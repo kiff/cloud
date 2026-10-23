@@ -1,0 +1,164 @@
+{
+ "schema_version": 1,
+ "diagram_type": "dataflow",
+ "meta": {
+  "title": "Data flow: connected tools and who holds the key",
+  "output": "out/03-tools.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en",
+  "legend": {
+   "entries": {
+    "emphasis": {
+     "label": "call with its permit"
+    },
+    "security": {
+     "label": "carries a credential"
+    }
+   }
+  }
+ },
+ "stages": [
+  {
+   "label": "Agent"
+  },
+  {
+   "label": "KIFF gateway"
+  },
+  {
+   "label": "Custody mode"
+  },
+  {
+   "label": "Tool side"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "KIFF agent key only",
+   "stage": 0,
+   "row": 2
+  },
+  {
+   "id": "gw",
+   "type": "security",
+   "label": "Gateway",
+   "sublabel": "allowed calls only",
+   "stage": 1,
+   "row": 2
+  },
+  {
+   "id": "sealed",
+   "type": "database",
+   "label": "Sealed",
+   "sublabel": "KIFF holds the key",
+   "stage": 2,
+   "row": 0
+  },
+  {
+   "id": "verify",
+   "type": "security",
+   "label": "Verify",
+   "sublabel": "nobody holds a key",
+   "stage": 2,
+   "row": 2
+  },
+  {
+   "id": "relay",
+   "type": "security",
+   "label": "Relay \u00b7 planque",
+   "sublabel": "keeps the sign-in",
+   "stage": 2,
+   "row": 4
+  },
+  {
+   "id": "t1",
+   "type": "external",
+   "label": "Tool",
+   "sublabel": "gets KIFF's key",
+   "stage": 3,
+   "row": 0
+  },
+  {
+   "id": "t2",
+   "type": "external",
+   "label": "Your tool",
+   "sublabel": "checks the permit",
+   "stage": 3,
+   "row": 2
+  },
+  {
+   "id": "t3",
+   "type": "external",
+   "label": "Vendor",
+   "sublabel": "gets planque's sign-in",
+   "stage": 3,
+   "row": 4
+  }
+ ],
+ "flows": [
+  {
+   "from": "agent",
+   "to": "gw",
+   "label": "tools/call",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gw",
+   "to": "sealed",
+   "label": "call"
+  },
+  {
+   "from": "sealed",
+   "to": "t1",
+   "label": "call + sealed key",
+   "variant": "security"
+  },
+  {
+   "from": "gw",
+   "to": "verify",
+   "label": "call + permit",
+   "variant": "emphasis"
+  },
+  {
+   "from": "verify",
+   "to": "t2",
+   "label": "KIFF-Permit header",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gw",
+   "to": "relay",
+   "label": "permit + relay key",
+   "variant": "emphasis"
+  },
+  {
+   "from": "relay",
+   "to": "t3",
+   "label": "call + sign-in",
+   "variant": "security"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "The permit",
+   "items": [
+    "Ed25519 JWT, typ kiff-permit+jwt",
+    "Covers one execution of one exact call",
+    "Keys at api.kiff.dev/.well-known/kiff-permit-keys.json"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "Gateway egress",
+   "items": [
+    "Tool URLs are untrusted: checked at connect and on every dial",
+    "No internal or metadata addresses; no redirects, no proxies",
+    "Sealed credentials are redacted from results and logs"
+   ]
+  }
+ ]
+}

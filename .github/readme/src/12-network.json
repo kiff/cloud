@@ -1,0 +1,244 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Network topology: trust zones and the only ways out",
+  "output": "out/12-network.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "components": [
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "untrusted",
+   "pos": [
+    40,
+    200
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "mcp",
+   "type": "security",
+   "label": "mcp.kiff.dev",
+   "sublabel": "TLS \u00b7 MCP",
+   "pos": [
+    300,
+    200
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "api",
+   "type": "security",
+   "label": "api.kiff.dev",
+   "sublabel": "TLS \u00b7 REST",
+   "pos": [
+    300,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "owner",
+   "type": "external",
+   "label": "Owner",
+   "sublabel": "approval device",
+   "pos": [
+    40,
+    40
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "egress",
+   "type": "security",
+   "label": "Egress guard",
+   "sublabel": "resolved IP checked",
+   "pos": [
+    300,
+    360
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "planque",
+   "type": "security",
+   "label": "planque",
+   "sublabel": "your side or KIFF's",
+   "pos": [
+    620,
+    300
+   ],
+   "size": [
+    160,
+    62
+   ]
+  },
+  {
+   "id": "vendor",
+   "type": "external",
+   "label": "Vendor API",
+   "sublabel": "public internet",
+   "pos": [
+    900,
+    300
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "own",
+   "type": "external",
+   "label": "Your tool",
+   "sublabel": "verify mode",
+   "pos": [
+    620,
+    450
+   ],
+   "size": [
+    160,
+    62
+   ]
+  },
+  {
+   "id": "chain",
+   "type": "cloud",
+   "label": "Base Sepolia",
+   "sublabel": "public chain",
+   "pos": [
+    620,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "jwks",
+   "type": "frontend",
+   "label": "Permit keys",
+   "sublabel": "/.well-known",
+   "pos": [
+    620,
+    160
+   ],
+   "size": [
+    160,
+    62
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "security-group",
+   "label": "KIFF trust boundary",
+   "wraps": [
+    "api",
+    "mcp",
+    "egress"
+   ]
+  },
+  {
+   "kind": "security-group",
+   "label": "Customer side",
+   "wraps": [
+    "planque",
+    "own"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "from": "owner",
+   "to": "api",
+   "label": "HTTPS",
+   "variant": "security"
+  },
+  {
+   "from": "agent",
+   "to": "mcp",
+   "label": "HTTPS",
+   "variant": "emphasis"
+  },
+  {
+   "from": "mcp",
+   "to": "api",
+   "label": "decide"
+  },
+  {
+   "from": "mcp",
+   "to": "egress",
+   "label": "allowed only",
+   "variant": "emphasis"
+  },
+  {
+   "from": "egress",
+   "to": "planque",
+   "label": "permit"
+  },
+  {
+   "from": "egress",
+   "to": "own",
+   "label": "permit"
+  },
+  {
+   "from": "planque",
+   "to": "vendor",
+   "label": "sign-in",
+   "variant": "security"
+  },
+  {
+   "from": "api",
+   "to": "chain",
+   "label": "anchor",
+   "variant": "dashed"
+  },
+  {
+   "from": "api",
+   "to": "jwks",
+   "label": "publish"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "The only way out",
+   "items": [
+    "Every outbound call goes through the egress guard",
+    "Checked at connect and on the resolved IP of every dial (defeats DNS rebinding)",
+    "No redirects, no proxies, no internal or metadata addresses"
+   ]
+  },
+  {
+   "dot": "cyan",
+   "title": "What crosses each line",
+   "items": [
+    "Agent \u2192 KIFF: the call, never a vendor key",
+    "KIFF \u2192 tool: the call with its permit",
+    "planque \u2192 vendor: the call with the sign-in planque keeps"
+   ]
+  }
+ ]
+}

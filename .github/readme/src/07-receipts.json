@@ -1,0 +1,183 @@
+{
+ "schema_version": 1,
+ "diagram_type": "dataflow",
+ "meta": {
+  "title": "Data flow: from a decision to a public anchor",
+  "output": "out/07-receipts.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en",
+  "legend": {
+   "entries": {
+    "emphasis": {
+     "label": "main path"
+    },
+    "dashed": {
+     "label": "async, swept in batches"
+    }
+   }
+  }
+ },
+ "stages": [
+  {
+   "label": "Decide"
+  },
+  {
+   "label": "Record"
+  },
+  {
+   "label": "Sign"
+  },
+  {
+   "label": "Anchor"
+  },
+  {
+   "label": "Check"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "dec",
+   "type": "backend",
+   "label": "Decision",
+   "sublabel": "allowed \u00b7 held \u00b7 refused",
+   "stage": 0,
+   "row": 1
+  },
+  {
+   "id": "halt",
+   "type": "security",
+   "label": "Halt",
+   "sublabel": "halted \u00b7 resumed",
+   "stage": 0,
+   "row": 3
+  },
+  {
+   "id": "rcpt",
+   "type": "backend",
+   "label": "Receipt",
+   "sublabel": "causal chain",
+   "stage": 1,
+   "row": 1
+  },
+  {
+   "id": "store",
+   "type": "database",
+   "label": "receipts",
+   "sublabel": "per account",
+   "stage": 1,
+   "row": 4
+  },
+  {
+   "id": "att",
+   "type": "security",
+   "label": "Attestation",
+   "sublabel": "secp256k1",
+   "stage": 2,
+   "row": 1
+  },
+  {
+   "id": "leaf",
+   "type": "security",
+   "label": "Salted leaf",
+   "sublabel": "keccak-256",
+   "stage": 2,
+   "row": 2
+  },
+  {
+   "id": "anchor",
+   "type": "cloud",
+   "label": "KiffAnchor",
+   "sublabel": "Base Sepolia",
+   "stage": 3,
+   "row": 2
+  },
+  {
+   "id": "get",
+   "type": "frontend",
+   "label": "GET receipt",
+   "sublabel": "/v1/receipts/{id}",
+   "stage": 4,
+   "row": 4
+  },
+  {
+   "id": "verify",
+   "type": "external",
+   "label": "kiff-verify",
+   "sublabel": "record \u2208 root",
+   "stage": 4,
+   "row": 2
+  }
+ ],
+ "flows": [
+  {
+   "from": "dec",
+   "to": "rcpt",
+   "label": "every decision",
+   "variant": "emphasis"
+  },
+  {
+   "from": "halt",
+   "to": "rcpt",
+   "label": "halt events"
+  },
+  {
+   "from": "rcpt",
+   "to": "store",
+   "label": "saved"
+  },
+  {
+   "from": "rcpt",
+   "to": "att",
+   "label": "chain hash",
+   "variant": "emphasis"
+  },
+  {
+   "from": "att",
+   "to": "leaf",
+   "label": "signed receipt"
+  },
+  {
+   "from": "leaf",
+   "to": "anchor",
+   "label": "Merkle root",
+   "variant": "dashed"
+  },
+  {
+   "from": "store",
+   "to": "get",
+   "label": "receipt + sig"
+  },
+  {
+   "from": "anchor",
+   "to": "verify",
+   "label": "Anchored event",
+   "variant": "emphasis"
+  },
+  {
+   "from": "get",
+   "to": "verify",
+   "label": "batch"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "amber",
+   "title": "Signed, then anchored",
+   "items": [
+    "The receipt's causal chain has one pinned encoding",
+    "Its secp256k1 signature fails on any change",
+    "Unanchored receipts are swept and anchored, paced for a public RPC"
+   ]
+  },
+  {
+   "dot": "slate",
+   "title": "Said plainly",
+   "items": [
+    "Base Sepolia is a public test network: no economic finality",
+    "Base mainnet is supported in the code and not offered",
+    "The signed receipt is the guarantee; the anchor is a public witness"
+   ]
+  }
+ ]
+}

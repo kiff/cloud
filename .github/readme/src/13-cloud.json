@@ -1,0 +1,251 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Cloud architecture: KIFF Cloud and the open-source family",
+  "output": "out/13-cloud.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "components": [
+  {
+   "id": "scan",
+   "type": "frontend",
+   "label": "kiff-scan",
+   "sublabel": "finds unguarded tools",
+   "pos": [
+    40,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "guard",
+   "type": "frontend",
+   "label": "kiff-guard",
+   "sublabel": "Python \u00b7 TypeScript",
+   "pos": [
+    40,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "plugins",
+   "type": "frontend",
+   "label": "kiff-plugins",
+   "sublabel": "Claude Code",
+   "pos": [
+    40,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "framework",
+   "type": "backend",
+   "label": "kiff",
+   "sublabel": "framework \u00b7 MIT",
+   "pos": [
+    300,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "cloud",
+   "type": "security",
+   "label": "kiff/cloud",
+   "sublabel": "gateway + API",
+   "pos": [
+    300,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ],
+   "tag": "this repo"
+  },
+  {
+   "id": "planque",
+   "type": "security",
+   "label": "planque",
+   "sublabel": "sign-ins \u00b7 relay",
+   "pos": [
+    560,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "vendors",
+   "type": "external",
+   "label": "Your tools",
+   "sublabel": "Stripe \u00b7 Shopify \u00b7 \u2026",
+   "pos": [
+    820,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "tafs",
+   "type": "frontend",
+   "label": "tafs",
+   "sublabel": "app + cloud service",
+   "pos": [
+    300,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "agentsrt",
+   "type": "backend",
+   "label": "agents",
+   "sublabel": "the runtime tafs runs",
+   "pos": [
+    560,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "status",
+   "type": "cloud",
+   "label": "status",
+   "sublabel": "status.kiff.dev",
+   "pos": [
+    820,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "chain",
+   "type": "cloud",
+   "label": "Base Sepolia",
+   "sublabel": "KiffAnchor",
+   "pos": [
+    560,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Runs where you code",
+   "wraps": [
+    "scan",
+    "guard",
+    "plugins"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "from": "scan",
+   "to": "guard",
+   "label": "then guard them"
+  },
+  {
+   "from": "guard",
+   "to": "cloud",
+   "label": "agents under a Card",
+   "variant": "emphasis"
+  },
+  {
+   "from": "plugins",
+   "to": "cloud",
+   "label": "MCP gateway",
+   "variant": "emphasis"
+  },
+  {
+   "from": "framework",
+   "to": "cloud",
+   "label": "built on kiff"
+  },
+  {
+   "from": "cloud",
+   "to": "planque",
+   "label": "permit",
+   "variant": "emphasis"
+  },
+  {
+   "from": "planque",
+   "to": "vendors",
+   "label": "sign-in",
+   "variant": "security"
+  },
+  {
+   "from": "tafs",
+   "to": "cloud",
+   "label": "every task decided"
+  },
+  {
+   "from": "tafs",
+   "to": "agentsrt",
+   "label": "runs on"
+  },
+  {
+   "from": "cloud",
+   "to": "chain",
+   "label": "receipt roots",
+   "variant": "dashed"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "Start anywhere",
+   "items": [
+    "kiff-scan: what can your agent do without asking?",
+    "kiff-guard: put an agent you already run under a Card",
+    "kiff-plugins: KIFF in Claude Code, with held calls handled"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "One enforcement core",
+   "items": [
+    "kiff/cloud decides, permits, halts and records",
+    "planque keeps the sign-ins and sends what KIFF allows",
+    "tafs is KIFF's own app, built on the same core"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,643 @@
+{
+ "schema_version": 1,
+ "diagram_type": "erd",
+ "meta": {
+  "title": "Core tables (key columns)",
+  "output": "out/10-erd.html",
+  "quality_profile": "standard",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "layout": {
+  "mode": "grid"
+ },
+ "entities": [
+  {
+   "id": "mandates",
+   "label": "mandates",
+   "sublabel": "a Card",
+   "tag": "Cards",
+   "row": 0,
+   "col": 0,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "subject",
+     "type": "text"
+    },
+    {
+     "name": "domain",
+     "type": "text"
+    },
+    {
+     "name": "grants",
+     "type": "jsonb"
+    },
+    {
+     "name": "aggregates",
+     "type": "jsonb"
+    },
+    {
+     "name": "on_exceed",
+     "type": "text"
+    },
+    {
+     "name": "valid_from",
+     "type": "timestamptz"
+    },
+    {
+     "name": "valid_until",
+     "type": "timestamptz"
+    },
+    {
+     "name": "revoked_at",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "mandate_holders",
+   "label": "mandate_holders",
+   "sublabel": "agents sharing a Card",
+   "tag": "Cards",
+   "row": 1,
+   "col": 0,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "mandate_id",
+     "type": "text",
+     "key": [
+      "pk",
+      "fk"
+     ],
+     "references": "mandates.id"
+    },
+    {
+     "name": "subject",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "position",
+     "type": "integer"
+    }
+   ]
+  },
+  {
+   "id": "mandate_draws",
+   "label": "mandate_draws",
+   "sublabel": "the balance ledger",
+   "tag": "Cards",
+   "row": 2,
+   "col": 0,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "mandate_id",
+     "type": "text",
+     "key": [
+      "pk",
+      "fk"
+     ],
+     "references": "mandates.id"
+    },
+    {
+     "name": "proposal_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "quantity_key",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "amount",
+     "type": "bigint"
+    },
+    {
+     "name": "drawn_at",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "mandate_revisions",
+   "label": "mandate_revisions",
+   "sublabel": "every change to a Card",
+   "tag": "Cards",
+   "row": 3,
+   "col": 0,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "mandate_id",
+     "type": "text",
+     "key": [
+      "pk",
+      "fk"
+     ],
+     "references": "mandates.id"
+    },
+    {
+     "name": "revision",
+     "type": "bigint",
+     "key": "pk"
+    },
+    {
+     "name": "changed_by",
+     "type": "text"
+    },
+    {
+     "name": "grants",
+     "type": "jsonb"
+    },
+    {
+     "name": "aggregates",
+     "type": "jsonb"
+    }
+   ]
+  },
+  {
+   "id": "mandate_exceptions",
+   "label": "mandate_exceptions",
+   "sublabel": "a held call",
+   "tag": "Holds",
+   "row": 0,
+   "col": 1,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "proposal_id",
+     "type": "text",
+     "key": "uk"
+    },
+    {
+     "name": "subject",
+     "type": "text"
+    },
+    {
+     "name": "action",
+     "type": "text"
+    },
+    {
+     "name": "fingerprint",
+     "type": "text"
+    },
+    {
+     "name": "breaches",
+     "type": "jsonb"
+    },
+    {
+     "name": "status",
+     "type": "text"
+    },
+    {
+     "name": "resolved_by",
+     "type": "text"
+    },
+    {
+     "name": "expires_at",
+     "type": "timestamptz"
+    },
+    {
+     "name": "consumed_at",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "mandate_exception_entries",
+   "label": "mandate_exception_entries",
+   "sublabel": "what an approval may draw",
+   "tag": "Holds",
+   "row": 1,
+   "col": 1,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "exception_id",
+     "type": "text",
+     "key": [
+      "pk",
+      "fk"
+     ],
+     "references": "mandate_exceptions.id"
+    },
+    {
+     "name": "mandate_id",
+     "type": "text",
+     "key": [
+      "pk",
+      "fk"
+     ],
+     "references": "mandates.id"
+    },
+    {
+     "name": "quantity_key",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "amount",
+     "type": "bigint"
+    }
+   ]
+  },
+  {
+   "id": "halts",
+   "label": "halts",
+   "sublabel": "agent or account",
+   "tag": "Halts",
+   "row": 2,
+   "col": 1,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "agent_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "halted",
+     "type": "boolean"
+    },
+    {
+     "name": "halted_at",
+     "type": "timestamptz"
+    },
+    {
+     "name": "resumed_at",
+     "type": "timestamptz"
+    },
+    {
+     "name": "planque_ack",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "halt_events",
+   "label": "halt_events",
+   "sublabel": "history, with receipts",
+   "tag": "Halts",
+   "row": 3,
+   "col": 1,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "agent_id",
+     "type": "text",
+     "key": "fk",
+     "references": "halts.agent_id"
+    },
+    {
+     "name": "kind",
+     "type": "text"
+    },
+    {
+     "name": "at",
+     "type": "timestamptz"
+    },
+    {
+     "name": "receipt",
+     "type": "text"
+    }
+   ]
+  },
+  {
+   "id": "tools",
+   "label": "gateway.tools",
+   "sublabel": "a connected tool",
+   "tag": "Gateway",
+   "row": 0,
+   "col": 2,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "name",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "upstream_url",
+     "type": "text"
+    },
+    {
+     "name": "mode",
+     "type": "text"
+    },
+    {
+     "name": "audience",
+     "type": "text"
+    },
+    {
+     "name": "amount_arg",
+     "type": "text"
+    },
+    {
+     "name": "resource_arg",
+     "type": "text"
+    },
+    {
+     "name": "fixed_args",
+     "type": "jsonb"
+    },
+    {
+     "name": "credential",
+     "type": "bytea"
+    }
+   ]
+  },
+  {
+   "id": "invocations",
+   "label": "gateway.invocations",
+   "sublabel": "the call ledger",
+   "tag": "Gateway",
+   "row": 1,
+   "col": 2,
+   "attributes": [
+    {
+     "name": "key",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "tenant_id",
+     "type": "text"
+    },
+    {
+     "name": "agent_id",
+     "type": "text"
+    },
+    {
+     "name": "tool",
+     "type": "text",
+     "key": "fk",
+     "references": "tools.name"
+    },
+    {
+     "name": "operation_id",
+     "type": "text"
+    },
+    {
+     "name": "args_hash",
+     "type": "text"
+    },
+    {
+     "name": "state",
+     "type": "text"
+    },
+    {
+     "name": "exception_id",
+     "type": "text",
+     "key": "fk",
+     "references": "mandate_exceptions.id"
+    },
+    {
+     "name": "hold_expires_at",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "dedup_slots",
+   "label": "gateway.dedup_slots",
+   "sublabel": "same call, one slot",
+   "tag": "Gateway",
+   "row": 2,
+   "col": 2,
+   "attributes": [
+    {
+     "name": "credential_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "tool",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "args_hash",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "invocation_key",
+     "type": "text",
+     "key": "fk",
+     "references": "invocations.key"
+    }
+   ]
+  },
+  {
+   "id": "permit_bindings",
+   "label": "permit_bindings",
+   "sublabel": "one permit per operation",
+   "tag": "Proof",
+   "row": 0,
+   "col": 3,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "op",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "tool",
+     "type": "text"
+    },
+    {
+     "name": "audience",
+     "type": "text"
+    },
+    {
+     "name": "permit_jti",
+     "type": "text"
+    },
+    {
+     "name": "minted_at",
+     "type": "timestamptz"
+    }
+   ]
+  },
+  {
+   "id": "receipts",
+   "label": "receipts",
+   "sublabel": "signed, then anchored",
+   "tag": "Proof",
+   "row": 1,
+   "col": 3,
+   "attributes": [
+    {
+     "name": "tenant_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "trace_id",
+     "type": "text",
+     "key": "pk"
+    },
+    {
+     "name": "proposal_id",
+     "type": "text"
+    },
+    {
+     "name": "action_name",
+     "type": "text"
+    },
+    {
+     "name": "causal_chain_hash",
+     "type": "text"
+    },
+    {
+     "name": "body",
+     "type": "jsonb"
+    },
+    {
+     "name": "anchor_tx_hash",
+     "type": "text"
+    },
+    {
+     "name": "anchored_at",
+     "type": "timestamptz"
+    }
+   ]
+  }
+ ],
+ "relationships": [
+  {
+   "from": "mandates",
+   "to": "mandate_holders",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "mandates",
+   "to": "mandate_draws",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "mandates",
+   "to": "mandate_revisions",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "mandate_exceptions",
+   "to": "mandate_exception_entries",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "mandates",
+   "to": "mandate_exception_entries",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "halts",
+   "to": "halt_events",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "tools",
+   "to": "invocations",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "invocations",
+   "to": "dedup_slots",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  },
+  {
+   "from": "mandate_exceptions",
+   "to": "invocations",
+   "fromCardinality": "one",
+   "toCardinality": "many",
+   "toOptional": true
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "Read it like this",
+   "items": [
+    "A Card is one mandates row; its balance is the sum of its draws in the window",
+    "A held call is a mandate_exceptions row; approving it lets it draw once",
+    "The gateway's ledger is separate: it decides nothing, it makes sure nothing is sent twice"
+   ]
+  }
+ ]
+}

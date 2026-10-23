@@ -1,0 +1,249 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "System context: who touches a call",
+  "output": "out/01-context.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "components": [
+  {
+   "id": "owner",
+   "type": "external",
+   "label": "You, the owner",
+   "sublabel": "app \u00b7 approval device",
+   "icon": "person",
+   "pos": [
+    40,
+    40
+   ],
+   "size": [
+    170,
+    64
+   ]
+  },
+  {
+   "id": "api",
+   "type": "backend",
+   "label": "KIFF API",
+   "sublabel": "api.kiff.dev \u00b7 decides",
+   "tag": "Cards \u00b7 permits \u00b7 receipts",
+   "pos": [
+    330,
+    40
+   ],
+   "size": [
+    190,
+    64
+   ]
+  },
+  {
+   "id": "chain",
+   "type": "cloud",
+   "label": "Base Sepolia",
+   "sublabel": "KiffAnchor contract",
+   "tag": "public test network",
+   "pos": [
+    660,
+    40
+   ],
+   "size": [
+    180,
+    64
+   ]
+  },
+  {
+   "id": "verifier",
+   "type": "external",
+   "label": "Anyone",
+   "sublabel": "auditor \u00b7 customer",
+   "icon": "person",
+   "pos": [
+    960,
+    40
+   ],
+   "size": [
+    160,
+    64
+   ]
+  },
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Your agent",
+   "sublabel": "any model \u00b7 any framework",
+   "pos": [
+    40,
+    250
+   ],
+   "size": [
+    170,
+    64
+   ]
+  },
+  {
+   "id": "gateway",
+   "type": "security",
+   "label": "KIFF gateway",
+   "sublabel": "mcp.kiff.dev \u00b7 MCP",
+   "tag": "forwards \u00b7 holds \u00b7 refuses",
+   "pos": [
+    330,
+    250
+   ],
+   "size": [
+    190,
+    64
+   ]
+  },
+  {
+   "id": "planque",
+   "type": "security",
+   "label": "planque",
+   "sublabel": "keeps the tool's sign-in",
+   "tag": "relay mode",
+   "pos": [
+    660,
+    250
+   ],
+   "size": [
+    180,
+    64
+   ]
+  },
+  {
+   "id": "vendor",
+   "type": "external",
+   "label": "Vendor tool",
+   "sublabel": "Stripe \u00b7 Shopify \u00b7 \u2026",
+   "pos": [
+    960,
+    250
+   ],
+   "size": [
+    160,
+    64
+   ]
+  },
+  {
+   "id": "owntool",
+   "type": "external",
+   "label": "Your own tool",
+   "sublabel": "checks the permit itself",
+   "tag": "verify mode",
+   "pos": [
+    330,
+    450
+   ],
+   "size": [
+    190,
+    64
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "kiff/cloud \u00b7 this repository",
+   "wraps": [
+    "api",
+    "gateway"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "owner-api",
+   "from": "owner",
+   "to": "api",
+   "label": "Cards \u00b7 approve \u00b7 halt",
+   "variant": "security"
+  },
+  {
+   "id": "agent-gw",
+   "from": "agent",
+   "to": "gateway",
+   "label": "tools/call",
+   "variant": "emphasis"
+  },
+  {
+   "id": "gw-api",
+   "from": "gateway",
+   "to": "api",
+   "label": "decide \u00b7 mint permit"
+  },
+  {
+   "id": "gw-planque",
+   "from": "gateway",
+   "to": "planque",
+   "label": "call + permit",
+   "variant": "emphasis"
+  },
+  {
+   "id": "planque-vendor",
+   "from": "planque",
+   "to": "vendor",
+   "label": "call + sign-in",
+   "variant": "emphasis"
+  },
+  {
+   "id": "gw-own",
+   "from": "gateway",
+   "to": "owntool",
+   "label": "call + permit, no key"
+  },
+  {
+   "id": "api-chain",
+   "from": "api",
+   "to": "chain",
+   "label": "receipt roots",
+   "variant": "dashed"
+  },
+  {
+   "id": "verifier-chain",
+   "from": "verifier",
+   "to": "chain",
+   "label": "check"
+  },
+  {
+   "id": "api-planque",
+   "from": "api",
+   "to": "planque",
+   "label": "signed halt ask",
+   "variant": "security",
+   "fromSide": "right",
+   "toSide": "top"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "The agent asks, KIFF decides",
+   "items": [
+    "Every tools/call goes through the gateway",
+    "KIFF answers allowed, held or refused before anything is sent",
+    "A clever prompt changes nothing: the Card is outside the model"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "Nobody hands the agent a key",
+   "items": [
+    "sealed: KIFF holds the tool's credential, sealed",
+    "verify: no one holds one; the tool checks the permit",
+    "relay: planque keeps the sign-in, in your own infrastructure if you like"
+   ]
+  },
+  {
+   "dot": "amber",
+   "title": "Proof anyone can check",
+   "items": [
+    "Every decision leaves a signed receipt",
+    "Receipt roots are anchored on Base Sepolia, a public test network",
+    "kiff-verify checks a record against its anchored batch"
+   ]
+  }
+ ]
+}

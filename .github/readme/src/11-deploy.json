@@ -1,0 +1,245 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Deployment: what runs, and what it keeps",
+  "output": "out/11-deploy.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "components": [
+  {
+   "id": "agents",
+   "type": "external",
+   "label": "Agents",
+   "sublabel": "MCP over HTTPS",
+   "pos": [
+    40,
+    190
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "gwproc",
+   "type": "backend",
+   "label": "Gateway service",
+   "sublabel": "cmd/gateway \u00b7 MCP",
+   "pos": [
+    260,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "apiproc",
+   "type": "backend",
+   "label": "API service",
+   "sublabel": "decide \u00b7 permits \u00b7 halts",
+   "pos": [
+    520,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "owner",
+   "type": "external",
+   "label": "Owner app",
+   "sublabel": "web \u00b7 phone",
+   "pos": [
+    520,
+    40
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "sweep",
+   "type": "messagebus",
+   "label": "Gateway sweeps",
+   "sublabel": "every minute",
+   "pos": [
+    260,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "pipeline",
+   "type": "messagebus",
+   "label": "Receipt pipeline",
+   "sublabel": "reconcile \u00b7 anchor sweep",
+   "pos": [
+    520,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "gwdb",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "schema gateway",
+   "pos": [
+    260,
+    490
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "apidb",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "schema cloud_meta",
+   "pos": [
+    520,
+    490
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "keys",
+   "type": "security",
+   "label": "Signing keys",
+   "sublabel": "Ed25519 \u00b7 secp256k1",
+   "pos": [
+    780,
+    190
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "rpc",
+   "type": "cloud",
+   "label": "Base Sepolia",
+   "sublabel": "public RPC",
+   "pos": [
+    1040,
+    340
+   ],
+   "size": [
+    150,
+    62
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "KIFF Cloud",
+   "wraps": [
+    "gwproc",
+    "apiproc",
+    "sweep",
+    "pipeline",
+    "gwdb",
+    "apidb",
+    "keys"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "from": "agents",
+   "to": "gwproc",
+   "label": "tools/call",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gwproc",
+   "to": "apiproc",
+   "label": "decide over HTTPS",
+   "variant": "emphasis"
+  },
+  {
+   "from": "owner",
+   "to": "apiproc",
+   "label": "Cards \u00b7 approvals"
+  },
+  {
+   "from": "gwproc",
+   "to": "sweep"
+  },
+  {
+   "from": "sweep",
+   "to": "gwdb",
+   "label": "stale \u00b7 results"
+  },
+  {
+   "from": "apiproc",
+   "to": "pipeline"
+  },
+  {
+   "from": "pipeline",
+   "to": "apidb",
+   "label": "receipts"
+  },
+  {
+   "from": "keys",
+   "to": "apiproc",
+   "label": "sign",
+   "variant": "security"
+  },
+  {
+   "from": "pipeline",
+   "to": "rpc",
+   "label": "submitRoot",
+   "variant": "dashed"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Two services, two modules",
+   "items": [
+    "The gateway reaches the API only over HTTP (KIFF_API_URL)",
+    "Each keeps its own schema",
+    "Background loops resolve abandoned calls and anchor receipts"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "Key material stays server-side",
+   "items": [
+    "Ed25519: execution permits and signed halt asks",
+    "secp256k1: receipt attestations and anchoring",
+    "Tool credentials are stored sealed, never returned"
+   ]
+  },
+  {
+   "dot": "slate",
+   "title": "Not in this export",
+   "items": [
+    "Hosting, networks and deploy configuration",
+    "status.kiff.dev runs apart from KIFF's own services"
+   ]
+  }
+ ]
+}

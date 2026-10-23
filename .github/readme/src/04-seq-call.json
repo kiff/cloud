@@ -1,0 +1,132 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Sequence: one allowed call, relay mode",
+  "output": "out/04-seq-call.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "participants": [
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "your runtime"
+  },
+  {
+   "id": "gw",
+   "type": "security",
+   "label": "KIFF gateway",
+   "sublabel": "mcp.kiff.dev"
+  },
+  {
+   "id": "api",
+   "type": "backend",
+   "label": "KIFF API",
+   "sublabel": "decides"
+  },
+  {
+   "id": "planque",
+   "type": "security",
+   "label": "planque",
+   "sublabel": "keeps the sign-in"
+  },
+  {
+   "id": "vendor",
+   "type": "external",
+   "label": "Vendor tool",
+   "sublabel": "e.g. Stripe"
+  }
+ ],
+ "messages": [
+  {
+   "from": "agent",
+   "to": "gw",
+   "y": 170,
+   "label": "tools/call refund_order \u20ac80",
+   "variant": "emphasis",
+   "note": "The gateway adds kiff_operation_id to every tool"
+  },
+  {
+   "from": "gw",
+   "to": "api",
+   "y": 240,
+   "label": "decide this call",
+   "note": "Recorded first: a call the gateway hasn't recorded is never sent"
+  },
+  {
+   "from": "api",
+   "to": "gw",
+   "y": 310,
+   "label": "allowed + permit",
+   "variant": "return",
+   "note": "Drawn on the Card under its lock. Ed25519 permit over the SHA-256 of the canonical arguments"
+  },
+  {
+   "from": "gw",
+   "to": "planque",
+   "y": 380,
+   "label": "call + KIFF-Permit",
+   "variant": "emphasis",
+   "note": "State moves to forwarding: from here it is never sent twice"
+  },
+  {
+   "from": "planque",
+   "to": "api",
+   "y": 450,
+   "label": "is this agent halted?",
+   "variant": "security",
+   "note": "Read at every dispatch; no answer means no send"
+  },
+  {
+   "from": "api",
+   "to": "planque",
+   "y": 520,
+   "label": "not halted",
+   "variant": "return"
+  },
+  {
+   "from": "planque",
+   "to": "vendor",
+   "y": 560,
+   "label": "call + the tool's sign-in",
+   "variant": "emphasis",
+   "note": "The sign-in never left planque"
+  },
+  {
+   "from": "vendor",
+   "to": "planque",
+   "y": 630,
+   "label": "result",
+   "variant": "return"
+  },
+  {
+   "from": "planque",
+   "to": "gw",
+   "y": 670,
+   "label": "result",
+   "variant": "return"
+  },
+  {
+   "from": "gw",
+   "to": "agent",
+   "y": 710,
+   "label": "result + KIFF call key",
+   "variant": "return",
+   "note": "The decision leaves a signed receipt"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "What the agent never sees",
+   "items": [
+    "The vendor's sign-in",
+    "The permit's signing key",
+    "Any way to send the same call twice"
+   ]
+  }
+ ]
+}

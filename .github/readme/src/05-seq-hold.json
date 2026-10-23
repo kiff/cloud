@@ -1,0 +1,142 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Sequence: a call over the Card is held",
+  "output": "out/05-seq-hold.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "participants": [
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "your runtime"
+  },
+  {
+   "id": "gw",
+   "type": "security",
+   "label": "KIFF gateway",
+   "sublabel": "mcp.kiff.dev"
+  },
+  {
+   "id": "api",
+   "type": "backend",
+   "label": "KIFF API",
+   "sublabel": "decides"
+  },
+  {
+   "id": "owner",
+   "type": "external",
+   "label": "You",
+   "sublabel": "app \u00b7 approval"
+  },
+  {
+   "id": "tool",
+   "type": "external",
+   "label": "Tool",
+   "sublabel": "the vendor"
+  }
+ ],
+ "messages": [
+  {
+   "from": "agent",
+   "to": "gw",
+   "y": 170,
+   "label": "tools/call refund_order \u20ac900",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gw",
+   "to": "api",
+   "y": 210,
+   "label": "decide this call"
+  },
+  {
+   "from": "api",
+   "to": "gw",
+   "y": 250,
+   "label": "held: over \u20ac500 per action",
+   "variant": "return",
+   "note": "Nothing is sent. Unanswered by its expiry, the hold is refused"
+  },
+  {
+   "from": "gw",
+   "to": "agent",
+   "y": 320,
+   "label": "waiting for the owner",
+   "variant": "return",
+   "note": "Same call later, same kiff_operation_id, collects the answer"
+  },
+  {
+   "from": "api",
+   "to": "owner",
+   "y": 390,
+   "label": "approve this exact call?",
+   "variant": "security",
+   "note": "Amount, resource and arguments, as asked"
+  },
+  {
+   "from": "owner",
+   "to": "api",
+   "y": 460,
+   "label": "approve once",
+   "variant": "security",
+   "note": "Covers this call once, on the resource it named. Unused, it is withdrawn"
+  },
+  {
+   "from": "agent",
+   "to": "gw",
+   "y": 530,
+   "label": "same call, retried"
+  },
+  {
+   "from": "gw",
+   "to": "api",
+   "y": 570,
+   "label": "decide again"
+  },
+  {
+   "from": "api",
+   "to": "gw",
+   "y": 610,
+   "label": "allowed + permit",
+   "variant": "return",
+   "note": "One permit per operation, even under concurrent retries"
+  },
+  {
+   "from": "gw",
+   "to": "tool",
+   "y": 680,
+   "label": "sent once",
+   "variant": "emphasis"
+  },
+  {
+   "from": "tool",
+   "to": "gw",
+   "y": 720,
+   "label": "result",
+   "variant": "return"
+  },
+  {
+   "from": "gw",
+   "to": "agent",
+   "y": 760,
+   "label": "result",
+   "variant": "return"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "amber",
+   "title": "Approval is narrow",
+   "items": [
+    "One call, once, on the resource it named",
+    "A new breach after approval waits for room",
+    "Change the Card instead if this should be normal"
+   ]
+  }
+ ]
+}

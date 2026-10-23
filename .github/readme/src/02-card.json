@@ -1,0 +1,178 @@
+{
+ "schema_version": 1,
+ "diagram_type": "dataflow",
+ "meta": {
+  "title": "How a Card decides one call",
+  "output": "out/02-card.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en",
+  "legend": {
+   "entries": {
+    "emphasis": {
+     "label": "main path"
+    },
+    "security": {
+     "label": "stop path: halt or refusal"
+    }
+   }
+  }
+ },
+ "stages": [
+  {
+   "label": "The ask"
+  },
+  {
+   "label": "Checked against"
+  },
+  {
+   "label": "One lock per Card"
+  },
+  {
+   "label": "The answer"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "call",
+   "type": "external",
+   "label": "tools/call",
+   "sublabel": "action \u00b7 amount \u00b7 resource",
+   "stage": 0,
+   "row": 1
+  },
+  {
+   "id": "domain",
+   "type": "frontend",
+   "label": "Domain",
+   "sublabel": "kiff.yaml",
+   "tag": "states \u00b7 actions \u00b7 roles",
+   "stage": 1,
+   "row": 0
+  },
+  {
+   "id": "card",
+   "type": "security",
+   "label": "Card",
+   "sublabel": "limits you set",
+   "tag": "per action \u00b7 per window",
+   "stage": 1,
+   "row": 1
+  },
+  {
+   "id": "halt",
+   "type": "security",
+   "label": "Halt",
+   "sublabel": "agent or account",
+   "stage": 1,
+   "row": 2
+  },
+  {
+   "id": "lock",
+   "type": "backend",
+   "label": "Card balance",
+   "sublabel": "locked per draw",
+   "stage": 2,
+   "row": 1
+  },
+  {
+   "id": "ledger",
+   "type": "database",
+   "label": "Draw ledger",
+   "sublabel": "mandate_draws",
+   "stage": 2,
+   "row": 2
+  },
+  {
+   "id": "allowed",
+   "type": "backend",
+   "label": "Allowed",
+   "sublabel": "permit \u00b7 sent once",
+   "stage": 3,
+   "row": 0
+  },
+  {
+   "id": "held",
+   "type": "messagebus",
+   "label": "Held",
+   "sublabel": "you approve, once",
+   "stage": 3,
+   "row": 1
+  },
+  {
+   "id": "refused",
+   "type": "security",
+   "label": "Refused",
+   "sublabel": "nothing sent",
+   "stage": 3,
+   "row": 2
+  }
+ ],
+ "flows": [
+  {
+   "from": "call",
+   "to": "domain",
+   "label": "is it allowed here?"
+  },
+  {
+   "from": "call",
+   "to": "card",
+   "label": "within the Card?",
+   "variant": "emphasis"
+  },
+  {
+   "from": "call",
+   "to": "halt",
+   "label": "halted?",
+   "variant": "security"
+  },
+  {
+   "from": "card",
+   "to": "lock",
+   "label": "room left?",
+   "variant": "emphasis"
+  },
+  {
+   "from": "ledger",
+   "to": "lock",
+   "label": "totals so far"
+  },
+  {
+   "from": "lock",
+   "to": "allowed",
+   "label": "fits: draw",
+   "variant": "emphasis"
+  },
+  {
+   "from": "lock",
+   "to": "held",
+   "label": "over: hold"
+  },
+  {
+   "from": "lock",
+   "to": "refused",
+   "label": "over: refuse",
+   "variant": "security"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "What a Card sets",
+   "items": [
+    "The actions it covers, and on which records",
+    "Up to X per action; up to Y per day, week or month",
+    "When it expires, and whether going over holds or refuses"
+   ]
+  },
+  {
+   "dot": "amber",
+   "title": "The key",
+   "items": [
+    "A per-action limit bounds one mistake; only a running total bounds a bad day",
+    "One balance per Card, locked per draw: two agents can't both spend the last \u20ac100",
+    "A retry counts once; a balance that can't be read is refused"
+   ]
+  }
+ ]
+}

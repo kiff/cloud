@@ -1,0 +1,121 @@
+{
+ "schema_version": 3,
+ "diagram_type": "lifecycle",
+ "meta": {
+  "title": "Lifecycle of one tool call in the gateway",
+  "output": "out/08-lifecycle.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "mainPath": [
+  "deciding",
+  "forwarding",
+  "forwarded"
+ ],
+ "states": [
+  {
+   "id": "deciding",
+   "type": "start",
+   "label": "deciding",
+   "sublabel": "recorded, asking KIFF"
+  },
+  {
+   "id": "forwarding",
+   "type": "active",
+   "label": "forwarding",
+   "sublabel": "sent once, result pending"
+  },
+  {
+   "id": "forwarded",
+   "type": "success",
+   "label": "forwarded",
+   "sublabel": "the tool's result"
+  },
+  {
+   "id": "held",
+   "type": "waiting",
+   "label": "held",
+   "sublabel": "waiting for you"
+  },
+  {
+   "id": "refused",
+   "type": "failure",
+   "label": "refused",
+   "sublabel": "nothing sent"
+  },
+  {
+   "id": "failed",
+   "type": "failure",
+   "label": "failed",
+   "sublabel": "not sent, or tool error"
+  },
+  {
+   "id": "unknown",
+   "type": "neutral",
+   "label": "unknown",
+   "sublabel": "outcome lost"
+  }
+ ],
+ "transitions": [
+  {
+   "from": "deciding",
+   "to": "forwarding",
+   "label": "allowed + permit",
+   "variant": "emphasis"
+  },
+  {
+   "from": "forwarding",
+   "to": "forwarded",
+   "label": "result",
+   "variant": "emphasis"
+  },
+  {
+   "from": "deciding",
+   "to": "held",
+   "label": "over the Card"
+  },
+  {
+   "from": "deciding",
+   "to": "refused",
+   "label": "refused",
+   "variant": "security"
+  },
+  {
+   "from": "held",
+   "to": "forwarding",
+   "label": "approved, retried",
+   "note": "one send, even under concurrent retries"
+  },
+  {
+   "from": "held",
+   "to": "refused",
+   "label": "rejected \u00b7 expired \u00b7 halted",
+   "variant": "security"
+  },
+  {
+   "from": "deciding",
+   "to": "failed",
+   "label": "no permit",
+   "note": "a call allowed without its permit is not sent"
+  },
+  {
+   "from": "forwarding",
+   "to": "unknown",
+   "label": "crash mid-send",
+   "variant": "dashed",
+   "note": "recorded as unknown and never re-sent"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "Why the ledger matters",
+   "items": [
+    "Recorded before it is decided: an unrecorded call is never sent",
+    "Moved to forwarding by one winner; other retries read its answer",
+    "kiff_operation_id ties a retry to the same call"
+   ]
+  }
+ ]
+}

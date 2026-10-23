@@ -1,0 +1,390 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Components: the two Go modules",
+  "output": "out/09-components.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "components": [
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "MCP client",
+   "pos": [
+    40,
+    190
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "server",
+   "type": "backend",
+   "label": "cmd/gateway",
+   "sublabel": "MCP server",
+   "pos": [
+    260,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "gwpkg",
+   "type": "security",
+   "label": "gateway",
+   "sublabel": "decide \u00b7 hold \u00b7 send",
+   "pos": [
+    480,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "egress",
+   "type": "security",
+   "label": "egress",
+   "sublabel": "public URLs only",
+   "pos": [
+    700,
+    190
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "tool",
+   "type": "external",
+   "label": "Tool or planque",
+   "sublabel": "upstream",
+   "pos": [
+    920,
+    190
+   ],
+   "size": [
+    160,
+    62
+   ]
+  },
+  {
+   "id": "invocation",
+   "type": "database",
+   "label": "invocation",
+   "sublabel": "call ledger",
+   "pos": [
+    480,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "secret",
+   "type": "security",
+   "label": "secret",
+   "sublabel": "sealed credentials",
+   "pos": [
+    700,
+    40
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "kiffapi",
+   "type": "backend",
+   "label": "kiffapi",
+   "sublabel": "client for the API",
+   "pos": [
+    480,
+    340
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "http",
+   "type": "backend",
+   "label": "API HTTP layer",
+   "sublabel": "decide endpoint",
+   "pos": [
+    480,
+    490
+   ],
+   "size": [
+    170,
+    62
+   ],
+   "tag": "not yet published"
+  },
+  {
+   "id": "mandate",
+   "type": "security",
+   "label": "mandate",
+   "sublabel": "Cards \u00b7 holds",
+   "pos": [
+    260,
+    490
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "domain",
+   "type": "frontend",
+   "label": "domain",
+   "sublabel": "kiff.yaml contracts",
+   "pos": [
+    40,
+    490
+   ],
+   "size": [
+    150,
+    62
+   ]
+  },
+  {
+   "id": "permit",
+   "type": "security",
+   "label": "permit",
+   "sublabel": "Ed25519 permits",
+   "pos": [
+    700,
+    490
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "halts",
+   "type": "security",
+   "label": "halts",
+   "sublabel": "halt + planque confirm",
+   "pos": [
+    260,
+    640
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "receipt",
+   "type": "backend",
+   "label": "receipt",
+   "sublabel": "receipts \u00b7 attestation",
+   "pos": [
+    480,
+    640
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "anchor",
+   "type": "cloud",
+   "label": "anchor",
+   "sublabel": "Merkle \u00b7 KiffAnchor",
+   "pos": [
+    700,
+    640
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "planque",
+   "type": "external",
+   "label": "planque",
+   "sublabel": "confirms halts",
+   "pos": [
+    260,
+    790
+   ],
+   "size": [
+    170,
+    62
+   ]
+  },
+  {
+   "id": "chain",
+   "type": "cloud",
+   "label": "Base Sepolia",
+   "sublabel": "public test network",
+   "pos": [
+    700,
+    790
+   ],
+   "size": [
+    170,
+    62
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "gateway/ \u00b7 Go module",
+   "wraps": [
+    "server",
+    "gwpkg",
+    "egress",
+    "invocation",
+    "secret",
+    "kiffapi"
+   ]
+  },
+  {
+   "kind": "region",
+   "label": "api/ \u00b7 Go module",
+   "wraps": [
+    "http",
+    "mandate",
+    "domain",
+    "permit",
+    "halts",
+    "receipt",
+    "anchor"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "from": "agent",
+   "to": "server",
+   "label": "tools/call",
+   "variant": "emphasis"
+  },
+  {
+   "from": "server",
+   "to": "gwpkg",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gwpkg",
+   "to": "egress",
+   "label": "forward",
+   "variant": "emphasis"
+  },
+  {
+   "from": "egress",
+   "to": "tool",
+   "label": "HTTPS",
+   "variant": "emphasis"
+  },
+  {
+   "from": "gwpkg",
+   "to": "invocation",
+   "label": "record \u00b7 claim"
+  },
+  {
+   "from": "secret",
+   "to": "egress",
+   "label": "credential",
+   "variant": "security"
+  },
+  {
+   "from": "gwpkg",
+   "to": "kiffapi",
+   "label": "decide"
+  },
+  {
+   "from": "kiffapi",
+   "to": "http",
+   "label": "HTTPS"
+  },
+  {
+   "from": "http",
+   "to": "mandate",
+   "label": "authorize"
+  },
+  {
+   "from": "mandate",
+   "to": "domain",
+   "label": "narrows"
+  },
+  {
+   "from": "http",
+   "to": "permit",
+   "label": "mint",
+   "variant": "security"
+  },
+  {
+   "from": "http",
+   "to": "receipt",
+   "label": "record"
+  },
+  {
+   "from": "receipt",
+   "to": "anchor",
+   "label": "attest",
+   "variant": "dashed"
+  },
+  {
+   "from": "anchor",
+   "to": "chain",
+   "label": "submitRoot",
+   "variant": "dashed"
+  },
+  {
+   "from": "halts",
+   "to": "planque",
+   "label": "signed ask",
+   "variant": "security"
+  },
+  {
+   "from": "http",
+   "to": "halts",
+   "label": "is halted?",
+   "variant": "security"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "gateway/",
+   "items": [
+    "tools/call: ask KIFF, hold or refuse, send once",
+    "invocation: one send per approval, never re-sent",
+    "egress + secret: no internal addresses, sealed keys"
+   ]
+  },
+  {
+   "dot": "cyan",
+   "title": "api/",
+   "items": [
+    "mandate: Cards, holds and the decision",
+    "permit, halts, receipt, anchor",
+    "cmd/kiff-verify checks a record against an anchored batch"
+   ]
+  }
+ ]
+}

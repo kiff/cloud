@@ -1,0 +1,32 @@
+[
+ {
+  "name": "rfc8785 3.2.2 example",
+  "input": "{\"numbers\":[333333333.33333329,1E30,4.50,2e-3,0.000000000000000000000000001],\"string\":\"\\u20ac$\\u000F\\u000aA'\\u0042\\u0022\\u005c\\\\\\\"\\/\",\"literals\":[null,true,false]}",
+  "canonical": "{\"literals\":[null,true,false],\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27],\"string\":\"€$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}"
+ },
+ {
+  "name": "rfc8785 3.2.3 sorting",
+  "input": "{\"\\u20ac\":\"Euro Sign\",\"\\r\":\"Carriage Return\",\"\\ufb33\":\"Hebrew Letter Dalet With Dagesh\",\"1\":\"One\",\"\\ud83d\\ude00\":\"Emoji: Grinning Face\",\"\\u0080\":\"Control\",\"\\u00f6\":\"Latin Small Letter O With Diaeresis\"}",
+  "canonical": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😀\":\"Emoji: Grinning Face\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}"
+ },
+ {
+  "name": "numbers",
+  "input": "[0,-0,1,-1,5000,1.0,1e21,1e20,0.000001,1e-7,123.456,-4.5,9007199254740991,5e-324,1.7976931348623157e308,0.1,100]",
+  "canonical": "[0,0,1,-1,5000,1,1e+21,100000000000000000000,0.000001,1e-7,123.456,-4.5,9007199254740991,5e-324,1.7976931348623157e+308,0.1,100]"
+ },
+ {
+  "name": "refund call",
+  "input": "{ \"reason\": \"damaged on arrival\", \"order_number\": \"1042\", \"amount_eur\": 80, \"idempotency_key\": \"inv_01J9Z\" }",
+  "canonical": "{\"amount_eur\":80,\"idempotency_key\":\"inv_01J9Z\",\"order_number\":\"1042\",\"reason\":\"damaged on arrival\"}"
+ },
+ {
+  "name": "nested and empty",
+  "input": "{\"b\":[],\"a\":{\"z\":{},\"y\":[true,null,\"x\"]}}",
+  "canonical": "{\"a\":{\"y\":[true,null,\"x\"],\"z\":{}},\"b\":[]}"
+ },
+ {
+  "name": "no escaping of non-ASCII or html",
+  "input": "\"<a href=\\\"/\\\">é</a> \\u2028\"",
+  "canonical": "\"<a href=\\\"/\\\">é</a>  \""
+ }
+]

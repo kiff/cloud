@@ -1,0 +1,138 @@
+# cafe.kiff.yaml
+#
+# Cloud-side counterpart of the framework's ai-cafe-ops worked
+# example (kiff/kiff#3, kiff/kiff#4). Upload this
+# YAML against a tenant via:
+#
+#   kiff-tenant set-domain --slug=cafe --file=cafe.kiff.yaml
+#
+# Then mint an API key for that tenant and the cloud runtime will
+# accept the same shape of events, actions, and approvals the local
+# `make demo` flow uses.
+#
+# The auto-vs-approval routing for inventory orders lives client-side
+# (the agent picks `cafe.auto_order_inventory` for low-risk amounts
+# and `cafe.order_inventory` for high-risk ones). The runtime gates
+# on the chosen contract's approval requirement.
+#
+# Reference: examples/ai-cafe-ops/domain.go in kiff/kiff.
+
+domain: ai-cafe-ops
+entity: Shift
+
+events:
+  - SHIFT_SCHEDULED
+  - SHIFT_STARTED
+  - INVENTORY_ORDERED
+  - SPECIALTY_REQUESTED
+  - STAFF_MESSAGED
+  - SUPPLIER_ESCALATED
+
+states:
+  - NEW
+  - OPEN
+  - AWAITING_HUMAN
+
+transitions:
+  - on: SHIFT_SCHEDULED
+    from: ""
+    to: NEW
+  - on: SHIFT_STARTED
+    from: NEW
+    to: OPEN
+  # Inventory / specialty / staff-message events do not move the
+  # shift out of OPEN; they describe operational activity within the
+  # open shift.
+  - on: INVENTORY_ORDERED
+    from: OPEN
+    to: OPEN
+  - on: SPECIALTY_REQUESTED
+    from: OPEN
+    to: OPEN
+  - on: STAFF_MESSAGED
+    from: OPEN
+    to: OPEN
+  # Supplier escalation parks the shift awaiting a human review.
+  - on: SUPPLIER_ESCALATED
+    from: OPEN
+    to: AWAITING_HUMAN
+
+actions:
+  - name: START_SHIFT
+    allowed_states: [NEW]
+    required_parameters: [opened_by]
+    required_permissions: [aicafeops.start]
+    risk: low
+    approval: never
+    executor: cafe.start_shift
+
+  # Low-amount inventory order. Agent picks this when amount_cents is
+  # under the per-order ceiling AND the shift's running daily total
+  # would stay under the daily cap. No approval.
+  - name: AUTO_ORDER_INVENTORY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, quantity, amount_cents]
+    required_permissions: [aicafeops.order]
+    risk: medium
+    approval: never
+    executor: cafe.auto_order_inventory
+
+  # High-amount inventory order. Same payload shape; runtime opens
+  # an approval before the executor runs.
+  - name: ORDER_INVENTORY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, quantity, amount_cents]
+    required_permissions: [aicafeops.order]
+    risk: high
+    approval: required
+    executor: cafe.order_inventory
+
+  # Specialty request. Pre-checks the catalog allow-list inside the
+  # executor; out-of-catalog items return ErrCafeNotInCatalog before
+  # any approval is opened.
+  - name: REQUEST_SPECIALTY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, rationale]
+    required_permissions: [aicafeops.specialty]
+    risk: medium
+    approval: required
+    executor: cafe.request_specialty
+
+  # Staff message. Pre-checks the working-hours window inside the
+  # executor; messages outside the window return ErrCafeAfterHours
+  # before any approval is opened.
+  - name: SEND_STAFF_MESSAGE
+    allowed_states: [OPEN]
+    required_parameters: [recipient, message, sent_at_local]
+    required_permissions: [aicafeops.message]
+    risk: medium
+    approval: required
+    executor: cafe.send_staff_message
+
+  # Supplier escalation. Always allowed in OPEN; the resulting event
+  # parks the shift in AWAITING_HUMAN.
+  - name: ESCALATE_SUPPLIER
+    allowed_states: [OPEN]
+    required_parameters: [supplier_id, reason]
+    required_permissions: [aicafeops.escalate]
+    risk: medium
+    approval: never
+    executor: cafe.escalate_supplier
+
+permissions:
+  roles:
+    shift_manager:
+      - aicafeops.start
+      - aicafeops.order
+      - aicafeops.specialty
+      - aicafeops.message
+      - aicafeops.escalate
+    ops_operator:
+      - aicafeops.start
+      - aicafeops.order
+      - aicafeops.specialty
+      - aicafeops.message
+      - aicafeops.escalate
+      - aicafeops.approve
+    system:
+      - aicafeops.start

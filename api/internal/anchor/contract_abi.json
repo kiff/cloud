@@ -1,0 +1,56 @@
+[
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "signer",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "streamId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint64",
+                "name": "batchId",
+                "type": "uint64"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "root",
+                "type": "bytes32"
+            }
+        ],
+        "name": "Anchored",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "root",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint64",
+                "name": "batchId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "streamId",
+                "type": "bytes32"
+            }
+        ],
+        "name": "submitRoot",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]

@@ -1,0 +1,166 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Sequence: halting an agent",
+  "output": "out/06-seq-halt.html",
+  "quality_profile": "showcase",
+  "visual_preset": "blueprint",
+  "locale": "en"
+ },
+ "participants": [
+  {
+   "id": "owner",
+   "type": "external",
+   "label": "You",
+   "sublabel": "app \u00b7 approval"
+  },
+  {
+   "id": "api",
+   "type": "backend",
+   "label": "KIFF API",
+   "sublabel": "decides"
+  },
+  {
+   "id": "planque",
+   "type": "security",
+   "label": "planque",
+   "sublabel": "keeps the sign-in"
+  },
+  {
+   "id": "gw",
+   "type": "security",
+   "label": "KIFF gateway",
+   "sublabel": "mcp.kiff.dev"
+  },
+  {
+   "id": "agent",
+   "type": "external",
+   "label": "Agent",
+   "sublabel": "your runtime"
+  }
+ ],
+ "messages": [
+  {
+   "from": "owner",
+   "to": "api",
+   "y": 170,
+   "label": "halt this agent",
+   "variant": "security",
+   "note": "Stored at once. KIFF now decides none of its calls"
+  },
+  {
+   "from": "api",
+   "to": "planque",
+   "y": 240,
+   "label": "confirm? signed for this halt",
+   "variant": "security",
+   "note": "Signed with KIFF's key: planque answers only KIFF"
+  },
+  {
+   "from": "planque",
+   "to": "api",
+   "y": 310,
+   "label": "read the halt back",
+   "note": "The same read its dispatch makes before every send"
+  },
+  {
+   "from": "api",
+   "to": "planque",
+   "y": 380,
+   "label": "halted since T",
+   "variant": "return"
+  },
+  {
+   "from": "planque",
+   "to": "api",
+   "y": 420,
+   "label": "confirmed",
+   "variant": "return"
+  },
+  {
+   "from": "api",
+   "to": "owner",
+   "y": 460,
+   "label": "halted",
+   "variant": "return",
+   "note": "Shown as halted, not halting, only once each planque confirms"
+  },
+  {
+   "from": "agent",
+   "to": "gw",
+   "y": 530,
+   "label": "any call, new or retried"
+  },
+  {
+   "from": "gw",
+   "to": "api",
+   "y": 570,
+   "label": "decide"
+  },
+  {
+   "from": "api",
+   "to": "gw",
+   "y": 610,
+   "label": "refused: halted",
+   "variant": "return",
+   "note": "Decide-time refusal: API HTTP layer, not yet published"
+  },
+  {
+   "from": "gw",
+   "to": "agent",
+   "y": 680,
+   "label": "refused, nothing sent",
+   "variant": "return"
+  },
+  {
+   "from": "gw",
+   "to": "planque",
+   "y": 720,
+   "label": "call with a pre-halt permit"
+  },
+  {
+   "from": "planque",
+   "to": "api",
+   "y": 760,
+   "label": "halted?",
+   "variant": "security",
+   "note": "planque checks at dispatch and fails closed"
+  },
+  {
+   "from": "planque",
+   "to": "gw",
+   "y": 830,
+   "label": "refused",
+   "variant": "return",
+   "note": "After a resume, what was asked before the halt stays refused"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "Where it stops",
+   "items": [
+    "A halt stops new calls",
+    "A request already sent may still complete at the vendor"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "from": 150,
+   "to": 505,
+   "label": "1 \u00b7 Halt, confirmed by planque"
+  },
+  {
+   "from": 515,
+   "to": 700,
+   "label": "2 \u00b7 New calls"
+  },
+  {
+   "from": 705,
+   "to": 880,
+   "label": "3 \u00b7 Permits issued before the halt"
+  }
+ ]
+}
