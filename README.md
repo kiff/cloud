@@ -45,6 +45,25 @@ and the parts of the API at `api.kiff.dev` that decide a call, mint its
 permit, apply a halt and write its receipt. Below is its blueprint, drawn
 from the code in this repository.
 
+## See it in a real product: tafs
+
+[tafs](https://github.com/kiff/tafs) is KIFF's own app, for iPhone, iPad and
+Mac. A business hands routine jobs to AI agents, called tafs, and each taf
+works under its own Card. Every action a taf takes goes through the gateway and
+the decision path in this repository:
+
+- **Inside its Card, a taf acts,** and the action leaves a signed receipt. The
+  app's Record shows it, with the receipt checked on the owner's device.
+- **Outside its Card, it waits.** The held call appears in *Needs you*, and the
+  owner approves it once or refuses it, signed on their own device.
+- **Halt all** stops every taf, and nothing new is sent until the owner resumes.
+- **Coach mode** sets a taf up: it connects the tools, proposes the Card, and
+  the owner approves both.
+
+The tools' sign-ins stay in [planque](https://github.com/kiff/planque); the
+tafs themselves never hold them. The same code decides for tafs and for any
+agent you connect yourself.
+
 ## The blueprint
 
 | | Diagram | Answers |
@@ -61,7 +80,7 @@ from the code in this repository.
 | 10 | [Data model](#data-model) | The tables behind Cards, holds, halts and proof |
 | 11 | [Deployment](#deployment) | What runs, and what it keeps |
 | 12 | [Network topology](#network-topology) | Trust zones, and the only way out |
-| 13 | [Cloud architecture](#cloud-architecture-and-the-kiff-family) | How kiff/cloud fits with the open-source family |
+| 13 | [Cloud architecture](#cloud-architecture-and-the-kiff-family) | How kiff/cloud fits with tafs and the rest of the family |
 
 The diagrams are drawn with [Archify](https://github.com/tt-a1i/archify);
 their sources are in [`.github/readme/src`](.github/readme/src).
@@ -323,20 +342,20 @@ the sign-in planque keeps.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/readme/13-cloud-dark.png">
-  <img src=".github/readme/13-cloud.png" alt="The KIFF family: kiff-scan finds unguarded tools, kiff-guard puts agents under a Card, kiff-plugins brings the gateway to Claude Code. kiff/cloud is built on the kiff framework, sends permits to planque, and anchors receipt roots on Base Sepolia. tafs runs on agents and every task is decided by kiff/cloud.">
+  <img src=".github/readme/13-cloud.png" alt="The KIFF family: tafs, KIFF's own app, runs on agents, and every task is decided by kiff/cloud. kiff/cloud is built on the kiff framework, sends permits to planque, which adds the sign-in for your tools, and anchors receipt roots on Base Sepolia. Below, the developer tools: kiff-plugins, kiff-guard and kiff-scan.">
 </picture>
 
 | Repository | What it is |
 |---|---|
-| [kiff/kiff-scan](https://github.com/kiff/kiff-scan) | *What can your AI agent do without asking?* Finds functions a model can call that delete data, deploy, move money or run a shell, with nothing on the path that can refuse. `uvx kiff-scan scan .` (MIT) |
-| [kiff/kiff-guard](https://github.com/kiff/kiff-guard) | Put an agent you already run under a Card (MIT): Python and TypeScript, with adapters for Agno, LangGraph, OpenAI, Google ADK, Strands, n8n and your own code. |
-| [kiff/kiff-plugins](https://github.com/kiff/kiff-plugins) | KIFF for Claude Code: the gateway, and skills to connect an agent and handle held calls. |
-| [kiff/kiff](https://github.com/kiff/kiff) | The KIFF framework (MIT): the open-source engine behind KIFF Cards, run on your own machine. |
-| [kiff/planque](https://github.com/kiff/planque) | Keeps your tools' sign-ins and sends the calls KIFF allows. |
-| [kiff/tafs](https://github.com/kiff/tafs) | tafs: hand routine work to agents and keep the keys. The app and its cloud service. |
-| [kiff/agents](https://github.com/kiff/agents) | The runtime tafs' agents run on. |
-| [kiff/status](https://github.com/kiff/status) | The source of [status.kiff.dev](https://status.kiff.dev). |
 | **kiff/cloud** | You are here: the enforcement core. |
+| [kiff/tafs](https://github.com/kiff/tafs) | KIFF's own app: hand routine work to agents, each under its Card, and keep the keys. The app and its cloud service. |
+| [kiff/planque](https://github.com/kiff/planque) | Keeps your tools' sign-ins and sends the calls KIFF allows. |
+| [kiff/agents](https://github.com/kiff/agents) | The runtime tafs' agents run on. |
+| [kiff/kiff](https://github.com/kiff/kiff) | The KIFF framework (MIT): the open-source engine behind KIFF Cards, run on your own machine. |
+| [kiff/status](https://github.com/kiff/status) | The source of [status.kiff.dev](https://status.kiff.dev). |
+| [kiff/kiff-plugins](https://github.com/kiff/kiff-plugins) | KIFF for Claude Code: the gateway, and skills to connect an agent and handle held calls. |
+| [kiff/kiff-guard](https://github.com/kiff/kiff-guard) | Put an agent you already run under a Card (MIT): Python and TypeScript, with adapters for Agno, LangGraph, OpenAI, Google ADK, Strands, n8n and your own code. |
+| [kiff/kiff-scan](https://github.com/kiff/kiff-scan) | *What can your AI agent do without asking?* Finds functions a model can call that delete data, deploy, move money or run a shell, with nothing on the path that can refuse. `uvx kiff-scan scan .` (MIT) |
 
 ## What this code enforces
 

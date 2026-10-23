@@ -54,8 +54,8 @@
   {
    "id": "owner",
    "type": "external",
-   "label": "Owner app",
-   "sublabel": "web \u00b7 phone",
+   "label": "Owner apps",
+   "sublabel": "tafs \u00b7 kiff.dev",
    "pos": [
     520,
     40

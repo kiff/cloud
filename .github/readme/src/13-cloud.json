@@ -2,7 +2,7 @@
  "schema_version": 1,
  "diagram_type": "architecture",
  "meta": {
-  "title": "Cloud architecture: KIFF Cloud and the open-source family",
+  "title": "Cloud architecture: kiff/cloud, tafs and the KIFF family",
   "output": "out/13-cloud.html",
   "quality_profile": "showcase",
   "visual_preset": "blueprint",
@@ -15,8 +15,8 @@
    "label": "kiff-scan",
    "sublabel": "finds unguarded tools",
    "pos": [
-    40,
-    40
+    560,
+    360
    ],
    "size": [
     170,
@@ -29,8 +29,8 @@
    "label": "kiff-guard",
    "sublabel": "Python \u00b7 TypeScript",
    "pos": [
-    40,
-    190
+    300,
+    360
    ],
    "size": [
     170,
@@ -44,7 +44,7 @@
    "sublabel": "Claude Code",
    "pos": [
     40,
-    340
+    360
    ],
    "size": [
     170,
@@ -57,8 +57,8 @@
    "label": "kiff",
    "sublabel": "framework \u00b7 MIT",
    "pos": [
-    300,
-    40
+    40,
+    190
    ],
    "size": [
     170,
@@ -112,15 +112,16 @@
    "id": "tafs",
    "type": "frontend",
    "label": "tafs",
-   "sublabel": "app + cloud service",
+   "sublabel": "KIFF's own app",
    "pos": [
     300,
-    340
+    40
    ],
    "size": [
     170,
     62
-   ]
+   ],
+   "tag": "iPhone \u00b7 iPad \u00b7 Mac"
   },
   {
    "id": "agentsrt",
@@ -128,8 +129,8 @@
    "label": "agents",
    "sublabel": "the runtime tafs runs",
    "pos": [
-    560,
-    340
+    40,
+    40
    ],
    "size": [
     170,
@@ -168,31 +169,25 @@
  "boundaries": [
   {
    "kind": "region",
-   "label": "Runs where you code",
+   "label": "Developer tools",
    "wraps": [
-    "scan",
+    "plugins",
     "guard",
-    "plugins"
+    "scan"
    ]
   }
  ],
  "connections": [
   {
-   "from": "scan",
-   "to": "guard",
-   "label": "then guard them"
-  },
-  {
-   "from": "guard",
+   "from": "tafs",
    "to": "cloud",
-   "label": "agents under a Card",
+   "label": "every task decided",
    "variant": "emphasis"
   },
   {
-   "from": "plugins",
-   "to": "cloud",
-   "label": "MCP gateway",
-   "variant": "emphasis"
+   "from": "tafs",
+   "to": "agentsrt",
+   "label": "runs on"
   },
   {
    "from": "framework",
@@ -212,39 +207,44 @@
    "variant": "security"
   },
   {
-   "from": "tafs",
-   "to": "cloud",
-   "label": "every task decided"
-  },
-  {
-   "from": "tafs",
-   "to": "agentsrt",
-   "label": "runs on"
-  },
-  {
    "from": "cloud",
    "to": "chain",
    "label": "receipt roots",
    "variant": "dashed"
+  },
+  {
+   "from": "guard",
+   "to": "cloud",
+   "label": "agents under a Card"
+  },
+  {
+   "from": "plugins",
+   "to": "cloud",
+   "label": "MCP gateway"
+  },
+  {
+   "from": "scan",
+   "to": "guard",
+   "label": "then guard them"
   }
  ],
  "cards": [
-  {
-   "dot": "cyan",
-   "title": "Start anywhere",
-   "items": [
-    "kiff-scan: what can your agent do without asking?",
-    "kiff-guard: put an agent you already run under a Card",
-    "kiff-plugins: KIFF in Claude Code, with held calls handled"
-   ]
-  },
   {
    "dot": "emerald",
    "title": "One enforcement core",
    "items": [
     "kiff/cloud decides, permits, halts and records",
-    "planque keeps the sign-ins and sends what KIFF allows",
-    "tafs is KIFF's own app, built on the same core"
+    "tafs, KIFF's own app, runs every task through it",
+    "planque keeps the sign-ins and sends what KIFF allows"
+   ]
+  },
+  {
+   "dot": "slate",
+   "title": "Developer tools",
+   "items": [
+    "kiff-plugins: KIFF in Claude Code",
+    "kiff-guard: put an agent you already run under a Card",
+    "kiff-scan: what can your agent do without asking?"
    ]
   }
  ]

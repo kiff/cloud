@@ -13,7 +13,7 @@
    "id": "owner",
    "type": "external",
    "label": "You, the owner",
-   "sublabel": "app \u00b7 approval device",
+   "sublabel": "tafs app \u00b7 approval",
    "icon": "person",
    "pos": [
     40,

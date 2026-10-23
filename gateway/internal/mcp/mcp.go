@@ -16,7 +16,9 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,6 +28,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/kiff/cloud/gateway/internal/requestlog"
@@ -456,14 +459,93 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 }
 
 // Client calls tools on remote MCP servers. Each server's era is probed
-// once and cached per URL.
+// once and cached per URL. An initialize-era server's session is opened
+// once and reused for that server and credential, so a
+// call doesn't pay initialize and initialized each time.
 type Client struct {
 	HTTP *http.Client
 	// Version is reported as the client's version.
 	Version string
 
-	mu   sync.Mutex
-	eras map[string]bool // url → modern
+	mu       sync.Mutex
+	eras     map[string]bool // url → modern
+	sessions map[string]openSession
+
+	// now is the clock, for tests.
+	now func() time.Time
+}
+
+// openSession is an initialize-era session kept for reuse: the server's
+// session id (possibly empty, for a server that issues none) and the
+// protocol version it answered, until it has been idle for sessionIdle.
+type openSession struct {
+	id, version string
+	used        time.Time
+	// ids are the request ids the session has used: initialize is 1, and
+	// each call takes the next, since an id is never used twice in a
+	// session (JSON-RPC as MCP profiles it). Shared by every copy.
+	ids *atomic.Int64
+}
+
+// sessionIdle is how long an unused session is kept, and maxSessions how
+// many are kept at most.
+const (
+	sessionIdle = 5 * time.Minute
+	maxSessions = 1000
+)
+
+// sessionKey names a session by its server and credential: one is never
+// shared across credentials, so never across accounts or tools. The
+// credential is kept as a hash.
+func sessionKey(url, bearer string) string {
+	sum := sha256.Sum256([]byte(bearer))
+	return url + "\x00" + hex.EncodeToString(sum[:])
+}
+
+func (c *Client) clock() time.Time {
+	if c.now != nil {
+		return c.now()
+	}
+	return time.Now()
+}
+
+// session returns the open session for key, if one was used recently.
+func (c *Client) session(key string) (openSession, bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	s, ok := c.sessions[key]
+	if !ok || c.clock().Sub(s.used) > sessionIdle {
+		delete(c.sessions, key)
+		return openSession{}, false
+	}
+	s.used = c.clock()
+	c.sessions[key] = s
+	return s, true
+}
+
+// keep records key's open session, dropping idle ones when there are many.
+func (c *Client) keep(key string, s openSession) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.sessions == nil {
+		c.sessions = map[string]openSession{}
+	}
+	if len(c.sessions) >= maxSessions {
+		for k, o := range c.sessions {
+			if c.clock().Sub(o.used) > sessionIdle || len(c.sessions) >= maxSessions {
+				delete(c.sessions, k)
+			}
+		}
+	}
+	s.used = c.clock()
+	c.sessions[key] = s
+}
+
+// forget drops key's session, after a failure on it.
+func (c *Client) forget(key string) {
+	c.mu.Lock()
+	delete(c.sessions, key)
+	c.mu.Unlock()
 }
 
 // CallError reports a failed upstream call and whether the tools/call
@@ -687,30 +769,73 @@ func readMessage(resp *http.Response, want string) (message, error) {
 	return message{}, errors.New("stream ended without a response")
 }
 
-// callLegacy opens a session with initialize, then calls the tool.
+// callLegacy calls the tool in an initialize-era session: the one kept
+// for this server and credential, else a new one. A kept session the
+// server answers with 404 has expired, and MCP has the server refuse such
+// a request without processing it: the call wasn't run, so it is sent once
+// more in a new session. Any other failure drops the kept session and is
+// reported as before, so a call whose outcome is unknown is never re-sent.
 func (c *Client) callLegacy(ctx context.Context, url, bearer, tool string, args json.RawMessage) (json.RawMessage, error) {
+	key := sessionKey(url, bearer)
+	kept, reused := c.session(key)
+	if !reused {
+		var err error
+		if kept, err = c.openLegacy(ctx, url, bearer); err != nil {
+			return nil, notSent(err)
+		}
+		c.keep(key, kept)
+	}
+	res, err := c.legacyCall(ctx, url, bearer, kept, tool, args)
+	var st *statusError
+	if reused && errors.As(err, &st) && st.code == http.StatusNotFound {
+		c.forget(key)
+		if kept, err = c.openLegacy(ctx, url, bearer); err != nil {
+			return nil, notSent(err)
+		}
+		c.keep(key, kept)
+		res, err = c.legacyCall(ctx, url, bearer, kept, tool, args)
+	}
+	if err != nil {
+		var rpc *RPCError
+		if errors.As(err, &rpc) {
+			return nil, rpc
+		}
+		c.forget(key)
+		return nil, sentUnlessDial(fmt.Errorf("tools/call: %w", err))
+	}
+	return res, nil
+}
+
+// openLegacy opens an initialize-era session: initialize, then initialized.
+func (c *Client) openLegacy(ctx context.Context, url, bearer string) (openSession, error) {
 	sess := &session{hc: c.hc(), url: url, bearer: bearer}
 	if _, err := sess.rpc(ctx, 1, "initialize", map[string]any{
 		"protocolVersion": LegacyVersions[0],
 		"capabilities":    map[string]any{},
 		"clientInfo":      map[string]string{"name": "kiff-gateway", "version": "1"},
 	}); err != nil {
-		return nil, notSent(fmt.Errorf("initialize: %w", err))
+		return openSession{}, fmt.Errorf("initialize: %w", err)
 	}
 	if err := sess.notify(ctx, "notifications/initialized"); err != nil {
-		return nil, notSent(fmt.Errorf("initialized: %w", err))
+		return openSession{}, fmt.Errorf("initialized: %w", err)
 	}
-	sess.call = ctx
-	res, err := sess.rpc(ctx, 2, "tools/call", map[string]any{"name": tool, "arguments": args})
-	if err != nil {
-		var rpc *RPCError
-		if errors.As(err, &rpc) {
-			return nil, rpc
-		}
-		return nil, sentUnlessDial(fmt.Errorf("tools/call: %w", err))
-	}
-	return res, nil
+	ids := &atomic.Int64{}
+	ids.Store(1) // initialize's
+	return openSession{id: sess.id, version: sess.version, ids: ids}, nil
 }
+
+// legacyCall sends one tools/call in the open session s, with ctx's call
+// headers (the permit) on that request only.
+func (c *Client) legacyCall(ctx context.Context, url, bearer string, s openSession, tool string, args json.RawMessage) (json.RawMessage, error) {
+	sess := &session{hc: c.hc(), url: url, bearer: bearer, id: s.id, version: s.version, call: ctx}
+	return sess.rpc(ctx, int(s.ids.Add(1)), "tools/call", map[string]any{"name": tool, "arguments": args})
+}
+
+// statusError is an HTTP status a server answered a request with, before
+// any JSON-RPC response.
+type statusError struct{ code int }
+
+func (e *statusError) Error() string { return fmt.Sprintf("status %d", e.code) }
 
 type session struct {
 	hc      *http.Client
@@ -765,7 +890,7 @@ func (s *session) rpc(ctx context.Context, id int, method string, params any) (j
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status %d", resp.StatusCode)
+		return nil, &statusError{code: resp.StatusCode}
 	}
 	if sid := resp.Header.Get("Mcp-Session-Id"); sid != "" {
 		s.id = sid
