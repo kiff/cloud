@@ -47,8 +47,8 @@ from the code in this repository.
 
 ## See it in a real product: tafs
 
-[tafs](https://github.com/kiff/tafs) is KIFF's own app, for iPhone, iPad and
-Mac. A business hands routine jobs to AI agents, called tafs, and each taf
+[tafs](https://github.com/kiff/tafs) is KIFF's own app, for iPhone and iPad.
+A business hands routine jobs to AI agents, called tafs, and each taf
 works under its own Card. Every action a taf takes goes through the gateway and
 the decision path in this repository:
 
