@@ -108,6 +108,9 @@ type Breach struct {
 	Used      int64 // for limit_reached: what the window had used
 	Draw      int64 // what this action carries
 	Reason    string
+	// Window is, for limit_reached, the total's window, so the owner reads
+	// "20 calls a day"; empty on holds made before it was kept.
+	Window Window `json:",omitempty"`
 	// Resource and Value are, for resource_not_on_card, the scoped
 	// parameter and the value the call sent ("" when it sent none).
 	Resource string `json:",omitempty"`
@@ -385,7 +388,7 @@ func Breaches(ms []Mandate, req Request, usage Usage, now time.Time) (out []Brea
 			ceiling := agg.Ceiling(m, now)
 			if !withinCeiling(used, draw, ceiling) {
 				out = append(out, Breach{MandateID: m.ID, Outcome: OutcomeLimitReached, Quantity: agg.Quantity,
-					Limit: ceiling, Used: used, Draw: draw,
+					Limit: ceiling, Used: used, Draw: draw, Window: agg.Window,
 					Reason: fmt.Sprintf("%s limit %d per %s reached: %d used, this action draws %d",
 						agg.Quantity, ceiling, agg.Window, used, draw)})
 			}

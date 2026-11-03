@@ -49,6 +49,8 @@ var cloudMetaPruned = []pruneStep{
 		AND (revoked_at < $2 OR card_id IN (` + endedCards + `))`},
 	{"mandate_effect_releases", `DELETE FROM cloud_meta.mandate_effect_releases WHERE tenant_id = $1
 		AND mandate_id IN (` + endedCards + `)`},
+	{"mandate_effect_surcharges", `DELETE FROM cloud_meta.mandate_effect_surcharges WHERE tenant_id = $1
+		AND mandate_id IN (` + endedCards + `)`},
 	{"mandate_exception_entries", `DELETE FROM cloud_meta.mandate_exception_entries WHERE tenant_id = $1
 		AND mandate_id IN (` + endedCards + `)`},
 	{"trial_draws", `DELETE FROM cloud_meta.trial_draws WHERE tenant_id = $1
@@ -63,6 +65,11 @@ var cloudMetaPruned = []pruneStep{
 	{"hold_answers", `DELETE FROM cloud_meta.hold_answers a WHERE a.tenant_id = $1 AND a.at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_exceptions e
 			WHERE e.tenant_id = a.tenant_id AND e.id = a.hold_id)`},
+	// "Did this happen?" answers once their call no longer counts on a Card.
+	{"happened_answers", `DELETE FROM cloud_meta.happened_answers h WHERE h.tenant_id = $1
+		AND h.answered_at < $2
+		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_draws d
+			WHERE d.tenant_id = h.tenant_id AND d.proposal_id = h.proposal_id)`},
 	{"mandate_proposal_claims", `DELETE FROM cloud_meta.mandate_proposal_claims c WHERE c.tenant_id = $1
 		AND c.claimed_at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_draws d
@@ -74,6 +81,10 @@ var cloudMetaPruned = []pruneStep{
 	{"mandate_warning_work", `DELETE FROM cloud_meta.mandate_warning_work WHERE tenant_id = $1 AND completed_at < $2`},
 	// Calls on the meters. A test account is never billed.
 	{"billable_calls", `DELETE FROM cloud_meta.billable_calls WHERE tenant_id = $1 AND at < $2`},
+	{"call_requesters", `DELETE FROM cloud_meta.call_requesters WHERE tenant_id = $1 AND at < $2`},
+	// Requests for packs, answered or ended.
+	{"task_pack_requests", `DELETE FROM cloud_meta.task_pack_requests WHERE tenant_id = $1 AND created_at < $2
+		AND (status <> 'open' OR expires_at < $2)`},
 	// Records.
 	{"receipts", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2`},
 	{"permit_bindings", `DELETE FROM cloud_meta.permit_bindings WHERE tenant_id = $1 AND created_at < $2`},
@@ -102,37 +113,49 @@ var cloudMetaPruned = []pruneStep{
 
 // cloudMetaKeptOnPrune stay, with the reason.
 var cloudMetaKeptOnPrune = map[string]string{
-	"tenants":                    "the account itself",
-	"tenant_memberships":         "the account's people and roles",
-	"subject_tenants":            "who signs in to the account",
-	"tenant_governance":          "the account's policy",
-	"tenant_domains":             "settings",
-	"tenant_domain_drafts":       "settings",
-	"tenant_controls":            "settings",
-	"permit_targets":             "settings: how each tool's permits bind",
-	"alert_targets":              "settings: where alerts go",
-	"guard_connections":          "the guards connected; their observations are pruned",
-	"guard_decision_cursors":     "how far each guard has reconciled",
-	"halts":                      "each agent's halt, on or off; a resumed one's time refuses permits from before it",
-	"mandate_draws":              "what a live Card has drawn, its accounting; goes with its Card",
-	"mandate_holders":            "goes with its Card",
-	"mandate_revisions":          "goes with its Card",
-	"mandate_warning_settings":   "goes with its Card",
-	"mandate_warning_episodes":   "a live Card's warning state; goes with its Card",
-	"support_tickets":            "support history",
-	"support_ticket_messages":    "support history",
-	"billing_customers":          "billing",
-	"billing_usage_events":       "billing",
-	"tenant_usage":               "billing",
-	"operator_audit":             "security: what operators did",
-	"membership_audit":           "security: who changed who could do what",
-	"user_wallets":               "a person's, not the account's",
-	"wallet_nonces":              "a person's, not the account's; expire on their own",
-	"billing_processed_events":   "no account's data",
-	"mandate_accounting_cutover": "no account's data",
-	"oauth_clients":              "no account's data",
-	"oauth_requests":             "no account's data; expire in 10 minutes",
-	"signed_requests":            "no account's data; pruned after use",
+	"tenants":                        "the account itself",
+	"tenant_memberships":             "the account's people and roles",
+	"subject_tenants":                "who signs in to the account",
+	"tenant_governance":              "the account's policy",
+	"access_groups":                  "settings: the account's groups",
+	"access_group_members":           "settings: who is in each group",
+	"access_grants":                  "settings: who each agent is shared with",
+	"access_backfill_invites":        "settings: invitations to welcome into Everyone; each goes once accepted",
+	"access_reads":                   "security: who read whose work, when and why; kept as the audit is",
+	"tenant_domains":                 "settings",
+	"tenant_domain_drafts":           "settings",
+	"tenant_controls":                "settings",
+	"permit_targets":                 "settings: how each tool's permits bind",
+	"alert_targets":                  "settings: where alerts go",
+	"guard_connections":              "the guards connected; their observations are pruned",
+	"guard_decision_cursors":         "how far each guard has reconciled",
+	"halts":                          "each agent's halt, on or off; a resumed one's time refuses permits from before it",
+	"mandate_draws":                  "what a live Card has drawn, its accounting; goes with its Card",
+	"mandate_holders":                "goes with its Card",
+	"mandate_revisions":              "goes with its Card",
+	"mandate_warning_settings":       "goes with its Card",
+	"mandate_warning_episodes":       "a live Card's warning state; goes with its Card",
+	"support_tickets":                "support history",
+	"support_ticket_messages":        "support history",
+	"billing_customers":              "billing",
+	"task_packs":                     "billing: the packs bought",
+	"apple_accounts":                 "billing: the account's App Store token",
+	"google_purchases":               "billing: the account's Google Play purchases",
+	"task_pack_draws":                "billing: what each pack paid for; goes with its pack",
+	"task_pack_takebacks":            "billing: a payment taken back before its pack was recorded; no tenant column, pruned after 30 days by the ledger",
+	"billing_usage_events":           "billing",
+	"tenant_usage":                   "billing",
+	"operator_audit":                 "security: what operators did",
+	"membership_audit":               "security: who changed who could do what",
+	"user_wallets":                   "a person's, not the account's",
+	"wallet_nonces":                  "a person's, not the account's; expire on their own",
+	"billing_processed_events":       "no account's data",
+	"mandate_accounting_cutover":     "no account's data",
+	"oauth_clients":                  "no account's data",
+	"oauth_requests":                 "no account's data; expire in 10 minutes",
+	"signed_requests":                "no account's data; pruned after use",
+	"access_backfilled":              "no account's data: that the groups backfill ran",
+	"access_archived_grants_cleared": "no account's data: that archived agents' grants were cleared",
 }
 
 // gatewayPruned are the gateway's rows the account finished with: calls

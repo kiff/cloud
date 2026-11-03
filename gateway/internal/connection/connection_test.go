@@ -3,8 +3,11 @@ package connection_test
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -29,7 +32,7 @@ type refunds struct{ status bool }
 func (r refunds) ListTools(context.Context) ([]mcp.Tool, error) {
 	tools := []mcp.Tool{
 		{Name: "refund", Title: "Refund a payment", Description: "Refund an order", InputSchema: json.RawMessage(
-			`{"type":"object","properties":{"order":{"type":"string"},"amount_eur":{"type":"integer"},"note":{"type":"number"},"idem":{"type":"string"}},"required":["order","amount_eur"]}`)},
+			`{"type":"object","properties":{"order":{"type":"string"},"amount_eur":{"type":"integer"},"note":{"type":"number"},"total":{"type":"string"},"idem":{"type":"string"}},"required":["order","amount_eur"]}`)},
 		{Name: "refund_status", Annotations: &mcp.ToolAnnotations{ReadOnlyHint: true}, InputSchema: json.RawMessage(`{"type":"object","properties":{"idem":{"type":"string"}},"required":["idem"]}`)},
 		{Name: "unsafe_status", InputSchema: json.RawMessage(`{"type":"object","properties":{"idem":{"type":"string"}}}`)},
 		{Name: "wrong_status", Annotations: &mcp.ToolAnnotations{ReadOnlyHint: true}, InputSchema: json.RawMessage(`{"type":"object","properties":{"other":{"type":"string"}}}`)},
@@ -59,9 +62,56 @@ type fakeAPI struct {
 	applied map[string]string
 	targets map[string][]kiffapi.PermitTarget
 	fail    bool
+	// signedAsks are the requests DeviceSigned was asked about; signDown
+	// makes it answer that KIFF is unavailable. A signature "t=ok" is
+	// accepted, once.
+	signedAsks []string
+	signDown   bool
+	signedUsed map[string]bool
 }
 
-func (f *fakeAPI) SetPermitTargets(_ context.Context, key string, ts []kiffapi.PermitTarget) error {
+func (f *fakeAPI) DeviceSigned(_ context.Context, key, method, uri, bodySHA256, signature string) (string, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.signedAsks = append(f.signedAsks, key+" "+method+" "+uri+" "+bodySHA256)
+	if f.signDown {
+		return "", errors.Join(kiffapi.ErrUnavailable, errors.New("down"))
+	}
+	if f.signedUsed == nil {
+		f.signedUsed = map[string]bool{}
+	}
+	if signature != "t=ok" || f.signedUsed[bodySHA256] {
+		return "", kiffapi.ErrNotSigned
+	}
+	f.signedUsed[bodySHA256] = true
+	return "kdg_test", nil
+}
+
+// CheckProfileApproval accepts an approval {"signed": true}, as apps/api
+// would a valid signed approve request, and refuses any other.
+func (f *fakeAPI) CheckProfileApproval(_ context.Context, key string, profile, approval json.RawMessage) (kiffapi.ProfileApproval, error) {
+	if bytes.Contains(profile, []byte(`"v":"bad"`)) {
+		return kiffapi.ProfileApproval{}, fmt.Errorf("%w: v must be kiff.profile.v1", kiffapi.ErrInvalidProfile)
+	}
+	if !bytes.Equal(approval, []byte(`{"signed":true}`)) {
+		return kiffapi.ProfileApproval{Reason: "profile_not_approved"}, nil
+	}
+	return kiffapi.ProfileApproval{Valid: true, ProfileSHA256: "p256", WordsSHA256: "w256", DeviceID: "dev_1", SignedAt: "2026-11-02T20:00:00Z"}, nil
+}
+
+// phoneWrite refuses a phone's session that writes without the grant, as
+// apps/api's route policy does.
+func phoneWrite(ctx context.Context, key string) error {
+	if strings.HasPrefix(key, "phone-") && kiffapi.DeviceGrantFrom(ctx) != "kdg_test" {
+		return errors.New("kiffapi: 403: phone_session_forbidden")
+	}
+	return nil
+}
+
+func (f *fakeAPI) SetPermitTargets(ctx context.Context, key string, ts []kiffapi.PermitTarget) error {
+	if err := phoneWrite(ctx, key); err != nil {
+		return err
+	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if f.fail {
@@ -90,11 +140,17 @@ func (f *fakeAPI) Me(_ context.Context, key string) (kiffapi.Me, error) {
 			Capabilities: []string{"read", "personal", "tools.connect"}}, nil
 	case "phone-a":
 		return kiffapi.Me{TenantID: "tenant-a", Roles: []string{"tenant_owner"}, Capabilities: []string{"read", "tools.connect"}, DeviceSession: true}, nil
+	case "phone-approver":
+		// A phone of a person who answers holds but doesn't connect tools.
+		return kiffapi.Me{TenantID: "tenant-a", Capabilities: []string{"read", "holds.answer"}, DeviceSession: true}, nil
 	}
 	return kiffapi.Me{}, kiffapi.ErrUnauthorized
 }
 
-func (f *fakeAPI) ApplyDomain(_ context.Context, key, domain, yaml string) error {
+func (f *fakeAPI) ApplyDomain(ctx context.Context, key, domain, yaml string) error {
+	if err := phoneWrite(ctx, key); err != nil {
+		return err
+	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if f.fail {
@@ -105,6 +161,7 @@ func (f *fakeAPI) ApplyDomain(_ context.Context, key, domain, yaml string) error
 }
 
 type rig struct {
+	h     *connection.Handler
 	store *connection.Store
 	api   *fakeAPI
 	srv   *httptest.Server
@@ -136,7 +193,8 @@ func newRig(t *testing.T, policy egress.Policy) *rig {
 	}
 	r := &rig{store: &connection.Store{Pool: pool, Keys: ring(t, "v1")}, api: &fakeAPI{applied: map[string]string{}}, tool: toolServer(t)}
 	mux := http.NewServeMux()
-	(&connection.Handler{Store: r.store, API: r.api, Remote: &mcp.Client{HTTP: policy.Client(0)}, Policy: policy}).Register(mux)
+	r.h = &connection.Handler{Store: r.store, API: r.api, Remote: &mcp.Client{HTTP: policy.Client(0)}, Policy: policy}
+	r.h.Register(mux)
 	r.srv = httptest.NewServer(mux)
 	t.Cleanup(r.srv.Close)
 	return r
@@ -433,7 +491,7 @@ func TestDiscover(t *testing.T) {
 		t.Fatal(err)
 	}
 	if len(got.Tools) != 1 || got.Tools[0].Name != "refund" || got.Tools[0].Description != "Refund an order" ||
-		strings.Join(got.Tools[0].IntegerArgs, ",") != "amount_eur" || strings.Join(got.Tools[0].StringArgs, ",") != "idem,order" {
+		strings.Join(got.Tools[0].IntegerArgs, ",") != "amount_eur" || strings.Join(got.Tools[0].StringArgs, ",") != "idem,order,total" {
 		t.Fatalf("tools: %+v", got.Tools)
 	}
 	if conns, _ := r.store.List(context.Background(), "tenant-a"); len(conns) != 0 {
@@ -697,5 +755,206 @@ func TestAToolKeepsTheVendorsTitle(t *testing.T) {
 	status, body = r.do(t, "owner-a", http.MethodPost, "/v1/connections/discover", map[string]any{"url": r.tool.URL, "credential": toolSecret})
 	if status != http.StatusOK || !strings.Contains(body, `"title":"Refund a payment"`) {
 		t.Fatalf("discover: %d %s", status, body)
+	}
+}
+
+// The account's own control server (kiff/tafs#206): its tools, writes
+// included, go to setup_reader, so Setup can act there as Coach on its own
+// Cards. Only a person connects one, only in verify mode, and it stays
+// there. A vendor's tool that writes never goes to setup_reader.
+func TestControlServer(t *testing.T) {
+	r := newRig(t, dev)
+	open := openToolServer(t)
+	control := func(name string) map[string]any {
+		return map[string]any{"name": name, "url": open.URL, "tool": "refund", "mode": "verify",
+			"audience": "https://tafs.example/mcp", "idempotency_argument": "idem", "control": true}
+	}
+	// Attack: a vendor's tool, KIFF holding its credential, marked control.
+	sealed := r.refund(toolSecret)
+	sealed["control"] = true
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", sealed); status != http.StatusForbidden {
+		t.Fatalf("control on a sealed tool: %d %s", status, body)
+	}
+	// Attack: planque's connector key marks its tool control.
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", control("planque_task")); status != http.StatusForbidden {
+		t.Fatalf("control from a connector key: %d %s", status, body)
+	}
+	// A vendor tool that writes, connected as usual: not setup_reader's.
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", r.refund(toolSecret)); status != http.StatusCreated {
+		t.Fatalf("vendor tool: %d %s", status, body)
+	}
+	if strings.Contains(r.api.applied["owner-a"], "setup_reader") {
+		t.Fatalf("a vendor's write went to setup_reader:\n%s", r.api.applied["owner-a"])
+	}
+	// The owner connects the account's own server, control.
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", control("taf_task")); status != http.StatusCreated ||
+		!strings.Contains(body, `"control":true`) {
+		t.Fatalf("control server: %d %s", status, body)
+	}
+	if !strings.Contains(r.api.applied["owner-a"], "    setup_reader: [tools.taf_task]\n") {
+		t.Fatalf("setup_reader without the control server's tool:\n%s", r.api.applied["owner-a"])
+	}
+	// It stays in verify mode.
+	if status, body := r.do(t, "owner-a", http.MethodPut, "/v1/connections/taf_task/mode",
+		map[string]string{"mode": "relay", "audience": "https://evil.example/mcp", "url": open.URL}); status != http.StatusForbidden {
+		t.Fatalf("control server moved out of verify: %d %s", status, body)
+	}
+}
+
+// The owner connects the account's control server from their phone
+// (kiff/tafs#206): only control, only with the phone's signature over that
+// exact request, which KIFF confirms and accepts once, and only for a person
+// who may connect tools. It is filed as a person's, not a key's.
+func TestPhoneConnectsTheControlServerSigned(t *testing.T) {
+	r := newRig(t, dev)
+	open := openToolServer(t)
+	body := map[string]any{"name": "taf_task", "url": open.URL, "tool": "refund", "mode": "verify",
+		"audience": "https://tafs.example/mcp", "idempotency_argument": "idem", "control": true}
+	raw, _ := json.Marshal(body)
+	sum := sha256.Sum256(raw)
+	post := func(key, sig string, b any) (int, string) {
+		t.Helper()
+		var payload []byte
+		if bb, ok := b.([]byte); ok {
+			payload = bb
+		} else {
+			payload, _ = json.Marshal(b)
+		}
+		req, _ := http.NewRequest(http.MethodPost, r.srv.URL+"/v1/connections", bytes.NewReader(payload))
+		req.Header.Set("Authorization", "Bearer "+key)
+		if sig != "" {
+			req.Header.Set(kiffapi.DeviceSignatureHeader, sig)
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var buf bytes.Buffer
+		_, _ = buf.ReadFrom(resp.Body)
+		return resp.StatusCode, buf.String()
+	}
+	// Attack: a phone's session connects a tool that isn't the control server.
+	plain := map[string]any{"name": "issue_refund", "url": r.tool.URL, "tool": "refund", "credential": toolSecret}
+	if status, body := post("phone-a", "t=ok", plain); status != http.StatusForbidden {
+		t.Fatalf("a phone connects an ordinary tool: %d %s", status, body)
+	}
+	// Attack: the control server without the phone's signature, or another one.
+	for _, sig := range []string{"", "t=forged"} {
+		if status, body := post("phone-a", sig, raw); status != http.StatusForbidden {
+			t.Fatalf("signature %q: %d %s", sig, status, body)
+		}
+	}
+	// A person who can't connect tools isn't let in at all.
+	if status, body := post("phone-approver", "t=ok", raw); status != http.StatusForbidden {
+		t.Fatalf("a phone without tools.connect: %d %s", status, body)
+	}
+	r.api.mu.Lock()
+	r.api.signDown = true
+	r.api.mu.Unlock()
+	if status, body := post("phone-a", "t=ok", raw); status != http.StatusServiceUnavailable {
+		t.Fatalf("KIFF can't check the signature: %d %s", status, body)
+	}
+	r.api.mu.Lock()
+	r.api.signDown = false
+	r.api.mu.Unlock()
+	if status, body := post("phone-a", "t=ok", raw); status != http.StatusCreated || !strings.Contains(body, `"control":true`) {
+		t.Fatalf("the owner's phone, signed: %d %s", status, body)
+	}
+	// KIFF was asked about this exact request.
+	want := "phone-a POST /v1/connections " + hex.EncodeToString(sum[:])
+	if asks := r.api.signedAsks; len(asks) == 0 || asks[len(asks)-1] != want {
+		t.Fatalf("asked KIFF about %v, want %q", asks, want)
+	}
+	if !strings.Contains(r.api.applied["phone-a"], "    setup_reader: [tools.taf_task]\n") {
+		t.Fatalf("contract:\n%s", r.api.applied["phone-a"])
+	}
+	conn, err := r.store.Get(context.Background(), "tenant-a", "taf_task")
+	if err != nil || conn.CreatedBy != "" || !conn.Control {
+		t.Fatalf("stored %+v %v: want a person's control server", conn, err)
+	}
+	// The same signed request again is refused (KIFF accepts it once).
+	_, _ = r.do(t, "owner-a", http.MethodDelete, "/v1/connections/taf_task", nil)
+	if status, body := post("phone-a", "t=ok", raw); status != http.StatusForbidden {
+		t.Fatalf("the signed request replayed: %d %s", status, body)
+	}
+}
+
+// A vendor connected by API key reaches the gateway as planque registers it
+// (amount lookups): its connector key connects each operation in
+// relay mode, with planque's transport credential and the permit-bound
+// idempotency argument; a write with terminal_no_effect_v1, a read without.
+// From there it is a connected tool like any other: the same contract applied,
+// the same permits and record, and a re-send of an existing name is 409.
+func TestAPIKeyGrantToolsConnectLikeAnyTool(t *testing.T) {
+	r := newRig(t, dev)
+	ctx := context.Background()
+	open := httptest.NewServer(&mcp.Server{Name: "planque", Version: "1", Auth: func(*http.Request) (mcp.Handler, error) {
+		return refunds{status: true}, nil
+	}})
+	t.Cleanup(open.Close)
+	write := map[string]any{"name": "vendor_refund", "url": open.URL, "tool": "refund", "mode": "relay",
+		"audience": "https://planque.example/v1/relay", "credential": "planque-transport", "amount_argument": "amount_eur",
+		"idempotency_argument": "idem", "outcome_contract": "terminal_no_effect_v1"}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", write); status != http.StatusCreated ||
+		!strings.Contains(body, `"mode":"relay"`) || !strings.Contains(body, `"outcome_contract":"terminal_no_effect_v1"`) || strings.Contains(body, "planque-transport") {
+		t.Fatalf("connector connects an API-key write: %d %s", status, body)
+	}
+	read := map[string]any{"name": "vendor_refund_status", "url": open.URL, "tool": "refund_status", "mode": "relay",
+		"audience": "https://planque.example/v1/relay", "credential": "planque-transport", "idempotency_argument": "idem", "read_only": true}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", read); status != http.StatusCreated || strings.Contains(body, "outcome_contract") {
+		t.Fatalf("connector connects an API-key read: %d %s", status, body)
+	}
+	if y := r.api.applied["connector-a"]; !strings.Contains(y, "name: vendor_refund") || !strings.Contains(y, "required_parameters: [amount_eur]") {
+		t.Fatalf("contract not applied: %q", y)
+	}
+	tools, err := (&gateway.PostgresCatalog{Pool: r.store.Pool}).Tools(ctx, "tenant-a")
+	if err != nil || len(tools) != 2 {
+		t.Fatalf("catalog: %+v %v", tools, err)
+	}
+	for _, tool := range tools {
+		want := ""
+		if tool.Name == "vendor_refund" {
+			want = gateway.TerminalNoEffectV1
+		}
+		if tool.Mode != gateway.ModeRelay || tool.IdempotencyArg != "idem" || tool.OutcomeContract != want {
+			t.Errorf("%s: mode %q idempotency %q contract %q", tool.Name, tool.Mode, tool.IdempotencyArg, tool.OutcomeContract)
+		}
+	}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", write); status != http.StatusConflict {
+		t.Fatalf("re-sent tool: %d %s", status, body)
+	}
+}
+
+// Attack: a person marks a vendor's server, fronted in verify mode by planque,
+// as the account's control server, handing its writes to setup_reader.
+// Refused: control is refused on a host where a connector key connected a tool.
+func TestControlRefusedWhereAConnectorConnects(t *testing.T) {
+	r := newRig(t, dev)
+	relay, own := openToolServer(t), openToolServer(t)
+	vendor := map[string]any{"name": "planque_refund", "url": relay.URL, "tool": "refund", "mode": "verify",
+		"audience": "https://planque.example/v1/relay", "amount_argument": "amount_eur", "idempotency_argument": "idem"}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", vendor); status != http.StatusCreated {
+		t.Fatalf("planque connects a vendor tool: %d %s", status, body)
+	}
+	control := func(name, url string) map[string]any {
+		return map[string]any{"name": name, "url": url, "tool": "refund", "mode": "verify",
+			"audience": "https://tafs.example/mcp", "idempotency_argument": "idem", "control": true}
+	}
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", control("relay_task", relay.URL)); status != http.StatusForbidden {
+		t.Fatalf("control on planque's host: %d %s", status, body)
+	}
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", control("taf_task", own.URL)); status != http.StatusCreated {
+		t.Fatalf("control on the account's own server: %d %s", status, body)
+	}
+	// The other order: a relay the KIFF knows (KIFF_PLANQUE_URLS), before
+	// planque connected anything there.
+	fresh := openToolServer(t)
+	r.h.RelayURLs = []string{fresh.URL + "/v1/relay"}
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", control("relay_first", fresh.URL)); status != http.StatusForbidden {
+		t.Fatalf("control on a known relay's host: %d %s", status, body)
+	}
+	if y := r.api.applied["owner-a"]; !strings.Contains(y, "    setup_reader: [tools.taf_task]\n") {
+		t.Fatalf("contract:\n%s", y)
 	}
 }

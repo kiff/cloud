@@ -411,3 +411,51 @@ func TestPostgres_EffectReleaseBatchRollsBackAndDoesNotRewriteDraws(t *testing.T
 		t.Fatal("original draws rewritten", err)
 	}
 }
+
+// A tenant whose Card has a released effect can still be deleted: the
+// release goes with its draw. A table made before ON DELETE CASCADE gets it
+// when the schema is applied again.
+func TestPostgres_ATenantWithAnEffectReleaseCanBeDeleted(t *testing.T) {
+	p := requirePostgres(t)
+	ctx := context.Background()
+	// The foreign key as it was first made, with no ON DELETE.
+	if _, err := p.Exec(ctx, `
+		ALTER TABLE cloud_meta.mandate_effect_releases DROP CONSTRAINT IF EXISTS mandate_effect_releases_draw_fkey;
+		ALTER TABLE cloud_meta.mandate_effect_releases DROP CONSTRAINT IF EXISTS mandate_effect_releases_tenant_id_mandate_id_proposal_id_q_fkey;
+		ALTER TABLE cloud_meta.mandate_effect_releases ADD CONSTRAINT mandate_effect_releases_tenant_id_mandate_id_proposal_id_q_fkey
+		  FOREIGN KEY (tenant_id, mandate_id, proposal_id, quantity_key)
+		  REFERENCES cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key)`); err != nil {
+		t.Fatal(err)
+	}
+	if err := mandate.ApplySchema(ctx, p); err != nil {
+		t.Fatal(err)
+	}
+	var cascades bool
+	if err := p.QueryRow(ctx, `SELECT bool_and(confdeltype = 'c') FROM pg_constraint
+		WHERE conrelid = 'cloud_meta.mandate_effect_releases'::regclass AND contype = 'f'`).Scan(&cascades); err != nil || !cascades {
+		t.Fatalf("the release's foreign key cascades: %v %v", cascades, err)
+	}
+
+	const tenant = "effects-delete"
+	seedTenant(t, p, tenant)
+	s := mandate.NewPostgresStore(p)
+	now := time.Now().UTC()
+	m := homeCard("delete-effects", 50000, 500000)
+	m.TenantID, m.ValidFrom, m.ValidUntil = tenant, time.Time{}, time.Time{}
+	if err := s.Issue(ctx, m, "owner"); err != nil {
+		t.Fatal(err)
+	}
+	if d, err := mandate.NewAuthorizer(s, nil, at(now)).Authorize(ctx, tenant, "delete-operation", refund(40000)); err != nil || !d.Allowed() {
+		t.Fatal(d, err)
+	}
+	if _, err := s.ReleaseEffects(ctx, effectEvidence(tenant, "delete-operation", now.Add(time.Minute))); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.Exec(ctx, `DELETE FROM cloud_meta.tenants WHERE id = $1`, tenant); err != nil {
+		t.Fatalf("deleting a tenant with an effect release: %v", err)
+	}
+	var left int
+	if err := p.QueryRow(ctx, `SELECT count(*) FROM cloud_meta.mandate_effect_releases WHERE tenant_id = $1`, tenant).Scan(&left); err != nil || left != 0 {
+		t.Fatalf("releases left: %d %v", left, err)
+	}
+}

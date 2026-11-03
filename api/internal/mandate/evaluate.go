@@ -85,6 +85,10 @@ type Request struct {
 	// whose Cards Subject (its TrialSubject) holds. Kept on a held call
 	// for its owner's record; it takes no part in the decision.
 	TrialDraft string `json:",omitempty"`
+	// AskedBy is the person whose run made the call, as their run grant
+	// says: the hold is theirs ("asked by"), and they may never answer it.
+	// It takes no part in the decision or the fingerprint.
+	AskedBy string `json:",omitempty"`
 	// Observe is true when the tenant is in observe mode. The caller
 	// executes anyway, so an action outside a Card is reported as
 	// owner_required but not held: there is nothing for an owner to

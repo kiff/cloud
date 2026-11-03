@@ -75,6 +75,11 @@ type Invocation struct {
 	CreatedAt        time.Time
 	ExecutionBinding json.RawMessage
 	UpdatedAt        time.Time
+	// VerifyEvidence is the verify read of a sent write, or nil.
+	VerifyEvidence json.RawMessage
+	// ProfileRevision is the connection profile the call was decided
+	// under (connection profiles: a call keeps the profile it was decided under), or nil for a tool without one.
+	ProfileRevision *int64
 }
 
 // Call identifies a tool call before it has a key.
@@ -92,6 +97,10 @@ type Call struct {
 	// that call is unfinished; after it finishes, an identical call is a
 	// new invocation, so it is never answered with a stale result.
 	ReadOnly bool
+	// ProfileRevision is the tool's profile in force when the call began.
+	ProfileRevision *int64
+	// Measure is what its amount means as decided: {unit, scale, title}.
+	Measure json.RawMessage
 }
 
 // CanonicalJSON re-encodes v with object keys sorted (encoding/json
@@ -176,14 +185,14 @@ func (s *Store) Pool() *pgxpool.Pool { return s.pool }
 func (s *Store) SetClock(now func() time.Time) { s.now = now }
 
 const cols = `key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments,
-	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding`
+	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence`
 
 func scan(row pgx.Row) (Invocation, error) {
 	var in Invocation
 	var args, result []byte
 	err := row.Scan(&in.Key, &in.TenantID, &in.CredentialID, &in.AgentID, &in.Tool, &in.OperationID,
 		&in.ArgsHash, &args, &in.State, &in.ExceptionID, &in.ReviewURL, &in.Message, &in.Reasons, &result,
-		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding)
+		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Invocation{}, ErrNotFound
 	}
@@ -320,11 +329,11 @@ func (s *Store) Begin(ctx context.Context, c Call) (Invocation, bool, error) {
 
 	in, err := scan(tx.QueryRow(ctx, `
 		INSERT INTO gateway.invocations
-		  (key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments, state, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
+		  (key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments, state, created_at, updated_at, profile_revision, measure)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12)
 		ON CONFLICT (key) DO NOTHING
 		RETURNING `+cols,
-		key, c.TenantID, c.CredentialID, c.AgentID, c.Tool, c.OperationID, argsHash, canon, StateDeciding, now))
+		key, c.TenantID, c.CredentialID, c.AgentID, c.Tool, c.OperationID, argsHash, canon, StateDeciding, now, c.ProfileRevision, nullableJSON(c.Measure)))
 	if err == nil {
 		return in, true, tx.Commit(ctx)
 	}
@@ -410,6 +419,10 @@ type Update struct {
 	ToolOutcome      string
 	NoEffectEvidence json.RawMessage
 	ExecutionBinding json.RawMessage
+	// VerifyPending marks, with the transition itself, a sent write whose
+	// verify read hasn't been recorded yet: until it is, its operation
+	// counts as paused once the read is overdue (connection profiles: the verify read).
+	VerifyPending bool
 }
 
 // ReasonGatewayRestarted is recorded when a stale in-flight invocation
@@ -489,9 +502,10 @@ func (s *Store) Transition(ctx context.Context, key string, from []State, to Sta
 		       tool_error = CASE WHEN $12 = '' THEN tool_error ELSE $12 END,
 		       tool_outcome = CASE WHEN $13 = '' THEN tool_outcome ELSE $13 END,
 		       no_effect_evidence = COALESCE(no_effect_evidence, $14::jsonb),
-		       execution_binding = COALESCE(execution_binding, $15::jsonb)
+		       execution_binding = COALESCE(execution_binding, $15::jsonb),
+		       verify_evidence = CASE WHEN $16 THEN COALESCE(verify_evidence, '{"result":"pending"}'::jsonb) ELSE verify_evidence END
 		 WHERE key = $1 AND state = ANY($2)`,
-		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding))
+		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding), u.VerifyPending)
 	if err != nil {
 		return false, err
 	}
@@ -507,6 +521,42 @@ func nullableJSON(raw json.RawMessage) any {
 
 // BindExecution records the executor before sending, without claiming
 // forwarding a second time or extending its original recovery lease.
+// ProbationCalls is how many sent calls of an untried money operation the
+// owner confirms, per profile revision (connection profiles: probation).
+const ProbationCalls = 3
+
+// MarkProbation marks a sent call for the owner to confirm, while fewer
+// than ProbationCalls of its tool, under its profile revision, are marked.
+// A lock per account and tool keeps two calls from taking the last one.
+func (s *Store) MarkProbation(ctx context.Context, key string) error {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	var tenant, tool string
+	if err := tx.QueryRow(ctx, `SELECT tenant_id, tool FROM gateway.invocations WHERE key = $1`, key).Scan(&tenant, &tool); err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext('probation:' || $1 || ':' || $2))`, tenant, tool); err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, `UPDATE gateway.invocations i SET probation = true
+		WHERE i.key = $1 AND i.state = 'forwarded' AND NOT i.probation
+		  AND (SELECT count(*) FROM gateway.invocations p WHERE p.tenant_id = i.tenant_id AND p.tool = i.tool
+		       AND p.profile_revision IS NOT DISTINCT FROM i.profile_revision AND p.probation) < $2`, key, ProbationCalls); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
+
+// RecordVerify keeps a forwarded call's verify read (connection profiles: the verify read), once: a second one for the same call changes nothing.
+func (s *Store) RecordVerify(ctx context.Context, key string, evidence json.RawMessage) error {
+	_, err := s.pool.Exec(ctx, `UPDATE gateway.invocations SET verify_evidence = $2::jsonb
+		WHERE key = $1 AND state = 'forwarded' AND (verify_evidence IS NULL OR verify_evidence->>'result' = 'pending')`, key, []byte(evidence))
+	return err
+}
+
 func (s *Store) BindExecution(ctx context.Context, key string, binding json.RawMessage) (bool, error) {
 	if len(binding) == 0 {
 		return false, errors.New("invocation: executor binding is required")

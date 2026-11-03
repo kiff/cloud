@@ -2,6 +2,8 @@ package proposals_test
 
 import (
 	"context"
+	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -64,5 +66,32 @@ func TestMemoryReader_CountDecisionsOverTime(t *testing.T) {
 	}
 	if !buckets[1].Start.Equal(base.Add(2 * time.Minute)) {
 		t.Errorf("second bucket start = %v, want %v", buckets[1].Start, base.Add(2*time.Minute))
+	}
+}
+
+// A person's own part of the record: every call of the agents they manage
+// and their own runs' calls, counted and listed as such.
+func TestMemoryReader_ScopeKeepsAPersonsOwnPart(t *testing.T) {
+	r := proposals.NewMemoryReader()
+	now := time.Now()
+	r.Append("t1", proposals.DecisionRow{ProposalID: "theirs", ActorID: "refunds", Outcome: "allowed", CreatedAt: now})
+	r.Append("t1", proposals.DecisionRow{ProposalID: "mine", ActorID: "refunds", Outcome: "allowed", CreatedAt: now})
+	r.Append("t1", proposals.DecisionRow{ProposalID: "managed", ActorID: "billing", Outcome: "blocked", CreatedAt: now})
+	page, err := r.ListCalls(context.Background(), "t1", proposals.CallQuery{Scope: &proposals.CallScope{
+		Agents: map[string]bool{"billing": true}, Mine: map[string]bool{"mine": true}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ids []string
+	for _, c := range page.Calls {
+		ids = append(ids, c.ProposalID)
+	}
+	sort.Strings(ids)
+	if strings.Join(ids, ",") != "managed,mine" || page.Counts.All != 2 || strings.Join(page.Agents, ",") != "billing,refunds" {
+		t.Fatalf("calls %v, counts %+v, agents %v", ids, page.Counts, page.Agents)
+	}
+	var nilScope *proposals.CallScope
+	if !nilScope.Keeps("any", "any") {
+		t.Fatal("a nil scope is the whole account")
 	}
 }

@@ -124,3 +124,95 @@ func TestPostgresDeveloperSessionStore_NotFoundAndDuplicate(t *testing.T) {
 		t.Errorf("duplicate insert: want ErrDevSessionDuplicate, got %v", err)
 	}
 }
+
+// kiff/tafs#233: a session gets one approval key, at sign-in or by its
+// first registration; a second is refused with the session as stored,
+// and a revoked session takes none.
+func TestPostgresDeveloperSessionStore_ApprovalKeyOnce(t *testing.T) {
+	pool := requirePostgres(t)
+	if err := auth.ApplyDeveloperSessionsSchema(context.Background(), pool); err != nil {
+		t.Fatalf("ApplyDeveloperSessionsSchema: %v", err)
+	}
+	truncateDevSessions(t, pool)
+	tenantID := tenant.NewID()
+	seedTenant(t, pool, tenantID)
+	store := auth.NewPostgresDeveloperSessionStore(pool)
+	ctx := context.Background()
+	now := time.Now().UTC().Truncate(time.Second)
+
+	gen, _ := auth.NewDevSessionToken()
+	if err := store.Insert(ctx, auth.DeveloperSession{ID: "phone-" + tenantID, Subject: "human-1", Tenant: tenantID,
+		TokenHash: gen.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}}); err != nil {
+		t.Fatalf("insert: %v", err)
+	}
+	if got, err := store.SetApprovalKey(ctx, "phone-"+tenantID, []byte{2}, now); err != nil || string(got.ApprovalPublicKey) != "\x02" {
+		t.Fatalf("first key: %v %+v", err, got)
+	}
+	if got, err := store.SetApprovalKey(ctx, "phone-"+tenantID, []byte{3}, now); !errors.Is(err, auth.ErrApprovalKeySet) || string(got.ApprovalPublicKey) != "\x02" {
+		t.Fatalf("second key: %v %+v", err, got)
+	}
+	if got, err := store.GetByHash(ctx, gen.Hash, now); err != nil || string(got.ApprovalPublicKey) != "\x02" {
+		t.Fatalf("read back: %v %+v", err, got)
+	}
+
+	// Given at sign-in, it is the session's one key.
+	signedIn, _ := auth.NewDevSessionToken()
+	if err := store.Insert(ctx, auth.DeveloperSession{ID: "signin-" + tenantID, Subject: "human-1", Tenant: tenantID,
+		TokenHash: signedIn.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}, ApprovalPublicKey: []byte{4}}); err != nil {
+		t.Fatalf("insert with key: %v", err)
+	}
+	if _, err := store.SetApprovalKey(ctx, "signin-"+tenantID, []byte{5}, now); !errors.Is(err, auth.ErrApprovalKeySet) {
+		t.Fatalf("a key after sign-in's: %v", err)
+	}
+
+	// A revoked or unknown session takes none.
+	revoked, _ := auth.NewDevSessionToken()
+	if err := store.Insert(ctx, auth.DeveloperSession{ID: "revoked-" + tenantID, Subject: "human-1", Tenant: tenantID,
+		TokenHash: revoked.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}}); err != nil {
+		t.Fatalf("insert: %v", err)
+	}
+	if err := store.Revoke(ctx, "revoked-"+tenantID, now); err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range []string{"revoked-" + tenantID, "nobody"} {
+		if _, err := store.SetApprovalKey(ctx, id, []byte{6}, now); !errors.Is(err, auth.ErrDevSessionNotFound) {
+			t.Errorf("%s: %v", id, err)
+		}
+	}
+}
+
+// A re-link swaps the session's approval key and returns the old one; an
+// ended session takes none.
+func TestPostgresDeveloperSessionStore_ReplaceApprovalKey(t *testing.T) {
+	pool := requirePostgres(t)
+	if err := auth.ApplyDeveloperSessionsSchema(context.Background(), pool); err != nil {
+		t.Fatalf("ApplyDeveloperSessionsSchema: %v", err)
+	}
+	truncateDevSessions(t, pool)
+	tenantID := tenant.NewID()
+	seedTenant(t, pool, tenantID)
+	store := auth.NewPostgresDeveloperSessionStore(pool)
+	ctx := context.Background()
+	now := time.Now().UTC().Truncate(time.Second)
+
+	gen, _ := auth.NewDevSessionToken()
+	if err := store.Insert(ctx, auth.DeveloperSession{ID: "phone-" + tenantID, Subject: "human-1", Tenant: tenantID,
+		TokenHash: gen.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}, ApprovalPublicKey: []byte{2}}); err != nil {
+		t.Fatalf("insert: %v", err)
+	}
+	if old, err := store.ReplaceApprovalKey(ctx, "phone-"+tenantID, []byte{3}, now); err != nil || string(old) != "\x02" {
+		t.Fatalf("replace: %v %x", err, old)
+	}
+	if got, err := store.GetByHash(ctx, gen.Hash, now); err != nil || string(got.ApprovalPublicKey) != "\x03" {
+		t.Fatalf("read back: %v %+v", err, got)
+	}
+	if err := store.Revoke(ctx, "phone-"+tenantID, now); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := store.ReplaceApprovalKey(ctx, "phone-"+tenantID, []byte{4}, now); !errors.Is(err, auth.ErrDevSessionNotFound) {
+		t.Fatalf("a revoked session: %v", err)
+	}
+	if _, err := store.ReplaceApprovalKey(ctx, "nope-"+tenantID, []byte{4}, now); !errors.Is(err, auth.ErrDevSessionNotFound) {
+		t.Fatalf("an unknown session: %v", err)
+	}
+}

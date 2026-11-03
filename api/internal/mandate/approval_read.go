@@ -123,7 +123,7 @@ func projectApproval(ctx context.Context, s approvalUsageReader, ms []Mandate, e
 		p.Exception, p.Status = e, e.Status
 		return p, nil
 	}
-	if cumulativeBreaches(bs) {
+	if unwaivedCumulative(bs, e.Breaches) {
 		p.Status = ExceptionApprovedNoRoom
 		p.ReviewedBreaches = append([]Breach(nil), e.Breaches...)
 		p.Exception.Breaches = bs

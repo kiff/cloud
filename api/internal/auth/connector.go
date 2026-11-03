@@ -32,6 +32,13 @@ var connectorRoutes = []string{
 	// planque asks for Setup's read Card, with the owner's signed approval
 	// of the connection (kiff/tafs#138).
 	"POST /v1/me/setup-reads",
+	// planque says a vendor signed a connection out, so the owner hears of
+	// it (connection_signed_out).
+	"POST /v1/me/connections/signed-out",
+	// planque reads KIFF's words for a profile, and the gateway checks the
+	// owner's approval of one with planque's key (connection profiles: the owner's approval).
+	"POST /v1/profiles/words",
+	"POST /v1/me/profile-approvals",
 }
 
 // ConnectorRouteAllowed reports whether r may be served to a connector key.

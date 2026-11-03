@@ -139,7 +139,11 @@ var ErrRequestSignature = errors.New("auth: this request needs the phone's signa
 //	<signed_at>
 func RequestMessage(tenantID, method, uri string, body []byte, signedAt string) []byte {
 	sum := sha256.Sum256(body)
-	return []byte(strings.Join([]string{"kiff.request.v1", tenantID, method, uri, hex.EncodeToString(sum[:]), signedAt}, "\n"))
+	return requestMessage(tenantID, method, uri, hex.EncodeToString(sum[:]), signedAt)
+}
+
+func requestMessage(tenantID, method, uri, bodySHA256, signedAt string) []byte {
+	return []byte(strings.Join([]string{"kiff.request.v1", tenantID, method, uri, bodySHA256, signedAt}, "\n"))
 }
 
 // VerifyRequest checks a KIFF-Device-Signature header against the
@@ -149,6 +153,14 @@ func RequestMessage(tenantID, method, uri string, body []byte, signedAt string) 
 // bytes, because an ECDSA signature has a second valid form, (r, n-s),
 // that anyone can make from the first without the key.
 func VerifyRequest(keyDER []byte, tenantID, method, uri string, body []byte, header string, now time.Time) ([]byte, error) {
+	sum := sha256.Sum256(body)
+	return VerifyRequestDigest(keyDER, tenantID, method, uri, hex.EncodeToString(sum[:]), header, now)
+}
+
+// VerifyRequestDigest is VerifyRequest for a request another KIFF service
+// received (kiff/tafs#206): it has the body's SHA-256, in lowercase hex,
+// not the body.
+func VerifyRequestDigest(keyDER []byte, tenantID, method, uri, bodySHA256, header string, now time.Time) ([]byte, error) {
 	t, v, ok := strings.Cut(strings.TrimPrefix(strings.TrimSpace(header), "t="), ",v1=")
 	if !ok || !strings.HasPrefix(strings.TrimSpace(header), "t=") {
 		return nil, ErrRequestSignature
@@ -168,11 +180,57 @@ func VerifyRequest(keyDER []byte, tenantID, method, uri string, body []byte, hea
 	if err != nil || len(sig) == 0 {
 		return nil, ErrRequestSignature
 	}
-	message := RequestMessage(tenantID, method, uri, body, t)
+	message := requestMessage(tenantID, method, uri, bodySHA256, t)
 	digest := sha256.Sum256(message)
 	if !ecdsa.VerifyASN1(k, digest[:], sig) {
 		return nil, ErrRequestSignature
 	}
 	id := sha256.Sum256(append(append(append([]byte(nil), keyDER...), 0), message...))
 	return id[:], nil
+}
+
+// ErrRelinkProof is a re-link whose new approval key didn't sign it.
+var ErrRelinkProof = errors.New("auth: the new approval key must sign the re-link")
+
+// RelinkMessage is what a phone's new approval key signs to re-link it
+// (kiff/tafs#233's case 2), one field per line:
+//
+//	kiff.approval-key-relink.v1
+//	<tenant_id>
+//	<sha256(device key SPKI DER) hex>   the session's device key names it
+//	<sha256(new approval key SPKI DER) hex>
+//	<signed_at>
+//
+// The device key names the session: the phone knows it, and only that
+// session holds it.
+func RelinkMessage(tenantID string, deviceKeyDER, newKeyDER []byte, signedAt string) []byte {
+	device, key := sha256.Sum256(deviceKeyDER), sha256.Sum256(newKeyDER)
+	return []byte(strings.Join([]string{"kiff.approval-key-relink.v1", tenantID,
+		hex.EncodeToString(device[:]), hex.EncodeToString(key[:]), signedAt}, "\n"))
+}
+
+// VerifyRelink checks that the new approval key signed RelinkMessage
+// (base64 DER ECDSA), within MaxAnswerSkew of now: the phone holds the
+// key, and its biometric prompt works, before KIFF swaps anything.
+func VerifyRelink(newKeyDER []byte, tenantID string, deviceKeyDER []byte, signedAt, sigB64 string, now time.Time) error {
+	at, err := time.Parse(time.RFC3339, signedAt)
+	if err != nil {
+		return ErrAnswerSignedAt
+	}
+	if d := now.Sub(at); d > MaxAnswerSkew || d < -MaxAnswerSkew {
+		return ErrAnswerSignedAt
+	}
+	k, err := deviceKey(newKeyDER)
+	if err != nil {
+		return err
+	}
+	sig, err := base64.StdEncoding.DecodeString(strings.TrimSpace(sigB64))
+	if err != nil || len(sig) == 0 {
+		return ErrRelinkProof
+	}
+	digest := sha256.Sum256(RelinkMessage(tenantID, deviceKeyDER, newKeyDER, signedAt))
+	if !ecdsa.VerifyASN1(k, digest[:], sig) {
+		return ErrRelinkProof
+	}
+	return nil
 }

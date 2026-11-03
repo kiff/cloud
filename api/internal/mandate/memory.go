@@ -24,6 +24,7 @@ type MemoryStore struct {
 	approvers      map[string]ApproverGrant
 	approverPolicy func(context.Context, string, string) error
 	releases       map[string]EffectRelease
+	surcharges     map[string]EffectSurcharge
 	// trialMu guards trials, each trial run's simulated draws. It is its
 	// own lock: a trial reads real usage through mu while holding it.
 	trialMu    sync.Mutex
@@ -123,6 +124,9 @@ func (s *MemoryStore) issueLocked(m Mandate, by string) {
 		m = keepRoom(m, old.Aggregates)
 		if m.Location == "" {
 			m.Location = old.Location
+		}
+		if m.Title == "" {
+			m.Title = old.Title
 		}
 	} else if m.Location == "" {
 		m.Location = m.DefaultLocation
@@ -253,6 +257,18 @@ func (s *MemoryStore) Revoke(_ context.Context, tenantID, mandateID string, at t
 		s.mandates[key(tenantID, mandateID)] = m
 	}
 	s.invalidateLocked(tenantID, mandateID, "card_revoked", at)
+	return nil
+}
+
+func (s *MemoryStore) SetTitle(_ context.Context, tenantID, mandateID, title string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	m, ok := s.mandates[key(tenantID, mandateID)]
+	if !ok {
+		return ErrNotFound
+	}
+	m.Title = title
+	s.mandates[key(tenantID, mandateID)] = m
 	return nil
 }
 

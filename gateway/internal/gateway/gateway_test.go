@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -28,12 +29,22 @@ var t0 = time.Date(2026, 10, 1, 12, 0, 0, 0, time.UTC)
 // fakeAPI decides like a Card with a €1,000 per-call limit that sends
 // larger calls home. It draws once per proposal id, as apps/api does.
 type fakeAPI struct {
-	mu       sync.Mutex
+	mu sync.Mutex
+	// surcharged are the calls whose larger vendor figure was asked to count;
+	// surchargeFails fails that many asks first.
+	surcharged     []string
+	surchargeFails int
+	// others is each other agent's Card, as Setup's key reads it; asked,
+	// the agents it was read for.
+	others   map[string]kiffapi.AgentCard
+	asked    []string
 	ingested map[string]int
 	approved map[string]bool
 	drawn    map[string]int64
 	// refuse answers a call for this amount with this decision.
 	refuse map[int64]kiffapi.Decision
+	// why is, by amount, the limits a hold of that amount went over.
+	why map[int64][]string
 	// holdExpiry is reported on every hold, when set.
 	holdExpiry *time.Time
 	// reviewBase, when set, is put before every hold's review path.
@@ -71,13 +82,17 @@ type fakeAPI struct {
 	trying         map[string]bool
 	trialOpenFails bool
 	trialDrafts    map[string]string
+	// runGrants are the run_grant each proposal carried, by proposal id.
+	// A proposal with "krg_bad" is refused, as KIFF refuses a grant that
+	// isn't for the agent or whose person may no longer use it.
+	runGrants map[string]string
 }
 
 func newFakeAPI() *fakeAPI {
 	return &fakeAPI{ingested: map[string]int{}, approved: map[string]bool{}, drawn: map[string]int64{},
-		refuse: map[int64]kiffapi.Decision{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
+		refuse: map[int64]kiffapi.Decision{}, why: map[int64][]string{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
 		issued: map[string]time.Time{}, now: time.Now, params: map[string]map[string]any{},
-		trying: map[string]bool{}, trialDrafts: map[string]string{}}
+		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{}}
 }
 
 // refundCard is the Card fakeAPI decides by, as GET /v1/me/card reads it.
@@ -99,6 +114,20 @@ func (f *fakeAPI) AgentCard(_ context.Context, key, trial string) (kiffapi.Agent
 		return kiffapi.AgentCard{}, errors.New("api unreachable")
 	}
 	return f.card, nil
+}
+
+func (f *fakeAPI) OtherAgentCard(_ context.Context, _, agent string) (kiffapi.AgentCard, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.asked = append(f.asked, agent)
+	if f.cardFails {
+		return kiffapi.AgentCard{}, errors.New("api unreachable")
+	}
+	card, ok := f.others[agent]
+	if !ok {
+		return kiffapi.AgentCard{}, kiffapi.ErrNoSuchAgent
+	}
+	return card, nil
 }
 
 func (f *fakeAPI) Holds(_ context.Context, _ string, ids []string) ([]kiffapi.Hold, error) {
@@ -131,6 +160,9 @@ func (f *fakeAPI) Me(_ context.Context, key string) (kiffapi.Me, error) {
 	case "no-tools-key":
 		// An agent that holds no tools, such as the setup agent.
 		return kiffapi.Me{TenantID: "t1", AgentID: "setup"}, nil
+	case "setup-key":
+		// Setup's key, as kiff/agents' setup agent holds it.
+		return kiffapi.Me{TenantID: "t1", AgentID: "setup", Roles: []string{gateway.SetupReaderRole}}, nil
 	case "down-key":
 		// apps/api couldn't say: its database down.
 		return kiffapi.Me{}, errors.Join(kiffapi.ErrUnavailable, errors.New("kiffapi: 503: service unavailable"))
@@ -170,13 +202,17 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 	}
 	f.params[p.ID] = p.Parameters
 	f.trialDrafts[p.ID] = p.TrialDraft
+	f.runGrants[p.ID] = p.RunGrant
+	if p.RunGrant == "krg_bad" {
+		return kiffapi.Decision{Outcome: "refused", Reasons: []string{"run_grant"}, Message: "the person who asked may not use this agent"}, nil
+	}
 	amount, _ := p.Parameters["amount_eur"].(int64)
 	if d, ok := f.refuse[amount]; ok {
 		return d, nil
 	}
 	if amount > 1000 && !f.approved[p.ID] {
 		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
-			ExpiresAt: f.holdExpiry}}, nil
+			ExpiresAt: f.holdExpiry, Why: f.why[amount]}}, nil
 	}
 	f.drawn[p.ID] = amount
 	if p.Permit != nil {
@@ -252,6 +288,9 @@ type fakeTool struct {
 	currency map[string]string
 	// readMeta is the get_order read's own _meta, as a vendor adds it.
 	readMeta map[string]any
+	// amounts is each order's amount, as the get_order read says it; an
+	// order missing here has none in the read.
+	amounts map[string]any
 }
 
 func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args json.RawMessage) (json.RawMessage, error) {
@@ -264,10 +303,15 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.permits = append(f.permits, mcp.CallHeader(ctx, gateway.PermitHeader))
 	echo, leak, spoof, refuse := f.echo, f.leak, f.spoof, f.refuse
 	cur, isRead, readMeta := f.currency[fmt.Sprint(a["order"])], tool == "get_order", f.readMeta
+	amt, hasAmount := f.amounts[fmt.Sprint(a["order"])]
 	n := len(f.calls)
 	f.mu.Unlock()
 	if isRead {
-		text, _ := json.Marshal(map[string]any{"id": a["order"], "object": "order", "currency": cur})
+		order := map[string]any{"id": a["order"], "object": "order", "currency": cur}
+		if hasAmount {
+			order["amount"] = amt
+		}
+		text, _ := json.Marshal(order)
 		if readMeta == nil {
 			return mcp.TextResult(string(text), false), nil
 		}
@@ -334,6 +378,8 @@ type rig struct {
 	gw    *gateway.Gateway
 	// trialRun, when set, is sent as KIFF-Trial-Run on trial calls.
 	trialRun string
+	// runGrant, when set, is sent as KIFF-Run-Grant on calls.
+	runGrant string
 }
 
 func newRig(t *testing.T) *rig {
@@ -373,6 +419,9 @@ func (r *rig) rpc(t *testing.T, key, method string, params any) (int, map[string
 	b, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
 	req, _ := http.NewRequest(http.MethodPost, r.srv.URL, bytes.NewReader(b))
 	req.Header.Set("Authorization", "Bearer "+key)
+	if r.runGrant != "" {
+		req.Header.Set(gateway.RunGrantHeader, r.runGrant)
+	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal(err)
@@ -460,6 +509,33 @@ func TestWithinCardForwardsOutsideHolds(t *testing.T) {
 	first := r.tool.calls[0]
 	if _, leaked := first[gateway.OperationArg]; leaked || !strings.HasPrefix(fmt.Sprint(first["idempotency_key"]), "tc-") {
 		t.Fatalf("forwarded arguments: %v", first)
+	}
+}
+
+// A held call says which limit it went over, as KIFF worded it for the
+// owner, in its text and its call state, on each retry and in
+// kiff_pending; a hold KIFF named no limit for says only that it is
+// outside the Card.
+func TestAHeldCallSaysWhichLimitItWentOver(t *testing.T) {
+	r := newRig(t)
+	why := "40.00 EUR would go over the 250.00 EUR limit: 220.00 EUR is used"
+	r.api.why[4000] = []string{why}
+	for _, try := range []string{"first", "retry"} {
+		got := r.call(t, "agent-key", amount(4000, "op-over"))
+		if !strings.Contains(got.text, "outside the agent's Card: "+why+". Nothing has been sent") || got.call["why"] != why {
+			t.Fatalf("%s: %+v", try, got)
+		}
+	}
+	_, calls := r.pending(t, "agent-key")
+	if len(calls) != 1 || calls[0].Why != why {
+		t.Fatalf("kiff_pending: %+v", calls)
+	}
+	got := r.call(t, "agent-key", amount(5000, "op-plain"))
+	if !strings.Contains(got.text, "outside the agent's Card. Nothing has been sent") || got.call["why"] != nil {
+		t.Fatalf("no limit named: %+v", got)
+	}
+	if r.tool.count() != 0 {
+		t.Fatalf("tool calls = %d", r.tool.count())
 	}
 }
 
@@ -601,21 +677,35 @@ func TestAuthAndToolList(t *testing.T) {
 	}
 }
 
-// An agent key without the gateway role,
-// such as the setup agent's, can call none of the account's tools, so it is
-// listed only KIFF's own.
-func TestAKeyWithoutTheGatewayRoleSeesOnlyKIFFsTools(t *testing.T) {
+// An agent key without the gateway role, such as the setup agent's, is
+// listed the account's tools a Card of its own covers (its approved reads,
+// kiff/tafs#138, and as Coach the app's own tools, kiff/tafs#206), and
+// KIFF's own; never the account's other tools. Without its Cards, only
+// KIFF's own.
+func TestAKeyWithoutTheGatewayRoleSeesOnlyWhatItsCardsCover(t *testing.T) {
 	r := newRig(t)
-	status, out := r.rpc(t, "no-tools-key", "tools/list", nil)
-	if status != http.StatusOK {
-		t.Fatal(status)
+	r.gw.Catalog = catalog{refundTool, {Name: "delete_customer", UpstreamTool: "delete_customer"}}
+	list := func() []string {
+		t.Helper()
+		status, out := r.rpc(t, "no-tools-key", "tools/list", nil)
+		if status != http.StatusOK {
+			t.Fatal(status)
+		}
+		var names []string
+		for _, tool := range out["result"].(map[string]any)["tools"].([]any) {
+			names = append(names, tool.(map[string]any)["name"].(string))
+		}
+		return names
 	}
-	var names []string
-	for _, tool := range out["result"].(map[string]any)["tools"].([]any) {
-		names = append(names, tool.(map[string]any)["name"].(string))
+	// The rig's Card covers issue_refund, not delete_customer.
+	if names := list(); !slices.Equal(names, []string{"issue_refund", gateway.CardTool, gateway.PendingTool}) {
+		t.Fatalf("tools/list for a key without the gateway role, with its Card: %v", names)
 	}
-	if len(names) != 2 || names[0] != gateway.CardTool || names[1] != gateway.PendingTool {
-		t.Fatalf("tools/list for a key without the gateway role: %v", names)
+	r.api.mu.Lock()
+	r.api.cardFails = true
+	r.api.mu.Unlock()
+	if names := list(); !slices.Equal(names, []string{gateway.CardTool, gateway.PendingTool}) {
+		t.Fatalf("tools/list for a key without the gateway role, its Cards unreadable: %v", names)
 	}
 }
 

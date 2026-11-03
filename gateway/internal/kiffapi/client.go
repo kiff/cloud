@@ -39,6 +39,9 @@ var ErrUnauthorized = errors.New("kiffapi: key refused")
 // the key is valid (a 5xx, its database down). Not the key's fault.
 var ErrUnavailable = errors.New("kiffapi: KIFF is unavailable")
 
+// ErrNoSuchAgent: the account has no agent by the id named.
+var ErrNoSuchAgent = errors.New("kiffapi: no such agent on the account")
+
 // Me is who a key speaks for.
 type Me struct {
 	APIKey   bool     `json:"api_key"`
@@ -58,7 +61,8 @@ type Me struct {
 	// that predates memberships.
 	Capabilities []string `json:"capabilities"`
 	// DeviceSession: the caller is a phone's session bound to its key.
-	// It may read, but never change the account here.
+	// It may read, but never change the account here, except to connect the
+	// account's control server with the phone's signature (kiff/tafs#206).
 	DeviceSession bool `json:"device_session"`
 }
 
@@ -128,6 +132,9 @@ type Exception struct {
 	// ExpiresAt is when a held call stops waiting for the owner and is
 	// refused.
 	ExpiresAt *time.Time `json:"expires_at"`
+	// Why is, on a hold, each limit the call went over, in the words the
+	// owner reads on the hold.
+	Why []string `json:"why"`
 }
 
 // Decision is apps/api's answer to a proposal.
@@ -166,6 +173,11 @@ type Proposal struct {
 	// TrialDraft is the draft whose trial makes the call (kiff/tafs#173):
 	// sent, and decided on the trial's own Cards.
 	TrialDraft string `json:"trial_draft,omitempty"`
+	// RunGrant is the run's grant, as its KIFF-Run-Grant header carried
+	// it: KIFF checks it is for this agent and that the person it names
+	// may still use it, refuses the call otherwise, and records the call,
+	// and any hold it opens, as theirs ("asked by").
+	RunGrant string `json:"run_grant,omitempty"`
 }
 
 func (c *Client) do(ctx context.Context, key, method, path string, body any) (int, []byte, error) {
@@ -188,6 +200,9 @@ func (c *Client) do(ctx context.Context, key, method, path string, body any) (in
 	}
 	if t := TenantFrom(ctx); t != "" {
 		req.Header.Set(TenantHeader, t)
+	}
+	if g := DeviceGrantFrom(ctx); g != "" {
+		req.Header.Set(DeviceGrantHeader, g)
 	}
 	resp, err := c.http.Do(req)
 	if err != nil {
@@ -213,6 +228,59 @@ func apiError(status int, raw []byte) error {
 		e.Error = strings.TrimSpace(string(raw))
 	}
 	return fmt.Errorf("kiffapi: %d: %s", status, e.Error)
+}
+
+// DeviceSignatureHeader carries a phone's signature on a request it makes
+// with its session: "t=<RFC 3339>,v1=<base64 DER ECDSA>" over kiff.request.v1
+// (tenant, method, path, sha256 of the body, signed_at), as apps/api reads it.
+const DeviceSignatureHeader = "KIFF-Device-Signature"
+
+// ErrNotSigned: apps/api says the caller's phone didn't sign the request, or
+// it was already made, or its person may not do it.
+var ErrNotSigned = errors.New("kiffapi: the phone's signature on this request wasn't accepted")
+
+// DeviceGrantHeader carries the grant DeviceSigned returns, on the writes
+// the gateway then makes with the phone's session.
+const DeviceGrantHeader = "KIFF-Device-Grant"
+
+// DeviceSigned asks apps/api whether the phone whose session key is signed
+// this request, with signature as the phone sent it, and records it as made
+// (kiff/tafs#206). On success it returns a grant: the gateway saves the
+// account's contract and permit targets with the phone's session, each once,
+// within a minute, by sending it (WithDeviceGrant).
+func (c *Client) DeviceSigned(ctx context.Context, key, method, uri, bodySHA256, signature string) (string, error) {
+	status, raw, err := c.do(ctx, key, http.MethodPost, "/v1/me/device-signature",
+		map[string]string{"method": method, "uri": uri, "body_sha256": bodySHA256, "signature": signature})
+	switch {
+	case errors.Is(err, ErrUnauthorized):
+		return "", errors.Join(ErrNotSigned, err)
+	case err != nil:
+		return "", errors.Join(ErrUnavailable, err)
+	case status == http.StatusOK:
+		var out struct {
+			Grant string `json:"grant"`
+		}
+		if err := json.Unmarshal(raw, &out); err != nil || out.Grant == "" {
+			return "", errors.Join(ErrUnavailable, errors.New("kiffapi: device-signature answered without a grant"))
+		}
+		return out.Grant, nil
+	case status >= 500:
+		return "", errors.Join(ErrUnavailable, apiError(status, raw))
+	}
+	return "", errors.Join(ErrNotSigned, apiError(status, raw))
+}
+
+type deviceGrantKey struct{}
+
+// WithDeviceGrant has every call to apps/api made with ctx carry grant.
+func WithDeviceGrant(ctx context.Context, grant string) context.Context {
+	return context.WithValue(ctx, deviceGrantKey{}, grant)
+}
+
+// DeviceGrantFrom returns the grant ctx carries, or "".
+func DeviceGrantFrom(ctx context.Context) string {
+	g, _ := ctx.Value(deviceGrantKey{}).(string)
+	return g
 }
 
 // Me resolves the key.
@@ -265,6 +333,11 @@ type Card struct {
 	Limits     []CardLimit `json:"limits"`
 	OnExceed   string      `json:"on_exceed"`
 	ValidUntil *time.Time  `json:"valid_until,omitempty"`
+	// Environment is the one environment the Card applies in, when it names
+	// one: another agent's Cards come from every environment (OtherAgentCard).
+	Environment string `json:"environment,omitempty"`
+	// Title is the Card's name for people, when it has one.
+	Title string `json:"title,omitempty"`
 }
 
 // CardGrant is an action a Card allows, with its per-call limits.
@@ -332,6 +405,27 @@ func (c *Client) AgentCard(ctx context.Context, key, trial string) (AgentCard, e
 	status, raw, err := c.do(ctx, key, http.MethodGet, path, nil)
 	if err != nil {
 		return AgentCard{}, err
+	}
+	if status != http.StatusOK {
+		return AgentCard{}, apiError(status, raw)
+	}
+	var card AgentCard
+	if err := json.Unmarshal(raw, &card); err != nil {
+		return AgentCard{}, err
+	}
+	return card, nil
+}
+
+// OtherAgentCard is Setup's read of another agent's live Cards, with what
+// each limit has used and has left (kiff/tafs#214): apps/api answers it only
+// for a key with the setup_reader role.
+func (c *Client) OtherAgentCard(ctx context.Context, key, agent string) (AgentCard, error) {
+	status, raw, err := c.do(ctx, key, http.MethodGet, "/v1/me/card?agent="+url.QueryEscape(agent), nil)
+	if err != nil {
+		return AgentCard{}, err
+	}
+	if status == http.StatusNotFound {
+		return AgentCard{}, errors.Join(ErrNoSuchAgent, apiError(status, raw))
 	}
 	if status != http.StatusOK {
 		return AgentCard{}, apiError(status, raw)
@@ -450,6 +544,16 @@ type PermitTarget struct {
 	// ResourceArg is bound like the amount: the resource the Card read is
 	// the one in the signed arguments.
 	ResourceArg string `json:"resource_argument,omitempty"`
+	// AmountLookedUp: the amount is read from the resource, never signed
+	// (amount_lookup).
+	AmountLookedUp bool `json:"amount_looked_up,omitempty"`
+	// AmountDecimal: the signed amount is a decimal string, counted in
+	// minor units at AmountScale (connection profiles).
+	AmountDecimal bool `json:"amount_decimal,omitempty"`
+	AmountScale   int  `json:"amount_scale,omitempty"`
+	// AmountPath and ResourcePath: a relay tool's nested governed values.
+	AmountPath   string `json:"amount_path,omitempty"`
+	ResourcePath string `json:"resource_path,omitempty"`
 }
 
 // SetPermitTargets replaces the account's permit targets. It needs the
@@ -507,6 +611,15 @@ func (c *Client) yaml(ctx context.Context, key, method, path, body string) (rawR
 	req.Header.Set("Content-Type", "application/yaml")
 	if id := requestlog.ID(ctx); id != "" {
 		req.Header.Set(requestlog.Header, id)
+	}
+	// As do sends them: the account a person named, and a phone's device
+	// grant, without which apps/api refuses the contract a phone's signed
+	// control connection saves (kiff/tafs#206).
+	if t := TenantFrom(ctx); t != "" {
+		req.Header.Set(TenantHeader, t)
+	}
+	if g := DeviceGrantFrom(ctx); g != "" {
+		req.Header.Set(DeviceGrantHeader, g)
 	}
 	resp, err := c.http.Do(req)
 	if err != nil {
@@ -581,4 +694,46 @@ func (c *Client) Holds(ctx context.Context, key string, ids []string) ([]Hold, e
 		return nil, err
 	}
 	return out.Holds, nil
+}
+
+// ProfileApproval is apps/api's check that the owner's signed approval
+// covers a profile and KIFF's words for it (connection profiles: the owner's approval).
+type ProfileApproval struct {
+	Valid         bool   `json:"valid"`
+	Reason        string `json:"reason"`
+	ProfileSHA256 string `json:"profile_sha256"`
+	WordsSHA256   string `json:"words_sha256"`
+	DeviceID      string `json:"device_id"`
+	SignedAt      string `json:"signed_at"`
+}
+
+// ErrInvalidProfile: apps/api refused the profile itself; the error says why.
+var ErrInvalidProfile = errors.New("kiffapi: invalid profile")
+
+// CheckProfileApproval asks apps/api, with the connector's key, whether
+// approval (the signed planque approve request) covers profile.
+func (c *Client) CheckProfileApproval(ctx context.Context, key string, profile, approval json.RawMessage) (ProfileApproval, error) {
+	status, raw, err := c.do(ctx, key, http.MethodPost, "/v1/me/profile-approvals",
+		map[string]json.RawMessage{"profile": profile, "approval": approval})
+	switch {
+	case errors.Is(err, ErrUnauthorized):
+		return ProfileApproval{}, err
+	case err != nil:
+		return ProfileApproval{}, errors.Join(ErrUnavailable, err)
+	case status == http.StatusOK:
+		var a ProfileApproval
+		if err := json.Unmarshal(raw, &a); err != nil {
+			return ProfileApproval{}, errors.Join(ErrUnavailable, err)
+		}
+		return a, nil
+	case status == http.StatusUnprocessableEntity:
+		var e struct {
+			Detail string `json:"detail"`
+		}
+		_ = json.Unmarshal(raw, &e)
+		return ProfileApproval{}, fmt.Errorf("%w: %s", ErrInvalidProfile, e.Detail)
+	case status >= 500:
+		return ProfileApproval{}, errors.Join(ErrUnavailable, apiError(status, raw))
+	}
+	return ProfileApproval{}, apiError(status, raw)
 }

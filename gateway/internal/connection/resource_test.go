@@ -3,6 +3,7 @@ package connection_test
 import (
 	"context"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -195,6 +196,64 @@ func TestConcurrentPartialSettingsKeepBothChanges(t *testing.T) {
 // A connection can name the read that says which currency a call is
 // in. It is stored with the tool, and refused without an amount unit and a
 // resource argument for the read to look up.
+// A tool whose calls don't carry their amount (answering a dispute) is
+// connected with the read that says it (amount lookups): it needs the
+// amount's name its Card uses and the resource, and can't also take the
+// amount from the call.
+func TestConnectWithAnAmountLookup(t *testing.T) {
+	r := newRig(t, dev)
+	lookup := map[string]any{"tool": "order_details", "argument": "order", "path": "amount"}
+	req := r.refund(toolSecret)
+	req["amount_unit"], req["amount_scale"], req["amount_lookup"] = "EUR", 2, lookup
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", req); status != http.StatusBadRequest || !strings.Contains(body, "resource argument") {
+		t.Fatalf("without a resource argument: %d %s", status, body)
+	}
+	req["resource_argument"] = "order"
+	status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", req)
+	if status != http.StatusCreated || !strings.Contains(body, `"amount_lookup":{"tool":"order_details","argument":"order","path":"amount"}`) {
+		t.Fatalf("create: %d %s", status, body)
+	}
+	if conns, _ := r.store.List(context.Background(), "tenant-a"); len(conns) != 1 || conns[0].AmountLookup == nil || conns[0].AmountLookup.Path != "amount" {
+		t.Fatalf("stored: %+v", conns)
+	}
+}
+
+// A looked-up amount on a relay tool (planque's): its permit target says the
+// amount is read, never signed, so apps/api binds the permit to the resource
+// alone. A verify tool checks its permit itself and could be handed one for an
+// amount an agent made up, so a lookup is refused there, at connect and when
+// moving to verify (amount lookups).
+func TestAnAmountLookupIsForSealedAndRelay(t *testing.T) {
+	r := newRig(t, dev)
+	open := openToolServer(t)
+	lookup := map[string]any{"tool": "order_details", "argument": "order", "path": "amount"}
+	relay := map[string]any{"name": "vendor_dispute", "url": open.URL, "tool": "refund", "mode": "relay",
+		"audience": "https://planque.example/v1/relay", "credential": "planque-transport", "amount_argument": "amount_eur",
+		"resource_argument": "order", "idempotency_argument": "idem", "amount_lookup": lookup}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", relay); status != http.StatusCreated {
+		t.Fatalf("relay: %d %s", status, body)
+	}
+	ts := r.api.targets["connector-a"]
+	if len(ts) != 1 || !ts[0].AmountLookedUp || ts[0].AmountArg != "amount_eur" || ts[0].ResourceArg != "order" {
+		t.Fatalf("permit target: %+v", ts)
+	}
+	verify := maps.Clone(relay)
+	verify["name"], verify["mode"] = "verify_dispute", "verify"
+	delete(verify, "credential")
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", verify); status != http.StatusBadRequest || !strings.Contains(body, "amount_lookup works only for sealed and relay") {
+		t.Fatalf("verify: %d %s", status, body)
+	}
+	sealed := r.refund(toolSecret)
+	sealed["resource_argument"], sealed["amount_lookup"] = "order", lookup
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", sealed); status != http.StatusCreated {
+		t.Fatalf("sealed: %d %s", status, body)
+	}
+	if status, body := r.do(t, "owner-a", http.MethodPut, "/v1/connections/issue_refund/mode",
+		map[string]string{"mode": "verify", "audience": "https://refunds.example.com/mcp", "url": open.URL}); status != http.StatusBadRequest || !strings.Contains(body, "amount_lookup works only") {
+		t.Fatalf("to verify: %d %s", status, body)
+	}
+}
+
 func TestConnectWithAUnitLookup(t *testing.T) {
 	r := newRig(t, dev)
 	lookup := map[string]any{"tool": "order_details", "argument": "order", "path": "currency"}

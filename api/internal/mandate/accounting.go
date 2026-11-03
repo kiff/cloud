@@ -81,6 +81,40 @@ func reviewedThresholds(current, reviewed []Breach) bool {
 	return true
 }
 
+// askEachCall reports whether b is a count total of 0: the Card's owner
+// asked to be asked about every call ("Each call asks you first"). It is the
+// one total an approve-once waives, for the call the owner approved: no room
+// is ever given for it, so nothing accumulates, and the call still counts as
+// used. Every other total, and every money total, stays unwaivable.
+func askEachCall(b Breach) bool {
+	return b.Outcome == OutcomeLimitReached && b.Quantity.Kind == KindCount && b.Limit == 0
+}
+
+// unwaivedCumulative reports whether bs breaches a total that the approval
+// in reviewed doesn't waive: any total but a count of 0, or a count of 0 on
+// a Card the owner didn't review it on.
+func unwaivedCumulative(bs, reviewed []Breach) bool {
+	for _, b := range bs {
+		if b.Outcome != OutcomeLimitReached {
+			continue
+		}
+		if !askEachCall(b) {
+			return true
+		}
+		seen := false
+		for _, r := range reviewed {
+			if askEachCall(r) && r.MandateID == b.MandateID && r.Quantity.Key() == b.Quantity.Key() {
+				seen = true
+				break
+			}
+		}
+		if !seen {
+			return true
+		}
+	}
+	return false
+}
+
 func cumulativeBreaches(bs []Breach) bool {
 	for _, b := range bs {
 		if b.Outcome == OutcomeLimitReached {
@@ -97,7 +131,7 @@ func (e Exception) CanApproveOnce() bool {
 		return false
 	}
 	for _, b := range e.Breaches {
-		if b.Outcome != OutcomePerActionExceeded && b.Outcome != OutcomeResourceOutside {
+		if b.Outcome != OutcomePerActionExceeded && b.Outcome != OutcomeResourceOutside && !askEachCall(b) {
 			return false
 		}
 	}

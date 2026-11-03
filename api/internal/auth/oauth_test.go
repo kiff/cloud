@@ -49,8 +49,12 @@ func TestMiddleware_OAuthToken(t *testing.T) {
 			t.Fatalf("%v: identity %+v", route, id)
 		}
 	}
+	// Nor the routes only a taf's runtime needs, which its gateway key
+	// reaches (TestATafsGatewayKeyAsksAboutItsOwnAgent): a client signed
+	// in over OAuth runs no one's runs.
 	for _, route := range [][2]string{{"POST", "/v1/keys"}, {"GET", "/v1/me/agents"}, {"POST", "/v1/oauth/consent"},
-		{"POST", "/v1/mandates"}, {"GET", "/v1/account/export"}} {
+		{"POST", "/v1/mandates"}, {"GET", "/v1/account/export"}, {"POST", "/v1/me/access"}, {"POST", "/v1/me/run-grants/resolve"},
+		{"POST", "/v1/me/read-grants/resolve"}} {
 		if code, _ := serve(ok, route[0], route[1]); code != http.StatusForbidden {
 			t.Fatalf("%v reached with an OAuth token: %d", route, code)
 		}
@@ -77,8 +81,10 @@ func TestMiddleware_OAuthToken(t *testing.T) {
 }
 
 // Invariant: an agent's gateway key pasted into a client reaches the same
-// routes as an OAuth token for that agent, and no others: not the
-// account's Cards, held work, event stream, agents or export.
+// routes as an OAuth token for that agent, and only the two its own
+// runtime needs besides (a person's access to that agent, and resolving
+// their run grant): not the account's Cards, held work, event stream,
+// agents or export.
 // Category: authority
 // Attack: use an agent's pasted gateway key to read the rest of the account through GET /v1/me/* routes
 // Refused: the middleware applies the gateway route list to any agent-bound gateway_agent key, not only to OAuth tokens
@@ -123,5 +129,26 @@ func TestPastedGatewayKeyReachesOnlyGatewayRoutes(t *testing.T) {
 	// scope what it reads (TestAgentKeyReadsOnlyCardsItsAgentHolds).
 	if code := serve(runtime, "GET", "/v1/me/mandates"); code != http.StatusOK {
 		t.Errorf("runtime key on /v1/me/mandates: %d", code)
+	}
+}
+
+// A taf's runtime holds only the taf's gateway key, and with it asks what
+// a person may do with the taf and resolves their run grant. Through the
+// real middleware both reach their handlers; a person's chat failed
+// closed when they didn't (a 403 before the handler).
+func TestATafsGatewayKeyAsksAboutItsOwnAgent(t *testing.T) {
+	store := NewMemoryAPIKeyStore()
+	gen, _ := NewAPIKey("acme", time.Time{})
+	_ = store.Insert(context.Background(), APIKeyRecord{ID: "key-taf", Tenant: "acme", Subject: "editor-1",
+		Roles: []string{RoleGatewayAgent}, AgentID: "refunds", KeyHash: gen.Hash, CreatedAt: time.Now()})
+	mw := NewMiddleware(NewStubProvider(NewMapResolver()), store, NewMapResolver())
+	for _, path := range []string{"/v1/me/access", "/v1/me/run-grants/resolve", "/v1/me/read-grants/resolve"} {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, path, nil)
+		req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
+		mw.Wrap(&authedHandler{}).ServeHTTP(rec, req)
+		if rec.Code != http.StatusOK {
+			t.Errorf("a taf's gateway key on POST %s: %d %s", path, rec.Code, rec.Body.String())
+		}
 	}
 }

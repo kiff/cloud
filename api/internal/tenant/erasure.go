@@ -3,6 +3,7 @@ package tenant
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -21,6 +22,8 @@ var cloudMetaErased = []string{
 	"mandate_warning_settings",
 	"approver_grants",
 	"mandate_effect_releases",
+	"mandate_effect_surcharges",
+	"happened_answers",
 	"mandate_draws",
 	"trial_draws",
 	// Which call each operation is bound to, and its permit id.
@@ -32,6 +35,11 @@ var cloudMetaErased = []string{
 	"mandate_proposal_claims",
 	"mandate_holders",
 	"mandates",
+	"access_reads",  // who read whose work, and why: its notes may hold personal details
+	"access_grants", // who each agent is shared with
+	"access_backfill_invites",
+	"access_group_members", // the account's groups' people
+	"access_groups",
 	"agents",
 	"guard_observations",
 	"guard_connections",
@@ -70,6 +78,11 @@ var cloudMetaErased = []string{
 	// Each call's agent, tool and how it counted on the meters. What
 	// Stripe was told stays in billing_usage_events.
 	"billable_calls",
+	"call_requesters",
+	// Which task each pack paid for, and the members' requests for packs
+	// (their reasons and the answers' notes).
+	"task_pack_draws",
+	"task_pack_requests",
 }
 
 // cloudMetaErasedThroughParent are keyed by their parent, not the
@@ -88,16 +101,22 @@ var cloudMetaErasedBySubject = []string{
 
 // cloudMetaNotPerTenant hold no tenant's or person's data.
 var cloudMetaNotPerTenant = map[string]string{
-	"mandate_accounting_cutover": "global accounting version and activation date; no tenant or personal data",
-	"billing_processed_events":   "Stripe webhook event ids, for idempotent processing",
-	"oauth_clients":              "registered OAuth clients (an app's name and redirect addresses), not an account's",
-	"oauth_requests":             "pending sign-in requests, expire in 10 minutes; no account is known until consent",
-	"signed_requests":            "sha256 replay ids of a phone's signed setup calls, pruned 10 minutes after use; no tenant column, nothing readable",
+	"access_backfilled":              "one row: that the groups backfill ran, and when; no tenant or personal data",
+	"access_archived_grants_cleared": "one row: that archived agents' grants were cleared, and when; no tenant or personal data",
+	"mandate_accounting_cutover":     "global accounting version and activation date; no tenant or personal data",
+	"billing_processed_events":       "Stripe webhook event ids and App Store notification ids, for idempotent processing",
+	"oauth_clients":                  "registered OAuth clients (an app's name and redirect addresses), not an account's",
+	"oauth_requests":                 "pending sign-in requests, expire in 10 minutes; no account is known until consent",
+	"signed_requests":                "sha256 replay ids of a phone's signed setup calls, pruned 10 minutes after use; no tenant column, nothing readable",
+	"task_pack_takebacks":            "store payment ids refunded or disputed before their pack was recorded; no tenant column, removed when the pack is recorded or after 30 days",
 }
 
 // cloudMetaRetained are kept, with the reason.
 var cloudMetaRetained = map[string]string{
 	"billing_customers":    "billing: the Stripe customer link, for invoices and disputes",
+	"task_packs":           "billing: the packs bought, by store transaction, for refunds and disputes",
+	"apple_accounts":       "billing: the token Apple's transactions name the account by, for refunds and disputes",
+	"google_purchases":     "billing: the Google Play purchases applied, by purchase token, for refunds and disputes",
 	"billing_usage_events": "billing: operation ids and outcomes reported to Stripe",
 	"tenant_usage":         "billing: hourly counts",
 	"operator_audit":       "security: what operators did",
@@ -215,4 +234,55 @@ func (p *Provisioner) reduceTenantRow(ctx context.Context, tenantID string) erro
 		return fmt.Errorf("reduce tenant row: %w", err)
 	}
 	return nil
+}
+
+// eraseIdentities deletes the sign-in of each of the account's people
+// that it leaves with no account: no other account's subject_tenants row
+// and no live membership elsewhere, the same rule that removes their
+// wallets. Without an IdentityEraser it does nothing.
+func (p *Provisioner) eraseIdentities(ctx context.Context, tenantID string) error {
+	if p.identities == nil {
+		return nil
+	}
+	subjects, err := p.leftWithNoAccount(ctx, tenantID)
+	if err != nil {
+		return fmt.Errorf("erase sign-ins: %w", err)
+	}
+	for _, s := range subjects {
+		if err := p.identities.EraseIdentity(ctx, s); err != nil {
+			return fmt.Errorf("erase sign-ins: %w", err)
+		}
+	}
+	return nil
+}
+
+// leftWithNoAccount lists the account's people who belong to no other.
+func (p *Provisioner) leftWithNoAccount(ctx context.Context, tenantID string) ([]string, error) {
+	ident := func(table string) string { return pgx.Identifier{MetaSchema, table}.Sanitize() }
+	has := map[string]bool{}
+	for _, table := range []string{"subject_tenants", "tenant_memberships"} {
+		var ok bool
+		if err := p.pool.QueryRow(ctx, `SELECT to_regclass($1) IS NOT NULL`, MetaSchema+"."+table).Scan(&ok); err != nil {
+			return nil, err
+		}
+		has[table] = ok
+	}
+	var parts, elsewhere []string
+	if has["subject_tenants"] {
+		parts = append(parts, `SELECT subject FROM `+ident("subject_tenants")+` WHERE tenant_id = $1`)
+		elsewhere = append(elsewhere, `NOT EXISTS (SELECT 1 FROM `+ident("subject_tenants")+` st WHERE st.subject = s.subject AND st.tenant_id <> $1)`)
+	}
+	if has["tenant_memberships"] {
+		parts = append(parts, `SELECT subject FROM `+ident("tenant_memberships")+` WHERE tenant_id = $1`)
+		elsewhere = append(elsewhere, `NOT EXISTS (SELECT 1 FROM `+ident("tenant_memberships")+` tm WHERE tm.subject = s.subject AND tm.tenant_id <> $1 AND tm.status <> 'removed')`)
+	}
+	if len(parts) == 0 {
+		return nil, nil
+	}
+	rows, err := p.pool.Query(ctx, `SELECT DISTINCT s.subject FROM (`+strings.Join(parts, " UNION ")+`) s WHERE `+
+		strings.Join(elsewhere, " AND ")+` ORDER BY s.subject`, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	return pgx.CollectRows(rows, pgx.RowTo[string])
 }

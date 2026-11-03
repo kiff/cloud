@@ -32,13 +32,19 @@ func TestContract(t *testing.T) {
 		strings.Count(ro, "risk: medium") != 1 {
 		t.Errorf("read-only risk:\n%s", ro)
 	}
-	// The read-only tools, and only those, go to setup_reader too
-	// (kiff/tafs#138); a contract with none has no setup_reader.
+	// setup_reader gets the read-only tools (kiff/tafs#138), never a
+	// vendor's tool that writes; a contract with none has no setup_reader.
 	if !strings.Contains(ro, "    gateway_agent: [tools.get_balance, tools.issue_refund]\n    setup_reader: [tools.get_balance]\n") {
 		t.Errorf("setup_reader:\n%s", ro)
 	}
 	if strings.Contains(y, gateway.SetupReaderRole) {
-		t.Errorf("setup_reader with no read-only tool:\n%s", y)
+		t.Errorf("setup_reader with no read-only or control tool:\n%s", y)
+	}
+	// And the account's own control server's tools, writes included, so
+	// Setup can act there as Coach (kiff/tafs#206).
+	ctl, _ := gateway.Contract([]gateway.Tool{{Name: "get_balance", ReadOnly: true}, refundTool, {Name: "taf_task", Control: true}})
+	if !strings.Contains(ctl, "    gateway_agent: [tools.get_balance, tools.issue_refund, tools.taf_task]\n    setup_reader: [tools.get_balance, tools.taf_task]\n") {
+		t.Errorf("setup_reader with a control server:\n%s", ctl)
 	}
 	if _, err := gateway.Contract([]gateway.Tool{{Name: "rm -rf"}}); err == nil {
 		t.Error("an unsafe tool name was accepted")

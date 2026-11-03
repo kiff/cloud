@@ -86,6 +86,12 @@ func (a *agent) GetTask(ctx context.Context, id string) (mcp.Task, error) {
 		if err != nil {
 			return mcp.Task{}, err
 		}
+		// A held call is decided only with its amount; one that can't be
+		// read now stays held. A deciding or forwarding one needs no
+		// amount to be recovered (retry decides only a held call).
+		if why := a.withLookedUpAmount(ctx, t, params, in.Arguments); why != "" && in.State == invocation.StateHeld {
+			return taskOf(in), nil
+		}
 		if _, err := a.retry(context.WithoutCancel(ctx), t, in, params); err != nil {
 			return mcp.Task{}, err
 		}

@@ -45,7 +45,7 @@ type SoftDeleteResult struct {
 // re-stamps the grace window. Callers that need idempotency (the
 // HTTP handler returns the existing timestamps; the CLI errors)
 // inspect the tenant's status before calling.
-func SoftDelete(ctx context.Context, store Store, keys KeyRevoker, tenantID string) (SoftDeleteResult, error) {
+func SoftDelete(ctx context.Context, store Store, keys KeyRevoker, tenantID, via string) (SoftDeleteResult, error) {
 	now := time.Now().UTC()
 	graceEnds := now.AddDate(0, 0, GracePeriodDays)
 
@@ -63,6 +63,9 @@ func SoftDelete(ctx context.Context, store Store, keys KeyRevoker, tenantID stri
 	}
 	if err := store.SetMetadata(ctx, tenantID, MetadataKeyGraceWindowEnds, graceEnds.Format(time.RFC3339)); err != nil {
 		return SoftDeleteResult{}, fmt.Errorf("stamp grace_window_ends: %w", err)
+	}
+	if err := store.SetMetadata(ctx, tenantID, MetadataKeyDeletedVia, via); err != nil {
+		return SoftDeleteResult{}, fmt.Errorf("stamp deleted_via: %w", err)
 	}
 
 	return SoftDeleteResult{

@@ -31,7 +31,8 @@ var heldOutcomes = []string{"owner_required", "approved_no_room", "approval_requ
 // (kiff/tafs#173), and Since those made from then on; Show is one of the
 // Calls* values. Limit is capped
 // at MaxLimit. Offset is not capped: the counts cover every call, so
-// every call must be reachable a page at a time.
+// every call must be reachable a page at a time. Scope, when set, keeps
+// only the calls a person may read; the counts and the agents follow it.
 type CallQuery struct {
 	Actor    string
 	Proposal string
@@ -40,6 +41,21 @@ type CallQuery struct {
 	Show     string
 	Limit    int
 	Offset   int
+	Scope    *CallScope
+}
+
+// CallScope is what of the account's calls one person reads: every call
+// of the agents they manage, and the calls their own runs made, by
+// proposal id. Sharing an agent lets someone use it, not read the
+// account. A nil scope reads the whole account, as an admin does.
+type CallScope struct {
+	Agents map[string]bool
+	Mine   map[string]bool
+}
+
+// Keeps reports whether the scope shows the call; a nil scope shows all.
+func (s *CallScope) Keeps(agent, proposalID string) bool {
+	return s == nil || s.Agents[agent] || s.Mine[proposalID]
 }
 
 // CallRow is one call: its latest decision, whether any of its decisions
@@ -69,6 +85,15 @@ type CallRow struct {
 	// Receipt is the call's receipt and whether KIFF has signed it yet;
 	// nil when it has none. Set by the activity handler.
 	Receipt *CallReceipt `json:"receipt,omitempty"`
+	// The call in the reader's words, so no app writes its own
+	// Set by the activity handler: Name is its
+	// tool as people read it; Kind is done, approved, not_done, sending,
+	// unknown, held or refused; Detail says what came of it ("Approved by
+	// you, then done"); AmountText is its amount in its unit ("$45").
+	Name       string `json:"name,omitempty"`
+	Kind       string `json:"kind,omitempty"`
+	Detail     string `json:"detail,omitempty"`
+	AmountText string `json:"amount_text,omitempty"`
 }
 
 // CallAnswer is a person's answer to a held call: "approved_once" or
@@ -221,7 +246,7 @@ func (r *PostgresReader) ListCalls(ctx context.Context, tenantID string, q CallQ
 			return CallsPage{}, err
 		}
 		c.DecisionRow = row
-		if c.MadeAt.Before(q.Since) {
+		if c.MadeAt.Before(q.Since) || !q.Scope.Keeps(c.ActorID, c.ProposalID) {
 			continue
 		}
 		all = append(all, c)
@@ -251,6 +276,9 @@ func (r *PostgresReader) ListCalls(ctx context.Context, tenantID string, q CallQ
 		if err := agents.Scan(&a); err != nil {
 			return CallsPage{}, fmt.Errorf("proposals: scan call agent: %w", err)
 		}
+		if q.Scope != nil && !q.Scope.Agents[a] && !hasAgent(all, a) {
+			continue // an agent the person has no call of isn't theirs to pick
+		}
 		page.Agents = append(page.Agents, a)
 	}
 	if err := agents.Err(); err != nil {
@@ -270,6 +298,16 @@ const callAgentsSQL = `
 
 // pageCalls counts every call, then keeps the page of those show
 // selects. calls are newest first.
+// hasAgent reports whether any of calls is agent's.
+func hasAgent(calls []CallRow, agent string) bool {
+	for _, c := range calls {
+		if c.ActorID == agent {
+			return true
+		}
+	}
+	return false
+}
+
 func pageCalls(calls []CallRow, q CallQuery) ([]CallRow, CallCounts) {
 	var counts CallCounts
 	out := make([]CallRow, 0, q.Limit)
@@ -300,6 +338,9 @@ func (r *MemoryReader) ListCalls(_ context.Context, tenantID string, q CallQuery
 	byCall := map[string]*CallRow{}
 	agents := map[string]bool{}
 	for _, d := range src {
+		if !q.Scope.Keeps(d.ActorID, d.ProposalID) {
+			continue
+		}
 		if d.ActorID != "" {
 			agents[d.ActorID] = true
 		}

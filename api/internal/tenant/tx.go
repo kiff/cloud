@@ -3,6 +3,7 @@ package tenant
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -33,6 +34,30 @@ func SetStatusQ(ctx context.Context, q Querier, id string, status Status, provis
 	}
 	if tag.RowsAffected() == 0 {
 		return ErrNotFound
+	}
+	return nil
+}
+
+// ErrStatusChanged: the tenant's status was no longer the one a
+// transition was checked against (SetStatusFromQ).
+var ErrStatusChanged = errors.New("tenant status changed since it was read")
+
+// SetStatusFromQ is SetStatusQ guarded on the status the caller read:
+// it changes nothing, and answers ErrStatusChanged, when the tenant has
+// moved on since (a restore racing the hard-delete sweep, say).
+func SetStatusFromQ(ctx context.Context, q Querier, id string, from, status Status, provisionedAt *time.Time) error {
+	const stmt = `
+		UPDATE ` + MetaSchema + `.tenants
+		SET status = $1,
+		    provisioned_at = COALESCE($2, provisioned_at)
+		WHERE id = $3 AND status = $4
+	`
+	tag, err := q.Exec(ctx, stmt, string(status), provisionedAt, id, string(from))
+	if err != nil {
+		return fmt.Errorf("update tenant status: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrStatusChanged
 	}
 	return nil
 }

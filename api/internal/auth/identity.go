@@ -161,6 +161,11 @@ type Identity struct {
 	// DeviceID is the approval device the session signed in from,
 	// when it names one; DeviceKey is then that device's key.
 	DeviceID string `json:"-"`
+	// ApprovalKey is the session's approval key (SPKI DER;
+	// kiff/tafs#233), when it has one: what grants authority through
+	// the session counts only with its signature. Resolved from the
+	// session record, never from the request.
+	ApprovalKey []byte `json:"-"`
 }
 
 // ActorID returns the authenticated principal that should appear in framework

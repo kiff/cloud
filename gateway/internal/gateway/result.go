@@ -38,6 +38,9 @@ type Call struct {
 	ExceptionID   string     `json:"exception_id,omitempty"`
 	ReviewURL     string     `json:"review_url,omitempty"`
 	HoldExpiresAt *time.Time `json:"hold_expires_at,omitempty"`
+	// Why is, on a hold, which limits the call went over, in the words
+	// the owner reads on the hold.
+	Why string `json:"why,omitempty"`
 	// Retry is what a retry does:
 	//   "same_call": repeat the identical call (same kiff_operation_id)
 	//                to get the answer;
@@ -86,7 +89,16 @@ const (
 	// apps/api allowed the call without its execution permit, so
 	// it was not sent: the tool would refuse it.
 	ReasonPermitMissing = "permit_missing"
+	// ReasonProfileChanged: a held call's tool moved to another profile
+	// before it was sent, so it was not sent (connection profiles: a call keeps the profile it was decided under).
+	ReasonProfileChanged = "profile_changed"
 )
+
+// sameRevision reports whether two profile revisions are the same, nil
+// (no profile) included.
+func sameRevision(a, b *int64) bool {
+	return (a == nil) == (b == nil) && (a == nil || *a == *b)
+}
 
 // reasonPermitAlreadyIssued is apps/api's: another request for the same
 // operation already received its one permit.
@@ -132,6 +144,7 @@ var nextSteps = map[string]struct {
 	"invalid_permit_request":       {"The tool's connection is not set up for execution permits. Ask the account owner to check the connection.", "none"},
 	ReasonUnitMismatch:             {"The call is in another currency or unit than the agent's Card counts. Do not retry it; tell the account owner.", "none"},
 	ReasonUnitUnverified:           {"KIFF could not check the call's currency or unit. Do not retry it; tell the account owner.", "none"},
+	ReasonAmountUnverified:         {"KIFF couldn't read this call's amount from its resource. Do not retry it; tell the account owner.", "none"},
 	"idempotency_key_reuse":        {"This " + OperationArg + " was already used for a different call. Call again with a new " + OperationArg + ".", "new_call"},
 	// The owner halted the agent, or its account:
 	// nothing of it is sent until they resume it, and nothing asked before
@@ -186,7 +199,7 @@ func callOf(in invocation.Invocation) Call {
 		Reasons: in.Reasons, ExceptionID: in.ExceptionID, ReviewURL: in.ReviewURL, HoldExpiresAt: utc(in.HoldExpiresAt)}
 	switch in.State {
 	case invocation.StateHeld:
-		c.Sent, c.Retry, c.RetryAfterS = "no", "same_call", retryHeld
+		c.Sent, c.Retry, c.RetryAfterS, c.Why = "no", "same_call", retryHeld, heldWhy(in)
 	case invocation.StateDeciding:
 		c.Sent, c.Retry, c.RetryAfterS = "no", "same_call", retryDeciding
 	case invocation.StateForwarding:

@@ -25,11 +25,13 @@ const (
 	PlanTrial Plan = "trial"
 
 	// PlanSolo is one person: 20 tafs tasks and 500 KIFF actions
-	// included each month, then metered.
+	// included each month; past them, tasks come from packs and actions
+	// are metered.
 	PlanSolo Plan = "solo"
 
 	// PlanTeam is two people or more, paid per person: 20 tasks and 500
-	// actions per person, pooled, then metered, with priority support.
+	// actions per person, pooled; past them, tasks come from packs and
+	// actions are metered. With priority support.
 	// (Before v1 this id named an older multi-control tier; no account
 	// carries it.)
 	PlanTeam Plan = "team"
@@ -103,9 +105,53 @@ const (
 	actionsPerSeat = 500
 )
 
-// MetadataKeyTaskCeiling is the owner's monthly tafs-task ceiling, set
-// from the app (PUT /v1/me/usage/ceiling). Absent: the included tasks.
-const MetadataKeyTaskCeiling = "task_ceiling"
+// MetadataKeyBillingSource is who bills the account's plan: one source per
+// account (BillingSource). Written with the plan by the store's webhooks,
+// or by an operator for a contract; absent while no plan is billed.
+const MetadataKeyBillingSource = "billing_source"
+
+// BillingSource is who bills an account's plan. Packs are one-time, so a
+// pack may be bought through either store whatever the plan's source.
+type BillingSource string
+
+const (
+	// BillingNone: no plan is billed (the trial before checkout, a plan
+	// that ended, internal).
+	BillingNone BillingSource = ""
+	// BillingStripe: Solo or Team, on kiff.dev.
+	BillingStripe BillingSource = "stripe"
+	// BillingApple: Solo, in the app, through Apple's in-app purchase.
+	BillingApple BillingSource = "apple"
+	// BillingGoogle: Solo, in the Android app, through Google Play Billing.
+	BillingGoogle BillingSource = "google"
+	// BillingContract: Company, on its contract.
+	BillingContract BillingSource = "contract"
+)
+
+// BillingSourceOf is who bills t's plan. Company is on its contract
+// whether or not one is stamped; internal is never billed.
+func BillingSourceOf(t Tenant) BillingSource {
+	switch PlanFor(t).Canonical {
+	case PlanCompany:
+		return BillingContract
+	case PlanInternal:
+		return BillingNone
+	}
+	s, _ := t.Metadata[MetadataKeyBillingSource].(string)
+	switch q := BillingSource(strings.ToLower(strings.TrimSpace(s))); q {
+	case BillingStripe, BillingApple, BillingGoogle, BillingContract:
+		return q
+	}
+	// A Stripe subscription recorded before the source was stamped: its
+	// next webhook stamps it.
+	sub, _ := t.Metadata["stripe_subscription_id"].(string)
+	switch status, _ := t.Metadata["billing_status"].(string); {
+	case sub == "":
+	case status == "active", status == "past_due", status == "trialing":
+		return BillingStripe
+	}
+	return BillingNone
+}
 
 // ChainTier is the public chain a tenant's receipts are anchored on.
 // It comes from the plan, server-controlled: a tenant can't choose it.
@@ -139,14 +185,17 @@ type PlanLimits struct {
 	IncludedTasks   int
 	IncludedActions int
 
-	// Capped reports that the included tasks and actions are hard
-	// limits (the trial): past them, KIFF refuses what would count. On
-	// paid plans KIFF actions never stop and are metered; tafs tasks
-	// stop at the owner's ceiling, which defaults to the included tasks.
+	// Capped reports that the included actions are a hard limit (the
+	// trial): past them, KIFF refuses what would count. On paid plans KIFF
+	// actions never stop and are metered. On every plan with included
+	// tasks, tafs tasks stop at the included tasks plus the account's pack
+	// tasks (PeriodTasks).
 	Capped bool
 
-	// Billed reports that usage is reported to Stripe (solo, team).
-	// Company is invoiced on its contract; trial and internal never.
+	// Billed reports that KIFF actions past the included ones are
+	// reported to Stripe (solo, team). Company is invoiced on its
+	// contract; trial and internal never. Tasks are never metered: past
+	// the included ones they come from packs.
 	Billed bool
 
 	// Seats is how many people may be members: 1 on the trial and Solo,
@@ -267,17 +316,51 @@ func TrialEndsAt(t Tenant) (time.Time, bool) {
 	return metaTime(t.Metadata, MetadataKeyTrialEndsAt)
 }
 
-// TaskCeiling is t's monthly tafs-task ceiling: the owner's, else the
-// plan's included tasks. Zero is none (internal, company).
-func TaskCeiling(t Tenant) int {
+// TrialStatus is where an account on the trial stands.
+type TrialStatus int
+
+const (
+	// TrialNotStarted: no end is stamped. The trial starts with a card at
+	// checkout, or with the store's free week.
+	TrialNotStarted TrialStatus = iota
+	// TrialRunning: started, and its end is still ahead.
+	TrialRunning
+	// TrialEnded: its end has passed, or a plan ended (an ended plan
+	// stamps the trial's end at that moment).
+	TrialEnded
+)
+
+// TrialStatusAt is where t's trial stands at now. Only meaningful on the
+// trial plan: a paid plan's account is never asked.
+func TrialStatusAt(t Tenant, now time.Time) TrialStatus {
+	end, ok := TrialEndsAt(t)
+	switch {
+	case !ok:
+		return TrialNotStarted
+	case now.Before(end):
+		return TrialRunning
+	}
+	return TrialEnded
+}
+
+// Runs reports that t's tafs may run at now: any plan but a trial that
+// hasn't started or has ended. KIFF refuses such an account's calls
+// (meter.Limits), so it has no tasks to add packs to: packs it holds
+// count again once a plan starts.
+func Runs(t Tenant, now time.Time) bool {
+	return PlanFor(t).Canonical != PlanTrial || TrialStatusAt(t, now) == TrialRunning
+}
+
+// PeriodTasks is the tafs tasks t has this period: what its plan includes
+// (per seat on Team), and packTasks, the pack tasks it has for the period
+// (those drawn in it, and those still valid). At that number its tafs stop
+// until someone adds a pack. Zero is no limit (internal, company).
+func PeriodTasks(t Tenant, packTasks int) int {
 	l := PlanFor(t)
-	if l.Capped || l.IncludedTasks == 0 {
-		return l.IncludedTasks
+	if l.IncludedTasks == 0 {
+		return 0
 	}
-	if c := metaInt(t.Metadata, MetadataKeyTaskCeiling); c >= l.IncludedTasks {
-		return c
-	}
-	return l.IncludedTasks
+	return l.IncludedTasks + max(packTasks, 0)
 }
 
 // PlanResolver implements the usage.PlanResolver contract by

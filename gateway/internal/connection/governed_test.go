@@ -70,9 +70,10 @@ func TestConnectAGenericToolOperation(t *testing.T) {
 		t.Fatalf("stored: %+v", conns)
 	}
 
-	// A path is for sealed connections: apps/api binds verify and relay
-	// permits to top-level arguments. (With an idempotency argument, so the
-	// path rule is what refuses the move.)
+	// A path is for sealed and relay connections: apps/api binds a relay
+	// permit at the path, and a verify tool checks top-level arguments
+	// itself. (With an idempotency argument, so the path rule is what
+	// refuses the move.)
 	idem := stripeRefundRequest(srv.URL)
 	idem["name"], idem["idempotency_argument"] = "stripe_refund_idem", "idempotency_key"
 	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", idem); status != http.StatusCreated {
@@ -80,7 +81,7 @@ func TestConnectAGenericToolOperation(t *testing.T) {
 	}
 	open := openToolServer(t)
 	if status, body := r.do(t, "owner-a", http.MethodPut, "/v1/connections/stripe_refund_idem/mode",
-		map[string]string{"mode": "verify", "audience": "https://refunds.example.com/mcp", "url": open.URL}); status != http.StatusBadRequest || !strings.Contains(body, "only for sealed") {
+		map[string]string{"mode": "verify", "audience": "https://refunds.example.com/mcp", "url": open.URL}); status != http.StatusBadRequest || !strings.Contains(body, "a verify tool takes") {
 		t.Fatalf("to verify: %d %s", status, body)
 	}
 	// The settings sheet changes top-level resource arguments only.
@@ -125,7 +126,7 @@ func TestGenericToolChecks(t *testing.T) {
 		{"a path in verify mode", func(m map[string]any) {
 			m["mode"], m["audience"], m["idempotency_argument"] = "verify", "https://refunds.example.com/mcp", "idempotency_key"
 			delete(m, "credential")
-		}, "only for sealed"},
+		}, "a verify tool takes"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			req := stripeRefundRequest(srv.URL)

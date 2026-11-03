@@ -24,8 +24,23 @@ import (
 // bookkeeping row (the Store does); it only owns the schema
 // creation/deletion side. Provision and Deprovision are idempotent.
 type Provisioner struct {
-	pool  *pgxpool.Pool
-	store Store
+	pool       *pgxpool.Pool
+	store      Store
+	identities IdentityEraser
+}
+
+// IdentityEraser deletes a person's sign-in at the identity provider, so
+// an erased account's people can't sign in again. Deleting one that's
+// already gone is done, not an error.
+type IdentityEraser interface {
+	EraseIdentity(ctx context.Context, subject string) error
+}
+
+// WithIdentityEraser makes Deprovision delete the sign-in of each person
+// the erasure leaves with no account, before it erases anything else.
+func (p *Provisioner) WithIdentityEraser(e IdentityEraser) *Provisioner {
+	p.identities = e
+	return p
 }
 
 // NewProvisioner wraps a pool plus the cloud's tenant Store.
@@ -118,6 +133,12 @@ func (p *Provisioner) Provision(ctx context.Context, tenantID string) error {
 // for the schema drop; if the row is already deleted, the call
 // returns nil.
 func (p *Provisioner) Deprovision(ctx context.Context, tenantID string) error {
+	// First, while the account's people are still on record: a sign-in
+	// that can't be deleted stops the erasure, so the next sweep tries
+	// again with the account still deleted_pending.
+	if err := p.eraseIdentities(ctx, tenantID); err != nil {
+		return err
+	}
 	t, err := p.store.Get(ctx, tenantID)
 	if err != nil {
 		// If the row is gone already, the schema may still exist.

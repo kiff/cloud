@@ -106,19 +106,70 @@ func readLimitBalance(ctx context.Context, q querier, tenant string, m Mandate, 
 	 t->>'Measure'=$7 AND t->>'Window'=$8 AND t->>'Location'=$9
 	 AND (t->>'WindowEnd')::timestamptz>$6
 	 AND ($8 <> 'calendar_day' OR (t->>'WindowStart')::timestamptz=$4)
-	 ) THEN d.amount ELSE 0 END),0)
+	 ) THEN d.amount ELSE 0 END),0),
+	 COALESCE(SUM(CASE WHEN s.recorded_at <= $6 THEN s.amount ELSE 0 END),0)
 	 FROM cloud_meta.mandate_draws d LEFT JOIN cloud_meta.mandate_effect_releases r
 	 ON (r.tenant_id,r.mandate_id,r.proposal_id,r.quantity_key)=(d.tenant_id,d.mandate_id,d.proposal_id,d.quantity_key)
+	 LEFT JOIN cloud_meta.mandate_effect_surcharges s
+	 ON (s.tenant_id,s.mandate_id,s.proposal_id,s.quantity_key)=(d.tenant_id,d.mandate_id,d.proposal_id,d.quantity_key)
 	 WHERE d.tenant_id=$1 AND d.mandate_id=$2 AND d.quantity_key=$3
 	 AND d.drawn_at >= $4 AND d.drawn_at <= $6 AND ($5='' OR d.proposal_id<>$5)`
 	b := LimitBalance{}
-	err = q.QueryRow(ctx, stmt, tenant, m.ID, a.Quantity.Key(), since.UTC(), exclude, now.UTC(), a.EffectiveMeasure(), a.Window, m.Loc().String()).Scan(&b.Gross, &b.Released)
+	var surcharged int64
+	err = q.QueryRow(ctx, stmt, tenant, m.ID, a.Quantity.Key(), since.UTC(), exclude, now.UTC(), a.EffectiveMeasure(), a.Window, m.Loc().String()).Scan(&b.Gross, &b.Released, &surcharged)
 	if err != nil {
 		return b, fmt.Errorf("sum charged limits: %w", err)
 	}
+	// What a vendor used beyond the decided amount counts too (connection profiles: the verify read): the Card counts the larger figure.
+	b.Gross += surcharged
 	if b.Gross < 0 || b.Released < 0 || b.Released > b.Gross {
 		return b, ErrUsageUnavailable
 	}
 	b.Net = b.Gross - b.Released
 	return b, nil
+}
+
+func (s *PostgresStore) SurchargeEffects(ctx context.Context, e VerifiedEvidence) ([]EffectSurcharge, error) {
+	if err := e.validate(); err != nil {
+		return nil, err
+	}
+	draws, err := s.ProposalDraws(ctx, e.TenantID, e.ProposalID)
+	if err != nil {
+		return nil, err
+	}
+	ids := []string{}
+	out := []EffectSurcharge{}
+	for _, d := range draws {
+		sc, ok, err := eligibleSurcharge(d, e)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
+			ids = append(ids, d.MandateID)
+			out = append(out, sc)
+		}
+	}
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	if err := lockCards(ctx, tx, e.TenantID, ids); err != nil {
+		return nil, err
+	}
+	for i, sc := range out {
+		if _, err := tx.Exec(ctx, `INSERT INTO cloud_meta.mandate_effect_surcharges
+		(tenant_id,mandate_id,proposal_id,quantity_key,amount,recorded_at,source,evidence_id)
+		VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`, sc.TenantID, sc.MandateID, sc.ProposalID, sc.QuantityKey, sc.Amount, sc.At, sc.Source, sc.EvidenceID); err != nil {
+			return nil, fmt.Errorf("record effect surcharge: %w", err)
+		}
+		// A repeated report answers the first one, never a second charge.
+		if err := tx.QueryRow(ctx, `SELECT amount,recorded_at,source,evidence_id FROM cloud_meta.mandate_effect_surcharges
+		WHERE tenant_id=$1 AND mandate_id=$2 AND proposal_id=$3 AND quantity_key=$4`, sc.TenantID, sc.MandateID, sc.ProposalID, sc.QuantityKey).
+			Scan(&sc.Amount, &sc.At, &sc.Source, &sc.EvidenceID); err != nil {
+			return nil, err
+		}
+		out[i] = sc
+	}
+	return out, tx.Commit(ctx)
 }

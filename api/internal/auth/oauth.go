@@ -51,6 +51,21 @@ var oauthRoutes = []string{
 	"POST /v1/gateway/trial",
 }
 
+// runtimeRoutes are the routes an agent's gateway key reaches besides
+// oauthRoutes, and an OAuth access token never does: the runtime running
+// a taf holds only its gateway key, and asks what a person may do with its
+// own agent before their run and at each turn, and resolves the run grant
+// their run carries. Both handlers answer only for the key's own agent;
+// resolving needs a grant KIFF signed. A client signed in over OAuth runs
+// no one's runs, so it needs neither.
+var runtimeRoutes = []string{
+	"POST /v1/me/access",
+	"POST /v1/me/run-grants/resolve",
+	// A read grant, before it serves one person's work to another: the
+	// handler answers only for the key's own agent.
+	"POST /v1/me/read-grants/resolve",
+}
+
 // OAuthRouteAllowed reports whether r may be served to an OAuth access
 // token.
 func OAuthRouteAllowed(r *http.Request) bool {
@@ -59,6 +74,11 @@ func OAuthRouteAllowed(r *http.Request) bool {
 	// agent's operation. Its handler checks ownership before any release;
 	// it never accepts an outcome or a budget revision from the caller.
 	if r.Method == http.MethodPost && postOnOne(path, "/v1/me/card-effects/", "/reconcile") {
+		return true
+	}
+	// A surcharge reads the gateway's own verify read of the agent's call
+	// the same way, and counts only what the vendor said it used.
+	if r.Method == http.MethodPost && postOnOne(path, "/v1/me/card-effects/", "/surcharge") {
 		return true
 	}
 	// An agent withdraws one of its own held calls when its run is
@@ -92,6 +112,16 @@ func postOnOne(path, prefix, suffix string) bool {
 	}
 	id, ok := strings.CutSuffix(tail, suffix)
 	return ok && id != "" && !strings.Contains(id, "/") && id != "." && id != ".."
+}
+
+// GatewayRouteAllowed reports whether r may be served to id, a gateway
+// credential: an OAuth access token reaches oauthRoutes alone, and an
+// agent's gateway key those and runtimeRoutes.
+func GatewayRouteAllowed(r *http.Request, id Identity) bool {
+	if OAuthRouteAllowed(r) {
+		return true
+	}
+	return !id.isOAuth() && slices.Contains(runtimeRoutes, r.Method+" "+strings.TrimRight(r.URL.Path, "/"))
 }
 
 // isOAuth reports whether id came from an OAuth access token.
@@ -149,9 +179,11 @@ const RoleGatewayAgent = "gateway_agent"
 
 // RoleSetupReader is the role of an agent that holds no tools (Setup,
 // kiff/agents#91): the gateway's contract grants it the read-only tools'
-// permissions, so it reads a tool the owner approved for it, each read
-// decided on its own Card (kiff/tafs#138). Unlike RoleGatewayAgent it
-// doesn't keep the key to the gateway's routes.
+// permissions, so it reads a tool the owner approved for it (kiff/tafs#138),
+// and the tools of the account's own control server, so as Coach it acts
+// there (kiff/tafs#206); never a vendor's tool that writes. Each call is
+// decided on a Card of its own. Unlike RoleGatewayAgent it doesn't keep the
+// key to the gateway's routes. Its calls are never billed (meter.FreeSetup).
 const RoleSetupReader = "setup_reader"
 
 func oauthForbidden(w http.ResponseWriter) {

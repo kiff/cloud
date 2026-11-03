@@ -23,7 +23,9 @@ decision, or more than once; a permit accepted for other arguments, another
 tool or after it expires; a halt that does not stop calls; a receipt that
 verifies after it was changed; one account reaching another's connections,
 tools, decisions or receipts; tool credentials leaving the gateway; the gateway
-reaching internal addresses.
+reaching internal addresses; a Card counting an amount the agent supplied
+instead of the one read from the record; a connection profile applied without
+the owner's approval; a run grant accepted for another person or agent.
 
 Repository visibility is not permission to test against the hosted service
 (`kiff.dev`, `app.kiff.dev`, `api.kiff.dev`, `mcp.kiff.dev`) or another

@@ -347,12 +347,24 @@ func recordsForBlockedReceipt(records []kiffaudit.Record, blocked kiffaudit.Reco
 	return out
 }
 
+// isStateNotAllowedRecord reports whether rec is an action the framework
+// refused for its record's state: its typed reason says so. A record from a
+// framework before the reason was recorded is read from its error text;
+// a record with neither is not classified, never taken for a state block.
 func isStateNotAllowedRecord(rec kiffaudit.Record) bool {
 	if rec.Kind != kiffaudit.KindActionFailed {
 		return false
 	}
-	return strings.Contains(strings.ToLower(blockedError(rec)), "action state not allowed")
+	if reason, ok := rec.Data["reason"].(string); ok && reason != "" {
+		return reason == reasonStateNotAllowed
+	}
+	errText, _ := rec.Data["error"].(string)
+	return strings.Contains(strings.ToLower(errText), "action state not allowed")
 }
+
+// reasonStateNotAllowed is the framework's typed reason for a state refusal
+// (outcome.ReasonStateNotAllowed).
+const reasonStateNotAllowed = "state_not_allowed"
 
 func blockedError(rec kiffaudit.Record) string {
 	if errText, _ := rec.Data["error"].(string); errText != "" {

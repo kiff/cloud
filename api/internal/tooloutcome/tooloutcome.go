@@ -269,6 +269,31 @@ func (p *Postgres) ToolTitles(ctx context.Context, tenantID string) (map[string]
 	return m, nil
 }
 
+// VendorTools reads each of tenantID's gateway tools' own name at its
+// vendor, when a relay named it (gateway.tools.vendor_tool, the vendor tool's own name), by the name a Card grants it under. Others are left out.
+func (p *Postgres) VendorTools(ctx context.Context, tenantID string) (map[string]string, error) {
+	if p == nil || p.pool == nil {
+		return nil, errors.New("tooloutcome: no database")
+	}
+	rows, err := p.pool.Query(ctx, `SELECT name, vendor_tool FROM gateway.tools WHERE tenant_id = $1 AND vendor_tool <> ''`, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	out, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) ([2]string, error) {
+		var r [2]string
+		err := row.Scan(&r[0], &r[1])
+		return r, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]string, len(out))
+	for _, r := range out {
+		m[r[0]] = r[1]
+	}
+	return m, nil
+}
+
 // ReadOnlyTools reads which of tenantID's gateway tools are marked as
 // only reading (gateway.tools.read_only), by name. Others are left out.
 func (p *Postgres) ReadOnlyTools(ctx context.Context, tenantID string) (map[string]bool, error) {
@@ -288,4 +313,30 @@ func (p *Postgres) ReadOnlyTools(ctx context.Context, tenantID string) (map[stri
 		m[n] = true
 	}
 	return m, nil
+}
+
+// ToolProfiles reads, for each of tenantID's gateway tools under an
+// owner-approved profile, that profile as applied (connection profiles), by the name a
+// Card grants the tool under. Tools without one are left out.
+func (p *Postgres) ToolProfiles(ctx context.Context, tenantID string) (map[string][]byte, error) {
+	if p == nil || p.pool == nil {
+		return nil, errors.New("tooloutcome: no database")
+	}
+	rows, err := p.pool.Query(ctx, `SELECT t.name, pr.profile FROM gateway.tools t
+		JOIN gateway.profiles pr ON pr.tenant_id = t.tenant_id AND pr.revision = t.profile_revision
+		WHERE t.tenant_id = $1`, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[string][]byte{}
+	for rows.Next() {
+		var name string
+		var raw []byte
+		if err := rows.Scan(&name, &raw); err != nil {
+			return nil, err
+		}
+		out[name] = raw
+	}
+	return out, rows.Err()
 }

@@ -182,6 +182,12 @@ type Store interface {
 	// inventory without deleting its statement or audit history.
 	Archive(ctx context.Context, tenantID, mandateID string, at time.Time) error
 
+	// SetTitle changes or clears a Card's title. It is presentation only:
+	// no revision is written and the Card's terms are untouched. The
+	// title must already be clean (CleanTitle). ErrNotFound if there is
+	// no such Card.
+	SetTitle(ctx context.Context, tenantID, mandateID, title string) error
+
 	// ForSubject returns every mandate naming a subject, in force or
 	// not.
 	//

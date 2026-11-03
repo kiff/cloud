@@ -29,7 +29,7 @@ func TestWriteInteropFixture(t *testing.T) {
 		t.Fatal(err)
 	}
 	_, _, _ = is.Bind(context.Background(), "tenant-fixture", "op-fixture", b)
-	tok, _, err := is.Mint(context.Background(), "tenant-fixture", "agent-fixture", "op-fixture", "card-fixture", b)
+	tok, _, err := is.Mint(context.Background(), "tenant-fixture", "agent-fixture", "op-fixture", "card-fixture", "", b)
 	if err != nil {
 		t.Fatal(err)
 	}

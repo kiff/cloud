@@ -60,6 +60,13 @@ const (
 	StatusDeleted Status = "deleted"
 )
 
+// Where a deletion came from (MetadataKeyDeletedVia).
+const (
+	DeletedViaApp      = "app"
+	DeletedViaWeb      = "web"
+	DeletedViaOperator = "operator"
+)
+
 // GracePeriodDays is the number of days the tenant's data is
 // retained in StatusDeletedPending before a hard delete is safe.
 // Matches the privacy policy's 30-day restoration window.
@@ -76,6 +83,18 @@ const (
 	// the grace window expires and a hard delete becomes safe.
 	// Always deleted_at + GracePeriodDays.
 	MetadataKeyGraceWindowEnds = "grace_window_ends"
+
+	// MetadataKeyDeletedVia says where a deletion came from, which
+	// decides whether it can be restored: DeletedViaApp (the tafs app,
+	// whose chats, notes and connections are already erased, so never),
+	// DeletedViaWeb (the dashboard or a key) or DeletedViaOperator (the
+	// kiff-tenant CLI, for a request by email).
+	MetadataKeyDeletedVia = "deleted_via"
+
+	// MetadataKeyErasedAt is the RFC 3339 timestamp when SweepExpired
+	// scrubbed the tenant: the record, kept with the retained tenants row,
+	// that its data was erased as the privacy policy promises.
+	MetadataKeyErasedAt = "erased_at"
 )
 
 // IsErasing reports whether the tenant is in a deletion-pending or

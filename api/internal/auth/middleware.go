@@ -119,7 +119,7 @@ func (m *Middleware) Wrap(next http.Handler) http.Handler {
 			m.refuse(w, r, err)
 			return
 		}
-		if id.gatewayOnly() && !OAuthRouteAllowed(r) {
+		if id.gatewayOnly() && !GatewayRouteAllowed(r, id) {
 			oauthForbidden(w)
 			return
 		}
@@ -263,7 +263,7 @@ func (m *Middleware) WrapPerson(next http.Handler) http.Handler {
 			m.refuse(w, r, err)
 			return
 		}
-		if id.gatewayOnly() && !OAuthRouteAllowed(r) {
+		if id.gatewayOnly() && !GatewayRouteAllowed(r, id) {
 			oauthForbidden(w)
 			return
 		}
@@ -348,9 +348,10 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 			slog.String("session_id", sess.ID), slog.String("err", terr.Error()))
 	}
 	id := Identity{
-		Subject: sess.Subject,
-		Tenant:  sess.Tenant,
-		Method:  MethodDeveloper,
+		Subject:     sess.Subject,
+		Tenant:      sess.Tenant,
+		Method:      MethodDeveloper,
+		ApprovalKey: sess.ApprovalPublicKey,
 	}
 	if sess.DeviceID != "" {
 		// The device decides: its key signs, and once it's removed

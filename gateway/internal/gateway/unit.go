@@ -46,6 +46,8 @@ const (
 // amount in a unit and a resource for the read to look up.
 func (l UnitLookup) Valid(t Tool) string {
 	switch {
+	case t.ReadOnly:
+		return "unit_lookup is for a write: a read has no amount for a Card to count"
 	case t.AmountArg == "" || t.AmountUnit == "" || t.ResourceArg == "":
 		return "unit_lookup needs the tool's amount argument, its amount unit and its resource argument"
 	case !ValidToolName(l.Tool) || l.Tool == t.Name:
@@ -77,6 +79,11 @@ func (a *agent) checkUnit(ctx context.Context, t Tool, params map[string]any, ca
 	read, err := a.tool(ctx, l.Tool)
 	if err != nil || !read.ReadOnly || read.UpstreamURL != t.UpstreamURL || read.Mode != t.Mode || read.Audience != t.Audience {
 		return unverified("the read set up to check it, " + l.Tool + ", isn't a read on the same connection")
+	}
+	// As readAmount's: a read with a lookup of its own is never used, so
+	// lookups can't call each other in a loop.
+	if read.AmountLookup != nil || read.UnitLookup != nil {
+		return unverified("the read set up to check it, " + l.Tool + ", has a lookup of its own")
 	}
 	args, _ := json.Marshal(lookupArgs(read, t, *l, resource, callArgs))
 	// The unit is kept per resource and scope: the same id in another

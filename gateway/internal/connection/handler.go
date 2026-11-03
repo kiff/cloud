@@ -1,15 +1,20 @@
 package connection
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/kiff/cloud/gateway/internal/egress"
@@ -25,6 +30,12 @@ type API interface {
 	Me(ctx context.Context, key string) (kiffapi.Me, error)
 	ApplyDomain(ctx context.Context, key, domain, yaml string) error
 	SetPermitTargets(ctx context.Context, key string, ts []kiffapi.PermitTarget) error
+	// DeviceSigned confirms that the caller's phone signed this request
+	// (kiff/tafs#206): a phone's session connects the control server only so.
+	DeviceSigned(ctx context.Context, key, method, uri, bodySHA256, signature string) (string, error)
+	// CheckProfileApproval says whether the owner's signed approval covers
+	// a profile and KIFF's words for it (connection profiles: the owner's approval).
+	CheckProfileApproval(ctx context.Context, key string, profile, approval json.RawMessage) (kiffapi.ProfileApproval, error)
 }
 
 // Lister lists a remote server's tools.
@@ -39,18 +50,25 @@ type Handler struct {
 	Remote Lister
 	Policy egress.Policy
 	Logger *slog.Logger
+	// RelayURLs are the vendor relays this KIFF runs beside (planque,
+	// KIFF_PLANQUE_URLS): a tool on their host is a vendor's, never the
+	// account's control server, whichever is connected first.
+	RelayURLs []string
 }
 
 // Register mounts the routes.
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /v1/connections", h.authRead(h.list))
-	mux.HandleFunc("POST /v1/connections", h.auth(h.create))
+	mux.HandleFunc("POST /v1/connections", h.authAs(h.create, mayCreate))
+	mux.HandleFunc("POST /v1/connections/batch", h.authAs(h.createBatch, mayCreate))
 	mux.HandleFunc("POST /v1/connections/discover", h.auth(h.discover))
 	mux.HandleFunc("POST /v1/connections/{name}/test", h.auth(h.test))
 	mux.HandleFunc("PUT /v1/connections/{name}/credential", h.auth(notConnector(h.setCredential)))
 	mux.HandleFunc("PUT /v1/connections/{name}/mode", h.auth(notConnector(h.setMode)))
 	mux.HandleFunc("PUT /v1/connections/{name}/settings", h.auth(notConnector(h.setSettings)))
 	mux.HandleFunc("DELETE /v1/connections/{name}", h.auth(h.remove))
+	mux.HandleFunc("POST /v1/profiles", h.auth(h.applyProfile))
+	mux.HandleFunc("POST /v1/connections/{name}/resume", h.auth(notConnector(h.resume)))
 }
 
 type caller struct {
@@ -81,6 +99,14 @@ func mayTouch(c caller, conn Connection) bool {
 
 func (h *Handler) auth(next func(http.ResponseWriter, *http.Request, caller)) http.HandlerFunc {
 	return h.authAs(next, kiffapi.Me.CanManage)
+}
+
+// mayCreate admits whoever manages the account's tools and, for one request
+// only, a phone's session of a person who may connect tools: create then
+// takes from it nothing but the account's control server, with the phone's
+// signature over that exact request (kiff/tafs#206).
+func mayCreate(me kiffapi.Me) bool {
+	return me.CanManage() || (me.DeviceSession && me.AgentID == "" && slices.Contains(me.Capabilities, "tools.connect"))
 }
 
 // authRead admits a phone's session too, to list the tools: it
@@ -132,8 +158,12 @@ type createRequest struct {
 	AmountArg string `json:"amount_argument"`
 	// AmountUnit and AmountScale say what the amount means, for display:
 	// "EUR" with 2 when the tool takes cents. Optional.
-	AmountUnit     string `json:"amount_unit"`
-	AmountScale    *int   `json:"amount_scale"`
+	AmountUnit  string `json:"amount_unit"`
+	AmountScale *int   `json:"amount_scale"`
+	// AmountFormat is "decimal_string" for a tool that takes its amount as
+	// text ("80.00"), counted in minor units at amount_scale; empty for a
+	// whole number (connection profiles).
+	AmountFormat   string `json:"amount_format"`
 	IdempotencyArg string `json:"idempotency_argument"`
 	// ResourceArg names the string argument saying what a call is on (an
 	// order, a customer), so a Card can be limited to named ones.
@@ -148,12 +178,18 @@ type createRequest struct {
 	OutcomeLookupTool string          `json:"outcome_lookup_tool"`
 	// UnitLookup names the read that says which unit a call is in (a
 	// payment's currency), so a call in another unit is refused.
-	UnitLookup  *gateway.UnitLookup `json:"unit_lookup"`
-	Credential  string              `json:"credential"`
-	Description string              `json:"description"`
+	UnitLookup *gateway.UnitLookup `json:"unit_lookup"`
+	// AmountLookup names the read that says a call's amount (a dispute's),
+	// for a tool whose calls don't carry one: KIFF reads it, never the agent.
+	AmountLookup *gateway.UnitLookup `json:"amount_lookup"`
+	Credential   string              `json:"credential"`
+	Description  string              `json:"description"`
 	// Title is the name people see. Empty: the vendor's own MCP title, or
 	// its tool's name in words.
 	Title string `json:"title"`
+	// VendorTool is the tool's own name at its vendor, from the connector
+	// that relays it (planque). Optional; one line, like a title.
+	VendorTool string `json:"vendor_tool"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
 	ReadOnly bool `json:"read_only"`
@@ -161,7 +197,36 @@ type createRequest struct {
 	// 046): sealed (the default), verify or relay.
 	Mode     string `json:"mode"`
 	Audience string `json:"audience"`
+	// Control marks the account's own control server (kiff/tafs#206): its
+	// tools are granted to setup_reader too, so Setup can act there on its
+	// own Cards. Only in verify mode (the server checks KIFF's permit
+	// itself and KIFF holds no credential for it), and only from a person:
+	// a connector key connects vendors, never a control server.
+	Control bool `json:"control"`
 }
+
+// createdBy is the key a connection is filed under: a connector key's own,
+// "" for a person, a phone's session included.
+func createdBy(me kiffapi.Me) string {
+	if me.DeviceSession {
+		return ""
+	}
+	return me.CredentialID
+}
+
+// sameHost reports whether two URLs name the same host and port.
+func sameHost(a, b string) bool {
+	ua, errA := url.Parse(a)
+	ub, errB := url.Parse(b)
+	return errA == nil && errB == nil && ua.Host != "" && strings.EqualFold(ua.Host, ub.Host)
+}
+
+// probeLimit bounds the probes of a phone's control-server connection, which
+// must save within its device grant's minute.
+const probeLimit = 15 * time.Second
+
+// controlRefused is why a connection can't be the account's control server.
+const controlRefused = "control is only for the account's own server: verify mode, connected by a person, not a connector key"
 
 const maxCredential = 8 << 10
 
@@ -176,115 +241,61 @@ func decode(w http.ResponseWriter, r *http.Request, v any) bool {
 }
 
 func (h *Handler) create(w http.ResponseWriter, r *http.Request, c caller) {
+	// A phone's session: the body is read whole, to check the phone signed it.
+	var signedBody []byte
+	if c.me.DeviceSession {
+		b, err := io.ReadAll(io.LimitReader(r.Body, 64<<10+1))
+		if err != nil || len(b) > 64<<10 {
+			writeErr(w, http.StatusBadRequest, "the request body must be a JSON object with the documented fields")
+			return
+		}
+		signedBody = b
+		r.Body = io.NopCloser(bytes.NewReader(b))
+	}
 	var req createRequest
 	if !decode(w, r, &req) {
 		return
 	}
-	req.OutcomeContract = strings.TrimSpace(req.OutcomeContract)
-	req.OutcomeLookupTool = strings.TrimSpace(req.OutcomeLookupTool)
-	if req.OutcomeContract != "" && (req.OutcomeContract != gateway.TerminalNoEffectV1 || req.IdempotencyArg == "") {
-		writeErr(w, http.StatusBadRequest, "outcome_contract must be terminal_no_effect_v1 with an idempotency argument; enable it only for a trusted executor that guarantees terminal non-actions")
-		return
-	}
-	req.Tool = strings.TrimSpace(req.Tool)
-	req.Name = strings.TrimSpace(req.Name)
-	if req.Name == "" {
-		req.Name = req.Tool
-	}
-	if req.Tool == "" {
-		writeErr(w, http.StatusBadRequest, "tool is required: the name of the tool on the remote server")
-		return
-	}
-	if !gateway.ValidToolName(req.Name) {
-		writeErr(w, http.StatusBadRequest, "name must start with a letter and use only letters, digits and underscores (up to 64)")
-		return
-	}
-	if gateway.ReservedToolName(req.Name) {
-		writeErr(w, http.StatusBadRequest, req.Name+" is the name of KIFF's own tool; choose another name")
-		return
-	}
-	if len(req.Credential) > maxCredential {
-		writeErr(w, http.StatusBadRequest, "the credential is too long")
-		return
-	}
-	u, err := h.Policy.ValidateURL(r.Context(), strings.TrimSpace(req.URL))
-	if err != nil {
-		writeErr(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	remote, msg := h.probe(r.Context(), u.String(), req.Credential, req.Tool)
-	if remote == nil {
-		writeErr(w, http.StatusBadGateway, msg)
-		return
-	}
-	if msg := checkGoverned(remote.InputSchema, &req); msg != "" {
-		writeErr(w, http.StatusBadRequest, msg)
-		return
-	}
-	if req.OutcomeLookupTool != "" {
-		if req.OutcomeContract != gateway.TerminalNoEffectV1 || req.OutcomeLookupTool == req.Tool || req.IdempotencyArg == "" {
-			writeErr(w, http.StatusBadRequest, "outcome_lookup_tool must be a separate read-only status tool under terminal_no_effect_v1")
+	if c.me.DeviceSession {
+		// Only the account's control server, and only signed on the phone:
+		// the owner's act behind Face ID, never the session alone.
+		if !req.Control {
+			writeErr(w, http.StatusForbidden, "a phone's session can list the tools but not change them; connect tools in KIFF")
 			return
 		}
-		lookup, msg := h.probe(r.Context(), u.String(), req.Credential, req.OutcomeLookupTool)
-		if lookup == nil {
-			writeErr(w, http.StatusBadGateway, msg)
+		sum := sha256.Sum256(signedBody)
+		grant, err := h.API.DeviceSigned(r.Context(), c.key, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), r.Header.Get(kiffapi.DeviceSignatureHeader))
+		switch {
+		case errors.Is(err, kiffapi.ErrUnavailable):
+			writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't check the phone's signature; sign it again and retry")
+			return
+		case err != nil:
+			writeErr(w, http.StatusForbidden, "from a phone, connecting the account's control server needs the phone's signature over this request ("+kiffapi.DeviceSignatureHeader+")")
 			return
 		}
-		if lookup.Annotations == nil || !lookup.Annotations.ReadOnlyHint || checkArgs(lookup.InputSchema, "", req.IdempotencyArg) != "" {
-			writeErr(w, http.StatusBadRequest, "the status tool must declare readOnlyHint and accept the operation's idempotency argument")
+		// The contract and permit targets are then saved with the phone's
+		// session and this grant, each once (apps/api admits nothing else).
+		r = r.WithContext(kiffapi.WithDeviceGrant(r.Context(), grant))
+	}
+	// A phone's grant lasts a minute from its signature: the server's probes
+	// get at most probeLimit of it, so the save comes before it ends.
+	probeCtx := r.Context()
+	if c.me.DeviceSession {
+		var cancel context.CancelFunc
+		probeCtx, cancel = context.WithTimeout(r.Context(), probeLimit)
+		defer cancel()
+	}
+	conn, status, msg := h.prepare(r.Context(), probeCtx, c, &req)
+	if status != 0 {
+		if status == http.StatusInternalServerError {
+			h.fail(w, r, "create", errors.New(msg))
 			return
 		}
-	}
-	mode, audience, msg := checkMode(req.Mode, req.Audience, req.IdempotencyArg)
-	if msg != "" {
-		writeErr(w, http.StatusBadRequest, msg)
+		writeErr(w, status, msg)
 		return
 	}
-	if c.me.IsConnector() && (mode == gateway.ModeSealed || c.me.CredentialID == "") {
-		// The connector's holder keeps the tool's credential (relay), or
-		// the tool checks KIFF's permit itself (verify).
-		writeErr(w, http.StatusForbidden, "a connector key connects tools in relay or verify mode; KIFF holds no credential for them")
-		return
-	}
-	if mode != gateway.ModeSealed && (req.AmountPath != "" || req.ResourcePath != "") {
-		writeErr(w, http.StatusBadRequest, pathsSealedOnly)
-		return
-	}
-	if mode == gateway.ModeVerify && req.Credential != "" {
-		writeErr(w, http.StatusBadRequest, "in verify mode KIFF holds no credential for the tool; leave credential empty")
-		return
-	}
-	scale, msg := checkUnit(req.AmountArg, strings.TrimSpace(req.AmountUnit), req.AmountScale)
-	if msg != "" {
-		writeErr(w, http.StatusBadRequest, msg)
-		return
-	}
-	if l := req.UnitLookup; l != nil {
-		l.Tool, l.Argument, l.Path = strings.TrimSpace(l.Tool), strings.TrimSpace(l.Argument), strings.TrimSpace(l.Path)
-		if msg := l.Valid(gateway.Tool{Name: req.Name, AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), ResourceArg: req.ResourceArg}); msg != "" {
-			writeErr(w, http.StatusBadRequest, msg)
-			return
-		}
-	}
-	desc := strings.TrimSpace(req.Description)
-	if desc == "" {
-		desc = remote.Description
-	}
-	title, msg := toolTitle(req.Title, req.Tool, remote)
-	if msg != "" {
-		writeErr(w, http.StatusBadRequest, msg)
-		return
-	}
-	schema := remote.InputSchema
-	if len(schema) == 0 {
-		schema = json.RawMessage(`{"type":"object"}`)
-	}
-	conn := Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
-		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale,
-		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, CreatedBy: c.me.CredentialID}
-	err = h.Store.Change(r.Context(), c.me.TenantID,
+	u, _ := url.Parse(conn.URL)
+	err := h.Store.Change(r.Context(), c.me.TenantID,
 		func(tx *Tx) error { return tx.Insert(r.Context(), conn, req.Credential) },
 		h.applier(r.Context(), c))
 	if errors.Is(err, ErrExists) {
@@ -303,6 +314,130 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request, c caller) {
 	h.log(r, "tool connected", c, req.Name, slog.String("host", u.Host))
 	saved, _ := h.Store.Get(r.Context(), c.me.TenantID, req.Name)
 	writeJSON(w, http.StatusCreated, saved)
+}
+
+// prepare checks one connection as create would make it, probing its
+// server within probeCtx, and returns it ready to insert; else a status and
+// why. create and createBatch share it, so a batch checks each connection
+// exactly as one alone (batch connections).
+func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRequest) (Connection, int, string) {
+	req.OutcomeContract = strings.TrimSpace(req.OutcomeContract)
+	req.OutcomeLookupTool = strings.TrimSpace(req.OutcomeLookupTool)
+	if req.OutcomeContract != "" && (req.OutcomeContract != gateway.TerminalNoEffectV1 || req.IdempotencyArg == "") {
+		return Connection{}, http.StatusBadRequest, "outcome_contract must be terminal_no_effect_v1 with an idempotency argument; enable it only for a trusted executor that guarantees terminal non-actions"
+	}
+	req.Tool = strings.TrimSpace(req.Tool)
+	req.Name = strings.TrimSpace(req.Name)
+	if req.Name == "" {
+		req.Name = req.Tool
+	}
+	if req.Tool == "" {
+		return Connection{}, http.StatusBadRequest, "tool is required: the name of the tool on the remote server"
+	}
+	if !gateway.ValidToolName(req.Name) {
+		return Connection{}, http.StatusBadRequest, "name must start with a letter and use only letters, digits and underscores (up to 64)"
+	}
+	if gateway.ReservedToolName(req.Name) {
+		return Connection{}, http.StatusBadRequest, req.Name + " is the name of KIFF's own tool; choose another name"
+	}
+	if len(req.Credential) > maxCredential {
+		return Connection{}, http.StatusBadRequest, "the credential is too long"
+	}
+	u, err := h.Policy.ValidateURL(ctx, strings.TrimSpace(req.URL))
+	if err != nil {
+		return Connection{}, http.StatusBadRequest, err.Error()
+	}
+	remote, msg := h.probe(probeCtx, u.String(), req.Credential, req.Tool)
+	if remote == nil {
+		return Connection{}, http.StatusBadGateway, msg
+	}
+	if msg := checkGoverned(remote.InputSchema, req); msg != "" {
+		return Connection{}, http.StatusBadRequest, msg
+	}
+	if req.OutcomeLookupTool != "" {
+		if req.OutcomeContract != gateway.TerminalNoEffectV1 || req.OutcomeLookupTool == req.Tool || req.IdempotencyArg == "" {
+			return Connection{}, http.StatusBadRequest, "outcome_lookup_tool must be a separate read-only status tool under terminal_no_effect_v1"
+		}
+		lookup, msg := h.probe(probeCtx, u.String(), req.Credential, req.OutcomeLookupTool)
+		if lookup == nil {
+			return Connection{}, http.StatusBadGateway, msg
+		}
+		if lookup.Annotations == nil || !lookup.Annotations.ReadOnlyHint || checkArgs(lookup.InputSchema, "", req.IdempotencyArg) != "" {
+			return Connection{}, http.StatusBadRequest, "the status tool must declare readOnlyHint and accept the operation's idempotency argument"
+		}
+	}
+	mode, audience, msg := checkMode(req.Mode, req.Audience, req.IdempotencyArg)
+	if msg != "" {
+		return Connection{}, http.StatusBadRequest, msg
+	}
+	if req.Control && (mode != gateway.ModeVerify || c.me.IsConnector()) {
+		return Connection{}, http.StatusForbidden, controlRefused
+	}
+	if req.Control {
+		// Not a vendor's server fronted in verify mode: a host where a
+		// connector key (planque) connected a tool is a vendor relay, never
+		// the account's own control server.
+		existing, err := h.Store.List(ctx, c.me.TenantID)
+		if err != nil {
+			return Connection{}, http.StatusInternalServerError, err.Error()
+		}
+		for _, e := range existing {
+			if e.CreatedBy != "" && sameHost(e.URL, u.String()) {
+				return Connection{}, http.StatusForbidden, controlRefused + "; a connector key connects tools on this server"
+			}
+		}
+		for _, relay := range h.RelayURLs {
+			if sameHost(relay, u.String()) {
+				return Connection{}, http.StatusForbidden, controlRefused + "; this server relays a vendor's tools"
+			}
+		}
+	}
+	if c.me.IsConnector() && (mode == gateway.ModeSealed || c.me.CredentialID == "") {
+		// The connector's holder keeps the tool's credential (relay), or
+		// the tool checks KIFF's permit itself (verify).
+		return Connection{}, http.StatusForbidden, "a connector key connects tools in relay or verify mode; KIFF holds no credential for them"
+	}
+	if mode == gateway.ModeVerify && (req.AmountPath != "" || req.ResourcePath != "") {
+		return Connection{}, http.StatusBadRequest, pathsSealedOnly
+	}
+	if mode == gateway.ModeVerify && req.AmountLookup != nil {
+		return Connection{}, http.StatusBadRequest, lookupNotVerify
+	}
+	if mode == gateway.ModeVerify && req.Credential != "" {
+		return Connection{}, http.StatusBadRequest, "in verify mode KIFF holds no credential for the tool; leave credential empty"
+	}
+	scale, msg := checkUnit(req.AmountArg, strings.TrimSpace(req.AmountUnit), req.AmountScale)
+	if msg != "" {
+		return Connection{}, http.StatusBadRequest, msg
+	}
+	if l := req.UnitLookup; l != nil {
+		l.Tool, l.Argument, l.Path = strings.TrimSpace(l.Tool), strings.TrimSpace(l.Argument), strings.TrimSpace(l.Path)
+		if msg := l.Valid(gateway.Tool{Name: req.Name, AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), ResourceArg: req.ResourceArg, ReadOnly: req.ReadOnly}); msg != "" {
+			return Connection{}, http.StatusBadRequest, msg
+		}
+	}
+	if l := req.AmountLookup; l != nil {
+		l.Tool, l.Argument, l.Path = strings.TrimSpace(l.Tool), strings.TrimSpace(l.Argument), strings.TrimSpace(l.Path)
+		if msg := l.ValidAmount(gateway.Tool{Name: req.Name, AmountArg: req.AmountArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ReadOnly: req.ReadOnly}); msg != "" {
+			return Connection{}, http.StatusBadRequest, msg
+		}
+	}
+	desc := strings.TrimSpace(req.Description)
+	if desc == "" {
+		desc = remote.Description
+	}
+	title, msg := toolTitle(req.Title, req.Tool, remote)
+	if msg != "" {
+		return Connection{}, http.StatusBadRequest, msg
+	}
+	schema := remote.InputSchema
+	if len(schema) == 0 {
+		schema = json.RawMessage(`{"type":"object"}`)
+	}
+	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
+		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
+		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100)}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the
@@ -451,11 +586,19 @@ func (h *Handler) setMode(w http.ResponseWriter, r *http.Request, c caller) {
 	case mode == gateway.ModeVerify && req.Credential != "":
 		writeErr(w, http.StatusBadRequest, "in verify mode KIFF holds no credential for the tool; leave credential empty")
 		return
+	case conn.Control && mode != gateway.ModeVerify:
+		// Its tools are granted to setup_reader: they stay where the
+		// server checks every permit and KIFF holds no credential.
+		writeErr(w, http.StatusForbidden, "the account's control server stays in verify mode; remove it and connect it again to change that")
+		return
 	case mode == gateway.ModeSealed && req.Credential == "":
 		writeErr(w, http.StatusBadRequest, "moving back to sealed needs the tool's credential again: KIFF deleted it when the connection left sealed")
 		return
-	case mode != gateway.ModeSealed && (conn.AmountPath != "" || conn.ResourcePath != ""):
+	case mode == gateway.ModeVerify && (conn.AmountPath != "" || conn.ResourcePath != ""):
 		writeErr(w, http.StatusBadRequest, pathsSealedOnly)
+		return
+	case mode == gateway.ModeVerify && conn.AmountLookup != nil:
+		writeErr(w, http.StatusBadRequest, lookupNotVerify)
 		return
 	}
 	target := conn.URL
@@ -687,7 +830,9 @@ func (h *Handler) targets(ctx context.Context, c caller) func([]gateway.Tool) er
 		for _, t := range tools {
 			if t.Mode == gateway.ModeVerify || t.Mode == gateway.ModeRelay {
 				ts = append(ts, kiffapi.PermitTarget{Domain: gateway.Domain, Action: t.Name, Tool: t.UpstreamTool,
-					Audience: t.Audience, AmountArg: t.AmountArg, ResourceArg: t.ResourceArg})
+					Audience: t.Audience, AmountArg: t.AmountArg, ResourceArg: t.ResourceArg, AmountLookedUp: t.AmountLookup != nil,
+					AmountDecimal: t.AmountFormat == gateway.FormatDecimal, AmountScale: t.AmountScale,
+					AmountPath: t.AmountPath, ResourcePath: t.ResourcePath})
 			}
 		}
 		if err := h.API.SetPermitTargets(ctx, c.key, ts); err != nil {
@@ -700,7 +845,7 @@ func (h *Handler) targets(ctx context.Context, c caller) func([]gateway.Tool) er
 // probe lists the remote server's tools with credential and returns the
 // named one, or a message for the owner with the credential redacted.
 func (h *Handler) probe(ctx context.Context, url, credential, tool string) (*mcp.RemoteTool, string) {
-	tools, err := h.Remote.ListTools(ctx, url, credential)
+	tools, err := h.listTools(ctx, url, credential)
 	if err != nil {
 		return nil, secret.Redact("KIFF could not list the tools at that URL: "+err.Error(), credential)
 	}
@@ -803,7 +948,12 @@ func checkArgs(schema json.RawMessage, amount, idem string) string {
 
 // pathsSealedOnly: apps/api binds a verify or relay permit to top-level
 // governed arguments, so nested paths are for sealed connections.
-const pathsSealedOnly = "amount_path and resource_path work only for sealed connections for now: a verify or relay tool takes its governed arguments at the top level"
+const pathsSealedOnly = "amount_path and resource_path work for sealed and relay connections: a verify tool takes its governed arguments at the top level"
+
+// lookupNotVerify: a verify tool checks the permit itself, so an agent could
+// take one for an amount it made up straight to it. A looked-up amount is for
+// sealed and relay tools, which only the gateway can send to (amount lookups).
+const lookupNotVerify = "amount_lookup works only for sealed and relay connections: a verify tool checks its permit itself, so it couldn't tell the amount KIFF read from one an agent made up"
 
 // maxFixedArgsBytes bounds a connection's fixed arguments.
 const maxFixedArgsBytes = 4 << 10
@@ -859,14 +1009,32 @@ func checkGoverned(schema json.RawMessage, req *createRequest) string {
 	// Top-level arguments keep their type checks; a nested one is checked
 	// on each call (the tool's schema rarely types nested fields).
 	topAmount, topResource := req.AmountArg, req.ResourceArg
-	if req.AmountPath != "" {
+	// An amount KIFF reads from the resource isn't one of the tool's arguments.
+	if req.AmountPath != "" || req.AmountLookup != nil {
 		topAmount = ""
 	}
 	if req.ResourcePath != "" {
 		topResource = ""
 	}
-	if msg := checkArgs(schema, topAmount, req.IdempotencyArg); msg != "" {
-		return msg
+	switch req.AmountFormat {
+	case "", gateway.FormatMinor:
+		req.AmountFormat = ""
+		if msg := checkArgs(schema, topAmount, req.IdempotencyArg); msg != "" {
+			return msg
+		}
+	case gateway.FormatDecimal:
+		// Counted exactly in minor units at the scale the unit takes.
+		if req.AmountArg == "" || req.AmountLookup != nil || req.AmountUnit == "" || req.AmountScale == nil {
+			return "amount_format decimal_string needs the amount argument, its amount_unit and amount_scale; KIFF reads it, it isn't looked up"
+		}
+		if topAmount != "" && !slices.Contains(schemaProps(schema)[topAmount], "string") {
+			return "amount_argument " + topAmount + " must be a string argument of the tool for amount_format decimal_string"
+		}
+		if msg := checkArgs(schema, "", req.IdempotencyArg); msg != "" {
+			return msg
+		}
+	default:
+		return "amount_format is integer_minor (the default) or decimal_string"
 	}
 	if req.AmountArg != "" && req.AmountArg == req.IdempotencyArg {
 		return "amount_argument and idempotency_argument must differ"
@@ -1013,4 +1181,19 @@ func vendorTitle(t mcp.RemoteTool) string {
 		return strings.TrimSpace(t.Annotations.Title)
 	}
 	return ""
+}
+
+// oneLine is s as one line of at most max runes: control characters and
+// line breaks become spaces, and the ends are trimmed.
+func oneLine(s string, max int) string {
+	r := []rune(strings.Map(func(c rune) rune {
+		if unicode.IsControl(c) {
+			return ' '
+		}
+		return c
+	}, strings.TrimSpace(s)))
+	if len(r) > max {
+		r = r[:max]
+	}
+	return strings.TrimSpace(string(r))
 }

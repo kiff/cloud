@@ -52,6 +52,16 @@ type effectReconciler interface {
 // records. A failed reconciliation keeps budget charged and is retried when
 // this result is collected again; it never causes another tool send.
 func (a *agent) reconcileEffects(ctx context.Context, in invocation.Invocation) {
+	// A vendor's larger figure is counted again on each collection until
+	// apps/api has it: the surcharge is idempotent and reads only the
+	// gateway's recorded verify read (verify.go).
+	if vendorUsedMore(in.VerifyEvidence) {
+		if s, ok := a.g.API.(effectSurcharger); ok {
+			if err := s.SurchargeEffects(ctx, a.key, in.Key); err != nil && a.g.Logger != nil {
+				a.g.Logger.WarnContext(ctx, "gateway: a surcharge is pending", slog.String("invocation", in.Key), slog.String("err", err.Error()))
+			}
+		}
+	}
 	if len(in.NoEffectEvidence) == 0 {
 		return
 	}

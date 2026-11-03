@@ -32,6 +32,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -154,6 +155,7 @@ func run(args []string) error {
 		ForwardTimeout: 30 * time.Second,
 		Logger:         logger,
 		Clients:        gateway.PostgresClients{Pool: pool},
+		Operations:     gateway.PostgresCatalog{Pool: pool},
 		ChatClients:    gateway.ParseChatClients(envOr("KIFF_GATEWAY_CHAT_CLIENTS", gateway.DefaultChatClients)),
 		// OAuth discovery; "off" disables it.
 		Resource: envOr("KIFF_GATEWAY_RESOURCE", "https://mcp.kiff.dev/mcp"),
@@ -179,7 +181,15 @@ func run(args []string) error {
 			g.LinkServer(version, id).ServeHTTP(w, r)
 		})
 	}
-	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger}).Register(mux)
+	// The vendor relays beside this KIFF, never the account's control server
+	// (kiff/tafs#206): the API's own list (KIFF_PLANQUE_URLS).
+	var relays []string
+	for _, u := range strings.Split(os.Getenv("KIFF_PLANQUE_URLS"), ",") {
+		if u = strings.TrimSpace(u); u != "" {
+			relays = append(relays, u)
+		}
+	}
+	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger, RelayURLs: relays}).Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprintln(w, "ok") })
 
 	srv := &http.Server{Addr: *addr, Handler: requestlog.Wrap(logger, mux), ReadHeaderTimeout: 10 * time.Second,

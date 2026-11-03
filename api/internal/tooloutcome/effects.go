@@ -3,12 +3,21 @@ package tooloutcome
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/kiff/cloud/api/internal/mandate"
 )
+
+// VerifiedReader reads the gateway's verify reads, as EvidenceReader reads
+// its terminal outcomes.
+type VerifiedReader interface {
+	Verified(context.Context, string, string) (mandate.VerifiedEvidence, bool, error)
+}
 
 // EvidenceReader reads only evidence recorded by the gateway's trusted
 // adapter, after the exact invocation has entered its durable terminal state.
@@ -54,4 +63,44 @@ func (p *Postgres) NoEffect(ctx context.Context, tenant, proposal string) (manda
 		source += ":read_only_lookup"
 	}
 	return mandate.NoEffectEvidence{TenantID: tenant, ProposalID: proposal, Subject: agent, Action: action, Source: source, EvidenceID: proposal, Reason: e.Reason, At: at}, true, nil
+}
+
+// Verified is the gateway's verify read of a forwarded call, when it found
+// the vendor used more than KIFF decided (connection profiles: the verify read). It reads
+// only what the gateway recorded for that exact call.
+func (p *Postgres) Verified(ctx context.Context, tenant, proposal string) (mandate.VerifiedEvidence, bool, error) {
+	var exists bool
+	if err := p.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='gateway' AND table_name='invocations' AND column_name='verify_evidence')`).Scan(&exists); err != nil || !exists {
+		return mandate.VerifiedEvidence{}, false, err
+	}
+	var agent, action string
+	var raw []byte
+	err := p.pool.QueryRow(ctx, `SELECT agent_id,tool,verify_evidence FROM gateway.invocations
+		WHERE tenant_id=$1 AND key=$2 AND state='forwarded' AND tool_outcome='done' AND verify_evidence IS NOT NULL`, tenant, proposal).Scan(&agent, &action, &raw)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return mandate.VerifiedEvidence{}, false, nil
+	}
+	if err != nil {
+		return mandate.VerifiedEvidence{}, false, err
+	}
+	var e struct {
+		Check     string `json:"check"`
+		Result    string `json:"result"`
+		AmountArg string `json:"amount_argument"`
+		Decided   *int64 `json:"decided_amount"`
+		Vendor    *int64 `json:"vendor_amount"`
+		At        string `json:"at"`
+	}
+	if err := json.Unmarshal(raw, &e); err != nil {
+		return mandate.VerifiedEvidence{}, false, err
+	}
+	if e.Check != "amount" || e.Result != "mismatch" || e.Decided == nil || e.Vendor == nil || *e.Vendor <= *e.Decided || e.AmountArg == "" {
+		return mandate.VerifiedEvidence{}, false, nil
+	}
+	at, err := time.Parse(time.RFC3339, e.At)
+	if err != nil {
+		return mandate.VerifiedEvidence{}, false, fmt.Errorf("invalid persisted verify read: %w", err)
+	}
+	return mandate.VerifiedEvidence{TenantID: tenant, ProposalID: proposal, Subject: agent, Action: action, AmountArg: e.AmountArg,
+		Decided: *e.Decided, Vendor: *e.Vendor, At: at, Source: "gateway:verify_read"}, true, nil
 }

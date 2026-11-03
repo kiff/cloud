@@ -47,7 +47,8 @@ from the code in this repository.
 
 ## See it in a real product: tafs
 
-[tafs](https://github.com/kiff/tafs) is KIFF's own app, for iPhone and iPad.
+[tafs](https://github.com/kiff/tafs) is KIFF's own app, for iPhone, iPad and
+Android. It is in a closed test on Android and on TestFlight for iPhone and iPad.
 A business hands routine jobs to AI agents, called tafs, and each taf
 works under its own Card. Every action a taf takes goes through the gateway and
 the decision path in this repository:
@@ -70,7 +71,7 @@ agent you connect yourself.
 |---|---|---|
 | 1 | [System context](#system-context) | Who touches a call, and who holds which key |
 | 2 | [How a Card decides](#cards-the-key) | What a Card checks, and why one balance per Card is the key |
-| 3 | [Connected tools](#connected-tools-who-holds-the-key) | sealed, verify and relay: where the credential lives |
+| 3 | [Connected tools](#connected-tools-who-holds-the-key) | sealed, verify and relay: where the credential lives; what a connection profile adds |
 | 4 | [One allowed call](#one-call-end-to-end) | A call from the agent to the vendor and back |
 | 5 | [The hold](#the-hold) | A call past the Card, and the owner's approval |
 | 6 | [Lifecycle of a call](#lifecycle-of-a-call) | Why a call is never sent twice |
@@ -182,6 +183,38 @@ Stripe operation) are ones the agent can't set. The keys are published at
 `https://api.kiff.dev/.well-known/kiff-permit-keys.json`
 ([docs](https://kiff.dev/docs/tool-permits)).
 
+### Connection profiles: what KIFF knows about a tool
+
+A connection can carry a **profile**: what each of its operations does, in
+terms a Card can count. A profile applies only once the owner has approved it,
+signed on their own phone; a connector's key can propose one, never apply it.
+For each operation it can say:
+
+- **The amount, read from the record.** Some writes act on an amount the call
+  doesn't carry, such as answering a dispute. The gateway reads the amount
+  from the record, as the agent and through its own Card, before KIFF
+  decides. An amount the agent sends itself is refused, and so is a call whose
+  amount can't be read: nothing is sent.
+- **A verify read after the write.** When the vendor answers a write, the
+  gateway reads it back: the amount the vendor used, or a field that shows it
+  took effect. If the vendor used more than was decided, the Card counts the
+  larger figure. A difference, a failed read or a missing field flags the call
+  and pauses that operation until the owner resumes it. It finds a mismatch
+  after the fact; it can't undo the first one.
+- **Probation.** The first sent calls of a money operation that no test call
+  has proved are on probation.
+
+**"Did this happen?"** A money call whose outcome KIFF can't prove (sent and
+its answer lost, or refused by the vendor without proof that nothing was done,
+or on probation) stays counted on the Card until the owner answers whether it
+happened.
+
+**Whose run it is.** When a person runs an agent, the run carries a grant KIFF
+signed for them, and the gateway passes it with each call. KIFF checks it on
+every call: for this agent, unexpired, and the person may still use it. KIFF
+records the call, and any hold it opens, as that person's, so nobody answers a
+hold they asked for. A call without a grant is decided as before.
+
 Every outbound call leaves through one **egress guard**. Tool URLs are
 untrusted, so they're checked when a tool is connected and again on the
 resolved IP of every connection: no internal or metadata addresses, no
@@ -278,7 +311,9 @@ witness.
 gateway/                  the MCP gateway (its own Go module)
   cmd/gateway             the server
   cmd/testtool            an MCP tool for tests that counts the calls it gets
-  internal/gateway        tools/call: ask KIFF, hold or refuse, send once
+  internal/gateway        tools/call: ask KIFF, hold or refuse, send once;
+                          amounts read from the record, verify reads, run grants
+  internal/connection     connecting tools, in batches, and applying approved profiles
   internal/invocation     the call ledger: one send per approval, never re-sent
   internal/egress         which tool URLs may be reached (no internal addresses)
   internal/secret         sealed tool credentials, redacted from results and logs
@@ -286,7 +321,9 @@ gateway/                  the MCP gateway (its own Go module)
 api/                      the decision path (a second Go module)
   internal/mandate        Cards: limits per subject, holds and the decision
   internal/proposals      decided operations
-  internal/permit         execution permits: Ed25519 JWTs over the exact arguments
+  internal/permit         execution permits: Ed25519 JWTs over the exact arguments;
+                          run grants and read grants
+  internal/tooloutcome    how an allowed call ended at the tool; "Did this happen?"
   internal/halts          the owner's halt, and planque's confirmation of it
   internal/receipt        receipts, their attestation and its verification
   internal/anchor         anchoring receipt batches; Merkle proofs
@@ -371,6 +408,9 @@ here is in this repository. Tests whose doc comment carries an
 | **A permit covers one exact call.** An Ed25519 JWT over the SHA-256 of the call's canonical arguments; the arguments sent are those it was minted for.<br><sub>`api/internal/permit`, `gateway/internal/gateway`</sub> | <sub>`TestPermitBindsTheFixedArguments`<br>`TestArgsSHA256IgnoresOrderAndWhitespace`<br>`TestLifetimeIsCapped`</sub> |
 | **Limits hold.** A call past a Card's limit is refused or held, totals count every allowed call, and an expired Card doesn't fall through to no limit. Room comes back only on the tool's own trusted, final outcome that nothing was done; the operation stays spent and is never sent again.<br><sub>`api/internal/mandate`</sub> | <sub>`TestPerActionLimit`<br>`TestCumulativeLimitRefusesTheActionThatCrossesIt`<br>`TestExpiredMandateDoesNotFallThroughToUnbounded`<br>`TestMandateFailsClosedUnlikeTheUsageLimiter`<br>`TestReleasedEffectsRestoreRoomWithoutReturningAttempts`<br>`TestMixedEffectReleaseIdempotentAndOperationStaysSpent`</sub> |
 | **Approval is narrow.** Approving a held call covers that call once, on the resource it named. An unused approval is withdrawn, and a new breach after it waits for room.<br><sub>`api/internal/mandate`</sub> | <sub>`TestApproveOnce`<br>`TestResourceOutsideComesHomeAndApprovalBindsTheResource`<br>`TestUnusedApprovalIsWithdrawn`<br>`TestNewCumulativeBreachAfterApprovalWaitsForRoom`</sub> |
+| **An amount comes from the record, never from the agent.** A write is limited by the amount its resource has; an amount the agent sends is refused, and a call whose amount can't be read isn't sent.<br><sub>`gateway/internal/gateway`</sub> | <sub>`TestAWriteIsLimitedByTheAmountItsResourceHas`<br>`TestAnAmountTheAgentSendsIsRefused`<br>`TestACallWhoseAmountCantBeReadIsNotSent`</sub> |
+| **What the vendor did is read back.** A verify read that differs pauses the operation, a vendor's larger figure is counted on the Card once, and an untried money operation starts on probation.<br><sub>`gateway/internal/gateway`, `api/internal/mandate`</sub> | <sub>`TestAVerifyReadThatDiffersPausesTheOperation`<br>`TestEffectSurchargeCountsTheLargerFigureOnce`<br>`TestTheFirstThreeCallsOfAnUntriedOperationAreOnProbation`</sub> |
+| **A profile needs the owner.** A connection profile applies only with the owner's signed approval.<br><sub>`gateway/internal/connection`</sub> | <sub>`TestProfileAppliesOnlyWithTheOwnersApproval`</sub> |
 | **One send per approval.** An approved call is sent once, even under concurrent retries. A call whose outcome is lost is recorded as unknown and never re-sent.<br><sub>`gateway/internal/gateway`</sub> | <sub>`TestApprovedHoldForwardsOnceUnderConcurrentRetries`<br>`TestCrashWhileForwardingIsUnknownAndNotResent`</sub> |
 | **The halt reaches the vendor's side.** A halt is shown as done only once each planque has confirmed it, over a request signed for that halt.<br><sub>`api/internal/halts`</sub> | <sub>`TestPlanquesConfirmOnlyWhenEachSeesTheHalt`<br>`TestPlanquesAskIsSignedForThatHalt`</sub> |
 | **Receipts are verifiable.** A receipt's causal chain has one pinned encoding, its signature fails on any change, and a tampered receipt fails verification against its anchor.<br><sub>`api/internal/receipt`</sub> | <sub>`TestCausalChainCanonicalEncodingIsPinned`<br>`TestAnchorAttester_TamperedReceiptFailsOnchainVerify`</sub> |

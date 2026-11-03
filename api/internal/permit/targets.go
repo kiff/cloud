@@ -27,7 +27,23 @@ type Target struct {
 	// ResourceArg is the string argument a Card's resource scope reads:
 	// which order, customer or account the call is on.
 	ResourceArg string `json:"resource_argument,omitempty"`
+	// AmountLookedUp says the amount isn't one of the call's arguments: the
+	// gateway reads it from the resource the signed arguments name
+	// (amount_lookup). Only a relay tool has it, where
+	// only the gateway can use the permit.
+	AmountLookedUp bool `json:"amount_looked_up,omitempty"`
+	// AmountDecimal says the signed amount is a decimal string ("80.00"),
+	// which the Card counts in minor units at AmountScale (connection profiles).
+	AmountDecimal bool `json:"amount_decimal,omitempty"`
+	AmountScale   int  `json:"amount_scale,omitempty"`
+	// AmountPath and ResourcePath say where a relay tool's signed arguments
+	// carry the governed values when they're nested ("invoice.total");
+	// empty, at the top level under AmountArg and ResourceArg.
+	AmountPath   string `json:"amount_path,omitempty"`
+	ResourcePath string `json:"resource_path,omitempty"`
 }
+
+var argPath = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]{0,63}(\.[A-Za-z][A-Za-z0-9_]{0,63}){0,7}$`)
 
 var identifier = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]{0,63}$`)
 
@@ -42,6 +58,16 @@ func (t Target) Validate() error {
 		return ErrInvalidTarget
 	}
 	if t.ResourceArg != "" && (!identifier.MatchString(t.ResourceArg) || t.ResourceArg == t.AmountArg) {
+		return ErrInvalidTarget
+	}
+	if t.AmountLookedUp && (t.AmountArg == "" || t.ResourceArg == "") {
+		return ErrInvalidTarget
+	}
+	if t.AmountScale < 0 || t.AmountScale > 8 || (t.AmountDecimal && (t.AmountArg == "" || t.AmountLookedUp)) {
+		return ErrInvalidTarget
+	}
+	if (t.AmountPath != "" && (!argPath.MatchString(t.AmountPath) || t.AmountArg == "" || t.AmountLookedUp)) ||
+		(t.ResourcePath != "" && (!argPath.MatchString(t.ResourcePath) || t.ResourceArg == "")) {
 		return ErrInvalidTarget
 	}
 	if strings.TrimSpace(t.Tool) == "" || len(t.Tool) > 128 || strings.TrimSpace(t.Audience) == "" ||
@@ -72,8 +98,8 @@ func (s PostgresTargets) Replace(ctx context.Context, tenantID string, ts []Targ
 		return err
 	}
 	for _, t := range ts {
-		if _, err := tx.Exec(ctx, `INSERT INTO cloud_meta.permit_targets (tenant_id, domain, action, tool, audience, amount_arg, resource_arg, updated_at, updated_by)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, tenantID, t.Domain, t.Action, t.Tool, t.Audience, t.AmountArg, t.ResourceArg, at.UTC(), by); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO cloud_meta.permit_targets (tenant_id, domain, action, tool, audience, amount_arg, resource_arg, amount_looked_up, updated_at, updated_by, amount_decimal, amount_scale, amount_path, resource_path)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`, tenantID, t.Domain, t.Action, t.Tool, t.Audience, t.AmountArg, t.ResourceArg, t.AmountLookedUp, at.UTC(), by, t.AmountDecimal, t.AmountScale, t.AmountPath, t.ResourcePath); err != nil {
 			return err
 		}
 	}
@@ -82,8 +108,8 @@ func (s PostgresTargets) Replace(ctx context.Context, tenantID string, ts []Targ
 
 func (s PostgresTargets) Get(ctx context.Context, tenantID, domain, action string) (Target, bool, error) {
 	t := Target{Domain: domain, Action: action}
-	err := s.Pool.QueryRow(ctx, `SELECT tool, audience, amount_arg, resource_arg FROM cloud_meta.permit_targets WHERE tenant_id = $1 AND domain = $2 AND action = $3`,
-		tenantID, domain, action).Scan(&t.Tool, &t.Audience, &t.AmountArg, &t.ResourceArg)
+	err := s.Pool.QueryRow(ctx, `SELECT tool, audience, amount_arg, resource_arg, amount_looked_up, amount_decimal, amount_scale, amount_path, resource_path FROM cloud_meta.permit_targets WHERE tenant_id = $1 AND domain = $2 AND action = $3`,
+		tenantID, domain, action).Scan(&t.Tool, &t.Audience, &t.AmountArg, &t.ResourceArg, &t.AmountLookedUp, &t.AmountDecimal, &t.AmountScale, &t.AmountPath, &t.ResourcePath)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Target{}, false, nil
 	}
@@ -91,7 +117,7 @@ func (s PostgresTargets) Get(ctx context.Context, tenantID, domain, action strin
 }
 
 func (s PostgresTargets) List(ctx context.Context, tenantID string) ([]Target, error) {
-	rows, err := s.Pool.Query(ctx, `SELECT domain, action, tool, audience, amount_arg, resource_arg FROM cloud_meta.permit_targets WHERE tenant_id = $1 ORDER BY domain, action`, tenantID)
+	rows, err := s.Pool.Query(ctx, `SELECT domain, action, tool, audience, amount_arg, resource_arg, amount_looked_up, amount_decimal, amount_scale, amount_path, resource_path FROM cloud_meta.permit_targets WHERE tenant_id = $1 ORDER BY domain, action`, tenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +125,7 @@ func (s PostgresTargets) List(ctx context.Context, tenantID string) ([]Target, e
 	out := []Target{}
 	for rows.Next() {
 		var t Target
-		if err := rows.Scan(&t.Domain, &t.Action, &t.Tool, &t.Audience, &t.AmountArg, &t.ResourceArg); err != nil {
+		if err := rows.Scan(&t.Domain, &t.Action, &t.Tool, &t.Audience, &t.AmountArg, &t.ResourceArg, &t.AmountLookedUp, &t.AmountDecimal, &t.AmountScale, &t.AmountPath, &t.ResourcePath); err != nil {
 			return nil, err
 		}
 		out = append(out, t)

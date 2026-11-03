@@ -3,7 +3,9 @@ package gateway
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -27,15 +29,40 @@ const cardToolDescription = "Shows the KIFF Card this agent acts under: which to
 	"and how much of each total is used and left right now. Reading it changes nothing. " +
 	"The numbers are as of this read; every call is still checked when it is made."
 
-func cardToolListing() mcp.Tool {
+// setupCardDescription adds, for Setup's key, reading another agent's Card:
+// Coach changes the account's tafs, so it reads what each acts under first
+// (kiff/tafs#214).
+const setupCardDescription = " With agent, the KIFF agent id of one of the account's agents, it shows that agent's Cards instead: " +
+	"read them before changing what an agent may do."
+
+// cardToolListing lists kiff_card. For Setup's key (setup) it takes an
+// agent, whose Cards it then reads.
+func cardToolListing(setup bool) mcp.Tool {
 	title := "Show my KIFF Card"
-	return mcp.Tool{Name: CardTool, Title: title, Description: cardToolDescription,
-		InputSchema: json.RawMessage(`{"type":"object","properties":{}}`),
+	desc, schema := cardToolDescription, `{"type":"object","properties":{}}`
+	if setup {
+		desc += setupCardDescription
+		schema = `{"type":"object","properties":{"agent":{"type":"string","description":"Another agent's KIFF agent id; omit for your own Card."}}}`
+	}
+	return mcp.Tool{Name: CardTool, Title: title, Description: desc, InputSchema: json.RawMessage(schema),
 		Annotations: &mcp.ToolAnnotations{Title: title, ReadOnlyHint: true}}
 }
 
-// cardResult answers kiff_card.
-func (a *agent) cardResult(ctx context.Context) (json.RawMessage, error) {
+// cardResult answers kiff_card: the caller's own Card, or for Setup's key
+// the Card of the agent it names.
+func (a *agent) cardResult(ctx context.Context, raw json.RawMessage) (json.RawMessage, error) {
+	var args struct {
+		Agent string `json:"agent"`
+	}
+	if len(raw) > 0 && string(raw) != "null" && json.Unmarshal(raw, &args) != nil {
+		return nil, invalid("arguments must be a JSON object")
+	}
+	if other := strings.TrimSpace(args.Agent); other != "" && other != a.me.AgentID {
+		if !slices.Contains(a.me.Roles, SetupReaderRole) {
+			return nil, invalid("agent is only for Setup's key; " + CardTool + " shows your own Card")
+		}
+		return a.otherCardResult(ctx, other)
+	}
 	card, err := a.g.API.AgentCard(ctx, a.key, a.trial)
 	if err != nil {
 		return mcp.TextResult("KIFF could not read your Card just now. Calls are still checked when they are made; try again shortly.", true), nil
@@ -57,14 +84,62 @@ func (a *agent) cardResult(ctx context.Context) (json.RawMessage, error) {
 		}
 	}
 	b.WriteString("\nThese numbers are as of now; every call is still checked when it is made.")
-	res := mcp.TextResult(b.String(), false)
-	// The Card itself, for programs.
+	return withCard(mcp.TextResult(b.String(), false), card), nil
+}
+
+// otherCardResult is Setup's read of another agent's Cards: the tools they
+// cover, each with its limits and what is used and left now.
+func (a *agent) otherCardResult(ctx context.Context, other string) (json.RawMessage, error) {
+	card, err := a.g.API.OtherAgentCard(ctx, a.key, other)
+	if errors.Is(err, kiffapi.ErrNoSuchAgent) {
+		return mcp.TextResult("There is no agent "+other+" on this account. Check the agent id before saying what it may do.", true), nil
+	}
+	if err != nil {
+		return mcp.TextResult("KIFF could not read agent "+other+"'s Card just now; try again shortly.", true), nil
+	}
+	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
+	if err != nil {
+		return nil, err
+	}
+	var b strings.Builder
+	b.WriteString("Agent " + other + "'s Cards.")
+	n := 0
+	connected := map[string]bool{}
+	for _, t := range tools {
+		connected[strings.ToLower(t.Name)] = true
+		if ReservedToolName(t.Name) || !slices.ContainsFunc(card.Cards, func(c kiffapi.Card) bool { return covers(c, t.Name) }) {
+			continue
+		}
+		b.WriteString("\n- " + t.Name + ": " + cardLine(card, t, true))
+		n++
+	}
+	if n == 0 {
+		b.WriteString(" None of its Cards covers a connected tool, so its calls to them are refused.")
+	}
+	// What its Cards name that isn't connected now: granted, but nothing to call.
+	var gone []string
+	for _, c := range card.Cards {
+		for _, g := range c.Grants {
+			if name := strings.ToLower(g.Action); !connected[name] && !slices.Contains(gone, g.Action) {
+				gone = append(gone, g.Action)
+			}
+		}
+	}
+	if len(gone) > 0 {
+		b.WriteString("\nIts Cards also name " + strings.Join(gone, ", ") + ", which isn't connected now: there is nothing to call.")
+	}
+	b.WriteString("\nThese numbers are as of now; every call is still checked when it is made.")
+	return withCard(mcp.TextResult(b.String(), false), card), nil
+}
+
+// withCard adds the Card itself to a result, for programs.
+func withCard(res json.RawMessage, card kiffapi.AgentCard) json.RawMessage {
 	var m map[string]any
 	if json.Unmarshal(res, &m) == nil {
 		m["structuredContent"] = card
 		res, _ = json.Marshal(m)
 	}
-	return res, nil
+	return res
 }
 
 // withCardLine adds what the agent's Card allows to a tool's description:
@@ -158,7 +233,20 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 				}
 			}
 		}
-		s := "Card " + c.ID + " covers this tool"
+		s := "Card " + c.ID
+		if c.Environment != "" {
+			s += " (" + c.Environment + ")"
+		}
+		if c.Title != "" {
+			// The Card's name for people, quoted: it's text an owner or a
+			// draft wrote, read as a name only.
+			s = fmt.Sprintf("Card %q (%s", c.Title, c.ID)
+			if c.Environment != "" {
+				s += ", " + c.Environment
+			}
+			s += ")"
+		}
+		s += " covers this tool"
 		if len(limits) > 0 {
 			s += ": " + strings.Join(limits, "; ")
 		}

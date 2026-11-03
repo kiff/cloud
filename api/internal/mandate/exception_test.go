@@ -417,3 +417,68 @@ func TestExceptionReasonNamesEveryCard(t *testing.T) {
 		t.Fatalf("reason = %q", d.Reason)
 	}
 }
+
+// askCard is a Card whose owner asks to be asked about every call: a count
+// total of limit (0 means each call asks first), held for the owner.
+func askCard(limit int64) mandate.Mandate {
+	m := homeCard("card-ask", 1000000, 5000000)
+	m.Aggregates = append(m.Aggregates, mandate.Aggregate{Quantity: mandate.Quantity{Kind: mandate.KindCount}, Limit: limit, Window: mandate.WindowCalendarDay})
+	return m
+}
+
+// Invariant: an approve-once waives a Card's total only when it is a count of
+// 0 the owner reviewed on that hold ("Each call asks you first"), and only
+// for that call: the call counts as used, and the next one asks again. A
+// non-zero total, or any money total, is never waived by approving once.
+// Category: accounting
+// Attack: approve one call on a Card that asks about each call, then send more calls hoping the approval carries them; or approve once past a 1-a-day count or a money total
+// Refused: the next call is held again; a non-zero count or a money total gets can_approve_once false, and an approve-once of it waits as approved_no_room
+func TestApproveOnceWaivesOnlyACountOfZero(t *testing.T) {
+	r := newRig(t, askCard(0))
+	d := r.decide("p1", 1000)
+	if d.Outcome != mandate.OutcomeOwnerRequired {
+		t.Fatalf("a count of 0 asks first: %+v", d)
+	}
+	e, _ := r.store.Exception(context.Background(), tenantID, d.ExceptionID)
+	if !e.CanApproveOnce() {
+		t.Fatalf("a count of 0 can be approved once: %+v", e.Breaches)
+	}
+	if _, err := r.store.ApproveOnce(context.Background(), tenantID, d.ExceptionID, "owner@x", r.clock); err != nil {
+		t.Fatal(err)
+	}
+	if got := r.decide("p1", 1000); got.Outcome != mandate.OutcomeWithinLimit {
+		t.Fatalf("the approved call: %+v", got)
+	}
+	if r.used("card-ask") != 1000 {
+		t.Fatalf("the approved call counts as used: %d", r.used("card-ask"))
+	}
+	// The next call asks again: the approval carried one call.
+	if next := r.decide("p2", 1000); next.Outcome != mandate.OutcomeOwnerRequired {
+		t.Fatalf("the next call: %+v", next)
+	}
+
+	// A count of 1, already used: approving once can't pass it.
+	one := newRig(t, askCard(1))
+	if first := one.decide("q1", 1000); first.Outcome != mandate.OutcomeWithinLimit {
+		t.Fatalf("the first of 1 a day: %+v", first)
+	}
+	held := one.decide("q2", 1000)
+	he, _ := one.store.Exception(context.Background(), tenantID, held.ExceptionID)
+	if held.Outcome != mandate.OutcomeOwnerRequired || he.CanApproveOnce() {
+		t.Fatalf("a non-zero count: %+v, can approve once %v", held, he.CanApproveOnce())
+	}
+	if _, err := one.store.ApproveOnce(context.Background(), tenantID, held.ExceptionID, "owner@x", one.clock); err == nil {
+		if got := one.decide("q2", 1000); got.Allowed() {
+			t.Fatalf("an approve-once carried a call past a count of 1: %+v", got)
+		}
+	}
+
+	// A money total of 0 is not a count: never waived.
+	money := homeCard("card-m", 1000000, 0)
+	m := newRig(t, money)
+	md := m.decide("r1", 1000)
+	me, _ := m.store.Exception(context.Background(), tenantID, md.ExceptionID)
+	if me.CanApproveOnce() {
+		t.Fatalf("a money total of 0 can be approved once: %+v", me.Breaches)
+	}
+}

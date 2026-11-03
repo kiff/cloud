@@ -160,6 +160,12 @@ func (a *Authorizer) Authorize(ctx context.Context, tenantID, proposalID string,
 	return a.decide(ctx, a.store, ms, tenantID, proposalID, req, now)
 }
 
+// Cards lists the account's Cards, as the decide path reads them to say
+// a hold's limits in their units.
+func (a *Authorizer) Cards(ctx context.Context, tenantID string) ([]Mandate, error) {
+	return a.store.List(ctx, tenantID)
+}
+
 // Decided reports whether a proposal id has already been decided on a
 // Card: it drew, or it has an exception (held, approved, consumed,
 // rejected or expired). The permit gate refuses to bind such an id for
@@ -410,7 +416,7 @@ func (a *Authorizer) decide(ctx context.Context, tx CardTx, ms []Mandate, tenant
 		// locks), and nothing outside the approved set is breached.
 		if reason := grantStillStands(ex, byID, now); reason != "" {
 			ex.Status, ex.Reason = ExceptionInvalidated, reason
-		} else if reviewedThresholds(breaches, ex.Breaches) && cumulativeBreaches(breaches) {
+		} else if reviewedThresholds(breaches, ex.Breaches) && unwaivedCumulative(breaches, ex.Breaches) {
 			// Approval reserved no room. Keep the reviewed answer unconsumed;
 			// the locked redemption must wait for a deliberate revision or
 			// normal window aging, never waive the total or send anything.

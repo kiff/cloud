@@ -347,3 +347,25 @@ func TestRemovedInviteeIsNotProvisionedAFreshAccount(t *testing.T) {
 		t.Fatalf("provisioned %v; a removed invitee must not get a fresh account", homes.provisioned)
 	}
 }
+
+// A phone's session (the device sign-in) carries its person's role on the
+// account it signed in to, as a web session does: a viewer's session is a
+// viewer's, so what KIFF scopes to a person's own use applies to the app
+// too: each person sees their own use. An empty role would read as an account from
+// before roles, which reads everything.
+func TestADeviceSessionCarriesItsPersonsRole(t *testing.T) {
+	f := newMemberFixture(t)
+	f.invite("tenant-a", "alice", "bob", membership.RoleViewer)
+	sessions := NewMemoryDeveloperSessionStore()
+	now := time.Now()
+	gen, _ := NewDevSessionToken()
+	if err := sessions.Insert(context.Background(), DeveloperSession{ID: "sess-bob", Subject: "bob", Tenant: "tenant-a",
+		TokenHash: gen.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour)}); err != nil {
+		t.Fatal(err)
+	}
+	f.mw = NewMiddleware(NewStubProvider(f.resolver), f.keys, f.resolver, WithMemberships(f.svc), WithDeveloperSessions(sessions))
+	code, id, body := f.do(gen.Plaintext, "")
+	if code != http.StatusOK || id.Method != MethodDeveloper || id.Tenant != "tenant-a" || id.MemberRole != membership.RoleViewer {
+		t.Fatalf("bob's phone session: %d %+v %v; want a viewer on tenant-a", code, id, body)
+	}
+}

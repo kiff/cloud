@@ -8,7 +8,7 @@ require (
 	github.com/clerk/clerk-sdk-go/v2 v2.6.0
 	github.com/ethereum/go-ethereum v1.17.3
 	github.com/jackc/pgx/v5 v5.9.2
-	github.com/kiff/kiff v0.8.1-0.20260902234849-b4301cc696a4
+	github.com/kiff/kiff v0.9.2-0.20261029090300-7aa9356edb70
 	github.com/kiff/kiff-studio v0.2.0
 	github.com/oklog/ulid/v2 v2.1.1
 	golang.org/x/crypto v0.47.0

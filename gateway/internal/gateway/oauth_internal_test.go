@@ -79,6 +79,9 @@ func (meAPI) Holds(context.Context, string, []string) ([]kiffapi.Hold, error) { 
 func (meAPI) AgentCard(context.Context, string, string) (kiffapi.AgentCard, error) {
 	return kiffapi.AgentCard{}, nil
 }
+func (meAPI) OtherAgentCard(context.Context, string, string) (kiffapi.AgentCard, error) {
+	return kiffapi.AgentCard{}, nil
+}
 func (meAPI) RequestToolCall(context.Context, string, string, string, string, time.Time) error {
 	return nil
 }

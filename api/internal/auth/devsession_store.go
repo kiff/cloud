@@ -40,6 +40,11 @@ type DeveloperSession struct {
 	// whose key it is. "" for a session without a device key, and
 	// for one from before approval devices until LinkLegacyDevices gives it one.
 	DeviceID string
+	// ApprovalPublicKey is the phone's approval key (P-256, SPKI DER;
+	// kiff/tafs#233), whose own access control requires Face ID or the
+	// passcode. Once set, what grants authority through the session
+	// counts only with its signature. Set once; nil until then.
+	ApprovalPublicKey []byte
 }
 
 // IsRevoked reports whether the session has been revoked.
@@ -59,6 +64,9 @@ var (
 	ErrDevSessionDuplicate = errors.New("auth: developer session already exists")
 	ErrDevSessionRevoked   = errors.New("auth: developer session has been revoked")
 	ErrDevSessionExpired   = errors.New("auth: developer session has expired")
+	// ErrApprovalKeySet is a second approval key for a session that has
+	// one: replacing it means signing in again (kiff/tafs#233).
+	ErrApprovalKeySet = errors.New("auth: this session already has an approval key")
 )
 
 // DeveloperSessionStore is the persistence boundary for developer
@@ -101,6 +109,19 @@ type DeveloperSessionStore interface {
 	// RevokeAllForTenant revokes every active session for a tenant
 	// (tenant soft-delete). Idempotent.
 	RevokeAllForTenant(ctx context.Context, tenant string, at time.Time) error
+
+	// SetApprovalKey gives a session its approval key, once
+	// (kiff/tafs#233). A session that has one is ErrApprovalKeySet,
+	// with the session as stored; an unknown, revoked or expired one is
+	// ErrDevSessionNotFound.
+	SetApprovalKey(ctx context.Context, id string, key []byte, now time.Time) (DeveloperSession, error)
+
+	// ReplaceApprovalKey swaps a session's approval key for a new one, as
+	// a re-link the person approved in their browser does (kiff/tafs#233,
+	// case 2): the old key signs nothing from then on. It returns the old
+	// key (empty when there was none); an unknown, revoked or expired
+	// session is ErrDevSessionNotFound.
+	ReplaceApprovalKey(ctx context.Context, id string, key []byte, now time.Time) ([]byte, error)
 }
 
 // MemoryDeveloperSessionStore is the in-memory implementation for
@@ -137,6 +158,10 @@ func (s *MemoryDeveloperSessionStore) Insert(_ context.Context, sess DeveloperSe
 	sess.DevicePublicKey = append([]byte(nil), sess.DevicePublicKey...)
 	if len(sess.DevicePublicKey) == 0 {
 		sess.DevicePublicKey = nil
+	}
+	sess.ApprovalPublicKey = append([]byte(nil), sess.ApprovalPublicKey...)
+	if len(sess.ApprovalPublicKey) == 0 {
+		sess.ApprovalPublicKey = nil
 	}
 	s.byID[sess.ID] = sess
 	s.byHash[sess.TokenHash] = sess.ID
@@ -246,4 +271,32 @@ func (s *MemoryDeveloperSessionStore) RevokeAllForTenant(_ context.Context, tena
 		}
 	}
 	return nil
+}
+
+func (s *MemoryDeveloperSessionStore) ReplaceApprovalKey(_ context.Context, id string, key []byte, now time.Time) ([]byte, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sess, ok := s.byID[id]
+	if !ok || sess.IsRevoked() || sess.IsExpired(now) {
+		return nil, ErrDevSessionNotFound
+	}
+	old := sess.ApprovalPublicKey
+	sess.ApprovalPublicKey = append([]byte(nil), key...)
+	s.byID[id] = sess
+	return old, nil
+}
+
+func (s *MemoryDeveloperSessionStore) SetApprovalKey(_ context.Context, id string, key []byte, now time.Time) (DeveloperSession, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sess, ok := s.byID[id]
+	if !ok || sess.IsRevoked() || sess.IsExpired(now) {
+		return DeveloperSession{}, ErrDevSessionNotFound
+	}
+	if len(sess.ApprovalPublicKey) > 0 {
+		return sess, ErrApprovalKeySet
+	}
+	sess.ApprovalPublicKey = append([]byte(nil), key...)
+	s.byID[id] = sess
+	return sess, nil
 }

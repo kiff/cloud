@@ -36,6 +36,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 // QuantityKind is what a mandate counts. Two forms only: a third would
@@ -269,6 +271,32 @@ type Mandate struct {
 	// before it is refused. Zero is DefaultHoldExpiry;
 	// HoldExpiryKeep asks Issue to keep the Card's current value.
 	HoldExpiry time.Duration
+	// Title is the Card's name for people, such as "Refunds on Stripe".
+	// Like ArchivedAt it is presentation only: no decision reads it, and
+	// changing it is not a revision. Empty on a reissue keeps the
+	// current one; SetTitle changes or clears it.
+	Title string
+}
+
+// MaxTitle is the longest Card title, in characters.
+const MaxTitle = 60
+
+// CleanTitle trims a Card title and checks it is plain text of at most
+// MaxTitle characters. Empty is allowed: a Card without a title.
+func CleanTitle(s string) (string, error) {
+	t := strings.TrimSpace(s)
+	if !utf8.ValidString(t) {
+		return "", fmt.Errorf("%w: title must be text", ErrInvalidMandate)
+	}
+	for _, r := range t {
+		if unicode.IsControl(r) {
+			return "", fmt.Errorf("%w: title must be one line of plain text", ErrInvalidMandate)
+		}
+	}
+	if n := utf8.RuneCountInString(t); n > MaxTitle {
+		return "", fmt.Errorf("%w: title is %d characters; at most %d", ErrInvalidMandate, n, MaxTitle)
+	}
+	return t, nil
 }
 
 // Hold expiry bounds: a held action never runs on silence.

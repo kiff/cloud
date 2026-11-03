@@ -84,6 +84,45 @@ func (s *MemoryStore) limitBalanceLocked(tenant string, m Mandate, a Aggregate, 
 		if err := addBalance(&b, d, release, m, a, now, since); err != nil {
 			return LimitBalance{}, err
 		}
+		if sc, ok := s.surcharges[key(tenant, m.ID, d.ProposalID, d.QuantityKey)]; ok && !sc.At.After(now) {
+			b.Gross += sc.Amount
+			b.Net = b.Gross - b.Released
+		}
 	}
 	return b, nil
+}
+
+func (s *MemoryStore) SurchargeEffects(_ context.Context, e VerifiedEvidence) ([]EffectSurcharge, error) {
+	if err := e.validate(); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.failRecord != nil {
+		return nil, s.failRecord
+	}
+	var out []EffectSurcharge
+	for _, d := range s.draws {
+		if d.TenantID != e.TenantID || d.ProposalID != e.ProposalID {
+			continue
+		}
+		sc, ok, err := eligibleSurcharge(d, e)
+		if err != nil {
+			return nil, err
+		}
+		if !ok {
+			continue
+		}
+		if old, exists := s.surcharges[key(d.TenantID, d.MandateID, d.ProposalID, d.QuantityKey)]; exists {
+			sc = old
+		}
+		out = append(out, sc)
+	}
+	if s.surcharges == nil {
+		s.surcharges = map[string]EffectSurcharge{}
+	}
+	for _, sc := range out {
+		s.surcharges[key(sc.TenantID, sc.MandateID, sc.ProposalID, sc.QuantityKey)] = sc
+	}
+	return out, nil
 }

@@ -65,3 +65,12 @@ ALTER TABLE cloud_meta.developer_sessions
 -- LinkLegacyDevices gives it one.
 ALTER TABLE cloud_meta.developer_sessions
     ADD COLUMN IF NOT EXISTS device_id TEXT NULL;
+
+-- The phone's approval key (P-256, SPKI DER; kiff/tafs#233): the key whose
+-- own access control requires Face ID or the passcode. Once set, what
+-- grants authority through the session (approving a held call, raising
+-- a Card, confirming a draft, resuming) counts only with its signature.
+-- Set once per session, at sign-in or by the session's first
+-- registration; replacing it means signing in again. NULL until then.
+ALTER TABLE cloud_meta.developer_sessions
+    ADD COLUMN IF NOT EXISTS approval_public_key BYTEA NULL;

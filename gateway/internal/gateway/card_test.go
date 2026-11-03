@@ -3,6 +3,7 @@ package gateway_test
 import (
 	"context"
 	"net/http"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -118,6 +119,103 @@ func TestCardToolReadsWithoutDeciding(t *testing.T) {
 	_, out = r.rpc(t, "agent-key", "tools/call", map[string]any{"name": gateway.CardTool})
 	if res := out["result"].(map[string]any); res["isError"] != true {
 		t.Errorf("unreadable Card: %v", res)
+	}
+}
+
+// Setup's key reads the Cards another agent acts under with kiff_card's
+// agent, so Coach can change a taf from what it holds (kiff/tafs#214). It is
+// read as kiff_card is: nothing recorded, decided, drawn or sent.
+func TestSetupReadsAnotherAgentsCardWithKiffCard(t *testing.T) {
+	r := newRig(t)
+	// Two Cards over one tool, in two environments, and a grant whose tool
+	// isn't connected; and an agent with no Card at all.
+	live, test := refundCard.Cards[0], refundCard.Cards[0]
+	live.ID, live.Environment = "mdt-live", "production"
+	test.ID, test.Environment = "mdt-test", "test"
+	test.Grants = append(append([]kiffapi.CardGrant{}, test.Grants...), kiffapi.CardGrant{Action: "old_export"})
+	r.api.others = map[string]kiffapi.AgentCard{
+		"coding-agent": {AgentID: "coding-agent", Cards: []kiffapi.Card{live, test}},
+		"nobody":       {AgentID: "nobody"},
+	}
+	schemaOf := func(key string) map[string]any {
+		t.Helper()
+		_, out := r.rpc(t, key, "tools/list", nil)
+		for _, tl := range out["result"].(map[string]any)["tools"].([]any) {
+			if m := tl.(map[string]any); m["name"] == gateway.CardTool {
+				return m["inputSchema"].(map[string]any)["properties"].(map[string]any)
+			}
+		}
+		t.Fatalf("%s: no %s listed", key, gateway.CardTool)
+		return nil
+	}
+	if _, ok := schemaOf("setup-key")["agent"]; !ok {
+		t.Error("Setup's kiff_card takes no agent")
+	}
+	if _, ok := schemaOf("agent-key")["agent"]; ok {
+		t.Error("a taf's kiff_card takes an agent")
+	}
+
+	status, out := r.rpc(t, "setup-key", "tools/call", map[string]any{"name": gateway.CardTool, "arguments": map[string]any{"agent": "coding-agent"}})
+	if status != http.StatusOK || out["result"] == nil {
+		t.Fatalf("tools/call: %d %v", status, out)
+	}
+	res := out["result"].(map[string]any)
+	text := res["content"].([]any)[0].(map[string]any)["text"].(string)
+	if res["isError"] == true || !strings.HasPrefix(text, "Agent coding-agent's Cards.") ||
+		!strings.Contains(text, "Card mdt-live (production) covers this tool: up to 1000 amount_eur per call") ||
+		!strings.Contains(text, "Card mdt-test (test) covers this tool") ||
+		!strings.Contains(text, "Its Cards also name old_export, which isn't connected now") {
+		t.Fatalf("result: %v", res)
+	}
+	if cards, _ := res["structuredContent"].(map[string]any)["cards"].([]any); len(cards) != 2 || cards[0].(map[string]any)["environment"] != "production" {
+		t.Errorf("structuredContent cards: %v", res["structuredContent"])
+	}
+	if sc, _ := res["structuredContent"].(map[string]any); sc["agent_id"] != "coding-agent" {
+		t.Errorf("structuredContent: %v", res["structuredContent"])
+	}
+	if !slices.Equal(r.api.asked, []string{"coding-agent"}) {
+		t.Errorf("asked for %v", r.api.asked)
+	}
+	var n int
+	if err := r.pool.QueryRow(context.Background(), `SELECT count(*) FROM gateway.invocations`).Scan(&n); err != nil || n != 0 {
+		t.Errorf("invocations: %d %v", n, err)
+	}
+	if len(r.api.ingested) != 0 || len(r.api.drawn) != 0 || len(r.tool.calls) != 0 {
+		t.Errorf("ingested %v, drawn %v, forwarded %v", r.api.ingested, r.api.drawn, r.tool.calls)
+	}
+
+	// An agent with no Card over a connected tool.
+	_, out = r.rpc(t, "setup-key", "tools/call", map[string]any{"name": gateway.CardTool, "arguments": map[string]any{"agent": "nobody"}})
+	if text := out["result"].(map[string]any)["content"].([]any)[0].(map[string]any)["text"].(string); !strings.Contains(text, "None of its Cards covers a connected tool") {
+		t.Errorf("no Card: %s", text)
+	}
+	// An id that isn't an agent on the account: said so, not "no Card".
+	_, out = r.rpc(t, "setup-key", "tools/call", map[string]any{"name": gateway.CardTool, "arguments": map[string]any{"agent": "ghost"}})
+	if res := out["result"].(map[string]any); res["isError"] != true ||
+		!strings.Contains(res["content"].([]any)[0].(map[string]any)["text"].(string), "There is no agent ghost on this account") {
+		t.Errorf("an unknown agent: %v", res)
+	}
+}
+
+// Invariant: only Setup's key reads another agent's Card through kiff_card;
+// a taf's key that names another agent is refused, and reads nothing.
+// Category: authority
+// Attack: call kiff_card with agent set to another agent, from a taf's gateway key
+// Refused: cardResult requires the setup_reader role before naming an agent
+func TestOnlySetupNamesAnAgentInKiffCard(t *testing.T) {
+	r := newRig(t)
+	r.api.others = map[string]kiffapi.AgentCard{"rae": refundCard}
+	_, out := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": gateway.CardTool, "arguments": map[string]any{"agent": "rae"}})
+	if e, _ := out["error"].(map[string]any); e == nil || e["code"] != float64(-32602) {
+		t.Fatalf("a taf naming another agent: %v", out)
+	}
+	if len(r.api.asked) != 0 {
+		t.Errorf("read another agent's Card for a taf's key: %v", r.api.asked)
+	}
+	// Naming itself is its own Card.
+	_, out = r.rpc(t, "agent-key", "tools/call", map[string]any{"name": gateway.CardTool, "arguments": map[string]any{"agent": "coding-agent"}})
+	if res, _ := out["result"].(map[string]any); res == nil || res["isError"] == true {
+		t.Errorf("naming itself: %v", out)
 	}
 }
 

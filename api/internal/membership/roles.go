@@ -19,7 +19,8 @@ const (
 	RoleEditor Role = "editor"
 	// RoleApprover answers holds. It cannot change what a Card allows.
 	RoleApprover Role = "approver"
-	// RoleViewer sees everything and changes nothing.
+	// RoleViewer uses what is shared with them and changes nothing. What
+	// each person reads of the account is scoped to their own use.
 	RoleViewer Role = "viewer"
 )
 

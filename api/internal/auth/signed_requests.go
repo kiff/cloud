@@ -19,6 +19,9 @@ type SignedRequests interface {
 	// its record hasn't passed. An error means nothing could be decided;
 	// the caller refuses the request.
 	Use(ctx context.Context, replayID []byte, now, validUntil time.Time) (bool, error)
+	// Seen reports whether a record with this ID is kept and hasn't passed:
+	// what a device grant was issued as (IssueDeviceGrant).
+	Seen(ctx context.Context, replayID []byte, now time.Time) (bool, error)
 }
 
 // MemorySignedRequests is SignedRequests for one process, without a
@@ -47,6 +50,13 @@ func (m *MemorySignedRequests) Use(_ context.Context, replayID []byte, now, vali
 	}
 	m.seen[key] = validUntil
 	return true, nil
+}
+
+func (m *MemorySignedRequests) Seen(_ context.Context, replayID []byte, now time.Time) (bool, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	until, ok := m.seen[string(replayID)]
+	return ok && !now.After(until), nil
 }
 
 //go:embed sql/signed_requests.sql
@@ -85,6 +95,15 @@ WHERE cloud_meta.signed_requests.valid_until < $3
 const sqlPruneSignedRequests = `
 DELETE FROM cloud_meta.signed_requests WHERE valid_until < $1
 `
+
+func (p *PostgresSignedRequests) Seen(ctx context.Context, replayID []byte, now time.Time) (bool, error) {
+	var ok bool
+	err := p.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM cloud_meta.signed_requests WHERE replay_id = $1 AND valid_until >= $2)`, replayID, now).Scan(&ok)
+	if err != nil {
+		return false, fmt.Errorf("read signed request: %w", err)
+	}
+	return ok, nil
+}
 
 func (p *PostgresSignedRequests) Use(ctx context.Context, replayID []byte, now, validUntil time.Time) (bool, error) {
 	tag, err := p.pool.Exec(ctx, sqlUseSignedRequest, replayID, validUntil, now)

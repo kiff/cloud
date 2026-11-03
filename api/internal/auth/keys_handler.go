@@ -588,7 +588,9 @@ func validAgentID(agentID string) bool {
 		return false
 	}
 	for _, r := range agentID {
-		if unicode.IsControl(r) {
+		// "~" is KIFF's own (an agent's trial holder, "<agent>~trial"):
+		// a key bound to one would act as another agent's trial.
+		if unicode.IsControl(r) || r == '~' {
 			return false
 		}
 	}

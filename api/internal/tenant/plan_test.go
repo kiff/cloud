@@ -95,22 +95,50 @@ func TestPlanFor_DomainsUncapped(t *testing.T) {
 	}
 }
 
-// The ceiling: the owner's on a billed plan, never below what's included;
-// the included tasks otherwise; none on company and internal.
-func TestTaskCeiling(t *testing.T) {
+// The tasks a period has: what the plan includes (per seat on Team) and
+// the pack tasks; no limit on company and internal. An old owner-set
+// ceiling counts for nothing.
+func TestPeriodTasks(t *testing.T) {
+	t.Parallel()
+	for name, c := range map[string]struct {
+		meta  map[string]any
+		packs int
+		want  int
+	}{
+		"solo, no packs":          {map[string]any{tenant.MetadataKeyPlan: "solo"}, 0, 20},
+		"solo, with packs":        {map[string]any{tenant.MetadataKeyPlan: "solo"}, 70, 90},
+		"solo, an old ceiling":    {map[string]any{tenant.MetadataKeyPlan: "solo", "task_ceiling": float64(60)}, 0, 20},
+		"team of 3, with packs":   {map[string]any{tenant.MetadataKeyPlan: "team", tenant.MetadataKeySeats: float64(3)}, 12, 72},
+		"trial, with packs":       {map[string]any{tenant.MetadataKeyPlan: "trial"}, 30, 55},
+		"internal":                {map[string]any{tenant.MetadataKeyPlan: "internal"}, 30, 0},
+		"company":                 {map[string]any{tenant.MetadataKeyPlan: "company"}, 0, 0},
+		"negative packs are none": {map[string]any{tenant.MetadataKeyPlan: "solo"}, -5, 20},
+	} {
+		if got := tenant.PeriodTasks(withMeta(c.meta), c.packs); got != c.want {
+			t.Errorf("%s: %d, want %d", name, got, c.want)
+		}
+	}
+}
+
+// One billing source per account; Company is on its contract.
+func TestBillingSourceOf(t *testing.T) {
 	t.Parallel()
 	for name, c := range map[string]struct {
 		meta map[string]any
-		want int
+		want tenant.BillingSource
 	}{
-		"solo, none set":       {map[string]any{tenant.MetadataKeyPlan: "solo"}, 20},
-		"solo, raised":         {map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyTaskCeiling: float64(60)}, 60},
-		"solo, below included": {map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyTaskCeiling: float64(5)}, 20},
-		"trial, set anyway":    {map[string]any{tenant.MetadataKeyPlan: "trial", tenant.MetadataKeyTaskCeiling: float64(60)}, 25},
-		"internal":             {map[string]any{tenant.MetadataKeyPlan: "internal"}, 0},
+		"none":                                  {map[string]any{tenant.MetadataKeyPlan: "trial"}, tenant.BillingNone},
+		"stripe":                                {map[string]any{tenant.MetadataKeyPlan: "team", tenant.MetadataKeyBillingSource: "stripe"}, tenant.BillingStripe},
+		"apple":                                 {map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyBillingSource: "Apple"}, tenant.BillingApple},
+		"company":                               {map[string]any{tenant.MetadataKeyPlan: "company"}, tenant.BillingContract},
+		"internal":                              {map[string]any{tenant.MetadataKeyPlan: "internal", tenant.MetadataKeyBillingSource: "stripe"}, tenant.BillingNone},
+		"unknown is none":                       {map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyBillingSource: "paypal"}, tenant.BillingNone},
+		"stripe, before the source was stamped": {map[string]any{tenant.MetadataKeyPlan: "solo", "stripe_subscription_id": "sub_1", "billing_status": "active"}, tenant.BillingStripe},
+		"stripe, ended before it was stamped":   {map[string]any{tenant.MetadataKeyPlan: "trial", "stripe_subscription_id": "sub_1", "billing_status": "canceled"}, tenant.BillingNone},
+		"not a string":                          {map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyBillingSource: 3}, tenant.BillingNone},
 	} {
-		if got := tenant.TaskCeiling(withMeta(c.meta)); got != c.want {
-			t.Errorf("%s: %d, want %d", name, got, c.want)
+		if got := tenant.BillingSourceOf(withMeta(c.meta)); got != c.want {
+			t.Errorf("%s: %q, want %q", name, got, c.want)
 		}
 	}
 }
@@ -180,5 +208,32 @@ func TestPlanResolver(t *testing.T) {
 	var none *tenant.PlanResolver
 	if limit, _, err := none.PlanProposalLimit(context.Background(), "any"); err != nil || limit != 0 {
 		t.Errorf("nil resolver: %d %v", limit, err)
+	}
+}
+
+// A trial account runs only between its start and its end; every other
+// plan runs.
+func TestTrialStatusAndRuns(t *testing.T) {
+	now := time.Date(2026, 10, 22, 12, 0, 0, 0, time.UTC)
+	for name, c := range map[string]struct {
+		meta   map[string]any
+		status tenant.TrialStatus
+		runs   bool
+	}{
+		"not started": {map[string]any{tenant.MetadataKeyPlan: "trial"}, tenant.TrialNotStarted, false},
+		"running":     {map[string]any{tenant.MetadataKeyPlan: "trial", tenant.MetadataKeyTrialEndsAt: "2026-10-25T00:00:00Z"}, tenant.TrialRunning, true},
+		"ended":       {map[string]any{tenant.MetadataKeyPlan: "trial", tenant.MetadataKeyTrialEndsAt: "2026-10-22T12:00:00Z"}, tenant.TrialEnded, false},
+		"solo":        {map[string]any{tenant.MetadataKeyPlan: "solo"}, tenant.TrialNotStarted, true},
+		"internal":    {map[string]any{tenant.MetadataKeyPlan: "internal"}, tenant.TrialNotStarted, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tt := withMeta(c.meta)
+			if got := tenant.TrialStatusAt(tt, now); got != c.status {
+				t.Fatalf("status %v, want %v", got, c.status)
+			}
+			if got := tenant.Runs(tt, now); got != c.runs {
+				t.Fatalf("runs %v, want %v", got, c.runs)
+			}
+		})
 	}
 }

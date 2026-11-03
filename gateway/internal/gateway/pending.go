@@ -99,6 +99,8 @@ type PendingCall struct {
 	ExceptionID   string     `json:"exception_id,omitempty"`
 	ReviewURL     string     `json:"review_url,omitempty"`
 	HoldExpiresAt *time.Time `json:"hold_expires_at,omitempty"`
+	// Why is, for a held call, which limits it went over.
+	Why string `json:"why,omitempty"`
 	// NextStep and Note are, for a refused call, what the owner asked the
 	// agent to do instead, e.g. return_first. The note is the
 	// owner's own words.
@@ -224,7 +226,7 @@ func pendingCall(in invocation.Invocation, t Tool, answers map[string]kiffapi.Ho
 	again := fmt.Sprintf("Call %s again with these arguments and %s %s", in.Tool, OperationArg, op)
 	switch in.State {
 	case invocation.StateHeld:
-		c.State, c.ExceptionID, c.ReviewURL, c.HoldExpiresAt = "held", in.ExceptionID, in.ReviewURL, utc(in.HoldExpiresAt)
+		c.State, c.ExceptionID, c.ReviewURL, c.HoldExpiresAt, c.Why = "held", in.ExceptionID, in.ReviewURL, utc(in.HoldExpiresAt), heldWhy(in)
 		h, known := answers[in.ExceptionID]
 		switch {
 		case !answered || (known && h.Status == "unavailable"):

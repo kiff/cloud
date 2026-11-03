@@ -167,3 +167,73 @@ UPDATE gateway.tools
 -- currency): {"tool", "argument", "path"}. A call in another unit than
 -- amount_unit is refused before KIFF decides it. NULL: no check.
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS unit_lookup jsonb;
+
+-- A tool whose calls don't carry their amount (answering a dispute) reads it
+-- from the call's resource with one of the agent's own reads on the same
+-- connection (amount lookups): {"tool", "argument", "path"}. KIFF puts what
+-- the read says under amount_arg before deciding; a call that carries the
+-- amount itself, or whose amount can't be read, is refused. NULL: none.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS amount_lookup jsonb;
+
+-- The account's own control server (kiff/tafs#206): a tool in verify mode
+-- that a person connected, never a connector key, and whose tools the
+-- contract also grants to setup_reader, so Setup (as Coach) can use them on
+-- its own Cards. A vendor's tools never carry it: on them, setup_reader
+-- keeps the read-only tools only.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS control boolean NOT NULL DEFAULT false;
+
+-- The tool's own name at its vendor, when a relay names it (the vendor tool's own name): planque connects "create_refund" as "create_refund_repg", and
+-- people read the vendor's name, not the relay's. '' for a direct tool.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS vendor_tool text NOT NULL DEFAULT '';
+
+-- Connection profiles: each profile the owner approved, kept by
+-- revision so a decided call keeps the profile it was decided under (floor
+-- rule 8). A connection points at the revision now in force; NULL: none
+-- yet, its settings above stand.
+CREATE TABLE IF NOT EXISTS gateway.profiles (
+    tenant_id      text NOT NULL,
+    revision       bigint NOT NULL,
+    profile        jsonb NOT NULL,
+    profile_sha256 text NOT NULL,
+    words_sha256   text NOT NULL,
+    device_id      text NOT NULL,
+    signed_at      timestamptz NOT NULL,
+    created_by     text NOT NULL,
+    created_at     timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (tenant_id, revision)
+);
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS profile_revision bigint;
+
+-- The connection profile a call was decided under (connection profiles: a call keeps the profile it was decided under):
+-- its replay, receipt and reconciliation use this revision, and a held
+-- call whose tool moved to another one is not sent under it. NULL: none.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS profile_revision bigint;
+
+-- How a call carries its amount, from the connection's profile (connection profiles):
+-- '' or integer_minor, a whole number in minor units; decimal_string, a
+-- decimal written as text that KIFF converts exactly at amount_scale.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS amount_format text NOT NULL DEFAULT '';
+
+-- The verify read after a 2xx write (connection profiles: the verify read): what the vendor
+-- said back, compared with what KIFF decided. NULL: no verify read.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS verify_evidence jsonb;
+
+-- An operation paused by its verify read, or a missing path: nothing is
+-- sent through it until the owner resumes it. '' runs.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS paused_reason text NOT NULL DEFAULT '';
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS paused_at timestamptz;
+
+-- Probation (connection profiles: probation): one of the first three sent calls of a money
+-- operation whose profile no test call proved, for the owner to confirm.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS probation boolean NOT NULL DEFAULT false;
+
+-- When the owner last resumed an operation: a verify read that didn't hold
+-- before then pauses it no more.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS resumed_at timestamptz;
+CREATE INDEX IF NOT EXISTS invocations_verify ON gateway.invocations (tenant_id, tool, updated_at)
+    WHERE verify_evidence IS NOT NULL;
+
+-- What a call's amount meant when it was decided: its unit, scale and the
+-- tool's title, fixed with the call so a later change to the connection
+-- never rewords it (connection profiles: a call keeps the profile it was decided under). NULL: from before this.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS measure jsonb;

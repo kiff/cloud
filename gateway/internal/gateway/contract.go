@@ -11,11 +11,14 @@ import (
 // this role.
 const Role = "gateway_agent"
 
-// SetupReaderRole is the role the contract grants the read-only tools'
-// permissions to, and nothing else: the key of an agent that holds no tools
-// (Setup, kiff/agents#91) carries it, so it can read a tool the owner
-// approved for it to read (kiff/tafs#138, gate A). Each read is still
-// decided on a Card naming that agent, as any call is.
+// SetupReaderRole is the role of the key of an agent that holds no tools of
+// its own (Setup, kiff/agents#91). The contract grants it the read-only
+// tools, so Setup can read a tool the owner approved for it to read
+// (kiff/tafs#138, gate A), and every tool of the account's own control
+// server, so as Coach it can act there (kiff/tafs#206). Never a vendor's
+// tool that writes: Setup connects the vendors, and must not be able to
+// act through them. Each call is still decided on a Card naming that
+// agent, as any call is.
 const SetupReaderRole = "setup_reader"
 
 var toolName = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]{0,63}$`)
@@ -41,8 +44,8 @@ func ValidToolName(name string) bool { return toolName.MatchString(name) }
 //     and its resource argument as a string, so a Card can name the
 //     resources it applies to;
 //   - requires issued authority, so a tool no Card covers is refused;
-//   - grants every tool to Role, and the read-only ones (risk: low) to
-//     SetupReaderRole too.
+//   - grants every tool to Role, and the read-only ones (risk: low) and
+//     the control server's to SetupReaderRole too.
 //
 // It is applied through apps/api's domain update, never written to
 // Postgres directly, so the running API drops its cached copy.
@@ -59,7 +62,7 @@ transitions:
 actions:
 `)
 	perms := make([]string, 0, len(tools))
-	var reads []string
+	var setup []string
 	for _, t := range tools {
 		if !toolName.MatchString(t.Name) {
 			return "", fmt.Errorf("gateway: tool name %q must be a letter followed by letters, digits or underscores", t.Name)
@@ -97,13 +100,15 @@ actions:
 		risk := "medium"
 		if t.ReadOnly {
 			risk = "low"
-			reads = append(reads, perm)
+		}
+		if t.ReadOnly || t.Control {
+			setup = append(setup, perm)
 		}
 		fmt.Fprintf(&b, "    required_permissions: [%s]\n    risk: %s\n    approval: never\n    executor: cloud.proxy\n    requires_authority: true\n", perm, risk)
 	}
 	fmt.Fprintf(&b, "permissions:\n  roles:\n    %s: [%s]\n", Role, strings.Join(perms, ", "))
-	if len(reads) > 0 {
-		fmt.Fprintf(&b, "    %s: [%s]\n", SetupReaderRole, strings.Join(reads, ", "))
+	if len(setup) > 0 {
+		fmt.Fprintf(&b, "    %s: [%s]\n", SetupReaderRole, strings.Join(setup, ", "))
 	}
 	return b.String(), nil
 }

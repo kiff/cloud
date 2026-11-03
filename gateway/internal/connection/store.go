@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -28,13 +29,21 @@ type Connection struct {
 	Name string `json:"name"`
 	// Title is the name people see: the vendor's MCP title, or its tool's
 	// name in words.
-	Title          string `json:"title"`
-	Description    string `json:"description"`
-	URL            string `json:"url"`
-	UpstreamTool   string `json:"tool"`
-	AmountArg      string `json:"amount_argument,omitempty"`
-	AmountUnit     string `json:"amount_unit,omitempty"`
-	AmountScale    int    `json:"amount_scale,omitempty"`
+	Title string `json:"title"`
+	// VendorTool is the tool's own name at its vendor, when the connector
+	// that relays it names it ("create_refund" behind planque's
+	// "create_refund_repg"), so people read the tool, not a relay's name
+	// for it (the vendor tool's own name). Empty for a tool connected directly.
+	VendorTool   string `json:"vendor_tool,omitempty"`
+	Description  string `json:"description"`
+	URL          string `json:"url"`
+	UpstreamTool string `json:"tool"`
+	AmountArg    string `json:"amount_argument,omitempty"`
+	AmountUnit   string `json:"amount_unit,omitempty"`
+	AmountScale  int    `json:"amount_scale,omitempty"`
+	// AmountFormat is "decimal_string" for an amount the tool takes as
+	// text, counted in minor units at AmountScale; "" for a whole number.
+	AmountFormat   string `json:"amount_format,omitempty"`
 	IdempotencyArg string `json:"idempotency_argument,omitempty"`
 	// ResourceArg is the string argument naming what a call is on,
 	// sent to KIFF so a Card's resource scope can read it.
@@ -50,8 +59,15 @@ type Connection struct {
 	// UnitLookup is the read that says which unit a call is in, so a call
 	// in another unit than AmountUnit is refused.
 	UnitLookup *gateway.UnitLookup `json:"unit_lookup,omitempty"`
+	// AmountLookup is the read that says a call's amount, for a tool whose
+	// calls don't carry one.
+	AmountLookup *gateway.UnitLookup `json:"amount_lookup,omitempty"`
 	// ReadOnly is the owner's declaration that the tool only reads.
 	ReadOnly bool `json:"read_only"`
+	// Control marks the account's own control server (kiff/tafs#206):
+	// verify mode, connected by a person, and granted to setup_reader too.
+	// Set only when the tool is connected.
+	Control bool `json:"control,omitempty"`
 	// Mode is who holds the downstream credential: sealed,
 	// verify or relay. Audience is what the tool or relay expects in the
 	// execution permit; empty for sealed.
@@ -64,6 +80,12 @@ type Connection struct {
 	// CreatedBy is the KIFF key that connected the tool, or "" for a
 	// person. A connector key manages only its own.
 	CreatedBy string `json:"-"`
+	// ProfileRevision is the owner-approved profile in force (connection profiles),
+	// or nil while the settings above stand alone.
+	ProfileRevision *int64 `json:"profile_revision,omitempty"`
+	// Paused says why its verify read paused it; nothing is sent through it
+	// until the owner resumes it. "" when it runs.
+	Paused string `json:"paused,omitempty"`
 }
 
 // Store keeps connections in gateway.tools.
@@ -79,14 +101,22 @@ type querier interface {
 
 const cols = `name, description, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
 	mode, audience, credential IS NOT NULL, input_schema, created_at, updated_at, outcome_contract, outcome_lookup_tool, resource_arg,
-	amount_path, resource_path, fixed_args, created_by, title, unit_lookup`
+	amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, profile_revision, amount_format,
+	COALESCE(NULLIF(gateway.tools.paused_reason, ''),
+		(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
+		             ELSE 'a check of an earlier call didn''t hold' END
+		 FROM gateway.invocations i
+		 WHERE i.tenant_id = gateway.tools.tenant_id AND i.tool = gateway.tools.name AND i.verify_evidence IS NOT NULL
+		   AND i.updated_at > COALESCE(gateway.tools.resumed_at, '-infinity'::timestamptz)
+		   AND i.verify_evidence->>'result' IN ('mismatch', 'unreadable', 'pending')
+		 ORDER BY i.updated_at DESC LIMIT 1), '')`
 
 func scanConn(row pgx.Row) (Connection, error) {
 	var c Connection
-	var schema, fixed, unit []byte
+	var schema, fixed, unit, amount []byte
 	err := row.Scan(&c.Name, &c.Description, &c.URL, &c.UpstreamTool, &c.AmountArg, &c.AmountUnit, &c.AmountScale, &c.IdempotencyArg, &c.ReadOnly,
 		&c.Mode, &c.Audience, &c.HasCredential, &schema, &c.CreatedAt, &c.UpdatedAt, &c.OutcomeContract, &c.OutcomeLookupTool, &c.ResourceArg,
-		&c.AmountPath, &c.ResourcePath, &fixed, &c.CreatedBy, &c.Title, &unit)
+		&c.AmountPath, &c.ResourcePath, &fixed, &c.CreatedBy, &c.Title, &unit, &c.Control, &c.VendorTool, &amount, &c.ProfileRevision, &c.AmountFormat, &c.Paused)
 	c.InputSchema = schema
 	if len(fixed) > 0 {
 		c.FixedArgs = fixed
@@ -95,6 +125,12 @@ func scanConn(row pgx.Row) (Connection, error) {
 		var l gateway.UnitLookup
 		if err = json.Unmarshal(unit, &l); err == nil {
 			c.UnitLookup = &l
+		}
+	}
+	if err == nil && len(amount) > 0 {
+		var l gateway.UnitLookup
+		if err = json.Unmarshal(amount, &l); err == nil {
+			c.AmountLookup = &l
 		}
 	}
 	return c, err
@@ -179,7 +215,8 @@ func (s *Store) Change(ctx context.Context, tenantID string, fn func(*Tx) error,
 	for _, c := range conns {
 		tools = append(tools, gateway.Tool{Name: c.Name, UpstreamTool: c.UpstreamTool, AmountArg: c.AmountArg, AmountUnit: c.AmountUnit,
 			AmountScale: c.AmountScale, ResourceArg: c.ResourceArg, ReadOnly: c.ReadOnly, Mode: c.Mode, Audience: c.Audience, OutcomeContract: c.OutcomeContract, OutcomeLookupTool: c.OutcomeLookupTool, ConnectionCreatedAt: c.CreatedAt,
-			UnitLookup: c.UnitLookup})
+			UnitLookup: c.UnitLookup, AmountLookup: c.AmountLookup, Control: c.Control, AmountFormat: c.AmountFormat,
+			AmountPath: c.AmountPath, ResourcePath: c.ResourcePath})
 	}
 	if err := apply(tools); err != nil {
 		return err
@@ -197,12 +234,12 @@ func (t *Tx) Insert(ctx context.Context, c Connection, credential string) error 
 		INSERT INTO gateway.tools (tenant_id, name, description, input_schema, upstream_url, upstream_tool,
 		                           amount_arg, idempotency_arg, credential_key_id, credential, read_only,
 		                           amount_unit, amount_scale, mode, audience, outcome_contract, outcome_lookup_tool, resource_arg,
-		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, amount_format)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
 		ON CONFLICT (tenant_id, name) DO NOTHING`,
 		t.tenantID, c.Name, c.Description, []byte(c.InputSchema), c.URL, c.UpstreamTool,
 		c.AmountArg, c.IdempotencyArg, keyID, sealed, c.ReadOnly, c.AmountUnit, c.AmountScale, modeOrSealed(c.Mode), c.Audience, c.OutcomeContract, c.OutcomeLookupTool, c.ResourceArg,
-		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup))
+		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup), c.Control, c.VendorTool, unitJSON(c.AmountLookup), c.AmountFormat)
 	if err != nil {
 		return err
 	}
@@ -357,4 +394,80 @@ func unitJSON(l *gateway.UnitLookup) any {
 	}
 	b, _ := json.Marshal(l)
 	return b
+}
+
+// Profile is one profile the owner approved, as the gateway keeps it.
+type Profile struct {
+	Revision      int64
+	Raw           json.RawMessage
+	ProfileSHA256 string
+	WordsSHA256   string
+	DeviceID      string
+	SignedAt      time.Time
+	CreatedBy     string
+}
+
+// ErrNotOwnTool: a profile names an operation that isn't a connection
+// the applying key made.
+var ErrNotOwnTool = errors.New("connection: a profile names a tool this key didn't connect")
+
+// ApplyProfile keeps p as the account's next revision and points each of
+// tools at it, all or nothing. Every tool must be a connection made by
+// p.CreatedBy, and fits says, inside the same transaction, whether the
+// connection matches the profile's operation for it and the amount format
+// it takes. Earlier revisions stay, for the calls decided under them.
+func (s *Store) ApplyProfile(ctx context.Context, tenantID string, p Profile, tools []string, fits func(Connection) (string, error)) (int64, error) {
+	tx, err := s.Pool.Begin(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback(ctx)
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext('gateway.tools:' || $1))`, tenantID); err != nil {
+		return 0, err
+	}
+	var own int
+	if err := tx.QueryRow(ctx, `SELECT count(*) FROM gateway.tools WHERE tenant_id = $1 AND name = ANY($2) AND created_by = $3`,
+		tenantID, tools, p.CreatedBy).Scan(&own); err != nil {
+		return 0, err
+	}
+	if own != len(tools) {
+		return 0, ErrNotOwnTool
+	}
+	conns, err := list(ctx, tx, tenantID)
+	if err != nil {
+		return 0, err
+	}
+	formats := map[string]string{}
+	for _, c := range conns {
+		if slices.Contains(tools, c.Name) {
+			if formats[c.Name], err = fits(c); err != nil {
+				return 0, err
+			}
+		}
+	}
+	var rev int64
+	if err := tx.QueryRow(ctx, `INSERT INTO gateway.profiles (tenant_id, revision, profile, profile_sha256, words_sha256, device_id, signed_at, created_by)
+		SELECT $1, COALESCE(MAX(revision), 0) + 1, $2, $3, $4, $5, $6, $7 FROM gateway.profiles WHERE tenant_id = $1
+		RETURNING revision`, tenantID, p.Raw, p.ProfileSHA256, p.WordsSHA256, p.DeviceID, p.SignedAt, p.CreatedBy).Scan(&rev); err != nil {
+		return 0, err
+	}
+	for name, format := range formats {
+		if _, err := tx.Exec(ctx, `UPDATE gateway.tools SET profile_revision = $3, amount_format = $4, updated_at = now() WHERE tenant_id = $1 AND name = $2`,
+			tenantID, name, rev, format); err != nil {
+			return 0, err
+		}
+	}
+	return rev, tx.Commit(ctx)
+}
+
+// ProfileAt returns the account's profile at revision.
+func (s *Store) ProfileAt(ctx context.Context, tenantID string, revision int64) (Profile, error) {
+	p := Profile{Revision: revision}
+	err := s.Pool.QueryRow(ctx, `SELECT profile, profile_sha256, words_sha256, device_id, signed_at, created_by
+		FROM gateway.profiles WHERE tenant_id = $1 AND revision = $2`, tenantID, revision).
+		Scan(&p.Raw, &p.ProfileSHA256, &p.WordsSHA256, &p.DeviceID, &p.SignedAt, &p.CreatedBy)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Profile{}, ErrNotFound
+	}
+	return p, err
 }

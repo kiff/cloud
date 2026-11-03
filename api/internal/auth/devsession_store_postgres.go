@@ -45,12 +45,12 @@ func NewPostgresDeveloperSessionStore(pool *pgxpool.Pool) *PostgresDeveloperSess
 }
 
 const sqlInsertDevSession = `
-INSERT INTO cloud_meta.developer_sessions (id, tenant_id, subject, label, token_hash, created_at, expires_at, device_public_key, device_id)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULLIF($9, ''))
+INSERT INTO cloud_meta.developer_sessions (id, tenant_id, subject, label, token_hash, created_at, expires_at, device_public_key, device_id, approval_public_key)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULLIF($9, ''), $10)
 `
 
 const sqlSelectDevSessionByHash = `
-SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, '')
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
 FROM cloud_meta.developer_sessions
 WHERE token_hash = $1
 `
@@ -68,10 +68,32 @@ UPDATE cloud_meta.developer_sessions SET revoked_at = $2 WHERE token_hash = $1 A
 `
 
 const sqlListActiveDevSessions = `
-SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, '')
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
 FROM cloud_meta.developer_sessions
 WHERE subject = $1 AND revoked_at IS NULL AND expires_at > $2
 ORDER BY created_at DESC
+`
+
+// sqlSetApprovalKey sets the key only where none is: a session gets
+// one approval key, and replacing it means signing in again.
+const sqlSetApprovalKey = `
+UPDATE cloud_meta.developer_sessions SET approval_public_key = $2
+WHERE id = $1 AND approval_public_key IS NULL AND revoked_at IS NULL AND expires_at > $3
+`
+
+// sqlReplaceApprovalKey swaps the key and returns the old one, read under
+// the row's lock in the same statement.
+const sqlReplaceApprovalKey = `
+UPDATE cloud_meta.developer_sessions s SET approval_public_key = $2
+FROM (SELECT id, approval_public_key AS old FROM cloud_meta.developer_sessions WHERE id = $1 FOR UPDATE) o
+WHERE s.id = o.id AND s.revoked_at IS NULL AND s.expires_at > $3
+RETURNING o.old
+`
+
+const sqlSelectDevSessionByID = `
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
+FROM cloud_meta.developer_sessions
+WHERE id = $1
 `
 
 const sqlRevokeAllDevSessionsForTenant = `
@@ -94,7 +116,7 @@ func (s *PostgresDeveloperSessionStore) Insert(ctx context.Context, sess Develop
 	}
 	_, err := s.pool.Exec(ctx, sqlInsertDevSession,
 		sess.ID, sess.Tenant, sess.Subject, sess.Label, hex.EncodeToString(sess.TokenHash[:]), sess.CreatedAt.UTC(), sess.ExpiresAt.UTC(),
-		deviceKeyColumn(sess.DevicePublicKey), sess.DeviceID,
+		deviceKeyColumn(sess.DevicePublicKey), sess.DeviceID, deviceKeyColumn(sess.ApprovalPublicKey),
 	)
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -215,7 +237,7 @@ func scanDevSession(row devSessionRowScanner) (DeveloperSession, error) {
 		lastSeen *time.Time
 		revoked  *time.Time
 	)
-	if err := row.Scan(&sess.ID, &sess.Tenant, &sess.Subject, &sess.Label, &hashHex, &sess.CreatedAt, &sess.ExpiresAt, &lastSeen, &revoked, &sess.DevicePublicKey, &sess.DeviceID); err != nil {
+	if err := row.Scan(&sess.ID, &sess.Tenant, &sess.Subject, &sess.Label, &hashHex, &sess.CreatedAt, &sess.ExpiresAt, &lastSeen, &revoked, &sess.DevicePublicKey, &sess.DeviceID, &sess.ApprovalPublicKey); err != nil {
 		return DeveloperSession{}, err
 	}
 	hashBytes, err := hex.DecodeString(strings.TrimSpace(hashHex))
@@ -241,3 +263,36 @@ func deviceKeyColumn(k []byte) any {
 
 // Compile-time assertion that the Postgres store satisfies the interface.
 var _ DeveloperSessionStore = (*PostgresDeveloperSessionStore)(nil)
+
+func (s *PostgresDeveloperSessionStore) ReplaceApprovalKey(ctx context.Context, id string, key []byte, now time.Time) ([]byte, error) {
+	var old []byte
+	err := s.pool.QueryRow(ctx, sqlReplaceApprovalKey, id, key, now.UTC()).Scan(&old)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, ErrDevSessionNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("replace approval key: %w", err)
+	}
+	return old, nil
+}
+
+func (s *PostgresDeveloperSessionStore) SetApprovalKey(ctx context.Context, id string, key []byte, now time.Time) (DeveloperSession, error) {
+	tag, err := s.pool.Exec(ctx, sqlSetApprovalKey, id, key, now.UTC())
+	if err != nil {
+		return DeveloperSession{}, fmt.Errorf("set approval key: %w", err)
+	}
+	sess, err := scanDevSession(s.pool.QueryRow(ctx, sqlSelectDevSessionByID, id))
+	if errors.Is(err, pgx.ErrNoRows) {
+		return DeveloperSession{}, ErrDevSessionNotFound
+	}
+	if err != nil {
+		return DeveloperSession{}, fmt.Errorf("read developer session: %w", err)
+	}
+	if tag.RowsAffected() == 1 {
+		return sess, nil
+	}
+	if sess.IsRevoked() || sess.IsExpired(now) {
+		return DeveloperSession{}, ErrDevSessionNotFound
+	}
+	return sess, ErrApprovalKeySet
+}

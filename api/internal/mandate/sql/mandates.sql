@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS cloud_meta.mandates (
 ALTER TABLE cloud_meta.mandates
     ADD COLUMN IF NOT EXISTS archived_at TIMESTAMPTZ;
 
+-- A Card's name for people. Presentation only, like archived_at:
+-- not in mandate_revisions, and no decision reads it. '' is no title.
+ALTER TABLE cloud_meta.mandates
+    ADD COLUMN IF NOT EXISTS title TEXT NOT NULL DEFAULT '';
+
 -- The immutable id of the card's domain, recorded at issuance so a
 -- card survives its domain being renamed. '' on cards issued before it,
 -- which keep matching by domain name; nothing is inferred for them.
@@ -287,7 +292,32 @@ CREATE TABLE IF NOT EXISTS cloud_meta.mandate_effect_releases (
     PRIMARY KEY (tenant_id, mandate_id, proposal_id, quantity_key),
     FOREIGN KEY (tenant_id, mandate_id, proposal_id, quantity_key)
       REFERENCES cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key)
+      ON DELETE CASCADE
 );
+
+-- A release goes with its draw. Deleting a tenant cascades to its draws,
+-- and without this the release on one of them stopped the whole delete.
+-- Tables made before this keep the first foreign key, so it is replaced
+-- once. Idempotent.
+DO $$
+DECLARE
+    fk TEXT;
+BEGIN
+    -- Two API processes starting at once take turns: the second then finds
+    -- the cascading key and does nothing.
+    PERFORM pg_advisory_xact_lock(hashtext('cloud_meta.mandate_effect_releases fk'));
+    SELECT conname INTO fk FROM pg_constraint
+     WHERE conrelid = 'cloud_meta.mandate_effect_releases'::regclass
+       AND contype = 'f' AND confdeltype <> 'c';
+    IF fk IS NOT NULL THEN
+        EXECUTE format('ALTER TABLE cloud_meta.mandate_effect_releases DROP CONSTRAINT %I', fk);
+        ALTER TABLE cloud_meta.mandate_effect_releases
+            ADD CONSTRAINT mandate_effect_releases_draw_fkey
+            FOREIGN KEY (tenant_id, mandate_id, proposal_id, quantity_key)
+            REFERENCES cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key)
+            ON DELETE CASCADE;
+    END IF;
+END $$;
 
 -- One immutable cutover record. All new ordinary and exception
 -- authorizations claim an operation with this version. Old writers omit
@@ -342,3 +372,33 @@ CREATE TABLE IF NOT EXISTS cloud_meta.trial_draws (
 );
 CREATE INDEX IF NOT EXISTS trial_draws_trial_idx ON cloud_meta.trial_draws (tenant_id, trial_id, subject, mandate_id, quantity_key, drawn_at);
 CREATE INDEX IF NOT EXISTS trial_draws_age_idx ON cloud_meta.trial_draws (drawn_at);
+
+-- Append-only: what a vendor used beyond what the Card decided, read back
+-- after the write (connection profiles: the verify read). The Card counts the larger
+-- figure. One draw has at most one, and it goes with its draw.
+CREATE TABLE IF NOT EXISTS cloud_meta.mandate_effect_surcharges (
+    tenant_id TEXT NOT NULL,
+    mandate_id TEXT NOT NULL,
+    proposal_id TEXT NOT NULL,
+    quantity_key TEXT NOT NULL,
+    amount BIGINT NOT NULL CHECK (amount > 0),
+    recorded_at TIMESTAMPTZ NOT NULL,
+    source TEXT NOT NULL,
+    evidence_id TEXT NOT NULL,
+    PRIMARY KEY (tenant_id, mandate_id, proposal_id, quantity_key),
+    FOREIGN KEY (tenant_id, mandate_id, proposal_id, quantity_key)
+      REFERENCES cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key)
+      ON DELETE CASCADE
+);
+
+-- The owner's answer to "Did this happen?" for a money call whose outcome
+-- KIFF can't prove (connection profiles: "Did this happen?"): signed on the phone, once.
+-- "No" gives the Card its room back through an effect release.
+CREATE TABLE IF NOT EXISTS cloud_meta.happened_answers (
+    tenant_id   TEXT NOT NULL,
+    proposal_id TEXT NOT NULL,
+    happened    BOOLEAN NOT NULL,
+    answered_by TEXT NOT NULL,
+    answered_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (tenant_id, proposal_id)
+);

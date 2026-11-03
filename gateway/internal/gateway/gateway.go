@@ -65,19 +65,39 @@ type Tool struct {
 	// ReadOnly: the owner declared the tool only reads. Its calls are
 	// decided as any other, but never treated as retries.
 	ReadOnly bool
+	// Control: the account's own control server's tool (kiff/tafs#206),
+	// granted to SetupReaderRole too, read-only or not.
+	Control bool
 	// Mode is who holds the downstream credential: ModeSealed
 	// (KIFF), ModeVerify (nobody; the tool checks the permit) or
 	// ModeRelay (the customer's relay). Audience is what the tool or
 	// relay expects in the permit.
-	Mode                string
-	Audience            string
-	OutcomeContract     string
-	OutcomeLookupTool   string
+	Mode              string
+	Audience          string
+	OutcomeContract   string
+	OutcomeLookupTool string
+	// ProfileRevision is the owner-approved profile in force (connection profiles),
+	// or nil.
+	ProfileRevision *int64
+	// Verify is the profile's read after a 2xx write, or nil.
+	Verify *VerifyRead
+	// Probation: a money operation whose profile no test call proved; its
+	// first sent calls are the owner's to confirm (connection profiles: probation).
+	Probation bool
+	// Paused says why the operation is paused, "" when it runs.
+	Paused string
+	// AmountFormat is FormatDecimal when the call carries its amount as a
+	// decimal string, from the profile; else a whole number in minor units.
+	AmountFormat        string
 	ConnectionCreatedAt time.Time
 	// UnitLookup, when set, is the read that says which unit a call is in
 	// (a payment's currency): a call in another unit than AmountUnit is
 	// refused before KIFF decides it.
 	UnitLookup *UnitLookup
+	// AmountLookup, when set, is the read that says a call's amount (a
+	// dispute's): the call doesn't carry one, and KIFF puts what the read
+	// says under AmountArg before deciding (amount.go).
+	AmountLookup *UnitLookup
 }
 
 // Custody modes.
@@ -119,6 +139,8 @@ type API interface {
 	Me(ctx context.Context, key string) (kiffapi.Me, error)
 	// AgentCard reads the agent's Cards; trial is the request's KIFF-Trial.
 	AgentCard(ctx context.Context, key, trial string) (kiffapi.AgentCard, error)
+	// OtherAgentCard reads another agent's live Cards, for Setup's key only.
+	OtherAgentCard(ctx context.Context, key, agent string) (kiffapi.AgentCard, error)
 	RequestToolCall(ctx context.Context, key, domain, entityID, agentID string, at time.Time) error
 	Decide(ctx context.Context, key string, p kiffapi.Proposal) (kiffapi.Decision, error)
 	Holds(ctx context.Context, key string, ids []string) ([]kiffapi.Hold, error)
@@ -144,6 +166,8 @@ type Store interface {
 	Get(ctx context.Context, key string) (invocation.Invocation, error)
 	Transition(ctx context.Context, key string, from []invocation.State, to invocation.State, u invocation.Update) (bool, error)
 	BindExecution(ctx context.Context, key string, binding json.RawMessage) (bool, error)
+	RecordVerify(ctx context.Context, key string, evidence json.RawMessage) error
+	MarkProbation(ctx context.Context, key string) error
 	RecoverStale(ctx context.Context, key string, staleBefore time.Time) (int64, error)
 	PurgeResults(ctx context.Context, before time.Time) (int64, error)
 	Pending(ctx context.Context, credentialID string, since time.Time, page *invocation.PendingPage, limit int) ([]invocation.Invocation, error)
@@ -181,9 +205,11 @@ type Gateway struct {
 	ChatClients ChatClients
 	// Clients records which MCP clients each agent uses; nil skips it.
 	Clients ClientRecorder
-	prompts prompts
-	seen    seenCache
-	units   unitCache
+	// Operations pauses an operation whose verify read didn't match (connection profiles: the verify read); nil leaves a mismatch recorded but unpaused.
+	Operations OperationPauser
+	prompts    prompts
+	seen       seenCache
+	units      unitCache
 }
 
 // DefaultLease is the in-flight lease when none is set.
@@ -321,6 +347,9 @@ type agent struct {
 	// writes, which are never sent (trial.go). Empty: not a trial.
 	// trialRun is its KIFF-Trial-Run, the trial's run.
 	trial, trialRun string
+	// runGrant is the request's KIFF-Run-Grant (grant.go): who asked for
+	// the run, as KIFF signed it. Empty: no person's run.
+	runGrant string
 	// trialDraft is set once KIFF said the KIFF-Trial draft is being tried
 	// (kiff/tafs#173): its calls are sent, decided on its trial Cards.
 	trialDraft string
@@ -358,7 +387,8 @@ func (g *Gateway) authenticate(r *http.Request, resource string, link bool) (mcp
 		return nil, errors.New("this token was issued for another KIFF gateway URL")
 	}
 	return &agent{g: g, key: key, credentialID: credentialID(key, me), me: me,
-		trial: strings.TrimSpace(r.Header.Get(TrialHeader)), trialRun: strings.TrimSpace(r.Header.Get(TrialRunHeader))}, nil
+		trial: strings.TrimSpace(r.Header.Get(TrialHeader)), trialRun: strings.TrimSpace(r.Header.Get(TrialRunHeader)),
+		runGrant: strings.TrimSpace(r.Header.Get(RunGrantHeader))}, nil
 }
 
 // OAuthTokenPrefix marks an OAuth access token.
@@ -391,18 +421,28 @@ func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 	if err != nil {
 		return nil, err
 	}
-	// A key without the gateway role (an agent that holds no tools, such as
-	// kiff/agents' setup agent) can call none of the
-	// account's tools, since the contract grants them only to that role, so
-	// it isn't shown them: only KIFF's own.
-	if !slices.Contains(a.me.Roles, Role) {
-		tools = nil
-	}
 	// What the agent's Card allows goes on each tool, so the agent knows
 	// its limits before it calls. Without the Card the tools are
 	// listed as they are: every call is still decided when it is made.
 	// In a trial, the Cards its calls are decided on (kiff/tafs#107).
 	card, cardErr := a.g.API.AgentCard(ctx, a.key, a.trial)
+	// A key without the gateway role (an agent that holds no tools of its
+	// own, such as kiff/agents' setup agent) is shown only the account's
+	// tools a Card of its own covers: the reads the owner approved for it
+	// (kiff/tafs#138) and, as Coach, the account's own app's tools
+	// (kiff/tafs#206). Not the account's other tools, which every taf's
+	// Card is about. Without its Cards, it is shown only KIFF's own.
+	if !slices.Contains(a.me.Roles, Role) {
+		var covered []Tool
+		if cardErr == nil {
+			for _, t := range tools {
+				if slices.ContainsFunc(card.Cards, func(c kiffapi.Card) bool { return covers(c, t.Name) }) {
+					covered = append(covered, t)
+				}
+			}
+		}
+		tools = covered
+	}
 	out := make([]mcp.Tool, 0, len(tools)+1)
 	for _, t := range tools {
 		if ReservedToolName(t.Name) {
@@ -446,7 +486,7 @@ func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 			// things, so it is marked destructive and Claude always asks.
 			Annotations: &mcp.ToolAnnotations{Title: title, ReadOnlyHint: t.ReadOnly, DestructiveHint: !t.ReadOnly}})
 	}
-	return append(out, cardToolListing(), pendingToolListing()), nil
+	return append(out, cardToolListing(slices.Contains(a.me.Roles, SetupReaderRole)), pendingToolListing()), nil
 }
 
 // ToolTitle is the fallback name people see for a tool whose vendor gives
@@ -505,7 +545,7 @@ func (a *agent) CallTool(ctx context.Context, name string, raw json.RawMessage) 
 		if strings.EqualFold(name, PendingTool) {
 			return a.pendingResult(ctx, raw)
 		}
-		return a.cardResult(ctx)
+		return a.cardResult(ctx, raw)
 	}
 	out, key, err := a.callTool(ctx, name, raw)
 	if err != nil {
@@ -519,21 +559,45 @@ func (a *agent) CallTool(ctx context.Context, name string, raw json.RawMessage) 
 // the resource the call is on.
 func (t Tool) params(args map[string]any) (map[string]any, error) {
 	params := map[string]any{}
-	if t.AmountArg != "" {
+	if t.AmountLookup != nil {
+		// Read from the resource, never taken from the agent: a call that
+		// carries it is refused, so the agent can't choose what its Card counts.
+		if _, ok := lookupPath(args, t.amountPath()); ok {
+			return nil, invalid(t.amountPath() + " is read by KIFF from the call's " + t.ResourceArg + "; leave it out")
+		}
+	} else if t.AmountArg != "" {
 		// Required wherever it sits: a missing amount is never zero (for a
 		// Stripe refund it would mean the whole charge).
 		path := t.amountPath()
 		v, ok := lookupPath(args, path)
-		n, isNum := v.(json.Number)
-		if !ok || !isNum {
-			return nil, invalid(path + " is required and must be a whole number")
+		if t.AmountFormat == FormatDecimal {
+			// Converted exactly at the tool's scale, never rounded.
+			s, isText := v.(string)
+			if !ok || !isText {
+				return nil, invalid(path + " is required, as a decimal number written as text, such as \"80.00\"")
+			}
+			i, err := MinorUnits(s, t.AmountScale)
+			if err != nil {
+				return nil, invalid(path + " " + err.Error())
+			}
+			params[t.AmountArg] = i
+		} else {
+			n, isNum := v.(json.Number)
+			if !ok || !isNum {
+				return nil, invalid(path + " is required and must be a whole number")
+			}
+			i, err := n.Int64()
+			if err != nil {
+				return nil, invalid(path + " must be a whole number")
+			}
+			params[t.AmountArg] = i
 		}
-		i, err := n.Int64()
-		if err != nil {
-			return nil, invalid(path + " must be a whole number")
-		}
-		params[t.AmountArg] = i
 	}
+	return t.resourceParam(args, params)
+}
+
+// resourceParam adds the resource the call is on to params.
+func (t Tool) resourceParam(args map[string]any, params map[string]any) (map[string]any, error) {
 	if t.ResourceArg != "" {
 		path := t.resourcePath()
 		v, _ := lookupPath(args, path)
@@ -558,6 +622,12 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 		return nil, "", err
 	}
 	args, op, err := splitArgs(raw)
+	if err == nil && t.Paused != "" && !t.ReadOnly {
+		// Its verify read didn't check out: nothing is sent through it until
+		// the owner resumes it (verify.go). Nothing is recorded or drawn.
+		return kiffResult("Not sent: "+name+" is paused: "+t.Paused+". The owner resumes it in KIFF.", Call{State: string(invocation.StateRefused), OperationID: op, Sent: "no",
+			Reasons: []string{ReasonOperationPaused}, Retry: "none"}), "", nil
+	}
 	if err != nil {
 		return nil, "", invalid(err.Error())
 	}
@@ -567,6 +637,16 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	params, err := t.params(args)
 	if err != nil {
 		return nil, "", err
+	}
+	// A tool that reads its amount does so before anything else, trials and
+	// retries included: no path decides it without the amount (amount.go).
+	if why := a.withLookedUpAmount(ctx, t, params, asJSON(args)); why != "" {
+		if a.trial != "" && a.trialDraft == "" {
+			// A trial's call is never recorded (see below).
+			return kiffResult(amountUnverified(why), Call{State: string(invocation.StateRefused), OperationID: op, Sent: "no",
+				Reasons: []string{ReasonAmountUnverified}, Retry: "none"}), "", nil
+		}
+		return a.amountRefused(ctx, t, name, op, args, params, why)
 	}
 	if a.trial != "" && a.trialDraft == "" {
 		sends, err := a.trialSends(ctx)
@@ -590,13 +670,11 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 
 	in, created, err := a.g.Store.Begin(ctx, invocation.Call{
 		TenantID: a.me.TenantID, CredentialID: a.credentialID, AgentID: a.me.AgentID,
-		Tool: name, OperationID: op, Arguments: argsJSON, ReadOnly: t.ReadOnly,
+		Tool: name, OperationID: op, Arguments: argsJSON, ReadOnly: t.ReadOnly, ProfileRevision: t.ProfileRevision,
+		Measure: measureOf(t),
 	})
 	if errors.Is(err, invocation.ErrOperationReused) {
-		return kiffResult("Refused: "+OperationArg+" "+op+" was already used for this tool with different arguments. "+
-			"Use a new "+OperationArg+" for a new action.",
-			Call{State: string(invocation.StateRefused), OperationID: op, Sent: "no",
-				Reasons: []string{ReasonOperationIDReused}, Retry: "new_call"}), "", nil
+		return operationReused(op), "", nil
 	}
 	if err != nil {
 		return nil, "", err
@@ -612,9 +690,18 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	return withTrialDraft(withResource(out, t), a.trialDraft), in.Key, err
 }
 
+// operationReused refuses an operation id already used for this tool with
+// other arguments.
+func operationReused(op string) json.RawMessage {
+	return kiffResult("Refused: "+OperationArg+" "+op+" was already used for this tool with different arguments. "+
+		"Use a new "+OperationArg+" for a new action.",
+		Call{State: string(invocation.StateRefused), OperationID: op, Sent: "no",
+			Reasons: []string{ReasonOperationIDReused}, Retry: "new_call"})
+}
+
 func (a *agent) proposal(t Tool, in invocation.Invocation, params map[string]any, body json.RawMessage) kiffapi.Proposal {
 	p := kiffapi.Proposal{ID: in.Key, Domain: Domain, EntityID: in.Key, EntityType: "ToolCall",
-		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft}
+		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant}
 	if t.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: t.Audience, Tool: t.UpstreamTool, Arguments: body}
 	}
@@ -683,10 +770,15 @@ func (a *agent) decided(ctx context.Context, t Tool, in invocation.Invocation, p
 		if in.State == invocation.StateHeld {
 			return a.heldResult(ctx, in), nil
 		}
-		u := invocation.Update{Message: "Held for the owner's approval."}
+		u := invocation.Update{Message: heldMessage, Reasons: []string{reasonOwnerRequired}}
 		if d.Exception != nil {
 			u.ExceptionID, u.ReviewURL = d.Exception.ID, a.g.absolute(d.Exception.ReviewURL)
 			u.HoldExpiresAt = d.Exception.ExpiresAt
+			// Which limits it went over, kept as the hold's message, so
+			// each retry and kiff_pending can say it again.
+			if len(d.Exception.Why) > 0 {
+				u.Message = strings.Join(d.Exception.Why, "; ")
+			}
 		}
 		if _, err := a.g.Store.Transition(ctx, in.Key, from, invocation.StateHeld, u); err != nil {
 			return nil, err
@@ -784,8 +876,22 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 		// cannot speak for KIFF in the dev.kiff/ _meta namespace.
 		stored := withoutKIFFMeta(secret.RedactJSON(res, credential))
 		te := toolError(stored)
-		return a.finish(ctx, in.Key, forwarding, invocation.StateForwarded,
-			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: terminalNoEffect(t, in, stored)}, nil)
+		verifies := te == "" && t.Verify != nil && !t.ReadOnly
+		out, err := a.finish(ctx, in.Key, forwarding, invocation.StateForwarded,
+			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: terminalNoEffect(t, in, stored), VerifyPending: verifies}, nil)
+		// A write its profile reads back is checked now, once it's recorded
+		// as sent (verify.go).
+		if err == nil && te == "" && t.Probation && !t.ReadOnly {
+			if perr := a.g.Store.MarkProbation(ctx, in.Key); perr != nil && a.g.Logger != nil {
+				a.g.Logger.WarnContext(ctx, "gateway: a probation call was not marked", slog.String("invocation", in.Key), slog.String("err", perr.Error()))
+			}
+		}
+		if err == nil && verifies {
+			if note := a.verify(ctx, t, in, stored); note != "" {
+				out = withNote(out, note)
+			}
+		}
+		return out, err
 	// A transport failure is checked first: a rejection before the tool
 	// ran wraps the server's error object but was never delivered.
 	case errors.As(err, &ce) && !ce.Sent:
@@ -834,6 +940,16 @@ func (a *agent) retry(ctx context.Context, t Tool, in invocation.Invocation, par
 		}
 	}
 	if in.State == invocation.StateHeld {
+		// A held call is sent only under the profile it was decided
+		// under: one whose tool moved to another profile needs a fresh
+		// decision (connection profiles: a call keeps the profile it was decided under), so it ends here, unsent.
+		if !sameRevision(in.ProfileRevision, t.ProfileRevision) {
+			return a.finish(ctx, in.Key, []invocation.State{invocation.StateHeld}, invocation.StateRefused, invocation.Update{
+				Message: "Not sent: this tool's profile changed after the call was held, so the approval no longer applies. " +
+					"Call again with a new " + OperationArg + " to have it decided under the profile now in force.",
+				Reasons: []string{ReasonProfileChanged},
+			}, nil)
+		}
 		// Ask again: the answer is the owner's, once they have given it.
 		return a.decided(ctx, t, in, params, []invocation.State{invocation.StateHeld})
 	}
@@ -903,7 +1019,11 @@ func (a *agent) heldResult(ctx context.Context, in invocation.Invocation) json.R
 		}
 	}
 	a.offerInChat(ctx, in)
-	msg := "Waiting for the owner's approval: this call is outside the agent's Card. Nothing has been sent to the tool. "
+	msg := "Waiting for the owner's approval: this call is outside the agent's Card. "
+	if why := heldWhy(in); why != "" {
+		msg = "Waiting for the owner's approval: this call is outside the agent's Card: " + why + ". "
+	}
+	msg += "Nothing has been sent to the tool. "
 	if in.ReviewURL != "" {
 		msg += "The owner can answer at " + in.ReviewURL + ". "
 	}
@@ -919,6 +1039,24 @@ func (a *agent) heldResult(ctx context.Context, in invocation.Invocation) json.R
 	return kiffResult(msg, callOf(in))
 }
 
+// heldMessage is a hold's stored message when KIFF named no limit.
+const heldMessage = "Held for the owner's approval."
+
+// reasonOwnerRequired marks a hold waiting for its owner: its stored
+// message is then which limits the call went over (heldWhy).
+const reasonOwnerRequired = "mandate_owner_required"
+
+// heldWhy is which limits a held call went over, as KIFF said when it
+// held it, or "" when it named none. Only a hold waiting for its owner
+// keeps them; any other held message (approved with no room left) is
+// KIFF's own, and a hold from before this keeps no reason.
+func heldWhy(in invocation.Invocation) string {
+	if in.State != invocation.StateHeld || !slices.Contains(in.Reasons, reasonOwnerRequired) || in.Message == heldMessage {
+		return ""
+	}
+	return in.Message
+}
+
 func (g *Gateway) absolute(path string) string {
 	if path == "" || strings.Contains(path, "://") || g.AppURL == "" {
 		return path
@@ -931,8 +1069,17 @@ type PostgresCatalog struct{ Pool *pgxpool.Pool }
 
 func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, error) {
 	rows, err := c.Pool.Query(ctx, `SELECT name, title, description, input_schema, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
-		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup
-		FROM gateway.tools WHERE tenant_id = $1 ORDER BY name`, tenantID)
+		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format,
+		COALESCE(NULLIF(t.paused_reason, ''),
+			(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
+			             ELSE 'a check of an earlier call didn''t hold' END
+			 FROM gateway.invocations i
+			 WHERE i.tenant_id = t.tenant_id AND i.tool = t.name AND i.verify_evidence IS NOT NULL
+			   AND i.updated_at > COALESCE(t.resumed_at, '-infinity'::timestamptz)
+			   AND i.verify_evidence->>'result' IN ('mismatch', 'unreadable', 'pending')
+			 ORDER BY i.updated_at DESC LIMIT 1), ''),
+		(SELECT p.profile FROM gateway.profiles p WHERE p.tenant_id = t.tenant_id AND p.revision = t.profile_revision)
+		FROM gateway.tools t WHERE tenant_id = $1 ORDER BY name`, tenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -940,10 +1087,18 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 	var out []Tool
 	for rows.Next() {
 		var t Tool
-		var schema, fixed, unit []byte
+		var schema, fixed, unit, amount, profile []byte
 		if err := rows.Scan(&t.Name, &t.Title, &t.Description, &schema, &t.UpstreamURL, &t.UpstreamTool, &t.AmountArg, &t.AmountUnit, &t.AmountScale, &t.IdempotencyArg, &t.ReadOnly,
-			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit); err != nil {
+			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat,
+			&t.Paused, &profile); err != nil {
 			return nil, err
+		}
+		if len(profile) > 0 {
+			v, probation, err := profileOp(profile, t.Name)
+			if err != nil {
+				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
+			}
+			t.Verify, t.Probation = v, probation
 		}
 		if len(unit) > 0 {
 			var l UnitLookup
@@ -951,6 +1106,13 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 				return nil, fmt.Errorf("gateway: unit_lookup of %s: %w", t.Name, err)
 			}
 			t.UnitLookup = &l
+		}
+		if len(amount) > 0 {
+			var l UnitLookup
+			if err := json.Unmarshal(amount, &l); err != nil {
+				return nil, fmt.Errorf("gateway: amount_lookup of %s: %w", t.Name, err)
+			}
+			t.AmountLookup = &l
 		}
 		t.InputSchema = schema
 		t.FixedArgs = fixed

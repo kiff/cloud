@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -45,14 +47,55 @@ func (r Request) BindingFor(t Target) (Binding, error) {
 // are exactly the target's governed arguments as they appear in the signed
 // arguments: the amount argument and the resource argument where the
 // target names them, and nothing else. Numbers compare as JSON numbers
-// (80 and 80.0 are equal).
+// (80 and 80.0 are equal). A looked-up amount is never in the signed
+// arguments: the Card evaluates the whole amount the gateway read for the
+// resource they name.
 func (r Request) SameGoverned(t Target, params map[string]any) bool {
-	var args map[string]json.RawMessage
-	if json.Unmarshal(r.Arguments, &args) != nil {
+	var top map[string]json.RawMessage
+	if json.Unmarshal(r.Arguments, &top) != nil {
 		return false
 	}
+	// The governed values, by the names the Card uses, wherever the signed
+	// arguments carry them: at the top level, or at the target's path.
+	args := map[string]json.RawMessage{}
+	for k, v := range top {
+		args[k] = v
+	}
+	for name, path := range map[string]string{t.AmountArg: t.AmountPath, t.ResourceArg: t.ResourcePath} {
+		if path == "" || name == "" {
+			continue
+		}
+		delete(args, name)
+		if v, ok := atPath(r.Arguments, path); ok {
+			args[name] = v
+		}
+	}
 	want := map[string]json.RawMessage{}
-	if t.AmountArg != "" {
+	if t.AmountLookedUp {
+		if _, signed := args[t.AmountArg]; signed {
+			return false
+		}
+		b, err := json.Marshal(params[t.AmountArg])
+		if err != nil {
+			return false
+		}
+		if n, err := json.Number(b).Int64(); err != nil || n < 0 {
+			return false
+		}
+		want[t.AmountArg] = b
+	} else if t.AmountDecimal {
+		// The signed amount is a decimal string; the Card counts it in
+		// minor units, converted exactly or not at all.
+		var s string
+		if json.Unmarshal(args[t.AmountArg], &s) != nil {
+			return false
+		}
+		n, ok := MinorUnits(s, t.AmountScale)
+		if !ok {
+			return false
+		}
+		want[t.AmountArg] = json.RawMessage(strconv.FormatInt(n, 10))
+	} else if t.AmountArg != "" {
 		v, ok := args[t.AmountArg]
 		if !ok {
 			return false
@@ -116,8 +159,9 @@ func (i *Issuer) Bind(ctx context.Context, tenantID, op string, b Binding) (Bind
 }
 
 // Mint signs the operation's one permit from its stored binding. minted
-// is false, with no token, when the operation already has its permit.
-func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card string, b Binding) (token string, minted bool, err error) {
+// is false, with no token, when the operation already has its permit. act
+// is the person the call is for, from its run grant; "" for none.
+func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card, act string, b Binding) (token string, minted bool, err error) {
 	life := i.Lifetime
 	if life <= 0 {
 		life = DefaultLifetime
@@ -130,6 +174,9 @@ func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card string, b Bin
 		Iss: i.Iss, Aud: b.Audience, Sub: sub, Iat: now.Unix(), Exp: now.Add(life).Unix(), Jti: NewJTI(),
 		Details: []Detail{{Type: DetailType, Tenant: tenantID, Tool: b.Tool, ArgsSHA256: b.ArgsSHA256,
 			Op: op, Card: card, Decision: op}},
+	}
+	if act != "" {
+		c.Act = &Actor{Sub: act}
 	}
 	// Sign before marking: a mark without a token would leave the
 	// operation unable to run, a token without a mark is never sent.
@@ -159,3 +206,20 @@ func (i *Issuer) JWKSHandler() http.Handler {
 
 // JWKSPath is where the keys are published.
 const JWKSPath = "/.well-known/kiff-permit-keys.json"
+
+// atPath is the raw value at a dotted path of names in a JSON object.
+func atPath(raw json.RawMessage, path string) (json.RawMessage, bool) {
+	cur := raw
+	for _, seg := range strings.Split(path, ".") {
+		var m map[string]json.RawMessage
+		if json.Unmarshal(cur, &m) != nil {
+			return nil, false
+		}
+		v, ok := m[seg]
+		if !ok {
+			return nil, false
+		}
+		cur = v
+	}
+	return cur, true
+}

@@ -30,11 +30,39 @@ type RoutePolicy struct {
 	// phone's signature (PhoneSignedRules).
 	phones *http.ServeMux
 	signed *http.ServeMux
+	// approval, the signed routes that grant authority
+	// (PhoneApprovalRules): signed by the approval key, once the session
+	// has one.
+	approval *http.ServeMux
+	// granted, the writes a phone's session makes once each with a live
+	// device grant (DeviceGrantRoutes).
+	granted *http.ServeMux
 	// made records the signed setup calls already made (key and signed
 	// message), until they could no longer verify, so none is replayed.
 	// In memory unless WithSignedRequests gives it a shared, durable record.
 	made SignedRequests
 	now  func() time.Time
+}
+
+// PhoneApprovalRules are the signed calls that grant authority
+// (kiff/tafs#233): issuing or raising a Card, submitting or confirming a
+// draft (a phone's draft is confirmed by submitting it, its trial too),
+// and resuming. Once a session has an approval key, whose own access
+// control requires Face ID or the passcode, these count only with its
+// signature, so code that skips the prompt can't grant anything. Every
+// other signed call keeps the session's device key: what reads or takes
+// authority away may run with no one at the screen.
+var PhoneApprovalRules = []string{
+	// "No" to "Did this happen?" gives a Card its room back.
+	"POST /v1/me/did-this-happen/{proposal}",
+	"POST /v1/me/mandates",
+	"POST /v1/me/mandates/{id}/extra-room",
+	"POST /v1/me/agent-drafts",
+	"POST /v1/me/agent-drafts/{id}/confirm",
+	"POST /v1/agents/{id}/resume",
+	"POST /v1/resume",
+	// Sharing an agent gives people its use.
+	"POST /v1/agents/{id}/grants",
 }
 
 // PhoneSignedRules are setup calls a phone's session makes only with its
@@ -44,6 +72,8 @@ type RoutePolicy struct {
 // token alone makes none of them. A key minted this way is always bound
 // to an agent (KeysHandler).
 var PhoneSignedRules = []string{
+	// The owner's answer to "Did this happen?", behind the device's unlock.
+	"POST /v1/me/did-this-happen/{proposal}",
 	"POST /v1/me/agents",
 	"POST /v1/me/mandates",
 	"POST /v1/keys",
@@ -78,10 +108,31 @@ var PhoneSignedRules = []string{
 	// Guideline 5.1.1(v)). The signature over this request, behind Face
 	// ID, is the handler's recent sign-in.
 	"POST /v1/me/delete",
-	// Raising the monthly tasks ceiling lets the tafs do, and bill, more;
-	// going on past the AI fair-use bound lets them spend more.
-	"PUT /v1/me/usage/ceiling",
+	// Groups and sharing, administered from the tafs app: each
+	// change is the person's act behind Face ID. The handlers check who
+	// may make it.
+	"POST /v1/groups",
+	"PATCH /v1/groups/{id}",
+	"DELETE /v1/groups/{id}",
+	"PUT /v1/groups/{id}/members/{subject}",
+	"DELETE /v1/groups/{id}/members/{subject}",
+	"POST /v1/agents/{id}/grants",
+	"DELETE /v1/agents/{id}/grants",
+	// The session's approval key (kiff/tafs#233), once, for a session that
+	// signed in without one: signed by the device key, as signing in is.
+	// A second is refused, so code holding the device key alone can't
+	// swap in a key of its own; replacing it means signing in again.
+	"POST /v1/me/device/approval-key",
+	// Re-linking it after the phone's faces or fingerprints changed: signed by
+	// the device key, with the new key's own proof. It only asks; the person
+	// approves the new key in their browser, so the phone alone can't swap it.
+	"POST /v1/me/device/relink",
+	// Going on past the AI fair-use bound lets the tafs spend more.
 	"PUT /v1/me/usage/ai",
+	// Declining a member's request for a pack is a billing admin's answer,
+	// behind Face ID like the other billing routes. Approving is buying the
+	// pack: Apple's signed transaction is its own proof.
+	"POST /v1/me/pack-requests/{id}/decline",
 	// Archiving an agent the phone made, once it's done: the Eval's
 	// cleanup after each run, and a taf removed for good (kiff/agents#78).
 	// It only takes authority away, but the phone's rules stay tight, so
@@ -108,7 +159,36 @@ const maxSignedBody = 1 << 20
 // of a call it answered; and it lists the drafts waiting for someone who
 // may confirm them.
 var PhoneSessionRules = []string{
+	// The money calls KIFF can't prove, for "Did this happen?".
+	"GET /v1/me/did-this-happen",
+	// KIFF's words for a connection's profile, which the phone renders and
+	// checks before the owner signs the approval (connection profiles: the owner's approval). It reads
+	// nothing of the account and changes nothing.
+	"POST /v1/profiles/words",
+	// Accepting the account's deletion: the body carries
+	// the intent signed by the approval key, behind the screen lock, which
+	// the handler verifies; nothing is erased until it finishes.
+	"POST /v1/account-deletions",
 	"GET /v1/me",
+	// Groups and who each agent is shared with, and the person's own
+	// access to each agent: the tafs app shows what KIFF says.
+	"GET /v1/groups",
+	"GET /v1/agents/{id}/grants",
+	"GET /v1/me/access",
+	// Reading another person's work, from the app: recorded by KIFF before
+	// it grants the read, unsigned as it grants nothing to act. The person
+	// whose work it is reads who read it; an admin, the account's reads.
+	"POST /v1/oversight/reads",
+	"GET /v1/me/oversight-reads",
+	"GET /v1/oversight/reads",
+	// The account's people, so the app can add one to a group or share
+	// an agent with them. Read only: inviting or changing anyone stays on
+	// the dashboard.
+	"GET /v1/tenant/members",
+	// A person's run grant for an agent they may use: no signature, as it
+	// adds nothing beyond that use, which KIFF checks, and the app asks
+	// for one with every message.
+	"POST /v1/me/run-grants",
 	"GET /v1/me/mandates",
 	"GET /v1/me/mandates/{id}/statement",
 	"POST /v1/me/mandates/{id}/revoke",
@@ -118,12 +198,28 @@ var PhoneSessionRules = []string{
 	"POST /v1/me/card-exceptions/{id}/reject",
 	"POST /v1/me/card-exceptions/{id}/change-card",
 	"GET /v1/receipts/{trace_id}",
+	// Whether this phone signed a request another KIFF service received
+	// (kiff/tafs#206): the session forwarded with the signature, never a
+	// signature on its own.
+	"POST /v1/me/device-signature",
 	// The account's record of every call (kiff/tafs#102): what a taf did,
 	// for the app's Activity and Record. Read only.
 	"GET /v1/me/activity",
 	// The account's two meters, counts only.
 	"GET /v1/me/usage",
 	"GET /v1/me/usage/tasks",
+	// A purchase made in the app through Apple: the transaction is Apple's
+	// signed JWS, carrying the account's appAccountToken, so it needs no
+	// signature of the phone's. The handler refuses another account's.
+	"POST /v1/me/billing/apple/transactions",
+	// The same through Google Play: the purchase token is read back from
+	// Play, and must carry the account's app_account_token.
+	"POST /v1/me/billing/google/purchases",
+	// A member asks an admin for a pack, and may withdraw it; neither
+	// spends anything. Declining is signed (PhoneSignedRules).
+	"GET /v1/me/pack-requests",
+	"POST /v1/me/pack-requests",
+	"POST /v1/me/pack-requests/{id}/withdraw",
 	"GET /v1/me/devices",
 	"DELETE /v1/me/devices/{id}",
 	"GET /v1/me/agent-drafts",
@@ -135,6 +231,9 @@ var PhoneSessionRules = []string{
 	// version's Card terms, or drafting a stale one again. Submitting either
 	// confirms nothing; the owner confirms with the phone's signature.
 	"POST /v1/me/agent-drafts/restore",
+	// How a draft would read, written nowhere (batch connections): tafs cloud
+	// shows the phone KIFF's lines for the draft the phone then signs.
+	"POST /v1/me/agent-drafts/preview",
 	"POST /v1/me/agent-drafts/{id}/redraft",
 	"GET /v1/me/alert-targets",
 	// The owner's halt: halting is one tap; resuming
@@ -190,9 +289,22 @@ var RuntimeKeyRules = map[string]KeyScope{
 	// This only consumes a durable trusted outcome for the caller's own
 	// operation. The handler never accepts an agent's effect assertion.
 	"POST /v1/me/card-effects/{proposal}/reconcile": AgentKeyOnly,
+	"POST /v1/me/card-effects/{proposal}/surcharge": AgentKeyOnly,
 
 	// Acting: decisions, events, and the entities a runtime works on.
 	"POST /v1/proposals/decide": AnyRuntimeKey,
+	// What a person may do with an agent: the runtime that runs
+	// it asks before a person's run, and at each turn, with the agent's own
+	// key. The handler refuses another agent's.
+	"POST /v1/agents/{id}/access": AgentKeyOnly,
+	// The same, for the key's own agent, without naming it.
+	"POST /v1/me/access": AgentKeyOnly,
+	// A run's grant, resolved by the agent's runtime with the agent's own
+	// key; the handler refuses another agent's grant.
+	"POST /v1/me/run-grants/resolve": AgentKeyOnly,
+	// A read grant, resolved the same way before the runtime serves another
+	// person's work to the reader KIFF recorded.
+	"POST /v1/me/read-grants/resolve": AgentKeyOnly,
 	// A trial's call through the gateway (kiff/tafs#107): decided for the
 	// key's own agent, and nothing recorded.
 	"POST /v1/gateway/trial": AgentKeyOnly,
@@ -348,6 +460,14 @@ func DefaultRoutePolicy() *RoutePolicy {
 	for _, pattern := range PhoneSignedRules {
 		p.signed.Handle(pattern, http.NotFoundHandler())
 	}
+	p.approval = http.NewServeMux()
+	for _, pattern := range PhoneApprovalRules {
+		p.approval.Handle(pattern, http.NotFoundHandler())
+	}
+	p.granted = http.NewServeMux()
+	for _, pattern := range DeviceGrantRoutes {
+		p.granted.Handle(pattern, http.NotFoundHandler())
+	}
 	return p
 }
 
@@ -367,6 +487,8 @@ var DefaultRules = map[string]membership.Capability{
 	// A person's own things.
 	"POST /v1/auth/device/approve":           membership.CapPersonal,
 	"POST /v1/auth/device/logout":            membership.CapPersonal,
+	"POST /v1/me/device/approval-key":        membership.CapPersonal,
+	"POST /v1/me/device/relink":              membership.CapPersonal,
 	"DELETE /v1/me/devices/{id}":             membership.CapPersonal,
 	"POST /v1/me/wallet/nonce":               membership.CapPersonal,
 	"POST /v1/me/wallet/verify":              membership.CapPersonal,
@@ -397,12 +519,38 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/mandates":                          membership.CapCardsManage,
 	"POST /v1/me/mandates/{id}/extra-room":          membership.CapCardsManage,
 	"POST /v1/me/card-effects/{proposal}/reconcile": membership.CapCardsManage,
-	"POST /v1/me/mandates/{id}/archive":             membership.CapCardsManage,
-	"POST /v1/me/mandates/{id}/move":                membership.CapCardsManage,
-	"POST /v1/me/mandates/{id}/revoke":              membership.CapCardsManage,
-	"PUT /v1/me/mandates/{id}/holders":              membership.CapCardsManage,
-	"POST /v1/me/agents":                            membership.CapCardsManage,
-	"POST /v1/me/agents/{id}/archive":               membership.CapCardsManage,
+	"POST /v1/me/card-effects/{proposal}/surcharge": membership.CapCardsManage,
+	// "Did this happen?" (connection profiles): whoever answers held calls answers it.
+	"GET /v1/me/did-this-happen":             membership.CapHoldsAnswer,
+	"POST /v1/me/did-this-happen/{proposal}": membership.CapHoldsAnswer,
+	"POST /v1/me/mandates/{id}/archive":      membership.CapCardsManage,
+	"POST /v1/me/mandates/{id}/move":         membership.CapCardsManage,
+	"POST /v1/me/mandates/{id}/revoke":       membership.CapCardsManage,
+	"PUT /v1/me/mandates/{id}/holders":       membership.CapCardsManage,
+	"PUT /v1/me/mandates/{id}/title":         membership.CapCardsManage,
+	"POST /v1/me/agents":                     membership.CapCardsManage,
+	// Groups and sharing. A group's managers change its
+	// members too, so those routes check in the handler.
+	"POST /v1/groups":                          membership.CapMembersManage,
+	"PATCH /v1/groups/{id}":                    membership.CapMembersManage,
+	"DELETE /v1/groups/{id}":                   membership.CapMembersManage,
+	"PUT /v1/groups/{id}/members/{subject}":    membership.CapPersonal,
+	"DELETE /v1/groups/{id}/members/{subject}": membership.CapPersonal,
+	"POST /v1/agents/{id}/grants":              membership.CapCardsManage,
+	"DELETE /v1/agents/{id}/grants":            membership.CapCardsManage,
+	// The permission answer: a person asks about themselves (the handler
+	// checks), a runtime about whoever its run is for.
+	"POST /v1/agents/{id}/access":    membership.CapRead,
+	"POST /v1/me/access":             membership.CapRead,
+	"POST /v1/me/run-grants":         membership.CapRead,
+	"POST /v1/me/run-grants/resolve": membership.CapRead,
+	// Reading another person's work: the handler checks the reader
+	// oversees the agent, and records the read before granting it.
+	"POST /v1/oversight/reads":        membership.CapRead,
+	"POST /v1/me/read-grants/resolve": membership.CapRead,
+	"GET /v1/me/oversight-reads":      membership.CapRead,
+	"GET /v1/oversight/reads":         membership.CapMembersManage,
+	"POST /v1/me/agents/{id}/archive": membership.CapCardsManage,
 
 	// Domains.
 	"PUT /v1/me/domain":                 membership.CapDomainsManage,
@@ -421,8 +569,20 @@ var DefaultRules = map[string]membership.Capability{
 	// Planque's connector key checks a person's device signature.
 	// The handler serves only a connector key; a person is refused there.
 	"POST /v1/devices/verify": membership.CapToolsConnect,
+	// Another KIFF service asks whether the caller's phone signed a request
+	// it received: the gateway, connecting the account's control server
+	// (kiff/tafs#206), which only someone who may connect tools does.
+	"POST /v1/me/device-signature": membership.CapToolsConnect,
 	// Setup's read Card, on the owner's approval of a connection (kiff/tafs#138).
 	"POST /v1/me/setup-reads": membership.CapToolsConnect,
+	// planque's connector key says a vendor signed a connection out; the
+	// handler serves only a connector key.
+	"POST /v1/me/connections/signed-out": membership.CapToolsConnect,
+	// Connection profiles: anyone on the account may read KIFF's
+	// words for a profile; only a connector key, for someone who may
+	// connect tools, checks the owner's approval of one.
+	"POST /v1/profiles/words":       membership.CapRead,
+	"POST /v1/me/profile-approvals": membership.CapToolsConnect,
 
 	// Tools a runtime connects.
 	"POST /v1/guard/connect": membership.CapToolsConnect,
@@ -440,11 +600,19 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/guard/observations":       membership.CapToolsConnect,
 
 	// Account-wide settings, billing, export, deletion.
-	"PUT /v1/me/account-kind":                      membership.CapAccountSettings,
-	"PUT /v1/me/usage/ceiling":                     membership.CapBilling,
-	"PUT /v1/me/usage/ai":                          membership.CapBilling,
-	"POST /v1/me/billing/checkout":                 membership.CapBilling,
+	"PUT /v1/me/account-kind":      membership.CapAccountSettings,
+	"PUT /v1/me/usage/ceiling":     membership.CapBilling,
+	"PUT /v1/me/usage/ai":          membership.CapBilling,
+	"POST /v1/me/billing/checkout": membership.CapBilling,
+	// Packs: bought by the billing admin; asked for by anyone on the
+	// account, who alone may withdraw their request (the handler checks).
+	"POST /v1/me/billing/apple/transactions":       membership.CapBilling,
+	"POST /v1/me/billing/google/purchases":         membership.CapBilling,
+	"POST /v1/me/pack-requests":                    membership.CapPersonal,
+	"POST /v1/me/pack-requests/{id}/withdraw":      membership.CapPersonal,
+	"POST /v1/me/pack-requests/{id}/decline":       membership.CapBilling,
 	"PUT /v1/me/time-zone":                         membership.CapAccountSettings,
+	"PUT /v1/me/account-name":                      membership.CapAccountSettings,
 	"PUT /v1/me/chat-approvals":                    membership.CapAccountSettings,
 	"PUT /v1/me/notification-prefs":                membership.CapAccountSettings,
 	"POST /v1/me/alert-targets":                    membership.CapAccountSettings,
@@ -456,6 +624,7 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/agent-drafts": membership.CapRead,
 	// Drafts that only wait (kiff/tafs#107); confirming them is cards.manage.
 	"POST /v1/me/agent-drafts/restore":      membership.CapRead,
+	"POST /v1/me/agent-drafts/preview":      membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/redraft": membership.CapRead,
 	// Agent keys only (RuntimeKeyRules); a person's session is refused by
 	// the handler, which needs a key bound to an agent.
@@ -474,6 +643,13 @@ var DefaultRules = map[string]membership.Capability{
 	"PUT /v1/me/billing-budget":        membership.CapBilling,
 	"GET /v1/me/export":                membership.CapExport,
 	"POST /v1/me/delete":               membership.CapDelete,
+	"POST /v1/account-deletions":       membership.CapDelete,
+	// This public route authenticates only the deletion's signed intent,
+	// which KIFF accepted from the phone (account deletion). It is registered
+	// outside the session mux and the handler reads no identity: this entry
+	// only names it for the route checks, it authorizes nothing.
+	"POST /v1/account-deletions/finish": membership.CapRead,
+	"POST /v1/account-deletions/status": membership.CapRead,
 
 	// People and policy.
 	"POST /v1/tenant/invites":                      membership.CapMembersManage,
@@ -508,7 +684,14 @@ func (p *RoutePolicy) phoneMux() *http.ServeMux {
 func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Identity) (signed, ok bool) {
 	if p.signed != nil {
 		if _, pattern := p.signed.Handler(r); pattern != "" {
-			return true, p.verifySigned(w, r, id)
+			return true, p.verifySigned(w, r, id, p.grantsAuthority(r, id))
+		}
+	}
+	// A write another KIFF service makes for the phone, with the grant its
+	// signed request earned (kiff/tafs#206).
+	if p.granted != nil && r.Header.Get(DeviceGrantHeader) != "" {
+		if _, pattern := p.granted.Handler(r); pattern != "" {
+			return false, p.useGrant(w, r, id, pattern)
 		}
 	}
 	if _, pattern := p.phoneMux().Handler(r); pattern == "" {
@@ -521,10 +704,22 @@ func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Id
 	return false, true
 }
 
+// grantsAuthority reports whether the request must be signed by the
+// session's approval key: a call that grants authority
+// (PhoneApprovalRules), from a session that has one (kiff/tafs#233).
+func (p *RoutePolicy) grantsAuthority(r *http.Request, id Identity) bool {
+	if p.approval == nil || len(id.ApprovalKey) == 0 {
+		return false
+	}
+	_, pattern := p.approval.Handler(r)
+	return pattern != ""
+}
+
 // verifySigned checks a setup call's KIFF-Device-Signature over the
 // tenant, method, path and query, and body, and refuses a signature it
 // has already accepted. The body is read and put back for the handler.
-func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Identity) bool {
+// With approval, the signature must be the approval key's.
+func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Identity, approval bool) bool {
 	var body []byte
 	if r.Body != nil {
 		b, err := io.ReadAll(io.LimitReader(r.Body, maxSignedBody+1))
@@ -539,11 +734,19 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 	if p.now != nil {
 		now = p.now()
 	}
-	replayID, err := VerifyRequest(id.DeviceKey, id.Tenant, r.Method, r.URL.RequestURI(), body, r.Header.Get(DeviceSignatureHeader), now)
+	key := id.DeviceKey
+	if approval {
+		key = id.ApprovalKey
+	}
+	replayID, err := VerifyRequest(key, id.Tenant, r.Method, r.URL.RequestURI(), body, r.Header.Get(DeviceSignatureHeader), now)
 	switch {
 	case errors.Is(err, ErrAnswerSignedAt):
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "signed_at_out_of_range",
 			"message": "the signature's time must be RFC 3339, within 5 minutes of KIFF's clock"})
+		return false
+	case err != nil && approval:
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "approval_key_required",
+			"message": "this grants authority: sign it with the phone's approval key, behind Face ID"})
 		return false
 	case err != nil:
 		writeJSON(w, http.StatusForbidden, map[string]string{"error": "signature_required",

@@ -54,6 +54,15 @@ type Claims struct {
 	Exp     int64    `json:"exp"`
 	Jti     string   `json:"jti"`
 	Details []Detail `json:"authorization_details"`
+	// Act is the person the call is for, when it is part of a person's
+	// run (RFC 8693's actor claim): KIFF checked their run grant on the
+	// call. Absent otherwise.
+	Act *Actor `json:"act,omitempty"`
+}
+
+// Actor is who an agent acts for.
+type Actor struct {
+	Sub string `json:"sub"`
 }
 
 // Key is a signing key and its id.

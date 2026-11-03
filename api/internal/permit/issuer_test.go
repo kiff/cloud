@@ -56,7 +56,7 @@ func TestMintSignsTheStoredBindingOnce(t *testing.T) {
 	if err != nil || !created || !stored.Same(b) {
 		t.Fatalf("bind: %+v %v", stored, err)
 	}
-	tok, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", stored)
+	tok, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", stored)
 	if err != nil || !minted {
 		t.Fatalf("mint: %v %v", minted, err)
 	}
@@ -74,7 +74,7 @@ func TestMintSignsTheStoredBindingOnce(t *testing.T) {
 	}
 
 	// One permit per operation: a second mint issues nothing.
-	if tok2, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", stored); err != nil || minted || tok2 != "" {
+	if tok2, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", stored); err != nil || minted || tok2 != "" {
 		t.Fatalf("second mint: %q %v %v", tok2, minted, err)
 	}
 }
@@ -159,7 +159,7 @@ func TestLifetimeIsCapped(t *testing.T) {
 	ctx := context.Background()
 	b := Binding{Tool: "t", ArgsSHA256: "h", Audience: "a"}
 	_, _, _ = is.Bind(ctx, "t1", "op", b)
-	tok, _, _ := is.Mint(ctx, "t1", "s", "op", "", b)
+	tok, _, _ := is.Mint(ctx, "t1", "s", "op", "", "", b)
 	_, c := decodeToken(t, tok, is.Key.Public().Pub)
 	if c.Exp-c.Iat != int64(MaxLifetime/time.Second) {
 		t.Fatalf("lifetime %d", c.Exp-c.Iat)
@@ -220,5 +220,106 @@ func TestSameGovernedWithAResource(t *testing.T) {
 		if bad.Validate() == nil {
 			t.Errorf("target %+v accepted", bad)
 		}
+	}
+}
+
+// amount lookups: a relay tool whose amount the gateway reads from the
+// resource. The amount is never signed: the Card evaluates the whole amount
+// read, and the resource it was read for must be the one the signed
+// arguments name, so a read for one dispute can't stand behind a permit for
+// another.
+func TestSameGovernedWithALookedUpAmount(t *testing.T) {
+	tg := Target{Action: "answer_dispute", Tool: "answer_dispute", Audience: "a", AmountArg: "amount", ResourceArg: "dispute", AmountLookedUp: true}
+	r := Request{Arguments: json.RawMessage(`{"dispute":"dp_A","accept":true,"planque_op":"tc-1"}`)}
+	for _, c := range []struct {
+		params map[string]any
+		want   bool
+	}{
+		{map[string]any{"amount": 4200, "dispute": "dp_A"}, true},
+		{map[string]any{"amount": 0, "dispute": "dp_A"}, true},       // a real 0 the vendor said
+		{map[string]any{"amount": 4200, "dispute": "dp_B"}, false},   // read for another dispute
+		{map[string]any{"dispute": "dp_A"}, false},                   // no amount read
+		{map[string]any{"amount": nil, "dispute": "dp_A"}, false},    // null
+		{map[string]any{"amount": -1, "dispute": "dp_A"}, false},     // negative
+		{map[string]any{"amount": 12.5, "dispute": "dp_A"}, false},   // not whole
+		{map[string]any{"amount": "4200", "dispute": "dp_A"}, false}, // text
+		{map[string]any{"amount": 4200, "dispute": "dp_A", "accept": true}, false},
+	} {
+		if got := r.SameGoverned(tg, c.params); got != c.want {
+			t.Errorf("%v: got %v", c.params, got)
+		}
+	}
+	// An amount in the signed arguments is the agent's word: refused.
+	signed := Request{Arguments: json.RawMessage(`{"dispute":"dp_A","amount":1}`)}
+	if signed.SameGoverned(tg, map[string]any{"amount": 4200, "dispute": "dp_A"}) {
+		t.Error("an amount in the signed arguments")
+	}
+	for _, bad := range []Target{
+		{Domain: "gateway", Action: "a", Tool: "t", Audience: "x", ResourceArg: "dispute", AmountLookedUp: true},
+		{Domain: "gateway", Action: "a", Tool: "t", Audience: "x", AmountArg: "amount", AmountLookedUp: true},
+	} {
+		if bad.Validate() == nil {
+			t.Errorf("target %+v accepted", bad)
+		}
+	}
+}
+
+// A decimal-string amount is signed as the tool takes it ("80.50") and
+// counted in minor units at the target's scale: the Card's 8050 matches it,
+// anything else, or a decimal the scale can't hold, doesn't (connection profiles).
+func TestSameGovernedWithADecimalAmount(t *testing.T) {
+	tg := Target{Domain: "gateway", Action: "record_invoice", Tool: "create_invoice", Audience: "a",
+		AmountArg: "total", AmountDecimal: true, AmountScale: 2}
+	for _, c := range []struct {
+		args   string
+		amount any
+		want   bool
+	}{
+		{`{"total":"80.50"}`, 8050, true},
+		{`{"total":"80.5"}`, 8050, true},
+		{`{"total":"80.50"}`, 80, false},
+		{`{"total":"80.505"}`, 8050, false},
+		{`{"total":8050}`, 8050, false},
+		{`{"total":"-80.50"}`, -8050, false},
+		{`{}`, 0, false},
+	} {
+		r := Request{Arguments: json.RawMessage(c.args)}
+		if got := r.SameGoverned(tg, map[string]any{"total": c.amount}); got != c.want {
+			t.Errorf("%s with %v: %v", c.args, c.amount, got)
+		}
+	}
+	if (Target{Domain: "gateway", Action: "a", Tool: "t", Audience: "a", AmountDecimal: true, AmountScale: 2}).Validate() == nil {
+		t.Error("a decimal target without its amount argument validated")
+	}
+}
+
+// A relay tool that takes its governed values nested is bound at their
+// paths: the Card's amount and resource are the ones the signed arguments
+// carry there, and a top-level value of the same name counts for nothing.
+func TestSameGovernedAtPaths(t *testing.T) {
+	tg := Target{Domain: "gateway", Action: "record_invoice", Tool: "create_invoice", Audience: "a",
+		AmountArg: "total", AmountPath: "invoice.total", AmountDecimal: true, AmountScale: 2,
+		ResourceArg: "contact", ResourcePath: "invoice.contactId"}
+	if err := tg.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range []struct {
+		args string
+		want bool
+	}{
+		{`{"invoice":{"total":"80.50","contactId":"c-1"}}`, true},
+		{`{"invoice":{"total":"80.50","contactId":"c-2"}}`, false},
+		{`{"invoice":{"total":"90.00","contactId":"c-1"}}`, false},
+		{`{"total":"80.50","contact":"c-1","invoice":{}}`, false},
+	} {
+		r := Request{Arguments: json.RawMessage(c.args)}
+		if got := r.SameGoverned(tg, map[string]any{"total": 8050, "contact": "c-1"}); got != c.want {
+			t.Errorf("%s: %v", c.args, got)
+		}
+	}
+	bad := tg
+	bad.AmountPath = "invoice.items[0].total"
+	if bad.Validate() == nil {
+		t.Error("an indexed path validated")
 	}
 }
