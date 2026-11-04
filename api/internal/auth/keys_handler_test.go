@@ -772,3 +772,87 @@ func TestKeysHandler_PhoneRevokesOnlyAgentKeys(t *testing.T) {
 		t.Fatalf("another tenant's key was revoked: %+v", theirs)
 	}
 }
+
+// An account key gets an expiry: 90 days by default, at most a year. An
+// agent's or a runtime's key gets none unless asked, and any expiry
+// asked for must be in the future. Roles never turn a key that doesn't
+// expire within a year into an account key.
+func TestKeysHandler_Expiry(t *testing.T) {
+	t.Parallel()
+	srv, store, token := keysServer(t, "tenant-acme")
+	now := time.Date(2026, 5, 23, 12, 0, 0, 0, time.UTC)
+	mint := func(body map[string]any) (int, CreateResponse, string) {
+		resp, raw := doJSON(t, "POST", srv.URL+"/v1/keys", token, body)
+		var out CreateResponse
+		_ = json.Unmarshal(raw, &out)
+		return resp.StatusCode, out, string(raw)
+	}
+	in := func(d time.Duration) string { return now.Add(d).Format(time.RFC3339) }
+
+	for name, roles := range map[string][]string{"admin": {"admin"}, "read-only": {RoleAccountReader}} {
+		code, k, raw := mint(map[string]any{"label": name, "roles": roles})
+		if code != http.StatusCreated || k.ExpiresAt == nil || !k.ExpiresAt.Equal(now.Add(AccountKeyDefaultLifetime)) {
+			t.Errorf("%s key with no expiry asked: %d %v %s, want %v", name, code, k.ExpiresAt, raw, now.Add(AccountKeyDefaultLifetime))
+		}
+		if code, k, raw := mint(map[string]any{"label": name, "roles": roles, "expires_at": in(30 * 24 * time.Hour)}); code != http.StatusCreated ||
+			k.ExpiresAt == nil || !k.ExpiresAt.Equal(now.Add(30*24*time.Hour)) {
+			t.Errorf("%s key for 30 days: %d %v %s", name, code, k.ExpiresAt, raw)
+		}
+		if code, _, raw := mint(map[string]any{"label": name, "roles": roles, "expires_at": in(366 * 24 * time.Hour)}); code != http.StatusBadRequest {
+			t.Errorf("%s key beyond a year: %d %s, want 400", name, code, raw)
+		}
+	}
+	for name, body := range map[string]map[string]any{
+		"runtime": {"label": "svc"},
+		"agent":   {"label": "agent", "roles": []string{"ops_agent"}, "agent_id": "agent-a"},
+	} {
+		if code, k, raw := mint(body); code != http.StatusCreated || k.ExpiresAt != nil {
+			t.Errorf("%s key with no expiry asked: %d %v %s, want none", name, code, k.ExpiresAt, raw)
+		}
+	}
+	// An agent's key may be asked to expire, beyond a year too.
+	if code, k, raw := mint(map[string]any{"label": "agent", "agent_id": "agent-a", "expires_at": in(2 * 365 * 24 * time.Hour)}); code != http.StatusCreated || k.ExpiresAt == nil {
+		t.Errorf("agent key for two years: %d %v %s", code, k.ExpiresAt, raw)
+	}
+	for _, at := range []string{in(-time.Minute), in(0)} {
+		if code, _, raw := mint(map[string]any{"label": "svc", "expires_at": at}); code != http.StatusBadRequest {
+			t.Errorf("expiry %s, not in the future: %d %s, want 400", at, code, raw)
+		}
+	}
+
+	// The list says when each key expires.
+	resp, raw := doJSON(t, "GET", srv.URL+"/v1/keys", token, nil)
+	if resp.StatusCode != http.StatusOK || !strings.Contains(string(raw), `"expires_at":"`+now.Add(AccountKeyDefaultLifetime).Format(time.RFC3339)) {
+		t.Errorf("list: %d %s, want the default expiry", resp.StatusCode, raw)
+	}
+
+	// A runtime key that never expires can't be made an account key by
+	// adding roles; one that expires within a year can.
+	_, forever, _ := mint(map[string]any{"label": "forever"})
+	if resp, raw := doJSON(t, "PATCH", srv.URL+"/v1/keys/"+forever.ID, token, map[string]any{"add_roles": []string{RoleAccountReader}}); resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("viewer added to a key that never expires: %d %s, want 400", resp.StatusCode, raw)
+	}
+	_, soon, _ := mint(map[string]any{"label": "soon", "expires_at": in(10 * 24 * time.Hour)})
+	if resp, raw := doJSON(t, "PATCH", srv.URL+"/v1/keys/"+soon.ID, token, map[string]any{"add_roles": []string{"admin"}}); resp.StatusCode != http.StatusOK {
+		t.Errorf("admin added to a key expiring in 10 days: %d %s, want 200", resp.StatusCode, raw)
+	}
+	if rec, err := store.GetByHash(context.Background(), storedHash(t, store, forever.ID)); err != nil || rec.ExpiresAt != nil {
+		t.Errorf("the never-expiring key changed: %v %v", rec.ExpiresAt, err)
+	}
+}
+
+// storedHash is a stored key's hash, by id.
+func storedHash(t *testing.T, store *MemoryAPIKeyStore, id string) [APIKeyHashSize]byte {
+	t.Helper()
+	recs, err := store.ListActive(context.Background(), "tenant-acme")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range recs {
+		if r.ID == id {
+			return r.KeyHash
+		}
+	}
+	t.Fatalf("no key %s", id)
+	return [APIKeyHashSize]byte{}
+}

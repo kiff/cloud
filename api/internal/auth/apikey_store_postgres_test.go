@@ -207,3 +207,48 @@ func TestPostgresAPIKeyStore_ListActive(t *testing.T) {
 		t.Errorf("tenant B active list wrong: %+v", got)
 	}
 }
+
+// A key's expiry is stored and read back by every read (by hash, the
+// active list, adding roles); a key minted without one reads as nil.
+func TestPostgresAPIKeyStore_Expiry(t *testing.T) {
+	pool := requirePostgres(t)
+	truncateAPIKeys(t, pool)
+	tenantID := tenant.NewID()
+	seedTenant(t, pool, tenantID)
+	store := auth.NewPostgresAPIKeyStore(pool)
+	ctx := context.Background()
+
+	expires := time.Now().UTC().Add(90 * 24 * time.Hour).Truncate(time.Microsecond)
+	withExpiry := auth.APIKeyRecord{ID: "key-exp-" + tenantID, Tenant: tenantID, Subject: "owner", Roles: []string{"viewer"},
+		KeyHash: sha256.Sum256([]byte("exp-" + tenantID)), CreatedAt: time.Now().UTC().Truncate(time.Microsecond), ExpiresAt: &expires}
+	without := auth.APIKeyRecord{ID: "key-none-" + tenantID, Tenant: tenantID, Subject: "owner",
+		KeyHash: sha256.Sum256([]byte("none-" + tenantID)), CreatedAt: time.Now().UTC().Truncate(time.Microsecond)}
+	for _, rec := range []auth.APIKeyRecord{withExpiry, without} {
+		if err := store.Insert(ctx, rec); err != nil {
+			t.Fatalf("Insert %s: %v", rec.ID, err)
+		}
+	}
+	got, err := store.GetByHash(ctx, withExpiry.KeyHash)
+	if err != nil || got.ExpiresAt == nil || !got.ExpiresAt.Equal(expires) {
+		t.Fatalf("GetByHash: %v %v, want %v", got.ExpiresAt, err, expires)
+	}
+	if got.IsExpired(expires.Add(-time.Second)) || !got.IsExpired(expires) {
+		t.Errorf("IsExpired around %v is wrong", expires)
+	}
+	if got, err := store.GetByHash(ctx, without.KeyHash); err != nil || got.ExpiresAt != nil {
+		t.Errorf("a key minted without an expiry: %v %v, want nil", got.ExpiresAt, err)
+	}
+	recs, err := store.ListActive(ctx, tenantID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range recs {
+		if r.ID == withExpiry.ID && (r.ExpiresAt == nil || !r.ExpiresAt.Equal(expires)) {
+			t.Errorf("ListActive: %v, want %v", r.ExpiresAt, expires)
+		}
+	}
+	added, err := store.AddRoles(ctx, tenantID, withExpiry.ID, []string{"reports"})
+	if err != nil || added.ExpiresAt == nil || !added.ExpiresAt.Equal(expires) {
+		t.Errorf("AddRoles kept the expiry: %v %v", added.ExpiresAt, err)
+	}
+}

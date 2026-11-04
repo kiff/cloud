@@ -393,6 +393,10 @@ func (m *Middleware) verifyAPIKey(ctx context.Context, raw string) (Identity, er
 		}
 		return Identity{}, err
 	}
+	if rec.IsExpired(m.clock()) {
+		// Past its expiry: refused like a revoked key.
+		return Identity{}, ErrAPIKeyExpired
+	}
 	if rec.Tenant != parsed.Tenant {
 		// Defensive: the embedded tenant in the key must match the
 		// stored record. A mismatch is either a bug in Insert or

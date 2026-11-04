@@ -72,8 +72,11 @@ func TestAgentKeyCannotHoldAccountRoles(t *testing.T) {
 		map[string]any{"add_roles": []string{"admin"}}); resp.StatusCode != http.StatusNotFound {
 		t.Errorf("granting admin to an unknown key: %d %s", resp.StatusCode, body)
 	}
-	// An unbound key may still be given admin by an admin.
-	resp, body = doJSON(t, http.MethodPost, srv.URL+"/v1/keys", ownerAuth, map[string]any{"label": "ops"})
+	// An unbound key may still be given admin by an admin, when it
+	// expires within a year as an account key must (a key that never
+	// expires is refused: TestKeysHandler_Expiry).
+	resp, body = doJSON(t, http.MethodPost, srv.URL+"/v1/keys", ownerAuth, map[string]any{"label": "ops",
+		"expires_at": time.Date(2026, 5, 23, 12, 0, 0, 0, time.UTC).Add(30 * 24 * time.Hour).Format(time.RFC3339)})
 	var unbound struct {
 		ID string `json:"id"`
 	}

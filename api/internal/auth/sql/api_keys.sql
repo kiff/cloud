@@ -84,3 +84,10 @@ ALTER TABLE cloud_meta.api_keys
 -- default to '' (any environment), so no key changes behaviour.
 ALTER TABLE cloud_meta.api_keys
     ADD COLUMN IF NOT EXISTS environment TEXT NOT NULL DEFAULT '';
+
+-- Optional expiry. Added idempotently; existing keys default to NULL
+-- (no expiry), so no key changes behaviour. A key past it is refused
+-- at authentication, like a revoked one. Account keys get one by
+-- default when minted (KeysHandler); agent keys only when asked.
+ALTER TABLE cloud_meta.api_keys
+    ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ NULL;

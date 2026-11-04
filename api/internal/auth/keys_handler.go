@@ -107,21 +107,63 @@ type createRequest struct {
 	// are decided there, and one naming another environment is refused.
 	// Optional; empty mints a key that may act in any environment.
 	Environment string `json:"environment,omitempty"`
+	// ExpiresAt is when the key stops working. An account key gets
+	// AccountKeyDefaultLifetime when it's absent and may not outlive
+	// AccountKeyMaxLifetime; an agent's or a runtime's key doesn't
+	// expire unless it's set.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+}
+
+// AccountKeyDefaultLifetime is how long an account key lasts when its
+// mint names no expiry, and AccountKeyMaxLifetime the most it may.
+const (
+	AccountKeyDefaultLifetime = 90 * 24 * time.Hour
+	AccountKeyMaxLifetime     = 365 * 24 * time.Hour
+)
+
+// isAccountKey reports whether roles on a key bound to agent make it an
+// account key: the account roles, or the read-only account key's role,
+// on a key bound to no agent, and not a connector.
+func isAccountKey(roles []string, agent string) bool {
+	return agent == "" && !slices.Contains(roles, RoleConnector) &&
+		(hasAccountRole(roles) || slices.Contains(roles, RoleAccountReader))
+}
+
+// keyExpiry is the expiry a new key gets: an account key's default when
+// asked for none, and an error when one is asked for that has passed or,
+// on an account key, exceeds the cap.
+func keyExpiry(asked *time.Time, account bool, now time.Time) (*time.Time, error) {
+	if asked == nil {
+		if !account {
+			return nil, nil
+		}
+		at := now.Add(AccountKeyDefaultLifetime)
+		return &at, nil
+	}
+	at := asked.UTC()
+	if !at.After(now) {
+		return nil, errors.New("expires_at must be in the future")
+	}
+	if account && at.After(now.Add(AccountKeyMaxLifetime)) {
+		return nil, errors.New("an account key expires within a year: expires_at is too far away")
+	}
+	return &at, nil
 }
 
 // CreateResponse is the body returned from POST /v1/keys. The
 // plaintext key appears here exactly once — never again. Clients
 // that lose the value must rotate the key.
 type CreateResponse struct {
-	ID          string    `json:"id"`
-	Tenant      string    `json:"tenant"`
-	Subject     string    `json:"subject"`
-	Label       string    `json:"label"`
-	Roles       []string  `json:"roles,omitempty"`
-	AgentID     string    `json:"agent_id,omitempty"`
-	Environment string    `json:"environment,omitempty"`
-	Plaintext   string    `json:"plaintext"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          string     `json:"id"`
+	Tenant      string     `json:"tenant"`
+	Subject     string     `json:"subject"`
+	Label       string     `json:"label"`
+	Roles       []string   `json:"roles,omitempty"`
+	AgentID     string     `json:"agent_id,omitempty"`
+	Environment string     `json:"environment,omitempty"`
+	Plaintext   string     `json:"plaintext"`
+	CreatedAt   time.Time  `json:"created_at"`
+	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
 }
 
 func (h *KeysHandler) create(w http.ResponseWriter, r *http.Request) {
@@ -218,6 +260,11 @@ func (h *KeysHandler) create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	now := h.clock()
+	expires, err := keyExpiry(req.ExpiresAt, isAccountKey(req.Roles, req.AgentID), now)
+	if err != nil {
+		writeJSONError(w, http.StatusBadRequest, err)
+		return
+	}
 	gen, err := NewAPIKey(id.Tenant, now)
 	if err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err)
@@ -233,6 +280,7 @@ func (h *KeysHandler) create(w http.ResponseWriter, r *http.Request) {
 		Environment: req.Environment,
 		KeyHash:     gen.Hash,
 		CreatedAt:   now,
+		ExpiresAt:   expires,
 	}
 	if err := h.store.Insert(r.Context(), rec); err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err)
@@ -248,6 +296,7 @@ func (h *KeysHandler) create(w http.ResponseWriter, r *http.Request) {
 		Environment: rec.Environment,
 		Plaintext:   gen.Plaintext,
 		CreatedAt:   rec.CreatedAt,
+		ExpiresAt:   rec.ExpiresAt,
 	})
 }
 
@@ -263,6 +312,7 @@ type ListItem struct {
 	Environment string     `json:"environment,omitempty"`
 	CreatedAt   time.Time  `json:"created_at"`
 	LastUsedAt  *time.Time `json:"last_used_at,omitempty"`
+	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
 	// MintedByRemovedMember: the person who minted this key was removed
 	// from the account. Agent keys keep working (revoking them would
 	// stop production); rotating them is an admin's decision.
@@ -313,6 +363,7 @@ func listItem(rec APIKeyRecord) ListItem {
 		Environment: rec.Environment,
 		CreatedAt:   rec.CreatedAt,
 		LastUsedAt:  rec.LastUsedAt,
+		ExpiresAt:   rec.ExpiresAt,
 	}
 }
 
@@ -404,6 +455,14 @@ func (h *KeysHandler) update(w http.ResponseWriter, r *http.Request) {
 				"a "+RoleGatewayAgent+" key must be bound to an agent; create a new key with agent_id"))
 			return
 		}
+	}
+	// Roles never turn a key into an account key that outlives the cap:
+	// an account key's expiry is chosen when it's minted.
+	if !isAccountKey(target.Roles, target.AgentID) && isAccountKey(append(slices.Clone(target.Roles), req.AddRoles...), target.AgentID) &&
+		(target.ExpiresAt == nil || target.ExpiresAt.After(h.clock().Add(AccountKeyMaxLifetime))) {
+		writeJSONError(w, http.StatusBadRequest, errors.New(
+			"these roles would make this key an account key, which must expire within a year; create a new account key instead"))
+		return
 	}
 	rec, err := h.store.AddRoles(r.Context(), id.Tenant, keyID, req.AddRoles)
 	if errors.Is(err, ErrAPIKeyNotFound) {

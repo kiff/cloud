@@ -92,10 +92,18 @@ type APIKeyRecord struct {
 	CreatedAt   time.Time
 	LastUsedAt  *time.Time
 	RevokedAt   *time.Time
+	// ExpiresAt, when set, is when the key stops authenticating, as a
+	// revoked one does. Nil means it doesn't expire.
+	ExpiresAt *time.Time
 }
 
 // IsRevoked reports whether the key has been revoked.
 func (r APIKeyRecord) IsRevoked() bool { return r.RevokedAt != nil }
+
+// IsExpired reports whether the key has expired at now.
+func (r APIKeyRecord) IsExpired(now time.Time) bool {
+	return r.ExpiresAt != nil && !now.Before(*r.ExpiresAt)
+}
 
 // IsDomainScoped reports whether the key is bound to a single domain
 // A tenant-wide key returns false.
@@ -117,6 +125,9 @@ var (
 	ErrAPIKeyNotFound  = errors.New("auth: api key not found")
 	ErrAPIKeyDuplicate = errors.New("auth: api key already exists")
 	ErrAPIKeyRevoked   = errors.New("auth: api key has been revoked")
+	// ErrAPIKeyExpired: the key is past its ExpiresAt. The store has no
+	// clock, so the caller that authenticates checks it (IsExpired).
+	ErrAPIKeyExpired = errors.New("auth: api key has expired")
 )
 
 // APIKeyStore is the persistence boundary for API keys. The
@@ -316,12 +327,12 @@ func NewPostgresAPIKeyStore(pool *pgxpool.Pool) *PostgresAPIKeyStore {
 }
 
 const sqlInsertAPIKey = `
-INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, expires_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 `
 
 const sqlSelectAPIKeyByHash = `
-SELECT id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at
+SELECT id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at, expires_at
 FROM cloud_meta.api_keys
 WHERE key_hash = $1
 `
@@ -336,7 +347,7 @@ WHERE id = $1 AND revoked_at IS NULL
 `
 
 const sqlListActiveAPIKeys = `
-SELECT id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at
+SELECT id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at, expires_at
 FROM cloud_meta.api_keys
 WHERE tenant_id = $1 AND revoked_at IS NULL
 ORDER BY created_at DESC
@@ -352,7 +363,7 @@ func (s *PostgresAPIKeyStore) Insert(ctx context.Context, r APIKeyRecord) error 
 		return fmt.Errorf("marshal roles: %w", err)
 	}
 	if _, err := s.pool.Exec(ctx, sqlInsertAPIKey,
-		r.ID, r.Tenant, r.Subject, r.Label, rolesJSON, r.DomainID, r.AgentID, r.Environment, r.HexHash(), r.CreatedAt,
+		r.ID, r.Tenant, r.Subject, r.Label, rolesJSON, r.DomainID, r.AgentID, r.Environment, r.HexHash(), r.CreatedAt, r.ExpiresAt,
 	); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" { // unique_violation
@@ -424,7 +435,7 @@ SET roles = k.roles || COALESCE(
 	  WHERE NOT (k.roles ? r)),
 	'[]'::jsonb)
 WHERE k.id = $1 AND k.tenant_id = $2 AND k.revoked_at IS NULL
-RETURNING id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at
+RETURNING id, tenant_id, subject, label, roles, domain_id, agent_id, environment, key_hash, created_at, last_used_at, revoked_at, expires_at
 `
 
 // AddRoles implements APIKeyStore.
@@ -492,8 +503,9 @@ func scanAPIKey(row apiKeyRowScanner) (APIKeyRecord, error) {
 		hashHex  string
 		lastUsed *time.Time
 		revoked  *time.Time
+		expires  *time.Time
 	)
-	if err := row.Scan(&rec.ID, &rec.Tenant, &rec.Subject, &rec.Label, &rolesRaw, &rec.DomainID, &rec.AgentID, &rec.Environment, &hashHex, &rec.CreatedAt, &lastUsed, &revoked); err != nil {
+	if err := row.Scan(&rec.ID, &rec.Tenant, &rec.Subject, &rec.Label, &rolesRaw, &rec.DomainID, &rec.AgentID, &rec.Environment, &hashHex, &rec.CreatedAt, &lastUsed, &revoked, &expires); err != nil {
 		return APIKeyRecord{}, err
 	}
 	if len(rolesRaw) > 0 {
@@ -511,6 +523,7 @@ func scanAPIKey(row apiKeyRowScanner) (APIKeyRecord, error) {
 	copy(rec.KeyHash[:], hashBytes)
 	rec.LastUsedAt = lastUsed
 	rec.RevokedAt = revoked
+	rec.ExpiresAt = expires
 	return rec, nil
 }
 

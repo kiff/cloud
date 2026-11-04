@@ -154,6 +154,9 @@ func (m *Middleware) verifyOAuthToken(ctx context.Context, raw string) (Identity
 	if err != nil {
 		return Identity{}, err
 	}
+	if rec.IsExpired(m.clock()) {
+		return Identity{}, ErrAPIKeyExpired
+	}
 	// Defensive: a grant only ever owns an agent-bound gateway_agent key.
 	if rec.AgentID == "" || !slices.Equal(rec.Roles, []string{RoleGatewayAgent}) {
 		return Identity{}, errors.New("auth: oauth grant key is not an agent-bound gateway key")

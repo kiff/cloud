@@ -25,6 +25,9 @@ type RoutePolicy struct {
 	mux *http.ServeMux
 	// keys, when set, is the runtime-key allowlist (RuntimeKeyRules).
 	keys *http.ServeMux
+	// readOnly is the read-only account key's allowlist
+	// (ReadOnlyKeyRules). Unset, that key reaches nothing.
+	readOnly *http.ServeMux
 	// phones, when set, is the allowlist for a phone's session
 	// (PhoneSessionRules); signed, the routes it reaches only with the
 	// phone's signature (PhoneSignedRules).
@@ -276,6 +279,21 @@ func (keyScopeHandler) ServeHTTP(http.ResponseWriter, *http.Request) {}
 // and its people's things (support tickets, wallet), and let it change
 // some of them. A route not named here is refused to runtime keys,
 // including routes added later. Account keys and people are unaffected.
+// ReadOnlyKeyRules are the routes a read-only account key reaches, all
+// reads (GET, and HEAD with it). Deny by default: a route not named
+// here is refused to it, a GET added later included, even one the
+// table would count as CapRead. Adding a route is a decision about what
+// the key may read.
+var ReadOnlyKeyRules = []string{
+	"GET /v1/me",
+	"GET /v1/me/activity",
+	"GET /v1/me/card-exceptions",
+	"GET /v1/me/card-exceptions/{id}",
+	"GET /v1/me/mandates",
+	"GET /v1/me/mandates/{id}/statement",
+	"GET /v1/me/stream",
+}
+
 var RuntimeKeyRules = map[string]KeyScope{
 	// Who am I, and my own Card.
 	"GET /v1/me":       AnyRuntimeKey,
@@ -409,14 +427,19 @@ func (p *RoutePolicy) Wrap(next http.Handler) http.Handler {
 			}
 		}
 		if err == nil && id.ReadOnlyAccountKey() {
-			// A read-only account key makes GET and HEAD requests that need
-			// CapRead, and nothing else. The method matters: the table
-			// names some POSTs CapRead (asking for access, drafting an
-			// agent, claiming a draft) because any reader may make them,
-			// and this key makes none. A read the table names another
-			// capability for (the export, the audit log) is refused too.
+			// A read-only account key makes the GET and HEAD requests
+			// ReadOnlyKeyRules names, and nothing else (deny by default).
+			// The method matters: the table names some POSTs CapRead
+			// (asking for access, drafting an agent), and this key makes
+			// none. The route must still need CapRead, so a listed read
+			// the table later names another capability for is refused.
 			read := r.Method == http.MethodGet || r.Method == http.MethodHead
-			if c, named := p.Required(r); !read || !named || c != membership.CapRead {
+			listed := false
+			if p.readOnly != nil {
+				_, pattern := p.readOnly.Handler(r)
+				listed = pattern != ""
+			}
+			if c, named := p.Required(r); !read || !listed || !named || c != membership.CapRead {
 				writeJSON(w, http.StatusForbidden, map[string]string{
 					"error":   "read_only_key",
 					"message": "this key only reads the account; it changes nothing",
@@ -470,6 +493,10 @@ func DefaultRoutePolicy() *RoutePolicy {
 	p.keys = http.NewServeMux()
 	for pattern, s := range RuntimeKeyRules {
 		p.keys.Handle(pattern, keyScopeHandler{s})
+	}
+	p.readOnly = http.NewServeMux()
+	for _, pattern := range ReadOnlyKeyRules {
+		p.readOnly.Handle(pattern, http.NotFoundHandler())
 	}
 	p.phones = http.NewServeMux()
 	for _, pattern := range PhoneSessionRules {
