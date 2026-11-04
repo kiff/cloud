@@ -31,29 +31,65 @@ func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
 	return nil
 }
 
-// BuildWarningIndexes builds the index the prune of completed warning work
-// reads (mandate_warning_work_completed). It is built CONCURRENTLY, so draws
-// and warning work keep writing while it builds, and outside ApplySchema,
+// warningIndexes are the indexes on cloud_meta.mandate_warning_work that
+// BuildWarningIndexes builds. Each lets a query read only its rows instead
+// of the whole table, which on a large table took longer than the warning
+// worker's stage: the prune of completed work, oldest first, and the pick
+// of the next pending job, in id order.
+var warningIndexes = []struct{ name, def string }{
+	{"mandate_warning_work_completed", "(completed_at) WHERE completed_at IS NOT NULL"},
+	{"mandate_warning_work_pending_id", "(id) WHERE completed_at IS NULL"},
+}
+
+// ErrWarningIndexesBuilding is BuildWarningIndexes' answer when another
+// instance is building them: that build finishes them.
+var ErrWarningIndexesBuilding = errors.New("warning indexes: another instance is building them")
+
+// BuildWarningIndexes builds warningIndexes CONCURRENTLY, so draws and
+// warning work keep writing while they build, and outside ApplySchema,
 // which runs as one transaction. An index a failed build left invalid is
-// dropped and built again. Idempotent; the API runs it after start.
+// dropped and built again. One instance builds at a time: a session
+// advisory lock, held on its own connection, keeps a second from dropping
+// the first's build in progress; the second answers
+// ErrWarningIndexesBuilding. Idempotent; the API runs it after start.
 func BuildWarningIndexes(ctx context.Context, pool *pgxpool.Pool) error {
-	var valid *bool
-	err := pool.QueryRow(ctx, `SELECT i.indisvalid FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
-		JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'cloud_meta' AND c.relname = 'mandate_warning_work_completed'`).Scan(&valid)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		return fmt.Errorf("warning index: read: %w", err)
+	conn, err := pool.Acquire(ctx)
+	if err != nil {
+		return fmt.Errorf("warning index: connection: %w", err)
 	}
-	if valid != nil && *valid {
-		return nil
+	defer conn.Release()
+	const lockKey = "cloud_meta.mandate_warning_work indexes"
+	// Try, never wait: a CONCURRENTLY build waits for every open
+	// transaction, a waiting pg_advisory_lock call included, so waiting
+	// here would deadlock with the instance that is building.
+	var locked bool
+	if err := conn.QueryRow(ctx, `SELECT pg_try_advisory_lock(hashtextextended($1, 0))`, lockKey).Scan(&locked); err != nil {
+		return fmt.Errorf("warning index: lock: %w", err)
 	}
-	if valid != nil {
-		if _, err := pool.Exec(ctx, `DROP INDEX CONCURRENTLY IF EXISTS cloud_meta.mandate_warning_work_completed`); err != nil {
-			return fmt.Errorf("warning index: drop invalid: %w", err)
+	if !locked {
+		return ErrWarningIndexesBuilding
+	}
+	defer func() {
+		_, _ = conn.Exec(context.WithoutCancel(ctx), `SELECT pg_advisory_unlock(hashtextextended($1, 0))`, lockKey)
+	}()
+	for _, ix := range warningIndexes {
+		var valid *bool
+		err := conn.QueryRow(ctx, `SELECT i.indisvalid FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
+			JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'cloud_meta' AND c.relname = $1`, ix.name).Scan(&valid)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("warning index %s: read: %w", ix.name, err)
 		}
-	}
-	if _, err := pool.Exec(ctx, `CREATE INDEX CONCURRENTLY IF NOT EXISTS mandate_warning_work_completed
-		ON cloud_meta.mandate_warning_work(completed_at) WHERE completed_at IS NOT NULL`); err != nil {
-		return fmt.Errorf("warning index: build: %w", err)
+		if valid != nil && *valid {
+			continue
+		}
+		if valid != nil {
+			if _, err := conn.Exec(ctx, `DROP INDEX CONCURRENTLY IF EXISTS cloud_meta.`+ix.name); err != nil {
+				return fmt.Errorf("warning index %s: drop invalid: %w", ix.name, err)
+			}
+		}
+		if _, err := conn.Exec(ctx, `CREATE INDEX CONCURRENTLY IF NOT EXISTS `+ix.name+` ON cloud_meta.mandate_warning_work`+ix.def); err != nil {
+			return fmt.Errorf("warning index %s: build: %w", ix.name, err)
+		}
 	}
 	return nil
 }

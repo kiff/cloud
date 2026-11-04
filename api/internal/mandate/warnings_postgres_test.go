@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/kiff/cloud/api/internal/mandate"
 )
 
@@ -277,18 +279,67 @@ func TestPostgresLifetimeWarningCountsTheWholeLedger(t *testing.T) {
 	}
 }
 
-// The prune of completed warning work reads the completed_at index, so it
-// touches only the rows it removes. In id order it read the whole table:
-// over 30 s in production, longer than the worker's whole pass.
-func TestPostgresWarningWorkPruneUsesTheCompletedIndex(t *testing.T) {
+// The warning worker's queries read their indexes, so each touches only
+// its rows: the prune of completed work and the pick of the next pending
+// job. In id order each read the whole table, over 30 s in production,
+// longer than the worker's stage.
+func TestPostgresWarningWorkQueriesReadTheirIndexes(t *testing.T) {
 	pool := requirePostgres(t)
 	ctx := context.Background()
-	// Twice: it is idempotent once the index is valid.
+	// Twice: it is idempotent once the indexes are valid.
 	for range 2 {
 		if err := mandate.BuildWarningIndexes(ctx, pool); err != nil {
 			t.Fatal(err)
 		}
 	}
+	for name, query := range map[string]string{
+		"mandate_warning_work_completed": `SELECT id FROM cloud_meta.mandate_warning_work WHERE completed_at<now()-interval '7 days' ORDER BY completed_at LIMIT 1000`,
+		"mandate_warning_work_pending_id": `SELECT w.id FROM cloud_meta.mandate_warning_work w WHERE w.completed_at IS NULL AND w.available_at<=now()
+			AND NOT EXISTS(SELECT 1 FROM cloud_meta.mandate_warning_work old WHERE old.tenant_id=w.tenant_id AND old.mandate_id=w.mandate_id AND old.completed_at IS NULL AND old.id<w.id)
+			ORDER BY w.id LIMIT 1`,
+	} {
+		if plan := explainNoSeqScan(t, pool, query); !strings.Contains(plan, name) {
+			t.Fatalf("%s isn't read:\n%s", name, plan)
+		}
+	}
+}
+
+// Two instances starting together build the indexes one at a time: the
+// second leaves it to the first instead of dropping its build in progress.
+func TestPostgresWarningIndexesBuildOneAtATime(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	for _, name := range []string{"mandate_warning_work_completed", "mandate_warning_work_pending_id"} {
+		if _, err := pool.Exec(ctx, `DROP INDEX IF EXISTS cloud_meta.`+name); err != nil {
+			t.Fatal(err)
+		}
+	}
+	errs := make(chan error, 2)
+	for range 2 {
+		go func() { errs <- mandate.BuildWarningIndexes(ctx, pool) }()
+	}
+	busy := 0
+	for range 2 {
+		err := <-errs
+		if errors.Is(err, mandate.ErrWarningIndexesBuilding) {
+			busy++
+		} else if err != nil {
+			t.Fatalf("a build at the same time failed: %v", err)
+		}
+	}
+	if busy > 1 {
+		t.Fatal("neither instance built the indexes")
+	}
+	var valid int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
+		WHERE c.relname IN ('mandate_warning_work_completed','mandate_warning_work_pending_id') AND i.indisvalid`).Scan(&valid); err != nil || valid != 2 {
+		t.Fatalf("valid indexes: %d %v", valid, err)
+	}
+}
+
+func explainNoSeqScan(t *testing.T, pool *pgxpool.Pool, query string) string {
+	t.Helper()
+	ctx := context.Background()
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		t.Fatal(err)
@@ -297,11 +348,12 @@ func TestPostgresWarningWorkPruneUsesTheCompletedIndex(t *testing.T) {
 	if _, err := tx.Exec(ctx, `SET LOCAL enable_seqscan = off`); err != nil {
 		t.Fatal(err)
 	}
-	var plan strings.Builder
-	rows, err := tx.Query(ctx, `EXPLAIN SELECT id FROM cloud_meta.mandate_warning_work WHERE completed_at<now()-interval '7 days' ORDER BY completed_at LIMIT 1000`)
+	rows, err := tx.Query(ctx, `EXPLAIN `+query)
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer rows.Close()
+	var plan strings.Builder
 	for rows.Next() {
 		var line string
 		if err := rows.Scan(&line); err != nil {
@@ -312,7 +364,5 @@ func TestPostgresWarningWorkPruneUsesTheCompletedIndex(t *testing.T) {
 	if err := rows.Err(); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(plan.String(), "mandate_warning_work_completed") {
-		t.Fatalf("the prune doesn't read the completed index:\n%s", plan.String())
-	}
+	return plan.String()
 }
