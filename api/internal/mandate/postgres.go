@@ -31,6 +31,33 @@ func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
 	return nil
 }
 
+// BuildWarningIndexes builds the index the prune of completed warning work
+// reads (mandate_warning_work_completed). It is built CONCURRENTLY, so draws
+// and warning work keep writing while it builds, and outside ApplySchema,
+// which runs as one transaction. An index a failed build left invalid is
+// dropped and built again. Idempotent; the API runs it after start.
+func BuildWarningIndexes(ctx context.Context, pool *pgxpool.Pool) error {
+	var valid *bool
+	err := pool.QueryRow(ctx, `SELECT i.indisvalid FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
+		JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'cloud_meta' AND c.relname = 'mandate_warning_work_completed'`).Scan(&valid)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return fmt.Errorf("warning index: read: %w", err)
+	}
+	if valid != nil && *valid {
+		return nil
+	}
+	if valid != nil {
+		if _, err := pool.Exec(ctx, `DROP INDEX CONCURRENTLY IF EXISTS cloud_meta.mandate_warning_work_completed`); err != nil {
+			return fmt.Errorf("warning index: drop invalid: %w", err)
+		}
+	}
+	if _, err := pool.Exec(ctx, `CREATE INDEX CONCURRENTLY IF NOT EXISTS mandate_warning_work_completed
+		ON cloud_meta.mandate_warning_work(completed_at) WHERE completed_at IS NOT NULL`); err != nil {
+		return fmt.Errorf("warning index: build: %w", err)
+	}
+	return nil
+}
+
 // PostgresStore is the production Store.
 //
 // Every query carries tenant_id in its predicate rather than filtering

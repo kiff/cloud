@@ -207,3 +207,21 @@ func TestPostgresHoldsOneCardUnitAsk(t *testing.T) {
 		t.Fatalf("folded: kept %s %d, second %s %q", keptStatus, keptCount, secondStatus, secondReason)
 	}
 }
+
+// A held card_unit ask names no Card, so it reads as held: a list of held
+// exceptions shows it, and no Card check withdraws it (kiff/tafs#464
+// item 11, from the v25 phone check).
+func TestACardUnitAskReadsAsHeld(t *testing.T) {
+	eachCardUnitStore(t, func(t *testing.T, s cardUnitStore, tenant string) {
+		ctx := context.Background()
+		e, _, err := s.AskCardUnit(ctx, mandate.CardUnitAsk{TenantID: tenant, ProposalID: fmt.Sprintf("tc-read-%d", time.Now().UnixNano()),
+			Subject: "chargebacks", Action: fmt.Sprintf("answer_read_%d", time.Now().UnixNano()), EntityID: "dp_1", Unit: "USD", CardUnit: "EUR"}, base)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p, err := mandate.ReadException(ctx, s.(mandate.Store), e, base.Add(time.Hour))
+		if err != nil || p.Status != mandate.ExceptionHeld || p.Exception.Status != mandate.ExceptionHeld {
+			t.Fatalf("read: %s / %s (%q) %v", p.Status, p.Exception.Status, p.Exception.Reason, err)
+		}
+	})
+}

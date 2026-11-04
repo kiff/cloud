@@ -583,6 +583,11 @@ func drawsFor(ms []Mandate, skip map[string]bool, tenantID, proposalID string, r
 // ms is what this subject holds now; a Card moved away is missing from
 // it. "" means the approval stands; otherwise the invalidation reason.
 func grantStillStands(ex Exception, held map[string]Mandate, now time.Time) string {
+	// A card_unit ask names no Card and grants nothing: changing the Card
+	// is what closes it (CloseCardUnit, ChangeCard).
+	if ex.KindOf() == KindCardUnit {
+		return ""
+	}
 	for _, id := range ex.MandateIDs() {
 		m, ok := held[id]
 		switch {

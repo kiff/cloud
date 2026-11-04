@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -273,5 +274,45 @@ func TestPostgresLifetimeWarningCountsTheWholeLedger(t *testing.T) {
 	}
 	if len(events) != 1 || events[0].Kind != "spent" || events[0].Used != 3 || events[0].Window != mandate.WindowLifetime {
 		t.Fatalf("warnings: %+v", events)
+	}
+}
+
+// The prune of completed warning work reads the completed_at index, so it
+// touches only the rows it removes. In id order it read the whole table:
+// over 30 s in production, longer than the worker's whole pass.
+func TestPostgresWarningWorkPruneUsesTheCompletedIndex(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	// Twice: it is idempotent once the index is valid.
+	for range 2 {
+		if err := mandate.BuildWarningIndexes(ctx, pool); err != nil {
+			t.Fatal(err)
+		}
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	if _, err := tx.Exec(ctx, `SET LOCAL enable_seqscan = off`); err != nil {
+		t.Fatal(err)
+	}
+	var plan strings.Builder
+	rows, err := tx.Query(ctx, `EXPLAIN SELECT id FROM cloud_meta.mandate_warning_work WHERE completed_at<now()-interval '7 days' ORDER BY completed_at LIMIT 1000`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for rows.Next() {
+		var line string
+		if err := rows.Scan(&line); err != nil {
+			t.Fatal(err)
+		}
+		plan.WriteString(line + "\n")
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(plan.String(), "mandate_warning_work_completed") {
+		t.Fatalf("the prune doesn't read the completed index:\n%s", plan.String())
 	}
 }

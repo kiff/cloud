@@ -288,7 +288,9 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 func (s *PostgresStore) ScheduleWarningObservations(ctx context.Context) error {
 	// Work snapshots are operational data, not the warning evidence. Retain
 	// completed snapshots seven days; failed/pending work is never pruned.
-	if _, err := s.pool.Exec(ctx, `DELETE FROM cloud_meta.mandate_warning_work WHERE id IN (SELECT id FROM cloud_meta.mandate_warning_work WHERE completed_at<now()-interval '7 days' ORDER BY id LIMIT 1000)`); err != nil {
+	// The prune reads mandate_warning_work_completed, so it touches only the
+	// rows it removes (in id order it read the whole table, over 30 s).
+	if _, err := s.pool.Exec(ctx, `DELETE FROM cloud_meta.mandate_warning_work WHERE id IN (SELECT id FROM cloud_meta.mandate_warning_work WHERE completed_at<now()-interval '7 days' ORDER BY completed_at LIMIT 1000)`); err != nil {
 		return err
 	}
 	_, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.mandate_warning_work(tenant_id,mandate_id,observed_at,card)

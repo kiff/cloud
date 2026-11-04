@@ -62,6 +62,9 @@ CREATE TABLE IF NOT EXISTS cloud_meta.mandate_warning_deliveries (
 ALTER TABLE cloud_meta.mandate_warning_work ADD COLUMN IF NOT EXISTS transaction_key text;
 CREATE UNIQUE INDEX IF NOT EXISTS mandate_warning_work_transaction ON cloud_meta.mandate_warning_work(tenant_id,mandate_id,transaction_key);
 CREATE INDEX IF NOT EXISTS mandate_warning_work_card_pending ON cloud_meta.mandate_warning_work(tenant_id,mandate_id,id) WHERE completed_at IS NULL;
+-- mandate_warning_work_completed, which the prune of completed work reads,
+-- is built CONCURRENTLY by BuildWarningIndexes, not here: on a large table a
+-- plain CREATE INDEX would block draws while it builds.
 ALTER TABLE cloud_meta.mandate_warnings ADD COLUMN IF NOT EXISTS resolved_at timestamptz, ADD COLUMN IF NOT EXISTS attention_dirty boolean NOT NULL DEFAULT true;
 ALTER TABLE cloud_meta.mandate_warnings
  ADD COLUMN IF NOT EXISTS delivery_available_at timestamptz NOT NULL DEFAULT now(),
