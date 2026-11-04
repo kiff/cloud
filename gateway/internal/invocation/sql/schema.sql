@@ -237,3 +237,11 @@ CREATE INDEX IF NOT EXISTS invocations_verify ON gateway.invocations (tenant_id,
 -- tool's title, fixed with the call so a later change to the connection
 -- never rewords it (connection profiles: a call keeps the profile it was decided under). NULL: from before this.
 ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS measure jsonb;
+
+-- When a call came back as an error that the connection itself raised
+-- before sending anything (its result's structuredContent says
+-- refused_by "connection" and sent false), the connection's code for why,
+-- e.g. 'halt_unknown'. Empty otherwise. It's the connection's own report,
+-- kept for the words only: it doesn't change what counts toward a Card.
+-- Kept when the result is purged.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS connection_refusal text NOT NULL DEFAULT '';

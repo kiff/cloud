@@ -364,6 +364,35 @@ func toolError(res json.RawMessage) string {
 	return toolErrorText(strings.Join(parts, " "))
 }
 
+// connectionRefusal is the connection's code when res is an error the
+// connection itself raised before sending anything: isError, and
+// structuredContent {"refused_by": "connection", "sent": false, "code": …}
+// (planque does this). Only a relay tool's result is read so: there the
+// answer comes from the customer's relay, while any other tool's answer is
+// the vendor's own and can't speak for a connection. "" for anything
+// else, a vendor's own error included. The code is kept only when it
+// reads as one: lower case letters and underscores, at most 40.
+func connectionRefusal(t Tool, res json.RawMessage) string {
+	if t.Mode != ModeRelay || toolError(res) == "" {
+		return ""
+	}
+	var r struct {
+		Structured struct {
+			RefusedBy string          `json:"refused_by"`
+			Code      string          `json:"code"`
+			Sent      json.RawMessage `json:"sent"`
+		} `json:"structuredContent"`
+	}
+	if json.Unmarshal(res, &r) != nil || r.Structured.RefusedBy != "connection" || strings.TrimSpace(string(r.Structured.Sent)) != "false" {
+		return ""
+	}
+	code := r.Structured.Code
+	if code == "" || len(code) > 40 || strings.Trim(code, "abcdefghijklmnopqrstuvwxyz_") != "" {
+		return ""
+	}
+	return code
+}
+
 // toolErrorText is msg as kept on the record: one line, at most
 // maxToolError characters, never empty.
 func toolErrorText(msg string) string {

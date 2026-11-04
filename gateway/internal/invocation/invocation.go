@@ -423,6 +423,9 @@ type Update struct {
 	// verify read hasn't been recorded yet: until it is, its operation
 	// counts as paused once the read is overdue (connection profiles: the verify read).
 	VerifyPending bool
+	// ConnectionRefusal replaces the recorded one when non-empty: the
+	// connection's code for a call it refused before sending anything.
+	ConnectionRefusal string
 }
 
 // ReasonGatewayRestarted is recorded when a stale in-flight invocation
@@ -503,9 +506,10 @@ func (s *Store) Transition(ctx context.Context, key string, from []State, to Sta
 		       tool_outcome = CASE WHEN $13 = '' THEN tool_outcome ELSE $13 END,
 		       no_effect_evidence = COALESCE(no_effect_evidence, $14::jsonb),
 		       execution_binding = COALESCE(execution_binding, $15::jsonb),
-		       verify_evidence = CASE WHEN $16 THEN COALESCE(verify_evidence, '{"result":"pending"}'::jsonb) ELSE verify_evidence END
+		       verify_evidence = CASE WHEN $16 THEN COALESCE(verify_evidence, '{"result":"pending"}'::jsonb) ELSE verify_evidence END,
+		       connection_refusal = CASE WHEN $17 = '' THEN connection_refusal ELSE $17 END
 		 WHERE key = $1 AND state = ANY($2)`,
-		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding), u.VerifyPending)
+		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding), u.VerifyPending, u.ConnectionRefusal)
 	if err != nil {
 		return false, err
 	}

@@ -50,6 +50,9 @@ const (
 	// never re-decided.
 	OutcomeWithdrawn      Outcome = "withdrawn"
 	OutcomeApprovedNoRoom Outcome = "approved_no_room"
+	// OutcomeUnitMismatch: the call is in another unit than its Card
+	// counts (KindCardUnit). Nothing is authorized.
+	OutcomeUnitMismatch Outcome = "amount_unit_mismatch"
 )
 
 // ExceptionStatus is where a held exception is in its life.
@@ -115,7 +118,23 @@ type Breach struct {
 	// parameter and the value the call sent ("" when it sent none).
 	Resource string `json:",omitempty"`
 	Value    string `json:",omitempty"`
+	// Unit and CardUnit are, for a KindCardUnit exception, the call's unit
+	// as the gateway read it ("USD") and the unit the Card counts ("EUR").
+	Unit     string `json:",omitempty"`
+	CardUnit string `json:",omitempty"`
 }
+
+// What an exception is (kiff/tafs#464 item 11).
+const (
+	// KindHold is an action held for its owner, to approve once, change
+	// the Card for or reject. An exception stored before Kind reads as one.
+	KindHold = "hold"
+	// KindCardUnit is an action refused because its Card has no limit in
+	// the call's unit: one per agent, action and unit while held, counted
+	// on each refused repeat. Its owner changes the Card or dismisses it;
+	// it can't be approved once.
+	KindCardUnit = "card_unit"
+)
 
 // Exception is one action held for a Card's owner.
 type Exception struct {
@@ -150,7 +169,47 @@ type Exception struct {
 	// Covering is the complete applicable set at cumulative redemption,
 	// including Cards whose thresholds were not waived. It survives replay.
 	Covering []string
+	// Kind is KindHold or KindCardUnit; "" reads as KindHold.
+	Kind string
+	// Count and LastAt are, for a KindCardUnit exception, how many calls
+	// were refused for it and when the latest was.
+	Count  int
+	LastAt *time.Time
 }
+
+// KindOf is the exception's kind, KindHold when none was stored.
+func (e Exception) KindOf() string {
+	if e.Kind == "" {
+		return KindHold
+	}
+	return e.Kind
+}
+
+// CardUnitAsk is a call refused because its Card has no limit in its unit.
+type CardUnitAsk struct {
+	TenantID, ProposalID, Subject, Action, EntityID string
+	Unit, CardUnit                                  string
+}
+
+// asks reports whether e is the held KindCardUnit exception for a.
+func (e Exception) asks(a CardUnitAsk) bool {
+	return e.KindOf() == KindCardUnit && e.Status == ExceptionHeld && e.Subject == a.Subject && e.Action == a.Action &&
+		len(e.Breaches) == 1 && strings.EqualFold(e.Breaches[0].Unit, a.Unit)
+}
+
+// newCardUnit is the exception a's first refusal opens.
+func newCardUnit(a CardUnitAsk, now time.Time) Exception {
+	t := now.UTC()
+	return Exception{ID: ExceptionID(a.TenantID, a.ProposalID), TenantID: a.TenantID, ProposalID: a.ProposalID,
+		Subject: a.Subject, Action: a.Action, EntityID: a.EntityID, Kind: KindCardUnit, Status: ExceptionHeld,
+		Breaches: []Breach{{Outcome: OutcomeUnitMismatch, Unit: strings.ToUpper(a.Unit), CardUnit: strings.ToUpper(a.CardUnit),
+			Reason: "the call is in " + strings.ToUpper(a.Unit) + " and the Card's limits are in " + strings.ToUpper(a.CardUnit)}},
+		CreatedAt: t, Count: 1, LastAt: &t, PriorApprovals: []ApprovalRecord{}}
+}
+
+// ReasonUnitAllowed is why a KindCardUnit exception closed when a call in
+// its unit was allowed: the Card counts that unit now.
+const ReasonUnitAllowed = "a call in this unit was allowed: the Card counts it now"
 
 // Expired reports whether a held exception has passed its expiry
 // unanswered. Once answered, an exception does not expire: approve once

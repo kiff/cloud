@@ -549,6 +549,35 @@ func TestConnectWithAnAmountUnit(t *testing.T) {
 	}
 }
 
+// A whole-number amount's display scale stays off its permit target:
+// apps/api reads a target's scale only for a decimal amount, and refuses a
+// connector key that changes a target, so a target written before decimals
+// (scale 0) must come out the same (connector_key_forbidden on every
+// connect for an account with a scaled verify or relay tool).
+func TestPermitTargetScaleOnlyForDecimal(t *testing.T) {
+	r := newRig(t, dev)
+	open := openToolServer(t)
+	cents := map[string]any{"name": "issue_refund", "url": open.URL, "tool": "refund", "mode": "verify", "audience": "https://refunds.example.com/mcp",
+		"idempotency_argument": "idem", "amount_argument": "amount_eur", "amount_unit": "EUR", "amount_scale": 2}
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", cents); status != http.StatusCreated {
+		t.Fatalf("connect issue_refund: %d %s", status, body)
+	}
+	if got := r.api.targets["owner-a"]; len(got) != 1 || got[0] != (kiffapi.PermitTarget{Domain: "gateway", Action: "issue_refund", Tool: "refund",
+		Audience: "https://refunds.example.com/mcp", AmountArg: "amount_eur"}) {
+		t.Fatalf("permit targets: %+v", got)
+	}
+	invoice := map[string]any{"name": "record_invoice", "url": open.URL, "tool": "refund", "mode": "verify", "audience": "https://refunds.example.com/mcp",
+		"idempotency_argument": "idem", "amount_argument": "total", "amount_unit": "EUR", "amount_scale": 2, "amount_format": "decimal_string"}
+	if status, body := r.do(t, "owner-a", http.MethodPost, "/v1/connections", invoice); status != http.StatusCreated {
+		t.Fatalf("connect record_invoice: %d %s", status, body)
+	}
+	for _, got := range r.api.targets["owner-a"] {
+		if want := got.Action == "record_invoice"; got.AmountDecimal != want || (got.AmountScale == 2) != want {
+			t.Fatalf("%s: decimal %v scale %d", got.Action, got.AmountDecimal, got.AmountScale)
+		}
+	}
+}
+
 // openToolServer lists its tools to anyone: a tool in verify mode checks
 // KIFF's execution permit on each call instead of a credential.
 func openToolServer(t *testing.T) *httptest.Server {

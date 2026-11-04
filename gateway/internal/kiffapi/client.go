@@ -221,11 +221,17 @@ func (c *Client) do(ctx context.Context, key, method, path string, body any) (in
 
 func apiError(status int, raw []byte) error {
 	var e struct {
-		Error string `json:"error"`
+		Error   string `json:"error"`
+		Message string `json:"message"`
 	}
 	_ = json.Unmarshal(raw, &e)
 	if e.Error == "" {
 		e.Error = strings.TrimSpace(string(raw))
+	}
+	// The code says what kind of refusal; apps/api's message says which
+	// check refused, so a refusal can be read from the gateway's answer.
+	if m := strings.TrimSpace(e.Message); m != "" && m != e.Error {
+		return fmt.Errorf("kiffapi: %d: %s: %s", status, e.Error, m)
 	}
 	return fmt.Errorf("kiffapi: %d: %s", status, e.Error)
 }

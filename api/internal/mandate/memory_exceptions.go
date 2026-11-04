@@ -201,6 +201,11 @@ func (s *MemoryStore) ChangeCardRoom(ctx context.Context, tenantID, id, by strin
 		if e.Status != ExceptionHeld {
 			return ErrExceptionState
 		}
+		if e.KindOf() == KindCardUnit {
+			// Its Card gains the unit in Coach: answering marks it changed.
+			resolve(e, ExceptionChanged, by, now)
+			return nil
+		}
 		usage := limitUsage{Usage: UsageFunc(func(mandateID string, q Quantity, since time.Time) (int64, error) {
 			return s.usedLocked(tenantID, mandateID, q.Key(), since, e.ProposalID), nil
 		}), read: func(m Mandate, a Aggregate, at time.Time) (int64, error) {
@@ -260,4 +265,38 @@ func (s *MemoryStore) invalidateHoldersLocked(tenantID, mandateID string, agents
 		e.Status, e.Reason, e.ResolvedBy, e.ResolvedAt = ExceptionInvalidated, reason, "", &t
 		s.exceptions[k] = e
 	}
+}
+
+// AskCardUnit opens a's KindCardUnit exception, or counts a's refusal on the
+// one already held: opened says which.
+func (s *MemoryStore) AskCardUnit(_ context.Context, a CardUnitAsk, now time.Time) (e Exception, opened bool, err error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for k, held := range s.exceptions {
+		if held.TenantID == a.TenantID && held.asks(a) {
+			t := now.UTC()
+			held.Count++
+			held.LastAt = &t
+			s.exceptions[k] = held
+			return held, false, nil
+		}
+	}
+	e = newCardUnit(a, now)
+	s.exceptions[key(a.TenantID, a.ProposalID)] = e
+	return e, true, nil
+}
+
+// CloseCardUnit closes a's held KindCardUnit exception, if any, as changed:
+// a call in its unit was allowed.
+func (s *MemoryStore) CloseCardUnit(_ context.Context, a CardUnitAsk, now time.Time) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for k, held := range s.exceptions {
+		if held.TenantID == a.TenantID && held.asks(a) {
+			resolve(&held, ExceptionChanged, "", now)
+			held.Reason = ReasonUnitAllowed
+			s.exceptions[k] = held
+		}
+	}
+	return nil
 }

@@ -102,7 +102,7 @@ func (p *Postgres) unproven(ctx context.Context, tenant, proposal string, answer
 		}
 		seen[u.Proposal] = true
 		u.Status = RefusedByTool
-		u.StatusWords = "The tool refused it, and nothing shows that no money moved."
+		u.StatusWords = "The app refused it. KIFF can't confirm that no money moved."
 		switch {
 		case state == "unknown":
 			u.Status = Unknown

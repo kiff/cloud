@@ -878,7 +878,8 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 		te := toolError(stored)
 		verifies := te == "" && t.Verify != nil && !t.ReadOnly
 		out, err := a.finish(ctx, in.Key, forwarding, invocation.StateForwarded,
-			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: terminalNoEffect(t, in, stored), VerifyPending: verifies}, nil)
+			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: terminalNoEffect(t, in, stored), VerifyPending: verifies,
+				ConnectionRefusal: connectionRefusal(t, stored)}, nil)
 		// A write its profile reads back is checked now, once it's recorded
 		// as sent (verify.go).
 		if err == nil && te == "" && t.Probation && !t.ReadOnly {

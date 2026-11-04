@@ -22,6 +22,8 @@ func TestFromRecord(t *testing.T) {
 	}{
 		"recorded done":    {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "done", HasResult: true}), tooloutcome.Outcome{Status: tooloutcome.Done, At: at}, true},
 		"recorded refusal": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "error", ToolError: "card declined"}), tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "card declined", At: at}, true},
+		"refused by the connection": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "error", ToolError: "Refused by planque: no.", ConnectionRefusal: "halt_unknown"}),
+			tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "Refused by planque: no.", RefusedBy: "connection", Code: "halt_unknown", At: at}, true},
 		// Rows from before tool_outcome, or from an older
 		// gateway during a rollout, are read from their result while it is
 		// kept, and as not recorded once it is purged, never as done.
@@ -110,6 +112,20 @@ func TestPostgresReadsTheGatewayRecord(t *testing.T) {
 		got["tc-refused"].Status != tooloutcome.RefusedByTool || got["tc-refused"].Message != "Refund amount is greater than unrefunded amount" ||
 		got["tc-old-refused"].Status != tooloutcome.RefusedByTool || got["tc-old-purged"].Status != tooloutcome.NotRecorded {
 		t.Errorf("outcomes: %+v", got)
+	}
+
+	// And with connection_refusal: a call the connection refused before
+	// sending carries its code; a vendor's error next to it doesn't.
+	if _, err := pool.Exec(ctx, `
+		ALTER TABLE gateway.invocations ADD COLUMN connection_refusal text NOT NULL DEFAULT '';
+		INSERT INTO gateway.invocations (key, tenant_id, state, tool_error, tool_outcome, connection_refusal, result, updated_at) VALUES
+			('tc-conn', 't1', 'forwarded', 'Refused by planque: no.', 'error', 'halt_unknown', NULL, now())`); err != nil {
+		t.Fatal(err)
+	}
+	got, err = r.Outcomes(ctx, "t1", []string{"tc-conn", "tc-refused"})
+	if err != nil || got["tc-conn"].Status != tooloutcome.RefusedByTool || got["tc-conn"].RefusedBy != "connection" || got["tc-conn"].Code != "halt_unknown" ||
+		got["tc-refused"].RefusedBy != "" || got["tc-refused"].Code != "" {
+		t.Errorf("with connection_refusal: %+v %v", got, err)
 	}
 }
 

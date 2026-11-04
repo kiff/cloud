@@ -829,9 +829,17 @@ func (h *Handler) targets(ctx context.Context, c caller) func([]gateway.Tool) er
 		ts := []kiffapi.PermitTarget{}
 		for _, t := range tools {
 			if t.Mode == gateway.ModeVerify || t.Mode == gateway.ModeRelay {
+				// apps/api reads a target's scale only for a decimal amount, and
+				// a connector key may not change a target it didn't write: the
+				// display scale of a whole-number amount ("EUR", 2) stays off,
+				// or every target written before decimals would differ.
+				decimal, scale := t.AmountFormat == gateway.FormatDecimal, 0
+				if decimal {
+					scale = t.AmountScale
+				}
 				ts = append(ts, kiffapi.PermitTarget{Domain: gateway.Domain, Action: t.Name, Tool: t.UpstreamTool,
 					Audience: t.Audience, AmountArg: t.AmountArg, ResourceArg: t.ResourceArg, AmountLookedUp: t.AmountLookup != nil,
-					AmountDecimal: t.AmountFormat == gateway.FormatDecimal, AmountScale: t.AmountScale,
+					AmountDecimal: decimal, AmountScale: scale,
 					AmountPath: t.AmountPath, ResourcePath: t.ResourcePath})
 			}
 		}

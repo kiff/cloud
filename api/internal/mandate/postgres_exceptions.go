@@ -23,7 +23,8 @@ func policyOf(m Mandate) string {
 const exceptionColumns = `
 		SELECT tenant_id, id, proposal_id, subject, action, entity_id, fingerprint,
 		       request, breaches, status, reason, created_at, resolved_by, resolved_at, consumed_at, expires_at,
-		       accounting_version, legacy_approval, covering_cards, prior_approvals, external_answer, refusal
+		       accounting_version, legacy_approval, covering_cards, prior_approvals, external_answer, refusal,
+		       kind, ask_count, last_at
 		  FROM cloud_meta.mandate_exceptions`
 
 func scanExceptions(rows pgx.Rows) ([]Exception, error) {
@@ -35,7 +36,8 @@ func scanExceptions(rows pgx.Rows) ([]Exception, error) {
 		var legacy, prior, external, refusal []byte
 		if err := rows.Scan(&e.TenantID, &e.ID, &e.ProposalID, &e.Subject, &e.Action, &e.EntityID, &e.Fingerprint,
 			&req, &breaches, &e.Status, &e.Reason, &e.CreatedAt, &e.ResolvedBy, &e.ResolvedAt, &e.ConsumedAt, &e.ExpiresAt,
-			&e.AccountingVersion, &legacy, &e.Covering, &prior, &external, &refusal); err != nil {
+			&e.AccountingVersion, &legacy, &e.Covering, &prior, &external, &refusal,
+			&e.Kind, &e.Count, &e.LastAt); err != nil {
 			return nil, fmt.Errorf("scan exception: %w", err)
 		}
 		if err := json.Unmarshal(req, &e.Request); err != nil {
@@ -139,8 +141,9 @@ func saveException(ctx context.Context, q querier, e Exception) error {
 		INSERT INTO cloud_meta.mandate_exceptions
 			(tenant_id, id, proposal_id, subject, action, entity_id, fingerprint,
 			 request, breaches, status, reason, created_at, resolved_by, resolved_at, consumed_at, expires_at,
-			 accounting_version, legacy_approval, covering_cards, prior_approvals, external_answer, refusal)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
+			 accounting_version, legacy_approval, covering_cards, prior_approvals, external_answer, refusal,
+			 kind, ask_count, last_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
 		ON CONFLICT (tenant_id, id) DO UPDATE SET
 			fingerprint = EXCLUDED.fingerprint, request = EXCLUDED.request,
 			breaches = EXCLUDED.breaches, status = EXCLUDED.status, reason = EXCLUDED.reason,
@@ -149,10 +152,11 @@ func saveException(ctx context.Context, q querier, e Exception) error {
 			expires_at = EXCLUDED.expires_at, accounting_version = EXCLUDED.accounting_version,
 			legacy_approval = EXCLUDED.legacy_approval, covering_cards = EXCLUDED.covering_cards,
 			prior_approvals = EXCLUDED.prior_approvals, external_answer = EXCLUDED.external_answer,
-			refusal = EXCLUDED.refusal`
+			refusal = EXCLUDED.refusal, kind = EXCLUDED.kind, ask_count = EXCLUDED.ask_count, last_at = EXCLUDED.last_at`
 	if _, err := q.Exec(ctx, stmt, e.TenantID, e.ID, e.ProposalID, e.Subject, e.Action, e.EntityID, e.Fingerprint,
 		req, breaches, string(e.Status), e.Reason, e.CreatedAt.UTC(), e.ResolvedBy, e.ResolvedAt, e.ConsumedAt, e.ExpiresAt,
-		e.AccountingVersion, legacy, nonNilStrings(e.Covering), prior, external, refusal); err != nil {
+		e.AccountingVersion, legacy, nonNilStrings(e.Covering), prior, external, refusal,
+		e.KindOf(), e.Count, e.LastAt); err != nil {
 		return fmt.Errorf("save exception: %w", err)
 	}
 	return nil
@@ -495,6 +499,11 @@ func (s *PostgresStore) ChangeCardRoom(ctx context.Context, tenantID, id, by str
 		if e.Status != ExceptionHeld {
 			return ErrExceptionState
 		}
+		if e.KindOf() == KindCardUnit {
+			// Its Card gains the unit in Coach: answering marks it changed.
+			resolve(e, ExceptionChanged, by, now)
+			return nil
+		}
 		cards, err := forSubject(ctx, tx, tenantID, e.Subject)
 		if err != nil {
 			return err
@@ -550,4 +559,75 @@ func resolve(e *Exception, status ExceptionStatus, by string, now time.Time) {
 	}
 	t := now.UTC()
 	e.Status, e.ResolvedBy, e.ResolvedAt = status, by, &t
+}
+
+// heldCardUnit is the held KindCardUnit exception for a, locked for update
+// on tx, if any.
+func heldCardUnit(ctx context.Context, tx pgx.Tx, a CardUnitAsk) (Exception, bool, error) {
+	rows, err := tx.Query(ctx, exceptionColumns+`
+		 WHERE tenant_id = $1 AND kind = 'card_unit' AND status = 'held' AND subject = $2 AND action = $3
+		   AND upper(breaches->0->>'Unit') = upper($4)
+		 ORDER BY created_at LIMIT 1 FOR UPDATE`, a.TenantID, a.Subject, a.Action, a.Unit)
+	if err != nil {
+		return Exception{}, false, fmt.Errorf("held card unit: %w", err)
+	}
+	es, err := scanExceptions(rows)
+	if err != nil || len(es) == 0 {
+		return Exception{}, false, err
+	}
+	return es[0], true, nil
+}
+
+// lockCardUnit takes a's (tenant, agent, action, unit) lock until tx ends,
+// so two refusals that find no held exception yet don't both open one.
+func lockCardUnit(ctx context.Context, tx pgx.Tx, a CardUnitAsk) error {
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended('card_unit|' || $1 || '|' || $2 || '|' || $3 || '|' || upper($4), 0))`,
+		a.TenantID, a.Subject, a.Action, a.Unit); err != nil {
+		return fmt.Errorf("lock card unit: %w", err)
+	}
+	return nil
+}
+
+// AskCardUnit opens a's KindCardUnit exception, or counts a's refusal on the
+// one already held: opened says which. Two refusals at once wait on
+// lockCardUnit, so only the first opens it.
+func (s *PostgresStore) AskCardUnit(ctx context.Context, a CardUnitAsk, now time.Time) (e Exception, opened bool, err error) {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return Exception{}, false, fmt.Errorf("ask card unit: begin: %w", err)
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	if err := lockCardUnit(ctx, tx, a); err != nil {
+		return Exception{}, false, err
+	}
+	held, ok, err := heldCardUnit(ctx, tx, a)
+	if err != nil {
+		return Exception{}, false, err
+	}
+	if ok {
+		t := now.UTC()
+		held.Count++
+		held.LastAt = &t
+		e = held
+	} else {
+		e, opened = newCardUnit(a, now), true
+	}
+	if err := saveException(ctx, tx, e); err != nil {
+		return Exception{}, false, err
+	}
+	return e, opened, tx.Commit(ctx)
+}
+
+// CloseCardUnit closes a's held KindCardUnit exception, if any, as changed:
+// a call in its unit was allowed.
+func (s *PostgresStore) CloseCardUnit(ctx context.Context, a CardUnitAsk, now time.Time) error {
+	_, err := s.pool.Exec(ctx, `
+		UPDATE cloud_meta.mandate_exceptions
+		   SET status = 'changed', resolved_by = '', resolved_at = $5, reason = $6
+		 WHERE tenant_id = $1 AND kind = 'card_unit' AND status = 'held' AND subject = $2 AND action = $3
+		   AND upper(breaches->0->>'Unit') = upper($4)`, a.TenantID, a.Subject, a.Action, a.Unit, now.UTC(), ReasonUnitAllowed)
+	if err != nil {
+		return fmt.Errorf("close card unit: %w", err)
+	}
+	return nil
 }

@@ -402,3 +402,14 @@ CREATE TABLE IF NOT EXISTS cloud_meta.happened_answers (
     answered_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (tenant_id, proposal_id)
 );
+
+-- What an exception is (kiff/tafs#464 item 11): 'hold', or 'card_unit' for
+-- an action refused because its Card has no limit in the call's unit, one
+-- per agent, action and unit while held, with how many calls were refused
+-- for it and when the latest was.
+ALTER TABLE cloud_meta.mandate_exceptions
+    ADD COLUMN IF NOT EXISTS kind      text        NOT NULL DEFAULT 'hold',
+    ADD COLUMN IF NOT EXISTS ask_count integer     NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS last_at   timestamptz;
+CREATE INDEX IF NOT EXISTS mandate_exceptions_card_unit_held
+    ON cloud_meta.mandate_exceptions (tenant_id, subject, action) WHERE kind = 'card_unit' AND status = 'held';

@@ -169,3 +169,38 @@ func TestWithCallKeepsTheToolsValues(t *testing.T) {
 		t.Fatalf("with resource: %s", got)
 	}
 }
+
+// A refusal the connection raised before sending carries its code
+// (planque's structuredContent); a vendor's own error, a success, a
+// claim that doesn't say sent false, or the same claim from a tool KIFF
+// reaches directly (the vendor's own server) carries none.
+func TestConnectionRefusal(t *testing.T) {
+	refused := func(structured string) json.RawMessage {
+		return json.RawMessage(`{"content":[{"type":"text","text":"Refused by planque: no."}],"isError":true,"structuredContent":` + structured + `}`)
+	}
+	for name, tc := range map[string]struct {
+		res  json.RawMessage
+		want string
+	}{
+		"halt unknown":    {refused(`{"refused_by":"connection","code":"halt_unknown","sent":false}`), "halt_unknown"},
+		"sent":            {refused(`{"refused_by":"connection","code":"halt_unknown","sent":true}`), ""},
+		"sent missing":    {refused(`{"refused_by":"connection","code":"halt_unknown"}`), ""},
+		"sent as string":  {refused(`{"refused_by":"connection","code":"halt_unknown","sent":"false"}`), ""},
+		"by the vendor":   {refused(`{"refused_by":"app","code":"halt_unknown","sent":false}`), ""},
+		"odd code":        {refused(`{"refused_by":"connection","code":"Halt Unknown!","sent":false}`), ""},
+		"no code":         {refused(`{"refused_by":"connection","sent":false}`), ""},
+		"not an error":    {json.RawMessage(`{"content":[],"structuredContent":{"refused_by":"connection","code":"halted","sent":false}}`), ""},
+		"vendor's error":  {json.RawMessage(`{"content":[{"type":"text","text":"card declined"}],"isError":true}`), ""},
+		"structured junk": {refused(`"halted"`), ""},
+	} {
+		if got := connectionRefusal(Tool{Mode: ModeRelay}, tc.res); got != tc.want {
+			t.Errorf("%s: %q, want %q", name, got, tc.want)
+		}
+	}
+	claim := refused(`{"refused_by":"connection","code":"halted","sent":false}`)
+	for _, mode := range []string{ModeSealed, ModeVerify, ""} {
+		if got := connectionRefusal(Tool{Mode: mode}, claim); got != "" {
+			t.Errorf("mode %q: %q, want the vendor's claim ignored", mode, got)
+		}
+	}
+}
