@@ -352,10 +352,11 @@ func (p *RoutePolicy) runtimeKeyAllowed(r *http.Request, id Identity) bool {
 }
 
 // isRuntimeKey reports whether id is an API key without the account
-// roles. People and account keys are not, and neither is a connector key:
-// the auth middleware already keeps it to its own routes.
+// roles. People and account keys are not, and neither is a connector key
+// (the auth middleware already keeps it to its own routes) or a
+// read-only account key (Wrap keeps it to reads).
 func (id Identity) isRuntimeKey() bool {
-	return id.APIKey && id.MemberRole == "" && !id.ManagesAccount() && !id.IsConnector()
+	return id.APIKey && id.MemberRole == "" && !id.ManagesAccount() && !id.IsConnector() && !id.ReadOnlyAccountKey()
 }
 
 type capHandler struct{ c membership.Capability }
@@ -406,6 +407,24 @@ func (p *RoutePolicy) Wrap(next http.Handler) http.Handler {
 			if signed {
 				r = r.WithContext(withDeviceSigned(r.Context()))
 			}
+		}
+		if err == nil && id.ReadOnlyAccountKey() {
+			// A read-only account key makes GET and HEAD requests that need
+			// CapRead, and nothing else. The method matters: the table
+			// names some POSTs CapRead (asking for access, drafting an
+			// agent, claiming a draft) because any reader may make them,
+			// and this key makes none. A read the table names another
+			// capability for (the export, the audit log) is refused too.
+			read := r.Method == http.MethodGet || r.Method == http.MethodHead
+			if c, named := p.Required(r); !read || !named || c != membership.CapRead {
+				writeJSON(w, http.StatusForbidden, map[string]string{
+					"error":   "read_only_key",
+					"message": "this key only reads the account; it changes nothing",
+				})
+				return
+			}
+			next.ServeHTTP(w, r)
+			return
 		}
 		if err == nil && p.keys != nil && id.isRuntimeKey() {
 			if !p.runtimeKeyAllowed(r, id) {

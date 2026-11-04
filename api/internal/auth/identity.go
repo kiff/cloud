@@ -250,6 +250,22 @@ func (id Identity) ManagesAccount() bool {
 	return id.AgentID == "" && !id.IsConnector() && (id.HasRole("tenant_owner") || id.HasRole("admin"))
 }
 
+// RoleAccountReader is the role of a read-only account key: an account
+// key that reads what the account's people read and changes nothing.
+const RoleAccountReader = "viewer"
+
+// ReadOnlyAccountKey reports whether the identity is a read-only account
+// key: an API key holding RoleAccountReader, bound to no agent, not a
+// connector, and without the account roles (which make it a full
+// account key). It is neither a runtime key nor a person: the route
+// policy lets it reach only what needs CapRead, and it never holds a
+// person's other capabilities (CapPersonal approves devices and leaves
+// the account). A key bound to an agent stays that agent's runtime key
+// whatever roles it holds.
+func (id Identity) ReadOnlyAccountKey() bool {
+	return id.APIKey && id.AgentID == "" && !id.IsConnector() && !id.ManagesAccount() && id.HasRole(RoleAccountReader)
+}
+
 // AccountRoles are the roles that let a credential act for the
 // account's people. A key bound to an agent never holds them: minting
 // or granting one onto such a key is refused, and a stored key that has

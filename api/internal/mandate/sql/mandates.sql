@@ -413,3 +413,31 @@ ALTER TABLE cloud_meta.mandate_exceptions
     ADD COLUMN IF NOT EXISTS last_at   timestamptz;
 CREATE INDEX IF NOT EXISTS mandate_exceptions_card_unit_held
     ON cloud_meta.mandate_exceptions (tenant_id, subject, action) WHERE kind = 'card_unit' AND status = 'held';
+
+-- One held card_unit exception per agent, action and unit, enforced here as
+-- well as by AskCardUnit's lock. Any second held one made before this
+-- index is folded into the earliest: its count is added there, the later
+-- last try is kept, and it is invalidated.
+WITH ranked AS (
+    SELECT tenant_id, id, ask_count, last_at,
+           first_value(id) OVER w AS keep_id,
+           row_number() OVER w AS n
+      FROM cloud_meta.mandate_exceptions
+     WHERE kind = 'card_unit' AND status = 'held'
+    WINDOW w AS (PARTITION BY tenant_id, subject, action, upper(breaches->0->>'Unit') ORDER BY created_at, id)
+), folded AS (
+    UPDATE cloud_meta.mandate_exceptions e
+       SET ask_count = e.ask_count + extra.total,
+           last_at = greatest(e.last_at, extra.latest)
+      FROM (SELECT tenant_id, keep_id, sum(ask_count) AS total, max(last_at) AS latest
+              FROM ranked WHERE n > 1 GROUP BY tenant_id, keep_id) extra
+     WHERE e.tenant_id = extra.tenant_id AND e.id = extra.keep_id
+)
+UPDATE cloud_meta.mandate_exceptions e
+   SET status = 'invalidated', resolved_by = '', resolved_at = now(),
+       reason = 'merged into an earlier request for the same action and unit'
+  FROM ranked
+ WHERE ranked.n > 1 AND e.tenant_id = ranked.tenant_id AND e.id = ranked.id;
+CREATE UNIQUE INDEX IF NOT EXISTS mandate_exceptions_card_unit_held_one
+    ON cloud_meta.mandate_exceptions (tenant_id, subject, action, upper(breaches->0->>'Unit'))
+    WHERE kind = 'card_unit' AND status = 'held';

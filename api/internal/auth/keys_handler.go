@@ -52,9 +52,10 @@ func WithKeysMinterRemoved(f func(ctx context.Context, tenant, subject string) b
 }
 
 // requireStepUp answers false (having written the refusal) when roles
-// name an account role and the caller's sign-in is not recent.
+// name an account role, or the read-only account key's role (it reads
+// the whole account), and the caller's sign-in is not recent.
 func (h *KeysHandler) requireStepUp(w http.ResponseWriter, r *http.Request, id Identity, roles []string) bool {
-	if h.stepUp == nil || !hasAccountRole(roles) {
+	if h.stepUp == nil || !(hasAccountRole(roles) || slices.Contains(roles, RoleAccountReader)) {
 		return true
 	}
 	if _, err := h.stepUp.Check(r.Context(), id); err != nil {

@@ -47,6 +47,11 @@ func (id Identity) Can(c membership.Capability) bool {
 	if id.MemberRole != "" {
 		return membership.Can(id.MemberRole, c)
 	}
+	if id.ReadOnlyAccountKey() {
+		// Reading only: not CapPersonal, which approves devices and leaves
+		// the account, nor anything an unbound runtime key holds below.
+		return c == membership.CapRead
+	}
 	if id.IsConnector() {
 		// The domain writes a connection makes are allowed by their
 		// handlers for the gateway's own domain only, so a connector key
@@ -199,7 +204,7 @@ func (m *Middleware) resolveDeveloper(ctx context.Context, id Identity) (members
 // a KIFF operator (kiff-tenant mint-key, Subject "ops"); those keys keep
 // their roles under the operator audit trail.
 func (m *Middleware) checkAccountKey(ctx context.Context, id Identity) error {
-	if id.AgentID != "" || !(hasAccountRole(id.Roles) || id.IsConnector()) {
+	if id.AgentID != "" || !(hasAccountRole(id.Roles) || id.IsConnector() || id.ReadOnlyAccountKey()) {
 		return nil
 	}
 	mem, err := m.members.Latest(ctx, id.Tenant, id.Subject)

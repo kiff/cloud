@@ -383,6 +383,50 @@ func TestIsKeyManagement(t *testing.T) {
 	}
 }
 
+// Minting a key that reads or manages the whole account (admin, or the
+// read-only viewer key) needs a recent sign-in; an agent's or a
+// runtime's key does not. Asking for viewer on an agent's key needs one
+// too: the role does nothing there, and the rule stays simple.
+func TestKeysHandler_AccountKeysNeedARecentSignIn(t *testing.T) {
+	t.Parallel()
+	serve := func(s *StepUp) (*httptest.Server, string) {
+		resolver := NewMapResolver()
+		resolver.Set("owner", actor.Actor{ID: "owner-actor", Roles: []string{"admin"}}, "tenant-acme")
+		clk := time.Date(2026, 5, 23, 12, 0, 0, 0, time.UTC)
+		store := NewMemoryAPIKeyStore()
+		mux := http.NewServeMux()
+		NewKeysHandler(store, WithKeysClock(fixedClock(clk)), WithKeysStepUp(s)).Register(mux)
+		srv := httptest.NewServer(NewMiddleware(NewStubProvider(resolver), store, resolver, WithClock(fixedClock(clk))).Wrap(mux))
+		t.Cleanup(srv.Close)
+		return srv, "Bearer owner"
+	}
+	// No sign-in is ever recent enough here.
+	srv, owner := serve(&StepUp{Now: func() time.Time { return time.Now() }})
+	for name, body := range map[string]map[string]any{
+		"read-only":          {"label": "qa", "roles": []string{RoleAccountReader}},
+		"admin":              {"label": "ops", "roles": []string{"admin"}},
+		"viewer on an agent": {"label": "agent", "roles": []string{RoleAccountReader}, "agent_id": "agent-a"},
+	} {
+		resp, raw := doJSON(t, "POST", srv.URL+"/v1/keys", owner, body)
+		if resp.StatusCode != http.StatusForbidden || !strings.Contains(string(raw), "reauth_required") {
+			t.Errorf("%s key without a recent sign-in: %d %s, want 403 reauth_required", name, resp.StatusCode, raw)
+		}
+	}
+	for name, body := range map[string]map[string]any{
+		"runtime": {"label": "svc"},
+		"agent":   {"label": "agent", "roles": []string{"ops_agent"}, "agent_id": "agent-a"},
+	} {
+		if resp, raw := doJSON(t, "POST", srv.URL+"/v1/keys", owner, body); resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+			t.Errorf("%s key: %d %s, want it minted", name, resp.StatusCode, raw)
+		}
+	}
+	// A recent sign-in mints the read-only key.
+	srv, owner = serve(&StepUp{TrustAll: true})
+	if resp, raw := doJSON(t, "POST", srv.URL+"/v1/keys", owner, map[string]any{"label": "qa", "roles": []string{RoleAccountReader}}); resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+		t.Errorf("read-only key after a recent sign-in: %d %s", resp.StatusCode, raw)
+	}
+}
+
 // TestKeysHandler_RuntimeKeyCannotManage proves the end-to-end gate: a
 // plain runtime API key (role ops_agent, no management role — the
 // agent's decide credential) is refused on both mint and revoke with

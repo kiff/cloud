@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
+
 	"github.com/kiff/cloud/api/internal/mandate"
 )
 
@@ -150,4 +152,58 @@ func TestCardUnitRefusalsAtOnceOpenOneAsk(t *testing.T) {
 			}
 		}
 	})
+}
+
+// Postgres holds one held card_unit exception per agent, action and unit
+// itself: a second can't be written, and one written before the index
+// existed is folded into the earliest when the schema is applied.
+func TestPostgresHoldsOneCardUnitAsk(t *testing.T) {
+	pool := requirePostgres(t)
+	seedTenant(t, pool, "t-unit-one")
+	ctx := context.Background()
+	s := mandate.NewPostgresStore(pool)
+	first, _, err := s.AskCardUnit(ctx, mandate.CardUnitAsk{TenantID: "t-unit-one", ProposalID: "tc-1", Subject: "chargebacks",
+		Action: "answer_dispute", EntityID: "dp_1", Unit: "USD", CardUnit: "EUR"}, base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// copyAs writes a copy of first, as another held exception made later.
+	const copyAs = `INSERT INTO cloud_meta.mandate_exceptions
+		SELECT (jsonb_populate_record(NULL::cloud_meta.mandate_exceptions,
+			to_jsonb(e) || jsonb_build_object('id', $3::text, 'proposal_id', $3::text, 'ask_count', 2, 'created_at', e.created_at + interval '1 hour'))).*
+		  FROM cloud_meta.mandate_exceptions e WHERE e.tenant_id = $1 AND e.id = $2`
+	var pgErr *pgconn.PgError
+	if _, err := pool.Exec(ctx, copyAs, "t-unit-one", first.ID, "exc-second"); !errors.As(err, &pgErr) || pgErr.Code != "23505" {
+		t.Fatalf("a second held card_unit exception: %v, want a unique violation", err)
+	}
+
+	// Before the index: a duplicate, folded when the schema is applied. In a
+	// transaction, rolled back, so other tests never see the index missing.
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	if _, err := tx.Exec(ctx, `DROP INDEX cloud_meta.mandate_exceptions_card_unit_held_one`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tx.Exec(ctx, copyAs, "t-unit-one", first.ID, "exc-second"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tx.Exec(ctx, mandate.SchemaSQL()); err != nil {
+		t.Fatal(err)
+	}
+	var keptStatus, secondStatus, secondReason string
+	var keptCount int
+	if err := tx.QueryRow(ctx, `SELECT status, ask_count FROM cloud_meta.mandate_exceptions WHERE tenant_id = $1 AND id = $2`,
+		"t-unit-one", first.ID).Scan(&keptStatus, &keptCount); err != nil {
+		t.Fatal(err)
+	}
+	if err := tx.QueryRow(ctx, `SELECT status, reason FROM cloud_meta.mandate_exceptions WHERE tenant_id = $1 AND id = 'exc-second'`,
+		"t-unit-one").Scan(&secondStatus, &secondReason); err != nil {
+		t.Fatal(err)
+	}
+	if keptStatus != "held" || keptCount != 3 || secondStatus != "invalidated" || secondReason == "" {
+		t.Fatalf("folded: kept %s %d, second %s %q", keptStatus, keptCount, secondStatus, secondReason)
+	}
 }

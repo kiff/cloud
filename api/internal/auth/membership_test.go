@@ -154,11 +154,12 @@ func TestAccountKeyActsWithNoMoreThanItsMintersRole(t *testing.T) {
 		return gen.Plaintext
 	}
 	account := mint("bob", []string{"tenant_owner"}, "")
+	readOnly := mint("bob", []string{RoleAccountReader}, "")
 	runtime := mint("bob", []string{"ops_agent"}, "")
 	agentKey := mint("bob", []string{"ops_agent"}, "agent-1")
 	operator := mint("ops", []string{"admin"}, "")
 
-	for name, k := range map[string]string{"account": account, "runtime": runtime, "agent": agentKey, "operator": operator} {
+	for name, k := range map[string]string{"account": account, "read-only": readOnly, "runtime": runtime, "agent": agentKey, "operator": operator} {
 		if code, _, _ := f.do(k, ""); code != http.StatusOK {
 			t.Fatalf("%s key before demotion: %d", name, code)
 		}
@@ -168,6 +169,9 @@ func TestAccountKeyActsWithNoMoreThanItsMintersRole(t *testing.T) {
 	}
 	if code, _, _ := f.do(account, ""); code != http.StatusUnauthorized {
 		t.Fatalf("account key of a demoted minter: %d, want 401 (M15)", code)
+	}
+	if code, _, _ := f.do(readOnly, ""); code != http.StatusUnauthorized {
+		t.Fatalf("read-only account key of a demoted minter: %d, want 401", code)
 	}
 	for name, k := range map[string]string{"runtime": runtime, "agent": agentKey, "operator": operator} {
 		if code, _, _ := f.do(k, ""); code != http.StatusOK {
@@ -179,6 +183,9 @@ func TestAccountKeyActsWithNoMoreThanItsMintersRole(t *testing.T) {
 	}
 	if code, _, _ := f.do(account, ""); code != http.StatusOK {
 		t.Fatalf("account key after re-promotion: %d", code)
+	}
+	if code, _, _ := f.do(readOnly, ""); code != http.StatusOK {
+		t.Fatalf("read-only account key after re-promotion: %d", code)
 	}
 }
 
