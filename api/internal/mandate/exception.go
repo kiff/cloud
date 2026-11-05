@@ -208,8 +208,35 @@ func newCardUnit(a CardUnitAsk, now time.Time) Exception {
 }
 
 // ReasonUnitAllowed is why a KindCardUnit exception closed when a call in
-// its unit was allowed: the Card counts that unit now.
-const ReasonUnitAllowed = "a call in this unit was allowed: the Card counts it now"
+// its unit was allowed on its action: the agent's Cards count that unit now.
+func ReasonUnitAllowed(action, unit string) string {
+	return "a call in " + strings.ToUpper(unit) + " was allowed on " + action + ": its Cards count " + strings.ToUpper(unit) + " now"
+}
+
+// ReasonUnitCovered is why a KindCardUnit exception closed when a signed
+// Card gave its agent action, whose amount is in unit.
+func ReasonUnitCovered(action, unit string) string {
+	return "a signed Card gives it " + action + " in " + strings.ToUpper(unit) + " now"
+}
+
+// UnitCover is what a signed Card gives one of its holders: an action
+// whose amount is in Unit. Issued with the Card, it closes that agent's
+// held KindCardUnit exceptions in that unit, on any action, as changed:
+// a Card gains a currency as another action (the same tool in that unit),
+// and signing it is the owner's decision. An allowed call closes only its
+// own action's ask (CloseCardUnit).
+// If a call on the original action is still refused, the next refusal
+// opens a fresh ask, so a close that came too soon is never silent.
+type UnitCover struct {
+	Subject, Action, Unit string
+}
+
+// answersUnit reports whether e is a held KindCardUnit exception of
+// subject's in unit, on any action.
+func (e Exception) answersUnit(subject, unit string) bool {
+	return e.KindOf() == KindCardUnit && e.Status == ExceptionHeld && e.Subject == subject &&
+		len(e.Breaches) == 1 && strings.EqualFold(e.Breaches[0].Unit, unit)
+}
 
 // Expired reports whether a held exception has passed its expiry
 // unanswered. Once answered, an exception does not expire: approve once

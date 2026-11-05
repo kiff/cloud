@@ -493,3 +493,31 @@ func TestPendingLeavesOutHoldsThatEnded(t *testing.T) {
 		t.Fatalf("with a refusal: %+v", calls)
 	}
 }
+
+// A hold KIFF no longer has (an ended hold pruned from a test account, or
+// one that isn't this agent's) will never get the owner's answer, so
+// kiff_pending leaves it out as ended, never as waiting: the chargebacks
+// eval listed 118 of them as waiting, and its key couldn't withdraw them.
+// A live hold and one KIFF couldn't be asked about stay listed.
+func TestPendingLeavesOutHoldsKIFFNoLongerHas(t *testing.T) {
+	r := newRig(t)
+	live, _ := r.call(t, "agent-key", amount(5000, "op-live")).call["exception_id"].(string)
+	if live == "" {
+		t.Fatal("the live call wasn't held")
+	}
+	r.api.pruned = map[string]bool{}
+	for i := 0; i < 60; i++ {
+		*r.now = r.now.Add(time.Second)
+		exc, _ := r.call(t, "agent-key", amount(5000, fmt.Sprintf("op-pruned-%02d", i))).call["exception_id"].(string)
+		r.api.pruned[exc] = true
+	}
+	text, calls, next := r.pendingPage(t, "agent-key", "")
+	if len(calls) != 1 || calls[0].OperationID != "op-live" || calls[0].Answer != "waiting" || next != "" {
+		t.Fatalf("60 pruned and 1 live: %d calls, next %q: %q", len(calls), next, text)
+	}
+	// When KIFF can't be asked, nothing is taken as gone: every hold says so.
+	r.api.holdsFail = true
+	if _, calls, _ := r.pendingPage(t, "agent-key", ""); len(calls) != 50 || calls[0].Answer != "unavailable" {
+		t.Fatalf("KIFF down: %d calls, first %+v", len(calls), calls[0])
+	}
+}

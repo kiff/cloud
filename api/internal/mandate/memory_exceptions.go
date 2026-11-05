@@ -287,16 +287,30 @@ func (s *MemoryStore) AskCardUnit(_ context.Context, a CardUnitAsk, now time.Tim
 }
 
 // CloseCardUnit closes a's held KindCardUnit exception, if any, as changed:
-// a call in its unit was allowed.
+// a call in its unit was allowed on its own action. Only its own action: an
+// allowed call on another action says nothing about this one, and closing
+// it there would reopen and alert again on the next refusal.
 func (s *MemoryStore) CloseCardUnit(_ context.Context, a CardUnitAsk, now time.Time) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for k, held := range s.exceptions {
 		if held.TenantID == a.TenantID && held.asks(a) {
 			resolve(&held, ExceptionChanged, "", now)
-			held.Reason = ReasonUnitAllowed
+			held.Reason = ReasonUnitAllowed(a.Action, a.Unit)
 			s.exceptions[k] = held
 		}
 	}
 	return nil
+}
+
+// closeUnitLocked closes subject's held KindCardUnit exceptions in unit as
+// changed, for reason; s.mu must be held.
+func (s *MemoryStore) closeUnitLocked(tenantID, subject, unit, by, reason string, now time.Time) {
+	for k, held := range s.exceptions {
+		if held.TenantID == tenantID && held.answersUnit(subject, unit) {
+			resolve(&held, ExceptionChanged, by, now)
+			held.Reason = reason
+			s.exceptions[k] = held
+		}
+	}
 }

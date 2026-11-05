@@ -85,7 +85,13 @@ func (s *MemoryStore) Issue(_ context.Context, m Mandate, by string) error {
 }
 
 // IssueAll issues every Card in ms, all or none.
-func (s *MemoryStore) IssueAll(_ context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time) error {
+func (s *MemoryStore) IssueAll(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time) error {
+	return s.IssueAllCovering(ctx, ms, by, expect, retire, at, nil)
+}
+
+// IssueAllCovering is IssueAll, and closes the held KindCardUnit exceptions
+// covers answers, as changed, at at, with the Cards.
+func (s *MemoryStore) IssueAllCovering(_ context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time, covers []UnitCover) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if len(ms) == 0 {
@@ -113,6 +119,9 @@ func (s *MemoryStore) IssueAll(_ context.Context, ms []Mandate, by string, expec
 			s.mandates[key(tenant, id)] = m
 		}
 		s.invalidateLocked(tenant, id, "card_revoked", at)
+	}
+	for _, c := range covers {
+		s.closeUnitLocked(tenant, c.Subject, c.Unit, by, ReasonUnitCovered(c.Action, c.Unit), at)
 	}
 	return nil
 }

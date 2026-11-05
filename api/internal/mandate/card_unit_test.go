@@ -21,6 +21,8 @@ type cardUnitStore interface {
 	ApproveOnce(ctx context.Context, tenantID, id, by string, now time.Time) (mandate.Exception, error)
 	ChangeCard(ctx context.Context, tenantID, id, by string, now time.Time) (mandate.Exception, error)
 	Reject(ctx context.Context, tenantID, id, by string, now time.Time, r mandate.Refusal) (mandate.Exception, error)
+	IssueAll(ctx context.Context, ms []mandate.Mandate, by string, expect map[string]int64, retire []string, at time.Time) error
+	IssueAllCovering(ctx context.Context, ms []mandate.Mandate, by string, expect map[string]int64, retire []string, at time.Time, covers []mandate.UnitCover) error
 }
 
 func eachCardUnitStore(t *testing.T, fn func(t *testing.T, s cardUnitStore, tenant string)) {
@@ -36,7 +38,7 @@ func eachCardUnitStore(t *testing.T, fn func(t *testing.T, s cardUnitStore, tena
 // per agent, action and unit: each refused repeat counts on it, another
 // unit or action is its own, and it can't be approved once (an older app
 // that reads it as a hold gets 409). A call in its unit closes it as
-// changed; changing the Card closes it too; dismissing it lets the next
+// changed (another action's allowed call doesn't); changing the Card closes it too; dismissing it lets the next
 // refusal open a new one (kiff/tafs#464 item 11).
 func TestACardUnitAskIsOneAskCountedUntilTheCardCountsTheUnit(t *testing.T) {
 	eachCardUnitStore(t, func(t *testing.T, s cardUnitStore, tenant string) {
@@ -76,11 +78,20 @@ func TestACardUnitAskIsOneAskCountedUntilTheCardCountsTheUnit(t *testing.T) {
 		if _, err := s.ApproveOnce(ctx, tenant, first.ID, "owner", base); !errors.Is(err, mandate.ErrCumulativeApproval) {
 			t.Fatalf("approve once: %v", err)
 		}
-		// A call in its unit closes it, as changed; the other action's stays.
+		// An allowed call on another action closes nothing: it says nothing
+		// about this one. A call in its unit on its own action closes it, as
+		// changed, naming the action; the other action's stays.
+		if err := s.CloseCardUnit(ctx, ask("tc-7a", "answer_dispute_usd", "usd"), base.Add(4*time.Hour)); err != nil {
+			t.Fatal(err)
+		}
+		if got, _ := s.Exception(ctx, tenant, first.ID); got.Status != mandate.ExceptionHeld {
+			t.Fatalf("another action's allowed call closed it: %s", got.Status)
+		}
 		if err := s.CloseCardUnit(ctx, ask("tc-7", "answer_dispute", "usd"), base.Add(4*time.Hour)); err != nil {
 			t.Fatal(err)
 		}
-		if got, _ := s.Exception(ctx, tenant, first.ID); got.Status != mandate.ExceptionChanged || got.Reason != mandate.ReasonUnitAllowed || got.ResolvedAt == nil {
+		if got, _ := s.Exception(ctx, tenant, first.ID); got.Status != mandate.ExceptionChanged || got.ResolvedAt == nil ||
+			got.Reason != "a call in USD was allowed on answer_dispute: its Cards count USD now" {
 			t.Fatalf("closed: %+v", got)
 		}
 		if got, _ := s.Exception(ctx, tenant, other.ID); got.Status != mandate.ExceptionHeld {
@@ -101,6 +112,79 @@ func TestACardUnitAskIsOneAskCountedUntilTheCardCountsTheUnit(t *testing.T) {
 		}
 		if _, opened, _ := s.AskCardUnit(ctx, ask("tc-9", "accept_dispute", "USD"), base.Add(7*time.Hour)); !opened {
 			t.Fatal("a refusal after dismissing was counted on the dismissed ask")
+		}
+	})
+}
+
+// A signed Card that gives the agent an action in the ask's unit closes the
+// agent's asks in that unit as changed, in the same transaction, naming the
+// action and who signed. Another agent's, or another unit's, stays; Cards
+// issued with no covers close nothing.
+func TestASignedCardInTheUnitClosesTheAgentsAsks(t *testing.T) {
+	eachCardUnitStore(t, func(t *testing.T, s cardUnitStore, tenant string) {
+		ctx := context.Background()
+		ask := func(proposal, subject, unit string) mandate.Exception {
+			e, opened, err := s.AskCardUnit(ctx, mandate.CardUnitAsk{TenantID: tenant, ProposalID: proposal, Subject: subject,
+				Action: "refund_payment", EntityID: "pi_1", Unit: unit, CardUnit: "EUR"}, base)
+			if err != nil || !opened {
+				t.Fatalf("ask %s: %v %v", proposal, opened, err)
+			}
+			return e
+		}
+		usd, gbp, theirs := ask("tc-cover-1", "chargebacks-cover", "USD"), ask("tc-cover-2", "chargebacks-cover", "GBP"), ask("tc-cover-3", "refunds-cover", "USD")
+		card := mandate.Mandate{ID: "card-cover-usd", TenantID: tenant, Subject: "chargebacks-cover",
+			Grants:     []mandate.Grant{{Action: "refund_payment_usd"}},
+			Aggregates: []mandate.Aggregate{{Quantity: mandate.Quantity{Kind: mandate.KindSum, Parameter: "amount"}, Limit: 1000, Window: mandate.WindowCalendarDay}}}
+
+		// Issued with no covers (a trial, a setup read): nothing closes.
+		if err := s.IssueAll(ctx, []mandate.Mandate{card}, "owner@example.com", nil, nil, base.Add(time.Hour)); err != nil {
+			t.Fatal(err)
+		}
+		if got, _ := s.Exception(ctx, tenant, usd.ID); got.Status != mandate.ExceptionHeld {
+			t.Fatalf("closed without covers: %s", got.Status)
+		}
+
+		covers := []mandate.UnitCover{{Subject: "chargebacks-cover", Action: "refund_payment_usd", Unit: "usd"}}
+		if err := s.IssueAllCovering(ctx, []mandate.Mandate{card}, "owner@example.com", nil, nil, base.Add(2*time.Hour), covers); err != nil {
+			t.Fatal(err)
+		}
+		got, _ := s.Exception(ctx, tenant, usd.ID)
+		if got.Status != mandate.ExceptionChanged || got.ResolvedBy != "owner@example.com" || got.ResolvedAt == nil ||
+			!got.ResolvedAt.Equal(base.Add(2*time.Hour)) || got.Reason != "a signed Card gives it refund_payment_usd in USD now" {
+			t.Fatalf("the USD ask: %+v", got)
+		}
+		for _, e := range []mandate.Exception{gbp, theirs} {
+			if got, _ := s.Exception(ctx, tenant, e.ID); got.Status != mandate.ExceptionHeld {
+				t.Fatalf("%s (%s) closed: %s", e.ID, e.Subject, got.Status)
+			}
+		}
+	})
+}
+
+// One missing limit is one ask, however a run alternates: a refused USD
+// call on one action and an allowed USD call on another, five times, open
+// a single ask counted five times, which alerts the owner once.
+func TestAnAllowedCallOnAnotherActionKeepsTheAsk(t *testing.T) {
+	eachCardUnitStore(t, func(t *testing.T, s cardUnitStore, tenant string) {
+		ctx := context.Background()
+		opened := 0
+		for i := range 5 {
+			at := base.Add(time.Duration(i) * time.Minute)
+			_, o, err := s.AskCardUnit(ctx, mandate.CardUnitAsk{TenantID: tenant, ProposalID: fmt.Sprintf("tc-alt-r-%d", i), Subject: "chargebacks-alt",
+				Action: "refund", EntityID: "pi_1", Unit: "USD", CardUnit: "EUR"}, at)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if o {
+				opened++
+			}
+			if err := s.CloseCardUnit(ctx, mandate.CardUnitAsk{TenantID: tenant, ProposalID: fmt.Sprintf("tc-alt-u-%d", i), Subject: "chargebacks-alt",
+				Action: "update_dispute", EntityID: "dp_1", Unit: "USD"}, at.Add(time.Second)); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if opened != 1 {
+			t.Fatalf("5 refused USD refunds, each followed by an allowed USD update_dispute: %d asks opened, want 1", opened)
 		}
 	})
 }

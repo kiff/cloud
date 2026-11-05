@@ -58,8 +58,11 @@ type fakeAPI struct {
 	cardFails bool
 	// cardTrials are the KIFF-Trial each AgentCard read was made with.
 	cardTrials []string
-	// holds answers Holds by exception id; holdsFail makes it fail.
+	// holds answers Holds by exception id; holdsFail makes it fail. A
+	// hold the fake opened and holds doesn't name is still held, as the
+	// API answers; one in pruned is no longer KIFF's to answer.
 	holds     map[string]kiffapi.Hold
+	pruned    map[string]bool
 	holdsFail bool
 	// permits are the permit requests seen, by proposal id;
 	// withholdPermit allows without minting one.
@@ -144,6 +147,8 @@ func (f *fakeAPI) Holds(_ context.Context, _ string, ids []string) ([]kiffapi.Ho
 	for _, id := range ids {
 		if h, ok := f.holds[id]; ok {
 			out = append(out, h)
+		} else if strings.HasPrefix(id, "exc-") && !f.pruned[id] {
+			out = append(out, kiffapi.Hold{ExceptionID: id, Status: "held"})
 		}
 	}
 	return out, nil

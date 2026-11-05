@@ -242,17 +242,23 @@ func (s *PostgresStore) Issue(ctx context.Context, m Mandate, by string) error {
 	// The upsert destroys the previous ceiling, so a revision written
 	// afterwards on a best-effort basis would leave exactly the gap
 	// this closes whenever the second write failed.
-	return s.issueAll(ctx, []Mandate{m}, by, nil, nil, time.Time{})
+	return s.issueAll(ctx, []Mandate{m}, by, nil, nil, time.Time{}, nil)
 }
 
 // IssueAll issues every Card in ms, each with its revision, in one
 // transaction holding all their locks: all of them, or none (kiff/tafs#107,
 // a version's Cards revised together). They share one tenant.
 func (s *PostgresStore) IssueAll(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time) error {
-	return s.issueAll(ctx, ms, by, expect, retire, at)
+	return s.issueAll(ctx, ms, by, expect, retire, at, nil)
 }
 
-func (s *PostgresStore) issueAll(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time) error {
+// IssueAllCovering is IssueAll, and in the same transaction closes the held
+// KindCardUnit exceptions covers answers, as changed, at at.
+func (s *PostgresStore) IssueAllCovering(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time, covers []UnitCover) error {
+	return s.issueAll(ctx, ms, by, expect, retire, at, covers)
+}
+
+func (s *PostgresStore) issueAll(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time, covers []UnitCover) error {
 	if len(ms) == 0 {
 		return nil
 	}
@@ -303,6 +309,12 @@ func (s *PostgresStore) issueAll(ctx context.Context, ms []Mandate, by string, e
 		}
 		if err := invalidateFor(ctx, tx, ms[0].TenantID, id, "card_revoked", at); err != nil {
 			return err
+		}
+	}
+	// The currency asks these Cards answer close with them, or not at all.
+	for _, c := range covers {
+		if err := closeUnit(ctx, tx, ms[0].TenantID, c.Subject, c.Unit, by, ReasonUnitCovered(c.Action, c.Unit), at); err != nil {
+			return fmt.Errorf("issue mandate: close card unit: %w", err)
 		}
 	}
 	if err := tx.Commit(ctx); err != nil {

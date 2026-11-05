@@ -266,7 +266,13 @@ func pendingCall(in invocation.Invocation, t Tool, answers map[string]kiffapi.Ho
 		switch {
 		case !answered || (known && h.Status == "unavailable"):
 			c.Answer, c.Next = "unavailable", "KIFF could not be asked for the owner's answer just now. Nothing has been sent; read "+PendingTool+" again later."
-		case !known || h.Status == "held":
+		case !known:
+			// KIFF answered and doesn't know this hold as the agent's: it
+			// ended and was pruned from a test account, or it isn't this
+			// agent's. No owner's answer will ever come, so it is open to
+			// no one, as one that ended.
+			c.Answer, c.Next = "ended", "KIFF no longer holds this call: it ended without the owner's answer. Nothing was sent."
+		case h.Status == "held":
 			c.Answer, c.Next = "waiting", "Waiting for the owner's answer. Nothing has been sent."
 		case h.Status == "approved_no_room":
 			c.Answer, c.Next = "approved_no_room", "Approved, but the Card has no room left. Nothing was sent. The owner can change the Card or reject; read "+PendingTool+" again later. Do not collect until room returns."

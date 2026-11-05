@@ -146,6 +146,12 @@ type Store interface {
 	// didn't hold. ErrNotFound for one that doesn't exist.
 	IssueAll(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time) error
 
+	// IssueAllCovering is IssueAll, and in the same transaction closes, as
+	// changed at at, each held KindCardUnit exception a cover answers: its
+	// agent's asks in that unit, whatever their action (kiff/tafs#464 item
+	// 11). Only a signed issue passes covers; a draft closes nothing.
+	IssueAllCovering(ctx context.Context, ms []Mandate, by string, expect map[string]int64, retire []string, at time.Time, covers []UnitCover) error
+
 	// Revisions returns every issuance of one mandate, oldest first.
 	// Append-only: nothing rewrites or removes a revision.
 	Revisions(ctx context.Context, tenantID, mandateID string) ([]Revision, error)

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // policyOf is what is stored for a Card's policy: an unset policy is
@@ -619,15 +620,33 @@ func (s *PostgresStore) AskCardUnit(ctx context.Context, a CardUnitAsk, now time
 }
 
 // CloseCardUnit closes a's held KindCardUnit exception, if any, as changed:
-// a call in its unit was allowed.
+// a call in its unit was allowed on its own action. Only its own action: an
+// allowed call on another action says nothing about this one, and closing
+// it there would reopen and alert again on the next refusal.
 func (s *PostgresStore) CloseCardUnit(ctx context.Context, a CardUnitAsk, now time.Time) error {
 	_, err := s.pool.Exec(ctx, `
 		UPDATE cloud_meta.mandate_exceptions
 		   SET status = 'changed', resolved_by = '', resolved_at = $5, reason = $6
 		 WHERE tenant_id = $1 AND kind = 'card_unit' AND status = 'held' AND subject = $2 AND action = $3
-		   AND upper(breaches->0->>'Unit') = upper($4)`, a.TenantID, a.Subject, a.Action, a.Unit, now.UTC(), ReasonUnitAllowed)
+		   AND upper(breaches->0->>'Unit') = upper($4)`, a.TenantID, a.Subject, a.Action, a.Unit, now.UTC(), ReasonUnitAllowed(a.Action, a.Unit))
 	if err != nil {
 		return fmt.Errorf("close card unit: %w", err)
 	}
 	return nil
+}
+
+// execer is a pool or a transaction.
+type execer interface {
+	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+}
+
+// closeUnit closes subject's held KindCardUnit exceptions in unit as
+// changed, for reason.
+func closeUnit(ctx context.Context, db execer, tenantID, subject, unit, by, reason string, now time.Time) error {
+	_, err := db.Exec(ctx, `
+		UPDATE cloud_meta.mandate_exceptions
+		   SET status = 'changed', resolved_by = $4, resolved_at = $5, reason = $6
+		 WHERE tenant_id = $1 AND kind = 'card_unit' AND status = 'held' AND subject = $2
+		   AND upper(breaches->0->>'Unit') = upper($3)`, tenantID, subject, unit, by, now.UTC(), reason)
+	return err
 }
