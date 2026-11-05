@@ -1,0 +1,1 @@
+{"v":"kiff.profile.v1","vendor":"Stripe","transport":"rest","pin":{"kind":"none"},"source":"drafted","test_proven":false,"operations":[{"tool":"create_refund","title":"Refund a payment","kind":"write","effect":"moves_money"}]}

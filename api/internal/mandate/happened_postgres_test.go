@@ -19,7 +19,8 @@ func TestPostgres_DidThisHappen(t *testing.T) {
 	ctx := context.Background()
 	if _, err := p.Exec(ctx, `DROP SCHEMA IF EXISTS gateway CASCADE; CREATE SCHEMA gateway;
 	 CREATE TABLE gateway.invocations (key text PRIMARY KEY, tenant_id text, agent_id text, tool text, state text,
-	 tool_outcome text, updated_at timestamptz, no_effect_evidence jsonb, probation boolean NOT NULL DEFAULT false, profile_revision bigint, measure jsonb);
+	 tool_outcome text, updated_at timestamptz, no_effect_evidence jsonb, probation boolean NOT NULL DEFAULT false, profile_revision bigint, measure jsonb,
+	 arguments jsonb NOT NULL DEFAULT '{"payment": "pi_1/x"}');
 	 CREATE TABLE gateway.tools (tenant_id text, name text, title text, amount_unit text, amount_scale int);
 	 CREATE TABLE gateway.profiles (tenant_id text, revision bigint, profile jsonb)`); err != nil {
 		t.Fatal(err)
@@ -69,10 +70,14 @@ func TestPostgres_DidThisHappen(t *testing.T) {
 		t.Fatal(err)
 	}
 	if _, err := p.Exec(ctx, `INSERT INTO gateway.profiles VALUES ($1, 1, jsonb_build_object('operations', jsonb_build_array(
-		jsonb_build_object('tool', $2::text, 'title', 'Refund a payment', 'amount', jsonb_build_object('unit', 'EUR', 'scale', 2)))))`, tenant, r.Action); err != nil {
+		jsonb_build_object('tool', $2::text, 'title', 'Refund a payment', 'amount', jsonb_build_object('unit', 'EUR', 'scale', 2),
+		'resource', jsonb_build_object('arg', 'payment', 'noun', 'payment'), 'record_url', 'https://dashboard.stripe.com/payments/{resource}',
+		'status_read', jsonb_build_object('tool', 'get_refund'))), 'vendor', 'Stripe'))`, tenant, r.Action); err != nil {
 		t.Fatal(err)
 	}
 	o := tooloutcome.NewPostgres(p)
+	now := base.Add(time.Minute)
+	o.SetClock(func() time.Time { return now })
 	calls, err := o.Unproven(ctx, tenant, "")
 	if err != nil || len(calls) != 3 {
 		t.Fatalf("unproven: %+v %v", calls, err)
@@ -82,9 +87,41 @@ func TestPostgres_DidThisHappen(t *testing.T) {
 			t.Fatalf("probation call %+v", c)
 		}
 		if (c.Proposal != "lost" && c.Proposal != "refused" && c.Proposal != "probation") || c.Amount != 40000 || c.Unit != "EUR" || c.Title != "Refund a payment" ||
-			c.Words != "Refund a payment: 400.00 EUR." || c.StatusWords == "" {
+			c.Words != "Refund a payment: 400.00 EUR." || c.StatusWords == "" || c.Checking != nil {
 			t.Fatalf("call %+v", c)
 		}
+		// The context comes from the profile the call was decided under
+		// (kiff/tafs#498): the vendor, what it acted on by the resource
+		// argument, where to look with the id path-escaped, and whether
+		// the vendor can be asked. The lost call has no profile: no context.
+		if c.Proposal == "lost" {
+			if c.Vendor != "" || c.Counterparty != nil || c.RecordURL != "" || c.HasStatusRead {
+				t.Fatalf("context without a profile: %+v", c)
+			}
+			continue
+		}
+		if c.Vendor != "Stripe" || c.Counterparty == nil || c.Counterparty.Noun != "payment" || c.Counterparty.ID != "pi_1/x" ||
+			c.RecordURL != "https://dashboard.stripe.com/payments/pi_1%2Fx" || !c.HasStatusRead {
+			t.Fatalf("context %+v %+v", c, c.Counterparty)
+		}
+	}
+	// "Not sure" marks the call as being checked for a day; a second mark
+	// while it holds keeps the first; past it, the ask is everyone's again.
+	if m, err := o.MarkChecking(ctx, tenant, "refused", "owner", now.Add(24*time.Hour)); err != nil || m.By != "owner" {
+		t.Fatalf("mark: %+v %v", m, err)
+	}
+	if m, err := o.MarkChecking(ctx, tenant, "refused", "bob", now.Add(25*time.Hour)); err != nil || m.By != "owner" {
+		t.Fatalf("a second mark replaced the first: %+v %v", m, err)
+	}
+	if calls, err := o.Unproven(ctx, tenant, "refused"); err != nil || len(calls) != 1 || calls[0].Checking == nil || calls[0].Checking.By != "owner" || !calls[0].Checking.Until.Equal(now.Add(24*time.Hour)) {
+		t.Fatalf("listed with the mark: %+v %v", calls, err)
+	}
+	now = now.Add(25 * time.Hour)
+	if calls, err := o.Unproven(ctx, tenant, "refused"); err != nil || len(calls) != 1 || calls[0].Checking != nil {
+		t.Fatalf("the mark ran out: %+v %v", calls, err)
+	}
+	if m, err := o.MarkChecking(ctx, tenant, "refused", "bob", now.Add(24*time.Hour)); err != nil || m.By != "bob" {
+		t.Fatalf("a mark after the first ran out: %+v %v", m, err)
 	}
 	// No: the room comes back, from the owner's word.
 	if _, err := s.ReleaseEffects(ctx, mandate.NoEffectEvidence{TenantID: tenant, ProposalID: "lost", Subject: r.Subject, Action: r.Action,

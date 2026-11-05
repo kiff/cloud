@@ -65,6 +65,8 @@ var cloudMetaPruned = []pruneStep{
 	{"hold_answers", `DELETE FROM cloud_meta.hold_answers a WHERE a.tenant_id = $1 AND a.at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_exceptions e
 			WHERE e.tenant_id = a.tenant_id AND e.id = a.hold_id)`},
+	// A "not sure" mark once it has run out.
+	{"happened_checking", `DELETE FROM cloud_meta.happened_checking c WHERE c.tenant_id = $1 AND c.until_at < $2`},
 	// "Did this happen?" answers once their call no longer counts on a Card.
 	{"happened_answers", `DELETE FROM cloud_meta.happened_answers h WHERE h.tenant_id = $1
 		AND h.answered_at < $2

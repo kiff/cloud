@@ -1,0 +1,26 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "Slack",
+  "transport": "rest",
+  "pin": {"kind": "none"},
+  "source": "catalog",
+  "catalog_entry": "slack@1",
+  "test_proven": false,
+  "operations": [
+    {
+      "tool": "chat_postMessage",
+      "title": "Post a message",
+      "kind": "write",
+      "effect": "sends",
+      "shape": "single",
+      "resource": {"arg": "channel", "noun": "channel", "outside": true},
+      "verify_read": {"tool": "conversations_history", "args": {"channel": "$args.channel", "latest": "$result.ts", "inclusive": "true"}, "done_when": {"path": "messages[0].ts", "equals": "$result.ts"}}
+    },
+    {
+      "tool": "conversations_history",
+      "title": "Read a channel",
+      "kind": "read",
+      "resource": {"arg": "channel", "noun": "channel"}
+    }
+  ]
+}

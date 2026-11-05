@@ -1,0 +1,37 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "Stripe",
+  "transport": "rest",
+  "pin": {"kind": "header", "value": "2026-09-30"},
+  "source": "catalog",
+  "catalog_entry": "stripe@1",
+  "test_proven": true,
+  "operations": [
+    {
+      "tool": "get_payment_intent",
+      "title": "Look up a payment",
+      "kind": "read",
+      "resource": {"arg": "payment_intent", "noun": "payment"}
+    },
+    {
+      "tool": "list_refunds",
+      "title": "List a payment's refunds",
+      "kind": "read",
+      "resource": {"arg": "payment_intent", "noun": "payment"}
+    },
+    {
+      "tool": "create_refund",
+      "title": "Refund a payment",
+      "kind": "write",
+      "effect": "moves_money",
+      "shape": "single",
+      "resource": {"arg": "payment_intent", "noun": "payment"},
+      "amount": {"from": "argument", "arg": "amount", "format": "integer_minor", "scale": 2, "unit_read": {"tool": "get_payment_intent", "args": {"payment_intent": "$args.payment_intent"}, "path": "currency"}},
+      "verify_read": {"tool": "list_refunds", "args": {"payment_intent": "$args.payment_intent"}, "amount_path": "data[0].amount"},
+      "marker": {"field": "metadata.kiff_op"},
+      "status_read": {"tool": "list_refunds", "args": {"payment_intent": "$args.payment_intent"}, "match": "data[0].metadata.kiff_op"},
+      "no_effect": {"statuses": [400, 402, 404], "docs": "https://docs.stripe.com/api/errors"},
+      "required_arguments": ["amount"]
+    }
+  ]
+}

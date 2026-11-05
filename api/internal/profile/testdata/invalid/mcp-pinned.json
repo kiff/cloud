@@ -1,0 +1,1 @@
+{"v":"kiff.profile.v1","vendor":"Notion","transport":"mcp","pin":{"kind":"header","value":"2025-09-03"},"source":"catalog","catalog_entry":"notion@1","test_proven":false,"operations":[{"tool":"notion-search","title":"Search pages","kind":"read"}]}

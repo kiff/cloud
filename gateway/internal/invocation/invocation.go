@@ -77,6 +77,10 @@ type Invocation struct {
 	UpdatedAt        time.Time
 	// VerifyEvidence is the verify read of a sent write, or nil.
 	VerifyEvidence json.RawMessage
+	// ConnectionRefusal is the connection's code for a call it refused
+	// before sending anything (a relay tool's answer saying so); ""
+	// otherwise.
+	ConnectionRefusal string
 	// ProfileRevision is the connection profile the call was decided
 	// under (connection profiles: a call keeps the profile it was decided under), or nil for a tool without one.
 	ProfileRevision *int64
@@ -185,14 +189,14 @@ func (s *Store) Pool() *pgxpool.Pool { return s.pool }
 func (s *Store) SetClock(now func() time.Time) { s.now = now }
 
 const cols = `key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments,
-	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence`
+	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence, connection_refusal`
 
 func scan(row pgx.Row) (Invocation, error) {
 	var in Invocation
 	var args, result []byte
 	err := row.Scan(&in.Key, &in.TenantID, &in.CredentialID, &in.AgentID, &in.Tool, &in.OperationID,
 		&in.ArgsHash, &args, &in.State, &in.ExceptionID, &in.ReviewURL, &in.Message, &in.Reasons, &result,
-		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence)
+		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence, &in.ConnectionRefusal)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Invocation{}, ErrNotFound
 	}

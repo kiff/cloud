@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"slices"
@@ -1238,4 +1239,116 @@ func TestAKeyKIFFCantCheckIsUnavailable(t *testing.T) {
 	if resp := initialize("agent-key"); resp.StatusCode != http.StatusOK {
 		t.Fatalf("a live key: %d", resp.StatusCode)
 	}
+}
+
+// Every call that ends leaves one log line saying how, as a class and
+// codes: a vendor's own error reaches the model as the tool's text and
+// the log as class vendor_error with the status it names; a connection's
+// refusal before the vendor reaches both, the log with its code; a call
+// KIFF refused itself logs its reasons (two refused
+// reads left no trace anywhere but the record). The line never carries
+// the credential, nor the tool's words: an email address or a URL in a
+// vendor's error stays on the record, which erasure reaches, and never
+// reaches the journal, which it doesn't.
+func TestCallOutcomeIsLogged(t *testing.T) {
+	type line struct {
+		Invocation, Tool, Operation, State, Class, Status, Refusal, Level, Raw string
+	}
+	lines := func(buf *bytes.Buffer) []line {
+		var out []line
+		for _, raw := range strings.Split(strings.TrimSpace(buf.String()), "\n") {
+			var m map[string]any
+			if json.Unmarshal([]byte(raw), &m) != nil || m["event"] != "gateway_call_outcome" {
+				continue
+			}
+			out = append(out, line{fmt.Sprint(m["invocation"]), fmt.Sprint(m["tool"]), fmt.Sprint(m["operation_id"]), fmt.Sprint(m["state"]),
+				fmt.Sprint(m["class"]), fmt.Sprint(m["status"]), fmt.Sprint(m["connection_refusal"]), fmt.Sprint(m["level"]), raw})
+		}
+		return out
+	}
+	t.Run("the vendor's error", func(t *testing.T) {
+		r := newRig(t)
+		var buf bytes.Buffer
+		r.gw.Logger = slog.New(slog.NewJSONHandler(&buf, nil))
+		r.gw.Credentials = creds{"t1/issue_refund": "sk_tool_secret"}
+		r.tool.refuse = "Stripe answered 404: No such customer: ana.lopez@example.com; see https://dashboard.example/cus_9xYz"
+		got := r.call(t, "agent-key", amount(500, "op-vendor-404"))
+		if !got.isError || !strings.Contains(got.text, "No such customer: ana.lopez@example.com") || strings.Contains(got.text, "sk_tool_secret") {
+			t.Fatalf("the model's result: %+v", got)
+		}
+		ls := lines(&buf)
+		if len(ls) != 1 {
+			t.Fatalf("outcome lines = %d, want 1:\n%s", len(ls), buf.String())
+		}
+		l := ls[0]
+		if l.Tool != "issue_refund" || l.Operation != "op-vendor-404" || l.State != "forwarded" || l.Class != "vendor_error" || l.Status != "404" ||
+			l.Level != "WARN" || !strings.HasPrefix(l.Invocation, "tc-") || l.Refusal != "<nil>" {
+			t.Fatalf("outcome line: %+v", l)
+		}
+		for _, word := range []string{"sk_tool_secret", "ana.lopez", "example.com", "dashboard.example", "cus_9xYz", "No such customer"} {
+			if strings.Contains(buf.String(), word) {
+				t.Fatalf("the log carries %q:\n%s", word, buf.String())
+			}
+		}
+		// The words stay on the record, which erasure reaches.
+		var kept string
+		if err := r.store.Pool().QueryRow(context.Background(), `SELECT tool_error FROM gateway.invocations WHERE operation_id = 'op-vendor-404'`).Scan(&kept); err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(kept, "ana.lopez@example.com") {
+			t.Fatalf("the record's tool_error: %q", kept)
+		}
+		// A replay of the same operation ends nothing, so it logs nothing more.
+		r.call(t, "agent-key", amount(500, "op-vendor-404"))
+		if n := len(lines(&buf)); n != 1 {
+			t.Fatalf("outcome lines after a replay = %d, want 1", n)
+		}
+	})
+	t.Run("the connection's refusal before the vendor", func(t *testing.T) {
+		r := newRig(t)
+		var buf bytes.Buffer
+		r.gw.Logger = slog.New(slog.NewJSONHandler(&buf, nil))
+		relay := refundTool
+		relay.Mode, relay.Audience = gateway.ModeRelay, "https://relay.example.com"
+		r.gw.Catalog = catalog{relay}
+		r.gw.Credentials = creds{"t1/issue_refund": "relay-transport"}
+		r.tool.answer = json.RawMessage(`{"content":[{"type":"text","text":"Refused by planque: this connection is halted. Nothing was sent."}],"isError":true,` +
+			`"structuredContent":{"refused_by":"connection","code":"halted","sent":false}}`)
+		got := r.call(t, "agent-key", amount(500, "op-halted"))
+		if !got.isError || !strings.Contains(got.text, "this connection is halted") {
+			t.Fatalf("the model's result: %+v", got)
+		}
+		ls := lines(&buf)
+		if len(ls) != 1 {
+			t.Fatalf("outcome lines = %d, want 1:\n%s", len(ls), buf.String())
+		}
+		l := ls[0]
+		if l.Tool != "issue_refund" || l.Operation != "op-halted" || l.State != "forwarded" || l.Class != "connection_refusal" || l.Refusal != "halted" ||
+			l.Status != "<nil>" || strings.Contains(l.Raw, "halted. Nothing") {
+			t.Fatalf("outcome line: %+v", l)
+		}
+	})
+	t.Run("a call KIFF refused itself", func(t *testing.T) {
+		r := newRig(t)
+		var buf bytes.Buffer
+		r.gw.Logger = slog.New(slog.NewJSONHandler(&buf, nil))
+		r.runGrant = "krg_bad"
+		got := r.call(t, "agent-key", amount(500, "op-no-grant"))
+		if !got.isError || r.tool.count() != 0 || got.call["state"] != "refused" {
+			t.Fatalf("%+v, tool calls = %d", got, r.tool.count())
+		}
+		ls := lines(&buf)
+		if len(ls) != 1 || ls[0].State != "refused" || ls[0].Class != "kiff_refused" || ls[0].Operation != "op-no-grant" || ls[0].Level != "WARN" ||
+			!strings.Contains(ls[0].Raw, `"reasons":["run_grant"]`) || strings.Contains(ls[0].Raw, "may not use") {
+			t.Fatalf("outcome lines: %+v\n%s", ls, buf.String())
+		}
+		// A held call hasn't ended, so it logs nothing until the owner answers.
+		r.runGrant = ""
+		if got := r.call(t, "agent-key", amount(5000, "op-held")); got.call["state"] != "held" {
+			t.Fatalf("%+v", got)
+		}
+		if n := len(lines(&buf)); n != 1 {
+			t.Fatalf("outcome lines after a hold = %d, want 1", n)
+		}
+	})
 }

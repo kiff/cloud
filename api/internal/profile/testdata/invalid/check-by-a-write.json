@@ -1,0 +1,1 @@
+{"v":"kiff.profile.v1","vendor":"Notion","transport":"mcp","pin":{"kind":"none"},"source":"drafted","test_proven":false,"operations":[{"tool":"notion-create-pages","title":"Write a page","kind":"write","effect":"writes","verify_read":{"tool":"notion-create-pages","done_when":{"path":"id","equals":"x"}}}]}

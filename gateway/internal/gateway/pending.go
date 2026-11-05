@@ -31,10 +31,15 @@ const (
 	holdsPerRead = 20
 	// pendingSince is how far back it looks: the longest hold.
 	pendingSince = 7 * 24 * time.Hour
+	// pendingReads bounds the store reads one listing makes to fill a
+	// page: a hold the agent's own run withdrew is left out, so a page
+	// may need more than one read when many were.
+	pendingReads = 5
 )
 
 const pendingToolDescription = "Lists your calls that KIFF holds for the owner's approval, with the owner's answer once given, " +
 	"your calls being sent, and your calls whose outcome is unknown, each with the call that collects it, newest first. " +
+	"A hold your own run withdrew is not listed: nothing waits on it, and its item is still yours to do. " +
 	"When there are more, pass the next_cursor it returns as cursor to read on. " +
 	"Reading it changes nothing and sends nothing. Call it when you start work, or to see whether the owner has answered."
 
@@ -118,15 +123,6 @@ func (a *agent) pendingResult(ctx context.Context, raw json.RawMessage) (json.Ra
 	if err != nil {
 		return nil, err
 	}
-	ins, err := a.g.Store.Pending(ctx, a.credentialID, a.g.now().Add(-pendingSince), page, pendingLimit+1)
-	if err != nil {
-		return nil, err
-	}
-	next := ""
-	if len(ins) > pendingLimit {
-		ins = ins[:pendingLimit]
-		next = pendingCursor(ins[pendingLimit-1])
-	}
 	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
 	if err != nil {
 		return nil, err
@@ -135,14 +131,53 @@ func (a *agent) pendingResult(ctx context.Context, raw json.RawMessage) (json.Ra
 	for _, t := range tools {
 		byName[t.Name] = t
 	}
-	answers, answered := a.ownerAnswers(ctx, ins)
-	calls := make([]PendingCall, 0, len(ins))
-	for _, in := range ins {
-		calls = append(calls, pendingCall(in, byName[in.Tool], answers, answered))
+	// Only what is still open is listed: a hold the agent's own run
+	// withdrew is nothing anyone waits on, and listing it read as an open
+	// request, so an agent skipped work it still had to do (in an eval,
+	// fifty withdrawn holds read as "about 30 requests still open"). The
+	// store can't tell a withdrawn hold from an open one, only KIFF can, so
+	// each read is answered and filtered, and reads go on until the page is
+	// full or nothing is left, at most pendingReads of them.
+	cursored := page != nil
+	since := a.g.now().Add(-pendingSince)
+	calls := make([]PendingCall, 0, pendingLimit)
+	var last *invocation.Invocation // the last call read, listed or not
+	more := false
+	for reads := 0; reads < pendingReads && len(calls) < pendingLimit; reads++ {
+		ins, err := a.g.Store.Pending(ctx, a.credentialID, since, page, pendingLimit+1)
+		if err != nil {
+			return nil, err
+		}
+		more = len(ins) > pendingLimit
+		if more {
+			ins = ins[:pendingLimit]
+		}
+		answers, answered := a.ownerAnswers(ctx, ins)
+		for i := range ins {
+			c := pendingCall(ins[i], byName[ins[i].Tool], answers, answered)
+			last = &ins[i]
+			if c.Answer == "withdrawn" {
+				continue
+			}
+			calls = append(calls, c)
+			if len(calls) == pendingLimit {
+				// The page is full: the rest of this read comes next.
+				more = more || i < len(ins)-1
+				break
+			}
+		}
+		if !more || last == nil {
+			break
+		}
+		page = &invocation.PendingPage{At: last.CreatedAt, Key: last.Key}
+	}
+	next := ""
+	if more && last != nil {
+		next = pendingCursor(*last)
 	}
 	var b strings.Builder
 	switch {
-	case len(calls) == 0 && page != nil:
+	case len(calls) == 0 && cursored:
 		b.WriteString("No more pending calls.")
 	case len(calls) == 0:
 		b.WriteString("You have no calls waiting on the owner, being sent, or with an unknown outcome.")

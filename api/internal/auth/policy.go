@@ -104,6 +104,9 @@ var PhoneWindowRules = []string{
 var PhoneSignedRules = []string{
 	// The owner's answer to "Did this happen?", behind the device's unlock.
 	"POST /v1/me/did-this-happen/{proposal}",
+	// "Not sure": asking for help checking it decides nothing, so the
+	// device key alone takes it (kiff/tafs#498).
+	"POST /v1/me/did-this-happen/{proposal}/check",
 	"POST /v1/me/agents",
 	"POST /v1/me/mandates",
 	"POST /v1/keys",
@@ -620,14 +623,15 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/card-effects/{proposal}/reconcile": membership.CapCardsManage,
 	"POST /v1/me/card-effects/{proposal}/surcharge": membership.CapCardsManage,
 	// "Did this happen?" (connection profiles): whoever answers held calls answers it.
-	"GET /v1/me/did-this-happen":             membership.CapHoldsAnswer,
-	"POST /v1/me/did-this-happen/{proposal}": membership.CapHoldsAnswer,
-	"POST /v1/me/mandates/{id}/archive":      membership.CapCardsManage,
-	"POST /v1/me/mandates/{id}/move":         membership.CapCardsManage,
-	"POST /v1/me/mandates/{id}/revoke":       membership.CapCardsManage,
-	"PUT /v1/me/mandates/{id}/holders":       membership.CapCardsManage,
-	"PUT /v1/me/mandates/{id}/title":         membership.CapCardsManage,
-	"POST /v1/me/agents":                     membership.CapCardsManage,
+	"GET /v1/me/did-this-happen":                   membership.CapHoldsAnswer,
+	"POST /v1/me/did-this-happen/{proposal}":       membership.CapHoldsAnswer,
+	"POST /v1/me/did-this-happen/{proposal}/check": membership.CapHoldsAnswer,
+	"POST /v1/me/mandates/{id}/archive":            membership.CapCardsManage,
+	"POST /v1/me/mandates/{id}/move":               membership.CapCardsManage,
+	"POST /v1/me/mandates/{id}/revoke":             membership.CapCardsManage,
+	"PUT /v1/me/mandates/{id}/holders":             membership.CapCardsManage,
+	"PUT /v1/me/mandates/{id}/title":               membership.CapCardsManage,
+	"POST /v1/me/agents":                           membership.CapCardsManage,
 	// Groups and sharing. A group's managers change its
 	// members too, so those routes check in the handler.
 	"POST /v1/groups":                          membership.CapMembersManage,

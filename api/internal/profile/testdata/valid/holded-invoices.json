@@ -1,0 +1,26 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "Holded",
+  "transport": "rest",
+  "pin": {"kind": "base_path", "value": "/api/invoicing/v1"},
+  "source": "drafted",
+  "test_proven": false,
+  "operations": [
+    {
+      "tool": "list_contacts",
+      "title": "Find a customer",
+      "kind": "read"
+    },
+    {
+      "tool": "create_invoice",
+      "title": "Record an invoice",
+      "kind": "write",
+      "effect": "records_money",
+      "shape": "single",
+      "resource": {"arg": "contactId", "noun": "customer"},
+      "amount": {"from": "path", "path": "invoice.total", "format": "decimal_string", "scale": 2, "unit": "EUR"},
+      "status_read": {"none": "Holded's API docs list no way to find an invoice by a reference the caller sets."},
+      "required_arguments": ["contactId", "items"]
+    }
+  ]
+}

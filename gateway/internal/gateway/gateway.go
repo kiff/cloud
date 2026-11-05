@@ -927,10 +927,56 @@ func (a *agent) finish(ctx context.Context, key string, from []invocation.State,
 		a.g.Logger.WarnContext(ctx, "gateway: call ended", slog.String("invocation", key),
 			slog.String("state", string(to)), slog.String("err", cause.Error()))
 	}
-	if _, err := a.g.Store.Transition(ctx, key, from, to, u); err != nil {
+	moved, err := a.g.Store.Transition(ctx, key, from, to, u)
+	if err != nil {
 		return nil, err
 	}
-	return a.replay(ctx, key)
+	out, in, err := a.replayed(ctx, key)
+	if err == nil && moved {
+		a.logOutcome(ctx, in)
+	}
+	return out, err
+}
+
+// logOutcome writes the one line that says how a call ended, once, as it
+// ends: which tool and operation, the state it reached, and its class
+// (outcomeClass) with the codes that tell one failure from another: the
+// HTTP status the tool's error names, a relay connection's refusal code,
+// KIFF's reasons. Without it, a vendor's refusal left no trace anywhere
+// but the record. The line is a step up from the
+// request summary: it names the tool and the agent's own operation id.
+// It never carries an argument, a credential, a result, or the tool's or
+// KIFF's words: the journal outlives the record and erasure never
+// reaches it, so the words stay on the record, read by operation
+// id.
+func (a *agent) logOutcome(ctx context.Context, in invocation.Invocation) {
+	if a.g.Logger == nil {
+		return
+	}
+	class := outcomeClass(in)
+	attrs := []slog.Attr{
+		slog.String("event", "gateway_call_outcome"),
+		slog.String("invocation", in.Key),
+		slog.String("tool", in.Tool),
+		slog.String("operation_id", in.OperationID),
+		slog.String("state", string(in.State)),
+		slog.String("class", class),
+	}
+	level := slog.LevelWarn
+	switch class {
+	case ClassDone:
+		level = slog.LevelInfo
+	case ClassVendorError, ClassConnectionRefusal:
+		if st := statusOf(in.ToolError); st != "" {
+			attrs = append(attrs, slog.String("status", st))
+		}
+		if in.ConnectionRefusal != "" {
+			attrs = append(attrs, slog.String("connection_refusal", in.ConnectionRefusal))
+		}
+	default:
+		attrs = append(attrs, slog.Any("reasons", in.Reasons))
+	}
+	a.g.Logger.LogAttrs(ctx, level, "gateway: call outcome", attrs...)
 }
 
 // retry answers a call that is a retry of an invocation.

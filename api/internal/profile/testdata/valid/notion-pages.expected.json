@@ -1,0 +1,38 @@
+{
+  "profile_sha256": "4dcfd20f86d448f9e55107dcd89fb3ab7fa926b3951bd452b0fcdfa704b62875",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "notion-search",
+        "kind": "does",
+        "text": "Search pages: reads from Notion, changes nothing."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "does",
+        "text": "Write a page: writes in Notion."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "does",
+        "text": "Write a page: can act on several at once."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "scope",
+        "text": "Write a page: a Card's \"Only for\" can name which parent page it acts on."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "missing",
+        "text": "Write a page: if an answer is lost, KIFF can't check whether it happened, so it stays counted."
+      },
+      {
+        "kind": "unpinned",
+        "text": "Notion's server isn't pinned to a version, so KIFF checks it daily."
+      }
+    ]
+  },
+  "words_sha256": "1d163b330000cddf2eed6af4c75f2974dc523b3b7d191cbf94ba1d983ec8df11"
+}

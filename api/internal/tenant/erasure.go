@@ -24,6 +24,7 @@ var cloudMetaErased = []string{
 	"mandate_effect_releases",
 	"mandate_effect_surcharges",
 	"happened_answers",
+	"happened_checking",
 	"mandate_draws",
 	"trial_draws",
 	// Which call each operation is bound to, and its permit id.

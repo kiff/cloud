@@ -403,6 +403,16 @@ CREATE TABLE IF NOT EXISTS cloud_meta.happened_answers (
     PRIMARY KEY (tenant_id, proposal_id)
 );
 
+-- Who asked for help checking a call ("not sure", kiff/tafs#498), and
+-- until when the ask is theirs: after that it is everyone's again.
+CREATE TABLE IF NOT EXISTS cloud_meta.happened_checking (
+    tenant_id   TEXT NOT NULL,
+    proposal_id TEXT NOT NULL,
+    checked_by  TEXT NOT NULL,
+    until_at    TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (tenant_id, proposal_id)
+);
+
 -- What an exception is (kiff/tafs#464 item 11): 'hold', or 'card_unit' for
 -- an action refused because its Card has no limit in the call's unit, one
 -- per agent, action and unit while held, with how many calls were refused

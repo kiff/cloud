@@ -1,0 +1,43 @@
+{
+  "profile_sha256": "f621900aa7bffa99678cf7ca3dac1490202c05e8647c42df0ce6bed0bd8cac46",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "chat_postMessage",
+        "kind": "does",
+        "text": "Post a message: sends a message through Slack."
+      },
+      {
+        "op": "chat_postMessage",
+        "kind": "outside",
+        "text": "Post a message: can reach people outside your company."
+      },
+      {
+        "op": "chat_postMessage",
+        "kind": "scope",
+        "text": "Post a message: a Card's \"Only for\" can name which channel it acts on."
+      },
+      {
+        "op": "chat_postMessage",
+        "kind": "checks",
+        "text": "Post a message: after each call, KIFF reads it back from Slack to check it took effect."
+      },
+      {
+        "op": "chat_postMessage",
+        "kind": "missing",
+        "text": "Post a message: if an answer is lost, KIFF can't check whether it happened, so it stays counted."
+      },
+      {
+        "op": "conversations_history",
+        "kind": "does",
+        "text": "Read a channel: reads from Slack, changes nothing."
+      },
+      {
+        "kind": "unpinned",
+        "text": "Slack's API isn't pinned to a version, so KIFF checks it daily."
+      }
+    ]
+  },
+  "words_sha256": "a65b75f49c10ec77943b8377567cdd58d3ba1d830dab3243962b1d523b81aef3"
+}

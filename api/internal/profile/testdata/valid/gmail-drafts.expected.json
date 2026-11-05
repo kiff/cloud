@@ -1,0 +1,19 @@
+{
+  "profile_sha256": "ba5ab704c31b4a60985b1b0311299b74c0ef3914fb5f270fd91fa4691d183463",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "drafts_create",
+        "kind": "does",
+        "text": "Draft a reply: makes a draft in Gmail. Nothing leaves until it's approved."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "missing",
+        "text": "Draft a reply: if an answer is lost, KIFF can't check whether it happened, so it stays counted."
+      }
+    ]
+  },
+  "words_sha256": "c74e88a1c61ef739304215d7de05d67b4a03fff47e8aafcffaf50c2799a55831"
+}

@@ -1,0 +1,24 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "Notion",
+  "transport": "mcp",
+  "pin": {"kind": "none"},
+  "source": "catalog",
+  "catalog_entry": "notion@1",
+  "test_proven": false,
+  "operations": [
+    {
+      "tool": "notion-search",
+      "title": "Search pages",
+      "kind": "read"
+    },
+    {
+      "tool": "notion-create-pages",
+      "title": "Write a page",
+      "kind": "write",
+      "effect": "writes",
+      "shape": "batch",
+      "resource": {"path": "parent.page_id", "noun": "parent page"}
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "profile_sha256": "ca81de5f3ea9895fd9d4b993e7d6ccd311dd55e2898ad96c5ba84a8ed6ac728a",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "get_payment_intent",
+        "kind": "does",
+        "text": "Look up a payment: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "list_refunds",
+        "kind": "does",
+        "text": "List a payment's refunds: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "create_refund",
+        "kind": "does",
+        "text": "Refund a payment: moves money through Stripe. It pays out or charges."
+      },
+      {
+        "op": "create_refund",
+        "kind": "scope",
+        "text": "Refund a payment: a Card's \"Only for\" can name which payment it acts on."
+      },
+      {
+        "op": "create_refund",
+        "kind": "counts",
+        "text": "Refund a payment: counted in the currency Stripe reports."
+      },
+      {
+        "op": "create_refund",
+        "kind": "checks",
+        "text": "Refund a payment: after each call, KIFF reads it back from Stripe to check the amount."
+      },
+      {
+        "op": "create_refund",
+        "kind": "no_effect",
+        "text": "Refund a payment: when Stripe refuses it with 400, 402 or 404, the Card gets that room back. Stripe's docs say nothing happened then."
+      }
+    ]
+  },
+  "words_sha256": "50723c8a13ec096293373c81fa1faee282f6052458d2441ca2127887b4fa7db6"
+}

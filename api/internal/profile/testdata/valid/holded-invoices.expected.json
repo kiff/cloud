@@ -1,0 +1,44 @@
+{
+  "profile_sha256": "2459ecb6357da3f4def161759f10f537d2864c9a8fc51bc4cc4c18fcc4cb3bfc",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "list_contacts",
+        "kind": "does",
+        "text": "Find a customer: reads from Holded, changes nothing."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "does",
+        "text": "Record an invoice: records money in Holded. It doesn't pay out or charge."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "scope",
+        "text": "Record an invoice: a Card's \"Only for\" can name which customer it acts on."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "counts",
+        "text": "Record an invoice: counted in EUR, read as a decimal with up to 2 places."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "missing",
+        "text": "Record an invoice: Holded doesn't say back what it used, so KIFF counts what the taf asked for."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "missing",
+        "text": "Record an invoice: if an answer is lost, KIFF can't check whether it happened, so it stays counted until you say."
+      },
+      {
+        "op": "create_invoice",
+        "kind": "probation",
+        "text": "Record an invoice: not tried with a test account, so you confirm its first 3 outcomes."
+      }
+    ]
+  },
+  "words_sha256": "611ce625045a417029236fcc60755782a4996a46faab796abbed23cc655afa60"
+}

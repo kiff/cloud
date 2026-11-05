@@ -166,15 +166,16 @@ func TestPendingSaysEachStateAndAnswer(t *testing.T) {
 			t.Errorf("%s lists idempotency_key %v", c.OperationID, v)
 		}
 	}
-	for op, want := range map[string]string{"op-refused": "refused", "op-ended": "ended", "op-expired": "ended", "op-withdrawn": "withdrawn", "op-waiting": "waiting", "op-no-room": "approved_no_room", "op-unavailable": "unavailable"} {
+	for op, want := range map[string]string{"op-refused": "refused", "op-ended": "ended", "op-expired": "ended", "op-waiting": "waiting", "op-no-room": "approved_no_room", "op-unavailable": "unavailable"} {
 		if got[op].State != "held" || got[op].Answer != want {
 			t.Errorf("%s: %+v, want answer %s", op, got[op], want)
 		}
 	}
-	// A hold the agent's own run withdrew is still to do; one that
-	// ended without the owner's approval is not.
-	if next := got["op-withdrawn"].Next; !strings.Contains(next, "still to do") || !strings.Contains(next, "new "+gateway.OperationArg) {
-		t.Errorf("withdrawn next: %q", next)
+	// A hold the agent's own run withdrew is open to no one: it isn't
+	// listed. One that ended without the owner's
+	// approval is, and isn't still to do.
+	if c, listed := got["op-withdrawn"]; listed {
+		t.Errorf("a withdrawn hold is listed: %+v", c)
 	}
 	for _, op := range []string{"op-ended", "op-expired"} {
 		if strings.Contains(got[op].Next, "still to do") {
@@ -372,5 +373,93 @@ func TestPendingPagesPastTheNewestFifty(t *testing.T) {
 	_, out := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": gateway.PendingTool, "arguments": map[string]any{"cursor": "not-a-cursor"}})
 	if out["error"] == nil {
 		t.Errorf("a made-up cursor: %v", out)
+	}
+}
+
+// A hold the agent's own run withdrew is open to no one, so kiff_pending
+// leaves it out, however many there are, and still finds the open call
+// behind them (an eval's fifty withdrawn holds read as
+// "about 30 requests still open", and the taf skipped the work).
+func TestPendingLeavesOutHoldsTheAgentWithdrew(t *testing.T) {
+	for _, withdrawn := range []int{40, 60, 260} {
+		t.Run(fmt.Sprint(withdrawn), func(t *testing.T) {
+			r := newRig(t)
+			waiting := r.call(t, "agent-key", amount(5000, "op-waiting"))
+			if _, ok := waiting.call["exception_id"].(string); !ok {
+				t.Fatalf("the waiting call wasn't held: %+v", waiting)
+			}
+			r.api.holds = map[string]kiffapi.Hold{}
+			for i := 0; i < withdrawn; i++ {
+				*r.now = r.now.Add(time.Second)
+				got := r.call(t, "agent-key", amount(5000, fmt.Sprintf("op-withdrawn-%03d", i)))
+				exc, _ := got.call["exception_id"].(string)
+				r.api.holds[exc] = kiffapi.Hold{ExceptionID: exc, Status: "invalidated", Withdrawn: true}
+			}
+			// Read on, as an agent does, until there is no cursor.
+			var listed []gateway.PendingCall
+			text, calls, next := r.pendingPage(t, "agent-key", "")
+			first := len(calls)
+			listed = append(listed, calls...)
+			for pages := 0; next != "" && pages < 10; pages++ {
+				_, calls, next = r.pendingPage(t, "agent-key", next)
+				listed = append(listed, calls...)
+			}
+			if len(listed) != 1 || listed[0].OperationID != "op-waiting" || listed[0].Answer != "waiting" {
+				t.Fatalf("%d withdrawn and 1 waiting listed %d calls: %+v", withdrawn, len(listed), listed)
+			}
+			if strings.Contains(text, "withdrew") {
+				t.Errorf("the text names a withdrawn hold: %q", text)
+			}
+			// Within the reads one listing makes (5 of 50), the waiting call
+			// is on the first page itself, so an agent that reads one page
+			// still finds it.
+			if withdrawn < 5*50 && (first != 1 || !strings.Contains(text, "op-waiting") || next != "") {
+				t.Errorf("%d withdrawn: the first page lists %d: %q", withdrawn, first, text)
+			}
+			if r.tool.count() != 0 {
+				t.Errorf("reading sent %d calls", r.tool.count())
+			}
+		})
+	}
+}
+
+// Leaving withdrawn holds out never loses an open call or lists one
+// twice: a page filled part way through a later read hands a cursor to
+// the rest.
+func TestPendingPagesPastWithdrawnHolds(t *testing.T) {
+	r := newRig(t)
+	for i := 0; i < 70; i++ {
+		*r.now = r.now.Add(time.Second)
+		r.abandoned(t, fmt.Sprintf("op-unknown-%02d", i), invocation.StateUnknown)
+	}
+	r.api.holds = map[string]kiffapi.Hold{}
+	for i := 0; i < 10; i++ {
+		*r.now = r.now.Add(time.Second)
+		got := r.call(t, "agent-key", amount(5000, fmt.Sprintf("op-withdrawn-%02d", i)))
+		exc, _ := got.call["exception_id"].(string)
+		r.api.holds[exc] = kiffapi.Hold{ExceptionID: exc, Status: "invalidated", Withdrawn: true}
+	}
+	_, first, next := r.pendingPage(t, "agent-key", "")
+	if len(first) != 50 || next == "" {
+		t.Fatalf("first page: %d calls, next %q", len(first), next)
+	}
+	seen := map[string]bool{}
+	for _, c := range first {
+		seen[c.OperationID] = true
+	}
+	_, second, after := r.pendingPage(t, "agent-key", next)
+	if len(second) != 20 || after != "" {
+		t.Fatalf("second page: %d calls, next %q", len(second), after)
+	}
+	for _, c := range second {
+		if seen[c.OperationID] {
+			t.Errorf("%s listed twice", c.OperationID)
+		}
+		seen[c.OperationID] = true
+	}
+	for i := 0; i < 70; i++ {
+		if !seen[fmt.Sprintf("op-unknown-%02d", i)] {
+			t.Errorf("op-unknown-%02d is never listed", i)
+		}
 	}
 }

@@ -122,10 +122,23 @@ type Postgres struct {
 	// hasRefusal is set once connection_refusal is seen: a column is
 	// never dropped, so it isn't looked up again.
 	hasRefusal atomic.Bool
+	// now is the clock "Did this happen?" reads its marks by; nil is the
+	// wall clock.
+	now func() time.Time
 }
 
 // NewPostgres reads outcomes through pool.
 func NewPostgres(pool *pgxpool.Pool) *Postgres { return &Postgres{pool: pool} }
+
+// SetClock fixes the clock, for tests.
+func (p *Postgres) SetClock(now func() time.Time) { p.now = now }
+
+func (p *Postgres) clock() time.Time {
+	if p.now != nil {
+		return p.now()
+	}
+	return time.Now()
+}
 
 // Outcomes reads the outcomes of proposalIDs in tenantID. Where the
 // gateway's tables do not exist (an API without a gateway), there are
