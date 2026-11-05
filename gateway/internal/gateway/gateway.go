@@ -175,6 +175,10 @@ type Store interface {
 
 // Gateway serves agents.
 type Gateway struct {
+	// Relays are the planques this KIFF runs beside (KIFF_PLANQUE_URLS): a
+	// relay tool on <relay>/mcp/<tenant>/<grant> is that grant's, the only
+	// tool a run waits on for a vendor's event.
+	Relays  []string
 	API     API
 	Catalog Catalog
 	Store   Store
@@ -997,7 +1001,17 @@ func (a *agent) replayed(ctx context.Context, key string) (json.RawMessage, invo
 		}
 		// The tool's own result, with KIFF's key for the call and its
 		// state, so the agent's runtime can file it (kiff/tafs#167).
-		return withCall(in.Result, callOf(in)), in, nil
+		c := callOf(in)
+		res, asked, found := takeWait(in.Result)
+		if found && asked != nil {
+			// Only a planque connection's tool, for its own grant, makes a
+			// run wait (the slow-tools design); any other tool's say-so is
+			// dropped with the keys.
+			if t, err := a.tool(ctx, in.Tool); err == nil && connectionGrant(t, a.g.Relays, a.me.TenantID) == asked.Grant {
+				c.Wait = asked
+			}
+		}
+		return withCall(res, c), in, nil
 	case invocation.StateHeld:
 		return a.heldResult(ctx, in), in, nil
 	case invocation.StateDeciding:

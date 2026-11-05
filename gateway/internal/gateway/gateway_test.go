@@ -291,6 +291,9 @@ type fakeTool struct {
 	// amounts is each order's amount, as the get_order read says it; an
 	// order missing here has none in the read.
 	amounts map[string]any
+	// answer, when set, is the whole result every call gets, as the tool
+	// writes it.
+	answer json.RawMessage
 }
 
 func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args json.RawMessage) (json.RawMessage, error) {
@@ -301,7 +304,7 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.raw = append(f.raw, args)
 	f.bearers = append(f.bearers, bearer)
 	f.permits = append(f.permits, mcp.CallHeader(ctx, gateway.PermitHeader))
-	echo, leak, spoof, refuse := f.echo, f.leak, f.spoof, f.refuse
+	echo, leak, spoof, refuse, answer := f.echo, f.leak, f.spoof, f.refuse, f.answer
 	cur, isRead, readMeta := f.currency[fmt.Sprint(a["order"])], tool == "get_order", f.readMeta
 	amt, hasAmount := f.amounts[fmt.Sprint(a["order"])]
 	n := len(f.calls)
@@ -317,6 +320,9 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 		}
 		b, _ := json.Marshal(map[string]any{"content": []map[string]any{{"type": "text", "text": string(text)}}, "_meta": readMeta})
 		return b, nil
+	}
+	if answer != nil {
+		return answer, nil
 	}
 	if refuse != "" {
 		b, _ := json.Marshal(map[string]any{

@@ -145,7 +145,17 @@ func run(args []string) error {
 	}
 	remote := &mcp.Client{HTTP: policy.Client(30 * time.Second), Version: version}
 	api := kiffapi.New(apiURL, nil)
+	// The vendor relays beside this KIFF, never the account's control server
+	// (kiff/tafs#206), and the only tools a run waits on for a vendor's event:
+	// the API's own list (KIFF_PLANQUE_URLS).
+	var relays []string
+	for _, u := range strings.Split(os.Getenv("KIFF_PLANQUE_URLS"), ",") {
+		if u = strings.TrimSpace(u); u != "" {
+			relays = append(relays, u)
+		}
+	}
 	g := &gateway.Gateway{
+		Relays:         relays,
 		API:            api,
 		Catalog:        catalog,
 		Store:          invocation.NewStore(pool),
@@ -180,14 +190,6 @@ func run(args []string) error {
 			}
 			g.LinkServer(version, id).ServeHTTP(w, r)
 		})
-	}
-	// The vendor relays beside this KIFF, never the account's control server
-	// (kiff/tafs#206): the API's own list (KIFF_PLANQUE_URLS).
-	var relays []string
-	for _, u := range strings.Split(os.Getenv("KIFF_PLANQUE_URLS"), ",") {
-		if u = strings.TrimSpace(u); u != "" {
-			relays = append(relays, u)
-		}
 	}
 	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger, RelayURLs: relays}).Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprintln(w, "ok") })

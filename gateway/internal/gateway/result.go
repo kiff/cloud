@@ -67,6 +67,96 @@ type Call struct {
 	// reads the value there to say what the call was on (kiff/tafs#167).
 	ResourceArgument string `json:"resource_argument,omitempty"`
 	ResourcePath     string `json:"resource_path,omitempty"`
+	// Wait is what a sent call waits for when its outcome comes later as a
+	// vendor's event (the slow-tools design): only on a forwarded call of a
+	// planque connection's tool that names its own grant. A run pauses on
+	// this, never on the tool's own structured content.
+	Wait *Wait `json:"wait,omitempty"`
+}
+
+// Wait is the vendor's event a sent call waits for, as the connection
+// said: the grant the tool belongs to, the event, the call's handle as its
+// key, how long a run waits, and the connection's words for it.
+type Wait struct {
+	Grant    string `json:"grant"`
+	Event    string `json:"event"`
+	Key      string `json:"key"`
+	TimeoutS int    `json:"timeout_s"`
+	Words    string `json:"words,omitempty"`
+}
+
+// A wait is bounded as the connection bounds it: a minute to three days.
+const (
+	minWaitS = 60
+	maxWaitS = 3 * 24 * 3600
+)
+
+// takeWait takes the keys that say a call waits (pending, wait_for) out
+// of a tool's structured content, which is the tool's to write: a run
+// pauses only on Call.Wait, which only the gateway writes. It answers the
+// result without them, what they asked for when it is well formed and the
+// result isn't an error, and whether there were any. A result with none is
+// returned as it is.
+func takeWait(raw json.RawMessage) (json.RawMessage, *Wait, bool) {
+	var m map[string]json.RawMessage
+	if json.Unmarshal(raw, &m) != nil || m == nil {
+		return raw, nil, false
+	}
+	var sc map[string]json.RawMessage
+	if json.Unmarshal(m["structuredContent"], &sc) != nil || sc == nil {
+		return raw, nil, false
+	}
+	pendingRaw, hasPending := sc["pending"]
+	waitRaw, hasWait := sc["wait_for"]
+	if !hasPending && !hasWait {
+		return raw, nil, false
+	}
+	delete(sc, "pending")
+	delete(sc, "wait_for")
+	b, err := json.Marshal(sc)
+	if err != nil {
+		return raw, nil, false
+	}
+	m["structuredContent"] = b
+	out, err := json.Marshal(m)
+	if err != nil {
+		return raw, nil, false
+	}
+	var pending, isErr bool
+	_ = json.Unmarshal(pendingRaw, &pending)
+	_ = json.Unmarshal(m["isError"], &isErr)
+	var w Wait
+	var timeout int
+	_ = json.Unmarshal(sc["timeout_s"], &timeout)
+	if !pending || isErr || json.Unmarshal(waitRaw, &w) != nil || w.Grant == "" || w.Event == "" || w.Key == "" ||
+		len(w.Key) > 256 || len(w.Event) > 128 || len(w.Words) > 160 || timeout < minWaitS || timeout > maxWaitS {
+		return out, nil, true
+	}
+	w.TimeoutS = timeout
+	return out, &w, true
+}
+
+// connectionGrant is the planque grant t belongs to: a relay tool whose
+// upstream is <planque>/mcp/<tenant>/<grant> on one of the planques this
+// KIFF runs beside (KIFF_PLANQUE_URLS), for the caller's own tenant, and
+// whose permit audience is that same address. "" for any other tool, a
+// sealed or verify one, or one naming another account, included.
+func connectionGrant(t Tool, relays []string, tenant string) string {
+	if t.Mode != ModeRelay || t.UpstreamURL == "" || t.Audience != t.UpstreamURL {
+		return ""
+	}
+	for _, r := range relays {
+		base := strings.TrimRight(r, "/") + "/mcp/"
+		rest, ok := strings.CutPrefix(t.UpstreamURL, base)
+		if !ok {
+			continue
+		}
+		parts := strings.Split(rest, "/")
+		if len(parts) == 2 && parts[0] == tenant && tenant != "" && parts[1] != "" {
+			return parts[1]
+		}
+	}
+	return ""
 }
 
 // Retry hints, in seconds.
