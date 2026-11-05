@@ -122,8 +122,74 @@ func VerifyAnswer(keyDER []byte, a Answer, sigB64 string, now time.Time) error {
 }
 
 // DeviceSignatureHeader carries a phone's signature on a setup request:
-// "t=<RFC 3339>,v1=<base64 DER ECDSA>".
+// "t=<RFC 3339>,v1=<base64 DER ECDSA>", or, signed inside an approval
+// window (kiff/tafs#494), "t=<RFC 3339>,v2=<base64 DER ECDSA>,w=<window id>":
+// the window's id is then the last line of the signed message
+// (RequestMessageWindow), so the signature can't be moved to another window.
 const DeviceSignatureHeader = "KIFF-Device-Signature"
+
+// signatureHeader is a DeviceSignatureHeader taken apart: its time, its
+// signature, and the window it names (v2), or "" (v1).
+type signatureHeader struct {
+	At, Signature, Window string
+}
+
+// parseSignatureHeader reads "t=…,v1=…" or "t=…,v2=…,w=…". Anything else
+// is ErrRequestSignature.
+func parseSignatureHeader(header string) (signatureHeader, error) {
+	var h signatureHeader
+	parts := strings.Split(strings.TrimSpace(header), ",")
+	if len(parts) < 2 || !strings.HasPrefix(parts[0], "t=") {
+		return h, ErrRequestSignature
+	}
+	h.At = strings.TrimPrefix(parts[0], "t=")
+	version := ""
+	for _, part := range parts[1:] {
+		k, v, ok := strings.Cut(part, "=")
+		if !ok {
+			return h, ErrRequestSignature
+		}
+		switch k {
+		case "v1", "v2":
+			if version != "" {
+				return h, ErrRequestSignature
+			}
+			version, h.Signature = k, v
+		case "w":
+			h.Window = strings.TrimSpace(v)
+		default:
+			return h, ErrRequestSignature
+		}
+	}
+	// A v2 names its window; a v1 names none. A window id is "win_" and
+	// 26 base32 characters, so it can't carry a newline into the message.
+	if version == "" || (version == "v2") != (h.Window != "") || (h.Window != "" && !windowIDShape(h.Window)) {
+		return h, ErrRequestSignature
+	}
+	return h, nil
+}
+
+// windowIDShape reports whether s is shaped as a window id.
+func windowIDShape(s string) bool {
+	if len(s) != 30 || !strings.HasPrefix(s, "win_") {
+		return false
+	}
+	for _, r := range s[4:] {
+		if !(r >= 'a' && r <= 'z') && !(r >= '2' && r <= '7') {
+			return false
+		}
+	}
+	return true
+}
+
+// SignatureWindow is the window a DeviceSignatureHeader names, or "".
+func SignatureWindow(header string) string {
+	h, err := parseSignatureHeader(header)
+	if err != nil {
+		return ""
+	}
+	return h.Window
+}
 
 // ErrRequestSignature is a setup request without a valid signature.
 var ErrRequestSignature = errors.New("auth: this request needs the phone's signature")
@@ -146,6 +212,29 @@ func requestMessage(tenantID, method, uri, bodySHA256, signedAt string) []byte {
 	return []byte(strings.Join([]string{"kiff.request.v1", tenantID, method, uri, bodySHA256, signedAt}, "\n"))
 }
 
+// RequestMessageWindow is what a phone signs with its device key inside an
+// approval window (kiff/tafs#494): RequestMessage's fields, under
+// kiff.request.v2, with the window's id as the last line.
+//
+//	kiff.request.v2
+//	<tenant_id>
+//	<METHOD>
+//	<path and query, as sent>
+//	<sha256(body) hex>
+//	<signed_at>
+//	<window id>
+func RequestMessageWindow(tenantID, method, uri string, body []byte, signedAt, window string) []byte {
+	sum := sha256.Sum256(body)
+	return requestMessageWindow(tenantID, method, uri, hex.EncodeToString(sum[:]), signedAt, window)
+}
+
+func requestMessageWindow(tenantID, method, uri, bodySHA256, signedAt, window string) []byte {
+	if window == "" {
+		return requestMessage(tenantID, method, uri, bodySHA256, signedAt)
+	}
+	return []byte(strings.Join([]string{"kiff.request.v2", tenantID, method, uri, bodySHA256, signedAt, window}, "\n"))
+}
+
 // VerifyRequest checks a KIFF-Device-Signature header against the
 // request with the device key, and that signed_at is within
 // MaxAnswerSkew of now. It returns the request's replay identity: the
@@ -153,40 +242,56 @@ func requestMessage(tenantID, method, uri, bodySHA256, signedAt string) []byte {
 // bytes, because an ECDSA signature has a second valid form, (r, n-s),
 // that anyone can make from the first without the key.
 func VerifyRequest(keyDER []byte, tenantID, method, uri string, body []byte, header string, now time.Time) ([]byte, error) {
+	id, _, err := VerifyRequestWindow(keyDER, tenantID, method, uri, body, header, now)
+	return id, err
+}
+
+// VerifyRequestWindow is VerifyRequest that also returns the window the
+// signature names (a v2 header, kiff/tafs#494), or "" for one signed
+// outside a window. The caller checks the window is open; the signature
+// only binds the request to it.
+func VerifyRequestWindow(keyDER []byte, tenantID, method, uri string, body []byte, header string, now time.Time) ([]byte, string, error) {
 	sum := sha256.Sum256(body)
-	return VerifyRequestDigest(keyDER, tenantID, method, uri, hex.EncodeToString(sum[:]), header, now)
+	return VerifyRequestDigestWindow(keyDER, tenantID, method, uri, hex.EncodeToString(sum[:]), header, now)
 }
 
 // VerifyRequestDigest is VerifyRequest for a request another KIFF service
 // received (kiff/tafs#206): it has the body's SHA-256, in lowercase hex,
 // not the body.
 func VerifyRequestDigest(keyDER []byte, tenantID, method, uri, bodySHA256, header string, now time.Time) ([]byte, error) {
-	t, v, ok := strings.Cut(strings.TrimPrefix(strings.TrimSpace(header), "t="), ",v1=")
-	if !ok || !strings.HasPrefix(strings.TrimSpace(header), "t=") {
-		return nil, ErrRequestSignature
-	}
-	at, err := time.Parse(time.RFC3339, t)
+	id, _, err := VerifyRequestDigestWindow(keyDER, tenantID, method, uri, bodySHA256, header, now)
+	return id, err
+}
+
+// VerifyRequestDigestWindow is VerifyRequestDigest that also returns the
+// window the signature names, as VerifyRequestWindow does.
+func VerifyRequestDigestWindow(keyDER []byte, tenantID, method, uri, bodySHA256, header string, now time.Time) ([]byte, string, error) {
+	h, err := parseSignatureHeader(header)
 	if err != nil {
-		return nil, ErrAnswerSignedAt
+		return nil, "", err
+	}
+	at, err := time.Parse(time.RFC3339, h.At)
+	if err != nil {
+		return nil, "", ErrAnswerSignedAt
 	}
 	if d := now.Sub(at); d > MaxAnswerSkew || d < -MaxAnswerSkew {
-		return nil, ErrAnswerSignedAt
+		return nil, "", ErrAnswerSignedAt
 	}
 	k, err := deviceKey(keyDER)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	sig, err := base64.StdEncoding.DecodeString(v)
+	sig, err := base64.StdEncoding.DecodeString(h.Signature)
 	if err != nil || len(sig) == 0 {
-		return nil, ErrRequestSignature
+		return nil, "", ErrRequestSignature
 	}
-	message := requestMessage(tenantID, method, uri, bodySHA256, t)
+	message := requestMessageWindow(tenantID, method, uri, bodySHA256, h.At, h.Window)
 	digest := sha256.Sum256(message)
 	if !ecdsa.VerifyASN1(k, digest[:], sig) {
-		return nil, ErrRequestSignature
+		return nil, "", ErrRequestSignature
 	}
 	id := sha256.Sum256(append(append(append([]byte(nil), keyDER...), 0), message...))
-	return id[:], nil
+	return id[:], h.Window, nil
 }
 
 // ErrRelinkProof is a re-link whose new approval key didn't sign it.

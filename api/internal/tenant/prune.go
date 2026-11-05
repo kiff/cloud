@@ -96,6 +96,8 @@ var cloudMetaPruned = []pruneStep{
 	// Credentials, sessions and drafts that ended.
 	{"developer_sessions", `DELETE FROM cloud_meta.developer_sessions WHERE tenant_id = $1
 		AND (revoked_at < $2 OR expires_at < $2)`},
+	// An approval window is over once its cap has passed (kiff/tafs#494).
+	{"approval_windows", `DELETE FROM cloud_meta.approval_windows WHERE tenant_id = $1 AND cap_at < $2`},
 	{"approval_devices", `DELETE FROM cloud_meta.approval_devices d WHERE d.tenant_id = $1 AND d.revoked_at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.developer_sessions s WHERE s.device_id = d.id)`},
 	{"api_keys", `DELETE FROM cloud_meta.api_keys WHERE tenant_id = $1 AND revoked_at < $2`},

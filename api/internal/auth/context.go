@@ -34,11 +34,26 @@ func WithIdentity(ctx context.Context, id Identity) context.Context {
 }
 
 // deviceSignedCtxKey marks a request whose KIFF-Device-Signature the
-// route policy verified (PhoneSignedRules).
+// route policy verified (PhoneSignedRules), with which key signed it.
 type deviceSignedCtxKey struct{}
 
-func withDeviceSigned(ctx context.Context) context.Context {
-	return context.WithValue(ctx, deviceSignedCtxKey{}, true)
+// SignedWith says how the route policy found a phone's request signed
+// (kiff/tafs#494): by which key (KeyDevice or KeyCritical) and, for a
+// routine action inside an approval window, that window's id. A handler
+// whose route is routine or critical by its content (a draft that widens
+// a Card, "No" to "Did this happen?") reads it and refuses a device-signed
+// request with critical_key_required.
+type SignedWith struct {
+	Key    string
+	Window string
+}
+
+// Critical reports whether the approval key signed, behind the person's
+// fingerprint or face.
+func (s SignedWith) Critical() bool { return s.Key == KeyCritical }
+
+func withDeviceSigned(ctx context.Context, with SignedWith) context.Context {
+	return context.WithValue(ctx, deviceSignedCtxKey{}, with)
 }
 
 // DeviceSigned reports whether the route policy verified this request's
@@ -46,8 +61,15 @@ func withDeviceSigned(ctx context.Context) context.Context {
 // behind the device's unlock, within minutes, and it is used once. Only
 // RoutePolicy.Wrap sets it.
 func DeviceSigned(ctx context.Context) bool {
-	v, _ := ctx.Value(deviceSignedCtxKey{}).(bool)
-	return v
+	_, ok := ctx.Value(deviceSignedCtxKey{}).(SignedWith)
+	return ok
+}
+
+// SignedWithFrom is how the route policy found this request signed, and
+// false when it verified no signature on it.
+func SignedWithFrom(ctx context.Context) (SignedWith, bool) {
+	v, ok := ctx.Value(deviceSignedCtxKey{}).(SignedWith)
+	return v, ok
 }
 
 // IdentityFrom returns the Identity attached to ctx. ErrNoIdentity
