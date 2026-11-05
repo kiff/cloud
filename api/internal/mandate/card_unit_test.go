@@ -225,3 +225,39 @@ func TestACardUnitAskReadsAsHeld(t *testing.T) {
 		}
 	})
 }
+
+// The same proposal reaching the authorizer while its
+// card_unit ask is held (the decide path refuses a retry in the same unit
+// before the authorizer; one that gets past that check is this case) is
+// refused as a reused proposal, whatever it asks, and the ask stays held
+// as it was: never invalidated, never replaced by another kind of hold.
+func TestTheAuthorizerLeavesAHeldCardUnitAskStanding(t *testing.T) {
+	ctx := context.Background()
+	for _, c := range []struct {
+		name   string
+		amount int64
+	}{{"within the Card", 2500}, {"over the Card", 20000}} {
+		t.Run(c.name, func(t *testing.T) {
+			s := seeded(t, spendMandate(10000))
+			ask, opened, err := s.AskCardUnit(ctx, mandate.CardUnitAsk{TenantID: "t1", ProposalID: "tc-1", Subject: "agent://refund-agent",
+				Action: "REFUND_INVOICE", EntityID: "in_1", Unit: "usd", CardUnit: "EUR"}, base)
+			if err != nil || !opened {
+				t.Fatalf("ask: %v %v", opened, err)
+			}
+			a := mandate.NewAuthorizer(s, nil, at(base.Add(time.Minute)))
+			d, err := a.Authorize(ctx, "t1", "tc-1", req("agent://refund-agent", "REFUND_INVOICE", "PAID", map[string]int64{"amount_cents": c.amount}))
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, err := s.Exception(ctx, "t1", ask.ID)
+			if err != nil || d.Allowed() || d.Outcome != mandate.OutcomeProposalReused || got.KindOf() != mandate.KindCardUnit ||
+				got.Status != mandate.ExceptionHeld || got.Count != 1 || got.Reason != "" {
+				t.Fatalf("decision %s; ask %s %s count %d (%s) %v", d.Outcome, got.KindOf(), got.Status, got.Count, got.Reason, err)
+			}
+			draws, err := s.ProposalDraws(ctx, "t1", "tc-1")
+			if err != nil || len(draws) != 0 {
+				t.Fatalf("draws: %v %v", draws, err)
+			}
+		})
+	}
+}

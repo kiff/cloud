@@ -125,6 +125,13 @@ func warningCard(raw []byte, tenant, id string) (Mandate, error) {
 	return m, err
 }
 
+// StaleWarningWork is how old an observation may be and still be evaluated;
+// older work is completed with SkippedWarningWork and sends nothing.
+const StaleWarningWork = 24 * time.Hour
+
+// SkippedWarningWork is the note on work skipped for its age.
+const SkippedWarningWork = "skipped: observed more than a day ago"
+
 // ProcessWarningWork is post-commit. Capture is atomic with a draw/release;
 // each historical observation is retained, including transient exhaustion.
 // Retryable jobs and persistent episode state survive process restarts.
@@ -163,6 +170,14 @@ func (s *PostgresStore) processWarningWork(ctx context.Context) (bool, error) {
 	}
 	if err = warningLock(ctx, tx, tenant, id); err != nil {
 		return false, err
+	}
+	// Work observed more than a day ago is skipped, never sent: a backlog
+	// that drains late would otherwise warn about windows long past.
+	if time.Since(at) > StaleWarningWork {
+		if _, err = tx.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET completed_at=now(),last_error=$2 WHERE id=$1`, job, SkippedWarningWork); err != nil {
+			return false, err
+		}
+		return true, tx.Commit(ctx)
 	}
 	if err = s.evaluateWarningJob(ctx, tx, tenant, id, at, raw); err != nil {
 		_ = tx.Rollback(ctx)

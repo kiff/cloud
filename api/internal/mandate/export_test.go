@@ -22,3 +22,11 @@ func SetAfterIssueLock(s *PostgresStore, fn func()) { s.afterIssueLock = fn }
 // LegacyFingerprintForTest is the pre-#1147 fingerprint, for tests of
 // exceptions recorded then.
 var LegacyFingerprintForTest = legacyFingerprint
+
+// SetWarningUnlockSQL replaces the build lock's unlock statement, so a
+// test can make it fail; the returned func puts it back.
+func SetWarningUnlockSQL(sql string) func() {
+	was := warningUnlockSQL
+	warningUnlockSQL = sql
+	return func() { warningUnlockSQL = was }
+}

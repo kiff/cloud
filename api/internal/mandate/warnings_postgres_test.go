@@ -4,14 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/testdb"
 )
 
 func TestPostgresCardWarningsCaptureReplayAndDelivery(t *testing.T) {
@@ -365,4 +368,107 @@ func explainNoSeqScan(t *testing.T, pool *pgxpool.Pool, query string) string {
 		t.Fatal(err)
 	}
 	return plan.String()
+}
+
+// Warning work observed more than a day ago is skipped, not sent: a backlog
+// that drains late doesn't warn about windows long past.
+func TestPostgresStaleWarningWorkIsSkippedNotSent(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	tenantID := "pg-card-warning-stale"
+	seedTenant(t, pool, tenantID)
+	s := mandate.NewPostgresStore(pool)
+	a := mandate.Aggregate{Quantity: mandate.Quantity{Kind: mandate.KindCount}, Limit: 3, Window: mandate.WindowRollingHour}
+	m := mandate.Mandate{ID: "stale-warning-card", TenantID: tenantID, Subject: "agent-a", Holders: []string{"agent-a"}, Aggregates: []mandate.Aggregate{a}}
+	if err := s.Issue(ctx, m, "admin"); err != nil {
+		t.Fatal(err)
+	}
+	for i := range 3 {
+		now := time.Now().UTC()
+		d := mandate.Draw{TenantID: tenantID, MandateID: m.ID, ProposalID: fmt.Sprintf("stale-%d-%d", i, now.UnixNano()), Subject: "agent-a", QuantityKey: "count", Amount: 1, DrawnAt: now, AccountingVersion: 1, Measure: mandate.MeasureAttempts,
+			ChargedLimits: []mandate.ChargedLimit{{Measure: mandate.MeasureAttempts, Window: a.Window, Location: "UTC", WindowStart: now.Add(-time.Hour), WindowEnd: now.Add(time.Hour)}}}
+		if err := s.RecordAll(ctx, []mandate.Draw{d}); err != nil {
+			t.Fatalf("draw %d: %v", i, err)
+		}
+	}
+	tag, err := pool.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET observed_at=observed_at-interval '25 hours' WHERE tenant_id=$1 AND completed_at IS NULL`, tenantID)
+	if err != nil || tag.RowsAffected() == 0 {
+		t.Fatalf("aging the work: %v (%d rows)", err, tag.RowsAffected())
+	}
+	for range 5 {
+		if err := s.ProcessWarningWork(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var pending, skipped, warnings int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FILTER (WHERE completed_at IS NULL), count(*) FILTER (WHERE last_error=$2)
+		FROM cloud_meta.mandate_warning_work WHERE tenant_id=$1`, tenantID, mandate.SkippedWarningWork).Scan(&pending, &skipped); err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cloud_meta.mandate_warnings WHERE tenant_id=$1`, tenantID).Scan(&warnings); err != nil {
+		t.Fatal(err)
+	}
+	if pending != 0 || skipped == 0 || warnings != 0 {
+		t.Fatalf("pending %d, skipped %d, warnings %d: stale work must be skipped and send nothing", pending, skipped, warnings)
+	}
+}
+
+// A build whose unlock fails doesn't hand its
+// connection, still holding the lock, back to the pool. Another instance
+// (its own pool) can build afterwards.
+func TestPostgresAFailedUnlockDoesntLeaveTheBuildLocked(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	restore := mandate.SetWarningUnlockSQL(`SELECT pg_advisory_unlock(hashtextextended($1, 0)), 1/0`)
+	err := mandate.BuildWarningIndexes(ctx, pool)
+	restore()
+	if err != nil {
+		t.Fatal(err)
+	}
+	other, err := pgxpool.New(ctx, testdb.URL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer other.Close()
+	if err := mandate.BuildWarningIndexes(ctx, other); err != nil {
+		t.Fatalf("after a failed unlock, another instance: %v", err)
+	}
+}
+
+// An instance that found another building
+// tries again, so a build whose instance died (its lock gone, its index
+// left invalid) is finished without waiting for the next start.
+func TestPostgresABuildLeftByADeadInstanceIsFinished(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	if _, err := pool.Exec(ctx, `DROP INDEX IF EXISTS cloud_meta.mandate_warning_work_pending_id`); err != nil {
+		t.Fatal(err)
+	}
+	// The dying instance: it holds the build lock on its own session.
+	dying, err := pgx.Connect(ctx, testdb.URL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := dying.Exec(ctx, `SELECT pg_advisory_lock(hashtextextended('cloud_meta.mandate_warning_work indexes', 0))`); err != nil {
+		t.Fatal(err)
+	}
+	waits := 0
+	done := make(chan error, 1)
+	go func() {
+		done <- mandate.BuildWarningIndexesWhenFree(ctx, pool, 50*time.Millisecond, func() { waits++ })
+	}()
+	time.Sleep(200 * time.Millisecond)
+	_ = dying.Close(ctx) // it dies; its lock goes with its session
+	select {
+	case err := <-done:
+		if err != nil || waits == 0 {
+			t.Fatalf("err %v after %d waits", err, waits)
+		}
+	case <-time.After(10 * time.Second):
+		t.Fatal("never built after the other instance died")
+	}
+	var valid bool
+	if err := pool.QueryRow(ctx, `SELECT i.indisvalid FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid WHERE c.relname = 'mandate_warning_work_pending_id'`).Scan(&valid); err != nil || !valid {
+		t.Fatalf("index valid %v %v", valid, err)
+	}
 }

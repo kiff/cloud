@@ -57,8 +57,21 @@ func BuildWarningIndexes(ctx context.Context, pool *pgxpool.Pool) error {
 	if err != nil {
 		return fmt.Errorf("warning index: connection: %w", err)
 	}
-	defer conn.Release()
 	const lockKey = "cloud_meta.mandate_warning_work indexes"
+	held := false
+	defer func() {
+		if held {
+			var unlocked bool
+			if err := conn.QueryRow(context.WithoutCancel(ctx), warningUnlockSQL, lockKey).Scan(&unlocked); err != nil || !unlocked {
+				// A connection still holding the lock never goes back to
+				// the pool: every later build, on any instance, would find
+				// it taken. Closed, its session ends and the lock with it.
+				_ = conn.Hijack().Close(context.WithoutCancel(ctx))
+				return
+			}
+		}
+		conn.Release()
+	}()
 	// Try, never wait: a CONCURRENTLY build waits for every open
 	// transaction, a waiting pg_advisory_lock call included, so waiting
 	// here would deadlock with the instance that is building.
@@ -69,9 +82,7 @@ func BuildWarningIndexes(ctx context.Context, pool *pgxpool.Pool) error {
 	if !locked {
 		return ErrWarningIndexesBuilding
 	}
-	defer func() {
-		_, _ = conn.Exec(context.WithoutCancel(ctx), `SELECT pg_advisory_unlock(hashtextextended($1, 0))`, lockKey)
-	}()
+	held = true
 	for _, ix := range warningIndexes {
 		var valid *bool
 		err := conn.QueryRow(ctx, `SELECT i.indisvalid FROM pg_index i JOIN pg_class c ON c.oid = i.indexrelid
@@ -92,6 +103,33 @@ func BuildWarningIndexes(ctx context.Context, pool *pgxpool.Pool) error {
 		}
 	}
 	return nil
+}
+
+// warningUnlockSQL ends BuildWarningIndexes' lock; a variable so a test
+// can make the unlock fail.
+var warningUnlockSQL = `SELECT pg_advisory_unlock(hashtextextended($1, 0))`
+
+// BuildWarningIndexesWhenFree is BuildWarningIndexes, waiting while another
+// instance builds: it tries again every wait. A build that finished leaves
+// nothing to do; one whose instance died (a deploy replacing it) left its
+// index invalid and its lock gone, and this one builds it, so the pick
+// isn't slow until the next start. waiting, if not nil, runs before each
+// wait.
+func BuildWarningIndexesWhenFree(ctx context.Context, pool *pgxpool.Pool, wait time.Duration, waiting func()) error {
+	for {
+		err := BuildWarningIndexes(ctx, pool)
+		if !errors.Is(err, ErrWarningIndexesBuilding) {
+			return err
+		}
+		if waiting != nil {
+			waiting()
+		}
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(wait):
+		}
+	}
 }
 
 // PostgresStore is the production Store.
