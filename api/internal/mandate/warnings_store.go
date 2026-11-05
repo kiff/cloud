@@ -125,12 +125,13 @@ func warningCard(raw []byte, tenant, id string) (Mandate, error) {
 	return m, err
 }
 
-// StaleWarningWork is how old an observation may be and still be evaluated;
-// older work is completed with SkippedWarningWork and sends nothing.
+// StaleWarningWork is how old an observation may be and still warn; older
+// work still moves its episodes on and resolves the warnings it would
+// resolve, but records no new one, and is completed with SkippedWarningWork.
 const StaleWarningWork = 24 * time.Hour
 
 // SkippedWarningWork is the note on work skipped for its age.
-const SkippedWarningWork = "skipped: observed more than a day ago"
+const SkippedWarningWork = "skipped: observed more than a day ago; nothing sent, open warnings resolved as due"
 
 // ProcessWarningWork is post-commit. Capture is atomic with a draw/release;
 // each historical observation is retained, including transient exhaustion.
@@ -171,15 +172,12 @@ func (s *PostgresStore) processWarningWork(ctx context.Context) (bool, error) {
 	if err = warningLock(ctx, tx, tenant, id); err != nil {
 		return false, err
 	}
-	// Work observed more than a day ago is skipped, never sent: a backlog
-	// that drains late would otherwise warn about windows long past.
-	if time.Since(at) > StaleWarningWork {
-		if _, err = tx.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET completed_at=now(),last_error=$2 WHERE id=$1`, job, SkippedWarningWork); err != nil {
-			return false, err
-		}
-		return true, tx.Commit(ctx)
-	}
-	if err = s.evaluateWarningJob(ctx, tx, tenant, id, at, raw); err != nil {
+	// Work observed more than a day ago sends nothing: a backlog that drains
+	// late would otherwise warn about windows long past. It's still
+	// evaluated, quietly, so a Card archived since, or an episode that moved
+	// on, resolves its open warnings instead of leaving them in attention.
+	stale := time.Since(at) > StaleWarningWork
+	if err = s.evaluateWarningJob(ctx, tx, tenant, id, at, raw, stale); err != nil {
 		_ = tx.Rollback(ctx)
 		// Keep every failed observation; do not mark it completed or zero usage.
 		_, saveErr := s.pool.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET attempts=attempts+1,last_error=$2,
@@ -189,14 +187,20 @@ func (s *PostgresStore) processWarningWork(ctx context.Context) (bool, error) {
 		}
 		return false, err
 	}
-	_, err = tx.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET completed_at=now(),last_error='' WHERE id=$1`, job)
+	note := ""
+	if stale {
+		note = SkippedWarningWork
+	}
+	_, err = tx.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET completed_at=now(),last_error=$2 WHERE id=$1`, job, note)
 	if err != nil {
 		return false, err
 	}
 	return true, tx.Commit(ctx)
 }
 
-func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenant, id string, at time.Time, raw []byte) error {
+// evaluateWarningJob moves the Card's episodes on to at and resolves the
+// warnings that no longer stand; quiet, it records no new warning.
+func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenant, id string, at time.Time, raw []byte, quiet bool) error {
 	m, err := warningCard(raw, tenant, id)
 	if err != nil {
 		return err
@@ -263,9 +267,19 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 				return err
 			}
 		}
+		prior := e
+		prior.Seen = make(map[string]bool, len(e.Seen))
+		for k, v := range e.Seen {
+			prior.Seen[k] = v
+		}
 		e, w, err := evaluateWarnings(h, m, a, c, e, at)
 		if err != nil {
 			return err
+		}
+		if quiet && e.Number == prior.Number {
+			// Nothing was sent, so nothing is seen that wasn't before: a
+			// warning the quiet pass held back is still due on the next.
+			e.Seen = prior.Seen
 		}
 		state, err = json.Marshal(e)
 		if err != nil {
@@ -280,7 +294,7 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 		if _, err = tx.Exec(ctx, `UPDATE cloud_meta.mandate_warnings SET resolved_at=$4,attention_dirty=true WHERE tenant_id=$1 AND mandate_id=$2 AND split_part(body->>'episode',':',1)=$3 AND body->>'episode'<>$5 AND resolved_at IS NULL`, tenant, id, identity, at, currentEpisode); err != nil {
 			return err
 		}
-		if w != nil {
+		if w != nil && !quiet {
 			body, err := json.Marshal(w)
 			if err != nil {
 				return err

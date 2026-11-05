@@ -413,9 +413,104 @@ func TestPostgresStaleWarningWorkIsSkippedNotSent(t *testing.T) {
 	}
 }
 
+// Stale work sends nothing, but it still resolves
+// what it would resolve, so an open warning doesn't stay in attention when
+// the only observation left for its Card is old.
+func TestPostgresStaleWarningWorkStillResolves(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	tenantID := "pg-card-warning-stale-resolve"
+	seedTenant(t, pool, tenantID)
+	s := mandate.NewPostgresStore(pool)
+	a := mandate.Aggregate{Quantity: mandate.Quantity{Kind: mandate.KindCount}, Limit: 3, Window: mandate.WindowRollingHour}
+	m := mandate.Mandate{ID: "stale-resolve-card", TenantID: tenantID, Subject: "agent-a", Holders: []string{"agent-a"}, Aggregates: []mandate.Aggregate{a}}
+	if err := s.Issue(ctx, m, "admin"); err != nil {
+		t.Fatal(err)
+	}
+	// An open warning from an episode the Card no longer has.
+	if _, err := pool.Exec(ctx, `INSERT INTO cloud_meta.mandate_warnings(tenant_id,mandate_id,id,recorded_at,body) VALUES($1,$2,'w-old',now()-interval '2 days','{"episode":"gone-limit:1"}')`, tenantID, m.ID); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now().UTC()
+	d := mandate.Draw{TenantID: tenantID, MandateID: m.ID, ProposalID: fmt.Sprintf("stale-resolve-%d", now.UnixNano()), Subject: "agent-a", QuantityKey: "count", Amount: 1, DrawnAt: now, AccountingVersion: 1, Measure: mandate.MeasureAttempts,
+		ChargedLimits: []mandate.ChargedLimit{{Measure: mandate.MeasureAttempts, Window: a.Window, Location: "UTC", WindowStart: now.Add(-time.Hour), WindowEnd: now.Add(time.Hour)}}}
+	if err := s.RecordAll(ctx, []mandate.Draw{d}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := pool.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET observed_at=observed_at-interval '25 hours' WHERE tenant_id=$1 AND completed_at IS NULL`, tenantID); err != nil {
+		t.Fatal(err)
+	}
+	for range 3 {
+		if err := s.ProcessWarningWork(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var open, recorded, skipped int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FILTER (WHERE resolved_at IS NULL), count(*) FILTER (WHERE id<>'w-old') FROM cloud_meta.mandate_warnings WHERE tenant_id=$1`, tenantID).Scan(&open, &recorded); err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cloud_meta.mandate_warning_work WHERE tenant_id=$1 AND last_error=$2`, tenantID, mandate.SkippedWarningWork).Scan(&skipped); err != nil {
+		t.Fatal(err)
+	}
+	if open != 0 || recorded != 0 || skipped == 0 {
+		t.Fatalf("open %d, new %d, skipped %d: stale work resolves the old warning and records none", open, recorded, skipped)
+	}
+}
+
 // A build whose unlock fails doesn't hand its
 // connection, still holding the lock, back to the pool. Another instance
 // (its own pool) can build afterwards.
+// A quiet pass over stale work marks nothing seen that it didn't send: a
+// lifetime Card left spent after a backlog still warns spent on the next
+// fresh observation.
+func TestPostgresAQuietPassStillLeavesSpentDue(t *testing.T) {
+	pool := requirePostgres(t)
+	ctx := context.Background()
+	tenantID := "pg-card-warning-quiet-spent"
+	seedTenant(t, pool, tenantID)
+	s := mandate.NewPostgresStore(pool)
+	a := mandate.Aggregate{Quantity: mandate.Quantity{Kind: mandate.KindCount}, Limit: 3, Window: mandate.WindowLifetime}
+	m := mandate.Mandate{ID: "quiet-spent-card", TenantID: tenantID, Subject: "agent-a", Holders: []string{"agent-a"}, Aggregates: []mandate.Aggregate{a}}
+	if err := s.Issue(ctx, m, "admin"); err != nil {
+		t.Fatal(err)
+	}
+	draw := func(i int, now time.Time) {
+		t.Helper()
+		d := mandate.Draw{TenantID: tenantID, MandateID: m.ID, ProposalID: fmt.Sprintf("quiet-%d-%d", i, now.UnixNano()), Subject: "agent-a", QuantityKey: "count", Amount: 1, DrawnAt: now, AccountingVersion: 1, Measure: mandate.MeasureAttempts,
+			ChargedLimits: []mandate.ChargedLimit{{Measure: mandate.MeasureAttempts, Window: a.Window, Location: "UTC", WindowStart: time.Unix(0, 0).UTC(), WindowEnd: time.Date(9999, 12, 31, 0, 0, 0, 0, time.UTC)}}}
+		if err := s.RecordAll(ctx, []mandate.Draw{d}); err != nil {
+			t.Fatalf("draw %d: %v", i, err)
+		}
+	}
+	// The backlog: three draws a day ago spent the Card, and the work that
+	// saw them is a day old too, so it passes quietly.
+	for i := range 3 {
+		draw(i, time.Now().UTC().Add(-26*time.Hour))
+	}
+	if _, err := pool.Exec(ctx, `UPDATE cloud_meta.mandate_warning_work SET observed_at=observed_at-interval '25 hours' WHERE tenant_id=$1 AND completed_at IS NULL`, tenantID); err != nil {
+		t.Fatal(err)
+	}
+	for range 5 {
+		if err := s.ProcessWarningWork(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// A fresh observation of the still-spent Card warns spent.
+	draw(3, time.Now().UTC())
+	for range 5 {
+		if err := s.ProcessWarningWork(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var spent int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cloud_meta.mandate_warnings WHERE tenant_id=$1 AND body->>'kind'='spent'`, tenantID).Scan(&spent); err != nil {
+		t.Fatal(err)
+	}
+	if spent != 1 {
+		t.Fatalf("%d spent warnings after the backlog, want 1: the quiet pass took it", spent)
+	}
+}
+
 func TestPostgresAFailedUnlockDoesntLeaveTheBuildLocked(t *testing.T) {
 	pool := requirePostgres(t)
 	ctx := context.Background()
