@@ -166,20 +166,17 @@ func TestPendingSaysEachStateAndAnswer(t *testing.T) {
 			t.Errorf("%s lists idempotency_key %v", c.OperationID, v)
 		}
 	}
-	for op, want := range map[string]string{"op-refused": "refused", "op-ended": "ended", "op-expired": "ended", "op-waiting": "waiting", "op-no-room": "approved_no_room", "op-unavailable": "unavailable"} {
+	for op, want := range map[string]string{"op-refused": "refused", "op-waiting": "waiting", "op-no-room": "approved_no_room", "op-unavailable": "unavailable"} {
 		if got[op].State != "held" || got[op].Answer != want {
 			t.Errorf("%s: %+v, want answer %s", op, got[op], want)
 		}
 	}
-	// A hold the agent's own run withdrew is open to no one: it isn't
-	// listed. One that ended without the owner's
-	// approval is, and isn't still to do.
-	if c, listed := got["op-withdrawn"]; listed {
-		t.Errorf("a withdrawn hold is listed: %+v", c)
-	}
-	for _, op := range []string{"op-ended", "op-expired"} {
-		if strings.Contains(got[op].Next, "still to do") {
-			t.Errorf("%s next: %q", op, got[op].Next)
+	// A hold the agent's own run withdrew, or one that ended (expired, or
+	// its Card withdrawn) without the owner's answer, is open to no one:
+	// none of them is listed.
+	for _, op := range []string{"op-withdrawn", "op-ended", "op-expired"} {
+		if c, listed := got[op]; listed {
+			t.Errorf("%s is listed: %+v", op, c)
 		}
 	}
 	if got["op-sending"].State != "sending" || got["op-unknown"].State != "unknown" {
@@ -461,5 +458,38 @@ func TestPendingPagesPastWithdrawnHolds(t *testing.T) {
 		if !seen[fmt.Sprintf("op-unknown-%02d", i)] {
 			t.Errorf("op-unknown-%02d is never listed", i)
 		}
+	}
+}
+
+// A hold that ended without the owner's answer (it expired, or its Card
+// was withdrawn) is open to no one either, so kiff_pending leaves it out
+// too, and the open call behind sixty of them is on the first page (the
+// chargebacks eval read "over 100 earlier submissions" as waiting after
+// the withdrawn ones were left out).
+func TestPendingLeavesOutHoldsThatEnded(t *testing.T) {
+	r := newRig(t)
+	if got := r.call(t, "agent-key", amount(5000, "op-waiting")); got.call["exception_id"] == nil {
+		t.Fatalf("the waiting call wasn't held: %+v", got)
+	}
+	r.api.holds = map[string]kiffapi.Hold{}
+	for i := 0; i < 60; i++ {
+		*r.now = r.now.Add(time.Second)
+		got := r.call(t, "agent-key", amount(5000, fmt.Sprintf("op-ended-%02d", i)))
+		exc, _ := got.call["exception_id"].(string)
+		status := "expired"
+		if i%2 == 1 {
+			status = "invalidated" // its Card was withdrawn
+		}
+		r.api.holds[exc] = kiffapi.Hold{ExceptionID: exc, Status: status}
+	}
+	text, calls, next := r.pendingPage(t, "agent-key", "")
+	if len(calls) != 1 || calls[0].OperationID != "op-waiting" || calls[0].Answer != "waiting" || next != "" {
+		t.Fatalf("60 ended and 1 waiting: %d calls, next %q: %q", len(calls), next, text)
+	}
+	// A refusal is the owner's answer and stays listed: it says what to do.
+	exc, _ := r.call(t, "agent-key", amount(5000, "op-refused")).call["exception_id"].(string)
+	r.api.holds[exc] = kiffapi.Hold{ExceptionID: exc, Status: "rejected"}
+	if _, calls, _ := r.pendingPage(t, "agent-key", ""); len(calls) != 2 || calls[0].Answer != "refused" {
+		t.Fatalf("with a refusal: %+v", calls)
 	}
 }

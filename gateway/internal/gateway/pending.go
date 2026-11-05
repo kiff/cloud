@@ -32,14 +32,14 @@ const (
 	// pendingSince is how far back it looks: the longest hold.
 	pendingSince = 7 * 24 * time.Hour
 	// pendingReads bounds the store reads one listing makes to fill a
-	// page: a hold the agent's own run withdrew is left out, so a page
-	// may need more than one read when many were.
+	// page: a hold the agent's own run withdrew, or one that ended with no
+	// answer, is left out, so a page may need more than one read.
 	pendingReads = 5
 )
 
 const pendingToolDescription = "Lists your calls that KIFF holds for the owner's approval, with the owner's answer once given, " +
 	"your calls being sent, and your calls whose outcome is unknown, each with the call that collects it, newest first. " +
-	"A hold your own run withdrew is not listed: nothing waits on it, and its item is still yours to do. " +
+	"A hold your own run withdrew, or one that ended without an answer, is not listed: nothing waits on it, and its item is still yours to do. " +
 	"When there are more, pass the next_cursor it returns as cursor to read on. " +
 	"Reading it changes nothing and sends nothing. Call it when you start work, or to see whether the owner has answered."
 
@@ -132,7 +132,7 @@ func (a *agent) pendingResult(ctx context.Context, raw json.RawMessage) (json.Ra
 		byName[t.Name] = t
 	}
 	// Only what is still open is listed: a hold the agent's own run
-	// withdrew is nothing anyone waits on, and listing it read as an open
+	// withdrew, or that ended with no answer, is nothing anyone waits on; listing it read as an open
 	// request, so an agent skipped work it still had to do (in an eval,
 	// fifty withdrawn holds read as "about 30 requests still open"). The
 	// store can't tell a withdrawn hold from an open one, only KIFF can, so
@@ -156,7 +156,7 @@ func (a *agent) pendingResult(ctx context.Context, raw json.RawMessage) (json.Ra
 		for i := range ins {
 			c := pendingCall(ins[i], byName[ins[i].Tool], answers, answered)
 			last = &ins[i]
-			if c.Answer == "withdrawn" {
+			if c.Answer == "withdrawn" || c.Answer == "ended" {
 				continue
 			}
 			calls = append(calls, c)
