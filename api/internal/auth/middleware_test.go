@@ -76,7 +76,7 @@ func TestMiddleware_SessionToken_HappyPath(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_alice")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -124,7 +124,7 @@ func TestMiddleware_SessionToken_AddsOwnerRoleAliases(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_self_signup")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -150,7 +150,7 @@ func TestMiddleware_SessionToken_AddsOwnerRoleAliases(t *testing.T) {
 	resolver.Set("user_admin", actor.Actor{ID: "u-adm", Roles: []string{"admin"}}, "tenant-adm")
 	req2, _ := http.NewRequest("GET", srv.URL, nil)
 	req2.Header.Set("Authorization", "Bearer user_admin")
-	resp2, err := http.DefaultClient.Do(req2)
+	resp2, err := testHTTP.Do(req2)
 	if err != nil {
 		t.Fatalf("admin request: %v", err)
 	}
@@ -182,7 +182,7 @@ func TestMiddleware_RejectsMissingHeader(t *testing.T) {
 	srv := httptest.NewServer(mw.Wrap(&authedHandler{}))
 	defer srv.Close()
 
-	resp, err := http.Get(srv.URL)
+	resp, err := testHTTP.Get(srv.URL)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -203,7 +203,7 @@ func TestMiddleware_RejectsBadSessionToken(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer not-a-known-subject")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -227,7 +227,7 @@ func TestMiddleware_RejectsResolverFailure(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_x")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -248,7 +248,7 @@ func TestMiddleware_ResolverBackendFailureReturnsServiceUnavailable(t *testing.T
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_x")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -303,7 +303,7 @@ func TestMiddleware_APIKey_HappyPath(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -355,7 +355,7 @@ func TestMiddleware_APIKey_RevokedKey_Rejected(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -388,7 +388,7 @@ func TestMiddleware_APIKey_TenantMismatch_Rejected(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -406,7 +406,7 @@ func TestMiddleware_APIKey_MalformedKey_Rejected(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer kiff_live_acme_short")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -451,7 +451,7 @@ func TestMiddleware_APIKey_NoResolverEntry_StillSucceeds(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -514,7 +514,7 @@ func TestMiddleware_WalletEnrichment_Linked(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_alice")
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("request: %v", err)
 	}
@@ -557,7 +557,7 @@ func TestMiddleware_WalletEnrichment_NotLinked(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_alice")
-	resp, _ := http.DefaultClient.Do(req)
+	resp, _ := testHTTP.Do(req)
 	resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -589,7 +589,7 @@ func TestMiddleware_WalletEnrichment_TransientErrorSucceeds(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_alice")
-	resp, _ := http.DefaultClient.Do(req)
+	resp, _ := testHTTP.Do(req)
 	resp.Body.Close()
 
 	// The auth check already passed; a transient wallet-store
@@ -618,7 +618,7 @@ func TestMiddleware_WalletEnrichment_OptOut(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", srv.URL, nil)
 	req.Header.Set("Authorization", "Bearer user_alice")
-	resp, _ := http.DefaultClient.Do(req)
+	resp, _ := testHTTP.Do(req)
 	resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -758,7 +758,7 @@ func TestMiddleware_APIKey_CarriesAgentBinding(t *testing.T) {
 
 		req, _ := http.NewRequest("GET", srv.URL, nil)
 		req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := testHTTP.Do(req)
 		if err != nil {
 			t.Fatalf("request: %v", err)
 		}
@@ -797,7 +797,7 @@ func TestMiddleware_APIKey_CarriesEnvironmentBinding(t *testing.T) {
 
 		req, _ := http.NewRequest("GET", srv.URL, nil)
 		req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := testHTTP.Do(req)
 		if err != nil {
 			t.Fatalf("request: %v", err)
 		}

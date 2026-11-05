@@ -59,7 +59,7 @@ func walletDoJSON(t *testing.T, method, url, auth string, body any) (*http.Respo
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := testHTTP.Do(req)
 	if err != nil {
 		t.Fatalf("do: %v", err)
 	}
