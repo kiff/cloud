@@ -32,6 +32,8 @@
 package mandate
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
@@ -53,12 +55,21 @@ const (
 	KindSum QuantityKind = "sum"
 )
 
-// Quantity is `count` or `sum(<parameter>)`.
+// Quantity is `count` or `sum(<parameter>)`, optionally per item.
 type Quantity struct {
 	Kind QuantityKind
 	// Parameter is the declared parameter name summed by KindSum, and
 	// empty for KindCount.
 	Parameter string
+	// Per names a string parameter the quantity is counted for each value
+	// of, apart: `count` per `invoice` is one total for each invoice, not
+	// one for the Card. Only on a total (Aggregate), never per action.
+	// Empty is one total for every call, as before.
+	Per string `json:",omitempty"`
+	// item is the digest of the value one call names, set while that call
+	// is checked and drawn (forCall). Never stored: an argument's value
+	// isn't kept anywhere a draw is.
+	item string
 }
 
 func (q Quantity) String() string {
@@ -69,8 +80,73 @@ func (q Quantity) String() string {
 }
 
 // Key identifies a quantity for accounting. Stable across restarts and
-// safe as a storage key.
-func (q Quantity) Key() string { return q.String() }
+// safe as a storage key. A per-item quantity is keyed by its parameter
+// and, while a call is checked, the digest of the value the call names:
+// each item draws under its own key. Without a call it keys no draw, so a
+// per-item total is never read against the Card's plain one.
+func (q Quantity) Key() string {
+	if q.Per == "" {
+		return q.String()
+	}
+	k := q.String() + " per " + strings.ToLower(q.Per)
+	if q.item != "" {
+		k += "=" + q.item
+	}
+	return k
+}
+
+// SplitKey reads a ledger key back as its quantity ("count", "sum(p)")
+// and, for a per-item key, the parameter it counts by. The item's digest
+// is dropped: a statement shows what was counted, never which digest.
+func SplitKey(key string) (quantity, per string) {
+	q, rest, found := strings.Cut(key, " per ")
+	if !found {
+		return key, ""
+	}
+	per, _, _ = strings.Cut(rest, "=")
+	return q, per
+}
+
+// forCall is q as it counts one call. A plain quantity counts every call.
+// A per-item one applies only to an action that declares its parameter
+// (applies); for such an action, a call that names no value (named false)
+// can't be counted, so it is held for the owner. counted keys the draw
+// by a digest of the value, salted by the Card, never the value itself;
+// item is the value as sent, for the owner's words ("" when it is
+// unreadable, and then the digest of what was sent is counted).
+func (q Quantity) forCall(m Mandate, req Request) (counted Quantity, item string, applies, named bool) {
+	if q.Per == "" {
+		return q, "", true, true
+	}
+	p := strings.ToLower(q.Per)
+	if !req.Declares[p] {
+		return q, "", false, false
+	}
+	if sent, unreadable := req.Unreadable[p]; unreadable {
+		q.item = itemDigest(m.ID, p, "\x01"+sent)
+		return q, "", true, true
+	}
+	v, ok := req.Resources[p]
+	if !ok || strings.TrimSpace(v) == "" {
+		return q, "", true, false
+	}
+	q.item = itemDigest(m.ID, p, sameItem(v))
+	return q, v, true, true
+}
+
+// sameItem is a value as an item is counted: trimmed and case-folded, so
+// "Ana@example.com", "ana@example.com" and " ana@example.com" are one item, as they are one
+// mailbox, and a call can't pass a per-item total by changing a value's
+// case or spacing. Two ids that differ only in case count as one, the
+// safe side.
+func sameItem(v string) string { return strings.ToLower(strings.TrimSpace(v)) }
+
+// itemDigest keys one item's draws. The Card's id salts it: a Card keeps
+// its id across every revision, so an edit never starts an item afresh.
+func itemDigest(mandateID, param, value string) string {
+	sum := sha256.Sum256([]byte(mandateID + "\x00" + param + "\x00" + value))
+	return hex.EncodeToString(sum[:16])
+}
 
 var (
 	ErrQuantitySyntax = errors.New("mandate: quantity must be `count` or `sum(<parameter>)`")
@@ -107,6 +183,8 @@ const (
 	WindowRollingHour Window = "rolling_1h"
 	// WindowRollingDay is the last 24 hours.
 	WindowRollingDay Window = "rolling_24h"
+	// WindowRollingWeek is the last 7 days: "one reminder a week".
+	WindowRollingWeek Window = "rolling_7d"
 	// WindowLifetime is the Card's whole life: "EUR 200 for this
 	// job until Friday". It never resets. It counts every draw the Card
 	// has made, not only those since ValidFrom, so a reissue that moves
@@ -137,6 +215,8 @@ func (w Window) Start(now time.Time, loc *time.Location) (time.Time, error) {
 		return now.Add(-time.Hour), nil
 	case WindowRollingDay:
 		return now.Add(-24 * time.Hour), nil
+	case WindowRollingWeek:
+		return now.Add(-7 * 24 * time.Hour), nil
 	case WindowLifetime:
 		// The zero time: every draw the Card has made counts.
 		return time.Time{}, nil
@@ -158,6 +238,11 @@ type Aggregate struct {
 	// the ceiling, never the usage ledger or the lifetime of a held call.
 	ExtraRoom []RoomGrant `json:",omitempty"`
 }
+
+// PerItem reports whether a is counted for each value of a parameter apart.
+// Such a total has one balance per item, so it has no single "used", no
+// forecast or warning, and no extra room.
+func (a Aggregate) PerItem() bool { return a.Quantity.Per != "" }
 
 // Grant scopes a mandate to actions. In this version a grant says which
 // actions the cap applies to; it does not itself confer authority (see

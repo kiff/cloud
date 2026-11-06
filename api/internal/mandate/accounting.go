@@ -214,6 +214,8 @@ func chargedLimit(agg Aggregate, m Mandate, now time.Time) ChargedLimit {
 		t.WindowEnd = now.Add(time.Hour).UTC()
 	case WindowRollingDay:
 		t.WindowEnd = now.Add(24 * time.Hour).UTC()
+	case WindowRollingWeek:
+		t.WindowEnd = now.Add(7 * 24 * time.Hour).UTC()
 	case WindowLifetime:
 		t.WindowEnd = lifetimeEnd
 	}

@@ -70,6 +70,10 @@ func Validate(m Mandate, actions []domain.ActionSpec) error {
 		// would forbid what the grant allows, and a parameter the action
 		// does not declare as a number would never bind.
 		for _, lim := range g.PerAction {
+			if lim.Quantity.Per != "" {
+				return fmt.Errorf("%w: a per-action limit on %s can't be per item; one action is on one item",
+					ErrInvalidMandate, spec.Name)
+			}
 			if lim.Quantity.Kind != KindSum {
 				return fmt.Errorf("%w: a per-action limit on %s must be sum(<parameter>); a count per action is always one",
 					ErrInvalidMandate, spec.Name)
@@ -107,6 +111,9 @@ func Validate(m Mandate, actions []domain.ActionSpec) error {
 		if _, err := agg.Window.Start(time.Now(), m.Loc()); err != nil {
 			return fmt.Errorf("%w: %v", ErrInvalidMandate, err)
 		}
+		if err := validatePer(agg, granted); err != nil {
+			return err
+		}
 		if agg.Quantity.Kind != KindSum {
 			continue
 		}
@@ -125,6 +132,36 @@ func Validate(m Mandate, actions []domain.ActionSpec) error {
 	return nil
 }
 
+// validatePer checks a per-item total: the parameter it counts by is a
+// string or enum that at least one action on the Card declares. Only the
+// actions that declare it are counted by it (Request.Declares); the rest
+// are left to the Card's other limits. It takes no extra room.
+func validatePer(agg Aggregate, granted []domain.ActionSpec) error {
+	per := agg.Quantity.Per
+	if per == "" {
+		return nil
+	}
+	if strings.TrimSpace(per) != per || strings.ContainsAny(per, " =") {
+		return fmt.Errorf("%w: %s per %q must name one parameter", ErrInvalidMandate, agg.Quantity, per)
+	}
+	if len(agg.ExtraRoom) > 0 {
+		return fmt.Errorf("%w: a total per %s takes no extra room", ErrInvalidMandate, per)
+	}
+	for _, spec := range granted {
+		if p, ok := parameterOf(spec, per); ok && isStringType(p.Type) {
+			return nil
+		}
+	}
+	return fmt.Errorf("%w: %s per %s: no action on the Card declares %q as a string", ErrInvalidMandate, agg.Quantity, per, per)
+}
+
+// isStringType reports whether a declared parameter type names a thing:
+// what a resource scope or a per-item total can match.
+func isStringType(t string) bool {
+	t = strings.ToLower(strings.TrimSpace(t))
+	return t == "string" || t == "enum"
+}
+
 // validateResources checks a grant's resource scope: a string or enum
 // parameter the action declares, and one to MaxResourceValues exact values. A scope
 // with no values would forbid everything the grant allows; a value with
@@ -138,7 +175,7 @@ func validateResources(spec domain.ActionSpec, r *ResourceScope) error {
 		return fmt.Errorf("%w: the resources for %s name %q, which the action does not declare",
 			ErrInvalidMandate, spec.Name, r.Parameter)
 	}
-	if t := strings.ToLower(strings.TrimSpace(p.Type)); t != "string" && t != "enum" {
+	if !isStringType(p.Type) {
 		return fmt.Errorf("%w: the resources for %s name %q, which the action declares as %s; a resource is a string parameter",
 			ErrInvalidMandate, spec.Name, r.Parameter, p.Type)
 	}

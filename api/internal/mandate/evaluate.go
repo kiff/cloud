@@ -81,6 +81,11 @@ type Request struct {
 	// different calls never look the same to an approval; a scope that
 	// names one refuses the call (OutcomeUnreadableResource).
 	Unreadable map[string]string `json:",omitempty"`
+	// Declares are the string parameters the action's contract declares,
+	// keyed by lowercase name: a per-item total applies only to an action
+	// that declares its parameter, and holds such a call that names none.
+	// It takes no part in the fingerprint.
+	Declares map[string]bool `json:",omitempty"`
 	// TrialDraft is the draft whose trial made the call (kiff/tafs#173),
 	// whose Cards Subject (its TrialSubject) holds. Kept on a held call
 	// for its owner's record; it takes no part in the decision.
@@ -326,6 +331,18 @@ func Evaluate(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, 
 					}
 				}
 			}
+			q, item, applies, named := agg.Quantity.forCall(m, req)
+			if !applies {
+				continue
+			}
+			if !named {
+				return Decision{
+					Outcome:   OutcomeResourceOutside,
+					MandateID: m.ID,
+					Quantity:  agg.Quantity,
+					Reason:    unnamedItemReason(agg.Quantity.Per),
+				}, nil
+			}
 			draw := DrawFor(agg.Quantity, req.Parameters)
 			ceiling := agg.Ceiling(m, now)
 			if draw < 0 {
@@ -342,7 +359,9 @@ func Evaluate(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, 
 			if err != nil {
 				return Decision{}, err
 			}
-			used, err := limitUsed(usage, m, agg, now, since)
+			counted := agg
+			counted.Quantity = q
+			used, err := limitUsed(usage, m, counted, now, since)
 			if err != nil {
 				return Decision{}, fmt.Errorf("%w: mandate %s: %v", ErrUsageUnavailable, m.ID, err)
 			}
@@ -354,8 +373,7 @@ func Evaluate(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, 
 					Limit:     ceiling,
 					Used:      used,
 					Draw:      draw,
-					Reason: fmt.Sprintf("%s limit %d per %s reached: %d used, this action draws %d",
-						agg.Quantity, ceiling, agg.Window, used, draw),
+					Reason:    limitReason(agg, item, ceiling, used, draw),
 				}, nil
 			}
 		}
@@ -438,6 +456,26 @@ func resourceBreach(m Mandate, req Request) (Decision, bool) {
 		}, true
 	}
 	return Decision{}, false
+}
+
+// limitReason says which total a call would pass, and for a per-item
+// total, on which item.
+func limitReason(a Aggregate, item string, ceiling, used, draw int64) string {
+	of := ""
+	if a.Quantity.Per != "" {
+		of = " for this " + a.Quantity.Per
+		if item != "" {
+			of = fmt.Sprintf(" for %s %q", a.Quantity.Per, item)
+		}
+	}
+	return fmt.Sprintf("%s limit %d per %s reached%s: %d used, this action draws %d",
+		a.Quantity, ceiling, a.Window, of, used, draw)
+}
+
+// unnamedItemReason is why a call is held when it names no value for a
+// per-item total its action declares: the total can't be counted.
+func unnamedItemReason(param string) string {
+	return fmt.Sprintf("the call names no %s, and this card counts per %s", param, param)
 }
 
 func resourceReason(param, value string, present bool) string {

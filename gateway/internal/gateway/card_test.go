@@ -351,3 +351,19 @@ func TestToolDescriptionsStayTheSameAsTheCardIsUsed(t *testing.T) {
 		t.Fatalf("kiff_card after: %q", got)
 	}
 }
+
+// A per-item total reads as one for each item the call names, over its
+// window, never as what is left of one total: it has none.
+func TestCardToolReadsAPerItemTotal(t *testing.T) {
+	r := newRig(t)
+	r.api.card.Cards = append([]kiffapi.Card{}, refundCard.Cards...)
+	r.api.card.Cards[0].Limits = []kiffapi.CardLimit{{Quantity: "count", Limit: 1, Window: "rolling_7d", Per: "order_id", Status: "per_item"}}
+	status, out := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": gateway.CardTool})
+	if status != http.StatusOK || out["result"] == nil {
+		t.Fatalf("tools/call: %d %v", status, out)
+	}
+	text := out["result"].(map[string]any)["content"].([]any)[0].(map[string]any)["text"].(string)
+	if !strings.Contains(text, "at most 1 call in the last 7 days for each order_id a call names (a call that names no order_id is held)") || strings.Contains(text, "left") {
+		t.Fatalf("text: %s", text)
+	}
+}

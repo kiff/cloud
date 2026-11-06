@@ -218,6 +218,8 @@ func evaluateWarnings(h WarningHistory, m Mandate, a Aggregate, c WarningConfig,
 		period = "over the last hour"
 	} else if a.Window == WindowRollingDay {
 		period = "over the last 24 hours"
+	} else if a.Window == WindowRollingWeek {
+		period = "over the last 7 days"
 	} else if a.Window == WindowLifetime {
 		period = "so far"
 	}

@@ -394,6 +394,9 @@ type CardLimit struct {
 	Used            int64           `json:"used"`
 	Remaining       int64           `json:"remaining"`
 	Status          string          `json:"status"`
+	// Per names the argument a per-item total counts each value of apart
+	// ("invoice_id"), with status "per_item": it has no single used or left.
+	Per string `json:"per,omitempty"`
 	// Unit and Scale say what a summed amount means (unit EUR, scale 2:
 	// 8000 is 80.00 EUR), when the domain declares it. Empty unit: bare.
 	Unit  string `json:"unit,omitempty"`

@@ -55,12 +55,31 @@ type RoomChangeStore interface {
 // A resource the hold is on is added to this Card's scope either way:
 // it is what the owner asked to change, and room alone would leave
 // the call outside the Card.
+// ErrNoRoomPerItem refuses extra room for a set time on a call held on a
+// per-item total: it has no room in this version. Its owner changes the
+// Card, which raises the limit, instead.
+var ErrNoRoomPerItem = fmt.Errorf("%w: a per-item total takes no extra room; change its limit instead", ErrExceptionState)
+
 func roomForHold(m Mandate, e Exception, u Usage, by string, now time.Time, duration RoomDuration, until time.Time) (Mandate, bool, error) {
 	if !cumulativeBreaches(e.Breaches) {
 		return ChangeFor(m, e.Request, u, now)
 	}
+	for _, b := range e.Breaches {
+		if b.MandateID == m.ID && b.Outcome == OutcomeLimitReached && b.Quantity.Per != "" {
+			// A per-item total has no room of its own: changing the Card
+			// raises its limit, for every item, so this call fits. Room for
+			// a set time is refused.
+			if duration != RoomThisWindow {
+				return m, false, ErrNoRoomPerItem
+			}
+			return ChangeFor(m, e.Request, u, now)
+		}
+	}
 	m, changed := withHeldResource(m, e.Request)
 	for i, a := range m.Aggregates {
+		if a.Quantity.Per != "" {
+			continue // not breached here: nothing to give
+		}
 		since, err := a.Window.Start(now, m.Loc())
 		if err != nil {
 			return m, false, err
@@ -175,6 +194,9 @@ func RoomFor(m Mandate, req RoomRequest, by string, now time.Time) (Mandate, err
 				}
 				if a.Window == WindowRollingDay {
 					grantAt = end.Add(-24 * time.Hour)
+				}
+				if a.Window == WindowRollingWeek {
+					grantAt = end.Add(-7 * 24 * time.Hour)
 				}
 			}
 		}

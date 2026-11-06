@@ -540,12 +540,16 @@ func drawsFor(ms []Mandate, skip map[string]bool, tenantID, proposalID string, r
 			continue
 		}
 		for _, agg := range m.Aggregates {
+			q, _, applies, named := agg.Quantity.forCall(m, req)
+			if !applies || !named {
+				continue // an owner's approval of an unnamed call draws on no item
+			}
 			amount := DrawFor(agg.Quantity, req.Parameters)
 			if amount == 0 {
 				continue
 			}
 			terms := chargedLimit(agg, m, now)
-			id := key(m.ID, agg.Quantity.Key())
+			id := key(m.ID, q.Key())
 			if i, exists := indexes[id]; exists {
 				draws[i].ChargedLimits = append(draws[i].ChargedLimits, terms)
 				if draws[i].Measure != terms.Measure {
@@ -562,7 +566,7 @@ func drawsFor(ms []Mandate, skip map[string]bool, tenantID, proposalID string, r
 				TenantID:          tenantID,
 				Subject:           req.Subject,
 				ProposalID:        proposalID,
-				QuantityKey:       agg.Quantity.Key(),
+				QuantityKey:       q.Key(),
 				Amount:            amount,
 				DrawnAt:           now,
 				Action:            req.Action,

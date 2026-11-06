@@ -260,20 +260,22 @@ func matchingAggregate(next []Aggregate, a Aggregate) (Aggregate, bool) {
 
 // windowLooseness orders windows by how much the same limit allows: one
 // that resets every hour allows the most, a calendar day can allow twice
-// across midnight, the last 24 hours never more than once, and a lifetime
-// total never resets.
+// across midnight, the last 24 hours never more than once, the last 7 days
+// once a week, and a lifetime total never resets.
 func windowLooseness(w Window) int {
 	switch w {
 	case WindowRollingHour:
-		return 4
+		return 5
 	case WindowCalendarDay:
-		return 3
+		return 4
 	case WindowRollingDay:
+		return 3
+	case WindowRollingWeek:
 		return 2
 	case WindowLifetime:
 		return 1
 	}
-	return 5 // unknown: the loosest, so a change to it is never taken as narrower
+	return 6 // unknown: the loosest, so a change to it is never taken as narrower
 }
 
 func windowWords(w Window) string {
@@ -284,6 +286,8 @@ func windowWords(w Window) string {
 		return "each day"
 	case WindowRollingDay:
 		return "in any 24 hours"
+	case WindowRollingWeek:
+		return "in any 7 days"
 	case WindowLifetime:
 		return "for the Card's whole life"
 	}

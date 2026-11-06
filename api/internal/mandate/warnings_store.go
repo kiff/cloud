@@ -218,6 +218,9 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 			return err
 		}
 		for _, a := range m.Aggregates {
+			if a.PerItem() {
+				continue // no forecast or warning: one total for each item
+			}
 			b, e := readLimitBalance(ctx, tx, tenant, m, a, at, "")
 			if e != nil {
 				return e
@@ -238,6 +241,9 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 		// A lifetime total is never rebuilt from the bounded history: it
 		// takes the complete SQL balance, as a limited history does.
 		for _, a := range m.Aggregates {
+			if a.PerItem() {
+				continue // no forecast or warning: one total for each item
+			}
 			if a.Window != WindowLifetime {
 				continue
 			}
@@ -254,6 +260,9 @@ func (s *PostgresStore) evaluateWarningJob(ctx context.Context, tx pgx.Tx, tenan
 	}
 	var identities []string
 	for _, a := range m.Aggregates {
+		if a.PerItem() {
+			continue // no forecast or warning: one total for each item
+		}
 		identity := warningIdentity(m, a, c, at)
 		identities = append(identities, identity)
 		var state []byte

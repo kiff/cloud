@@ -459,6 +459,17 @@ func Breaches(ms []Mandate, req Request, usage Usage, now time.Time) (out []Brea
 					}
 				}
 			}
+			q, item, applies, named := agg.Quantity.forCall(m, req)
+			if !applies {
+				continue
+			}
+			if !named {
+				// Nothing to count it against: the owner decides, never the
+				// total, and changing the Card can't make it fit.
+				out = append(out, Breach{MandateID: m.ID, Outcome: OutcomeResourceOutside, Quantity: agg.Quantity,
+					Resource: agg.Quantity.Per, Reason: unnamedItemReason(agg.Quantity.Per)})
+				continue
+			}
 			draw := DrawFor(agg.Quantity, req.Parameters)
 			if draw < 0 {
 				return nil, false, nil
@@ -467,16 +478,22 @@ func Breaches(ms []Mandate, req Request, usage Usage, now time.Time) (out []Brea
 			if err != nil {
 				return nil, false, err
 			}
-			used, err := limitUsed(usage, m, agg, now, since)
+			counted := agg
+			counted.Quantity = q
+			used, err := limitUsed(usage, m, counted, now, since)
 			if err != nil {
 				return nil, false, fmt.Errorf("%w: mandate %s: %v", ErrUsageUnavailable, m.ID, err)
 			}
 			ceiling := agg.Ceiling(m, now)
 			if !withinCeiling(used, draw, ceiling) {
-				out = append(out, Breach{MandateID: m.ID, Outcome: OutcomeLimitReached, Quantity: agg.Quantity,
+				b := Breach{MandateID: m.ID, Outcome: OutcomeLimitReached, Quantity: agg.Quantity,
 					Limit: ceiling, Used: used, Draw: draw, Window: agg.Window,
-					Reason: fmt.Sprintf("%s limit %d per %s reached: %d used, this action draws %d",
-						agg.Quantity, ceiling, agg.Window, used, draw)})
+					Reason: limitReason(agg, item, ceiling, used, draw)}
+				if agg.Quantity.Per != "" {
+					// The item it's held for, so the owner reads "invoice in_42".
+					b.Resource, b.Value = agg.Quantity.Per, item
+				}
+				out = append(out, b)
 			}
 		}
 	}
@@ -532,12 +549,18 @@ func ChangeFor(m Mandate, req Request, usage Usage, now time.Time) (Mandate, boo
 	}
 	aggs := append([]Aggregate(nil), m.Aggregates...)
 	for i, agg := range aggs {
+		q, _, applies, named := agg.Quantity.forCall(m, req)
+		if !applies || !named {
+			continue // a call that names no item fits no change
+		}
 		draw := DrawFor(agg.Quantity, req.Parameters)
 		since, err := agg.Window.Start(now, m.Loc())
 		if err != nil {
 			return m, false, err
 		}
-		used, err := limitUsed(usage, m, agg, now, since)
+		counted := agg
+		counted.Quantity = q
+		used, err := limitUsed(usage, m, counted, now, since)
 		if err != nil {
 			return m, false, fmt.Errorf("%w: mandate %s: %v", ErrUsageUnavailable, m.ID, err)
 		}

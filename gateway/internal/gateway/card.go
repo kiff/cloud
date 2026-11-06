@@ -197,6 +197,18 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 					num, unit = func(n int64) string { return formatScaled(n, scale) }, l.Unit
 				}
 			}
+			if l.Per != "" {
+				// One total for each item the call names, not the Card's: it has
+				// no single used or left, and a call that names none is held.
+				each := unit
+				if each == "calls" && l.Limit == 1 {
+					each = "call"
+				}
+				limits = append(limits, fmt.Sprintf("at most %s %s %s for each %s a call names (a call that names no %s is held)",
+					num(l.Limit), each, windowText(l.Window), l.Per, l.Per))
+				totals = true
+				continue
+			}
 			if l.Measure != "" {
 				shared += ", measures " + l.Measure
 			}
@@ -317,6 +329,8 @@ func windowText(w string) string {
 		return "in the last hour"
 	case "rolling_24h":
 		return "in the last 24 hours"
+	case "rolling_7d":
+		return "in the last 7 days"
 	case "lifetime":
 		return "for the Card's whole life (it never resets)"
 	}

@@ -55,6 +55,9 @@ func windowDuration(m Mandate, a Aggregate, now time.Time) time.Duration {
 	if a.Window == WindowRollingHour {
 		return time.Hour
 	}
+	if a.Window == WindowRollingWeek {
+		return 7 * 24 * time.Hour
+	}
 	if a.Window == WindowLifetime {
 		// What is left of the Card's life, or a fixed horizon without an
 		// end date: a lifetime total has no period of its own.
@@ -261,7 +264,7 @@ func Project(h WarningHistory, m Mandate, a Aggregate, now time.Time, balance Li
 			release = &r
 		}
 		var drawEvents []time.Time
-		if a.Window == WindowRollingHour || a.Window == WindowRollingDay {
+		if a.Window == WindowRollingHour || a.Window == WindowRollingDay || a.Window == WindowRollingWeek {
 			at := d.DrawnAt.Add(windowDuration(m, a, now)).Add(time.Nanosecond)
 			if at.After(now) && !at.After(end) {
 				drawEvents = append(drawEvents, at)
