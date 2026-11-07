@@ -179,6 +179,53 @@ func (s *PostgresStore) AddAIGoOn(ctx context.Context, id string, period time.Ti
 	return n, nil
 }
 
+// RaiseSpendLimit implements Store: one conditional UPDATE, so of two
+// raises from the same limit only one applies.
+func (s *PostgresStore) RaiseSpendLimit(ctx context.Context, id string, from, to, unset int64) error {
+	if strings.TrimSpace(id) == "" {
+		return ErrNotFound
+	}
+	tag, err := s.pool.Exec(ctx, `
+		UPDATE `+MetaSchema+`.tenants
+		SET metadata = COALESCE(NULLIF(metadata, 'null'::jsonb), '{}'::jsonb) || jsonb_build_object($1::text, $3::bigint)
+		WHERE id = $4 AND COALESCE((metadata->>$1)::bigint, $5::bigint) = $2::bigint`,
+		MetadataKeySpendLimitCents, from, to, id, unset)
+	if err != nil {
+		return fmt.Errorf("raise spend limit: %w", err)
+	}
+	if tag.RowsAffected() == 1 {
+		return nil
+	}
+	if _, err := s.Get(ctx, id); err != nil {
+		return err
+	}
+	return ErrLimitChanged
+}
+
+// MarkCreditsWarned implements Store: one conditional UPDATE, so a
+// warning goes out once however many look at once.
+func (s *PostgresStore) MarkCreditsWarned(ctx context.Context, id string, period time.Time, pct int) (bool, error) {
+	if strings.TrimSpace(id) == "" {
+		return false, ErrNotFound
+	}
+	at := period.UTC().Format(time.RFC3339)
+	tag, err := s.pool.Exec(ctx, `
+		UPDATE `+MetaSchema+`.tenants
+		SET metadata = COALESCE(NULLIF(metadata, 'null'::jsonb), '{}'::jsonb) || jsonb_build_object($1::text, $3::text, $2::text, $4::int)
+		WHERE id = $5 AND NOT (COALESCE(metadata->>$1, '') = $3 AND COALESCE((metadata->>$2)::int, 0) >= $4)`,
+		MetadataKeyCreditsWarnedPeriod, MetadataKeyCreditsWarnedPct, at, pct, id)
+	if err != nil {
+		return false, fmt.Errorf("mark credits warned: %w", err)
+	}
+	if tag.RowsAffected() == 1 {
+		return true, nil
+	}
+	if _, err := s.Get(ctx, id); err != nil {
+		return false, err
+	}
+	return false, nil
+}
+
 // SetMetadata implements Store. Merges one key into the existing
 // metadata JSONB column so unrelated keys are preserved. Passing
 // value=nil deletes the key. The query is parameterized; both key

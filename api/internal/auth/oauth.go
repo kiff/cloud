@@ -64,6 +64,9 @@ var runtimeRoutes = []string{
 	// A read grant, before it serves one person's work to another: the
 	// handler answers only for the key's own agent.
 	"POST /v1/me/read-grants/resolve",
+	// Whether a new run may start, before each one: the balance, for the
+	// key's own agent. It grants nothing.
+	"GET /v1/me/credits/allowance",
 }
 
 // OAuthRouteAllowed reports whether r may be served to an OAuth access

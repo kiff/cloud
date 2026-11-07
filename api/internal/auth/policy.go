@@ -167,6 +167,9 @@ var PhoneSignedRules = []string{
 	"POST /v1/me/window/{id}/close",
 	// Going on past the AI fair-use bound lets the tafs spend more.
 	"PUT /v1/me/usage/ai",
+	// Raising the spend limit lets the tafs spend more: the signature
+	// covers the body, which names the limit it raises from.
+	"PUT /v1/me/usage/limit",
 	// Declining a member's request for a pack is a billing admin's answer,
 	// behind Face ID like the other billing routes. Approving is buying the
 	// pack: Apple's signed transaction is its own proof.
@@ -345,7 +348,10 @@ var RuntimeKeyRules = map[string]KeyScope{
 	// A taf's runtime, or Setup's, reports each of its runs that ended
 	// having used AI, once, for its credits. The handler keeps it only for
 	// the key's own agent, a taf or Setup, and keeps a run's first report.
-	"PUT /v1/me/runs/{run}/usage":        AgentKeyOnly,
+	"PUT /v1/me/runs/{run}/usage": AgentKeyOnly,
+	// The same runtime asks, before each new run, whether one may start:
+	// the balance, for the key's own agent, a taf or Setup.
+	"GET /v1/me/credits/allowance":       AgentKeyOnly,
 	"GET /v1/me/mandates":                AgentKeyOnly, // only Cards the agent holds
 	"GET /v1/me/mandates/{id}/statement": AgentKeyOnly,
 	// This only consumes a durable trusted outcome for the caller's own
@@ -713,6 +719,7 @@ var DefaultRules = map[string]membership.Capability{
 	"PUT /v1/me/account-kind":      membership.CapAccountSettings,
 	"PUT /v1/me/usage/ceiling":     membership.CapBilling,
 	"PUT /v1/me/usage/ai":          membership.CapBilling,
+	"PUT /v1/me/usage/limit":       membership.CapBilling,
 	"POST /v1/me/billing/checkout": membership.CapBilling,
 	// Packs: bought by the billing admin; asked for by anyone on the
 	// account, who alone may withdraw their request (the handler checks).
@@ -740,6 +747,7 @@ var DefaultRules = map[string]membership.Capability{
 	// the handler, which needs a key bound to an agent.
 	"POST /v1/me/holds/{id}/withdraw":       membership.CapRead,
 	"PUT /v1/me/runs/{run}/usage":           membership.CapRead,
+	"GET /v1/me/credits/allowance":          membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/confirm": membership.CapCardsManage,
 	// The owner's halt and resume.
 	"POST /v1/agents/{id}/halt":             membership.CapCardsManage,

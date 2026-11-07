@@ -2,6 +2,7 @@ package tenant
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 )
@@ -98,6 +99,29 @@ const MetadataKeySeats = "seats"
 
 // TeamMinSeats is the fewest people a Team plan has.
 const TeamMinSeats = 2
+
+// MetadataKeySpendLimitCents is a Team (Company) account's spend limit
+// beyond its included credits, in euro cents: raised one step at a time,
+// signed on the phone by someone who manages billing. Absent, the default.
+const MetadataKeySpendLimitCents = "spend_limit_cents"
+
+// MetadataKeyCreditsWarnedPeriod and MetadataKeyCreditsWarnedPct are the
+// last warning about the account's credits: the period it was in (its
+// start, RFC 3339) and at what share, so each is sent once a period.
+const (
+	MetadataKeyCreditsWarnedPeriod = "credits_warned_period"
+	MetadataKeyCreditsWarnedPct    = "credits_warned_pct"
+)
+
+// ErrLimitChanged is a raise of the spend limit from a limit it no longer
+// is.
+var ErrLimitChanged = errors.New("tenant: the spend limit changed")
+
+// SpendLimitCents is t's spend limit as stored; 0 when none is, which
+// reads as the default.
+func SpendLimitCents(t Tenant) int64 {
+	return int64(metaInt(t.Metadata, MetadataKeySpendLimitCents))
+}
 
 // Per person, on Solo and Team (pooled on Team).
 const (

@@ -148,6 +148,8 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"apple_accounts":                 "billing: the account's App Store token",
 	"google_purchases":               "billing: the account's Google Play purchases",
 	"task_pack_draws":                "billing: what each pack paid for; goes with its pack",
+	"credit_packs":                   "billing: the packs of credits bought, which never expire",
+	"credit_pack_draws":              "billing: which run each pack of credits paid for; goes with its pack",
 	"task_pack_takebacks":            "billing: a payment taken back before its pack was recorded; no tenant column, pruned after 30 days by the ledger",
 	"billing_usage_events":           "billing",
 	"tenant_usage":                   "billing",

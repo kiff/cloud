@@ -265,6 +265,18 @@ type Store interface {
 	// tenant id does not exist.
 	AddAIGoOn(ctx context.Context, id string, period time.Time) (int, error)
 
+	// RaiseSpendLimit sets the account's spend limit
+	// (MetadataKeySpendLimitCents) to to, in one step, only while it is
+	// from; one with none reads as unset. ErrLimitChanged when it isn't
+	// from, so two raises from the same limit add one step, and
+	// ErrNotFound when the tenant id does not exist.
+	RaiseSpendLimit(ctx context.Context, id string, from, to, unset int64) error
+
+	// MarkCreditsWarned records, once, that the account was warned at pct
+	// of what the period that starts at period has: false when it already
+	// was, at pct or above. ErrNotFound when the tenant id does not exist.
+	MarkCreditsWarned(ctx context.Context, id string, period time.Time, pct int) (bool, error)
+
 	// Delete removes the tenant row. Schema teardown is the
 	// provisioner's job; this only deletes bookkeeping. Callers
 	// should set Status to StatusDeleted and keep the row instead

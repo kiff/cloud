@@ -84,9 +84,11 @@ var cloudMetaErased = []string{
 	// Each run of a taf or of Coach that used AI, and its credits.
 	"billable_runs",
 	// Which task each pack paid for, and the members' requests for packs
-	// (their reasons and the answers' notes).
+	// or a raise (their reasons and the answers' notes).
 	"task_pack_draws",
 	"task_pack_requests",
+	// Which run each pack of credits paid for.
+	"credit_pack_draws",
 }
 
 // cloudMetaErasedThroughParent are keyed by their parent, not the
@@ -119,6 +121,7 @@ var cloudMetaNotPerTenant = map[string]string{
 var cloudMetaRetained = map[string]string{
 	"billing_customers":    "billing: the Stripe customer link, for invoices and disputes",
 	"task_packs":           "billing: the packs bought, by store transaction, for refunds and disputes",
+	"credit_packs":         "billing: the packs of credits bought, by store transaction, for refunds and disputes",
 	"apple_accounts":       "billing: the token Apple's transactions name the account by, for refunds and disputes",
 	"google_purchases":     "billing: the Google Play purchases applied, by purchase token, for refunds and disputes",
 	"billing_usage_events": "billing: operation ids and outcomes reported to Stripe",

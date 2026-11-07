@@ -114,6 +114,55 @@ func (s *MemoryStore) SetStatus(_ context.Context, id string, status Status, pro
 	return nil
 }
 
+// RaiseSpendLimit implements Store.
+func (s *MemoryStore) RaiseSpendLimit(_ context.Context, id string, from, to, unset int64) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	t, ok := s.byID[id]
+	if !ok {
+		return ErrNotFound
+	}
+	cur := unset
+	switch v := t.Metadata[MetadataKeySpendLimitCents].(type) {
+	case float64:
+		cur = int64(v)
+	case int:
+		cur = int64(v)
+	case int64:
+		cur = v
+	}
+	if cur != from {
+		return ErrLimitChanged
+	}
+	if t.Metadata == nil {
+		t.Metadata = map[string]any{}
+	}
+	t.Metadata[MetadataKeySpendLimitCents] = float64(to)
+	s.byID[id] = t
+	return nil
+}
+
+// MarkCreditsWarned implements Store.
+func (s *MemoryStore) MarkCreditsWarned(_ context.Context, id string, period time.Time, pct int) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	t, ok := s.byID[id]
+	if !ok {
+		return false, ErrNotFound
+	}
+	at := period.UTC().Format(time.RFC3339)
+	if p, _ := t.Metadata[MetadataKeyCreditsWarnedPeriod].(string); p == at && metaInt(t.Metadata, MetadataKeyCreditsWarnedPct) >= pct {
+		return false, nil
+	}
+	if t.Metadata == nil {
+		t.Metadata = map[string]any{}
+	}
+	t.Metadata[MetadataKeyCreditsWarnedPeriod] = at
+	t.Metadata[MetadataKeyCreditsWarnedPct] = float64(pct)
+	s.byID[id] = t
+	return true, nil
+}
+
 // AddAIGoOn implements Store.
 func (s *MemoryStore) AddAIGoOn(_ context.Context, id string, period time.Time) (int, error) {
 	s.mu.Lock()
