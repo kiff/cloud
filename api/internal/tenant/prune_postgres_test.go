@@ -31,6 +31,17 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 			t.Fatalf("apply %s: %v", name, err)
 		}
 	}
+	// The run ledger's table, as the meter makes it, for the columns this
+	// test writes; the meter's own schema is a superset.
+	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS cloud_meta.billable_runs (
+		tenant_id TEXT NOT NULL, run_id TEXT NOT NULL, agent_id TEXT NOT NULL, started_at TIMESTAMPTZ NOT NULL,
+		ended_at TIMESTAMPTZ NOT NULL, cost_micro_usd BIGINT NOT NULL, counted BOOLEAN NOT NULL, settled_at TIMESTAMPTZ NULL,
+		PRIMARY KEY (tenant_id, run_id))`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := pool.Exec(ctx, `ALTER TABLE cloud_meta.billable_runs ADD COLUMN IF NOT EXISTS settled_at TIMESTAMPTZ NULL`); err != nil {
+		t.Fatal(err)
+	}
 	store := tenant.NewPostgresStore(pool)
 	prov := tenant.NewProvisioner(pool, store)
 	exec := func(q string, args ...any) {
@@ -65,6 +76,11 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 			($1, $1 || '-ended', 'p-ended', 'count', 1, $2), ($1, $1 || '-live', 'p-live', 'count', 1, $2)`, id, old)
 		exec(`INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, key_hash, revoked_at) VALUES ($1 || '-revoked', $1, 'k', $1 || '-h1', $2)`, id, old)
 		exec(`INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, key_hash, created_at) VALUES ($1 || '-live', $1, 'k', $1 || '-h2', $2)`, id, old)
+		// Runs ended before the cutoff: one still owed (counted, not
+		// settled), one settled, one free.
+		exec(`INSERT INTO cloud_meta.billable_runs (tenant_id, run_id, agent_id, started_at, ended_at, cost_micro_usd, counted, settled_at)
+			VALUES ($1, 'run-owed', 'agent-a', $2, $2, 1, TRUE, NULL), ($1, 'run-settled', 'agent-a', $2, $2, 1, TRUE, $2),
+			       ($1, 'run-free', 'agent-a', $2, $2, 1, FALSE, NULL)`, id, old)
 		for trace, at := range map[string]time.Time{"tr-old": old, "tr-new": recent} {
 			exec(`INSERT INTO cloud_meta.receipts (tenant_id, trace_id, schema_version, entity_id, entity_type, action_name, issued_at, causal_chain_hash, body, created_at)
 				VALUES ($1, $2, '1', 'e', 'Order', 'REFUND', $3, 'h', '{}', $3)`, id, trace, at)
@@ -119,6 +135,8 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		{"the old receipt", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-old'`, 0},
 		{"the new receipt", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-new'`, 1},
 		{"the owner", `SELECT count(*) FROM cloud_meta.subject_tenants WHERE tenant_id = $1`, 1},
+		{"a run still owed", `SELECT count(*) FROM cloud_meta.billable_runs WHERE tenant_id = $1 AND run_id = 'run-owed'`, 1},
+		{"the settled and free runs", `SELECT count(*) FROM cloud_meta.billable_runs WHERE tenant_id = $1 AND run_id <> 'run-owed'`, 0},
 		{"the done operation", `SELECT count(*) FROM ` + schemaA + `.kiff_events WHERE entity_id = 'op-old' AND $1 <> ''`, 0},
 		{"the done operation's Record", `SELECT count(*) FROM ` + schemaA + `.kiff_audit WHERE entity_id = 'op-old' AND $1 <> ''`, 0},
 		{"an operation with recent activity", `SELECT count(*) FROM ` + schemaA + `.kiff_events WHERE entity_id = 'op-mixed' AND $1 <> ''`, 1},
