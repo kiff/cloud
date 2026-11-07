@@ -449,6 +449,31 @@ func Period(t Tenant, now time.Time) (from, to time.Time) {
 	return from, from.AddDate(0, 1, 0)
 }
 
+// PeriodAt is the period of t's plan that at falls in, as of now:
+// Period's for an instant in or after the current period, and for one
+// before it (a run that ended just before the period rolled over, read
+// after), the months before it, each stepped back from the current
+// period's start, clamped as Period's steps forward are. At most
+// maxPeriodsBack months back: older than that is the earliest of them.
+func PeriodAt(t Tenant, at, now time.Time) (from, to time.Time) {
+	from, to = Period(t, now)
+	at = at.UTC()
+	if !at.Before(from) {
+		if at.Before(to) {
+			return from, to
+		}
+		return Period(t, at)
+	}
+	start := from
+	for k := 1; at.Before(from) && k <= maxPeriodsBack; k++ {
+		from, to = addMonths(start, -k), addMonths(start, 1-k)
+	}
+	return from, to
+}
+
+// maxPeriodsBack bounds how far back PeriodAt steps.
+const maxPeriodsBack = 36
+
 // PeriodFrom is the period of t's plan that starts at start: the trial,
 // else a month.
 func PeriodFrom(t Tenant, start time.Time) (from, to time.Time) {

@@ -121,7 +121,17 @@ func GatewayRouteAllowed(r *http.Request, id Identity) bool {
 	if OAuthRouteAllowed(r) {
 		return true
 	}
-	return !id.isOAuth() && slices.Contains(runtimeRoutes, r.Method+" "+strings.TrimRight(r.URL.Path, "/"))
+	if id.isOAuth() {
+		return false
+	}
+	path := strings.TrimRight(r.URL.Path, "/")
+	// The runtime running a taf reports each of its runs that ended having
+	// used AI, once, for its credits. The handler keeps it only for the
+	// key's own agent, and it grants nothing.
+	if r.Method == http.MethodPut && postOnOne(path, "/v1/me/runs/", "/usage") {
+		return true
+	}
+	return slices.Contains(runtimeRoutes, r.Method+" "+path)
 }
 
 // isOAuth reports whether id came from an OAuth access token.

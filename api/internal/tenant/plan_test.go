@@ -182,6 +182,38 @@ func TestPeriod(t *testing.T) {
 	}
 }
 
+// The period an instant fell in, read after it: the current one, the one
+// it rolls forward to, or the months before, stepped back from the current
+// period's start and clamped, so a 31st anchor stays each month's end.
+func TestPeriodAt(t *testing.T) {
+	t.Parallel()
+	at := func(m time.Month, d, h int) time.Time { return time.Date(2026, m, d, h, 0, 0, 0, time.UTC) }
+	month := withMeta(map[string]any{tenant.MetadataKeyPlan: "internal"})
+	solo31 := withMeta(map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyPeriodStart: "2026-03-31T08:00:00Z", tenant.MetadataKeyPeriodEnd: "2026-04-30T08:00:00Z"})
+	for name, c := range map[string]struct {
+		t        tenant.Tenant
+		at, now  time.Time
+		from, to time.Time
+	}{
+		"in the current month":         {month, at(11, 7, 9), at(11, 7, 12), at(11, 1, 0), at(12, 1, 0)},
+		"the month before, read after": {month, at(11, 30, 23), at(12, 1, 0), at(11, 1, 0), at(12, 1, 0)},
+		"two months back":              {month, at(9, 15, 9), at(11, 7, 12), at(9, 1, 0), at(10, 1, 0)},
+		"after now":                    {month, at(12, 2, 0), at(11, 7, 12), at(12, 1, 0), at(1, 1, 0).AddDate(1, 0, 0)},
+		"Stripe's, in it":              {solo31, at(4, 10, 9), at(4, 20, 9), at(3, 31, 8), at(4, 30, 8)},
+		"Stripe's, the one before":     {solo31, at(3, 30, 23), at(4, 1, 9), at(2, 28, 8), at(3, 31, 8)},
+		"Stripe's, two before":         {solo31, at(2, 10, 9), at(4, 1, 9), at(1, 31, 8), at(2, 28, 8)},
+	} {
+		from, to := tenant.PeriodAt(c.t, c.at, c.now)
+		if !from.Equal(c.from) || !to.Equal(c.to) {
+			t.Errorf("%s: [%v, %v), want [%v, %v)", name, from, to, c.from, c.to)
+		}
+	}
+	// Far back, it stops at the earliest it steps to.
+	if from, _ := tenant.PeriodAt(month, at(1, 1, 0).AddDate(-10, 0, 0), at(11, 7, 12)); !from.Equal(at(11, 1, 0).AddDate(0, -36, 0)) {
+		t.Errorf("ten years back: %v", from)
+	}
+}
+
 func TestPlanResolver(t *testing.T) {
 	t.Parallel()
 	store := tenant.NewMemoryStore()

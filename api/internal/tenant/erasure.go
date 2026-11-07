@@ -81,6 +81,8 @@ var cloudMetaErased = []string{
 	// Stripe was told stays in billing_usage_events.
 	"billable_calls",
 	"call_requesters",
+	// Each run of a taf or of Coach that used AI, and its credits.
+	"billable_runs",
 	// Which task each pack paid for, and the members' requests for packs
 	// (their reasons and the answers' notes).
 	"task_pack_draws",

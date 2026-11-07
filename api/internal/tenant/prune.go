@@ -84,6 +84,8 @@ var cloudMetaPruned = []pruneStep{
 	// Calls on the meters. A test account is never billed.
 	{"billable_calls", `DELETE FROM cloud_meta.billable_calls WHERE tenant_id = $1 AND at < $2`},
 	{"call_requesters", `DELETE FROM cloud_meta.call_requesters WHERE tenant_id = $1 AND at < $2`},
+	// Runs and their credits, by when they ended.
+	{"billable_runs", `DELETE FROM cloud_meta.billable_runs WHERE tenant_id = $1 AND ended_at < $2`},
 	// Requests for packs, answered or ended.
 	{"task_pack_requests", `DELETE FROM cloud_meta.task_pack_requests WHERE tenant_id = $1 AND created_at < $2
 		AND (status <> 'open' OR expires_at < $2)`},

@@ -246,6 +246,9 @@ var PhoneSessionRules = []string{
 	// The account's two meters, counts only.
 	"GET /v1/me/usage",
 	"GET /v1/me/usage/tasks",
+	// The credits its tafs' runs used, and those runs (read only).
+	"GET /v1/me/usage/credits",
+	"GET /v1/me/usage/credits/runs",
 	// A purchase made in the app through Apple: the transaction is Apple's
 	// signed JWS, carrying the account's appAccountToken, so it needs no
 	// signature of the phone's. The handler refuses another account's.
@@ -338,7 +341,11 @@ var RuntimeKeyRules = map[string]KeyScope{
 	"GET /v1/me/holds": AgentKeyOnly, // only the agent's own held calls
 	// An agent withdraws one of its own held calls when its run is
 	// cancelled; the handler checks the call is the agent's.
-	"POST /v1/me/holds/{id}/withdraw":    AgentKeyOnly,
+	"POST /v1/me/holds/{id}/withdraw": AgentKeyOnly,
+	// A taf's runtime, or Setup's, reports each of its runs that ended
+	// having used AI, once, for its credits. The handler keeps it only for
+	// the key's own agent, a taf or Setup, and keeps a run's first report.
+	"PUT /v1/me/runs/{run}/usage":        AgentKeyOnly,
 	"GET /v1/me/mandates":                AgentKeyOnly, // only Cards the agent holds
 	"GET /v1/me/mandates/{id}/statement": AgentKeyOnly,
 	// This only consumes a durable trusted outcome for the caller's own
@@ -732,6 +739,7 @@ var DefaultRules = map[string]membership.Capability{
 	// Agent keys only (RuntimeKeyRules); a person's session is refused by
 	// the handler, which needs a key bound to an agent.
 	"POST /v1/me/holds/{id}/withdraw":       membership.CapRead,
+	"PUT /v1/me/runs/{run}/usage":           membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/confirm": membership.CapCardsManage,
 	// The owner's halt and resume.
 	"POST /v1/agents/{id}/halt":             membership.CapCardsManage,

@@ -54,7 +54,7 @@ func TestMiddleware_OAuthToken(t *testing.T) {
 	// in over OAuth runs no one's runs.
 	for _, route := range [][2]string{{"POST", "/v1/keys"}, {"GET", "/v1/me/agents"}, {"POST", "/v1/oauth/consent"},
 		{"POST", "/v1/mandates"}, {"GET", "/v1/account/export"}, {"POST", "/v1/me/access"}, {"POST", "/v1/me/run-grants/resolve"},
-		{"POST", "/v1/me/read-grants/resolve"}} {
+		{"POST", "/v1/me/read-grants/resolve"}, {"PUT", "/v1/me/runs/r1/usage"}} {
 		if code, _ := serve(ok, route[0], route[1]); code != http.StatusForbidden {
 			t.Fatalf("%v reached with an OAuth token: %d", route, code)
 		}
@@ -142,13 +142,25 @@ func TestATafsGatewayKeyAsksAboutItsOwnAgent(t *testing.T) {
 	_ = store.Insert(context.Background(), APIKeyRecord{ID: "key-taf", Tenant: "acme", Subject: "editor-1",
 		Roles: []string{RoleGatewayAgent}, AgentID: "refunds", KeyHash: gen.Hash, CreatedAt: time.Now()})
 	mw := NewMiddleware(NewStubProvider(NewMapResolver()), store, NewMapResolver())
-	for _, path := range []string{"/v1/me/access", "/v1/me/run-grants/resolve", "/v1/me/read-grants/resolve"} {
+	for _, route := range [][2]string{{http.MethodPost, "/v1/me/access"}, {http.MethodPost, "/v1/me/run-grants/resolve"},
+		{http.MethodPost, "/v1/me/read-grants/resolve"}, {http.MethodPut, "/v1/me/runs/r1/usage"}} {
 		rec := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodPost, path, nil)
+		req := httptest.NewRequest(route[0], route[1], nil)
 		req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
 		mw.Wrap(&authedHandler{}).ServeHTTP(rec, req)
 		if rec.Code != http.StatusOK {
-			t.Errorf("a taf's gateway key on POST %s: %d %s", path, rec.Code, rec.Body.String())
+			t.Errorf("a taf's gateway key on %s %s: %d %s", route[0], route[1], rec.Code, rec.Body.String())
+		}
+	}
+	// Its runs' usage only: never another route under a run, nor the runs.
+	for _, route := range [][2]string{{http.MethodPut, "/v1/me/runs/r1/usage/x"}, {http.MethodGet, "/v1/me/runs/r1/usage"},
+		{http.MethodPut, "/v1/me/runs//usage"}, {http.MethodPut, "/v1/me/runs/a/b/usage"}} {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(route[0], route[1], nil)
+		req.Header.Set("Authorization", "Bearer "+gen.Plaintext)
+		mw.Wrap(&authedHandler{}).ServeHTTP(rec, req)
+		if rec.Code != http.StatusForbidden {
+			t.Errorf("a taf's gateway key on %s %s: %d, want 403", route[0], route[1], rec.Code)
 		}
 	}
 }
