@@ -67,6 +67,9 @@ var runtimeRoutes = []string{
 	// Whether a new run may start, before each one: the balance, for the
 	// key's own agent. It grants nothing.
 	"GET /v1/me/credits/allowance",
+	// A removed taf's runtime archives the key's own agent, its last act
+	// with the key: it only takes authority away, and revokes the key.
+	"POST /v1/agents/self/archive",
 }
 
 // OAuthRouteAllowed reports whether r may be served to an OAuth access

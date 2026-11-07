@@ -25,14 +25,14 @@ const (
 	// escalates by accident.
 	PlanTrial Plan = "trial"
 
-	// PlanSolo is one person: 20 tafs tasks and 500 KIFF actions
-	// included each month; past them, tasks come from packs and actions
-	// are metered.
+	// PlanSolo is one person, for tafs only: credits, sold in the app
+	// stores. Its own agents' calls that would count as KIFF actions are
+	// refused (meter.ReasonPlanOwnAgentsCompany); those are Company's.
 	PlanSolo Plan = "solo"
 
-	// PlanTeam is two people or more, paid per person: 20 tasks and 500
-	// actions per person, pooled; past them, tasks come from packs and
-	// actions are metered. With priority support.
+	// PlanTeam is what kiff.dev sells as Company: paid per seat, one seat
+	// or more, with 500 KIFF actions a seat for the account's own agents,
+	// pooled, then metered. With priority support.
 	// (Before v1 this id named an older multi-control tier; no account
 	// carries it.)
 	PlanTeam Plan = "team"
@@ -97,8 +97,9 @@ const MetadataKeyTrialStartedAt = "trial_started_at"
 // subscription's quantity, written by the webhooks. At least TeamMinSeats.
 const MetadataKeySeats = "seats"
 
-// TeamMinSeats is the fewest people a Team plan has.
-const TeamMinSeats = 2
+// TeamMinSeats is the fewest seats a Team (Company) plan has: there is no
+// minimum beyond one.
+const TeamMinSeats = 1
 
 // MetadataKeySpendLimitCents is a Team (Company) account's spend limit
 // beyond its included credits, in euro cents: raised one step at a time,
@@ -274,7 +275,8 @@ func defaultLimits(p Plan, seats int) PlanLimits {
 	// MaxDomains is left at its zero value (unlimited) on every plan.
 	switch canonical {
 	case PlanSolo:
-		return PlanLimits{Plan: p, Canonical: canonical, IncludedTasks: tasksPerSeat, IncludedActions: actionsPerSeat,
+		// No KIFF actions: Solo is tafs only.
+		return PlanLimits{Plan: p, Canonical: canonical, IncludedTasks: tasksPerSeat,
 			Billed: true, Seats: 1, AnchorChain: ChainSepolia}
 	case PlanTeam:
 		seats = max(seats, TeamMinSeats)

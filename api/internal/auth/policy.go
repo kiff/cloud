@@ -345,6 +345,11 @@ var RuntimeKeyRules = map[string]KeyScope{
 	// An agent withdraws one of its own held calls when its run is
 	// cancelled; the handler checks the call is the agent's.
 	"POST /v1/me/holds/{id}/withdraw": AgentKeyOnly,
+	// A taf's runtime archives the key's own agent when the taf is
+	// removed, its last act with the key: it only takes authority away,
+	// and archiving revokes the key too. It names no agent: the key's is
+	// the only one it can reach.
+	"POST /v1/agents/self/archive": AgentKeyOnly,
 	// A taf's runtime, or Setup's, reports each of its runs that ended
 	// having used AI, once, for its credits. The handler keeps it only for
 	// the key's own agent, a taf or Setup, and keeps a run's first report.
@@ -748,6 +753,7 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/holds/{id}/withdraw":       membership.CapRead,
 	"PUT /v1/me/runs/{run}/usage":           membership.CapRead,
 	"GET /v1/me/credits/allowance":          membership.CapRead,
+	"POST /v1/agents/self/archive":          membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/confirm": membership.CapCardsManage,
 	// The owner's halt and resume.
 	"POST /v1/agents/{id}/halt":             membership.CapCardsManage,

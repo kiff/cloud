@@ -18,8 +18,8 @@ func TestPlanFor_ThePlans(t *testing.T) {
 	t.Parallel()
 	for plan, want := range map[string]tenant.PlanLimits{
 		"trial":    {Canonical: tenant.PlanTrial, IncludedTasks: 25, IncludedActions: 500, Capped: true, Seats: 1, MonthlyProposalLimit: 5_000, HardCap: true, AnchorChain: tenant.ChainSepolia},
-		"solo":     {Canonical: tenant.PlanSolo, IncludedTasks: 20, IncludedActions: 500, Billed: true, Seats: 1, AnchorChain: tenant.ChainSepolia},
-		"team":     {Canonical: tenant.PlanTeam, IncludedTasks: 40, IncludedActions: 1_000, Billed: true, Seats: 2, AnchorChain: tenant.ChainSepolia},
+		"solo":     {Canonical: tenant.PlanSolo, IncludedTasks: 20, Billed: true, Seats: 1, AnchorChain: tenant.ChainSepolia},
+		"team":     {Canonical: tenant.PlanTeam, IncludedTasks: 20, IncludedActions: 500, Billed: true, Seats: 1, AnchorChain: tenant.ChainSepolia},
 		"company":  {Canonical: tenant.PlanCompany, AnchorChain: tenant.ChainSepolia},
 		"internal": {Canonical: tenant.PlanInternal, AnchorChain: tenant.ChainSepolia},
 	} {
@@ -31,10 +31,10 @@ func TestPlanFor_ThePlans(t *testing.T) {
 	}
 }
 
-// Team pools 20 tasks and 500 actions per person, and has at least two.
+// Team (Company) pools 500 actions a seat, and has at least one seat.
 func TestPlanFor_TeamPoolsPerSeat(t *testing.T) {
 	t.Parallel()
-	for seats, want := range map[any][3]int{float64(5): {5, 100, 2_500}, float64(1): {2, 40, 1_000}, nil: {2, 40, 1_000}, "3": {2, 40, 1_000}} {
+	for seats, want := range map[any][3]int{float64(5): {5, 100, 2_500}, float64(1): {1, 20, 500}, float64(0): {1, 20, 500}, nil: {1, 20, 500}, "3": {1, 20, 500}} {
 		meta := map[string]any{tenant.MetadataKeyPlan: "team"}
 		if seats != nil {
 			meta[tenant.MetadataKeySeats] = seats
