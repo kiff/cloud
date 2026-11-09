@@ -11,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/memberships.sql
@@ -21,7 +23,7 @@ func SchemaSQL() string { return membershipsSQL }
 
 // ApplySchema runs the membership DDL. Call after tenant.ApplyCloudMeta.
 func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, membershipsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "membership/memberships", membershipsSQL); err != nil {
 		return fmt.Errorf("apply memberships schema: %w", err)
 	}
 	return nil

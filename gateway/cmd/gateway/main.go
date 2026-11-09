@@ -193,6 +193,7 @@ func run(args []string) error {
 	}
 	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger, RelayURLs: relays}).Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprintln(w, "ok") })
+	mux.HandleFunc("GET /robots.txt", robots)
 
 	srv := &http.Server{Addr: *addr, Handler: requestlog.Wrap(logger, mux), ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout: 30 * time.Second, WriteTimeout: 60 * time.Second, IdleTimeout: 120 * time.Second}
@@ -233,4 +234,11 @@ func envOr(key, def string) string {
 		return v
 	}
 	return def
+}
+
+// robots tells crawlers to keep off mcp.kiff.dev: its URLs are for agents,
+// and a crawler that follows one from a public page only gets 401s.
+func robots(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprint(w, "User-agent: *\nDisallow: /\n")
 }

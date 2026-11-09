@@ -159,10 +159,15 @@ func evaluateWarnings(h WarningHistory, m Mandate, a Aggregate, c WarningConfig,
 	if a.Window == WindowCalendarDay {
 		anchor, _ = a.Window.Start(now, m.Loc())
 	}
+	// A total of 0 (every call asks, by design) is never spent or burst:
+	// there is nothing to use up, and 0 >= 0 at each window's start would
+	// otherwise warn every day with nothing used. (Its runway can't fire:
+	// Project reports such a total as spent, never estimated.)
+	ceiling := a.Ceiling(m, now)
 	conditions := map[string]bool{
-		"spent":   s.Spent && b.Net >= a.Ceiling(m, now),
+		"spent":   s.Spent && ceiling > 0 && b.Net >= ceiling,
 		"unusual": s.Unusual && hasRatio && ratio >= float64(s.UnusualMultiplier),
-		"burst":   s.Burst && !anchor.IsZero() && !h.IssuedAt.IsZero() && now.Before(h.IssuedAt.AddDate(0, 0, 7)) && now.Sub(anchor) >= 0 && now.Sub(anchor) <= duration/10 && float64(b.Net) > float64(a.Ceiling(m, now))*float64(s.BurstPercent)/100,
+		"burst":   s.Burst && ceiling > 0 && !anchor.IsZero() && !h.IssuedAt.IsZero() && now.Before(h.IssuedAt.AddDate(0, 0, 7)) && now.Sub(anchor) >= 0 && now.Sub(anchor) <= duration/10 && float64(b.Net) > float64(ceiling)*float64(s.BurstPercent)/100,
 		"runway":  s.Runway && a.Window != WindowRollingHour && f.State == "estimated" && f.RunsOutAt != nil && f.RunsOutAt.Sub(now) <= duration*time.Duration(s.RunwayPercent)/100,
 	}
 	active := false

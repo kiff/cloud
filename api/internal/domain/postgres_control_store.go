@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/kiff/cloud/api/internal/pgschema"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -25,7 +26,7 @@ func TenantControlsSQL() string { return tenantControlsSQL }
 // ApplyTenantControlsSchema runs the DDL against pool. Idempotent.
 // Call at API startup after ApplyTenantDomainsSchema.
 func ApplyTenantControlsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, tenantControlsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "domain/tenant_controls", tenantControlsSQL); err != nil {
 		return fmt.Errorf("apply tenant_controls schema: %w", err)
 	}
 	return nil

@@ -115,6 +115,7 @@ var cloudMetaNotPerTenant = map[string]string{
 	"oauth_requests":                 "pending sign-in requests, expire in 10 minutes; no account is known until consent",
 	"signed_requests":                "sha256 replay ids of a phone's signed setup calls, pruned 10 minutes after use; no tenant column, nothing readable",
 	"task_pack_takebacks":            "store payment ids refunded or disputed before their pack was recorded; no tenant column, removed when the pack is recorded or after 30 days",
+	"schemas_applied":                "the hash of each store's schema last applied at boot (pgschema); no tenant or personal data",
 }
 
 // cloudMetaRetained are kept, with the reason.

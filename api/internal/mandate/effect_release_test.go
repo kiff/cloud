@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 func effectEvidence(tenant, prop string, at time.Time) mandate.NoEffectEvidence {
@@ -425,6 +426,9 @@ func TestPostgres_ATenantWithAnEffectReleaseCanBeDeleted(t *testing.T) {
 		ALTER TABLE cloud_meta.mandate_effect_releases ADD CONSTRAINT mandate_effect_releases_tenant_id_mandate_id_proposal_id_q_fkey
 		  FOREIGN KEY (tenant_id, mandate_id, proposal_id, quantity_key)
 		  REFERENCES cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key)`); err != nil {
+		t.Fatal(err)
+	}
+	if err := pgschema.Forget(ctx, p, "mandate/schema"); err != nil {
 		t.Fatal(err)
 	}
 	if err := mandate.ApplySchema(ctx, p); err != nil {

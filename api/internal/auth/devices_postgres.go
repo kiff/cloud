@@ -10,6 +10,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/approval_devices.sql
@@ -19,7 +21,7 @@ var approvalDevicesSQL string
 // API startup after ApplyDeveloperSessionsSchema (it adds
 // developer_sessions.device_id).
 func ApplyDevicesSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, approvalDevicesSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/approval_devices", approvalDevicesSQL); err != nil {
 		return fmt.Errorf("apply approval_devices schema: %w", err)
 	}
 	return nil

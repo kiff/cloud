@@ -114,6 +114,11 @@ func TestWarningsHourlyRunwayBurstEscalationAndDedup(t *testing.T) {
 	if err != nil || w == nil || w.Kind != "burst" {
 		t.Fatalf("cold start: %+v %v", w, err)
 	}
+	// The stored English reason, word for word: internal/words composes the
+	// same line from the same fields (TestWarningReasonMatchesKIFFsStoredEnglish).
+	if w.Reason != "A new Card used more than its burst threshold at the start of this window. 75% of this total is used over the last hour. Review this window’s room, change the Card, or pause its agent." {
+		t.Fatalf("stored %q", w.Reason)
+	}
 	e, w, err = evaluateWarnings(h, m, a, c, e, now)
 	if err != nil || w != nil {
 		t.Fatalf("duplicate: %+v %v", w, err)
@@ -122,6 +127,9 @@ func TestWarningsHourlyRunwayBurstEscalationAndDedup(t *testing.T) {
 	e, w, err = evaluateWarnings(h, m, a, c, e, now)
 	if err != nil || w == nil || w.Kind != "spent" {
 		t.Fatalf("spent escalation: %+v %v", w, err)
+	}
+	if w.Reason != "This Card total is spent. 100% of this total is used over the last hour. Review this window’s room, change the Card, or pause its agent." {
+		t.Fatalf("stored %q", w.Reason)
 	}
 	_, w, err = evaluateWarnings(h, m, a, c, warningEpisode{}, now)
 	if err != nil || w == nil || w.Kind != "spent" {
@@ -173,5 +181,40 @@ func TestWarningRecoveryStartsANewRollingBurstObservation(t *testing.T) {
 	_, w, err = evaluateWarnings(h, m, a, c, e, at)
 	if err != nil || w == nil || w.Kind != "burst" {
 		t.Fatalf("new burst: %+v %v", w, err)
+	}
+}
+
+// A Card whose total is 0 asks for every call by design: there is nothing to
+// spend, so no window start, day after day, warns it is spent, and an
+// approved call drawn on it warns of nothing either. A total above 0 still
+// warns when it's used up.
+func TestAZeroTotalCardNeverWarnsAcrossWindows(t *testing.T) {
+	h, m, a, now := warningFixture(WindowCalendarDay, 0)
+	h.Draws = nil
+	c := WarningConfig{Settings: DefaultWarningSettings()}
+	e := warningEpisode{}
+	at := now
+	for day := 0; day < 3; day++ {
+		var w *CardWarning
+		var err error
+		e, w, err = evaluateWarnings(h, m, a, c, e, at)
+		if err != nil || w != nil {
+			t.Fatalf("day %d, nothing used: %+v %v", day, w, err)
+		}
+		at = at.Add(24 * time.Hour)
+	}
+	// An approved call drawn on the 0 total, early in a new Card's first day:
+	// where a burst would be judged.
+	at, _ = a.Window.Start(at, m.Loc())
+	at = at.Add(30 * time.Minute)
+	h.IssuedAt = at.Add(-time.Hour)
+	d := at.Add(-20 * time.Minute)
+	h.Draws = []Draw{{TenantID: m.TenantID, MandateID: m.ID, ProposalID: "approved", QuantityKey: a.Quantity.Key(), Amount: 5, DrawnAt: d, ChargedLimits: []ChargedLimit{chargedLimit(a, m, d)}}}
+	if _, w, err := evaluateWarnings(h, m, a, c, warningEpisode{}, at); err != nil || w != nil {
+		t.Fatalf("approved call on a 0 total: %+v %v", w, err)
+	}
+	a.Limit = 5
+	if _, w, err := evaluateWarnings(h, m, a, c, warningEpisode{}, at); err != nil || w == nil || w.Kind != "spent" {
+		t.Fatalf("a used-up total of 5: %+v %v", w, err)
 	}
 }

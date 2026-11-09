@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/kiff/cloud/api/internal/pgschema"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -24,7 +25,7 @@ func TenantDomainDraftsSQL() string { return tenantDomainDraftsSQL }
 // ApplyTenantDomainDraftsSchema runs the DDL against pool.
 // Idempotent.
 func ApplyTenantDomainDraftsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, tenantDomainDraftsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "domain/tenant_domain_drafts", tenantDomainDraftsSQL); err != nil {
 		return fmt.Errorf("apply tenant_domain_drafts schema: %w", err)
 	}
 	return nil

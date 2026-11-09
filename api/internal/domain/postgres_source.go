@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/kiff/cloud/api/internal/pgschema"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -27,7 +28,7 @@ func TenantDomainsSQL() string { return tenantDomainsSQL }
 // Callers usually invoke this at API startup, after
 // tenant.ApplyCloudMeta.
 func ApplyTenantDomainsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, tenantDomainsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "domain/tenant_domains", tenantDomainsSQL); err != nil {
 		return fmt.Errorf("apply tenant_domains schema: %w", err)
 	}
 	if err := migrateTenantDomainsComposite(ctx, pool); err != nil {

@@ -10,6 +10,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/wallets.sql
@@ -22,7 +24,7 @@ func WalletsSchemaSQL() string { return walletsSQL }
 // ApplyWalletsSchema runs the wallets DDL against the given pool.
 // Idempotent. Call once at API startup, after ApplyCloudMeta.
 func ApplyWalletsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, walletsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/wallets", walletsSQL); err != nil {
 		return fmt.Errorf("apply wallets schema: %w", err)
 	}
 	return nil

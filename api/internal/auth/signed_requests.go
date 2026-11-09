@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 // SignedRequests records the phone's signed setup calls already made,
@@ -65,7 +67,7 @@ var signedRequestsSQL string
 // ApplySignedRequestsSchema runs the signed_requests DDL against pool.
 // Idempotent. Call once at API startup, after ApplyCloudMeta.
 func ApplySignedRequestsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, signedRequestsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/signed_requests", signedRequestsSQL); err != nil {
 		return fmt.Errorf("apply signed_requests schema: %w", err)
 	}
 	return nil

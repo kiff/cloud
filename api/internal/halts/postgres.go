@@ -9,6 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/halts.sql
@@ -17,7 +19,7 @@ var haltsSQL string
 // ApplySchema creates the halts table if absent. Idempotent. Run after
 // cloud_meta.tenants exists.
 func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, haltsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "halts/halts", haltsSQL); err != nil {
 		return fmt.Errorf("apply halts schema: %w", err)
 	}
 	return nil

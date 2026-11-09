@@ -12,6 +12,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/mandates.sql
@@ -25,7 +27,7 @@ func SchemaSQL() string { return mandatesSQL + "\n" + warningsSQL }
 
 // ApplySchema creates the tables if they are absent. Idempotent.
 func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, SchemaSQL()); err != nil {
+	if err := pgschema.Apply(ctx, pool, "mandate/schema", SchemaSQL()); err != nil {
 		return fmt.Errorf("apply mandates schema: %w", err)
 	}
 	return nil

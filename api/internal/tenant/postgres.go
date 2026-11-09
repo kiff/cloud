@@ -11,6 +11,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 // MetaSchema is the Postgres schema where the cloud's bookkeeping
@@ -31,7 +33,7 @@ func CloudMetaSQL() string { return cloudMetaSQL }
 // ApplyCloudMeta runs the bookkeeping DDL against the given pool.
 // Idempotent. Call once at API startup.
 func ApplyCloudMeta(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, cloudMetaSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "tenant/cloud_meta", cloudMetaSQL); err != nil {
 		return fmt.Errorf("apply cloud_meta schema: %w", err)
 	}
 	return nil

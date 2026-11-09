@@ -13,6 +13,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/receipts.sql
@@ -27,7 +29,7 @@ func ReceiptsSQL() string { return receiptsSQL }
 // tenant.ApplyCloudMeta (the foreign key requires
 // cloud_meta.tenants).
 func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, receiptsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "receipt/receipts", receiptsSQL); err != nil {
 		return fmt.Errorf("apply receipts schema: %w", err)
 	}
 	return nil

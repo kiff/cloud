@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 // A Card can be shared. Each test runs
@@ -335,6 +336,9 @@ func TestPostgres_SharedCardBackfill(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i := 0; i < 2; i++ {
+		if err := pgschema.Forget(ctx, pool, "mandate/schema"); err != nil {
+			t.Fatal(err)
+		}
 		if err := mandate.ApplySchema(ctx, pool); err != nil {
 			t.Fatal(err)
 		}

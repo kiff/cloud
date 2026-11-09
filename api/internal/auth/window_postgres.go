@@ -9,6 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/approval_windows.sql
@@ -17,7 +19,7 @@ var approvalWindowsSQL string
 // ApplyWindowsSchema runs the approval_windows DDL. Idempotent. Call at
 // API startup after ApplyDevicesSchema.
 func ApplyWindowsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, approvalWindowsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/approval_windows", approvalWindowsSQL); err != nil {
 		return fmt.Errorf("apply approval_windows schema: %w", err)
 	}
 	return nil

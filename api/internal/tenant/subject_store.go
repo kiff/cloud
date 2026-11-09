@@ -10,6 +10,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/subject_tenants.sql
@@ -24,7 +26,7 @@ func SubjectTenantsSQL() string { return subjectTenantsSQL }
 // the pool. Must be called after ApplyCloudMeta because of the
 // foreign key on cloud_meta.tenants(id). Idempotent.
 func ApplySubjectTenantsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, subjectTenantsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "tenant/subject_tenants", subjectTenantsSQL); err != nil {
 		return fmt.Errorf("apply subject_tenants schema: %w", err)
 	}
 	return nil

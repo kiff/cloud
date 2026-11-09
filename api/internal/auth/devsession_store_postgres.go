@@ -12,6 +12,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/developer_sessions.sql
@@ -25,7 +27,7 @@ func DeveloperSessionsSchemaSQL() string { return developerSessionsSQL }
 // pool. Idempotent. Call once at API startup, after ApplyCloudMeta
 // (the foreign key requires cloud_meta.tenants).
 func ApplyDeveloperSessionsSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, developerSessionsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/developer_sessions", developerSessionsSQL); err != nil {
 		return fmt.Errorf("apply developer_sessions schema: %w", err)
 	}
 	return nil

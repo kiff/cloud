@@ -10,6 +10,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/decision_cursors.sql
@@ -22,7 +24,7 @@ func DecisionCursorSQL() string { return decisionCursorsSQL }
 // Call at startup after tenant.ApplyCloudMeta (the FK requires
 // cloud_meta.tenants).
 func ApplyDecisionCursorSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, decisionCursorsSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "receipt/decision_cursors", decisionCursorsSQL); err != nil {
 		return fmt.Errorf("apply decision cursor schema: %w", err)
 	}
 	return nil

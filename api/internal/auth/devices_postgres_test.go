@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/kiff/cloud/api/internal/auth"
+	"github.com/kiff/cloud/api/internal/pgschema"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -37,6 +38,9 @@ func TestPostgresDeviceStore(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Twice: the schema is idempotent, foreign key included.
+	if err := pgschema.Forget(ctx, pool, "auth/approval_devices"); err != nil {
+		t.Fatal(err)
+	}
 	if err := auth.ApplyDevicesSchema(ctx, pool); err != nil {
 		t.Fatalf("second ApplyDevicesSchema: %v", err)
 	}
@@ -213,6 +217,9 @@ VALUES ($1, $2, 'human-1', 'tafs on iPhone', 'ios', $3, $4)`, id, tenantID, key,
 	tok, _ := auth.NewDevSessionToken()
 	if err := sessions.Insert(ctx, auth.DeveloperSession{ID: "sess-dup-" + tenantID, Subject: "human-1", Tenant: tenantID, Label: "tafs on iPhone",
 		TokenHash: tok.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: key, DeviceID: newer}); err != nil {
+		t.Fatal(err)
+	}
+	if err := pgschema.Forget(ctx, pool, "auth/approval_devices"); err != nil {
 		t.Fatal(err)
 	}
 	if err := auth.ApplyDevicesSchema(ctx, pool); err != nil {

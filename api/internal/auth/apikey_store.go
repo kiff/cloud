@@ -16,6 +16,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/api_keys.sql
@@ -30,7 +32,7 @@ func APIKeysSchemaSQL() string { return apiKeysSQL }
 // Idempotent. Call once at API startup, after ApplyCloudMeta (the
 // foreign key requires cloud_meta.tenants to exist).
 func ApplyAPIKeysSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx, apiKeysSQL); err != nil {
+	if err := pgschema.Apply(ctx, pool, "auth/api_keys", apiKeysSQL); err != nil {
 		return fmt.Errorf("apply api_keys schema: %w", err)
 	}
 	return nil

@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kiff/cloud/api/internal/domain"
+	"github.com/kiff/cloud/api/internal/pgschema"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -54,12 +55,17 @@ func TestMigrateTenantDomainsComposite(t *testing.T) {
 	if _, err := pool.Exec(ctx, "DROP TABLE IF EXISTS cloud_meta.tenant_domains CASCADE"); err != nil {
 		t.Fatalf("drop table: %v", err)
 	}
+	// The recorded schema no longer matches the table: run it again.
+	if err := pgschema.Forget(ctx, pool, "domain/tenant_domains"); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := pool.Exec(ctx, oldTenantDomainsDDL); err != nil {
 		t.Fatalf("create old table: %v", err)
 	}
 	defer func() {
 		// Leave the DB in the migrated shape for any subsequent test.
 		_, _ = pool.Exec(context.Background(), "DROP TABLE IF EXISTS cloud_meta.tenant_domains CASCADE")
+		_ = pgschema.Forget(context.Background(), pool, "domain/tenant_domains")
 		_ = domain.ApplyTenantDomainsSchema(context.Background(), pool)
 		truncate(t, pool)
 	}()

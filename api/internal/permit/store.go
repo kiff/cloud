@@ -9,6 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/kiff/cloud/api/internal/pgschema"
 )
 
 //go:embed sql/permits.sql
@@ -16,7 +18,7 @@ var schemaSQL string
 
 // ApplySchema creates the permit tables. Idempotent.
 func ApplySchema(ctx context.Context, pool *pgxpool.Pool) error {
-	_, err := pool.Exec(ctx, schemaSQL)
+	err := pgschema.Apply(ctx, pool, "permit/permits", schemaSQL)
 	return err
 }
 
