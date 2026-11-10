@@ -77,3 +77,71 @@ func TestPostgres_EffectSurchargeCountsTheLargerFigureOnce(t *testing.T) {
 	seedTenant(t, p, "effects-surcharged")
 	testSurcharges(t, mandate.NewPostgresStore(p), "effects-surcharged")
 }
+
+// Room the owner's "No" gave back is taken again, once, when the refund is
+// found after all: the Card counts the call as it did before the "No". A
+// release from any other source is never taken back, and a call with no
+// release of that source changes nothing.
+func testReinstates(t *testing.T, s mandate.Store, tenant string) {
+	t.Helper()
+	ctx := context.Background()
+	m := homeCard("reinstated", 50000, 500000)
+	m.TenantID = tenant
+	if err := s.Issue(ctx, m, "owner"); err != nil {
+		t.Fatal(err)
+	}
+	a := mandate.NewAuthorizer(s, nil, at(base))
+	for _, op := range []string{"said-no", "no-effect"} {
+		if d, err := a.Authorize(ctx, tenant, op, refund(20000)); err != nil || !d.Allowed() {
+			t.Fatal(d, err)
+		}
+	}
+	rs := s.(mandate.EffectReleaseStore)
+	r := refund(20000)
+	if _, err := rs.ReleaseEffects(ctx, mandate.NoEffectEvidence{TenantID: tenant, ProposalID: "said-no", Subject: r.Subject, Action: r.Action,
+		At: base.Add(time.Second), Source: "owner:did_this_happen", EvidenceID: "happened-said-no", Reason: "the owner said it didn't happen"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rs.ReleaseEffects(ctx, effectEvidence(tenant, "no-effect", base.Add(time.Second))); err != nil {
+		t.Fatal(err)
+	}
+	agg := m.Aggregates[0]
+	if b, _ := mandate.ReadLimitBalance(ctx, s, tenant, m, agg, base.Add(2*time.Second), ""); b.Net != 0 {
+		t.Fatalf("after both releases: %+v", b)
+	}
+	rr := s.(mandate.EffectReinstateStore)
+	ev := func(prop string) mandate.ReinstateEvidence {
+		return mandate.ReinstateEvidence{TenantID: tenant, ProposalID: prop, Undoes: "owner:did_this_happen",
+			Source: "thune:refund_found", EvidenceID: "re_1", At: base.Add(3 * time.Second)}
+	}
+	var wg sync.WaitGroup
+	for i := 0; i < 6; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if _, err := rr.ReinstateEffects(ctx, ev("said-no")); err != nil {
+				t.Error(err)
+			}
+		}()
+	}
+	wg.Wait()
+	if out, err := rr.ReinstateEffects(ctx, ev("no-effect")); err != nil || len(out) != 0 {
+		t.Fatalf("a release of another source was taken back: %+v %v", out, err)
+	}
+	if b, err := mandate.ReadLimitBalance(ctx, s, tenant, m, agg, base.Add(4*time.Second), ""); err != nil || b.Net != 20000 {
+		t.Fatalf("after the refund was found: %+v %v, want the said-no call counted once (20000)", b, err)
+	}
+	if _, err := rr.ReinstateEffects(ctx, mandate.ReinstateEvidence{TenantID: tenant, ProposalID: "said-no"}); err == nil {
+		t.Fatal("incomplete evidence was accepted")
+	}
+}
+
+func TestReinstateTakesBackTheOwnersNoOnce(t *testing.T) {
+	testReinstates(t, mandate.NewMemoryStore(), tenantID)
+}
+
+func TestPostgres_ReinstateTakesBackTheOwnersNoOnce(t *testing.T) {
+	p := requirePostgres(t)
+	seedTenant(t, p, "effects-reinstated")
+	testReinstates(t, mandate.NewPostgresStore(p), "effects-reinstated")
+}

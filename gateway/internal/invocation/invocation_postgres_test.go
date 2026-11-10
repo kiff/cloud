@@ -12,6 +12,7 @@ import (
 
 	"github.com/kiff/cloud/gateway/internal/invocation"
 	"github.com/kiff/cloud/gateway/internal/testdb"
+	"github.com/kiff/cloud/gateway/internal/thune"
 )
 
 var t0 = time.Date(2026, 10, 1, 12, 0, 0, 0, time.UTC)
@@ -202,6 +203,10 @@ func TestRecoveredCallCannotBeOverwritten(t *testing.T) {
 func TestEveryGatewayTableIsErasable(t *testing.T) {
 	s, _ := newStore(t)
 	ctx := context.Background()
+	// Every module's tables in the gateway schema, not just this one's.
+	if err := thune.ApplySchema(ctx, s.Pool()); err != nil {
+		t.Fatal(err)
+	}
 	rows, err := s.Pool().Query(ctx, `
 		SELECT t.table_name FROM information_schema.tables t
 		 WHERE t.table_schema = 'gateway' AND t.table_type = 'BASE TABLE'

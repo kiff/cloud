@@ -176,3 +176,82 @@ func TestRecordURLAndLabelRead(t *testing.T) {
 		t.Errorf("no placeholder: %s", got)
 	}
 }
+
+// thune step one: a refund's case block names reads of the same profile
+// whose only reference is the call's charge, finds KIFF's own refunds by
+// the operation's marker, and says where a dispute shows.
+func TestACaseBlock(t *testing.T) {
+	raw, err := os.ReadFile("testdata/valid/stripe-refunds.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	good := func() map[string]any {
+		return map[string]any{
+			"kind":         "refund",
+			"charge_arg":   "payment_intent",
+			"account_read": map[string]any{"tool": "get_account", "path": "id"},
+			"charge_read": map[string]any{"tool": "get_payment_intent", "args": map[string]any{"payment_intent": "$args.payment_intent"},
+				"currency": "currency", "captured": "amount_received", "disputed": "latest_charge.disputed"},
+			"refunds_read": map[string]any{"tool": "list_refunds", "args": map[string]any{"payment_intent": "$args.payment_intent"},
+				"list": "data", "id": "id", "amount": "amount", "status": "status", "marker": "metadata.kiff_op"},
+			"refund_event": map[string]any{"event": "STRIPE_REFUND_UPDATED_TRIGGER", "object": "object", "charge": "payment_intent"},
+		}
+	}
+	with := func(edit func(c map[string]any, op map[string]any)) error {
+		var p map[string]any
+		if err := json.Unmarshal(raw, &p); err != nil {
+			t.Fatal(err)
+		}
+		ops := p["operations"].([]any)
+		p["operations"] = append(ops, map[string]any{"tool": "get_account", "title": "Look up the account", "kind": "read"})
+		for _, o := range ops {
+			if op := o.(map[string]any); op["tool"] == "create_refund" {
+				c := good()
+				edit(c, op)
+				op["case"] = c
+			}
+		}
+		b, _ := json.Marshal(p)
+		_, err := Parse(b)
+		return err
+	}
+	if err := with(func(map[string]any, map[string]any) {}); err != nil {
+		t.Fatalf("a good case block: %v", err)
+	}
+	if err := with(func(c map[string]any, _ map[string]any) {
+		cr := c["charge_read"].(map[string]any)
+		delete(cr, "disputed")
+		cr["dispute_status"], cr["dispute_open"] = "dispute.status", []string{"needs_response", "under_review"}
+	}); err != nil {
+		t.Fatalf("a dispute status: %v", err)
+	}
+	for name, edit := range map[string]func(c, op map[string]any){
+		"another kind":      func(c, _ map[string]any) { c["kind"] = "coupon" },
+		"no marker":         func(_, op map[string]any) { delete(op, "marker") },
+		"another marker":    func(c, _ map[string]any) { c["refunds_read"].(map[string]any)["marker"] = "metadata.other" },
+		"a write as a read": func(c, _ map[string]any) { c["account_read"].(map[string]any)["tool"] = "create_refund" },
+		"an unknown read":   func(c, _ map[string]any) { c["charge_read"].(map[string]any)["tool"] = "get_charge" },
+		"another reference": func(c, _ map[string]any) {
+			c["refunds_read"].(map[string]any)["args"] = map[string]any{"x": "$args.amount"}
+		},
+		"a result reference": func(c, _ map[string]any) {
+			c["charge_read"].(map[string]any)["args"] = map[string]any{"x": "$result.id"}
+		},
+		"no dispute": func(c, _ map[string]any) { delete(c["charge_read"].(map[string]any), "disputed") },
+		"both disputes": func(c, _ map[string]any) {
+			c["charge_read"].(map[string]any)["dispute_status"] = "dispute.status"
+			c["charge_read"].(map[string]any)["dispute_open"] = []string{"open"}
+		},
+		"open values without a status": func(c, _ map[string]any) { c["charge_read"].(map[string]any)["dispute_open"] = []string{"open"} },
+		"a bad path":                   func(c, _ map[string]any) { c["refunds_read"].(map[string]any)["amount"] = "data[x]" },
+		"a bad charge arg":             func(c, _ map[string]any) { c["charge_arg"] = "$args.payment_intent" },
+		"not moving money":             func(_, op map[string]any) { op["effect"] = "records_money" },
+		"an unknown field":             func(c, _ map[string]any) { c["claim"] = true },
+		"a bad event slug":             func(c, _ map[string]any) { c["refund_event"].(map[string]any)["event"] = "two words" },
+		"a bad event path":             func(c, _ map[string]any) { c["refund_event"].(map[string]any)["object"] = "data[x]" },
+	} {
+		if err := with(edit); err == nil {
+			t.Errorf("%s: accepted", name)
+		}
+	}
+}

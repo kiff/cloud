@@ -173,3 +173,52 @@ func (s *PostgresStore) SurchargeEffects(ctx context.Context, e VerifiedEvidence
 	}
 	return out, tx.Commit(ctx)
 }
+
+func (s *PostgresStore) ReinstateEffects(ctx context.Context, e ReinstateEvidence) ([]EffectSurcharge, error) {
+	if err := e.validate(); err != nil {
+		return nil, err
+	}
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	rows, err := tx.Query(ctx, `SELECT mandate_id, quantity_key, amount FROM cloud_meta.mandate_effect_releases
+		WHERE tenant_id=$1 AND proposal_id=$2 AND source=$3 ORDER BY mandate_id, quantity_key`, e.TenantID, e.ProposalID, e.Undoes)
+	if err != nil {
+		return nil, err
+	}
+	out := []EffectSurcharge{}
+	ids := []string{}
+	for rows.Next() {
+		sc := EffectSurcharge{TenantID: e.TenantID, ProposalID: e.ProposalID, At: e.At, Source: e.Source, EvidenceID: e.EvidenceID}
+		if err := rows.Scan(&sc.MandateID, &sc.QuantityKey, &sc.Amount); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		out = append(out, sc)
+		ids = append(ids, sc.MandateID)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	if err := lockCards(ctx, tx, e.TenantID, ids); err != nil {
+		return nil, err
+	}
+	for i, sc := range out {
+		if _, err := tx.Exec(ctx, `INSERT INTO cloud_meta.mandate_effect_surcharges
+		(tenant_id,mandate_id,proposal_id,quantity_key,amount,recorded_at,source,evidence_id)
+		VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`, sc.TenantID, sc.MandateID, sc.ProposalID, sc.QuantityKey, sc.Amount, sc.At, sc.Source, sc.EvidenceID); err != nil {
+			return nil, fmt.Errorf("record reinstated effect: %w", err)
+		}
+		// A repeated proof answers the first one, never a second charge.
+		if err := tx.QueryRow(ctx, `SELECT amount,recorded_at,source,evidence_id FROM cloud_meta.mandate_effect_surcharges
+		WHERE tenant_id=$1 AND mandate_id=$2 AND proposal_id=$3 AND quantity_key=$4`, sc.TenantID, sc.MandateID, sc.ProposalID, sc.QuantityKey).
+			Scan(&sc.Amount, &sc.At, &sc.Source, &sc.EvidenceID); err != nil {
+			return nil, err
+		}
+		out[i] = sc
+	}
+	return out, tx.Commit(ctx)
+}

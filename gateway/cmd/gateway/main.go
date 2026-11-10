@@ -47,6 +47,7 @@ import (
 	"github.com/kiff/cloud/gateway/internal/mcp"
 	"github.com/kiff/cloud/gateway/internal/requestlog"
 	"github.com/kiff/cloud/gateway/internal/secret"
+	"github.com/kiff/cloud/gateway/internal/thune"
 )
 
 const version = "0.1.0"
@@ -118,6 +119,9 @@ func run(args []string) error {
 	if err := invocation.ApplySchema(ctx, pool); err != nil {
 		return fmt.Errorf("apply schema: %w", err)
 	}
+	if err := thune.ApplySchema(ctx, pool); err != nil {
+		return fmt.Errorf("apply thune schema: %w", err)
+	}
 	catalog := gateway.PostgresCatalog{Pool: pool}
 	conns := &connection.Store{Pool: pool, Keys: keys}
 
@@ -154,11 +158,17 @@ func run(args []string) error {
 			relays = append(relays, u)
 		}
 	}
+	store := invocation.NewStore(pool)
+	refunds := thune.NewStore(pool)
 	g := &gateway.Gateway{
-		Relays:         relays,
-		API:            api,
-		Catalog:        catalog,
-		Store:          invocation.NewStore(pool),
+		Relays:  relays,
+		API:     api,
+		Catalog: catalog,
+		Store:   store,
+		// Refunds with a case block go through thune (refund.go); the
+		// watch reads only as an agent, when one touches the account.
+		Thune:          refunds,
+		Watch:          &thune.Watcher{Store: refunds, Calls: gateway.ThuneCalls{Store: store}, Logger: logger},
 		Forward:        remote,
 		Credentials:    conns,
 		AppURL:         os.Getenv("KIFF_APP_BASE_URL"),
@@ -177,6 +187,9 @@ func run(args []string) error {
 	mux := http.NewServeMux()
 	mux.Handle("/mcp", g.Server(version))
 	g.RegisterReconciliation(mux)
+	// The refund events the connection hands KIFF (refund_events.go), when
+	// it has a signing secret for them.
+	g.RegisterRefundEvents(mux, os.Getenv("KIFF_PLANQUE_EVENT_SECRET"))
 	if g.Resource != "" {
 		mux.HandleFunc("GET /.well-known/oauth-protected-resource/mcp", g.ResourceMetadata)
 		mux.HandleFunc("GET /.well-known/oauth-protected-resource", g.ResourceMetadata)

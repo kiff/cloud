@@ -126,3 +126,33 @@ func (s *MemoryStore) SurchargeEffects(_ context.Context, e VerifiedEvidence) ([
 	}
 	return out, nil
 }
+
+func (s *MemoryStore) ReinstateEffects(_ context.Context, e ReinstateEvidence) ([]EffectSurcharge, error) {
+	if err := e.validate(); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.failRecord != nil {
+		return nil, s.failRecord
+	}
+	if s.surcharges == nil {
+		s.surcharges = map[string]EffectSurcharge{}
+	}
+	var out []EffectSurcharge
+	for _, r := range s.releases {
+		if r.TenantID != e.TenantID || r.ProposalID != e.ProposalID || r.Source != e.Undoes {
+			continue
+		}
+		k := key(r.TenantID, r.MandateID, r.ProposalID, r.QuantityKey)
+		sc, exists := s.surcharges[k]
+		if !exists {
+			sc = EffectSurcharge{TenantID: r.TenantID, MandateID: r.MandateID, ProposalID: r.ProposalID, QuantityKey: r.QuantityKey,
+				Amount: r.Amount, At: e.At, Source: e.Source, EvidenceID: e.EvidenceID}
+			s.surcharges[k] = sc
+		}
+		out = append(out, sc)
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].MandateID+out[i].QuantityKey < out[j].MandateID+out[j].QuantityKey })
+	return out, nil
+}

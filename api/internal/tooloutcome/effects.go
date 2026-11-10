@@ -33,14 +33,18 @@ type EvidenceReader interface {
 const SourceNotSent = "gateway:not_sent"
 
 // NoEffect is the trusted evidence that proposal's call had no effect:
-// the vendor's terminal refusal under terminal_no_effect_v1, or the
-// gateway's own record that it was never sent.
+// the vendor's terminal refusal under terminal_no_effect_v1, the
+// gateway's own record that it was never sent, or a refund the processor
+// says failed (refunds.go).
 func (p *Postgres) NoEffect(ctx context.Context, tenant, proposal string) (mandate.NoEffectEvidence, bool, error) {
 	e, found, err := p.terminalNoEffect(ctx, tenant, proposal)
 	if found || err != nil {
 		return e, found, err
 	}
-	return p.notSent(ctx, tenant, proposal)
+	if e, found, err = p.notSent(ctx, tenant, proposal); found || err != nil {
+		return e, found, err
+	}
+	return p.refundFailed(ctx, tenant, proposal)
 }
 
 // notSent is the evidence of a call the gateway recorded as `failed`.

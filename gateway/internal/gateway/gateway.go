@@ -24,6 +24,7 @@ import (
 	"github.com/kiff/cloud/gateway/internal/kiffapi"
 	"github.com/kiff/cloud/gateway/internal/mcp"
 	"github.com/kiff/cloud/gateway/internal/secret"
+	"github.com/kiff/cloud/gateway/internal/thune"
 )
 
 // Domain is the gateway domain every account's ToolCall contract lives
@@ -102,6 +103,12 @@ type Tool struct {
 	// dispute's): the call doesn't carry one, and KIFF puts what the read
 	// says under AmountArg before deciding (amount.go).
 	AmountLookup *UnitLookup
+	// Case, when set, is the profile operation's case block: a refund
+	// that goes through thune's governed path (refund.go).
+	Case *CaseProfile
+	// NoEffect are the vendor statuses its profile says mean nothing
+	// happened.
+	NoEffect []int
 }
 
 // Custody modes.
@@ -150,6 +157,10 @@ func forwardArgs(t Tool, in invocation.Invocation) json.RawMessage {
 	}
 	if t.IdempotencyArg != "" {
 		args[t.IdempotencyArg] = in.Key
+	}
+	if t.Case != nil {
+		// KIFF keeps the request with the call; the processor never sees it.
+		delete(args, RequestArg)
 	}
 	body, _ := json.Marshal(args)
 	return body
@@ -237,9 +248,16 @@ type Gateway struct {
 	Clients ClientRecorder
 	// Operations pauses an operation whose verify read didn't match (connection profiles: the verify read); nil leaves a mismatch recorded but unpaused.
 	Operations OperationPauser
-	prompts    prompts
-	seen       seenCache
-	units      unitCache
+	// Thune is the refund module's store (refund.go); nil sends a refund
+	// with a case block as any other tool.
+	Thune *thune.Store
+	// Watch follows refunds whose money hasn't ended, on an account an
+	// agent's governed call touches; nil doesn't.
+	Watch    *thune.Watcher
+	accounts accountCache
+	prompts  prompts
+	seen     seenCache
+	units    unitCache
 }
 
 // DefaultLease is the in-flight lease when none is set.
@@ -315,7 +333,19 @@ func (g *Gateway) resourceMetadata(w http.ResponseWriter, resource string) {
 // SweepStale resolves every abandoned in-flight call, so the record is
 // truthful even if the agent never retries.
 func (g *Gateway) SweepStale(ctx context.Context) (int64, error) {
-	return g.Store.RecoverStale(ctx, "", g.now().Add(-g.lease()))
+	n, err := g.Store.RecoverStale(ctx, "", g.now().Add(-g.lease()))
+	if err != nil {
+		return n, err
+	}
+	// A refund call the sweep ended (or one a crash ended after its record
+	// was written) is settled in thune too: its claim, its charge and its
+	// watch follow the gateway's record.
+	if g.Thune != nil {
+		if _, err := (&thune.Gate{Store: g.Thune}).Recover(ctx, "", g.lease()); err != nil {
+			return n, err
+		}
+	}
+	return n, nil
 }
 
 // DefaultResultRetention is how long a forwarded call keeps the tool's
@@ -494,6 +524,9 @@ func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 			props = map[string]any{}
 		}
 		props[OperationArg] = operationSchema
+		if t.Case != nil && !t.ReadOnly {
+			props[RequestArg] = requestSchema
+		}
 		if t.IdempotencyArg != "" {
 			// KIFF sets it from the invocation; the agent never does.
 			dropArg(schema, props, t.IdempotencyArg)
@@ -763,6 +796,9 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 		}
 		return a.finish(ctx, in.Key, from, invocation.StateRefused, invocation.Update{Message: msg, Reasons: []string{reason}}, nil)
 	}
+	if a.governsRefund(t) {
+		return a.refundFirst(ctx, t, in, params, from)
+	}
 	return a.decided(ctx, t, in, params, from)
 }
 
@@ -861,6 +897,17 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 		return a.replay(ctx, in.Key)
 	}
 	forwarding := []invocation.State{invocation.StateForwarding}
+	if a.governsRefund(t) {
+		// thune records that it is sending, and a refund it no longer
+		// holds as allowed or held (its approval was voided) never leaves.
+		ok, err := a.caseSending(ctx, in.Key)
+		if err != nil || !ok {
+			return a.finish(ctx, in.Key, forwarding, invocation.StateFailed, invocation.Update{
+				Message: "Not sent: KIFF's record of this refund no longer allows it to be sent. Retry with a new " + OperationArg + ".",
+				Reasons: []string{ReasonCaseUnreadable},
+			}, err)
+		}
+	}
 	credential := ""
 	// In verify mode KIFF holds no credential for the tool; in relay mode
 	// the stored credential is the relay's transport credential.
@@ -1016,6 +1063,14 @@ func (a *agent) retry(ctx context.Context, t Tool, in invocation.Invocation, par
 			return nil, err
 		}
 		if n > 0 {
+			if a.g.Thune != nil {
+				// RecoverStale just ended this call as abandoned, so no live
+				// process holds it: settle its adjustment now, not at the
+				// next sweep (its row was written a little after the call's).
+				if _, err := (&thune.Gate{Store: a.g.Thune}).Recover(ctx, in.Key, 0); err != nil {
+					a.caseLog(ctx, in.Key, err)
+				}
+			}
 			return a.replay(ctx, in.Key)
 		}
 	}
@@ -1031,6 +1086,10 @@ func (a *agent) retry(ctx context.Context, t Tool, in invocation.Invocation, par
 			}, nil)
 		}
 		// Ask again: the answer is the owner's, once they have given it.
+		if a.governsRefund(t) {
+			// Read again before sending: a changed charge voids the approval.
+			return a.refundRetry(ctx, t, in, params)
+		}
 		return a.decided(ctx, t, in, params, []invocation.State{invocation.StateHeld})
 	}
 	out, cur, err := a.replayed(ctx, in.Key)
@@ -1193,6 +1252,9 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}
 			t.Verify, t.Probation, t.Money = f.Verify, f.Probation, f.Money
+			if t.Case, t.NoEffect, err = profileCase(profile, t.Name); err != nil {
+				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
+			}
 		}
 		if len(unit) > 0 {
 			var l UnitLookup

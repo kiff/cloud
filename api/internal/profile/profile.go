@@ -95,7 +95,69 @@ type Operation struct {
 	// name (a customer's name, an invoice's number), for the words KIFF
 	// asks with; it needs a resource.
 	LabelRead *Read `json:"label_read,omitempty"`
+	// Case makes a refund go through KIFF's governed path (thune): the
+	// reads that give its facts, where the call names its charge.
+	Case *Case `json:"case,omitempty"`
 }
+
+// Case is a money operation's case block (thune design v3, §4): what it
+// is, where the call names its charge, and the reads of the same profile
+// that give the facts KIFF decides on. A Card can't opt out of it.
+type Case struct {
+	// Kind is "refund", the one step one handles.
+	Kind string `json:"kind"`
+	// ChargeArg is the dotted path of the call's argument naming the
+	// charge; the reads reference it as $args.<charge_arg>.
+	ChargeArg string `json:"charge_arg"`
+	// AccountRead gives the processor account the connection is on.
+	AccountRead Read `json:"account_read"`
+	// ChargeRead gives the charge's currency, captured amount and
+	// dispute state.
+	ChargeRead CaseChargeRead `json:"charge_read"`
+	// RefundsRead lists the charge's refunds, everyone's.
+	RefundsRead CaseRefundsRead `json:"refunds_read"`
+	// RefundEvent, when set, is the app event that carries one refund's
+	// state: the connection hands it to KIFF as well as to the taf.
+	RefundEvent *CaseRefundEvent `json:"refund_event,omitempty"`
+}
+
+// CaseRefundEvent is the app event that carries a refund: its slug, where
+// the refund is in the payload, and where the refund names its charge. The
+// refund's id, amount, status and marker are read from it at the refunds
+// read's paths.
+type CaseRefundEvent struct {
+	Event  string `json:"event"`
+	Object string `json:"object"`
+	Charge string `json:"charge"`
+}
+
+// CaseChargeRead reads a charge: its currency, its captured amount, and
+// either a boolean that is true while a dispute is open, or a dispute
+// status with its open values.
+type CaseChargeRead struct {
+	Tool          string            `json:"tool"`
+	Args          map[string]string `json:"args,omitempty"`
+	Currency      string            `json:"currency"`
+	Captured      string            `json:"captured"`
+	Disputed      string            `json:"disputed,omitempty"`
+	DisputeStatus string            `json:"dispute_status,omitempty"`
+	DisputeOpen   []string          `json:"dispute_open,omitempty"`
+}
+
+// CaseRefundsRead lists a charge's refunds: the list, and each refund's id,
+// amount, status and the marker KIFF's calls write.
+type CaseRefundsRead struct {
+	Tool   string            `json:"tool"`
+	Args   map[string]string `json:"args,omitempty"`
+	List   string            `json:"list"`
+	ID     string            `json:"id"`
+	Amount string            `json:"amount"`
+	Status string            `json:"status"`
+	Marker string            `json:"marker"`
+}
+
+// CaseKindRefund is the one case kind step one handles.
+const CaseKindRefund = "refund"
 
 // RecordPlaceholder is what a record_url carries where the resource's id goes.
 const RecordPlaceholder = "{resource}"
@@ -394,6 +456,11 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 			return fmt.Errorf("record_url: %w", err)
 		}
 	}
+	if c := o.Case; c != nil {
+		if err := validateCase(o, *c, byTool); err != nil {
+			return fmt.Errorf("case: %w", err)
+		}
+	}
 	if l := o.LabelRead; l != nil {
 		if o.Resource == nil {
 			return errors.New("label_read names the resource's own name, so the operation needs a resource")
@@ -492,6 +559,91 @@ func validateAmount(a Amount, byTool map[string]Operation) error {
 		if !pathExpr.MatchString(r.Path) {
 			return errors.New("amount.unit_read.path is a dotted path")
 		}
+	}
+	return nil
+}
+
+// validateCase checks a case block: a refund that moves money, whose
+// marker the case's refunds read finds, with reads of the same profile
+// whose only reference is the call's charge.
+func validateCase(o Operation, c Case, byTool map[string]Operation) error {
+	if c.Kind != CaseKindRefund {
+		return errors.New(`kind is "refund"`)
+	}
+	if o.Effect != EffectMovesMoney {
+		return errors.New("a case is for an operation that moves money")
+	}
+	if o.Marker == nil {
+		return errors.New("a case needs the operation's marker, to find KIFF's own refunds")
+	}
+	if !argPath.MatchString(c.ChargeArg) {
+		return errors.New("charge_arg is a dotted path in the call's arguments, names only")
+	}
+	charge := "$args." + c.ChargeArg
+	reads := []struct {
+		name string
+		tool string
+		args map[string]string
+	}{
+		{"account_read", c.AccountRead.Tool, c.AccountRead.Args},
+		{"charge_read", c.ChargeRead.Tool, c.ChargeRead.Args},
+		{"refunds_read", c.RefundsRead.Tool, c.RefundsRead.Args},
+	}
+	for _, r := range reads {
+		if err := readOf(r.tool, r.args, byTool); err != nil {
+			return fmt.Errorf("%s: %w", r.name, err)
+		}
+		for k, v := range r.args {
+			// The watch reads a charge with no call in hand: the charge is
+			// the only thing a case read may take from one.
+			if strings.HasPrefix(v, "$") && v != charge {
+				return fmt.Errorf("%s: argument %s may reference only %s", r.name, k, charge)
+			}
+		}
+	}
+	paths := map[string]string{
+		"account_read.path":    c.AccountRead.Path,
+		"charge_read.currency": c.ChargeRead.Currency,
+		"charge_read.captured": c.ChargeRead.Captured,
+		"refunds_read.list":    c.RefundsRead.List,
+		"refunds_read.id":      c.RefundsRead.ID,
+		"refunds_read.amount":  c.RefundsRead.Amount,
+		"refunds_read.status":  c.RefundsRead.Status,
+		"refunds_read.marker":  c.RefundsRead.Marker,
+	}
+	if e := c.RefundEvent; e != nil {
+		if !toolName.MatchString(e.Event) {
+			return errors.New("refund_event.event is the app's event slug")
+		}
+		paths["refund_event.object"], paths["refund_event.charge"] = e.Object, e.Charge
+	}
+	names := make([]string, 0, len(paths))
+	for k := range paths {
+		names = append(names, k)
+	}
+	slices.Sort(names)
+	for _, k := range names {
+		if !pathExpr.MatchString(paths[k]) {
+			return fmt.Errorf("%s is a dotted path", k)
+		}
+	}
+	if c.RefundsRead.Marker != o.Marker.Field {
+		return fmt.Errorf("refunds_read.marker is the operation's marker, %s", o.Marker.Field)
+	}
+	switch {
+	case c.ChargeRead.Disputed != "" && c.ChargeRead.DisputeStatus != "":
+		return errors.New("charge_read gives disputed or dispute_status, not both")
+	case c.ChargeRead.Disputed != "":
+		if !pathExpr.MatchString(c.ChargeRead.Disputed) || len(c.ChargeRead.DisputeOpen) > 0 {
+			return errors.New("charge_read.disputed is a dotted path to a boolean")
+		}
+	case c.ChargeRead.DisputeStatus != "":
+		if !pathExpr.MatchString(c.ChargeRead.DisputeStatus) || len(c.ChargeRead.DisputeOpen) == 0 {
+			return errors.New("charge_read.dispute_status is a dotted path, with the dispute_open values")
+		}
+	default:
+		// A refund on a disputed charge can pay twice: KIFF must see it.
+		return errors.New("charge_read says where a dispute shows: disputed or dispute_status")
 	}
 	return nil
 }

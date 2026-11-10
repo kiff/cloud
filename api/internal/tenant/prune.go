@@ -72,6 +72,13 @@ var cloudMetaPruned = []pruneStep{
 		AND h.answered_at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_draws d
 			WHERE d.tenant_id = h.tenant_id AND d.proposal_id = h.proposal_id)`},
+	// A refund notice once its call's record is pruned: the notices are
+	// found through that record, and until it goes the notice row is what
+	// keeps the owner from being told twice.
+	{"refund_notices", `DELETE FROM cloud_meta.refund_notices n WHERE n.tenant_id = $1
+		AND n.sent_at < $2
+		AND NOT EXISTS (SELECT 1 FROM gateway.invocations i
+			WHERE i.tenant_id = n.tenant_id AND i.key = n.proposal_id)`},
 	{"mandate_proposal_claims", `DELETE FROM cloud_meta.mandate_proposal_claims c WHERE c.tenant_id = $1
 		AND c.claimed_at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_draws d

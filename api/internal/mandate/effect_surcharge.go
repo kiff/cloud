@@ -59,3 +59,30 @@ func eligibleSurcharge(d Draw, e VerifiedEvidence) (EffectSurcharge, bool, error
 	return EffectSurcharge{TenantID: d.TenantID, MandateID: d.MandateID, ProposalID: d.ProposalID, QuantityKey: d.QuantityKey,
 		Amount: e.Vendor - e.Decided, At: e.At, Source: e.Source, EvidenceID: e.ProposalID}, true, nil
 }
+
+// ReinstateEvidence is trusted proof that a call whose room came back on a
+// person's word did move money after all: its own refund, found at the
+// processor by its marker (thune). It takes back exactly what that word
+// released, once, as surcharges on the same draws: the Card counts the call
+// again, and nothing else changes. Append-only, like every surcharge.
+type ReinstateEvidence struct {
+	TenantID, ProposalID string
+	// Undoes is the source of the releases it takes back (the owner's
+	// "No" to "Did this happen?"); no other release is touched.
+	Undoes string
+	// Source and EvidenceID name the proof: the processor's refund.
+	Source, EvidenceID string
+	At                 time.Time
+}
+
+func (e ReinstateEvidence) validate() error {
+	if e.TenantID == "" || e.ProposalID == "" || e.Undoes == "" || e.Source == "" || e.EvidenceID == "" || e.At.IsZero() {
+		return errors.New("mandate: incomplete reinstate evidence")
+	}
+	return nil
+}
+
+// EffectReinstateStore takes back room released on a word later proved wrong.
+type EffectReinstateStore interface {
+	ReinstateEffects(context.Context, ReinstateEvidence) ([]EffectSurcharge, error)
+}
