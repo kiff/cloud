@@ -108,6 +108,9 @@ var cloudMetaErasedBySubject = []string{
 	// waiting a moment to go (newdevice): the person's, not the account's.
 	"new_device_emails",
 	"known_devices",
+	// A device sign-in waiting for approval carries a person only for a
+	// re-link (the session's); gone when approved or within 10 minutes.
+	"device_sign_ins",
 }
 
 // cloudMetaNotPerTenant hold no tenant's or person's data.

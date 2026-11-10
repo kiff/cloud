@@ -169,6 +169,7 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"wallet_nonces":                  "a person's, not the account's; expire on their own",
 	"known_devices":                  "a person's, not the account's; a device unseen for 180 days goes on its own (newdevice)",
 	"new_device_emails":              "a person's, not the account's; gone within minutes, sent or not (newdevice)",
+	"device_sign_ins":                "a device sign-in waiting for approval; gone when approved, and expired ones are swept at the next start (10 minutes)",
 	"billing_processed_events":       "no account's data",
 	"mandate_accounting_cutover":     "no account's data",
 	"oauth_clients":                  "no account's data",
