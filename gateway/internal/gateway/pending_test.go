@@ -521,3 +521,43 @@ func TestPendingLeavesOutHoldsKIFFNoLongerHas(t *testing.T) {
 		t.Fatalf("KIFF down: %d calls, first %+v", len(calls), calls[0])
 	}
 }
+
+// Invariant: kiff_pending's text names each listed call's arguments, and an owner's refusal reads as covering that one call, never the tool: an agent that reads only the text knows which item the owner refused, and another item's call of the same tool is still its to make.
+// Category: authority
+// Attack: the owner refuses a refund on one order; on its next run the agent reads kiff_pending's text, which named only the tool, and skips a valid refund on another order as if the owner had refused that too
+// Refused: the text line carries the refused call's order and amount, and says the refusal covers this call only, so a call with other arguments is decided on its own
+func TestPendingTextNamesTheCallTheOwnerRefused(t *testing.T) {
+	r := newRig(t)
+	refused := amount(5000, "op-refused")
+	refused["order"] = "o-refused-7"
+	exc, _ := r.call(t, "agent-key", refused).call["exception_id"].(string)
+	*r.now = r.now.Add(time.Second)
+	waiting := amount(4000, "op-waiting")
+	waiting["order"] = "o-waiting-9"
+	wexc, _ := r.call(t, "agent-key", waiting).call["exception_id"].(string)
+	r.api.holds = map[string]kiffapi.Hold{
+		exc:  {ExceptionID: exc, Status: "rejected"},
+		wexc: {ExceptionID: wexc, Status: "held"},
+	}
+	text, _ := r.pending(t, "agent-key")
+	var refusedLine, waitingLine string
+	for _, line := range strings.Split(text, "\n") {
+		switch {
+		case strings.Contains(line, "op-refused"):
+			refusedLine = line
+		case strings.Contains(line, "op-waiting"):
+			waitingLine = line
+		}
+	}
+	for _, want := range []string{`"order":"o-refused-7"`, `"amount_eur":5000`, "refused this call", "covers this call only", "decided on its own"} {
+		if !strings.Contains(refusedLine, want) {
+			t.Errorf("the refused line has no %q: %s", want, refusedLine)
+		}
+	}
+	if strings.Contains(refusedLine, "Do not call it again") || strings.Contains(refusedLine, "o-waiting-9") {
+		t.Errorf("the refused line: %s", refusedLine)
+	}
+	if !strings.Contains(waitingLine, `"order":"o-waiting-9"`) || !strings.Contains(waitingLine, "Waiting") {
+		t.Errorf("the waiting line: %s", waitingLine)
+	}
+}
