@@ -104,6 +104,10 @@ var cloudMetaErasedThroughParent = map[string][2]string{
 var cloudMetaErasedBySubject = []string{
 	"wallet_nonces",
 	"user_wallets",
+	// A hash of each device a person signed in on, and a new-device email
+	// waiting a moment to go (newdevice): the person's, not the account's.
+	"new_device_emails",
+	"known_devices",
 }
 
 // cloudMetaNotPerTenant hold no tenant's or person's data.
