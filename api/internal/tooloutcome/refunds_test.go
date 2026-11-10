@@ -1,7 +1,10 @@
 package tooloutcome_test
 
 import (
+	"bytes"
 	"context"
+	"log/slog"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -295,5 +298,50 @@ func TestARefundFoundAfterTheOwnersNoTakesItsRoomAgainAndIsTold(t *testing.T) {
 	// back by the "No" already, once per draw.
 	if k := n.kinds(); len(n.got) != 2 || k["tc-found"] != tooloutcome.NoticeRefundAfterNo || k["tc-right"] != tooloutcome.NoticeRefundFailed {
 		t.Fatalf("notices: %v (%d sent), want tc-found as %s and tc-right as %s, once each", k, len(n.got), tooloutcome.NoticeRefundAfterNo, tooloutcome.NoticeRefundFailed)
+	}
+}
+
+// A refund found after the owner's "No" on a call whose draw already holds
+// a surcharge of another kind (vendor evidence) can't have its room taken
+// again: the surcharge key is held. The owner is still told, once, and the
+// watch logs it: it never fails silently.
+func TestARefundFoundAfterNoWithAnotherSurchargeIsToldAndLogged(t *testing.T) {
+	ctx := context.Background()
+	pool, err := pgxpool.New(ctx, postgresURL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(pool.Close)
+	refundTables(t, pool)
+	at := time.Date(2026, 11, 12, 9, 0, 0, 0, time.UTC)
+	for _, q := range []string{
+		`INSERT INTO gateway.invocations VALUES ('tc-held','t1','agent-a','issue_refund','forwarded','done','2026-11-12T09:00:00Z',NULL)`,
+		`INSERT INTO gateway.thune_adjustments VALUES ('tc-held','t1','acct_1','ch_1','sent','succeeded','re_1','2026-11-12T09:00:00Z')`,
+		`INSERT INTO cloud_meta.mandate_draws VALUES ('t1','card-1','tc-held','sum(amount_eur)')`,
+		`INSERT INTO cloud_meta.mandate_effect_releases VALUES ('t1','card-1','tc-held','sum(amount_eur)','` + tooloutcome.SourceOwnerNo + `')`,
+		`INSERT INTO cloud_meta.mandate_effect_surcharges VALUES ('t1','card-1','tc-held','sum(amount_eur)','gateway:verify_read')`,
+	} {
+		if _, err := pool.Exec(ctx, q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	var logs bytes.Buffer
+	rr := &reinstater{pool: pool}
+	n := &notifier{}
+	w := &tooloutcome.RefundWatch{Outcomes: tooloutcome.NewPostgres(pool), Releases: &releaser{pool: pool}, Reinstates: rr, Alerts: n,
+		Logger: slog.New(slog.NewTextHandler(&logs, nil)), Now: func() time.Time { return at }}
+	for i := 0; i < 2; i++ {
+		if _, _, err := w.RunOnce(ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(rr.got) != 0 {
+		t.Fatalf("reinstated %+v: the held key can't take another surcharge", rr.got)
+	}
+	if k := n.kinds(); len(n.got) != 1 || k["tc-held"] != tooloutcome.NoticeRefundAfterNo {
+		t.Fatalf("notices: %v (%d sent), want tc-held told once as %s", k, len(n.got), tooloutcome.NoticeRefundAfterNo)
+	}
+	if c := strings.Count(logs.String(), "wasn't taken again"); c != 1 {
+		t.Fatalf("logged %d times, want once:\n%s", c, logs.String())
 	}
 }

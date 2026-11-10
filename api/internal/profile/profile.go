@@ -457,6 +457,10 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 		}
 	}
 	if c := o.Case; c != nil {
+		// A refund's money rules are reviewed code, never a model's draft.
+		if p.Source != "catalog" {
+			return errors.New("case: a case block comes only from a catalog entry merged by review (reviewed catalog only)")
+		}
 		if err := validateCase(o, *c, byTool); err != nil {
 			return fmt.Errorf("case: %w", err)
 		}
@@ -563,9 +567,17 @@ func validateAmount(a Amount, byTool map[string]Operation) error {
 	return nil
 }
 
-// validateCase checks a case block: a refund that moves money, whose
-// marker the case's refunds read finds, with reads of the same profile
-// whose only reference is the call's charge.
+// NarrowedParams is where a broad tool narrowed to one operation takes the
+// operation's fields (Stripe's stripe_api_write through planque:
+// parameters). The connection writes such a tool's marker inside them, so
+// the record the operation makes carries it without this prefix: a case's
+// refunds read may name the marker so, and nothing looser. planque allows
+// that form only for a tool narrowed to one write.
+const NarrowedParams = "parameters"
+
+// validateCase checks a case block: a refund that moves money in a fixed
+// currency, whose marker the case's refunds read finds, with reads of the
+// same profile whose only reference is the call's charge.
 func validateCase(o Operation, c Case, byTool map[string]Operation) error {
 	if c.Kind != CaseKindRefund {
 		return errors.New(`kind is "refund"`)
@@ -575,6 +587,11 @@ func validateCase(o Operation, c Case, byTool map[string]Operation) error {
 	}
 	if o.Marker == nil {
 		return errors.New("a case needs the operation's marker, to find KIFF's own refunds")
+	}
+	// KIFF compares the refund's currency with the charge's only when the
+	// tool has a fixed unit: a case without one would be counted unchecked.
+	if o.Amount == nil || o.Amount.Unit == "" {
+		return errors.New("a case needs the operation's fixed amount.unit, so a refund is never counted in another currency")
 	}
 	if !argPath.MatchString(c.ChargeArg) {
 		return errors.New("charge_arg is a dotted path in the call's arguments, names only")
@@ -627,8 +644,8 @@ func validateCase(o Operation, c Case, byTool map[string]Operation) error {
 			return fmt.Errorf("%s is a dotted path", k)
 		}
 	}
-	if c.RefundsRead.Marker != o.Marker.Field {
-		return fmt.Errorf("refunds_read.marker is the operation's marker, %s", o.Marker.Field)
+	if c.RefundsRead.Marker != o.Marker.Field && o.Marker.Field != NarrowedParams+"."+c.RefundsRead.Marker {
+		return fmt.Errorf("refunds_read.marker is the operation's marker, %s, or, for a tool narrowed to one operation, the marker inside its %s", o.Marker.Field, NarrowedParams)
 	}
 	switch {
 	case c.ChargeRead.Disputed != "" && c.ChargeRead.DisputeStatus != "":

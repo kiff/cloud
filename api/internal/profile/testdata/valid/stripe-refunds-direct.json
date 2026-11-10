@@ -1,0 +1,94 @@
+{
+    "v": "kiff.profile.v1",
+    "vendor": "Stripe",
+    "transport": "mcp",
+    "pin": {
+        "kind": "none"
+    },
+    "source": "catalog",
+    "catalog_entry": "stripe-refunds@1",
+    "test_proven": false,
+    "operations": [
+        {
+            "tool": "stripe_api_details_abcd",
+            "title": "Read a Stripe operation's fields",
+            "kind": "read"
+        },
+        {
+            "tool": "stripe_account_abcd",
+            "title": "Look up the Stripe account",
+            "kind": "read"
+        },
+        {
+            "tool": "stripe_charge_abcd",
+            "title": "Look up a charge",
+            "kind": "read",
+            "resource": {
+                "arg": "charge",
+                "noun": "charge"
+            }
+        },
+        {
+            "tool": "stripe_refunds_abcd",
+            "title": "List a charge's refunds",
+            "kind": "read",
+            "resource": {
+                "arg": "charge",
+                "noun": "charge"
+            }
+        },
+        {
+            "tool": "stripe_refund",
+            "title": "Refund a charge",
+            "kind": "write",
+            "effect": "moves_money",
+            "shape": "single",
+            "resource": {
+                "arg": "charge",
+                "noun": "charge"
+            },
+            "amount": {
+                "from": "argument",
+                "arg": "amount",
+                "format": "integer_minor",
+                "scale": 2,
+                "unit": "EUR"
+            },
+            "marker": {
+                "field": "parameters.metadata.kiff_op"
+            },
+            "required_arguments": [
+                "charge",
+                "amount"
+            ],
+            "case": {
+                "kind": "refund",
+                "charge_arg": "charge",
+                "account_read": {
+                    "tool": "stripe_account_abcd",
+                    "path": "id"
+                },
+                "charge_read": {
+                    "tool": "stripe_charge_abcd",
+                    "args": {
+                        "charge": "$args.charge"
+                    },
+                    "currency": "currency",
+                    "captured": "amount_captured",
+                    "disputed": "disputed"
+                },
+                "refunds_read": {
+                    "tool": "stripe_refunds_abcd",
+                    "args": {
+                        "charge": "$args.charge"
+                    },
+                    "list": "data",
+                    "id": "id",
+                    "amount": "amount",
+                    "status": "status",
+                    "marker": "metadata.kiff_op"
+                }
+            }
+        }
+    ]
+}

@@ -311,8 +311,10 @@ func (a *agent) caseIdentity(ctx context.Context, t Tool, in invocation.Invocati
 		return thune.Identity{}, thune.Ask{}, err.Error()
 	}
 	amount, _ := params[t.AmountArg].(int64)
+	// The Card counts the amount in the tool's unit: a charge in another
+	// currency is refused, never counted as if it were in this one.
 	return thune.Identity{TenantID: a.me.TenantID, Account: account, Object: cs, Kind: thune.KindRefund, Request: req},
-		thune.Ask{Amount: amount}, ""
+		thune.Ask{Amount: amount, Currency: t.AmountUnit}, ""
 }
 
 // Owner ask codes thune sends: apps/api maps each to KIFF's own words in

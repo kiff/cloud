@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"slices"
 	"testing"
 	"time"
 
@@ -155,5 +156,30 @@ func TestAChargeReadWithNoDisputeFlagSendsNoRefund(t *testing.T) {
 	got := r.call(t, "agent-key", caseCall(200, "ticket-7", "op-1"))
 	if !got.isError || r.proc.refundWrites() != 0 {
 		t.Fatalf("a charge with no dispute flag: %+v, writes %d", got, r.proc.refundWrites())
+	}
+}
+
+// Invariant: a refund is never counted in another currency than the charge's.
+// Category: accounting
+// Attack: a refund tool whose Card counts euros is called on a charge in dollars
+// Refused: refused before KIFF decides it, as a currency mismatch; nothing is sent or counted
+func TestARefundOnAChargeInAnotherCurrencyIsRefused(t *testing.T) {
+	r := newRefundRig(t)
+	usd := governedRefund
+	usd.AmountUnit = "USD"
+	r.gw.Catalog = catalog{usd, readTool("get_account"), readTool("get_charge"), readTool("list_refunds")}
+	got := r.call(t, "agent-key", caseCall(200, "ticket-7", "op-1"))
+	if !got.isError || r.proc.refundWrites() != 0 {
+		t.Fatalf("a USD tool on a EUR charge: %+v, writes %d", got, r.proc.refundWrites())
+	}
+	if a := r.adjustment(t, "op-1"); a.Execution != thune.ExecRefused || !slices.Contains(a.Reasons, thune.ReasonCurrency) {
+		t.Fatalf("adjustment: %s %v", a.Execution, a.Reasons)
+	}
+	// The same tool in the charge's own currency goes through.
+	eur := governedRefund
+	eur.AmountUnit = "EUR"
+	r.gw.Catalog = catalog{eur, readTool("get_account"), readTool("get_charge"), readTool("list_refunds")}
+	if got := r.call(t, "agent-key", caseCall(200, "ticket-8", "op-2")); got.isError || r.proc.refundWrites() != 1 {
+		t.Fatalf("a EUR tool on a EUR charge: %+v, writes %d", got, r.proc.refundWrites())
 	}
 }

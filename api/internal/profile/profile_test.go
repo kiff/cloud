@@ -206,6 +206,11 @@ func TestACaseBlock(t *testing.T) {
 		p["operations"] = append(ops, map[string]any{"tool": "get_account", "title": "Look up the account", "kind": "read"})
 		for _, o := range ops {
 			if op := o.(map[string]any); op["tool"] == "create_refund" {
+				// A case's refund has a fixed currency, which KIFF compares
+				// with the charge's.
+				a := op["amount"].(map[string]any)
+				delete(a, "unit_read")
+				a["unit"] = "EUR"
 				c := good()
 				edit(c, op)
 				op["case"] = c
@@ -218,6 +223,29 @@ func TestACaseBlock(t *testing.T) {
 	if err := with(func(map[string]any, map[string]any) {}); err != nil {
 		t.Fatalf("a good case block: %v", err)
 	}
+	// The same case block in a drafted profile is refused: a refund's money
+	// rules are reviewed code.
+	{
+		var p map[string]any
+		if err := json.Unmarshal(raw, &p); err != nil {
+			t.Fatal(err)
+		}
+		p["source"] = "drafted"
+		delete(p, "catalog_entry")
+		delete(p, "test_proven")
+		ops := p["operations"].([]any)
+		p["operations"] = append(ops, map[string]any{"tool": "get_account", "title": "Look up the account", "kind": "read"})
+		for _, o := range ops {
+			if op := o.(map[string]any); op["tool"] == "create_refund" {
+				op["case"] = good()
+				delete(op, "no_effect")
+			}
+		}
+		b, _ := json.Marshal(p)
+		if _, err := Parse(b); err == nil || !strings.Contains(err.Error(), "case block comes only") {
+			t.Fatalf("a drafted case block: %v", err)
+		}
+	}
 	if err := with(func(c map[string]any, _ map[string]any) {
 		cr := c["charge_read"].(map[string]any)
 		delete(cr, "disputed")
@@ -225,8 +253,26 @@ func TestACaseBlock(t *testing.T) {
 	}); err != nil {
 		t.Fatalf("a dispute status: %v", err)
 	}
+	// A tool narrowed to one operation (planque's stripe_api_write) gets its
+	// marker inside the operation's parameters; the refund it makes carries
+	// it without them. Exactly that prefix, and nothing looser.
+	if err := with(func(_, op map[string]any) {
+		op["marker"] = map[string]any{"field": NarrowedParams + ".metadata.kiff_op"}
+	}); err != nil {
+		t.Fatalf("a marker inside parameters: %v", err)
+	}
+	for _, field := range []string{"params.metadata.kiff_op", "parameters.parameters.metadata.kiff_op", "x.parameters.metadata.kiff_op", "metadata"} {
+		if err := with(func(_, op map[string]any) { op["marker"] = map[string]any{"field": field} }); err == nil || !strings.Contains(err.Error(), "refunds_read.marker") {
+			t.Errorf("a marker at %s: %v", field, err)
+		}
+	}
 	for name, edit := range map[string]func(c, op map[string]any){
-		"another kind":      func(c, _ map[string]any) { c["kind"] = "coupon" },
+		"another kind": func(c, _ map[string]any) { c["kind"] = "coupon" },
+		"no fixed unit": func(_, op map[string]any) {
+			a := op["amount"].(map[string]any)
+			delete(a, "unit")
+			a["unit_read"] = map[string]any{"tool": "get_payment_intent", "path": "currency"}
+		},
 		"no marker":         func(_, op map[string]any) { delete(op, "marker") },
 		"another marker":    func(c, _ map[string]any) { c["refunds_read"].(map[string]any)["marker"] = "metadata.other" },
 		"a write as a read": func(c, _ map[string]any) { c["account_read"].(map[string]any)["tool"] = "create_refund" },

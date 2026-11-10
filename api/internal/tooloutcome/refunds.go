@@ -199,33 +199,47 @@ func (w *RefundWatch) RunOnce(ctx context.Context) (released, told int, err erro
 	}
 	// Notices: failed refunds, KIFF's refunds on a charge that also has a
 	// counting refund made outside KIFF, and refunds found after the
-	// owner's "No" whose room was taken again.
+	// owner's "No". The last is keyed on the "No" and the refund found,
+	// once every draw the "No" released carries a surcharge: the room taken
+	// again, or (rarely) a surcharge of another kind that already held the
+	// key, so nothing was taken. taken says which; the owner is told either
+	// way, and the second is logged.
 	rows, err = p.pool.Query(ctx, `
-		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $2::text FROM gateway.thune_adjustments a
+		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $2::text, true FROM gateway.thune_adjustments a
 		  JOIN gateway.invocations i ON i.key = a.key AND i.tenant_id = a.tenant_id
 		 WHERE a.execution='sent' AND a.financial IN ('failed','cancelled')
 		   AND NOT EXISTS (SELECT 1 FROM cloud_meta.refund_notices n WHERE n.tenant_id=a.tenant_id AND n.proposal_id=a.key AND n.kind=$2)
 		UNION ALL
-		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $3::text FROM gateway.thune_adjustments a
+		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $3::text, true FROM gateway.thune_adjustments a
 		  JOIN gateway.invocations i ON i.key = a.key AND i.tenant_id = a.tenant_id
 		 WHERE a.execution='sent' AND a.financial IN ('none','pending','succeeded')
 		   AND EXISTS (SELECT 1 FROM gateway.thune_refunds o WHERE o.tenant_id=a.tenant_id AND o.account=a.account AND o.object=a.object
 		       AND o.origin='outside' AND o.status IN ('pending','succeeded'))
 		   AND NOT EXISTS (SELECT 1 FROM cloud_meta.refund_notices n WHERE n.tenant_id=a.tenant_id AND n.proposal_id=a.key AND n.kind=$3)
 		UNION ALL
-		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $4::text FROM gateway.thune_adjustments a
+		SELECT a.tenant_id, a.key, i.tool, i.agent_id, $4::text,
+		       NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_effect_releases r JOIN cloud_meta.mandate_effect_surcharges s
+		           ON s.tenant_id=r.tenant_id AND s.mandate_id=r.mandate_id AND s.proposal_id=r.proposal_id AND s.quantity_key=r.quantity_key
+		          WHERE r.tenant_id=a.tenant_id AND r.proposal_id=a.key AND r.source=$6 AND s.source<>$5)
+		  FROM gateway.thune_adjustments a
 		  JOIN gateway.invocations i ON i.key = a.key AND i.tenant_id = a.tenant_id
-		 WHERE a.execution='sent' AND a.financial IN ('pending','succeeded')
-		   AND EXISTS (SELECT 1 FROM cloud_meta.mandate_effect_surcharges s WHERE s.tenant_id=a.tenant_id AND s.proposal_id=a.key AND s.source=$5)
+		 WHERE a.execution='sent' AND a.financial IN ('pending','succeeded') AND a.refund_id <> ''
+		   AND EXISTS (SELECT 1 FROM cloud_meta.mandate_effect_releases r WHERE r.tenant_id=a.tenant_id AND r.proposal_id=a.key AND r.source=$6)
+		   AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_effect_releases r WHERE r.tenant_id=a.tenant_id AND r.proposal_id=a.key AND r.source=$6
+		       AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_effect_surcharges s WHERE s.tenant_id=r.tenant_id AND s.mandate_id=r.mandate_id
+		           AND s.proposal_id=r.proposal_id AND s.quantity_key=r.quantity_key))
 		   AND NOT EXISTS (SELECT 1 FROM cloud_meta.refund_notices n WHERE n.tenant_id=a.tenant_id AND n.proposal_id=a.key AND n.kind=$4)
-		 LIMIT $1`, n, NoticeRefundFailed, NoticeRefundedTwice, NoticeRefundAfterNo, SourceRefundFound)
+		 LIMIT $1`, n, NoticeRefundFailed, NoticeRefundedTwice, NoticeRefundAfterNo, SourceRefundFound, SourceOwnerNo)
 	if err != nil {
 		return released, told, err
 	}
-	type notice struct{ tenant, key, tool, agent, kind string }
+	type notice struct {
+		tenant, key, tool, agent, kind string
+		taken                          bool
+	}
 	notices, err := pgx.CollectRows(rows, func(r pgx.CollectableRow) (notice, error) {
 		var x notice
-		return x, r.Scan(&x.tenant, &x.key, &x.tool, &x.agent, &x.kind)
+		return x, r.Scan(&x.tenant, &x.key, &x.tool, &x.agent, &x.kind, &x.taken)
 	})
 	if err != nil {
 		return released, told, err
@@ -239,6 +253,10 @@ func (w *RefundWatch) RunOnce(ctx context.Context) (released, told int, err erro
 		}
 		if err != nil {
 			return released, told, err
+		}
+		if !x.taken {
+			w.log(ctx, "tooloutcome: a refund found after the owner's No kept a surcharge of another kind, so its room wasn't taken again",
+				x.key, errors.New("surcharge key already held"))
 		}
 		if w.Alerts != nil {
 			w.Alerts.NotifyRefund(x.tenant, x.key, x.tool, x.agent, x.kind, w.now().UTC())
