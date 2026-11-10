@@ -68,3 +68,48 @@ func TestTrustedNoEffectRequiresDurableTerminalBinding(t *testing.T) {
 		})
 	}
 }
+
+// A call KIFF allowed and the gateway recorded as never sent (`failed`) is
+// evidence of no effect, read from the gateway's own record: an allowed call
+// whose permit wasn't issued, whose credential couldn't be read, or whose
+// tool couldn't be reached gives its Card room back.
+// A call that may have been sent (`unknown`, `forwarding`) or was sent
+// (`forwarded`) without a terminal refusal is not, and no other tenant's
+// record counts.
+func TestANotSentCallIsEvidenceOfNoEffect(t *testing.T) {
+	ctx := context.Background()
+	p, err := pgxpool.New(ctx, postgresURL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(p.Close)
+	withoutGatewaySchema(t, p)
+	r := tooloutcome.NewPostgres(p)
+	if _, err := p.Exec(ctx, `CREATE SCHEMA gateway; CREATE TABLE gateway.invocations (
+	 key text PRIMARY KEY, tenant_id text, agent_id text, tool text, state text, tool_outcome text,
+	 updated_at timestamptz, no_effect_evidence jsonb)`); err != nil {
+		t.Fatal(err)
+	}
+	at := time.Date(2026, 11, 10, 9, 0, 0, 0, time.UTC)
+	for _, tc := range []struct {
+		state string
+		found bool
+	}{{"failed", true}, {"unknown", false}, {"forwarding", false}, {"forwarded", false}, {"refused", false}, {"held", false}} {
+		t.Run(tc.state, func(t *testing.T) {
+			if _, err := p.Exec(ctx, `INSERT INTO gateway.invocations VALUES($1,'t1','agent-a','refund',$1,'',$2,NULL)`, tc.state, at); err != nil {
+				t.Fatal(err)
+			}
+			e, found, err := r.NoEffect(ctx, "t1", tc.state)
+			if err != nil || found != tc.found {
+				t.Fatal(e, found, err)
+			}
+			if found && (e.ProposalID != tc.state || e.Subject != "agent-a" || e.Action != "refund" || e.Source != tooloutcome.SourceNotSent ||
+				e.EvidenceID != tc.state || e.Reason == "" || !e.At.Equal(at)) {
+				t.Fatal(e)
+			}
+			if _, found, err := r.NoEffect(ctx, "t2", tc.state); found || err != nil {
+				t.Fatal("cross-tenant evidence", found, err)
+			}
+		})
+	}
+}

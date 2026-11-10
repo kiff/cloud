@@ -236,3 +236,44 @@ func TestUnknownReconciliationFailClosed(t *testing.T) {
 		})
 	}
 }
+
+// A call KIFF allowed that the gateway never sent (its permit wasn't
+// issued) asks apps/api to give the Card its room back, as it ends and
+// again on every collection until apps/api has it. apps/api reads the
+// gateway's own record for the evidence, never this request. A call that
+// was sent asks for nothing.
+func TestAnAllowedCallThatWasNeverSentGivesItsRoomBack(t *testing.T) {
+	r := newRig(t)
+	a := &reconciliationAPI{fakeAPI: r.api}
+	verify := refundTool
+	verify.Mode, verify.Audience = gateway.ModeVerify, "https://refunds.example.com/mcp"
+	r.gw.API, r.gw.Catalog = a, catalog{verify}
+	r.api.mu.Lock()
+	r.api.withholdPermit = true
+	r.api.mu.Unlock()
+
+	a.fail = true
+	got := r.call(t, "agent-key", amount(500, "never-sent"))
+	key, _ := got.call["invocation"].(string)
+	if r.tool.count() != 0 || got.call["sent"] != "no" || key == "" {
+		t.Fatalf("%+v, tool calls = %d", got, r.tool.count())
+	}
+	if len(a.releases) != 0 {
+		t.Fatalf("a failed release was kept: %v", a.releases)
+	}
+	// apps/api couldn't be reached: the next collection asks again, and
+	// still sends nothing.
+	a.fail = false
+	r.call(t, "agent-key", amount(500, "never-sent"))
+	if r.tool.count() != 0 || len(a.releases) != 1 || a.releases[0] != key {
+		t.Fatalf("releases %v, tool calls = %d", a.releases, r.tool.count())
+	}
+
+	r.api.mu.Lock()
+	r.api.withholdPermit = false
+	r.api.mu.Unlock()
+	sent := r.call(t, "agent-key", amount(500, "sent"))
+	if r.tool.count() != 1 || sent.isError || len(a.releases) != 1 {
+		t.Fatalf("a sent call asked for its room back: %+v, releases %v", sent, a.releases)
+	}
+}

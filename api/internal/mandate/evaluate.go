@@ -53,7 +53,17 @@ const (
 // Request is the proposal being evaluated, reduced to what a mandate
 // cares about.
 type Request struct {
-	Subject string
+	// OwnerAsk, when set, is the reason code for why every call of this
+	// request is the owner's to approve, however much room the Cards have
+	// (words.OwnerAsks); OwnerAskWhy is KIFF's own line for it, in English.
+	// The Cards' limits still apply, and on top each covering Card asks as a
+	// count total of 0 does (askEachCall). Approving it approves that one
+	// call, and a Card set to refuse what's outside it refuses the call. The
+	// gateway sets it, for example for a tool that moves money where no
+	// permit binds the call. Never the caller's words: only codes KIFF words.
+	OwnerAsk    string `json:",omitempty"`
+	OwnerAskWhy string `json:",omitempty"`
+	Subject     string
 	// Domain is the current name (slug) of the domain the request is in;
 	// DomainID is that domain's immutable id. A card issued with a
 	// DomainID matches the id, so it survives a rename; one issued before

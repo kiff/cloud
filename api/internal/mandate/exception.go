@@ -122,6 +122,9 @@ type Breach struct {
 	// as the gateway read it ("USD") and the unit the Card counts ("EUR").
 	Unit     string `json:",omitempty"`
 	CardUnit string `json:",omitempty"`
+	// OwnerAsk is, for a hold the request asked for (Request.OwnerAsk), its
+	// reason code, so the hold is worded in the reader's language.
+	OwnerAsk string `json:",omitempty"`
 }
 
 // What an exception is (kiff/tafs#464 item 11).

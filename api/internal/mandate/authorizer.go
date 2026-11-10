@@ -370,6 +370,7 @@ func (a *Authorizer) decide(ctx context.Context, tx CardTx, ms []Mandate, tenant
 	if err != nil {
 		return Decision{}, err
 	}
+	d = ownerAsks(d, req)
 	if d.Allowed() && d.Outcome != OutcomeNotCovered {
 		// It fits the Cards as they stand: the owner changed a Card, or
 		// the window reset since it came home. It draws like any other
@@ -392,6 +393,9 @@ func (a *Authorizer) decide(ctx context.Context, tx CardTx, ms []Mandate, tenant
 	breaches, ok, err := Breaches(ms, req, usage, now)
 	if err != nil {
 		return Decision{}, err
+	}
+	if ok && req.OwnerAsk != "" {
+		breaches = withOwnerAsk(breaches, ms, req, now)
 	}
 	if !ok || len(breaches) == 0 {
 		return d, nil
@@ -718,4 +722,47 @@ func sameCards(a, b []Mandate) bool {
 		}
 	}
 	return true
+}
+
+// ownerAsks is d, unless it fits the Cards and req asks its owner anyway
+// (Request.OwnerAsk): then it is outside them, for the owner, by req's
+// reason.
+func ownerAsks(d Decision, req Request) Decision {
+	if req.OwnerAsk != "" && d.Allowed() && d.Outcome != OutcomeNotCovered {
+		return Decision{Outcome: OutcomeLimitReached, Reason: ownerAskWhy(req)}
+	}
+	return d
+}
+
+// ownerAskWhy is the English line of req's owner ask.
+func ownerAskWhy(req Request) string {
+	if req.OwnerAskWhy != "" {
+		return req.OwnerAskWhy
+	}
+	return "every call of this tool waits for approval"
+}
+
+// withOwnerAsk adds, for every covering Card in force that doesn't already
+// ask each call, the breach a count total of 0 makes, with the request's
+// reason (Request.OwnerAsk): approving it is approving this call only, and
+// a Card set to refuse refuses it. The breach keeps the request's code.
+func withOwnerAsk(bs []Breach, ms []Mandate, req Request, now time.Time) []Breach {
+	count := Quantity{Kind: KindCount}
+	for _, m := range ms {
+		if !appliesTo(m, req) || !m.Active(now) {
+			continue
+		}
+		asks := false
+		for _, b := range bs {
+			if b.MandateID == m.ID && askEachCall(b) && b.Quantity.Key() == count.Key() {
+				asks = true
+				break
+			}
+		}
+		if !asks {
+			bs = append(bs, Breach{MandateID: m.ID, Outcome: OutcomeLimitReached, Quantity: count,
+				Limit: 0, Draw: 1, Reason: ownerAskWhy(req), OwnerAsk: req.OwnerAsk})
+		}
+	}
+	return bs
 }

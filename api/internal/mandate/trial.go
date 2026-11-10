@@ -34,12 +34,18 @@ func TrialAgent(subject string) (string, bool) { return strings.CutSuffix(subjec
 // takes precedence.
 func Trial(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, error) {
 	d, err := Evaluate(ms, req, usage, now)
-	if err != nil || d.Allowed() || !ownerBreach(d.Outcome) {
+	if err != nil {
 		return d, err
+	}
+	if d = ownerAsks(d, req); d.Allowed() || !ownerBreach(d.Outcome) {
+		return d, nil
 	}
 	breaches, ok, err := Breaches(ms, req, usage, now)
 	if err != nil {
 		return Decision{}, err
+	}
+	if ok && req.OwnerAsk != "" {
+		breaches = withOwnerAsk(breaches, ms, req, now)
 	}
 	if !ok || len(breaches) == 0 {
 		return d, nil

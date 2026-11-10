@@ -62,7 +62,10 @@ func (a *agent) reconcileEffects(ctx context.Context, in invocation.Invocation) 
 			}
 		}
 	}
-	if len(in.NoEffectEvidence) == 0 {
+	// A call the gateway recorded as never sent (failed) is evidence of no
+	// effect too: apps/api reads that record itself, never this process's
+	// say-so (tooloutcome: not sent).
+	if len(in.NoEffectEvidence) == 0 && in.State != invocation.StateFailed {
 		return
 	}
 	r, ok := a.g.API.(effectReconciler)

@@ -34,6 +34,14 @@ type VerifyRead struct {
 		Path   string `json:"path"`
 		Equals string `json:"equals"`
 	} `json:"done_when"`
+	// Marker is the field of the operation's own vendor record that the
+	// connection writes its operation id into (the profile's marker, such
+	// as metadata.kiff_op), or "". On a relay tool, where the connection
+	// writes it, an amount path that walks a list (data[0].amount) reads
+	// the element this call made, found by its marker, never the newest
+	// one: a refund made meanwhile in the vendor's dashboard isn't this
+	// call's.
+	Marker string `json:"-"`
 }
 
 // effectSurcharger is the part of apps/api that counts a vendor's larger
@@ -55,28 +63,42 @@ func (c PostgresCatalog) PauseOperation(ctx context.Context, tenantID, tool, rea
 	return err
 }
 
-// profileOp is what the profile says of tool that the gateway acts on: its
-// verify read, or nil, and whether it's on probation (a money operation
-// no test call proved).
-func profileOp(profile []byte, tool string) (*VerifyRead, bool, error) {
+// profileFacts is what the profile says of a tool that the gateway acts on.
+type profileFacts struct {
+	// Verify is its verify read, or nil.
+	Verify *VerifyRead
+	// Probation: a money operation no test call proved.
+	Probation bool
+	// Money: the operation moves or records money.
+	Money bool
+}
+
+// profileOp is what the profile says of tool that the gateway acts on.
+func profileOp(profile []byte, tool string) (profileFacts, error) {
 	var p struct {
 		TestProven bool `json:"test_proven"`
 		Operations []struct {
 			Tool       string      `json:"tool"`
 			Effect     string      `json:"effect"`
 			VerifyRead *VerifyRead `json:"verify_read"`
+			Marker     *struct {
+				Field string `json:"field"`
+			} `json:"marker"`
 		} `json:"operations"`
 	}
 	if err := json.Unmarshal(profile, &p); err != nil {
-		return nil, false, err
+		return profileFacts{}, err
 	}
 	for _, o := range p.Operations {
 		if o.Tool == tool {
 			money := o.Effect == "records_money" || o.Effect == "moves_money"
-			return o.VerifyRead, money && !p.TestProven, nil
+			if o.VerifyRead != nil && o.Marker != nil {
+				o.VerifyRead.Marker = o.Marker.Field
+			}
+			return profileFacts{Verify: o.VerifyRead, Probation: money && !p.TestProven, Money: money}, nil
 		}
 	}
-	return nil, false, nil
+	return profileFacts{}, nil
 }
 
 // verifyEvidence is what a verify read found, as the call keeps it.
@@ -179,6 +201,15 @@ func (a *agent) verifyResult(ctx context.Context, t Tool, in invocation.Invocati
 	}
 	e.Decided = &decided
 	val, found := firstIn(got, v.AmountPath)
+	if v.Marker != "" && t.Mode == ModeRelay {
+		mine, ok, listed := markedIn(got, v.AmountPath, v.Marker, in.Key)
+		if listed && !ok {
+			return "unreadable", "the verify read's answer has no record marked with this call (" + v.Marker + ")"
+		}
+		if listed {
+			val, found = mine, true
+		}
+	}
 	if !found {
 		return "unreadable", "the verify read's answer doesn't have " + v.AmountPath
 	}
@@ -257,6 +288,42 @@ func resolveRef(ref string, args map[string]any, result []any) (any, bool) {
 		return firstIn(result, p)
 	}
 	return ref, true
+}
+
+// markedIn reads path from the element, of the list path walks, whose
+// marker is op: data[0].amount walks data, and reads amount from the
+// element whose metadata.kiff_op is op. listed is false when path walks no
+// list in docs (the caller reads path as it is); ok is false when the list
+// has no element with that marker, or the element lacks the rest of path.
+func markedIn(docs []any, path, marker, op string) (val any, ok, listed bool) {
+	i := strings.Index(path, "[")
+	j := strings.Index(path, "]")
+	if i <= 0 || j < i {
+		return nil, false, false
+	}
+	list, rest := path[:i], path[j+1:]
+	if rest != "" && !strings.HasPrefix(rest, ".") {
+		return nil, false, false
+	}
+	rest = strings.TrimPrefix(rest, ".")
+	for _, d := range docs {
+		v, found := valueAt(d, list)
+		elems, isList := v.([]any)
+		if !found || !isList {
+			continue
+		}
+		for _, el := range elems {
+			if m, has := valueAt(el, marker); has && fmt.Sprint(m) == op {
+				if rest == "" {
+					return el, true, true
+				}
+				val, ok = valueAt(el, rest)
+				return val, ok, true
+			}
+		}
+		return nil, false, true
+	}
+	return nil, false, false
 }
 
 func firstIn(docs []any, path string) (any, bool) {

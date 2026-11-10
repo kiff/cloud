@@ -84,6 +84,10 @@ type Tool struct {
 	// Probation: a money operation whose profile no test call proved; its
 	// first sent calls are the owner's to confirm (connection profiles: probation).
 	Probation bool
+	// Money: the profile says the operation moves or records money. On a
+	// connection where KIFF holds the key, every call of it asks the owner
+	// (OwnerAskParam).
+	Money bool
 	// Paused says why the operation is paused, "" when it runs.
 	Paused string
 	// AmountFormat is FormatDecimal when the call carries its amount as a
@@ -112,6 +116,28 @@ const PermitHeader = "KIFF-Permit"
 
 // needsPermit reports whether the tool runs only with an execution permit.
 func (t Tool) needsPermit() bool { return t.Mode == ModeVerify || t.Mode == ModeRelay }
+
+// OwnerAskParam is the parameter KIFF is told, with a reason code, that
+// every call of a tool is the owner's to approve, however much room the
+// Card has (apps/api GatewayOwnerAskParam). apps/api words the code; the
+// Card's limits still apply, and a Card set to refuse what's outside it
+// refuses the call.
+const OwnerAskParam = "kiff_owner_ask"
+
+// OwnerAskSealedMoney is the code for a money tool on a connection where
+// KIFF holds the key: no permit binds the call at the tool, so a person
+// approves each one.
+const OwnerAskSealedMoney = "sealed_money"
+
+// ownerAsk is the code for why every call of t asks its owner, or "": a
+// money operation that no permit binds at the tool (any custody but verify
+// or relay).
+func (t Tool) ownerAsk() string {
+	if t.Money && !t.ReadOnly && !t.needsPermit() {
+		return OwnerAskSealedMoney
+	}
+	return ""
+}
 
 // forwardArgs is the exact argument object sent to the tool: the agent's
 // arguments plus the operation id under the tool's idempotency argument.
@@ -597,6 +623,9 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 			params[t.AmountArg] = i
 		}
 	}
+	if code := t.ownerAsk(); code != "" {
+		params[OwnerAskParam] = code
+	}
 	return t.resourceParam(args, params)
 }
 
@@ -1066,6 +1095,10 @@ func (a *agent) replayed(ctx context.Context, key string) (json.RawMessage, invo
 	case invocation.StateForwarding:
 		return kiffResult(fmt.Sprintf("This call has been sent to the tool and its result is not in yet. It will not be sent again; "+
 			"retry the same call in about %d seconds.", retryForwarding), callOf(in)), in, nil
+	case invocation.StateFailed:
+		// Allowed and never sent: the Card gets its room back.
+		a.reconcileEffects(ctx, in)
+		return kiffResult(in.Message, callOf(in)), in, nil
 	default:
 		return kiffResult(in.Message, callOf(in)), in, nil
 	}
@@ -1155,11 +1188,11 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 			return nil, err
 		}
 		if len(profile) > 0 {
-			v, probation, err := profileOp(profile, t.Name)
+			f, err := profileOp(profile, t.Name)
 			if err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}
-			t.Verify, t.Probation = v, probation
+			t.Verify, t.Probation, t.Money = f.Verify, f.Probation, f.Money
 		}
 		if len(unit) > 0 {
 			var l UnitLookup
