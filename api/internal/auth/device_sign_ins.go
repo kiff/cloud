@@ -55,6 +55,9 @@ type WaitingSignIns interface {
 	ByHash(ctx context.Context, hash string, now time.Time) (*WaitingSignIn, error)
 	ByUserCode(ctx context.Context, code string, now time.Time) (*WaitingSignIn, error)
 	Delete(ctx context.Context, hash string) error
+	// Claim deletes the sign-in for approval, and says whether it was
+	// still waiting: of two processes approving it at once, one wins.
+	Claim(ctx context.Context, hash string, now time.Time) (bool, error)
 	// DropRelinks deletes the re-links of session: one at a time.
 	DropRelinks(ctx context.Context, session string) error
 	// Sweep deletes the expired ones and counts those still waiting.
@@ -101,6 +104,14 @@ func (s *PostgresWaitingSignIns) Delete(ctx context.Context, hash string) error 
 		return fmt.Errorf("drop device sign-in: %w", err)
 	}
 	return nil
+}
+
+func (s *PostgresWaitingSignIns) Claim(ctx context.Context, hash string, now time.Time) (bool, error) {
+	tag, err := s.pool.Exec(ctx, `DELETE FROM cloud_meta.device_sign_ins WHERE device_hash = $1 AND expires_at >= $2`, hash, now.UTC())
+	if err != nil {
+		return false, fmt.Errorf("claim device sign-in: %w", err)
+	}
+	return tag.RowsAffected() == 1, nil
 }
 
 func (s *PostgresWaitingSignIns) DropRelinks(ctx context.Context, session string) error {
@@ -183,6 +194,17 @@ func (m *MemoryWaitingSignIns) Delete(_ context.Context, hash string) error {
 	defer m.mu.Unlock()
 	delete(m.rows, hash)
 	return nil
+}
+
+func (m *MemoryWaitingSignIns) Claim(_ context.Context, hash string, now time.Time) (bool, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	r, ok := m.rows[hash]
+	if !ok || now.After(r.ExpiresAt) {
+		return false, nil
+	}
+	delete(m.rows, hash)
+	return true, nil
 }
 
 func (m *MemoryWaitingSignIns) DropRelinks(_ context.Context, session string) error {
