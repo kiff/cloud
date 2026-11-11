@@ -65,6 +65,9 @@ var cloudMetaPruned = []pruneStep{
 	{"hold_answers", `DELETE FROM cloud_meta.hold_answers a WHERE a.tenant_id = $1 AND a.at < $2
 		AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_exceptions e
 			WHERE e.tenant_id = a.tenant_id AND e.id = a.hold_id)`},
+	// What a call was about, once it's older than the cutoff: its Record
+	// entry goes with the account's schema's history, and this with it.
+	{"call_about", `DELETE FROM cloud_meta.call_about WHERE tenant_id = $1 AND created_at < $2`},
 	// A "not sure" mark once it has run out.
 	{"happened_checking", `DELETE FROM cloud_meta.happened_checking c WHERE c.tenant_id = $1 AND c.until_at < $2`},
 	// "Did this happen?" answers once their call no longer counts on a Card.

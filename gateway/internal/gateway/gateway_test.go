@@ -90,13 +90,16 @@ type fakeAPI struct {
 	// A proposal with "krg_bad" is refused, as KIFF refuses a grant that
 	// isn't for the agent or whose person may no longer use it.
 	runGrants map[string]string
+	// words are the taf's words each proposal carried, by proposal id.
+	words map[string]gateway.TafWords
 }
 
 func newFakeAPI() *fakeAPI {
 	return &fakeAPI{ingested: map[string]int{}, approved: map[string]bool{}, drawn: map[string]int64{},
 		refuse: map[int64]kiffapi.Decision{}, why: map[int64][]string{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
 		issued: map[string]time.Time{}, now: time.Now, params: map[string]map[string]any{},
-		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{}}
+		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{},
+		words: map[string]gateway.TafWords{}}
 }
 
 // refundCard is the Card fakeAPI decides by, as GET /v1/me/card reads it.
@@ -209,6 +212,7 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 	f.params[p.ID] = p.Parameters
 	f.trialDrafts[p.ID] = p.TrialDraft
 	f.runGrants[p.ID] = p.RunGrant
+	f.words[p.ID] = gateway.TafWords{About: p.TafAbout, Reason: p.TafReason}
 	if p.RunGrant == "krg_bad" {
 		return kiffapi.Decision{Outcome: "refused", Reasons: []string{"run_grant"}, Message: "the person who asked may not use this agent"}, nil
 	}

@@ -191,7 +191,7 @@ func (a *agent) amountRefused(ctx context.Context, t Tool, name, op string, args
 	if err := a.g.API.RequestToolCall(work, a.key, Domain, in.Key, a.me.AgentID, in.CreatedAt); err == nil {
 		blocked := maps.Clone(params)
 		blocked[AmountUnverifiedParam] = true
-		p := a.proposal(t, in, blocked, nil)
+		p := a.proposal(work, t, in, blocked, nil)
 		// Nothing is sent, so nothing needs a permit.
 		p.Permit = nil
 		if _, err := a.g.API.Decide(work, a.key, p); err != nil && a.g.Logger != nil {

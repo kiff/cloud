@@ -178,6 +178,11 @@ type Proposal struct {
 	// may still use it, refuses the call otherwise, and records the call,
 	// and any hold it opens, as theirs ("asked by").
 	RunGrant string `json:"run_grant,omitempty"`
+	// TafAbout and TafReason are the taf's own words about the call
+	// (gateway.AboutArg, gateway.ReasonArg): KIFF keeps them with a hold
+	// for its owner to read, and decides nothing on them.
+	TafAbout  string `json:"taf_about,omitempty"`
+	TafReason string `json:"taf_reason,omitempty"`
 }
 
 func (c *Client) do(ctx context.Context, key, method, path string, body any) (int, []byte, error) {

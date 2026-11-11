@@ -34,6 +34,20 @@ const Domain = "gateway"
 // OperationArg is the argument the gateway adds to every tool.
 const OperationArg = "kiff_operation_id"
 
+// AboutArg and ReasonArg are the taf's own words about a call, added to
+// every tool that changes something: what the call is about, as the owner
+// knows it ("Order 1042"), and why, in a few words ("arrived broken"). KIFF
+// keeps them with a held call for its owner to read, labelled as the taf's.
+// They never reach the tool, never decide anything and aren't part of the
+// call's identity: a retry worded differently is still the same call.
+const (
+	AboutArg  = "kiff_about"
+	ReasonArg = "kiff_reason"
+)
+
+// TafWords are AboutArg and ReasonArg as a call sent them.
+type TafWords struct{ About, Reason string }
+
 // Tool is a tool an account has connected.
 type Tool struct {
 	Name string
@@ -475,6 +489,29 @@ var operationSchema = map[string]any{
 		"Without it, an identical call within 10 minutes is treated as a retry of the first.",
 }
 
+// MaxAboutLength and MaxReasonLength are the most characters of AboutArg
+// and ReasonArg the owner is shown; apps/api cuts what's longer.
+const (
+	MaxAboutLength  = 120
+	MaxReasonLength = 280
+)
+
+// aboutSchema and reasonSchema are added to every tool that changes
+// something.
+var aboutSchema = map[string]any{
+	"type":      "string",
+	"maxLength": MaxAboutLength,
+	"description": "Optional. What this action is about, as the owner knows it: the order, invoice or ticket number, " +
+		"such as \"Order 1042\". Shown to the owner if the call is held. Never a person's name, email or phone.",
+}
+
+var reasonSchema = map[string]any{
+	"type":      "string",
+	"maxLength": MaxReasonLength,
+	"description": "Optional. Why, in a few words, such as \"arrived broken, photo attached\". Shown to the owner " +
+		"if the call is held, as your words. Never a person's name or contact details.",
+}
+
 func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 	a.seeClient(ctx)
 	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
@@ -524,6 +561,9 @@ func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 			props = map[string]any{}
 		}
 		props[OperationArg] = operationSchema
+		if !t.ReadOnly {
+			props[AboutArg], props[ReasonArg] = aboutSchema, reasonSchema
+		}
 		if t.Case != nil && !t.ReadOnly {
 			props[RequestArg] = requestSchema
 		}
@@ -576,26 +616,45 @@ func (a *agent) tool(ctx context.Context, name string) (Tool, error) {
 	return Tool{}, mcp.UnknownTool(name)
 }
 
-// splitArgs takes kiff_operation_id out of the tool's arguments.
-func splitArgs(raw json.RawMessage) (map[string]any, string, error) {
+// splitArgs takes kiff_operation_id, kiff_about and kiff_reason out of the
+// tool's arguments.
+func splitArgs(raw json.RawMessage) (map[string]any, string, TafWords, error) {
 	args := map[string]any{}
 	if len(raw) > 0 && string(raw) != "null" {
 		dec := json.NewDecoder(strings.NewReader(string(raw)))
 		dec.UseNumber()
 		if err := dec.Decode(&args); err != nil {
-			return nil, "", errors.New("arguments must be a JSON object")
+			return nil, "", TafWords{}, errors.New("arguments must be a JSON object")
 		}
 	}
-	op := ""
-	if v, ok := args[OperationArg]; ok {
-		s, ok := v.(string)
+	var texts [3]string
+	for i, name := range []string{OperationArg, AboutArg, ReasonArg} {
+		v, ok := args[name]
 		if !ok {
-			return nil, "", errors.New(OperationArg + " must be a string")
+			continue
 		}
-		op = strings.TrimSpace(s)
-		delete(args, OperationArg)
+		delete(args, name)
+		s, ok := v.(string)
+		if !ok && name == OperationArg {
+			return nil, "", TafWords{}, errors.New(name + " must be a string")
+		}
+		// The taf's words only show to the owner: one that isn't text is
+		// dropped, and the call goes on.
+		texts[i] = strings.TrimSpace(s)
 	}
-	return args, op, nil
+	return args, texts[0], TafWords{About: texts[1], Reason: texts[2]}, nil
+}
+
+type tafWordsKey struct{}
+
+// withTafWords has the proposals made under ctx carry w.
+func withTafWords(ctx context.Context, w TafWords) context.Context {
+	return context.WithValue(ctx, tafWordsKey{}, w)
+}
+
+func tafWordsFrom(ctx context.Context) TafWords {
+	w, _ := ctx.Value(tafWordsKey{}).(TafWords)
+	return w
 }
 
 func invalid(msg string) error { return &mcp.RPCError{Code: -32602, Message: msg} }
@@ -687,7 +746,7 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	if err != nil {
 		return nil, "", err
 	}
-	args, op, err := splitArgs(raw)
+	args, op, words, err := splitArgs(raw)
 	if err == nil && t.Paused != "" && !t.ReadOnly {
 		// Its verify read didn't check out: nothing is sent through it until
 		// the owner resumes it (verify.go). Nothing is recorded or drawn.
@@ -747,7 +806,8 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	}
 	// The work below must finish even if the agent disconnects: a
 	// decision or a forward without its record is the failure to avoid.
-	work := context.WithoutCancel(ctx)
+	// The taf's words go with this call's proposal, a retry's included.
+	work := withTafWords(context.WithoutCancel(ctx), words)
 	if !created {
 		out, err = a.retry(work, t, in, params)
 	} else {
@@ -765,9 +825,11 @@ func operationReused(op string) json.RawMessage {
 			Reasons: []string{ReasonOperationIDReused}, Retry: "new_call"})
 }
 
-func (a *agent) proposal(t Tool, in invocation.Invocation, params map[string]any, body json.RawMessage) kiffapi.Proposal {
+func (a *agent) proposal(ctx context.Context, t Tool, in invocation.Invocation, params map[string]any, body json.RawMessage) kiffapi.Proposal {
+	words := tafWordsFrom(ctx)
 	p := kiffapi.Proposal{ID: in.Key, Domain: Domain, EntityID: in.Key, EntityType: "ToolCall",
-		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant}
+		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant,
+		TafAbout: words.About, TafReason: words.Reason}
 	if t.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: t.Audience, Tool: t.UpstreamTool, Arguments: body}
 	}
@@ -790,7 +852,7 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 	if reason, msg, unit := a.checkUnit(ctx, t, params, in.Arguments); reason != "" {
 		blocked := maps.Clone(params)
 		blocked[UnitParam] = unit
-		if _, err := a.g.API.Decide(ctx, a.key, a.proposal(t, in, blocked, forwardArgs(t, in))); err != nil && a.g.Logger != nil {
+		if _, err := a.g.API.Decide(ctx, a.key, a.proposal(ctx, t, in, blocked, forwardArgs(t, in))); err != nil && a.g.Logger != nil {
 			a.g.Logger.WarnContext(ctx, "gateway: a call refused for its unit was not recorded by KIFF",
 				slog.String("invocation", in.Key), slog.String("err", err.Error()))
 		}
@@ -806,7 +868,7 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 // same proposal never draws twice.
 func (a *agent) decided(ctx context.Context, t Tool, in invocation.Invocation, params map[string]any, from []invocation.State) (json.RawMessage, error) {
 	body := forwardArgs(t, in)
-	d, err := a.g.API.Decide(ctx, a.key, a.proposal(t, in, params, body))
+	d, err := a.g.API.Decide(ctx, a.key, a.proposal(ctx, t, in, params, body))
 	if err != nil {
 		if in.State == invocation.StateHeld {
 			c := callOf(in)

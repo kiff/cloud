@@ -158,6 +158,13 @@ type DecisionRow struct {
 	OnArg  string      `json:"on_arg,omitempty"`
 	OnHash string      `json:"on_hash,omitempty"`
 
+	// About is what the call is about, in the taf's own words, as the
+	// gateway's kiff_about sent it ("Order 1042"): a business reference,
+	// one plain line, for the owner's Record to show and search. Kept
+	// beside the decision (callabout), never in its record, so it is no
+	// part of any receipt and can be erased. Absent when none.
+	About string `json:"about,omitempty"`
+
 	// TrialDraft is the draft whose trial made the call (kiff/tafs#173):
 	// sent, and decided on the trial's own Cards. Empty for every other
 	// call.

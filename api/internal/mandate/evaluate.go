@@ -104,6 +104,12 @@ type Request struct {
 	// says: the hold is theirs ("asked by"), and they may never answer it.
 	// It takes no part in the decision or the fingerprint.
 	AskedBy string `json:",omitempty"`
+	// TafAbout and TafReason are the taf's own words about the call: what
+	// it's about ("Order 1042") and why, already one plain line each. Kept
+	// on a held call for its owner to read as the taf's; they take no part
+	// in the decision or the fingerprint.
+	TafAbout  string `json:",omitempty"`
+	TafReason string `json:",omitempty"`
 	// Observe is true when the tenant is in observe mode. The caller
 	// executes anyway, so an action outside a Card is reported as
 	// owner_required but not held: there is nothing for an owner to

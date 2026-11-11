@@ -768,7 +768,10 @@ var DefaultRules = map[string]membership.Capability{
 	"PUT /v1/me/billing-budget":        membership.CapBilling,
 	"GET /v1/me/export":                membership.CapExport,
 	"POST /v1/me/delete":               membership.CapDelete,
-	"POST /v1/account-deletions":       membership.CapDelete,
+	// Erasing the taf's words about one call (what a customer may have
+	// written): the account's admins, as for deleting the account.
+	"DELETE /v1/me/calls/{proposal_id}/words": membership.CapDelete,
+	"POST /v1/account-deletions":              membership.CapDelete,
 	// This public route authenticates only the deletion's signed intent,
 	// which KIFF accepted from the phone (account deletion). It is registered
 	// outside the session mux and the handler reads no identity: this entry

@@ -31,6 +31,7 @@ var cloudMetaErased = []string{
 	// Which call each operation is bound to, and its permit id.
 	"permit_bindings",
 	"permit_targets",
+	"call_about", // what each call is about, in the taf's words
 	"mandate_exception_entries",
 	"mandate_exceptions",
 	"mandate_revisions",
