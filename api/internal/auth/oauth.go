@@ -70,6 +70,10 @@ var runtimeRoutes = []string{
 	// A removed taf's runtime archives the key's own agent, its last act
 	// with the key: it only takes authority away, and revokes the key.
 	"POST /v1/agents/self/archive",
+	// A taf hands a step it may never take to its owner ("Your step"), and
+	// lists its own that wait. The handler keeps both to the key's agent.
+	"POST /v1/me/handoffs",
+	"GET /v1/me/handoffs",
 }
 
 // OAuthRouteAllowed reports whether r may be served to an OAuth access
@@ -135,6 +139,13 @@ func GatewayRouteAllowed(r *http.Request, id Identity) bool {
 	// used AI, once, for its credits. The handler keeps it only for the
 	// key's own agent, and it grants nothing.
 	if r.Method == http.MethodPut && postOnOne(path, "/v1/me/runs/", "/usage") {
+		return true
+	}
+	// "Your step": the runtime reads a step its taf handed to the owner,
+	// and names its read of the vendor after "Done". The handler serves
+	// only the key's own agent's; a hand-off grants nothing.
+	if (r.Method == http.MethodGet && postOnOne(path, "/v1/me/handoffs/", "")) ||
+		(r.Method == http.MethodPost && postOnOne(path, "/v1/me/handoffs/", "/check")) {
 		return true
 	}
 	return slices.Contains(runtimeRoutes, r.Method+" "+path)

@@ -68,6 +68,10 @@ var cloudMetaPruned = []pruneStep{
 	// What a call was about, once it's older than the cutoff: its Record
 	// entry goes with the account's schema's history, and this with it.
 	{"call_about", `DELETE FROM cloud_meta.call_about WHERE tenant_id = $1 AND created_at < $2`},
+	// A step handed to the owner, once it closed with its settled receipt
+	// saved and is older than the cutoff: its receipts keep only a hash of
+	// its words, so they still verify.
+	{"handoffs", `DELETE FROM cloud_meta.handoffs WHERE tenant_id = $1 AND settled_at IS NOT NULL AND created_at < $2`},
 	// A "not sure" mark once it has run out.
 	{"happened_checking", `DELETE FROM cloud_meta.happened_checking c WHERE c.tenant_id = $1 AND c.until_at < $2`},
 	// "Did this happen?" answers once their call no longer counts on a Card.

@@ -32,6 +32,7 @@ var cloudMetaErased = []string{
 	"permit_bindings",
 	"permit_targets",
 	"call_about", // what each call is about, in the taf's words
+	"handoffs",   // steps a taf handed to its owner: their words, and who answered
 	"mandate_exception_entries",
 	"mandate_exceptions",
 	"mandate_revisions",

@@ -238,6 +238,11 @@ var PhoneSessionRules = []string{
 	"POST /v1/me/card-exceptions/{id}/approve-once",
 	"POST /v1/me/card-exceptions/{id}/reject",
 	"POST /v1/me/card-exceptions/{id}/change-card",
+	// "Your step": the steps a taf handed to its owner, and the answer,
+	// "done" or "skipped", signed with kiff.handoff.v1 by the device key.
+	"GET /v1/me/handoffs",
+	"GET /v1/me/handoffs/{id}",
+	"POST /v1/me/handoffs/{id}/answer",
 	"GET /v1/receipts/{trace_id}",
 	// Whether this phone signed a request another KIFF service received
 	// (kiff/tafs#206): the session forwarded with the signature, never a
@@ -345,6 +350,13 @@ var RuntimeKeyRules = map[string]KeyScope{
 	// An agent withdraws one of its own held calls when its run is
 	// cancelled; the handler checks the call is the agent's.
 	"POST /v1/me/holds/{id}/withdraw": AgentKeyOnly,
+	// A taf hands a step it may never take to its owner ("Your step"),
+	// reads how it stands, and names its read of the vendor after "Done".
+	// The handler keeps each to the key's own agent; only a person answers.
+	"POST /v1/me/handoffs":            AgentKeyOnly,
+	"GET /v1/me/handoffs":             AgentKeyOnly,
+	"GET /v1/me/handoffs/{id}":        AgentKeyOnly,
+	"POST /v1/me/handoffs/{id}/check": AgentKeyOnly,
 	// A taf's runtime archives the key's own agent when the taf is
 	// removed, its last act with the key: it only takes authority away,
 	// and archiving revokes the key too. It names no agent: the key's is
@@ -633,7 +645,10 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/approvals/{id}/deny":                  membership.CapHoldsAnswer,
 	"POST /v1/me/card-exceptions/{id}/approve-once": membership.CapHoldsAnswer,
 	"POST /v1/me/card-exceptions/{id}/reject":       membership.CapHoldsAnswer,
-	"POST /v1/me/card-exceptions/{id}/change-card":  membership.CapCardsManage,
+	// "Your step": answering a step handed to the owner is answering for
+	// the taf, as a hold is.
+	"POST /v1/me/handoffs/{id}/answer":             membership.CapHoldsAnswer,
+	"POST /v1/me/card-exceptions/{id}/change-card": membership.CapCardsManage,
 
 	// Cards and the agents that hold them.
 	"POST /v1/me/mandates":                          membership.CapCardsManage,
@@ -751,6 +766,8 @@ var DefaultRules = map[string]membership.Capability{
 	// Agent keys only (RuntimeKeyRules); a person's session is refused by
 	// the handler, which needs a key bound to an agent.
 	"POST /v1/me/holds/{id}/withdraw":       membership.CapRead,
+	"POST /v1/me/handoffs":                  membership.CapRead,
+	"POST /v1/me/handoffs/{id}/check":       membership.CapRead,
 	"PUT /v1/me/runs/{run}/usage":           membership.CapRead,
 	"GET /v1/me/credits/allowance":          membership.CapRead,
 	"POST /v1/agents/self/archive":          membership.CapRead,

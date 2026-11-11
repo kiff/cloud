@@ -99,7 +99,42 @@ func (a Answer) Message() []byte {
 // VerifyAnswer checks a base64 DER ECDSA signature over a.Message() with
 // the device key, and that signed_at is within MaxAnswerSkew of now.
 func VerifyAnswer(keyDER []byte, a Answer, sigB64 string, now time.Time) error {
-	at, err := time.Parse(time.RFC3339, a.SignedAt)
+	return verifySigned(keyDER, a.Message(), a.SignedAt, sigB64, now)
+}
+
+// HandoffAnswer is what a phone signs when it answers a step a taf handed
+// to its owner ("Your step"): "done" or "skipped".
+type HandoffAnswer struct {
+	TenantID  string
+	HandoffID string
+	Answer    string // done | skipped
+	Version   int    // the hand-off's version, 1 until its shape changes
+	SignedAt  string // RFC 3339, as sent
+}
+
+// HandoffMessage names the hand-off answer's message, its first line.
+const HandoffMessage = "kiff.handoff.v1"
+
+// Message is the exact text KIFF verifies, one field per line:
+//
+//	kiff.handoff.v1
+//	<tenant_id>
+//	<handoff_id>
+//	<answer>               done | skipped
+//	<version>
+//	<signed_at>
+func (a HandoffAnswer) Message() []byte {
+	return []byte(strings.Join([]string{HandoffMessage, a.TenantID, a.HandoffID, a.Answer, strconv.Itoa(a.Version), a.SignedAt}, "\n"))
+}
+
+// VerifyHandoffAnswer checks a base64 DER ECDSA signature over a.Message()
+// with the device key, and that signed_at is within MaxAnswerSkew of now.
+func VerifyHandoffAnswer(keyDER []byte, a HandoffAnswer, sigB64 string, now time.Time) error {
+	return verifySigned(keyDER, a.Message(), a.SignedAt, sigB64, now)
+}
+
+func verifySigned(keyDER, message []byte, signedAt, sigB64 string, now time.Time) error {
+	at, err := time.Parse(time.RFC3339, signedAt)
 	if err != nil {
 		return ErrAnswerSignedAt
 	}
@@ -114,7 +149,7 @@ func VerifyAnswer(keyDER []byte, a Answer, sigB64 string, now time.Time) error {
 	if err != nil || len(sig) == 0 {
 		return ErrAnswerSignature
 	}
-	digest := sha256.Sum256(a.Message())
+	digest := sha256.Sum256(message)
 	if !ecdsa.VerifyASN1(k, digest[:], sig) {
 		return ErrAnswerSignature
 	}
