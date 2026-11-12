@@ -99,6 +99,14 @@ type Tool struct {
 	// Status is the profile's read that finds the operation at the vendor
 	// by its operation id, or nil (status.go).
 	Status *StatusRead
+	// Claim is the kind of action the profile marks this write as
+	// (dispute_answer, reminder): one agent at a time acts on one object
+	// for it (claim.go). "" for none.
+	Claim string
+	// ClaimRelated is where the object of a related kind of action sits in
+	// the amount lookup's read (a dispute's charge, for refunds already
+	// made on it), or nil (claim.go).
+	ClaimRelated *ClaimRelated
 	// Probation: a money operation whose profile no test call proved; its
 	// first sent calls are the owner's to confirm (connection profiles: probation).
 	Probation bool
@@ -222,6 +230,7 @@ type Store interface {
 	BindExecution(ctx context.Context, key string, binding json.RawMessage) (bool, error)
 	RecordVerify(ctx context.Context, key string, evidence json.RawMessage) error
 	MarkProbation(ctx context.Context, key string) error
+	ClaimObject(ctx context.Context, tenant, kind, object, agent, key string, lease time.Duration) (invocation.ObjectClaim, error)
 	RecoverStale(ctx context.Context, key string, staleBefore time.Time) (int64, error)
 	PurgeResults(ctx context.Context, before time.Time) (int64, error)
 	Pending(ctx context.Context, credentialID string, since time.Time, page *invocation.PendingPage, limit int) ([]invocation.Invocation, error)
@@ -430,6 +439,9 @@ type agent struct {
 	// trialDraft is set once KIFF said the KIFF-Trial draft is being tried
 	// (kiff/tafs#173): its calls are sent, decided on its trial Cards.
 	trialDraft string
+	// related is the related object the call's amount lookup named (a
+	// dispute's charge), for ClaimRelated; "" for none.
+	related string
 }
 
 // authenticate checks the bearer for the URL it was called on. An OAuth
@@ -816,6 +828,9 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	} else {
 		out, err = a.first(work, t, in, params)
 	}
+	if err == nil {
+		out = a.withRelated(work, t, out)
+	}
 	return withTrialDraft(withResource(out, t), a.trialDraft), in.Key, err
 }
 
@@ -860,6 +875,11 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 				slog.String("invocation", in.Key), slog.String("err", err.Error()))
 		}
 		return a.finish(ctx, in.Key, from, invocation.StateRefused, invocation.Update{Message: msg, Reasons: []string{reason}}, nil)
+	}
+	// Another agent acting on the same object for the same kind of action:
+	// nothing is decided, drawn or sent (claim.go).
+	if out, held, err := a.claimObject(ctx, t, in, params, from); held || err != nil {
+		return out, err
 	}
 	if a.governsRefund(t) {
 		return a.refundFirst(ctx, t, in, params, from)
@@ -1222,11 +1242,11 @@ func (a *agent) replayed(ctx context.Context, key string) (json.RawMessage, invo
 		c := callOf(in)
 		res, asked, found := takeWait(in.Result)
 		if found && asked != nil {
-			// Only a planque connection's tool, for its own grant, makes a
-			// run wait (the slow-tools design); any other tool's say-so is
-			// dropped with the keys.
-			if t, err := a.tool(ctx, in.Tool); err == nil && connectionGrant(t, a.g.Relays, a.me.TenantID) == asked.Grant {
-				c.Wait = asked
+			// Only a planque connection's tool, for its own grant, or Coach's
+			// drive tools on the account's own control server, make a run wait
+			// (allowedWait); any other tool's say-so is dropped with the keys.
+			if t, err := a.tool(ctx, in.Tool); err == nil {
+				c.Wait = allowedWait(t, asked, a.g.Relays, a.me.TenantID)
 			}
 		}
 		return withCall(res, c), in, nil
@@ -1306,7 +1326,7 @@ type PostgresCatalog struct{ Pool *pgxpool.Pool }
 
 func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, error) {
 	rows, err := c.Pool.Query(ctx, `SELECT name, title, description, input_schema, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
-		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format,
+		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format, control,
 		COALESCE(NULLIF(t.paused_reason, ''),
 			(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
 			             ELSE 'a check of an earlier call didn''t hold' END
@@ -1326,7 +1346,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 		var t Tool
 		var schema, fixed, unit, amount, profile []byte
 		if err := rows.Scan(&t.Name, &t.Title, &t.Description, &schema, &t.UpstreamURL, &t.UpstreamTool, &t.AmountArg, &t.AmountUnit, &t.AmountScale, &t.IdempotencyArg, &t.ReadOnly,
-			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat,
+			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat, &t.Control,
 			&t.Paused, &profile); err != nil {
 			return nil, err
 		}
@@ -1335,7 +1355,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 			if err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}
-			t.Verify, t.Status, t.Probation, t.Money = f.Verify, f.Status, f.Probation, f.Money
+			t.Verify, t.Status, t.Probation, t.Money, t.Claim, t.ClaimRelated = f.Verify, f.Status, f.Probation, f.Money, f.Claim, f.ClaimRelated
 			if t.Case, t.NoEffect, err = profileCase(profile, t.Name); err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}

@@ -404,7 +404,7 @@ func newRig(t *testing.T) *rig {
 	if err := invocation.ApplySchema(context.Background(), pool); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := pool.Exec(context.Background(), `TRUNCATE gateway.invocations, gateway.dedup_slots, gateway.agent_clients`); err != nil {
+	if _, err := pool.Exec(context.Background(), `TRUNCATE gateway.invocations, gateway.dedup_slots, gateway.agent_clients, gateway.object_claims`); err != nil {
 		t.Fatal(err)
 	}
 	r := &rig{pool: pool, api: newFakeAPI(), tool: &fakeTool{}, store: invocation.NewStore(pool)}

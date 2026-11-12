@@ -585,3 +585,97 @@ func (s *Store) BindExecution(ctx context.Context, key string, binding json.RawM
 	}
 	return tag.RowsAffected() == 1, nil
 }
+
+// ObjectClaim is who holds an object for one kind of action
+// (gateway.object_claims): Won when the asking agent holds it now; else
+// the holding agent, its call and that call's state.
+type ObjectClaim struct {
+	Won    bool
+	Agent  string
+	Holder string
+	State  State
+}
+
+// ClaimObject takes the claim on (tenant, kind, object) for agent's call
+// key. The asking agent wins when no other agent's claim counts: one
+// counts while any of its holders' calls is deciding, forwarding or held,
+// taken within lease (a held call until its hold expires, when it has one).
+// The same agent wins too, and its call joins the holders, so its own later
+// call never hands the object away while an earlier one still counts.
+// Serialized per object, so two agents asking at once can't both win.
+func (s *Store) ClaimObject(ctx context.Context, tenant, kind, object, agent, key string, lease time.Duration) (ObjectClaim, error) {
+	if tenant == "" || kind == "" || object == "" || agent == "" || key == "" {
+		return ObjectClaim{}, errors.New("invocation: an object claim names its tenant, kind, object, agent and call")
+	}
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return ObjectClaim{}, err
+	}
+	defer tx.Rollback(ctx)
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended('object_claim' || chr(10) || $1 || chr(10) || $2 || chr(10) || $3, 0))`,
+		tenant, kind, object); err != nil {
+		return ObjectClaim{}, err
+	}
+	now := s.now().UTC()
+	rows, err := tx.Query(ctx, `SELECT c.agent_id, c.holder, c.taken_at, i.state, i.hold_expires_at
+		FROM gateway.object_claims c LEFT JOIN gateway.invocations i ON i.key = c.holder
+		WHERE c.tenant_id = $1 AND c.kind = $2 AND c.object = $3 ORDER BY c.taken_at, c.holder`, tenant, kind, object)
+	if err != nil {
+		return ObjectClaim{}, err
+	}
+	// The holders whose call still counts: all of one agent's, while any does.
+	// Never nil: holder = ANY(NULL) would keep every row.
+	live := []string{}
+	for rows.Next() {
+		var cur ObjectClaim
+		var takenAt time.Time
+		var state *string
+		var holdExpires *time.Time
+		if err := rows.Scan(&cur.Agent, &cur.Holder, &takenAt, &state, &holdExpires); err != nil {
+			rows.Close()
+			return ObjectClaim{}, err
+		}
+		if state == nil || !claimCounts(State(*state), takenAt, holdExpires, now, lease) {
+			continue
+		}
+		if cur.Agent != agent {
+			rows.Close()
+			cur.State = State(*state)
+			return cur, nil
+		}
+		live = append(live, cur.Holder)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return ObjectClaim{}, err
+	}
+	// Holders that no longer count go, another agent's included: the claim is this agent's now.
+	if _, err := tx.Exec(ctx, `DELETE FROM gateway.object_claims
+		WHERE tenant_id = $1 AND kind = $2 AND object = $3 AND NOT (holder = ANY($4))`, tenant, kind, object, live); err != nil {
+		return ObjectClaim{}, err
+	}
+	if _, err := tx.Exec(ctx, `INSERT INTO gateway.object_claims (tenant_id, kind, object, agent_id, holder, taken_at)
+		VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (tenant_id, kind, object, holder) DO NOTHING`,
+		tenant, kind, object, agent, key, now); err != nil {
+		return ObjectClaim{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return ObjectClaim{}, err
+	}
+	return ObjectClaim{Won: true, Agent: agent, Holder: key, State: StateDeciding}, nil
+}
+
+// claimCounts reports whether a claim whose holder's call is in state,
+// taken at taken, still holds the object at now.
+func claimCounts(state State, taken time.Time, holdExpires *time.Time, now time.Time, lease time.Duration) bool {
+	switch state {
+	case StateHeld:
+		if holdExpires != nil {
+			return holdExpires.After(now)
+		}
+		return taken.Add(lease).After(now)
+	case StateDeciding, StateForwarding:
+		return taken.Add(lease).After(now)
+	}
+	return false
+}

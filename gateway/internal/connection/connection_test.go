@@ -823,6 +823,17 @@ func TestControlServer(t *testing.T) {
 	if !strings.Contains(r.api.applied["owner-a"], "    setup_reader: [tools.taf_task]\n") {
 		t.Fatalf("setup_reader without the control server's tool:\n%s", r.api.applied["owner-a"])
 	}
+	// The gateway reads it back as control at call time: what lets Coach's
+	// drive tools park a run (allowedWait) depends on it.
+	tools, err := gateway.PostgresCatalog{Pool: r.store.Pool}.Tools(context.Background(), "tenant-a")
+	if err != nil {
+		t.Fatalf("catalog: %v", err)
+	}
+	for _, tool := range tools {
+		if tool.Control != (tool.Name == "taf_task") {
+			t.Fatalf("catalog reads %s as control=%v", tool.Name, tool.Control)
+		}
+	}
 	// It stays in verify mode.
 	if status, body := r.do(t, "owner-a", http.MethodPut, "/v1/connections/taf_task/mode",
 		map[string]string{"mode": "relay", "audience": "https://evil.example/mcp", "url": open.URL}); status != http.StatusForbidden {

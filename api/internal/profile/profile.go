@@ -95,6 +95,17 @@ type Operation struct {
 	// name (a customer's name, an invoice's number), for the words KIFF
 	// asks with; it needs a resource.
 	LabelRead *Read `json:"label_read,omitempty"`
+	// Claim marks a write as a kind of action (dispute_answer, reminder)
+	// that one agent at a time makes on one object, its resource: a second
+	// agent's call of the same kind on the same object is refused while the
+	// first agent's call is being decided, held or sent (the gateway's
+	// object claims). It needs a resource.
+	Claim string `json:"claim,omitempty"`
+	// ClaimRelated names a related object the agent is shown what was
+	// already done on: {kind: "refund", path}, the path in the read the
+	// operation's amount lookup makes (a dispute's charge). It shows, and
+	// never blocks.
+	ClaimRelated *ClaimRelated `json:"claim_related,omitempty"`
 	// Case makes a refund go through KIFF's governed path (thune): the
 	// reads that give its facts, where the call names its charge.
 	Case *Case `json:"case,omitempty"`
@@ -232,6 +243,12 @@ type StatusRead struct {
 	None  string `json:"none,omitempty"`
 }
 
+// ClaimRelated is an operation's claim_related.
+type ClaimRelated struct {
+	Kind string `json:"kind"`
+	Path string `json:"path"`
+}
+
 // NoEffect lists the vendor statuses that mean nothing happened, with the
 // vendor's docs saying so.
 type NoEffect struct {
@@ -256,8 +273,9 @@ func (o Operation) Money() bool {
 }
 
 var (
-	toolName = regexp.MustCompile(`^[A-Za-z0-9_.-]{1,128}$`)
-	unitCode = regexp.MustCompile(`^[A-Z]{3}$`)
+	claimKind = regexp.MustCompile(`^[a-z][a-z_]{0,31}$`)
+	toolName  = regexp.MustCompile(`^[A-Za-z0-9_.-]{1,128}$`)
+	unitCode  = regexp.MustCompile(`^[A-Z]{3}$`)
 	// pathExpr is a path in a vendor's answer, with [n] for an array
 	// index; argPath is one in the call's own arguments, which the
 	// gateway follows by name only.
@@ -349,10 +367,16 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 	if strings.TrimSpace(o.Title) == "" || len(o.Title) > 80 {
 		return errors.New("title says what it does, 1 to 80 characters")
 	}
+	if o.Claim != "" && (!claimKind.MatchString(o.Claim) || o.Resource == nil) {
+		return errors.New("claim is a lowercase kind of action (letters and _, up to 32) on an operation with a resource")
+	}
+	if r := o.ClaimRelated; r != nil && (o.Kind != "write" || r.Kind != "refund" || !pathExpr.MatchString(r.Path)) {
+		return errors.New(`claim_related is {kind: "refund", path} on a write: the dotted path of the related charge in its amount lookup's read`)
+	}
 	switch o.Kind {
 	case "read":
-		if o.Effect != "" || o.Amount != nil || o.VerifyRead != nil || o.Marker != nil || o.StatusRead != nil || o.NoEffect != nil {
-			return errors.New("a read has no effect, amount, verify_read, marker, status_read or no_effect")
+		if o.Effect != "" || o.Amount != nil || o.VerifyRead != nil || o.Marker != nil || o.StatusRead != nil || o.NoEffect != nil || o.Claim != "" {
+			return errors.New("a read has no effect, amount, verify_read, marker, status_read, no_effect or claim")
 		}
 	case "write":
 		switch o.Effect {

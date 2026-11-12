@@ -70,6 +70,10 @@ type profileFacts struct {
 	// Status is its status read, or nil: also nil when the profile says
 	// the vendor gives no way to check (status_read none).
 	Status *StatusRead
+	// Claim is the kind of action the profile marks a write as, or "".
+	Claim string
+	// ClaimRelated is its claim_related, or nil.
+	ClaimRelated *ClaimRelated
 	// Probation: a money operation no test call proved.
 	Probation bool
 	// Money: the operation moves or records money.
@@ -81,10 +85,14 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 	var p struct {
 		TestProven bool `json:"test_proven"`
 		Operations []struct {
-			Tool       string      `json:"tool"`
-			Effect     string      `json:"effect"`
-			VerifyRead *VerifyRead `json:"verify_read"`
-			StatusRead *StatusRead `json:"status_read"`
+			Tool       string        `json:"tool"`
+			Effect     string        `json:"effect"`
+			VerifyRead *VerifyRead   `json:"verify_read"`
+			StatusRead *StatusRead   `json:"status_read"`
+			Kind       string        `json:"kind"`
+			Claim      string        `json:"claim"`
+			Related    *ClaimRelated `json:"claim_related"`
+			Resource   *struct{}     `json:"resource"`
 			Marker     *struct {
 				Field string `json:"field"`
 			} `json:"marker"`
@@ -103,7 +111,15 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 			if status != nil && (status.Tool == "" || status.Match == "") {
 				status = nil
 			}
-			return profileFacts{Verify: o.VerifyRead, Status: status, Probation: money && !p.TestProven, Money: money}, nil
+			claim := ""
+			if o.Kind == "write" && o.Resource != nil && claimKind.MatchString(o.Claim) {
+				claim = o.Claim
+			}
+			related := o.Related
+			if related != nil && (o.Kind != "write" || related.Kind != RelatedRefund || related.Path == "") {
+				related = nil
+			}
+			return profileFacts{Verify: o.VerifyRead, Status: status, Probation: money && !p.TestProven, Money: money, Claim: claim, ClaimRelated: related}, nil
 		}
 	}
 	return profileFacts{}, nil

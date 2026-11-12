@@ -252,3 +252,22 @@ ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS connection_refusal text
 -- What the read found: which read, the vendor record's id, when, and the
 -- profile revision. NULL: not found that way.
 ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS status_evidence jsonb;
+
+-- Object claims (one object, one agent): which agent is acting on an
+-- object, for one kind of action the profile marks (its operation's
+-- claim, such as dispute_answer or reminder), keyed by the object the
+-- call names (its resource). One row per call of that agent's that holds
+-- it: the claim counts while any of them is being decided, held for the
+-- owner or being sent, within its lease, so the agent's own later call
+-- never hands the object away while an earlier one still waits. Once none
+-- counts, or the lease passes, the next agent takes it. Refunds keep
+-- thune's own claims (gateway.thune_claims).
+CREATE TABLE IF NOT EXISTS gateway.object_claims (
+    tenant_id text        NOT NULL,
+    kind      text        NOT NULL,
+    object    text        NOT NULL,
+    agent_id  text        NOT NULL,
+    holder    text        NOT NULL,
+    taken_at  timestamptz NOT NULL,
+    PRIMARY KEY (tenant_id, kind, object, holder)
+);

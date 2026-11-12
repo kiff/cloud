@@ -70,7 +70,16 @@ func (a *agent) readAmount(ctx context.Context, t Tool, params map[string]any, c
 	if err != nil {
 		return 0, "the read to check it failed"
 	}
-	return amountIn(out, l.Path)
+	n, why := amountIn(out, l.Path)
+	if why == "" && t.ClaimRelated != nil {
+		// The same read names the related object (a dispute's charge).
+		if v, ok := firstIn(resultDocs(out), t.ClaimRelated.Path); ok {
+			if s, isText := v.(string); isText {
+				a.related = s
+			}
+		}
+	}
+	return n, why
 }
 
 // amountIn is the whole amount at path in a read's result, as unitIn reads a

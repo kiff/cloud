@@ -69,8 +69,9 @@ type Call struct {
 	ResourcePath     string `json:"resource_path,omitempty"`
 	// Wait is what a sent call waits for when its outcome comes later as a
 	// vendor's event (the slow-tools design): only on a forwarded call of a
-	// planque connection's tool that names its own grant. A run pauses on
-	// this, never on the tool's own structured content.
+	// planque connection's tool that names its own grant, or of Coach's
+	// drive tools on the account's own control server (allowedWait). A run
+	// pauses on this, never on the tool's own structured content.
 	Wait *Wait `json:"wait,omitempty"`
 }
 
@@ -134,6 +135,49 @@ func takeWait(raw json.RawMessage) (json.RawMessage, *Wait, bool) {
 	}
 	w.TimeoutS = timeout
 	return out, &w, true
+}
+
+// CoachDriveGrant is the reserved grant a drive's pause waits under
+// (kiff/tafs's drive contract, "When the person touches the app"): while the
+// person has the app, Coach's app_look or app_act answers with a wait, and
+// Coach's run is parked until Continue or the drive's end answers it.
+const CoachDriveGrant = "coach-drive"
+
+// maxDriveWaitS bounds a drive's wait: a drive with nothing done for 15
+// minutes ends as idle, so its pause never needs longer.
+const maxDriveWaitS = 900
+
+// coachDriveTools are the only tools that may park a run under
+// CoachDriveGrant: Coach's look and act at the account's own control server.
+var coachDriveTools = map[string]bool{"app_look": true, "app_act": true}
+
+// allowedWait is the wait a call of t may make its run take, or nil, for
+// the caller's tenant:
+//   - CoachDriveGrant only from Coach's app_look or app_act on the account's
+//     own control server (verify mode, where the server checks every
+//     permit), keyed "<tenant>:<drive>" for the caller's own tenant, and
+//     never longer than maxDriveWaitS;
+//   - any other grant only from a planque connection's tool naming its own
+//     grant (connectionGrant).
+//
+// Anything else is dropped, as the tool's say-so alone never parks a run.
+func allowedWait(t Tool, w *Wait, relays []string, tenant string) *Wait {
+	if w == nil || tenant == "" {
+		return nil
+	}
+	if w.Grant == CoachDriveGrant {
+		drive, ok := strings.CutPrefix(w.Key, tenant+":")
+		if !t.Control || t.Mode != ModeVerify || !coachDriveTools[t.UpstreamTool] || !ok || drive == "" {
+			return nil
+		}
+		parked := *w
+		parked.TimeoutS = min(parked.TimeoutS, maxDriveWaitS)
+		return &parked
+	}
+	if g := connectionGrant(t, relays, tenant); g != "" && g == w.Grant {
+		return w
+	}
+	return nil
 }
 
 // connectionGrant is the planque grant t belongs to: a relay tool whose

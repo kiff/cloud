@@ -520,3 +520,51 @@ func (s *Store) AccountOf(ctx context.Context, tenant, charge string) (account s
 	}
 	return account, err == nil, err
 }
+
+// MadeRefund is a refund on a charge that counts (pending or succeeded):
+// its amount in the charge's minor units and currency, whether KIFF made
+// it, and which agent's call when it did.
+type MadeRefund struct {
+	Amount   int64
+	Currency string
+	Status   string
+	// Agent is the agent whose call KIFF made it for; "" for one made
+	// outside KIFF.
+	Agent string
+	// InFlight: KIFF sent it, or lost its answer, and the processor doesn't
+	// list it yet.
+	InFlight bool
+}
+
+// RefundsMade lists the refunds that count on a charge, by its id in any of
+// the account's processor accounts, as thune last saw them, and KIFF's own
+// refunds on it still in flight: what an agent acting on the same charge
+// for another reason (a dispute) is shown.
+func (s *Store) RefundsMade(ctx context.Context, tenant, object string) ([]MadeRefund, error) {
+	rows, err := s.pool.Query(ctx, `
+		SELECT r.amount, r.status, COALESCE(NULLIF(a.currency, ''), ''), COALESCE(i.agent_id, ''), false
+		  FROM gateway.thune_refunds r
+		  LEFT JOIN gateway.thune_adjustments a ON a.key = r.marker AND r.marker <> ''
+		  LEFT JOIN gateway.invocations i ON i.key = r.marker AND r.marker <> ''
+		 WHERE r.tenant_id = $1 AND r.object = $2 AND r.status IN ($3, $4)
+		UNION ALL
+		SELECT a.requested, $3, a.currency, COALESCE(i.agent_id, ''), true
+		  FROM gateway.thune_adjustments a
+		  LEFT JOIN gateway.invocations i ON i.key = a.key
+		 WHERE a.tenant_id = $1 AND a.object = $2 AND a.execution IN ($5, $6)
+		   AND NOT EXISTS (SELECT 1 FROM gateway.thune_refunds r WHERE r.tenant_id = a.tenant_id AND r.marker = a.key)`,
+		tenant, object, RefundPending, RefundSucceeded, ExecSending, ExecUnknown)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []MadeRefund
+	for rows.Next() {
+		var m MadeRefund
+		if err := rows.Scan(&m.Amount, &m.Status, &m.Currency, &m.Agent, &m.InFlight); err != nil {
+			return nil, err
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}

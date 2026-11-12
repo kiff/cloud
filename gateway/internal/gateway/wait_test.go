@@ -89,3 +89,69 @@ func TestOnlyAConnectionToolForItsOwnGrantMakesARunWait(t *testing.T) {
 		}
 	}
 }
+
+// Invariant: only Coach's app_look and app_act on the account's own control server park a run under coach-drive, keyed by the caller's own tenant, for at most 900 seconds.
+// Category: authority
+// Attack: another tool, another connection, or another account's drive answers wait_for {grant: "coach-drive"} to park a run, or to park it for days
+// Refused: the keys are stripped and no wait is written; a drive's wait is cut to 900 seconds
+func TestOnlyCoachsDriveToolsParkARunUnderCoachDrive(t *testing.T) {
+	const planque = "https://planque.example"
+	control := func(upstream string) gateway.Tool {
+		tool := refundTool
+		tool.Control, tool.Mode, tool.UpstreamTool = true, gateway.ModeVerify, upstream
+		tool.UpstreamURL = "https://tafs.example/v1/mcp"
+		tool.Audience = tool.UpstreamURL
+		return tool
+	}
+	drive := func(key string, timeout int) json.RawMessage {
+		b, _ := json.Marshal(map[string]any{
+			"content": []map[string]any{{"type": "text", "text": "The person is using the app."}},
+			"structuredContent": map[string]any{"pending": true, "timeout_s": timeout,
+				"wait_for": map[string]any{"grant": gateway.CoachDriveGrant, "event": "DRIVE_CONTINUE", "key": key, "words": "the person's Continue"}},
+		})
+		return b
+	}
+	notControl := control("app_look")
+	notControl.Control = false
+	sealedControl := control("app_look")
+	sealedControl.Mode = gateway.ModeSealed
+	planqueNamedCoachDrive := refundTool
+	planqueNamedCoachDrive.Mode, planqueNamedCoachDrive.UpstreamURL = gateway.ModeRelay, planque+"/mcp/t1/"+gateway.CoachDriveGrant
+	planqueNamedCoachDrive.Audience = planqueNamedCoachDrive.UpstreamURL
+	for i, tc := range []struct {
+		name    string
+		tool    gateway.Tool
+		answer  json.RawMessage
+		timeout float64 // 0: no wait
+	}{
+		{"Coach's look, its own tenant's drive", control("app_look"), drive("t1:dv_1", 600), 600},
+		{"Coach's act, a wait asked past 900 s", control("app_act"), drive("t1:dv_1", 3600), 900},
+		{"another tool of the control server", control("app_status"), drive("t1:dv_1", 600), 0},
+		{"app_look on a tool that isn't the control server", notControl, drive("t1:dv_1", 600), 0},
+		{"a control tool that isn't in verify mode", sealedControl, drive("t1:dv_1", 600), 0},
+		{"a planque connection naming coach-drive as its own grant", planqueNamedCoachDrive, drive("t1:dv_1", 600), 0},
+		{"another account's drive", control("app_look"), drive("t2:dv_1", 600), 0},
+		{"a drive id with no account", control("app_look"), drive("dv_1", 600), 0},
+		{"the account with no drive", control("app_look"), drive("t1:", 600), 0},
+	} {
+		r := newRig(t)
+		r.gw.Relays = []string{planque + "/"}
+		r.gw.Catalog = catalog{tc.tool}
+		r.tool.answer = tc.answer
+		_, out := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": "issue_refund", "arguments": amount(500, fmt.Sprintf("op-drive-%d", i))})
+		res, _ := out["result"].(map[string]any)
+		meta, _ := res["_meta"].(map[string]any)
+		call, _ := meta[gateway.MetaKey].(map[string]any)
+		if sc, _ := res["structuredContent"].(map[string]any); sc["wait_for"] != nil || sc["pending"] != nil {
+			t.Errorf("%s: the wait keys stayed in the answer: %v", tc.name, sc)
+		}
+		wait, waits := call["wait"].(map[string]any)
+		if waits != (tc.timeout > 0) {
+			t.Errorf("%s: wait = %v, want waits %v (call %v)", tc.name, call["wait"], tc.timeout > 0, call)
+			continue
+		}
+		if waits && (wait["grant"] != gateway.CoachDriveGrant || wait["key"] != "t1:dv_1" || wait["event"] != "DRIVE_CONTINUE" || wait["timeout_s"] != tc.timeout) {
+			t.Errorf("%s: wait = %v", tc.name, wait)
+		}
+	}
+}
