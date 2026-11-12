@@ -84,6 +84,9 @@ type Invocation struct {
 	// ProfileRevision is the connection profile the call was decided
 	// under (connection profiles: a call keeps the profile it was decided under), or nil for a tool without one.
 	ProfileRevision *int64
+	// StatusEvidence is what the profile's status read found when the
+	// call's outcome wasn't known, or nil (kiff/tafs#498).
+	StatusEvidence json.RawMessage
 }
 
 // Call identifies a tool call before it has a key.
@@ -189,14 +192,14 @@ func (s *Store) Pool() *pgxpool.Pool { return s.pool }
 func (s *Store) SetClock(now func() time.Time) { s.now = now }
 
 const cols = `key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments,
-	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence, connection_refusal`
+	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence, connection_refusal, status_evidence`
 
 func scan(row pgx.Row) (Invocation, error) {
 	var in Invocation
 	var args, result []byte
 	err := row.Scan(&in.Key, &in.TenantID, &in.CredentialID, &in.AgentID, &in.Tool, &in.OperationID,
 		&in.ArgsHash, &args, &in.State, &in.ExceptionID, &in.ReviewURL, &in.Message, &in.Reasons, &result,
-		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence, &in.ConnectionRefusal)
+		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence, &in.ConnectionRefusal, &in.StatusEvidence)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Invocation{}, ErrNotFound
 	}
@@ -430,6 +433,9 @@ type Update struct {
 	// ConnectionRefusal replaces the recorded one when non-empty: the
 	// connection's code for a call it refused before sending anything.
 	ConnectionRefusal string
+	// StatusEvidence is what the profile's status read found, kept once:
+	// the call was found at the vendor by its operation id (kiff/tafs#498).
+	StatusEvidence json.RawMessage
 }
 
 // ReasonGatewayRestarted is recorded when a stale in-flight invocation
@@ -511,9 +517,10 @@ func (s *Store) Transition(ctx context.Context, key string, from []State, to Sta
 		       no_effect_evidence = COALESCE(no_effect_evidence, $14::jsonb),
 		       execution_binding = COALESCE(execution_binding, $15::jsonb),
 		       verify_evidence = CASE WHEN $16 THEN COALESCE(verify_evidence, '{"result":"pending"}'::jsonb) ELSE verify_evidence END,
-		       connection_refusal = CASE WHEN $17 = '' THEN connection_refusal ELSE $17 END
+		       connection_refusal = CASE WHEN $17 = '' THEN connection_refusal ELSE $17 END,
+		       status_evidence = COALESCE(status_evidence, $18::jsonb)
 		 WHERE key = $1 AND state = ANY($2)`,
-		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding), u.VerifyPending, u.ConnectionRefusal)
+		key, fromS, string(to), u.ExceptionID, u.ReviewURL, u.Message, result, s.now().UTC(), u.Reasons, u.HoldExpiresAt, finishedStates, u.ToolError, u.ToolOutcome, nullableJSON(u.NoEffectEvidence), nullableJSON(u.ExecutionBinding), u.VerifyPending, u.ConnectionRefusal, nullableJSON(u.StatusEvidence))
 	if err != nil {
 		return false, err
 	}

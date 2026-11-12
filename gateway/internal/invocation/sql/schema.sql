@@ -245,3 +245,10 @@ ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS measure jsonb;
 -- kept for the words only: it doesn't change what counts toward a Card.
 -- Kept when the result is purged.
 ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS connection_refusal text NOT NULL DEFAULT '';
+
+-- Check first (kiff/tafs#498): a money call whose outcome wasn't known (its
+-- answer lost, or an error from the vendor with nothing proving no effect)
+-- that the profile's status read found at the vendor by its operation id.
+-- What the read found: which read, the vendor record's id, when, and the
+-- profile revision. NULL: not found that way.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS status_evidence jsonb;

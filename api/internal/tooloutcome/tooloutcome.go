@@ -54,9 +54,13 @@ type Outcome struct {
 	// connection refused itself, before sending anything, and Code is its
 	// reason (e.g. "halt_unknown"). That's the connection's own report:
 	// the words change, what counts toward a Card doesn't.
-	RefusedBy string    `json:"refused_by,omitempty"`
-	Code      string    `json:"code,omitempty"`
-	At        time.Time `json:"at"`
+	RefusedBy string `json:"refused_by,omitempty"`
+	Code      string `json:"code,omitempty"`
+	// Found: a Done call whose outcome wasn't known until the profile's
+	// status read found it at the vendor by its operation id
+	// (kiff/tafs#498).
+	Found bool      `json:"found,omitempty"`
+	At    time.Time `json:"at"`
 }
 
 // Reader reads outcomes by proposal id. A call the gateway has no record
@@ -74,6 +78,8 @@ type Record struct {
 	// ConnectionRefusal is the connection's code for a call it refused
 	// before sending anything; "" otherwise.
 	ConnectionRefusal string
+	// Found: the gateway's status read found the call at the vendor.
+	Found bool
 	// HasResult and ResultError are the tool's own result while it is kept
 	// (24 hours): whether there is one, and its isError. ResultText is its
 	// text, for a legacy error.
@@ -99,7 +105,7 @@ func FromRecord(r Record) (Outcome, bool) {
 		case r.ToolOutcome == "error":
 			return Outcome{Status: RefusedByTool, Message: r.ToolError, At: at}, true
 		case r.ToolOutcome == "done":
-			return Outcome{Status: Done, At: at}, true
+			return Outcome{Status: Done, Found: r.Found, At: at}, true
 		case r.HasResult && r.ResultError:
 			return Outcome{Status: RefusedByTool, Message: legacyMessage(r.ResultText), At: at}, true
 		case r.HasResult:
@@ -119,9 +125,10 @@ func FromRecord(r Record) (Outcome, bool) {
 // Postgres reads gateway.invocations in the shared database.
 type Postgres struct {
 	pool *pgxpool.Pool
-	// hasRefusal is set once connection_refusal is seen: a column is
-	// never dropped, so it isn't looked up again.
-	hasRefusal atomic.Bool
+	// hasRefusal is set once connection_refusal is seen, and hasFound once
+	// status_evidence is: a column is never dropped, so it isn't looked up
+	// again.
+	hasRefusal, hasFound atomic.Bool
 	// now is the clock "Did this happen?" reads its marks by; nil is the
 	// wall clock.
 	now func() time.Time
@@ -167,6 +174,14 @@ func (p *Postgres) Outcomes(ctx context.Context, tenantID string, proposalIDs []
 		}
 		p.hasRefusal.Store(hasRefusal)
 	}
+	hasFound := p.hasFound.Load()
+	if !hasFound {
+		if err := p.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM information_schema.columns
+			WHERE table_schema = 'gateway' AND table_name = 'invocations' AND column_name = 'status_evidence')`).Scan(&hasFound); err != nil {
+			return nil, err
+		}
+		p.hasFound.Store(hasFound)
+	}
 	recorded := `'' AS tool_error, '' AS tool_outcome`
 	if hasOutcome {
 		recorded = `tool_error, tool_outcome`
@@ -175,12 +190,16 @@ func (p *Postgres) Outcomes(ctx context.Context, tenantID string, proposalIDs []
 	if hasRefusal {
 		refusal = `connection_refusal`
 	}
+	found := `false`
+	if hasFound {
+		found = `status_evidence IS NOT NULL`
+	}
 	// isError is compared as JSON, never cast: result is the tool's own
 	// output, and a non-boolean isError cast to boolean would fail the
 	// whole read. As in the gateway, only an absent,
 	// null or false isError is success; any other value is an error.
 	rows, err := p.pool.Query(ctx, `
-		SELECT key, state, message, `+recorded+`, `+refusal+`, updated_at,
+		SELECT key, state, message, `+recorded+`, `+refusal+`, `+found+`, updated_at,
 		       result IS NOT NULL, COALESCE(result->'isError' NOT IN ('false'::jsonb, 'null'::jsonb), false),
 		       COALESCE((SELECT string_agg(c->>'text', ' ') FROM jsonb_array_elements(
 		           CASE WHEN jsonb_typeof(result->'content') = 'array' THEN result->'content' ELSE '[]'::jsonb END) c
@@ -194,7 +213,7 @@ func (p *Postgres) Outcomes(ctx context.Context, tenantID string, proposalIDs []
 	for rows.Next() {
 		var key string
 		var r Record
-		if err := rows.Scan(&key, &r.State, &r.Message, &r.ToolError, &r.ToolOutcome, &r.ConnectionRefusal, &r.At,
+		if err := rows.Scan(&key, &r.State, &r.Message, &r.ToolError, &r.ToolOutcome, &r.ConnectionRefusal, &r.Found, &r.At,
 			&r.HasResult, &r.ResultError, &r.ResultText); err != nil {
 			return nil, err
 		}

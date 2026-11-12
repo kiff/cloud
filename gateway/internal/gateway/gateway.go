@@ -96,6 +96,9 @@ type Tool struct {
 	ProfileRevision *int64
 	// Verify is the profile's read after a 2xx write, or nil.
 	Verify *VerifyRead
+	// Status is the profile's read that finds the operation at the vendor
+	// by its operation id, or nil (status.go).
+	Status *StatusRead
 	// Probation: a money operation whose profile no test call proved; its
 	// first sent calls are the owner's to confirm (connection profiles: probation).
 	Probation bool
@@ -1018,10 +1021,18 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 		// cannot speak for KIFF in the dev.kiff/ _meta namespace.
 		stored := withoutKIFFMeta(secret.RedactJSON(res, credential))
 		te := toolError(stored)
+		noEffect, refusal := terminalNoEffect(t, in, stored), connectionRefusal(t, stored)
+		// The vendor's error, with nothing proving no effect and not the
+		// connection's own refusal: looked for at the vendor first.
+		if te != "" && len(noEffect) == 0 && refusal == "" && a.checks(t) {
+			if ev := a.checkFirst(ctx, t, in, "error"); ev != nil {
+				return a.found(ctx, in.Key, forwarding, ev, te)
+			}
+		}
 		verifies := te == "" && t.Verify != nil && !t.ReadOnly
 		out, err := a.finish(ctx, in.Key, forwarding, invocation.StateForwarded,
-			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: terminalNoEffect(t, in, stored), VerifyPending: verifies,
-				ConnectionRefusal: connectionRefusal(t, stored)}, nil)
+			invocation.Update{Result: stored, ToolError: te, ToolOutcome: toolOutcome(te), NoEffectEvidence: noEffect, VerifyPending: verifies,
+				ConnectionRefusal: refusal}, nil)
 		// A write its profile reads back is checked now, once it's recorded
 		// as sent (verify.go).
 		if err == nil && te == "" && t.Probation && !t.ReadOnly {
@@ -1043,6 +1054,9 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 			Reasons: []string{ReasonToolUnreachable},
 		}, logged)
 	case errors.As(err, &ce):
+		if ev := a.lostCheck(ctx, t, in); ev != nil {
+			return a.found(ctx, in.Key, forwarding, ev, "")
+		}
 		return a.finish(ctx, in.Key, forwarding, invocation.StateUnknown, invocation.Update{
 			Message: "Sent to the tool, but its response was lost. KIFF will not send it again; check the tool before retrying with a new " + OperationArg + ".",
 			Reasons: []string{ReasonResponseLost},
@@ -1050,9 +1064,17 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 	case errors.As(err, &rpc):
 		// The tool answered with an error: delivered, and its answer.
 		msg := secret.Redact(rpc.Message, credential)
+		if a.checks(t) {
+			if ev := a.checkFirst(ctx, t, in, "error"); ev != nil {
+				return a.found(ctx, in.Key, forwarding, ev, toolErrorText(msg))
+			}
+		}
 		return a.finish(ctx, in.Key, forwarding, invocation.StateForwarded, invocation.Update{
 			Result: mcp.TextResult("The tool returned an error: "+msg, true), ToolError: toolErrorText(msg), ToolOutcome: "error"}, nil)
 	default:
+		if ev := a.lostCheck(ctx, t, in); ev != nil {
+			return a.found(ctx, in.Key, forwarding, ev, "")
+		}
 		return a.finish(ctx, in.Key, forwarding, invocation.StateUnknown, invocation.Update{
 			Message: "Sent to the tool, but its response was lost. KIFF will not send it again; check the tool before retrying with a new " + OperationArg + ".",
 			Reasons: []string{ReasonResponseLost},
@@ -1313,7 +1335,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 			if err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}
-			t.Verify, t.Probation, t.Money = f.Verify, f.Probation, f.Money
+			t.Verify, t.Status, t.Probation, t.Money = f.Verify, f.Status, f.Probation, f.Money
 			if t.Case, t.NoEffect, err = profileCase(profile, t.Name); err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}

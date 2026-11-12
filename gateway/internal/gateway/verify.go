@@ -67,6 +67,9 @@ func (c PostgresCatalog) PauseOperation(ctx context.Context, tenantID, tool, rea
 type profileFacts struct {
 	// Verify is its verify read, or nil.
 	Verify *VerifyRead
+	// Status is its status read, or nil: also nil when the profile says
+	// the vendor gives no way to check (status_read none).
+	Status *StatusRead
 	// Probation: a money operation no test call proved.
 	Probation bool
 	// Money: the operation moves or records money.
@@ -81,6 +84,7 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 			Tool       string      `json:"tool"`
 			Effect     string      `json:"effect"`
 			VerifyRead *VerifyRead `json:"verify_read"`
+			StatusRead *StatusRead `json:"status_read"`
 			Marker     *struct {
 				Field string `json:"field"`
 			} `json:"marker"`
@@ -95,7 +99,11 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 			if o.VerifyRead != nil && o.Marker != nil {
 				o.VerifyRead.Marker = o.Marker.Field
 			}
-			return profileFacts{Verify: o.VerifyRead, Probation: money && !p.TestProven, Money: money}, nil
+			status := o.StatusRead
+			if status != nil && (status.Tool == "" || status.Match == "") {
+				status = nil
+			}
+			return profileFacts{Verify: o.VerifyRead, Status: status, Probation: money && !p.TestProven, Money: money}, nil
 		}
 	}
 	return profileFacts{}, nil

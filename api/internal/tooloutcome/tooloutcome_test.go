@@ -20,8 +20,10 @@ func TestFromRecord(t *testing.T) {
 		want tooloutcome.Outcome
 		ok   bool
 	}{
-		"recorded done":    {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "done", HasResult: true}), tooloutcome.Outcome{Status: tooloutcome.Done, At: at}, true},
-		"recorded refusal": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "error", ToolError: "card declined"}), tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "card declined", At: at}, true},
+		"recorded done": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "done", HasResult: true}), tooloutcome.Outcome{Status: tooloutcome.Done, At: at}, true},
+		// Found at the vendor by the gateway's status read (kiff/tafs#498).
+		"found at the vendor": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "done", Found: true}), tooloutcome.Outcome{Status: tooloutcome.Done, Found: true, At: at}, true},
+		"recorded refusal":    {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "error", ToolError: "card declined"}), tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "card declined", At: at}, true},
 		"refused by the connection": {rec(tooloutcome.Record{State: "forwarded", ToolOutcome: "error", ToolError: "Refused by planque: no.", ConnectionRefusal: "halt_unknown"}),
 			tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "Refused by planque: no.", RefusedBy: "connection", Code: "halt_unknown", At: at}, true},
 		// Rows from before tool_outcome, or from an older
@@ -126,6 +128,19 @@ func TestPostgresReadsTheGatewayRecord(t *testing.T) {
 	if err != nil || got["tc-conn"].Status != tooloutcome.RefusedByTool || got["tc-conn"].RefusedBy != "connection" || got["tc-conn"].Code != "halt_unknown" ||
 		got["tc-refused"].RefusedBy != "" || got["tc-refused"].Code != "" {
 		t.Errorf("with connection_refusal: %+v %v", got, err)
+	}
+
+	// And with status_evidence: a call the gateway's status read found at
+	// the vendor reads as found; a done call next to it doesn't.
+	if _, err := pool.Exec(ctx, `
+		ALTER TABLE gateway.invocations ADD COLUMN status_evidence jsonb;
+		INSERT INTO gateway.invocations (key, tenant_id, state, tool_error, tool_outcome, status_evidence, result, updated_at) VALUES
+			('tc-found', 't1', 'forwarded', '', 'done', '{"read":"list_refunds","was":"unknown"}', NULL, now())`); err != nil {
+		t.Fatal(err)
+	}
+	got, err = r.Outcomes(ctx, "t1", []string{"tc-found", "tc-done"})
+	if err != nil || got["tc-found"].Status != tooloutcome.Done || !got["tc-found"].Found || got["tc-done"].Found {
+		t.Errorf("with status_evidence: %+v %v", got, err)
 	}
 }
 
