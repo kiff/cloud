@@ -238,6 +238,8 @@ var PhoneSessionRules = []string{
 	"POST /v1/me/card-exceptions/{id}/approve-once",
 	"POST /v1/me/card-exceptions/{id}/reject",
 	"POST /v1/me/card-exceptions/{id}/change-card",
+	"POST /v1/me/card-exceptions/{id}/allow-draft",
+	"POST /v1/me/agent-drafts/{id}/replay",
 	// "Your step": the steps a taf handed to its owner, and the answer,
 	// "done" or "skipped", signed with kiff.handoff.v1 by the device key.
 	"GET /v1/me/handoffs",
@@ -649,6 +651,10 @@ var DefaultRules = map[string]membership.Capability{
 	// the taf, as a hold is.
 	"POST /v1/me/handoffs/{id}/answer":             membership.CapHoldsAnswer,
 	"POST /v1/me/card-exceptions/{id}/change-card": membership.CapCardsManage,
+	// "Allow this from now on": a draft of the narrowest change, and the
+	// replay of the held calls against a draft. Neither changes a Card.
+	"POST /v1/me/card-exceptions/{id}/allow-draft": membership.CapCardsManage,
+	"POST /v1/me/agent-drafts/{id}/replay":         membership.CapCardsManage,
 
 	// Cards and the agents that hold them.
 	"POST /v1/me/mandates":                          membership.CapCardsManage,
@@ -901,6 +907,11 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 	// Signed inside a window, on a routine route: the device key, and the
 	// window must be open for this phone. On a critical route the window
 	// counts for nothing: the approval key must have signed.
+	// One signature over two requests (kiff.requests.v1) is the approval
+	// key's, whatever the route: it carries another service's request too.
+	if SignedTogether(header) {
+		key, with = id.ApprovalKey, SignedWith{Key: KeyCritical}
+	}
 	var window ApprovalWindow
 	inWindow := approval && signatureWindowNamed(header) && p.routine(r)
 	if inWindow {

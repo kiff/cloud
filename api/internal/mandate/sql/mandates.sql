@@ -451,3 +451,8 @@ UPDATE cloud_meta.mandate_exceptions e
 CREATE UNIQUE INDEX IF NOT EXISTS mandate_exceptions_card_unit_held_one
     ON cloud_meta.mandate_exceptions (tenant_id, subject, action, upper(breaches->0->>'Unit'))
     WHERE kind = 'card_unit' AND status = 'held';
+
+-- The held call a revision was made for ("Allow this from now on"): the
+-- exception's id, '' for every other revision.
+ALTER TABLE cloud_meta.mandate_revisions
+    ADD COLUMN IF NOT EXISTS from_hold TEXT NOT NULL DEFAULT '';

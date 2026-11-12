@@ -95,6 +95,9 @@ type Revision struct {
 	Grants     []Grant
 	Aggregates []Aggregate
 	ValidUntil time.Time
+	// FromHold is the held call this issuance was made for ("Allow this
+	// from now on"); "" for every other.
+	FromHold string
 }
 
 // ErrProposalSpent is returned by RecordAll when the proposal id has

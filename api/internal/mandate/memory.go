@@ -180,6 +180,7 @@ func (s *MemoryStore) issueLocked(m Mandate, by string) {
 		OnExceed:   policyOf(m),
 		Grants:     m.Grants,
 		Aggregates: m.Aggregates,
+		FromHold:   m.FromHold,
 		ValidUntil: m.ValidUntil,
 	})
 }

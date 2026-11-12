@@ -167,10 +167,13 @@ const DeviceSignatureHeader = "KIFF-Device-Signature"
 // signature, and the window it names (v2), or "" (v1).
 type signatureHeader struct {
 	At, Signature, Window string
+	// With is a v3's other request: the lowercase hex SHA-256 of the
+	// request message it was signed together with (kiff.requests.v1).
+	With string
 }
 
-// parseSignatureHeader reads "t=…,v1=…" or "t=…,v2=…,w=…". Anything else
-// is ErrRequestSignature.
+// parseSignatureHeader reads "t=…,v1=…", "t=…,v2=…,w=…" or
+// "t=…,v3=…,with=sha256:…". Anything else is ErrRequestSignature.
 func parseSignatureHeader(header string) (signatureHeader, error) {
 	var h signatureHeader
 	parts := strings.Split(strings.TrimSpace(header), ",")
@@ -185,23 +188,61 @@ func parseSignatureHeader(header string) (signatureHeader, error) {
 			return h, ErrRequestSignature
 		}
 		switch k {
-		case "v1", "v2":
+		case "v1", "v2", "v3":
 			if version != "" {
 				return h, ErrRequestSignature
 			}
 			version, h.Signature = k, v
 		case "w":
 			h.Window = strings.TrimSpace(v)
+		case "with":
+			hexSum, ok := strings.CutPrefix(strings.TrimSpace(v), "sha256:")
+			if !ok || len(hexSum) != 64 || strings.ToLower(hexSum) != hexSum {
+				return h, ErrRequestSignature
+			}
+			if _, err := hex.DecodeString(hexSum); err != nil {
+				return h, ErrRequestSignature
+			}
+			h.With = hexSum
 		default:
 			return h, ErrRequestSignature
 		}
 	}
 	// A v2 names its window; a v1 names none. A window id is "win_" and
 	// 26 base32 characters, so it can't carry a newline into the message.
-	if version == "" || (version == "v2") != (h.Window != "") || (h.Window != "" && !windowIDShape(h.Window)) {
+	if version == "" || (version == "v2") != (h.Window != "") || (h.Window != "" && !windowIDShape(h.Window)) ||
+		(version == "v3") != (h.With != "") {
 		return h, ErrRequestSignature
 	}
 	return h, nil
+}
+
+// SignedTogether reports whether header is a v3: one signature over two
+// requests (kiff.requests.v1), which only the approval key gives.
+func SignedTogether(header string) bool {
+	h, err := parseSignatureHeader(header)
+	return err == nil && h.With != ""
+}
+
+// RequestsMessage is what a phone signs, once, with its approval key, to
+// send two requests under one fingerprint
+// (kiff/tafs/docs/secure-connection.md), one field per line:
+//
+//	kiff.requests.v1
+//	<tenant_id>
+//	<signed_at>
+//	<sha256 hex of one request message>
+//	<sha256 hex of the other>
+//
+// The two hashes are in sorted order. Each request message is the one its
+// service checks alone (RequestMessage for KIFF), with the same signed_at:
+// each service rebuilds its own and takes the other's hash as given.
+func RequestsMessage(tenantID, signedAt, oneSHA256, otherSHA256 string) []byte {
+	a, b := oneSHA256, otherSHA256
+	if b < a {
+		a, b = b, a
+	}
+	return []byte(strings.Join([]string{"kiff.requests.v1", tenantID, signedAt, a, b}, "\n"))
 }
 
 // windowIDShape reports whether s is shaped as a window id.
@@ -321,11 +362,28 @@ func VerifyRequestDigestWindow(keyDER []byte, tenantID, method, uri, bodySHA256,
 		return nil, "", ErrRequestSignature
 	}
 	message := requestMessageWindow(tenantID, method, uri, bodySHA256, h.At, h.Window)
+	// A v3 signed this request together with one other: its own message's
+	// hash and the other's, as the phone signed them. Its use is this
+	// request's alone, so the other service's use of the same signature
+	// is never this one's.
+	var own []byte
+	if h.With != "" {
+		sum := sha256.Sum256(requestMessage(tenantID, method, uri, bodySHA256, h.At))
+		own = []byte(hex.EncodeToString(sum[:]))
+		if string(own) == h.With {
+			return nil, "", ErrRequestSignature
+		}
+		message = RequestsMessage(tenantID, h.At, string(own), h.With)
+	}
 	digest := sha256.Sum256(message)
 	if !ecdsa.VerifyASN1(k, digest[:], sig) {
 		return nil, "", ErrRequestSignature
 	}
-	id := sha256.Sum256(append(append(append([]byte(nil), keyDER...), 0), message...))
+	used := append(append(append([]byte(nil), keyDER...), 0), message...)
+	if own != nil {
+		used = append(append(used, 0), own...)
+	}
+	id := sha256.Sum256(used)
 	return id[:], h.Window, nil
 }
 

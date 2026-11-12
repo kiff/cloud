@@ -432,13 +432,13 @@ func insertRevision(ctx context.Context, q querier, m Mandate, by string) error 
 	const stmt = `
 		INSERT INTO cloud_meta.mandate_revisions
 			(tenant_id, mandate_id, revision, changed_at, changed_by,
-			 grants, aggregates, valid_until, subject, on_exceed, holders)
+			 grants, aggregates, valid_until, subject, on_exceed, holders, from_hold)
 		SELECT $1, $2,
 		       COALESCE(MAX(revision), 0) + 1,
-		       NOW(), $3, $4, $5, $6, $7, $8, $9
+		       NOW(), $3, $4, $5, $6, $7, $8, $9, $10
 		  FROM cloud_meta.mandate_revisions
 		 WHERE tenant_id = $1 AND mandate_id = $2`
-	if _, err := q.Exec(ctx, stmt, m.TenantID, m.ID, by, grants, aggs, nullTime(m.ValidUntil), m.Subject, policyOf(m), m.HolderList()); err != nil {
+	if _, err := q.Exec(ctx, stmt, m.TenantID, m.ID, by, grants, aggs, nullTime(m.ValidUntil), m.Subject, policyOf(m), m.HolderList(), m.FromHold); err != nil {
 		return fmt.Errorf("record mandate revision: %w", err)
 	}
 	return nil
@@ -448,7 +448,7 @@ func insertRevision(ctx context.Context, q querier, m Mandate, by string) error 
 func (s *PostgresStore) Revisions(ctx context.Context, tenantID, mandateID string) ([]Revision, error) {
 	const stmt = `
 		SELECT revision, changed_at, changed_by, grants, aggregates, valid_until,
-		       COALESCE(subject, ''), COALESCE(on_exceed, ''), COALESCE(holders, '{}')
+		       COALESCE(subject, ''), COALESCE(on_exceed, ''), COALESCE(holders, '{}'), from_hold
 		  FROM cloud_meta.mandate_revisions
 		 WHERE tenant_id = $1 AND mandate_id = $2
 		 ORDER BY revision ASC`
@@ -463,7 +463,7 @@ func (s *PostgresStore) Revisions(ctx context.Context, tenantID, mandateID strin
 		r := Revision{TenantID: tenantID, MandateID: mandateID}
 		var grants, aggs []byte
 		var until *time.Time
-		if err := rows.Scan(&r.Number, &r.At, &r.By, &grants, &aggs, &until, &r.Subject, &r.OnExceed, &r.Holders); err != nil {
+		if err := rows.Scan(&r.Number, &r.At, &r.By, &grants, &aggs, &until, &r.Subject, &r.OnExceed, &r.Holders, &r.FromHold); err != nil {
 			return nil, fmt.Errorf("scan mandate revision: %w", err)
 		}
 		if err := json.Unmarshal(grants, &r.Grants); err != nil {

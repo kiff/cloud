@@ -361,6 +361,9 @@ type Mandate struct {
 	// changing it is not a revision. Empty on a reissue keeps the
 	// current one; SetTitle changes or clears it.
 	Title string
+	// FromHold is the held call an issuance was made for ("Allow this from
+	// now on"): kept on the revision it writes, never on the Card itself.
+	FromHold string `json:"-"`
 }
 
 // MaxTitle is the longest Card title, in characters.
