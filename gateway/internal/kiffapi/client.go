@@ -611,6 +611,22 @@ func (c *Client) ApplyDomain(ctx context.Context, key, domain, yaml string) erro
 	return apiError(post.status, post.body)
 }
 
+// PreviewDraft asks apps/api to word draft (an agent draft's body) against
+// contract, the gateway contract a batch would apply, with the batch's
+// tool titles: apps/api's answer, as it gave it, and its status. Nothing is
+// stored (POST /v1/connections/batch/preview).
+func (c *Client) PreviewDraft(ctx context.Context, key string, draft json.RawMessage, contract string, titles map[string]string) (int, []byte, error) {
+	var body map[string]any
+	if err := json.Unmarshal(draft, &body); err != nil || body == nil {
+		return 0, nil, errors.New("kiffapi: the draft is a JSON object")
+	}
+	body["contract"] = contract
+	if len(titles) > 0 {
+		body["titles"] = titles
+	}
+	return c.do(ctx, key, http.MethodPost, "/v1/me/agent-drafts/preview", body)
+}
+
 type rawResp struct {
 	status int
 	body   []byte

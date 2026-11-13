@@ -10,9 +10,12 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"slices"
 	"strconv"
+	"strings"
 	"sync"
 
+	"github.com/kiff/cloud/gateway/internal/gateway"
 	"github.com/kiff/cloud/gateway/internal/kiffapi"
 	"github.com/kiff/cloud/gateway/internal/mcp"
 )
@@ -55,17 +58,9 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 		writeErr(w, http.StatusBadRequest, "the request body must be a JSON object with the documented fields")
 		return
 	}
-	if len(req.Connections) == 0 || len(req.Connections) > maxBatch {
-		writeErr(w, http.StatusBadRequest, "a batch connects between 1 and "+strconv.Itoa(maxBatch)+" tools")
+	if msg := checkBatch(req.Connections); msg != "" {
+		writeErr(w, http.StatusBadRequest, msg)
 		return
-	}
-	// Only the account's own control server: a vendor's tool is connected
-	// one at a time, as the owner sets each one up.
-	for i := range req.Connections {
-		if !req.Connections[i].Control {
-			writeErr(w, http.StatusBadRequest, "a batch connects only the account's control server: every connection has control: true")
-			return
-		}
 	}
 	if c.me.DeviceSession {
 		// One signature over the whole batch, the owner's act behind their
@@ -96,41 +91,14 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 		h.fail(w, r, "create batch", err)
 		return
 	}
-	there := map[string]Connection{}
-	for _, e := range existing {
-		there[e.Name] = e
+	toMake, kept, replaced, status, msg := h.planBatch(r.Context(), probeCtx, c, req.Connections, existing)
+	if status == http.StatusInternalServerError {
+		h.fail(w, r, "create batch", errors.New(msg))
+		return
 	}
-	var toMake []Connection
-	var kept, replaced []string
-	seen := map[string]bool{}
-	for i := range req.Connections {
-		one := &req.Connections[i]
-		conn, status, msg := h.prepare(r.Context(), probeCtx, c, &one.createRequest)
-		if status != 0 {
-			if status == http.StatusInternalServerError {
-				h.fail(w, r, "create batch", errors.New(msg))
-				return
-			}
-			writeErr(w, status, "connection "+strconv.Itoa(i)+": "+msg)
-			return
-		}
-		if seen[conn.Name] {
-			writeErr(w, http.StatusBadRequest, "connection "+strconv.Itoa(i)+": "+conn.Name+" is named twice in the batch")
-			return
-		}
-		seen[conn.Name] = true
-		if e, ok := there[conn.Name]; ok {
-			if sameConnection(e, conn) {
-				kept = append(kept, conn.Name)
-				continue
-			}
-			if !one.Replace || !e.Control || !conn.Control {
-				writeErr(w, http.StatusConflict, "a tool named "+conn.Name+" is already connected; remove it first, or choose another name")
-				return
-			}
-			replaced = append(replaced, conn.Name)
-		}
-		toMake = append(toMake, conn)
+	if status != 0 {
+		writeErr(w, status, msg)
+		return
 	}
 	made := make([]string, 0, len(toMake))
 	if len(toMake) > 0 {
@@ -165,7 +133,7 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 			h.log(r, "tool connected", c, conn.Name, slog.Bool("batch", true))
 		}
 	}
-	status := http.StatusOK
+	status = http.StatusOK
 	if len(made) > 0 {
 		status = http.StatusCreated
 	}
@@ -176,6 +144,148 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 		replaced = []string{}
 	}
 	writeJSON(w, status, map[string]any{"connected": made, "already": kept, "replaced": replaced})
+}
+
+// previewBatch serves POST /v1/connections/batch/preview {connections,
+// draft}: KIFF's words for an agent draft's Cards as they would read once
+// the batch is connected, before anything is. A first start signs the batch
+// and the draft together, so the owner reads the draft's Cards over tools
+// not connected yet. Each connection is checked as the batch checks it
+// (planBatch: its server probed), the contract the batch would apply is
+// built as it would be (the account's tools, those it replaces swapped, the
+// new ones added), and apps/api words the draft against it. A connection
+// the batch would refuse is refused here in its words, and nothing is
+// worded. Nothing is stored or connected, and no signature is needed:
+// connecting still takes the batch itself.
+func (h *Handler) previewBatch(w http.ResponseWriter, r *http.Request, c caller) {
+	b, err := io.ReadAll(io.LimitReader(r.Body, 512<<10+1))
+	if err != nil || len(b) > 512<<10 {
+		writeErr(w, http.StatusBadRequest, "the request body must be a JSON object with the documented fields")
+		return
+	}
+	var req struct {
+		Connections []batchConnection `json:"connections"`
+		Draft       json.RawMessage   `json:"draft"`
+	}
+	dec := json.NewDecoder(bytes.NewReader(b))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&req); err != nil {
+		writeErr(w, http.StatusBadRequest, "the request body must be {connections, draft}: the batch, and the agent draft to word")
+		return
+	}
+	if msg := checkBatch(req.Connections); msg != "" {
+		writeErr(w, http.StatusBadRequest, msg)
+		return
+	}
+	if len(bytes.TrimSpace(req.Draft)) == 0 || bytes.TrimSpace(req.Draft)[0] != '{' {
+		writeErr(w, http.StatusBadRequest, "draft is the agent draft to word, as agent-drafts takes it")
+		return
+	}
+	probeCtx := r.Context()
+	if c.me.DeviceSession {
+		var cancel context.CancelFunc
+		probeCtx, cancel = context.WithTimeout(r.Context(), probeLimit)
+		defer cancel()
+	}
+	probeCtx = withListCache(probeCtx)
+	existing, err := h.Store.List(r.Context(), c.me.TenantID)
+	if err != nil {
+		h.fail(w, r, "preview batch", err)
+		return
+	}
+	toMake, _, replaced, status, msg := h.planBatch(r.Context(), probeCtx, c, req.Connections, existing)
+	if status == http.StatusInternalServerError {
+		h.fail(w, r, "preview batch", errors.New(msg))
+		return
+	}
+	if status != 0 {
+		writeErr(w, status, msg)
+		return
+	}
+	tools := make([]gateway.Tool, 0, len(existing)+len(toMake))
+	for _, e := range existing {
+		if !slices.Contains(replaced, e.Name) {
+			tools = append(tools, toolOf(e))
+		}
+	}
+	titles := map[string]string{}
+	for _, conn := range toMake {
+		tools = append(tools, toolOf(conn))
+		if conn.Title != "" {
+			titles[conn.Name] = conn.Title
+		}
+	}
+	// By name, as the store lists them, so the contract reads as the one the batch then applies (the draft's
+	// contract_digest, checked at submit, sorts on its own).
+	slices.SortFunc(tools, func(a, b gateway.Tool) int { return strings.Compare(a.Name, b.Name) })
+	y, err := gateway.Contract(tools)
+	if err != nil {
+		writeErr(w, http.StatusUnprocessableEntity, "the batch's tools don't make a contract KIFF takes, so they would not be connected: "+err.Error())
+		return
+	}
+	st, answer, err := h.API.PreviewDraft(r.Context(), c.key, req.Draft, y, titles)
+	if err != nil && !errors.Is(err, kiffapi.ErrUnauthorized) {
+		writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't word the draft; try again")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(st)
+	_, _ = w.Write(answer)
+}
+
+// checkBatch says what's wrong with a batch's size or its kind, or "".
+// Only the account's own control server: a vendor's tool is connected one
+// at a time, as the owner sets each one up.
+func checkBatch(conns []batchConnection) string {
+	if len(conns) == 0 || len(conns) > maxBatch {
+		return "a batch connects between 1 and " + strconv.Itoa(maxBatch) + " tools"
+	}
+	for i := range conns {
+		if !conns[i].Control {
+			return "a batch connects only the account's control server: every connection has control: true"
+		}
+	}
+	return ""
+}
+
+// planBatch checks each of a batch's connections as one alone (prepare,
+// its server probed) against the account's tools there, and says what the
+// batch would do: the connections to make, the names already there on its
+// terms (kept), and those it takes over (replaced); else a status and why,
+// 500 for a failure of the gateway's own. The batch and its preview share
+// it, so a preview words exactly the tools the batch then connects.
+func (h *Handler) planBatch(ctx, probeCtx context.Context, c caller, conns []batchConnection, existing []Connection) (toMake []Connection, kept, replaced []string, status int, msg string) {
+	there := map[string]Connection{}
+	for _, e := range existing {
+		there[e.Name] = e
+	}
+	seen := map[string]bool{}
+	for i := range conns {
+		one := &conns[i]
+		conn, status, msg := h.prepare(ctx, probeCtx, c, &one.createRequest)
+		if status != 0 {
+			if status == http.StatusInternalServerError {
+				return nil, nil, nil, status, msg
+			}
+			return nil, nil, nil, status, "connection " + strconv.Itoa(i) + ": " + msg
+		}
+		if seen[conn.Name] {
+			return nil, nil, nil, http.StatusBadRequest, "connection " + strconv.Itoa(i) + ": " + conn.Name + " is named twice in the batch"
+		}
+		seen[conn.Name] = true
+		if e, ok := there[conn.Name]; ok {
+			if sameConnection(e, conn) {
+				kept = append(kept, conn.Name)
+				continue
+			}
+			if !one.Replace || !e.Control || !conn.Control {
+				return nil, nil, nil, http.StatusConflict, "a tool named " + conn.Name + " is already connected; remove it first, or choose another name"
+			}
+			replaced = append(replaced, conn.Name)
+		}
+		toMake = append(toMake, conn)
+	}
+	return toMake, kept, replaced, 0, ""
 }
 
 // sameConnection reports whether a connection already there has the terms

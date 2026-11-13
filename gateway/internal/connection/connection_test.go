@@ -68,6 +68,31 @@ type fakeAPI struct {
 	signedAsks []string
 	signDown   bool
 	signedUsed map[string]bool
+	// previews are the drafts PreviewDraft was asked to word, with the
+	// contract and titles; previewDown makes it answer KIFF is unavailable.
+	previews    []fakePreview
+	previewDown bool
+}
+
+type fakePreview struct {
+	key      string
+	draft    map[string]any
+	contract string
+	titles   map[string]string
+}
+
+func (f *fakeAPI) PreviewDraft(_ context.Context, key string, draft json.RawMessage, contract string, titles map[string]string) (int, []byte, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.previewDown {
+		return 0, nil, kiffapi.ErrUnavailable
+	}
+	var d map[string]any
+	if err := json.Unmarshal(draft, &d); err != nil {
+		return 0, nil, err
+	}
+	f.previews = append(f.previews, fakePreview{key: key, draft: d, contract: contract, titles: titles})
+	return http.StatusOK, []byte(`{"agent_id":"setup","card_title":"Coach","cards":[],"contract_digest":"d1"}`), nil
 }
 
 func (f *fakeAPI) DeviceSigned(_ context.Context, key, method, uri, bodySHA256, signature string) (string, error) {

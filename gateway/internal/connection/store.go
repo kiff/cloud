@@ -213,10 +213,7 @@ func (s *Store) Change(ctx context.Context, tenantID string, fn func(*Tx) error,
 	}
 	tools := make([]gateway.Tool, 0, len(conns))
 	for _, c := range conns {
-		tools = append(tools, gateway.Tool{Name: c.Name, UpstreamTool: c.UpstreamTool, AmountArg: c.AmountArg, AmountUnit: c.AmountUnit,
-			AmountScale: c.AmountScale, ResourceArg: c.ResourceArg, ReadOnly: c.ReadOnly, Mode: c.Mode, Audience: c.Audience, OutcomeContract: c.OutcomeContract, OutcomeLookupTool: c.OutcomeLookupTool, ConnectionCreatedAt: c.CreatedAt,
-			UnitLookup: c.UnitLookup, AmountLookup: c.AmountLookup, Control: c.Control, AmountFormat: c.AmountFormat,
-			AmountPath: c.AmountPath, ResourcePath: c.ResourcePath})
+		tools = append(tools, toolOf(c))
 	}
 	if err := apply(tools); err != nil {
 		return err
@@ -470,4 +467,13 @@ func (s *Store) ProfileAt(ctx context.Context, tenantID string, revision int64) 
 		return Profile{}, ErrNotFound
 	}
 	return p, err
+}
+
+// toolOf is the contract's view of a connection: what Contract and the
+// permit targets read.
+func toolOf(c Connection) gateway.Tool {
+	return gateway.Tool{Name: c.Name, UpstreamTool: c.UpstreamTool, AmountArg: c.AmountArg, AmountUnit: c.AmountUnit,
+		AmountScale: c.AmountScale, ResourceArg: c.ResourceArg, ReadOnly: c.ReadOnly, Mode: c.Mode, Audience: c.Audience, OutcomeContract: c.OutcomeContract, OutcomeLookupTool: c.OutcomeLookupTool, ConnectionCreatedAt: c.CreatedAt,
+		UnitLookup: c.UnitLookup, AmountLookup: c.AmountLookup, Control: c.Control, AmountFormat: c.AmountFormat,
+		AmountPath: c.AmountPath, ResourcePath: c.ResourcePath}
 }

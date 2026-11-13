@@ -36,6 +36,9 @@ type API interface {
 	// CheckProfileApproval says whether the owner's signed approval covers
 	// a profile and KIFF's words for it (connection profiles: the owner's approval).
 	CheckProfileApproval(ctx context.Context, key string, profile, approval json.RawMessage) (kiffapi.ProfileApproval, error)
+	// PreviewDraft words an agent draft against a contract a batch would
+	// apply, storing nothing (batch preview).
+	PreviewDraft(ctx context.Context, key string, draft json.RawMessage, contract string, titles map[string]string) (int, []byte, error)
 }
 
 // Lister lists a remote server's tools.
@@ -61,6 +64,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /v1/connections", h.authRead(h.list))
 	mux.HandleFunc("POST /v1/connections", h.authAs(h.create, mayCreate))
 	mux.HandleFunc("POST /v1/connections/batch", h.authAs(h.createBatch, mayCreate))
+	mux.HandleFunc("POST /v1/connections/batch/preview", h.authAs(h.previewBatch, mayCreate))
 	mux.HandleFunc("POST /v1/connections/discover", h.auth(h.discover))
 	mux.HandleFunc("POST /v1/connections/{name}/test", h.auth(h.test))
 	mux.HandleFunc("PUT /v1/connections/{name}/credential", h.auth(notConnector(h.setCredential)))
