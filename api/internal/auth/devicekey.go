@@ -267,6 +267,17 @@ func SignatureWindow(header string) string {
 	return h.Window
 }
 
+// SignatureTime is a DeviceSignatureHeader's signed_at, and false when the
+// header has none that parses.
+func SignatureTime(header string) (time.Time, bool) {
+	h, err := parseSignatureHeader(header)
+	if err != nil {
+		return time.Time{}, false
+	}
+	at, err := time.Parse(time.RFC3339, h.At)
+	return at, err == nil
+}
+
 // ErrRequestSignature is a setup request without a valid signature.
 var ErrRequestSignature = errors.New("auth: this request needs the phone's signature")
 

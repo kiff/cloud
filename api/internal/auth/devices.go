@@ -25,7 +25,7 @@ type ApprovalDevice struct {
 	Subject string
 	// Name is what the person calls it, as the device said at sign-in.
 	Name string
-	// Platform is ios, ipados, macos, android or windows.
+	// Platform is ios, ipados, macos, android, windows or linux.
 	Platform string
 	// Kind is what the device is (DeviceKindOf), its name in the list drawn
 	// from it in the reader's language; "" for one kept before kinds, whose
@@ -45,7 +45,7 @@ type ApprovalDevice struct {
 func (d ApprovalDevice) IsRevoked() bool { return d.RevokedAt != nil }
 
 // Platforms a device may name.
-var devicePlatforms = map[string]bool{"ios": true, "ipados": true, "macos": true, "android": true, "windows": true}
+var devicePlatforms = map[string]bool{"ios": true, "ipados": true, "macos": true, "android": true, "windows": true, "linux": true}
 
 // ValidDevicePlatform reports whether p is a platform KIFF knows.
 func ValidDevicePlatform(p string) bool { return devicePlatforms[p] }
@@ -84,6 +84,10 @@ type DeviceStore interface {
 	// key, so a device signing in again is the same device.
 	// ErrDeviceNotFound when there's none.
 	FindByKey(ctx context.Context, tenant, subject string, key []byte) (ApprovalDevice, error)
+	// FindByKeyInTenant returns any person's active device on an account
+	// with this key, so a pairing can't enrol a key already in use there.
+	// ErrDeviceNotFound when there's none.
+	FindByKeyInTenant(ctx context.Context, tenant string, key []byte) (ApprovalDevice, error)
 	// Relabel sets a device's name, platform and kind, as a later sign-in
 	// of the same key says them. ErrDeviceNotFound when unknown.
 	Relabel(ctx context.Context, id, name, platform, kind string) error
@@ -204,6 +208,17 @@ func (s *MemoryDeviceStore) FindByKey(_ context.Context, tenant, subject string,
 		return ApprovalDevice{}, ErrDeviceNotFound
 	}
 	return *found, nil
+}
+
+func (s *MemoryDeviceStore) FindByKeyInTenant(_ context.Context, tenant string, key []byte) (ApprovalDevice, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, d := range s.byID {
+		if d.Tenant == tenant && !d.IsRevoked() && string(d.PublicKey) == string(key) {
+			return d, nil
+		}
+	}
+	return ApprovalDevice{}, ErrDeviceNotFound
 }
 
 func (d ApprovalDevice) check() error {

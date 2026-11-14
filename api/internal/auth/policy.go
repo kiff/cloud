@@ -74,6 +74,8 @@ var PhoneApprovalRules = []string{
 	"POST /v1/agents/{id}/grants",
 	// Opening an approval window is the fingerprint the window stands for.
 	"POST /v1/me/window",
+	// Pairing a computer gives it approval authority; a window never covers it.
+	"POST /v1/me/pairings",
 }
 
 // PhoneWindowRules are the approval routes that are routine
@@ -165,6 +167,9 @@ var PhoneSignedRules = []string{
 	// opening. Closing it takes nothing: the device key.
 	"POST /v1/me/window",
 	"POST /v1/me/window/{id}/close",
+	// Pairing a computer (the desktop client contract, §5): the approval key signs
+	// it, and the handler refuses a session that has none.
+	"POST /v1/me/pairings",
 	// Going on past the AI fair-use bound lets the tafs spend more.
 	"PUT /v1/me/usage/ai",
 	// Raising the spend limit lets the tafs spend more: the signature
@@ -623,6 +628,7 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/device/relink":              membership.CapPersonal,
 	"POST /v1/me/window":                     membership.CapPersonal,
 	"POST /v1/me/window/{id}/close":          membership.CapPersonal,
+	"POST /v1/me/pairings":                   membership.CapPersonal,
 	"DELETE /v1/me/devices/{id}":             membership.CapPersonal,
 	"POST /v1/me/wallet/nonce":               membership.CapPersonal,
 	"POST /v1/me/wallet/verify":              membership.CapPersonal,

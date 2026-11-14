@@ -66,6 +66,7 @@ var cloudMetaErased = []string{
 	"oauth_device_codes", // pending codes carry no tenant until approved
 	"api_keys",
 	"developer_sessions",
+	"pairings",         // computers a phone approved, with their keys and names
 	"approval_windows", // Before the devices they name
 	"approval_devices", // After the sessions that name them
 	"support_tickets",  // its messages are deleted first, through ticket_id

@@ -128,6 +128,15 @@ WHERE tenant_id = $1 AND subject = $2 AND public_key = $3 AND revoked_at IS NULL
 	return d, err
 }
 
+func (s *PostgresDeviceStore) FindByKeyInTenant(ctx context.Context, tenant string, key []byte) (ApprovalDevice, error) {
+	d, err := scanDevice(s.pool.QueryRow(ctx, `SELECT `+sqlDeviceColumns+` FROM cloud_meta.approval_devices
+WHERE tenant_id = $1 AND public_key = $2 AND revoked_at IS NULL LIMIT 1`, tenant, key))
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ApprovalDevice{}, ErrDeviceNotFound
+	}
+	return d, err
+}
+
 func scanDevice(row devSessionRowScanner) (ApprovalDevice, error) {
 	var d ApprovalDevice
 	var attestation *string
