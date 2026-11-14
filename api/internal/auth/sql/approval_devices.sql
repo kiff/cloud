@@ -30,6 +30,12 @@ CREATE TABLE IF NOT EXISTS cloud_meta.approval_devices (
     revoked_at      TIMESTAMPTZ NULL
 );
 
+-- What the device is: iphone, ipad, android_phone, android_tablet or
+-- other. Its name in the list is drawn from it in the reader's language,
+-- not fixed in the app's language at sign-in. '' for a device kept before
+-- kinds: its name says it (auth.DeviceKindOf).
+ALTER TABLE cloud_meta.approval_devices ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT '';
+
 -- A person's devices on an account, for the list and for the verify API.
 CREATE INDEX IF NOT EXISTS approval_devices_person_idx
     ON cloud_meta.approval_devices (tenant_id, subject) WHERE revoked_at IS NULL;

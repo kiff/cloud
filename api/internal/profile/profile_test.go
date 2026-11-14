@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var update = flag.Bool("update", false, "rewrite the golden vectors in testdata/valid/*.expected.json")
+var update = flag.Bool("update", false, "rewrite the golden vectors in testdata/valid/*.expected.json and testdata/valid/v2/")
 
 // expected is a golden vector: what KIFF answers for a profile. planque,
 // tafs and both apps test against the same files.
@@ -20,6 +20,10 @@ type expected struct {
 	WordsSHA256   string `json:"words_sha256"`
 }
 
+// goldenDirs is where each words version's golden vectors are: v1 beside
+// the profiles, as always; v2 in v2/, with the same names.
+var goldenDirs = map[string]string{WordsVersion: "testdata/valid", WordsVersion2: "testdata/valid/v2"}
+
 func TestGoldenVectors(t *testing.T) {
 	files, _ := filepath.Glob("testdata/valid/*.json")
 	n := 0
@@ -28,39 +32,45 @@ func TestGoldenVectors(t *testing.T) {
 			continue
 		}
 		n++
-		t.Run(filepath.Base(f), func(t *testing.T) {
-			raw, err := os.ReadFile(f)
-			if err != nil {
-				t.Fatal(err)
-			}
-			p, err := Parse(raw)
-			if err != nil {
-				t.Fatalf("a valid vector is refused: %v", err)
-			}
-			got := expected{Words: Render(p)}
-			if got.ProfileSHA256, err = Digest(raw); err != nil {
-				t.Fatal(err)
-			}
-			if got.WordsSHA256, err = WordsDigest(got.Words); err != nil {
-				t.Fatal(err)
-			}
-			out, _ := json.MarshalIndent(got, "", "  ")
-			out = append(out, '\n')
-			golden := strings.TrimSuffix(f, ".json") + ".expected.json"
-			if *update {
-				if err := os.WriteFile(golden, out, 0o644); err != nil {
+		for _, version := range WordsVersions {
+			t.Run(version+"/"+filepath.Base(f), func(t *testing.T) {
+				raw, err := os.ReadFile(f)
+				if err != nil {
 					t.Fatal(err)
 				}
-				return
-			}
-			want, err := os.ReadFile(golden)
-			if err != nil {
-				t.Fatalf("no golden vector (go test -run TestGoldenVectors -update): %v", err)
-			}
-			if !bytes.Equal(out, want) {
-				t.Errorf("%s changed. Words an owner signed must render the same: a new text is a new WordsVersion.\ngot:\n%s", golden, out)
-			}
-		})
+				p, err := Parse(raw)
+				if err != nil {
+					t.Fatalf("a valid vector is refused: %v", err)
+				}
+				words, ok := RenderVersion(p, version)
+				if !ok {
+					t.Fatalf("%s isn't rendered", version)
+				}
+				got := expected{Words: words}
+				if got.ProfileSHA256, err = Digest(raw); err != nil {
+					t.Fatal(err)
+				}
+				if got.WordsSHA256, err = WordsDigest(got.Words); err != nil {
+					t.Fatal(err)
+				}
+				out, _ := json.MarshalIndent(got, "", "  ")
+				out = append(out, '\n')
+				golden := filepath.Join(goldenDirs[version], strings.TrimSuffix(filepath.Base(f), ".json")+".expected.json")
+				if *update {
+					if err := os.WriteFile(golden, out, 0o644); err != nil {
+						t.Fatal(err)
+					}
+					return
+				}
+				want, err := os.ReadFile(golden)
+				if err != nil {
+					t.Fatalf("no golden vector (go test -run TestGoldenVectors -update): %v", err)
+				}
+				if !bytes.Equal(out, want) {
+					t.Errorf("%s changed. Words an owner signed must render the same: a new text is a new WordsVersion.\ngot:\n%s", golden, out)
+				}
+			})
+		}
 	}
 	if n < 5 {
 		t.Fatalf("only %d valid vectors", n)
@@ -349,5 +359,56 @@ func TestAClaimAndAClaimRelated(t *testing.T) {
 		if err := with(c.tool, c.changes); err == nil {
 			t.Errorf("%s: accepted", name)
 		}
+	}
+}
+
+// v2 is v1 less KIFF's bookkeeping: the same lines in the same order,
+// without the unpinned line and without the lost-answer line on an
+// operation that neither moves nor records money; on one that does, that
+// line says the owner confirms. Render stays v1.
+func TestWordsV2DropsKIFFsBookkeeping(t *testing.T) {
+	files, _ := filepath.Glob("testdata/valid/*.json")
+	for _, f := range files {
+		if strings.HasSuffix(f, ".expected.json") {
+			continue
+		}
+		raw, _ := os.ReadFile(f)
+		p, err := Parse(raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		v1, v2 := Render(p), render(p, WordsVersion2)
+		if v1.V != WordsVersion || v2.V != WordsVersion2 {
+			t.Fatalf("%s: versions %q, %q", f, v1.V, v2.V)
+		}
+		money := map[string]bool{}
+		for _, o := range p.Operations {
+			money[o.Tool] = o.Money()
+		}
+		var kept []Line
+		for _, l := range v1.Lines {
+			switch {
+			case l.Kind == KindUnpinned:
+			case l.Kind == KindMissing && strings.Contains(l.Text, "if an answer is lost"):
+				if money[l.Op] {
+					kept = append(kept, Line{Op: l.Op, Kind: KindMissing, Text: strings.SplitN(l.Text, ": ", 2)[0] + ": if " + p.Vendor + "'s answer is lost, you confirm whether it went through; until then it stays counted."})
+				}
+			default:
+				kept = append(kept, l)
+			}
+		}
+		a, _ := json.Marshal(kept)
+		b, _ := json.Marshal(v2.Lines)
+		if !bytes.Equal(a, b) {
+			t.Errorf("%s: v2\n%s\nwant\n%s", f, b, a)
+		}
+		for _, l := range v2.Lines {
+			if l.Kind == KindUnpinned || strings.Contains(l.Text, "KIFF can't check") || strings.Contains(l.Text, "checks it daily") {
+				t.Errorf("%s: v2 says KIFF's bookkeeping: %q", f, l.Text)
+			}
+		}
+	}
+	if _, ok := RenderVersion(Profile{}, "kiff.words.v3"); ok {
+		t.Error("an unknown version rendered")
 	}
 }

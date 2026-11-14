@@ -27,6 +27,10 @@ type ApprovalDevice struct {
 	Name string
 	// Platform is ios, ipados, macos, android or windows.
 	Platform string
+	// Kind is what the device is (DeviceKindOf), its name in the list drawn
+	// from it in the reader's language; "" for one kept before kinds, whose
+	// name says it.
+	Kind string
 	// PublicKey is the device's P-256 key (SPKI DER).
 	PublicKey []byte
 	// Attestation is the attestation format KIFF verified for the key, or
@@ -80,9 +84,9 @@ type DeviceStore interface {
 	// key, so a device signing in again is the same device.
 	// ErrDeviceNotFound when there's none.
 	FindByKey(ctx context.Context, tenant, subject string, key []byte) (ApprovalDevice, error)
-	// Relabel sets a device's name and platform, as a later sign-in of the
-	// same key says them. ErrDeviceNotFound when unknown.
-	Relabel(ctx context.Context, id, name, platform string) error
+	// Relabel sets a device's name, platform and kind, as a later sign-in
+	// of the same key says them. ErrDeviceNotFound when unknown.
+	Relabel(ctx context.Context, id, name, platform, kind string) error
 }
 
 // MemoryDeviceStore is the in-memory DeviceStore for tests and dev.
@@ -170,7 +174,7 @@ func (s *MemoryDeviceStore) Touch(_ context.Context, id string, at time.Time) er
 	return nil
 }
 
-func (s *MemoryDeviceStore) Relabel(_ context.Context, id, name, platform string) error {
+func (s *MemoryDeviceStore) Relabel(_ context.Context, id, name, platform, kind string) error {
 	if !ValidDevicePlatform(platform) {
 		return fmt.Errorf("auth: unknown device platform %q", platform)
 	}
@@ -180,7 +184,7 @@ func (s *MemoryDeviceStore) Relabel(_ context.Context, id, name, platform string
 	if !ok {
 		return ErrDeviceNotFound
 	}
-	d.Name, d.Platform = name, platform
+	d.Name, d.Platform, d.Kind = name, platform, kind
 	s.byID[id] = d
 	return nil
 }

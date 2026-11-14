@@ -1,0 +1,59 @@
+{
+  "profile_sha256": "e61e2a032762dbd3ee742396c9211f2569fdd8b9d614c27650fc1ad61d363fd6",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "stripe_api_details_abcd",
+        "kind": "does",
+        "text": "Read a Stripe operation's fields: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "stripe_account_abcd",
+        "kind": "does",
+        "text": "Look up the Stripe account: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "stripe_charge_abcd",
+        "kind": "does",
+        "text": "Look up a charge: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "stripe_refunds_abcd",
+        "kind": "does",
+        "text": "List a charge's refunds: reads from Stripe, changes nothing."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "does",
+        "text": "Refund a charge: moves money through Stripe. It pays out or charges."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "scope",
+        "text": "Refund a charge: a Card's \"Only for\" can name which charge it acts on."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "counts",
+        "text": "Refund a charge: counted in EUR."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "missing",
+        "text": "Refund a charge: Stripe doesn't say back what it used, so KIFF counts what the taf asked for."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "missing",
+        "text": "Refund a charge: if Stripe's answer is lost, you confirm whether it went through; until then it stays counted."
+      },
+      {
+        "op": "stripe_refund",
+        "kind": "probation",
+        "text": "Refund a charge: not tried with a test account, so you confirm its first 3 outcomes."
+      }
+    ]
+  },
+  "words_sha256": "5e1293504fd294a7ad3b7c4df00ff16cad567dab111803b58fb09697fd42a3bf"
+}

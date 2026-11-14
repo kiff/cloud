@@ -31,5 +31,10 @@ CREATE TABLE IF NOT EXISTS cloud_meta.device_sign_ins (
     expires_at      TIMESTAMPTZ NOT NULL
 );
 
+-- The device's kind (iphone, ipad, android_phone, android_tablet or other),
+-- as it said at the start or as its name says; its name in the list is
+-- drawn from it in the reader's language.
+ALTER TABLE cloud_meta.device_sign_ins ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT '';
+
 CREATE INDEX IF NOT EXISTS device_sign_ins_expires_at ON cloud_meta.device_sign_ins (expires_at);
 CREATE INDEX IF NOT EXISTS device_sign_ins_subject ON cloud_meta.device_sign_ins (subject) WHERE subject <> '';

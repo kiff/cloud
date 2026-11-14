@@ -1,0 +1,14 @@
+{
+  "profile_sha256": "ba5ab704c31b4a60985b1b0311299b74c0ef3914fb5f270fd91fa4691d183463",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "drafts_create",
+        "kind": "does",
+        "text": "Draft a reply: makes a draft in Gmail. Nothing leaves until it's approved."
+      }
+    ]
+  },
+  "words_sha256": "788d8fa26cf19e01b3665522641b46c6f88a08f478fa1e4787256266c40f429b"
+}

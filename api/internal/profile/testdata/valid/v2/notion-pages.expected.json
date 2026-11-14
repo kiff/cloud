@@ -1,0 +1,29 @@
+{
+  "profile_sha256": "4dcfd20f86d448f9e55107dcd89fb3ab7fa926b3951bd452b0fcdfa704b62875",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "notion-search",
+        "kind": "does",
+        "text": "Search pages: reads from Notion, changes nothing."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "does",
+        "text": "Write a page: writes in Notion."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "does",
+        "text": "Write a page: can act on several at once."
+      },
+      {
+        "op": "notion-create-pages",
+        "kind": "scope",
+        "text": "Write a page: a Card's \"Only for\" can name which parent page it acts on."
+      }
+    ]
+  },
+  "words_sha256": "50473520febc7b4ee3a5c33222e8bf8abfc5715f4fe9f787a43933e4854fbc31"
+}

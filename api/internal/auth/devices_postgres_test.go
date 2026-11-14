@@ -62,13 +62,13 @@ func TestPostgresDeviceStore(t *testing.T) {
 	if err := store.Insert(ctx, twin); !errors.Is(err, auth.ErrDeviceDuplicate) {
 		t.Errorf("a second active device with the same key: %v", err)
 	}
-	if err := store.Relabel(ctx, ipad.ID, "tafs on iPad", "ipados"); err != nil {
+	if err := store.Relabel(ctx, ipad.ID, "tafs on iPad", "ipados", "ipad"); err != nil {
 		t.Fatal(err)
 	}
-	if err := store.Relabel(ctx, ipad.ID, "x", "palmos"); err == nil {
+	if err := store.Relabel(ctx, ipad.ID, "x", "palmos", ""); err == nil {
 		t.Error("relabelled to an unknown platform")
 	}
-	if err := store.Relabel(ctx, "dev_nope", "x", "ios"); !errors.Is(err, auth.ErrDeviceNotFound) {
+	if err := store.Relabel(ctx, "dev_nope", "x", "ios", ""); !errors.Is(err, auth.ErrDeviceNotFound) {
 		t.Errorf("relabel unknown: %v", err)
 	}
 	bad := ipad
@@ -77,7 +77,7 @@ func TestPostgresDeviceStore(t *testing.T) {
 		t.Error("an unknown platform was kept")
 	}
 	got, err := store.Get(ctx, ipad.ID)
-	if err != nil || got.Platform != "ipados" || string(got.PublicKey) != string(key) || got.Attestation != "" || got.RevokedAt != nil {
+	if err != nil || got.Platform != "ipados" || got.Kind != "ipad" || string(got.PublicKey) != string(key) || got.Attestation != "" || got.RevokedAt != nil {
 		t.Fatalf("get = %+v, %v", got, err)
 	}
 	if _, err := store.Get(ctx, "dev_nope"); !errors.Is(err, auth.ErrDeviceNotFound) {

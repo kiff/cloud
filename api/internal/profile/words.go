@@ -13,6 +13,15 @@ import (
 // version: the words an owner signed must render the same forever.
 const WordsVersion = "kiff.words.v1"
 
+// WordsVersion2 is the owner's words without KIFF's own bookkeeping: no
+// line that KIFF checks a vendor daily, and the lost-answer line only on
+// operations that move or record money, where the owner is the one asked.
+// v1 renders as it always has; an app reads v2 only when it asks for it.
+const WordsVersion2 = "kiff.words.v2"
+
+// WordsVersions are the renderers KIFF answers, oldest first.
+var WordsVersions = []string{WordsVersion, WordsVersion2}
+
 // Words is what the owner reads and approves for a profile. The apps
 // show each line's text as it is, in order; KIFF renders it, never Coach.
 type Words struct {
@@ -46,9 +55,23 @@ const (
 // confirms on a profile no test call proved.
 const ProbationCalls = 3
 
-// Render returns the words for a valid profile.
-func Render(p Profile) Words {
-	w := Words{V: WordsVersion}
+// Render returns the words for a valid profile, in kiff.words.v1.
+func Render(p Profile) Words { return render(p, WordsVersion) }
+
+// RenderVersion returns the words for a valid profile in version v, one of
+// WordsVersions; ok is false for any other.
+func RenderVersion(p Profile, v string) (w Words, ok bool) {
+	for _, known := range WordsVersions {
+		if v == known {
+			return render(p, v), true
+		}
+	}
+	return Words{}, false
+}
+
+func render(p Profile, version string) Words {
+	v2 := version == WordsVersion2
+	w := Words{V: version}
 	add := func(op, kind, text string) { w.Lines = append(w.Lines, Line{Op: op, Kind: kind, Text: text}) }
 	v := p.Vendor
 	for _, o := range p.Operations {
@@ -93,7 +116,12 @@ func Render(p Profile) Words {
 		} else if o.Money() {
 			add(o.Tool, KindMissing, t+": "+v+" doesn't say back what it used, so KIFF counts what the taf asked for.")
 		}
-		if s := o.StatusRead; s == nil || s.None != "" {
+		if s := o.StatusRead; v2 && (s == nil || s.None != "") {
+			// The owner's part, said as the owner's: only where money is.
+			if o.Money() {
+				add(o.Tool, KindMissing, t+": if "+v+"'s answer is lost, you confirm whether it went through; until then it stays counted.")
+			}
+		} else if s == nil || s.None != "" {
 			if o.Money() {
 				add(o.Tool, KindMissing, t+": if an answer is lost, KIFF can't check whether it happened, so it stays counted until you say.")
 			} else {
@@ -107,7 +135,7 @@ func Render(p Profile) Words {
 			add(o.Tool, KindProbation, t+": not tried with a test account, so you confirm its first "+strconv.Itoa(ProbationCalls)+" outcomes.")
 		}
 	}
-	if p.Pin.Kind == "none" {
+	if p.Pin.Kind == "none" && !v2 {
 		what := "API"
 		if p.Transport == "mcp" {
 			what = "server"

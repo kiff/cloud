@@ -37,15 +37,15 @@ func NewPostgresDeviceStore(pool *pgxpool.Pool) *PostgresDeviceStore {
 	return &PostgresDeviceStore{pool: pool}
 }
 
-const sqlDeviceColumns = `id, tenant_id, subject, name, platform, public_key, attestation, created_at, last_used_at, revoked_at`
+const sqlDeviceColumns = `id, tenant_id, subject, name, platform, public_key, attestation, created_at, last_used_at, revoked_at, kind`
 
 func (s *PostgresDeviceStore) Insert(ctx context.Context, d ApprovalDevice) error {
 	if err := d.check(); err != nil {
 		return err
 	}
 	_, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.approval_devices (`+sqlDeviceColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8, NULL, NULL)`,
-		d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.Attestation, d.CreatedAt.UTC())
+VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8, NULL, NULL, $9)`,
+		d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.Attestation, d.CreatedAt.UTC(), d.Kind)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 		return fmt.Errorf("%w: %q", ErrDeviceDuplicate, d.ID)
@@ -105,11 +105,11 @@ WHERE id = $1 AND (last_used_at IS NULL OR last_used_at < $2::timestamptz - inte
 	return nil
 }
 
-func (s *PostgresDeviceStore) Relabel(ctx context.Context, id, name, platform string) error {
+func (s *PostgresDeviceStore) Relabel(ctx context.Context, id, name, platform, kind string) error {
 	if !ValidDevicePlatform(platform) {
 		return fmt.Errorf("auth: unknown device platform %q", platform)
 	}
-	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.approval_devices SET name = $2, platform = $3 WHERE id = $1`, id, name, platform)
+	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.approval_devices SET name = $2, platform = $3, kind = $4 WHERE id = $1`, id, name, platform, kind)
 	if err != nil {
 		return fmt.Errorf("relabel device: %w", err)
 	}
@@ -131,7 +131,7 @@ WHERE tenant_id = $1 AND subject = $2 AND public_key = $3 AND revoked_at IS NULL
 func scanDevice(row devSessionRowScanner) (ApprovalDevice, error) {
 	var d ApprovalDevice
 	var attestation *string
-	if err := row.Scan(&d.ID, &d.Tenant, &d.Subject, &d.Name, &d.Platform, &d.PublicKey, &attestation, &d.CreatedAt, &d.LastUsedAt, &d.RevokedAt); err != nil {
+	if err := row.Scan(&d.ID, &d.Tenant, &d.Subject, &d.Name, &d.Platform, &d.PublicKey, &attestation, &d.CreatedAt, &d.LastUsedAt, &d.RevokedAt, &d.Kind); err != nil {
 		return ApprovalDevice{}, err
 	}
 	if attestation != nil {
@@ -186,7 +186,7 @@ WHERE tenant_id = $1 AND subject = $2 AND public_key = $3 AND revoked_at IS NULL
 				// Another instance starting may insert the same key's device at
 				// once: then that one is the device (one per key, by the index).
 				tag, err := tx.Exec(ctx, `INSERT INTO cloud_meta.approval_devices (`+sqlDeviceColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, NULL, NULL)
+VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, NULL, NULL, '')
 ON CONFLICT (tenant_id, subject, public_key) WHERE revoked_at IS NULL DO NOTHING`, d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.CreatedAt.UTC())
 				if err != nil {
 					return err
