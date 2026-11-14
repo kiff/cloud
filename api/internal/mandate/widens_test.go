@@ -34,6 +34,7 @@ func TestWidens(t *testing.T) {
 	}{
 		{"the same", func(m *Mandate) {}, ""},
 		{"a new title, location, hold time", func(m *Mandate) { m.Title, m.Location, m.HoldExpiry = "x", "Europe/Paris", time.Hour }, ""},
+		{"issued by another draft", func(m *Mandate) { m.DraftID = "drf_2" }, ""},
 		{"a lower limit", func(m *Mandate) { m.Aggregates[0].Limit = 1000 }, ""},
 		{"a stricter window", func(m *Mandate) { m.Aggregates[0].Window = WindowLifetime }, ""},
 		{"an extra limit", func(m *Mandate) {

@@ -364,6 +364,11 @@ type Mandate struct {
 	// FromHold is the held call an issuance was made for ("Allow this from
 	// now on"): kept on the revision it writes, never on the Card itself.
 	FromHold string `json:"-"`
+	// DraftID is the agent draft whose confirmation (or trial) issued the
+	// Card's current terms. Each issuance sets it: a draft's own id, or
+	// empty when the Card was issued or reissued directly. Changing only
+	// holders, room or the title keeps it.
+	DraftID string `json:",omitempty"`
 }
 
 // MaxTitle is the longest Card title, in characters.

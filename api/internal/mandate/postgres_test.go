@@ -354,3 +354,47 @@ func TestPostgres_ConcurrentSameIDAuthorizesOnce(t *testing.T) {
 	}
 	testConcurrentSameID(t, mandate.NewPostgresStore(pool))
 }
+
+// A Card's draft is the one that issued its current terms: issuing it
+// directly clears it (stored NULL, read ""), and a change of holders, not
+// an issuance, keeps it.
+func TestPostgres_DraftIDFollowsTheIssuance(t *testing.T) {
+	pool := requirePostgres(t)
+	seedTenant(t, pool, "pg-draft")
+	s := mandate.NewPostgresStore(pool)
+	ctx := context.Background()
+	draftOf := func() string {
+		t.Helper()
+		ms, err := s.List(ctx, "pg-draft")
+		if err != nil || len(ms) != 1 {
+			t.Fatalf("List: %v %+v", err, ms)
+		}
+		return ms[0].DraftID
+	}
+
+	m := pgMandate("pg-draft", "mdt-draft")
+	m.DraftID = "draft-1"
+	if err := s.IssueAll(ctx, []mandate.Mandate{m}, "tester", nil, nil, base); err != nil {
+		t.Fatalf("IssueAll: %v", err)
+	}
+	if got := draftOf(); got != "draft-1" {
+		t.Fatalf("draft after a draft's issuance: %q", got)
+	}
+	if _, err := s.SetHolders(ctx, "pg-draft", "mdt-draft", []string{"agent://b"}, nil, "tester", base); err != nil {
+		t.Fatalf("SetHolders: %v", err)
+	}
+	if got := draftOf(); got != "draft-1" {
+		t.Fatalf("draft after a change of holders: %q", got)
+	}
+	m.DraftID, m.Subject = "", "agent://b"
+	if err := s.Issue(ctx, m, "tester"); err != nil {
+		t.Fatalf("Issue: %v", err)
+	}
+	if got := draftOf(); got != "" {
+		t.Fatalf("draft after a direct reissue: %q", got)
+	}
+	var stored *string
+	if err := pool.QueryRow(ctx, `SELECT draft_id FROM cloud_meta.mandates WHERE tenant_id = 'pg-draft' AND id = 'mdt-draft'`).Scan(&stored); err != nil || stored != nil {
+		t.Fatalf("a direct issuance stores draft_id %v (%v), want NULL", stored, err)
+	}
+}

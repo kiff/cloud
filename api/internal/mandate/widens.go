@@ -103,14 +103,14 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 }
 
 // otherTerms is the Card with every term Widens compares itself, and what
-// is no authority (its name, ids, location, hold time, revocation and
-// archive), set aside: what remains must be the same, or the revision
+// is no authority (its name, ids, the draft that issued it, location,
+// hold time, revocation and archive), set aside: what remains must be the same, or the revision
 // widens. Next steps are compared as one set across the Card's grants.
 // Extra room is left out: a draft never carries it, and adding it is
 // critical through its own route.
 func otherTerms(m Mandate) *Mandate {
 	o := m
-	o.ID, o.TenantID, o.Subject, o.Holders, o.Domain, o.DomainID, o.Environment = "", "", "", nil, "", "", ""
+	o.ID, o.TenantID, o.Subject, o.Holders, o.Domain, o.DomainID, o.Environment, o.DraftID = "", "", "", nil, "", "", "", ""
 	o.ValidFrom, o.ValidUntil, o.RevokedAt, o.ArchivedAt = time.Time{}, time.Time{}, nil, nil
 	o.Location, o.DefaultLocation, o.OnExceed, o.HoldExpiry, o.Title = "", "", "", 0, ""
 	var steps []string

@@ -222,8 +222,8 @@ func (t pgCardTx) RecordAll(ctx context.Context, draws []Draw) error {
 const issueStmt = `
 	INSERT INTO cloud_meta.mandates
 		(id, tenant_id, subject, domain, environment, grants, aggregates,
-		 valid_from, valid_until, revoked_at, location, domain_id, on_exceed, hold_expiry_seconds, title)
-	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+		 valid_from, valid_until, revoked_at, location, domain_id, on_exceed, hold_expiry_seconds, title, draft_id)
+	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,NULLIF($16, ''))
 	ON CONFLICT (tenant_id, id) DO UPDATE SET
 		subject = EXCLUDED.subject,
 		on_exceed = EXCLUDED.on_exceed,
@@ -237,7 +237,9 @@ const issueStmt = `
 		valid_until = EXCLUDED.valid_until,
 		location = EXCLUDED.location,
 		-- An unnamed title keeps the Card's current one.
-		title = CASE WHEN EXCLUDED.title <> '' THEN EXCLUDED.title ELSE mandates.title END`
+		title = CASE WHEN EXCLUDED.title <> '' THEN EXCLUDED.title ELSE mandates.title END,
+		-- Every issuance says which draft issued it: none when issued directly.
+		draft_id = EXCLUDED.draft_id`
 
 func (s *PostgresStore) Issue(ctx context.Context, m Mandate, by string) error {
 	// The revision is written in the same transaction as the upsert.
@@ -403,7 +405,7 @@ func (s *PostgresStore) issueTx(ctx context.Context, tx pgx.Tx, m Mandate, by st
 	if _, err := tx.Exec(ctx, issueStmt,
 		m.ID, m.TenantID, m.Subject, m.Domain, m.Environment, grants, aggs,
 		nullTime(m.ValidFrom), nullTime(m.ValidUntil), m.RevokedAt, m.Location, m.DomainID, policyOf(m),
-		int64(m.HoldExpiry/time.Second), m.Title,
+		int64(m.HoldExpiry/time.Second), m.Title, m.DraftID,
 	); err != nil {
 		return fmt.Errorf("issue mandate: %w", err)
 	}
@@ -645,6 +647,7 @@ func (s *PostgresStore) Archive(ctx context.Context, tenantID, mandateID string,
 const mandateColumns = `
 		SELECT id, tenant_id, subject, domain, environment, grants, aggregates,
 		       valid_from, valid_until, revoked_at, archived_at, location, domain_id, on_exceed, hold_expiry_seconds, title,
+		       COALESCE(draft_id, ''),
 		       ARRAY(SELECT h.subject FROM cloud_meta.mandate_holders h
 		              WHERE h.tenant_id = mandates.tenant_id AND h.mandate_id = mandates.id
 		              ORDER BY h.position)`
@@ -852,7 +855,7 @@ func scanMandates(rows pgx.Rows) ([]Mandate, error) {
 			holdSecs                                     int64
 		)
 		if err := rows.Scan(&m.ID, &m.TenantID, &m.Subject, &m.Domain, &m.Environment,
-			&grants, &aggs, &validFrom, &validUntil, &revokedAt, &archivedAt, &m.Location, &m.DomainID, &m.OnExceed, &holdSecs, &m.Title, &m.Holders); err != nil {
+			&grants, &aggs, &validFrom, &validUntil, &revokedAt, &archivedAt, &m.Location, &m.DomainID, &m.OnExceed, &holdSecs, &m.Title, &m.DraftID, &m.Holders); err != nil {
 			return nil, fmt.Errorf("scan mandate: %w", err)
 		}
 		if err := json.Unmarshal(grants, &m.Grants); err != nil {

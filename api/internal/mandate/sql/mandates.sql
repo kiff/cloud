@@ -456,3 +456,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS mandate_exceptions_card_unit_held_one
 -- exception's id, '' for every other revision.
 ALTER TABLE cloud_meta.mandate_revisions
     ADD COLUMN IF NOT EXISTS from_hold TEXT NOT NULL DEFAULT '';
+
+-- The agent draft whose confirmation (or trial) issued the Card's current
+-- terms; NULL for a Card issued or last reissued directly.
+ALTER TABLE cloud_meta.mandates
+    ADD COLUMN IF NOT EXISTS draft_id TEXT;
