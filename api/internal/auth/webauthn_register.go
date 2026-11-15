@@ -88,8 +88,7 @@ const (
 //  5. the credential id is authData's, never the client's;
 //  6. the backup flags are what it says of being synced.
 func VerifyRegistration(rp RelyingParty, tenant, subject, issuedAt string, clientDataJSON, attestationObject []byte, now time.Time) (Registered, error) {
-	if tenant == "" || subject == "" || len(clientDataJSON) == 0 || len(clientDataJSON) > maxClientData ||
-		len(attestationObject) == 0 || len(attestationObject) > maxAttestation {
+	if tenant == "" || subject == "" {
 		return Registered{}, ErrRegistrationShape
 	}
 	at, err := time.Parse(time.RFC3339, issuedAt)
@@ -98,6 +97,35 @@ func VerifyRegistration(rp RelyingParty, tenant, subject, issuedAt string, clien
 	}
 	if d := now.Sub(at); d > RegistrationMaxAge || d < -RegistrationMaxAge {
 		return Registered{}, ErrRegistrationIssued
+	}
+	return verifyCreation(rp, RegistrationMessage(tenant, subject, issuedAt), clientDataJSON, attestationObject)
+}
+
+// PairingCredentialMessage is what a passkey computer's creation proof
+// (the desktop client contract, §5.1) has its challenge be the SHA-256 of: the
+// QR's nonce and pub as the QR writes them (base64url), so the credential was
+// made for this pairing and no other. The computer makes it before showing the
+// QR, which carries the credential as before.
+func PairingCredentialMessage(nonce, pub string) []byte {
+	return []byte("kiff.passkey.pair.v1\n" + nonce + "\n" + pub)
+}
+
+// VerifyPairingCredential checks a passkey computer's creation proof at its
+// claim: the same checks as VerifyRegistration's (type, origin, challenge,
+// attestation none, rpIdHash, UP and UV, one ES256 P-256 key), over
+// PairingCredentialMessage. The caller then checks that the credential and key
+// it read are the ones the phone approved.
+func VerifyPairingCredential(rp RelyingParty, nonce, pub string, clientDataJSON, attestationObject []byte) (Registered, error) {
+	if nonce == "" || pub == "" {
+		return Registered{}, ErrRegistrationShape
+	}
+	return verifyCreation(rp, PairingCredentialMessage(nonce, pub), clientDataJSON, attestationObject)
+}
+
+// verifyCreation is a creation's checks, its challenge base64url(sha256(message)).
+func verifyCreation(rp RelyingParty, message, clientDataJSON, attestationObject []byte) (Registered, error) {
+	if len(clientDataJSON) == 0 || len(clientDataJSON) > maxClientData || len(attestationObject) == 0 || len(attestationObject) > maxAttestation {
+		return Registered{}, ErrRegistrationShape
 	}
 	var client struct {
 		Type        string `json:"type"`
@@ -114,7 +142,7 @@ func VerifyRegistration(rp RelyingParty, tenant, subject, issuedAt string, clien
 	if rp.ID == "" || client.CrossOrigin || !slices.Contains(rp.Origins, client.Origin) {
 		return Registered{}, ErrRegistrationOrigin
 	}
-	digest := sha256.Sum256(RegistrationMessage(tenant, subject, issuedAt))
+	digest := sha256.Sum256(message)
 	challenge, err := b64url(client.Challenge)
 	if err != nil || subtle.ConstantTimeCompare(challenge, digest[:]) != 1 {
 		return Registered{}, ErrRegistrationChallenge
