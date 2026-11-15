@@ -538,13 +538,24 @@ func (a *agent) ListTools(ctx context.Context) ([]mcp.Tool, error) {
 	// listed as they are: every call is still decided when it is made.
 	// In a trial, the Cards its calls are decided on (kiff/tafs#107).
 	card, cardErr := a.g.API.AgentCard(ctx, a.key, a.trial)
-	// A key without the gateway role (an agent that holds no tools of its
-	// own, such as kiff/agents' setup agent) is shown only the account's
-	// tools a Card of its own covers: the reads the owner approved for it
-	// (kiff/tafs#138) and, as Coach, the account's own app's tools
-	// (kiff/tafs#206). Not the account's other tools, which every taf's
-	// Card is about. Without its Cards, it is shown only KIFF's own.
-	if !slices.Contains(a.me.Roles, Role) {
+	// An agent is shown only the account's tools a Card of its own covers.
+	// A taf isn't shown another taf's tools on the same account, or a tool
+	// of its own connection no Card covers: a call to one is refused, and a
+	// refused read stops the taf's writes for the session (a version's trial
+	// refunded nothing after reading through another taf's tool). A key
+	// without the gateway role (an agent that holds no tools of its own,
+	// such as kiff/agents' setup agent) sees the reads the owner approved
+	// for it (kiff/tafs#138) and, as Coach, the account's own app's tools
+	// (kiff/tafs#206); without its Cards, only KIFF's own. A taf whose Card
+	// KIFF couldn't be asked for (no answer, or a 5xx) sees the account's
+	// tools as before, each call still decided when it is made; a Card KIFF
+	// refused to show (a 4xx: a revoked or unknown key) leaves only KIFF's own.
+	fallback := cardErr != nil && errors.Is(cardErr, kiffapi.ErrUnavailable) && slices.Contains(a.me.Roles, Role)
+	if fallback && a.g.Logger != nil {
+		a.g.Logger.WarnContext(ctx, "gateway: a taf's tools listed without its Card",
+			slog.String("agent", a.me.AgentID), slog.String("trial", a.trial), slog.String("err", cardErr.Error()))
+	}
+	if !fallback {
 		var covered []Tool
 		if cardErr == nil {
 			for _, t := range tools {
@@ -1270,15 +1281,15 @@ func (a *agent) replayed(ctx context.Context, key string) (json.RawMessage, invo
 func (a *agent) heldResult(ctx context.Context, in invocation.Invocation) json.RawMessage {
 	for _, reason := range in.Reasons {
 		if reason == "mandate_approved_no_room" {
-			msg := "Approved, but the Card has no room left. Nothing was sent. The owner can change the Card or reject this call. " +
+			msg := heldOpening + "Approved, but the Card has no room left. Nothing was sent. The owner can change the Card or reject this call. " +
 				"Read kiff_pending to check for room; retry the same operation only after room returns."
 			return kiffResult(msg, callOf(in))
 		}
 	}
 	a.offerInChat(ctx, in)
-	msg := "Waiting for the owner's approval: this call is outside the agent's Card. "
+	msg := heldOpening + "Waiting for the owner's approval: this call is outside the agent's Card. "
 	if why := heldWhy(in); why != "" {
-		msg = "Waiting for the owner's approval: this call is outside the agent's Card: " + why + ". "
+		msg = heldOpening + "Waiting for the owner's approval: this call is outside the agent's Card: " + why + ". "
 	}
 	msg += "Nothing has been sent to the tool. "
 	if in.ReviewURL != "" {
@@ -1295,6 +1306,11 @@ func (a *agent) heldResult(ctx context.Context, in invocation.Invocation) json.R
 	}
 	return kiffResult(msg, callOf(in))
 }
+
+// heldOpening begins every held call's result, so a taf never reports one as
+// done: it said "the evidence is submitted but waits for your approval" of a
+// call KIFF held and never sent.
+const heldOpening = "HELD: not done, nothing sent. Say it waits for the owner's approval; never say it was done, sent or submitted. "
 
 // heldMessage is a hold's stored message when KIFF named no limit.
 const heldMessage = "Held for the owner's approval."

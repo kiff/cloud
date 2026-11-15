@@ -47,12 +47,12 @@ func NewPostgresDeveloperSessionStore(pool *pgxpool.Pool) *PostgresDeveloperSess
 }
 
 const sqlInsertDevSession = `
-INSERT INTO cloud_meta.developer_sessions (id, tenant_id, subject, label, token_hash, created_at, expires_at, device_public_key, device_id, approval_public_key)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULLIF($9, ''), $10)
+INSERT INTO cloud_meta.developer_sessions (id, tenant_id, subject, label, token_hash, created_at, expires_at, device_public_key, device_id, approval_public_key, approval_mode)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULLIF($9, ''), $10, $11)
 `
 
 const sqlSelectDevSessionByHash = `
-SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key, approval_mode
 FROM cloud_meta.developer_sessions
 WHERE token_hash = $1
 `
@@ -70,16 +70,19 @@ UPDATE cloud_meta.developer_sessions SET revoked_at = $2 WHERE token_hash = $1 A
 `
 
 const sqlListActiveDevSessions = `
-SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key, approval_mode
 FROM cloud_meta.developer_sessions
 WHERE subject = $1 AND revoked_at IS NULL AND expires_at > $2
 ORDER BY created_at DESC
 `
 
 // sqlSetApprovalKey sets the key only where none is: a session gets
-// one approval key, and replacing it means signing in again.
+// one approval key, and replacing it means signing in again. A view-only
+// session that may take its first key is held to it from then on ('key');
+// a session from before approval modes keeps its mode.
 const sqlSetApprovalKey = `
-UPDATE cloud_meta.developer_sessions SET approval_public_key = $2
+UPDATE cloud_meta.developer_sessions SET approval_public_key = $2,
+    approval_mode = CASE WHEN approval_mode = 'view' THEN 'key' ELSE approval_mode END
 WHERE id = $1 AND approval_public_key IS NULL AND revoked_at IS NULL AND expires_at > $3
 `
 
@@ -93,7 +96,7 @@ RETURNING o.old
 `
 
 const sqlSelectDevSessionByID = `
-SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key
+SELECT id, tenant_id, subject, label, token_hash, created_at, expires_at, last_seen_at, revoked_at, device_public_key, COALESCE(device_id, ''), approval_public_key, approval_mode
 FROM cloud_meta.developer_sessions
 WHERE id = $1
 `
@@ -118,7 +121,7 @@ func (s *PostgresDeveloperSessionStore) Insert(ctx context.Context, sess Develop
 	}
 	_, err := s.pool.Exec(ctx, sqlInsertDevSession,
 		sess.ID, sess.Tenant, sess.Subject, sess.Label, hex.EncodeToString(sess.TokenHash[:]), sess.CreatedAt.UTC(), sess.ExpiresAt.UTC(),
-		deviceKeyColumn(sess.DevicePublicKey), sess.DeviceID, deviceKeyColumn(sess.ApprovalPublicKey),
+		deviceKeyColumn(sess.DevicePublicKey), sess.DeviceID, deviceKeyColumn(sess.ApprovalPublicKey), sess.ApprovalMode,
 	)
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -239,7 +242,7 @@ func scanDevSession(row devSessionRowScanner) (DeveloperSession, error) {
 		lastSeen *time.Time
 		revoked  *time.Time
 	)
-	if err := row.Scan(&sess.ID, &sess.Tenant, &sess.Subject, &sess.Label, &hashHex, &sess.CreatedAt, &sess.ExpiresAt, &lastSeen, &revoked, &sess.DevicePublicKey, &sess.DeviceID, &sess.ApprovalPublicKey); err != nil {
+	if err := row.Scan(&sess.ID, &sess.Tenant, &sess.Subject, &sess.Label, &hashHex, &sess.CreatedAt, &sess.ExpiresAt, &lastSeen, &revoked, &sess.DevicePublicKey, &sess.DeviceID, &sess.ApprovalPublicKey, &sess.ApprovalMode); err != nil {
 		return DeveloperSession{}, err
 	}
 	hashBytes, err := hex.DecodeString(strings.TrimSpace(hashHex))

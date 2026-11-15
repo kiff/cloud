@@ -36,3 +36,26 @@ func TestMeTellsARefusedKeyFromAnOutage(t *testing.T) {
 		t.Fatalf("unreachable: %v", err)
 	}
 }
+
+// AgentCard tells no answer from a refusal the same way: a 5xx or an
+// unreachable API is ErrUnavailable, so the gateway lists a taf the account's
+// tools as before; a 4xx is KIFF's answer, never ErrUnavailable.
+func TestAgentCardTellsARefusalFromAnOutage(t *testing.T) {
+	status := http.StatusUnauthorized
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(status)
+		_, _ = w.Write([]byte(`{"error":"x"}`))
+	}))
+	c := kiffapi.New(srv.URL, srv.Client())
+	if _, err := c.AgentCard(context.Background(), "k", ""); err == nil || errors.Is(err, kiffapi.ErrUnavailable) {
+		t.Fatalf("401: %v", err)
+	}
+	status = http.StatusBadGateway
+	if _, err := c.AgentCard(context.Background(), "k", ""); !errors.Is(err, kiffapi.ErrUnavailable) {
+		t.Fatalf("502: %v", err)
+	}
+	srv.Close()
+	if _, err := c.AgentCard(context.Background(), "k", ""); !errors.Is(err, kiffapi.ErrUnavailable) {
+		t.Fatalf("unreachable: %v", err)
+	}
+}

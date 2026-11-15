@@ -166,6 +166,66 @@ type Identity struct {
 	// the session counts only with its signature. Resolved from the
 	// session record, never from the request.
 	ApprovalKey []byte `json:"-"`
+	// ApprovalMode is the session's (DeveloperSession.ApprovalMode), and
+	// KeyStore its device's (ApprovalDevice.KeyStore). Resolved from their
+	// records, never from the request.
+	ApprovalMode string `json:"-"`
+	KeyStore     string `json:"-"`
+}
+
+// ViewOnly reports whether nothing the session signs approves: a view-only
+// session, or one whose device key is in software (the desktop client contract,
+// §1.1, §2.6). It reads, refuses, answers hand-offs and signs out.
+func (id Identity) ViewOnly() bool {
+	return id.ApprovalMode == ApprovalModeView || id.KeyStore == KeyStoreSoftware
+}
+
+// ApprovalModeDeviceKey is what ShownApprovalMode says of a session from
+// before approval modes that has no approval key: it approves with its
+// device key, as it always has.
+const ApprovalModeDeviceKey = "device_key"
+
+// ShownApprovalMode is how a device's session approves, as its apps are told
+// (approval_mode): "view" when nothing it signs approves (a view-only
+// session, or a device key in software), "passkey" when it approves with its
+// device's own passkey, "key" with its approval key, and "device_key" for a
+// session from before approval modes with no approval key. It follows what
+// KIFF checks, so an app shows "View only" exactly when KIFF approves nothing
+// from it.
+func ShownApprovalMode(mode string, hasApprovalKey bool, keyStore string) string {
+	switch {
+	case mode == ApprovalModeView || keyStore == KeyStoreSoftware:
+		return ApprovalModeView
+	case mode == ApprovalModePasskey:
+		return ApprovalModePasskey
+	case mode == ApprovalModeKey || hasApprovalKey:
+		return ApprovalModeKey
+	default:
+		return ApprovalModeDeviceKey
+	}
+}
+
+// ShownApprovalMode is ShownApprovalMode for the session, or "" for a caller
+// that isn't a device's session (a browser, a key, the CLI).
+func (id Identity) ShownApprovalMode() string {
+	if id.Method != MethodDeveloper || len(id.DeviceKey) == 0 {
+		return ""
+	}
+	return ShownApprovalMode(id.ApprovalMode, len(id.ApprovalKey) > 0, id.KeyStore)
+}
+
+// HeldToApprovalKey reports whether what grants authority through the
+// session counts only with its approval key: every session but one from
+// before approval modes that has no approval key, which approves with its
+// device key as it always has.
+func (id Identity) HeldToApprovalKey() bool {
+	return len(id.ApprovalKey) > 0 || id.ApprovalMode != "" || id.KeyStore == KeyStoreSoftware
+}
+
+// ViewOnlyRefusal is the 403 body for an approval from a ViewOnly session.
+func ViewOnlyRefusal() map[string]string {
+	return map[string]string{"error": "view_only",
+		"message": "this device can't approve: approve on your phone, or pair this device from it"}
 }
 
 // ActorID returns the authenticated principal that should appear in framework

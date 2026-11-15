@@ -2,6 +2,8 @@ package auth
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"io"
 	"net/http"
@@ -43,6 +45,9 @@ type RoutePolicy struct {
 	// window, the approval routes that are routine (PhoneWindowRules):
 	// inside an open approval window, the device key signs them.
 	window *http.ServeMux
+	// mayBeSigned, the routes verified only when they come signed
+	// (PhoneMaySignRules); the handler decides when it needs one.
+	mayBeSigned *http.ServeMux
 	// made records the signed setup calls already made (key and signed
 	// message), until they could no longer verify, so none is replayed.
 	// In memory unless WithSignedRequests gives it a shared, durable record.
@@ -50,7 +55,12 @@ type RoutePolicy struct {
 	// windows keeps the approval windows (kiff/tafs#494). Nil: no window
 	// is ever open, so every approval route needs the approval key.
 	windows WindowStore
-	now     func() time.Time
+	// passkeys and rp check a passkey's assertion for a session that
+	// approves with one (ApprovalModePasskey). Nil: such a session approves
+	// nothing.
+	passkeys PasskeyStore
+	rp       RelyingParty
+	now      func() time.Time
 }
 
 // PhoneApprovalRules are the signed calls that grant authority
@@ -76,6 +86,9 @@ var PhoneApprovalRules = []string{
 	"POST /v1/me/window",
 	// Pairing a computer gives it approval authority; a window never covers it.
 	"POST /v1/me/pairings",
+	// A passkey approves: registering or removing one is an approval.
+	"POST /v1/me/passkeys",
+	"DELETE /v1/me/passkeys/{id}",
 }
 
 // PhoneWindowRules are the approval routes that are routine
@@ -95,6 +108,15 @@ var PhoneWindowRules = []string{
 	"POST /v1/me/did-this-happen/{proposal}",
 	"POST /v1/me/mandates",
 	"POST /v1/me/agent-drafts/{id}/confirm",
+}
+
+// PhoneMaySignRules are phone routes that need a signature only for some
+// requests, which their handler tells apart: removing another device that
+// holds an approval key takes that approval (the approval key's signature,
+// for a session held to it), and removing the session's own device takes
+// none. Sent signed, the policy verifies it as for an approval route.
+var PhoneMaySignRules = []string{
+	"DELETE /v1/me/devices/{id}",
 }
 
 // PhoneSignedRules are setup calls a phone's session makes only with its
@@ -170,6 +192,9 @@ var PhoneSignedRules = []string{
 	// Pairing a computer (the desktop client contract, §5): the approval key signs
 	// it, and the handler refuses a session that has none.
 	"POST /v1/me/pairings",
+	// A passkey approves: registering or removing one is an approval.
+	"POST /v1/me/passkeys",
+	"DELETE /v1/me/passkeys/{id}",
 	// Going on past the AI fair-use bound lets the tafs spend more.
 	"PUT /v1/me/usage/ai",
 	// Raising the spend limit lets the tafs spend more: the signature
@@ -278,6 +303,7 @@ var PhoneSessionRules = []string{
 	"POST /v1/me/pack-requests/{id}/withdraw",
 	"GET /v1/me/devices",
 	"DELETE /v1/me/devices/{id}",
+	"GET /v1/me/passkeys",
 	// The open approval window, with KIFF's words for the next tap (kiff/tafs#494).
 	"GET /v1/me/window",
 	"GET /v1/me/agent-drafts",
@@ -473,6 +499,13 @@ func (p *RoutePolicy) WithSignedRequests(made SignedRequests) *RoutePolicy {
 }
 
 // WithClock reads the time from now, for tests of the approval window.
+// WithPasskeys checks the passkey assertions of sessions that approve with
+// their device's own passkey (the desktop client contract, §2.6), for rp.
+func (p *RoutePolicy) WithPasskeys(store PasskeyStore, rp RelyingParty) *RoutePolicy {
+	p.passkeys, p.rp = store, rp
+	return p
+}
+
 func (p *RoutePolicy) WithClock(now func() time.Time) *RoutePolicy {
 	p.now = now
 	return p
@@ -601,6 +634,10 @@ func DefaultRoutePolicy() *RoutePolicy {
 	for _, pattern := range PhoneWindowRules {
 		p.window.Handle(pattern, http.NotFoundHandler())
 	}
+	p.mayBeSigned = http.NewServeMux()
+	for _, pattern := range PhoneMaySignRules {
+		p.mayBeSigned.Handle(pattern, http.NotFoundHandler())
+	}
 	p.granted = http.NewServeMux()
 	for _, pattern := range DeviceGrantRoutes {
 		p.granted.Handle(pattern, http.NotFoundHandler())
@@ -629,6 +666,8 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/me/window":                     membership.CapPersonal,
 	"POST /v1/me/window/{id}/close":          membership.CapPersonal,
 	"POST /v1/me/pairings":                   membership.CapPersonal,
+	"POST /v1/me/passkeys":                   membership.CapPersonal,
+	"DELETE /v1/me/passkeys/{id}":            membership.CapPersonal,
 	"DELETE /v1/me/devices/{id}":             membership.CapPersonal,
 	"POST /v1/me/wallet/nonce":               membership.CapPersonal,
 	"POST /v1/me/wallet/verify":              membership.CapPersonal,
@@ -841,8 +880,36 @@ func (p *RoutePolicy) phoneMux() *http.ServeMux {
 func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Identity) (with SignedWith, signed, ok bool) {
 	if p.signed != nil {
 		if _, pattern := p.signed.Handler(r); pattern != "" {
+			// A session that approves nothing (the desktop client contract, §2.6): no
+			// approval route, and no signature that stands for an approval (a
+			// window's tap, or one signature over two requests), whatever key
+			// made it.
+			header := r.Header.Get(DeviceSignatureHeader)
+			if id.ViewOnly() && (p.approvalRoute(r) || signatureWindowNamed(header) || SignedTogether(header)) {
+				writeJSON(w, http.StatusForbidden, ViewOnlyRefusal())
+				return SignedWith{}, true, false
+			}
+			// A session that approves with its device's own passkey: what grants
+			// authority counts only with that passkey's assertion, never a window
+			// or its device key; the rest is signed by the device key as usual.
+			if id.ApprovalMode == ApprovalModePasskey && p.approvalRoute(r) {
+				with, ok := p.verifyPasskey(w, r, id)
+				return with, true, ok
+			}
 			with, ok := p.verifySigned(w, r, id, p.grantsAuthority(r, id))
 			return with, true, ok
+		}
+	}
+	if p.mayBeSigned != nil && !id.ViewOnly() {
+		if _, pattern := p.mayBeSigned.Handler(r); pattern != "" {
+			switch {
+			case id.ApprovalMode == ApprovalModePasskey && r.Header.Get(PasskeyAssertionHeader) != "":
+				with, ok := p.verifyPasskey(w, r, id)
+				return with, true, ok
+			case r.Header.Get(DeviceSignatureHeader) != "":
+				with, ok := p.verifySigned(w, r, id, id.HeldToApprovalKey())
+				return with, true, ok
+			}
 		}
 	}
 	// A write another KIFF service makes for the phone, with the grant its
@@ -874,9 +941,17 @@ func (p *RoutePolicy) routine(r *http.Request) bool {
 
 // grantsAuthority reports whether the request must be signed by the
 // session's approval key: a call that grants authority
-// (PhoneApprovalRules), from a session that has one (kiff/tafs#233).
+// (PhoneApprovalRules), from a session held to it (kiff/tafs#233). Only a
+// session from before approval modes with no approval key isn't: it signs
+// with its device key, as it always has.
 func (p *RoutePolicy) grantsAuthority(r *http.Request, id Identity) bool {
-	if p.approval == nil || len(id.ApprovalKey) == 0 {
+	return id.HeldToApprovalKey() && p.approvalRoute(r)
+}
+
+// approvalRoute reports whether the request's route grants authority
+// (PhoneApprovalRules).
+func (p *RoutePolicy) approvalRoute(r *http.Request) bool {
+	if p.approval == nil {
 		return false
 	}
 	_, pattern := p.approval.Handler(r)
@@ -983,6 +1058,69 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 		_ = p.windows.Restart(r.Context(), window.ID, window.Restarted(now))
 	}
 	return with, true
+}
+
+// verifyPasskey checks a request's PasskeyAssertionHeader for a session that
+// approves with its device's own passkey (VerifyRequestPasskey) and refuses
+// an approval it has already accepted, as verifySigned does for a key's
+// signature. The body is read and put back for the handler.
+func (p *RoutePolicy) verifyPasskey(w http.ResponseWriter, r *http.Request, id Identity) (SignedWith, bool) {
+	header := r.Header.Get(PasskeyAssertionHeader)
+	if header == "" || p.passkeys == nil {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "passkey_required",
+			"message": "this grants authority: approve it with this computer's passkey (" + PasskeyAssertionHeader + "), behind Windows Hello"})
+		return SignedWith{}, false
+	}
+	var body []byte
+	if r.Body != nil {
+		b, err := io.ReadAll(io.LimitReader(r.Body, maxSignedBody+1))
+		if err != nil || len(b) > maxSignedBody {
+			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]string{"error": "request too large to sign"})
+			return SignedWith{}, false
+		}
+		body = b
+		r.Body = io.NopCloser(bytes.NewReader(b))
+	}
+	now := time.Now()
+	if p.now != nil {
+		now = p.now()
+	}
+	sum := sha256.Sum256(body)
+	ok, replayID, err := VerifyRequestPasskey(r.Context(), p.passkeys, p.rp, id, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), header, now)
+	switch {
+	case errors.Is(err, ErrAnswerSignedAt):
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "signed_at_out_of_range",
+			"message": "the assertion's t= must be RFC 3339, within 5 minutes of KIFF's clock"})
+		return SignedWith{}, false
+	case errors.Is(err, ErrPasskeySynced):
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "passkey_synced",
+			"message": "this computer's own passkey must stay on it: a synced passkey (BE or BS) isn't this computer"})
+		return SignedWith{}, false
+	case errors.Is(err, ErrPasskeyDevice):
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "passkey_not_this_device",
+			"message": "this passkey was registered with another device: approve with this computer's own passkey"})
+		return SignedWith{}, false
+	case errors.Is(err, ErrAssertionUser):
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "user_verification_required",
+			"message": "the assertion has no user verification (UV): Windows Hello must verify the person"})
+		return SignedWith{}, false
+	case err != nil:
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "passkey_invalid",
+			"message": "the passkey's assertion doesn't approve this request: its challenge is base64url(sha256(kiff.request.v1)) with t= as signed_at"})
+		return SignedWith{}, false
+	}
+	fresh, err := p.made.Use(r.Context(), replayID, now, now.Add(2*MaxAnswerSkew))
+	if err != nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "signature_check_unavailable",
+			"message": "KIFF couldn't check this approval; approve it again and retry"})
+		return SignedWith{}, false
+	}
+	if !fresh {
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "signature_replayed",
+			"message": "this approval was already used; approve it again to repeat it"})
+		return SignedWith{}, false
+	}
+	return SignedWith{Key: KeyCritical, Passkey: ok.Key.PublicKey, Assertion: passkeyHeaderAssertion(header)}, true
 }
 
 // signatureWindowNamed reports whether a DeviceSignatureHeader names a

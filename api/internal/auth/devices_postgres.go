@@ -37,15 +37,15 @@ func NewPostgresDeviceStore(pool *pgxpool.Pool) *PostgresDeviceStore {
 	return &PostgresDeviceStore{pool: pool}
 }
 
-const sqlDeviceColumns = `id, tenant_id, subject, name, platform, public_key, attestation, created_at, last_used_at, revoked_at, kind`
+const sqlDeviceColumns = `id, tenant_id, subject, name, platform, public_key, attestation, created_at, last_used_at, revoked_at, kind, has_approval_key, key_store`
 
 func (s *PostgresDeviceStore) Insert(ctx context.Context, d ApprovalDevice) error {
 	if err := d.check(); err != nil {
 		return err
 	}
 	_, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.approval_devices (`+sqlDeviceColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8, NULL, NULL, $9)`,
-		d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.Attestation, d.CreatedAt.UTC(), d.Kind)
+VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8, NULL, NULL, $9, $10, $11)`,
+		d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.Attestation, d.CreatedAt.UTC(), d.Kind, d.HasApprovalKey, d.KeyStore)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 		return fmt.Errorf("%w: %q", ErrDeviceDuplicate, d.ID)
@@ -119,6 +119,27 @@ func (s *PostgresDeviceStore) Relabel(ctx context.Context, id, name, platform, k
 	return nil
 }
 
+func (s *PostgresDeviceStore) MarkApprovalKey(ctx context.Context, id string) error {
+	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.approval_devices SET has_approval_key = true WHERE id = $1`, id)
+	if err != nil {
+		return fmt.Errorf("mark device's approval key: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrDeviceNotFound
+	}
+	return nil
+}
+
+func (s *PostgresDeviceStore) HasApprovalDevice(ctx context.Context, tenant, subject string, since time.Time) (bool, error) {
+	var has bool
+	err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM cloud_meta.approval_devices
+WHERE tenant_id = $1 AND subject = $2 AND has_approval_key AND (revoked_at IS NULL OR revoked_at >= $3))`, tenant, subject, since.UTC()).Scan(&has)
+	if err != nil {
+		return false, fmt.Errorf("read approval devices: %w", err)
+	}
+	return has, nil
+}
+
 func (s *PostgresDeviceStore) FindByKey(ctx context.Context, tenant, subject string, key []byte) (ApprovalDevice, error) {
 	d, err := scanDevice(s.pool.QueryRow(ctx, `SELECT `+sqlDeviceColumns+` FROM cloud_meta.approval_devices
 WHERE tenant_id = $1 AND subject = $2 AND public_key = $3 AND revoked_at IS NULL ORDER BY created_at LIMIT 1`, tenant, subject, key))
@@ -140,7 +161,7 @@ WHERE tenant_id = $1 AND public_key = $2 AND revoked_at IS NULL LIMIT 1`, tenant
 func scanDevice(row devSessionRowScanner) (ApprovalDevice, error) {
 	var d ApprovalDevice
 	var attestation *string
-	if err := row.Scan(&d.ID, &d.Tenant, &d.Subject, &d.Name, &d.Platform, &d.PublicKey, &attestation, &d.CreatedAt, &d.LastUsedAt, &d.RevokedAt, &d.Kind); err != nil {
+	if err := row.Scan(&d.ID, &d.Tenant, &d.Subject, &d.Name, &d.Platform, &d.PublicKey, &attestation, &d.CreatedAt, &d.LastUsedAt, &d.RevokedAt, &d.Kind, &d.HasApprovalKey, &d.KeyStore); err != nil {
 		return ApprovalDevice{}, err
 	}
 	if attestation != nil {
@@ -195,7 +216,7 @@ WHERE tenant_id = $1 AND subject = $2 AND public_key = $3 AND revoked_at IS NULL
 				// Another instance starting may insert the same key's device at
 				// once: then that one is the device (one per key, by the index).
 				tag, err := tx.Exec(ctx, `INSERT INTO cloud_meta.approval_devices (`+sqlDeviceColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, NULL, NULL, '')
+VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, NULL, NULL, '', false, '')
 ON CONFLICT (tenant_id, subject, public_key) WHERE revoked_at IS NULL DO NOTHING`, d.ID, d.Tenant, d.Subject, d.Name, d.Platform, d.PublicKey, d.CreatedAt.UTC())
 				if err != nil {
 					return err

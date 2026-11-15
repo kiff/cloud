@@ -36,6 +36,22 @@ CREATE TABLE IF NOT EXISTS cloud_meta.approval_devices (
 -- kinds: its name says it (auth.DeviceKindOf).
 ALTER TABLE cloud_meta.approval_devices ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT '';
 
+-- Whether a session of the device was given an approval key, at sign-in,
+-- at a pairing's claim, or registered or re-linked later. It stays set once
+-- the device is removed: a person with such a device, active or removed in
+-- the last 30 days, enrols no approval key from the browser
+-- (the desktop client contract, §1.1). Devices kept before this column take it
+-- from their sessions.
+ALTER TABLE cloud_meta.approval_devices ADD COLUMN IF NOT EXISTS has_approval_key BOOLEAN NOT NULL DEFAULT false;
+UPDATE cloud_meta.approval_devices d SET has_approval_key = true
+WHERE NOT d.has_approval_key AND EXISTS (
+    SELECT 1 FROM cloud_meta.developer_sessions s WHERE s.device_id = d.id AND s.approval_public_key IS NOT NULL);
+
+-- 'software' for a device whose key isn't in hardware: nothing it signs
+-- approves. '' when it is, or the device didn't say.
+ALTER TABLE cloud_meta.approval_devices ADD COLUMN IF NOT EXISTS key_store TEXT NOT NULL DEFAULT ''
+    CHECK (key_store IN ('', 'software'));
+
 -- A person's devices on an account, for the list and for the verify API.
 CREATE INDEX IF NOT EXISTS approval_devices_person_idx
     ON cloud_meta.approval_devices (tenant_id, subject) WHERE revoked_at IS NULL;

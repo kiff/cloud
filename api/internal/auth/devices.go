@@ -36,10 +36,22 @@ type ApprovalDevice struct {
 	// Attestation is the attestation format KIFF verified for the key, or
 	// "" when none was (every device today).
 	Attestation string
-	CreatedAt   time.Time
-	LastUsedAt  *time.Time
-	RevokedAt   *time.Time
+	// HasApprovalKey says a session of the device was given an approval key:
+	// at sign-in, at a pairing's claim, or registered or re-linked later. It
+	// stays set once the device is removed (HasApprovalDevice).
+	HasApprovalKey bool
+	// KeyStore is KeyStoreSoftware for a device whose key isn't in hardware,
+	// "" when it is or when the device didn't say.
+	KeyStore   string
+	CreatedAt  time.Time
+	LastUsedAt *time.Time
+	RevokedAt  *time.Time
 }
+
+// ApprovalDeviceKept is how long a removed device that held an approval key
+// still counts as the person's approval device (HasApprovalDevice): losing
+// the last phone doesn't reopen the browser's first-device enrolment.
+const ApprovalDeviceKept = 30 * 24 * time.Hour
 
 // IsRevoked reports whether the device was removed.
 func (d ApprovalDevice) IsRevoked() bool { return d.RevokedAt != nil }
@@ -91,6 +103,13 @@ type DeviceStore interface {
 	// Relabel sets a device's name, platform and kind, as a later sign-in
 	// of the same key says them. ErrDeviceNotFound when unknown.
 	Relabel(ctx context.Context, id, name, platform, kind string) error
+	// MarkApprovalKey records that a session of the device holds an approval
+	// key (HasApprovalKey). Idempotent; ErrDeviceNotFound when unknown.
+	MarkApprovalKey(ctx context.Context, id string) error
+	// HasApprovalDevice reports whether the person has, on the account, a
+	// device that holds an approval key: an active one, or one removed at or
+	// after since (now less ApprovalDeviceKept).
+	HasApprovalDevice(ctx context.Context, tenant, subject string, since time.Time) (bool, error)
 }
 
 // MemoryDeviceStore is the in-memory DeviceStore for tests and dev.
@@ -191,6 +210,29 @@ func (s *MemoryDeviceStore) Relabel(_ context.Context, id, name, platform, kind 
 	d.Name, d.Platform, d.Kind = name, platform, kind
 	s.byID[id] = d
 	return nil
+}
+
+func (s *MemoryDeviceStore) MarkApprovalKey(_ context.Context, id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	d, ok := s.byID[id]
+	if !ok {
+		return ErrDeviceNotFound
+	}
+	d.HasApprovalKey = true
+	s.byID[id] = d
+	return nil
+}
+
+func (s *MemoryDeviceStore) HasApprovalDevice(_ context.Context, tenant, subject string, since time.Time) (bool, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, d := range s.byID {
+		if d.Tenant == tenant && d.Subject == subject && d.HasApprovalKey && (d.RevokedAt == nil || !d.RevokedAt.Before(since)) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func (s *MemoryDeviceStore) FindByKey(_ context.Context, tenant, subject string, key []byte) (ApprovalDevice, error) {

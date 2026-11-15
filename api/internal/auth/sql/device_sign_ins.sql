@@ -36,5 +36,11 @@ CREATE TABLE IF NOT EXISTS cloud_meta.device_sign_ins (
 -- drawn from it in the reader's language.
 ALTER TABLE cloud_meta.device_sign_ins ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT '';
 
+-- A computer with no approval key of its own says "approval": "passkey", and
+-- 'software' when its device key isn't in hardware (the desktop client
+-- contract, §1.1).
+ALTER TABLE cloud_meta.device_sign_ins ADD COLUMN IF NOT EXISTS approval_passkey BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE cloud_meta.device_sign_ins ADD COLUMN IF NOT EXISTS key_store TEXT NOT NULL DEFAULT '';
+
 CREATE INDEX IF NOT EXISTS device_sign_ins_expires_at ON cloud_meta.device_sign_ins (expires_at);
 CREATE INDEX IF NOT EXISTS device_sign_ins_subject ON cloud_meta.device_sign_ins (subject) WHERE subject <> '';

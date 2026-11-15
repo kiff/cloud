@@ -33,8 +33,21 @@ type Pairing struct {
 	ApprovalKey []byte
 	Name        string
 	Platform    string
-	// Kind is the QR's: hello or enclave.
-	Kind      string
+	// Kind is the QR's: hello or enclave, keystore for an Android phone or
+	// tablet, or passkey for a computer that approves with its own platform
+	// passkey (no ApprovalKey).
+	Kind string
+	// CredentialID and CredentialKey are a passkey computer's own credential
+	// (its id, and its P-256 key as SPKI DER), registered for the device at
+	// the claim. Nil for hello and enclave.
+	CredentialID  []byte
+	CredentialKey []byte
+	// DeviceKind is a phone or tablet's (iphone, ipad, android_phone,
+	// android_tablet), "" for a computer.
+	DeviceKind string
+	// KeyStore is "software" for a computer whose device key isn't in
+	// hardware: it pairs view-only, never approving (§5.1, §2.6). "" otherwise.
+	KeyStore  string
 	NonceHash []byte
 	Expires   time.Time
 	CreatedAt time.Time
@@ -87,6 +100,19 @@ func NewPairingID() string {
 // each value has one spelling.
 var pairingB64 = base64.RawURLEncoding.Strict()
 
+// MaxCredentialID is the longest WebAuthn credential id KIFF keeps.
+const MaxCredentialID = 1023
+
+// ParsePairingCredentialID decodes a QR credential id (base64url): 1 to
+// MaxCredentialID bytes.
+func ParsePairingCredentialID(s string) ([]byte, bool) {
+	b, err := pairingB64.DecodeString(s)
+	if err != nil || len(b) == 0 || len(b) > MaxCredentialID {
+		return nil, false
+	}
+	return b, true
+}
+
 // ParsePairingKey decodes a QR key (base64url SPKI DER) and accepts only
 // P-256. It returns the DER bytes.
 func ParsePairingKey(s string) ([]byte, error) {
@@ -112,7 +138,9 @@ func PairingNonceHash(nonce string) ([]byte, bool) {
 }
 
 // PairingCode is the 6 characters both screens show:
-// base32(sha256(pub ‖ approval_pub)), RFC 4648 alphabet, its first 6.
+// base32(sha256(pub ‖ approval_pub)), RFC 4648 alphabet, its first 6. For a
+// passkey computer, its credential's key takes approval_pub's place, so the
+// code covers the passkey the phone registers.
 func PairingCode(pub, approvalPub []byte) string {
 	sum := sha256.Sum256(append(append([]byte(nil), pub...), approvalPub...))
 	return base32.StdEncoding.EncodeToString(sum[:])[:6]

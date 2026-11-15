@@ -348,10 +348,11 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 			slog.String("session_id", sess.ID), slog.String("err", terr.Error()))
 	}
 	id := Identity{
-		Subject:     sess.Subject,
-		Tenant:      sess.Tenant,
-		Method:      MethodDeveloper,
-		ApprovalKey: sess.ApprovalPublicKey,
+		Subject:      sess.Subject,
+		Tenant:       sess.Tenant,
+		Method:       MethodDeveloper,
+		ApprovalKey:  sess.ApprovalPublicKey,
+		ApprovalMode: sess.ApprovalMode,
 	}
 	if sess.DeviceID != "" {
 		// The device decides: its key signs, and once it's removed
@@ -366,7 +367,7 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 		if d.IsRevoked() || d.Tenant != sess.Tenant || d.Subject != sess.Subject {
 			return Identity{}, ErrDevSessionRevoked
 		}
-		id.DeviceKey, id.DeviceSessionID, id.DeviceName, id.DeviceID = d.PublicKey, sess.ID, d.Name, d.ID
+		id.DeviceKey, id.DeviceSessionID, id.DeviceName, id.DeviceID, id.KeyStore = d.PublicKey, sess.ID, d.Name, d.ID, d.KeyStore
 		if terr := m.devices.Touch(ctx, d.ID, m.clock()); terr != nil {
 			m.logger.WarnContext(ctx, "auth: device touch failed", slog.String("device", d.ID), slog.String("err", terr.Error()))
 		}

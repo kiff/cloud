@@ -36,12 +36,13 @@ func NewPostgresPairingStore(pool *pgxpool.Pool) *PostgresPairingStore {
 	return &PostgresPairingStore{pool: pool}
 }
 
-const sqlPairingColumns = `id, tenant_id, subject, approved_by, public_key, approval_public_key, name, platform, kind, nonce_hash, expires_at, created_at, claimed_at`
+const sqlPairingColumns = `id, tenant_id, subject, approved_by, public_key, approval_public_key, name, platform, kind, nonce_hash, expires_at, created_at, claimed_at, credential_id, credential_public_key, device_kind, key_store`
 
 func (s *PostgresPairingStore) Insert(ctx context.Context, p Pairing) error {
 	_, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.pairings (`+sqlPairingColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NULL)`,
-		p.ID, p.Tenant, p.Subject, p.ApprovedBy, p.PublicKey, p.ApprovalKey, p.Name, p.Platform, p.Kind, p.NonceHash, p.Expires.UTC(), p.CreatedAt.UTC())
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NULL, $13, $14, $15, $16)`,
+		p.ID, p.Tenant, p.Subject, p.ApprovedBy, p.PublicKey, p.ApprovalKey, p.Name, p.Platform, p.Kind, p.NonceHash, p.Expires.UTC(), p.CreatedAt.UTC(),
+		p.CredentialID, p.CredentialKey, p.DeviceKind, p.KeyStore)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 		return ErrPairingUsed
@@ -55,7 +56,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NULL)`,
 func (s *PostgresPairingStore) ByNonce(ctx context.Context, nonceHash []byte) (Pairing, error) {
 	var p Pairing
 	err := s.pool.QueryRow(ctx, `SELECT `+sqlPairingColumns+` FROM cloud_meta.pairings WHERE nonce_hash = $1`, nonceHash).Scan(
-		&p.ID, &p.Tenant, &p.Subject, &p.ApprovedBy, &p.PublicKey, &p.ApprovalKey, &p.Name, &p.Platform, &p.Kind, &p.NonceHash, &p.Expires, &p.CreatedAt, &p.ClaimedAt)
+		&p.ID, &p.Tenant, &p.Subject, &p.ApprovedBy, &p.PublicKey, &p.ApprovalKey, &p.Name, &p.Platform, &p.Kind, &p.NonceHash, &p.Expires, &p.CreatedAt, &p.ClaimedAt, &p.CredentialID, &p.CredentialKey, &p.DeviceKind, &p.KeyStore)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Pairing{}, ErrPairingNotFound
 	}

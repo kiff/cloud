@@ -49,6 +49,12 @@ type RelyingParty struct {
 	Origins []string
 }
 
+// KiffRelyingParty is KIFF's: the RP ID every passkey is for, and the origin
+// a ceremony runs on. A native app builds clientDataJSON itself (Windows'
+// webauthn.dll), so there the origin is the agreed value and binds nothing;
+// the challenge does (the desktop client contract, §2.6).
+var KiffRelyingParty = RelyingParty{ID: "kiff.dev", Origins: []string{"https://kiff.dev"}}
+
 var (
 	ErrPasskeyAccount   = errors.New("auth: this passkey isn't this account's")
 	ErrAssertionType    = errors.New("auth: the assertion isn't a WebAuthn get")
@@ -67,12 +73,16 @@ var (
 type Approved struct {
 	SignCount uint32
 	Synced    bool
-	Used      []byte
+	// BackupEligible is the BE flag: the passkey may be synced, though it
+	// isn't yet. A computer's own passkey must have neither.
+	BackupEligible bool
+	Used           []byte
 }
 
 const (
 	flagUserPresent  = 0x01
 	flagUserVerified = 0x04
+	flagBackupElig   = 0x08
 	flagBackedUp     = 0x10
 	// authData is rpIdHash (32), flags (1), signCount (4), then extensions.
 	authDataMin = 37
@@ -150,7 +160,7 @@ func VerifyAssertion(rp RelyingParty, key Passkey, tenantID string, a Assertion,
 		return Approved{}, nil, ErrAssertionCounter
 	}
 	used := sha256.Sum256(append(append(append([]byte("passkey\x00"), key.ID...), 0), message...))
-	return Approved{SignCount: count, Synced: flags&flagBackedUp != 0, Used: used[:]}, used[:], nil
+	return Approved{SignCount: count, Synced: flags&flagBackedUp != 0, BackupEligible: flags&flagBackupElig != 0, Used: used[:]}, used[:], nil
 }
 
 // VerifyRequestAssertion is VerifyRequestDigest for a passkey: the request

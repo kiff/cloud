@@ -74,3 +74,12 @@ ALTER TABLE cloud_meta.developer_sessions
 -- registration; replacing it means signing in again. NULL until then.
 ALTER TABLE cloud_meta.developer_sessions
     ADD COLUMN IF NOT EXISTS approval_public_key BYTEA NULL;
+
+-- How what grants authority through the session is approved
+-- (the desktop client contract, §1.1): 'key', with its approval key; 'view',
+-- never; 'passkey', only with a passkey's assertion (a computer's own platform
+-- passkey, §2.6); '' for a session from before approval modes, which approves
+-- as it always has.
+ALTER TABLE cloud_meta.developer_sessions
+    ADD COLUMN IF NOT EXISTS approval_mode TEXT NOT NULL DEFAULT ''
+        CHECK (approval_mode IN ('', 'key', 'view', 'passkey'));

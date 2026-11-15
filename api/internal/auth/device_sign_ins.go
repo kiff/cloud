@@ -41,8 +41,13 @@ type WaitingSignIn struct {
 	Platform      string
 	PlatformSent  bool
 	Kind          string // the device's kind (DeviceKindOf)
-	CreatedAt     time.Time
-	ExpiresAt     time.Time
+	// Passkey: the device sent "approval": "passkey" (no approval key of
+	// its own), and KeyStore is KeyStoreSoftware when its device key isn't
+	// in hardware (the desktop client contract, §1.1).
+	Passkey   bool
+	KeyStore  string
+	CreatedAt time.Time
+	ExpiresAt time.Time
 }
 
 // ErrUserCodeTaken is a user code already waiting under another sign-in.
@@ -73,13 +78,13 @@ func NewPostgresWaitingSignIns(pool *pgxpool.Pool) *PostgresWaitingSignIns {
 	return &PostgresWaitingSignIns{pool: pool}
 }
 
-const sqlWaitingColumns = `device_hash, user_code, subject, tenant_id, relink_session, device_key, approval_key, device_name, platform, platform_sent, created_at, expires_at, kind`
+const sqlWaitingColumns = `device_hash, user_code, subject, tenant_id, relink_session, device_key, approval_key, device_name, platform, platform_sent, created_at, expires_at, kind, approval_passkey, key_store`
 
 func (s *PostgresWaitingSignIns) Put(ctx context.Context, w WaitingSignIn) error {
 	_, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.device_sign_ins (`+sqlWaitingColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
 		w.DeviceHash, w.UserCode, w.Subject, w.Tenant, w.RelinkSession, w.DeviceKey, w.ApprovalKey, w.DeviceName, w.Platform,
-		w.PlatformSent, w.CreatedAt.UTC(), w.ExpiresAt.UTC(), w.Kind)
+		w.PlatformSent, w.CreatedAt.UTC(), w.ExpiresAt.UTC(), w.Kind, w.Passkey, w.KeyStore)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 		return ErrUserCodeTaken
@@ -136,7 +141,7 @@ func (s *PostgresWaitingSignIns) Sweep(ctx context.Context, now time.Time) (int,
 func scanWaiting(row pgx.Row) (*WaitingSignIn, error) {
 	var w WaitingSignIn
 	err := row.Scan(&w.DeviceHash, &w.UserCode, &w.Subject, &w.Tenant, &w.RelinkSession, &w.DeviceKey, &w.ApprovalKey, &w.DeviceName,
-		&w.Platform, &w.PlatformSent, &w.CreatedAt, &w.ExpiresAt, &w.Kind)
+		&w.Platform, &w.PlatformSent, &w.CreatedAt, &w.ExpiresAt, &w.Kind, &w.Passkey, &w.KeyStore)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}

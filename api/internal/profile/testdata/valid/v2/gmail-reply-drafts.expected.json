@@ -1,0 +1,24 @@
+{
+  "profile_sha256": "513eafde1298eeaf7a9af3265602c98f00fcc38f58d31c3749d3dfe9ae9dd7c4",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "drafts_create",
+        "kind": "does",
+        "text": "Draft a reply: makes a draft in Gmail. Nothing leaves until it's approved."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "outside",
+        "text": "Draft a reply: its drafts can reach people outside your company once sent."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "scope",
+        "text": "Draft a reply: a Card's \"Only for\" can name which thread it acts on."
+      }
+    ]
+  },
+  "words_sha256": "cd750cb9cc61710daf0ba8cd76b61ee8d41111b57a4d2e916f0a1659b06e3c6c"
+}

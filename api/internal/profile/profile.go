@@ -181,7 +181,9 @@ type Resource struct {
 	// Noun is what it is, singular ("channel", "payment", "page").
 	Noun string `json:"noun"`
 	// Outside: for a sends operation, the recipient may be outside the
-	// account's domain, a class of its own in the words.
+	// account's domain, a class of its own in the words. For a draft
+	// (none_until_approved), what it drafts reaches people outside once the
+	// owner sends it, such as a draft email or reply.
 	Outside bool `json:"outside,omitempty"`
 }
 
@@ -402,8 +404,8 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 		if strings.TrimSpace(r.Noun) == "" || len(r.Noun) > 40 {
 			return errors.New("resource.noun says what it is, 1 to 40 characters")
 		}
-		if r.Outside && o.Effect != EffectSends {
-			return errors.New("resource.outside is only for a sends operation")
+		if r.Outside && o.Effect != EffectSends && o.Effect != EffectDraft {
+			return errors.New("resource.outside is only for a sends operation, or a draft (none_until_approved) that reaches people outside once sent")
 		}
 	}
 	if o.Money() != (o.Amount != nil) {

@@ -61,6 +61,8 @@ func TestFixedArgumentIsSentAndNestedAmountDecided(t *testing.T) {
 func TestFixedArgumentIsHiddenFromTheAgent(t *testing.T) {
 	r := newRig(t)
 	r.gw.Catalog = catalog{stripeRefund}
+	// A taf is listed only the tools its Cards cover.
+	r.api.card.Cards = []kiffapi.Card{{Grants: []kiffapi.CardGrant{{Action: "stripe_refund"}}}}
 	status, out := r.rpc(t, "agent-key", "tools/list", nil)
 	if status != http.StatusOK || out["result"] == nil {
 		t.Fatalf("tools/list: %d %v", status, out)

@@ -417,10 +417,17 @@ func (c *Client) AgentCard(ctx context.Context, key, trial string) (AgentCard, e
 		path += "?trial=" + url.QueryEscape(trial)
 	}
 	status, raw, err := c.do(ctx, key, http.MethodGet, path, nil)
+	if errors.Is(err, ErrUnauthorized) {
+		return AgentCard{}, err // KIFF answered: the key is refused
+	}
 	if err != nil {
-		return AgentCard{}, err
+		return AgentCard{}, errors.Join(ErrUnavailable, err)
 	}
 	if status != http.StatusOK {
+		// A 5xx is no answer; a 4xx is one (a revoked or unknown key).
+		if status >= 500 {
+			return AgentCard{}, errors.Join(ErrUnavailable, apiError(status, raw))
+		}
 		return AgentCard{}, apiError(status, raw)
 	}
 	var card AgentCard

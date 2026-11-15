@@ -86,6 +86,7 @@ func TestInvalidVectorsAreRefused(t *testing.T) {
 		"unknown-field.json":        `unknown field "releases_on"`,
 		"check-by-a-write.json":     "only a read can check",
 		"array-in-call-path.json":   "names only",
+		"outside-on-a-write.json":   "resource.outside is only for a sends operation, or a draft",
 	}
 	for name, msg := range want {
 		raw, err := os.ReadFile(filepath.Join("testdata/invalid", name))

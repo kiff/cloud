@@ -27,7 +27,7 @@ func TestPostgresWaitingSignInsKeepNoSecretAndExpire(t *testing.T) {
 	s := auth.NewPostgresWaitingSignIns(pool)
 	now := time.Date(2026, 11, 10, 16, 0, 0, 0, time.UTC)
 	w := auth.WaitingSignIn{DeviceHash: "h1", UserCode: "BCDF-GHJK", DeviceKey: []byte{1, 2}, ApprovalKey: []byte{3}, DeviceName: "Pixel",
-		Platform: "android", PlatformSent: true, CreatedAt: now, ExpiresAt: now.Add(10 * time.Minute)}
+		Platform: "android", PlatformSent: true, Passkey: true, KeyStore: auth.KeyStoreSoftware, CreatedAt: now, ExpiresAt: now.Add(10 * time.Minute)}
 	if err := s.Put(ctx, w); err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func TestPostgresWaitingSignInsKeepNoSecretAndExpire(t *testing.T) {
 	} {
 		got, err := get()
 		if err != nil || got == nil || got.DeviceName != "Pixel" || got.Platform != "android" || !got.PlatformSent || string(got.DeviceKey) != "\x01\x02" ||
-			!got.ExpiresAt.Equal(w.ExpiresAt) {
+			!got.ExpiresAt.Equal(w.ExpiresAt) || !got.Passkey || got.KeyStore != auth.KeyStoreSoftware {
 			t.Fatalf("by %s: %+v %v", name, got, err)
 		}
 	}

@@ -67,6 +67,8 @@ var cloudMetaErased = []string{
 	"api_keys",
 	"developer_sessions",
 	"pairings",         // computers a phone approved, with their keys and names
+	"passkeys",         // a computer's own passkey: its public key and counter
+	"approval_checks",  // KIFF's checks of approvals, before the devices they name
 	"approval_windows", // Before the devices they name
 	"approval_devices", // After the sessions that name them
 	"support_tickets",  // its messages are deleted first, through ticket_id

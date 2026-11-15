@@ -58,6 +58,10 @@ type fakeAPI struct {
 	cardFails bool
 	// cardTrials are the KIFF-Trial each AgentCard read was made with.
 	cardTrials []string
+	// trialCards answers AgentCard for a trial's draft, when it names one.
+	trialCards map[string]kiffapi.AgentCard
+	// cardRefused makes AgentCard answer a 4xx: KIFF answered, and refused.
+	cardRefused bool
 	// holds answers Holds by exception id; holdsFail makes it fail. A
 	// hold the fake opened and holds doesn't name is still held, as the
 	// API answers; one in pruned is no longer KIFF's to answer.
@@ -118,7 +122,13 @@ func (f *fakeAPI) AgentCard(_ context.Context, key, trial string) (kiffapi.Agent
 	defer f.mu.Unlock()
 	f.cardTrials = append(f.cardTrials, trial)
 	if f.cardFails {
-		return kiffapi.AgentCard{}, errors.New("api unreachable")
+		return kiffapi.AgentCard{}, errors.Join(kiffapi.ErrUnavailable, errors.New("api unreachable"))
+	}
+	if f.cardRefused {
+		return kiffapi.AgentCard{}, errors.New("kiffapi: 401: unauthorized")
+	}
+	if c, ok := f.trialCards[trial]; ok && trial != "" {
+		return c, nil
 	}
 	return f.card, nil
 }
@@ -732,6 +742,9 @@ func TestToolAnnotations(t *testing.T) {
 	balance := refundTool
 	balance.Name, balance.ReadOnly = "get_balance", true
 	r.gw.Catalog = catalog{refundTool, balance}
+	// A taf is listed only the tools its Cards cover.
+	r.api.card.Cards = append([]kiffapi.Card{}, refundCard.Cards...)
+	r.api.card.Cards[0].Grants = append(append([]kiffapi.CardGrant{}, refundCard.Cards[0].Grants...), kiffapi.CardGrant{Action: "get_balance"})
 	_, out := r.rpc(t, "agent-key", "tools/list", nil)
 	want := map[string]map[string]any{
 		"issue_refund": {"title": "Issue refund", "readOnlyHint": false, "destructiveHint": true},

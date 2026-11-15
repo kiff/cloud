@@ -155,6 +155,20 @@ func TestPostgresDeveloperSessionStore_ApprovalKeyOnce(t *testing.T) {
 		t.Fatalf("read back: %v %+v", err, got)
 	}
 
+	// A session from before approval modes keeps its mode; a view-only one
+	// is held to the key it took.
+	if got, _ := store.GetByHash(ctx, gen.Hash, now); got.ApprovalMode != "" {
+		t.Fatalf("a session from before approval modes changed mode: %q", got.ApprovalMode)
+	}
+	view, _ := auth.NewDevSessionToken()
+	if err := store.Insert(ctx, auth.DeveloperSession{ID: "view-" + tenantID, Subject: "human-1", Tenant: tenantID,
+		TokenHash: view.Hash, CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}, ApprovalMode: auth.ApprovalModeView}); err != nil {
+		t.Fatalf("insert view-only: %v", err)
+	}
+	if got, err := store.SetApprovalKey(ctx, "view-"+tenantID, []byte{6}, now); err != nil || got.ApprovalMode != auth.ApprovalModeKey {
+		t.Fatalf("a view-only session's first key: %v %+v", err, got)
+	}
+
 	// Given at sign-in, it is the session's one key.
 	signedIn, _ := auth.NewDevSessionToken()
 	if err := store.Insert(ctx, auth.DeveloperSession{ID: "signin-" + tenantID, Subject: "human-1", Tenant: tenantID,

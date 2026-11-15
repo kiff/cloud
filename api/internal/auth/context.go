@@ -46,6 +46,11 @@ type deviceSignedCtxKey struct{}
 type SignedWith struct {
 	Key    string
 	Window string
+	// Passkey is the public key of the passkey whose assertion approved the
+	// request (PasskeyAssertionHeader), and Assertion the header's a= value,
+	// for the receipt's proof; nil and "" when a key signed.
+	Passkey   []byte
+	Assertion string
 }
 
 // Critical reports whether the approval key signed, behind the person's

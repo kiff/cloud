@@ -1,0 +1,19 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "Gmail",
+  "transport": "rest",
+  "pin": {"kind": "base_path", "value": "/gmail/v1"},
+  "source": "catalog",
+  "catalog_entry": "google-gmail@2",
+  "test_proven": false,
+  "operations": [
+    {
+      "tool": "drafts_create",
+      "title": "Draft a reply",
+      "kind": "write",
+      "effect": "none_until_approved",
+      "shape": "single",
+      "resource": {"arg": "thread_id", "noun": "thread", "outside": true}
+    }
+  ]
+}

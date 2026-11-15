@@ -45,7 +45,32 @@ type DeveloperSession struct {
 	// passcode. Once set, what grants authority through the session
 	// counts only with its signature. Set once; nil until then.
 	ApprovalPublicKey []byte
+	// ApprovalMode is how what grants authority through the session is
+	// approved (the desktop client contract, §1.1): ApprovalModeKey, with its
+	// approval key; ApprovalModeView, never; "" for a session from before
+	// approval modes, which approves as it always has.
+	ApprovalMode string
 }
+
+// A session's approval modes (DeveloperSession.ApprovalMode).
+const (
+	// ApprovalModeKey: what grants authority counts only with the session's
+	// approval key.
+	ApprovalModeKey = "key"
+	// ApprovalModeView: the session approves nothing, whatever it signs. It
+	// reads, refuses, answers hand-offs and signs out.
+	ApprovalModeView = "view"
+	// ApprovalModePasskey: the session has no approval key; what grants
+	// authority counts only with its device's own passkey's assertion
+	// (PasskeyAssertionHeader), never its device key (the desktop client
+	// contract, §2.6).
+	ApprovalModePasskey = "passkey"
+)
+
+// KeyStoreSoftware is a device whose device key isn't in hardware
+// (ApprovalDevice.KeyStore): code running as the person could use it, so
+// nothing it signs approves.
+const KeyStoreSoftware = "software"
 
 // IsRevoked reports whether the session has been revoked.
 func (s DeveloperSession) IsRevoked() bool { return s.RevokedAt != nil }
@@ -297,6 +322,9 @@ func (s *MemoryDeveloperSessionStore) SetApprovalKey(_ context.Context, id strin
 		return sess, ErrApprovalKeySet
 	}
 	sess.ApprovalPublicKey = append([]byte(nil), key...)
+	if sess.ApprovalMode == ApprovalModeView {
+		sess.ApprovalMode = ApprovalModeKey
+	}
 	s.byID[id] = sess
 	return sess, nil
 }

@@ -73,8 +73,14 @@ func TestAPasskeyApprovesExactlyTheActionItSigned(t *testing.T) {
 	// A synced passkey (BE and BS) still approves, and says so: it's never the second device.
 	synced := c
 	synced.flags |= 0x08 | flagBackedUp
-	if ok, _, err := VerifyAssertion(testRP, key, "t_acme", synced.assert(t), message); err != nil || !ok.Synced {
+	if ok, _, err := VerifyAssertion(testRP, key, "t_acme", synced.assert(t), message); err != nil || !ok.Synced || !ok.BackupEligible {
 		t.Fatalf("a synced passkey: %+v, %v", ok, err)
+	}
+	// Backup eligible but not yet backed up: BE alone, which a computer's own passkey refuses.
+	eligible := c
+	eligible.flags |= 0x08
+	if ok, _, err := VerifyAssertion(testRP, key, "t_acme", eligible.assert(t), message); err != nil || ok.Synced || !ok.BackupEligible {
+		t.Fatalf("a backup-eligible passkey: %+v, %v", ok, err)
 	}
 	// The same approval twice has the same replay identity, for the caller's used set.
 	if _, again, _ := VerifyRequestAssertion(testRP, Passkey{ID: key.ID, Tenant: key.Tenant, PublicKey: key.PublicKey, SignCount: 6}, "t_acme", "POST", "/v1/agent-drafts/dr_1/confirm", bodyHex, at, c.assert(t), now); string(again) != string(used) {

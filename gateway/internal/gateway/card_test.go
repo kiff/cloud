@@ -46,7 +46,6 @@ func TestToolListShowsTheCard(t *testing.T) {
 		"issue_refund": "Refund an order\n\nYour KIFF Card: Card mdt-refunds covers this tool: up to 1000 amount_eur per call; " +
 			"a total of 5000 amount_eur today; a total of 20 calls in the last hour, shared by every tool this Card covers. " +
 			"A per-action breach can be held for review. Approval still counts fully; a cumulative ceiling needs an explicit Card revision. What is used and left of each total: kiff_card.",
-		"get_balance": "Show the balance\n\nYour KIFF Card: no Card of yours covers this tool, so calls to it are refused.",
 		"list_orders": "List orders\n\nYour KIFF Card: Card mdt-refunds covers this tool: " +
 			"a total of 20 calls in the last hour, shared by every tool this Card covers. A per-action breach can be held for review. Approval still counts fully; a cumulative ceiling needs an explicit Card revision. What is used and left of each total: kiff_card.",
 	}
@@ -57,6 +56,10 @@ func TestToolListShowsTheCard(t *testing.T) {
 	}
 	if !strings.Contains(got[gateway.CardTool], "changes nothing") {
 		t.Errorf("kiff_card: %q", got[gateway.CardTool])
+	}
+	// A tool no Card of the taf covers isn't listed at all.
+	if _, listed := got["get_balance"]; listed {
+		t.Errorf("get_balance is listed: %q", got["get_balance"])
 	}
 }
 
