@@ -246,22 +246,53 @@ func apiError(status int, raw []byte) error {
 // (tenant, method, path, sha256 of the body, signed_at), as apps/api reads it.
 const DeviceSignatureHeader = "KIFF-Device-Signature"
 
+// PasskeyAssertionHeader carries a computer's own passkey assertion on a
+// request it makes with a session that approves with its passkey (the
+// desktop client contract): "t=…,a=…", with ",with=sha256:<hex>" when it
+// approves two requests at once (kiff.requests.v1). apps/api checks it as
+// /v1/me/device-signature's `passkey`, in place of `signature`.
+const PasskeyAssertionHeader = "KIFF-Passkey-Assertion"
+
+// DeviceApproval is how the person's device approved a request, as sent: a
+// phone's signature, or a computer's passkey assertion.
+type DeviceApproval struct {
+	Signature string
+	Passkey   string
+}
+
+// DeviceApprovalFrom reads a request's device approval from its headers,
+// as the device sent them. apps/api takes exactly one of the two.
+func DeviceApprovalFrom(h http.Header) DeviceApproval {
+	return DeviceApproval{Signature: h.Get(DeviceSignatureHeader), Passkey: h.Get(PasskeyAssertionHeader)}
+}
+
 // ErrNotSigned: apps/api says the caller's phone didn't sign the request, or
 // it was already made, or its person may not do it.
 var ErrNotSigned = errors.New("kiffapi: the phone's signature on this request wasn't accepted")
+
+// ErrReplayed: apps/api already took this approval (409 signature_replayed).
+// It comes with ErrNotSigned, so a caller that only knows that one refuses
+// it too.
+var ErrReplayed = errors.New("kiffapi: this approval was already used")
 
 // DeviceGrantHeader carries the grant DeviceSigned returns, on the writes
 // the gateway then makes with the phone's session.
 const DeviceGrantHeader = "KIFF-Device-Grant"
 
-// DeviceSigned asks apps/api whether the phone whose session key is signed
-// this request, with signature as the phone sent it, and records it as made
-// (kiff/tafs#206). On success it returns a grant: the gateway saves the
+// DeviceSigned asks apps/api whether the device whose session key is approved
+// this request, with its signature or passkey assertion as it sent them, and
+// records it as made (kiff/tafs#206). On success it returns a grant: the gateway saves the
 // account's contract and permit targets with the phone's session, each once,
 // within a minute, by sending it (WithDeviceGrant).
-func (c *Client) DeviceSigned(ctx context.Context, key, method, uri, bodySHA256, signature string) (string, error) {
-	status, raw, err := c.do(ctx, key, http.MethodPost, "/v1/me/device-signature",
-		map[string]string{"method": method, "uri": uri, "body_sha256": bodySHA256, "signature": signature})
+func (c *Client) DeviceSigned(ctx context.Context, key, method, uri, bodySHA256 string, approval DeviceApproval) (string, error) {
+	body := map[string]string{"method": method, "uri": uri, "body_sha256": bodySHA256}
+	if approval.Signature != "" {
+		body["signature"] = approval.Signature
+	}
+	if approval.Passkey != "" {
+		body["passkey"] = approval.Passkey
+	}
+	status, raw, err := c.do(ctx, key, http.MethodPost, "/v1/me/device-signature", body)
 	switch {
 	case errors.Is(err, ErrUnauthorized):
 		return "", errors.Join(ErrNotSigned, err)
@@ -277,6 +308,8 @@ func (c *Client) DeviceSigned(ctx context.Context, key, method, uri, bodySHA256,
 		return out.Grant, nil
 	case status >= 500:
 		return "", errors.Join(ErrUnavailable, apiError(status, raw))
+	case status == http.StatusConflict:
+		return "", errors.Join(ErrNotSigned, ErrReplayed, apiError(status, raw))
 	}
 	return "", errors.Join(ErrNotSigned, apiError(status, raw))
 }

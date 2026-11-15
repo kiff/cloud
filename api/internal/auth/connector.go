@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"time"
 )
 
 // RoleConnector is the only role a connector key holds. A
@@ -13,6 +14,22 @@ import (
 // bound to an agent, and it is minted only alone, by an admin's session or
 // a phone's signed setup call.
 const RoleConnector = "connector"
+
+// ConnectorUnusedTTL is how long a connector key may wait for its first
+// use. A connector key is minted to be handed to planque at once, in the
+// same enrolment, and a device can't revoke one. So a key planque never
+// took (its enrolment failed after the mint, or the app stopped between
+// the two) would otherwise stay live in KIFF, held by no one. One that
+// hasn't authenticated by then stops authenticating, as an expired key
+// does. Its first use (planque asking who it is, at enrolment) stamps
+// LastUsedAt, after which it lives as any other connector key.
+const ConnectorUnusedTTL = 15 * time.Minute
+
+// UnusedConnectorExpired reports whether r is a connector key that was
+// never used and is past ConnectorUnusedTTL at now.
+func (r APIKeyRecord) UnusedConnectorExpired(now time.Time) bool {
+	return slices.Contains(r.Roles, RoleConnector) && r.LastUsedAt == nil && !now.Before(r.CreatedAt.Add(ConnectorUnusedTTL))
+}
 
 // connectorRoutes are the only routes a connector key reaches: who it is,
 // the two writes the gateway makes with the caller's key when a

@@ -66,13 +66,16 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 		// One signature over the whole batch, the owner's act behind their
 		// confirmation, as for one connection.
 		sum := sha256.Sum256(b)
-		grant, err := h.API.DeviceSigned(r.Context(), c.key, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), r.Header.Get(kiffapi.DeviceSignatureHeader))
+		grant, err := h.API.DeviceSigned(r.Context(), c.key, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), kiffapi.DeviceApprovalFrom(r.Header))
 		switch {
 		case errors.Is(err, kiffapi.ErrUnavailable):
-			writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't check the phone's signature; sign it again and retry")
+			writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't check the device's approval; approve it again and retry")
+			return
+		case errors.Is(err, kiffapi.ErrReplayed):
+			writeErr(w, http.StatusConflict, "this approval was already used; approve the request again")
 			return
 		case err != nil:
-			writeErr(w, http.StatusForbidden, "from a phone, connecting the account's control server needs the phone's signature over this request ("+kiffapi.DeviceSignatureHeader+")")
+			writeErr(w, http.StatusForbidden, "from a phone or computer, connecting the account's control server needs the device's approval over this request ("+kiffapi.DeviceSignatureHeader+" or "+kiffapi.PasskeyAssertionHeader+")")
 			return
 		}
 		r = r.WithContext(kiffapi.WithDeviceGrant(r.Context(), grant))

@@ -130,6 +130,9 @@ var (
 	// ErrAPIKeyExpired: the key is past its ExpiresAt. The store has no
 	// clock, so the caller that authenticates checks it (IsExpired).
 	ErrAPIKeyExpired = errors.New("auth: api key has expired")
+	// ErrConnectorUnused: a connector key that was never used within
+	// ConnectorUnusedTTL of its mint. Refused as an expired key is.
+	ErrConnectorUnused = errors.New("auth: connector key was never used and has expired")
 )
 
 // APIKeyStore is the persistence boundary for API keys. The

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"slices"
@@ -186,5 +187,106 @@ func TestConnectorRouteAllowed(t *testing.T) {
 		if got := ConnectorRouteAllowed(r); got != c.want {
 			t.Errorf("%s %s: %v, want %v", c.method, c.path, got, c.want)
 		}
+	}
+}
+
+// A connector key planque never took stops authenticating
+// ConnectorUnusedTTL after its mint; once used in time, it lives on. Other
+// keys aren't touched by it.
+func TestConnectorKeyUnusedExpires(t *testing.T) {
+	t.Parallel()
+	minted := time.Date(2026, 11, 15, 18, 0, 0, 0, time.UTC)
+	store := NewMemoryAPIKeyStore()
+	key := func(id string, roles ...string) string {
+		gen, err := NewAPIKey("acme", minted)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := store.Insert(context.Background(), APIKeyRecord{ID: id, Tenant: "acme", Subject: "dev-1", Label: "planque",
+			Roles: roles, KeyHash: gen.Hash, CreatedAt: minted}); err != nil {
+			t.Fatal(err)
+		}
+		return gen.Plaintext
+	}
+	at := func(d time.Duration, raw string) error {
+		mw := NewMiddleware(NewStubProvider(NewMapResolver()), store, NewMapResolver(), WithClock(fixedClock(minted.Add(d))))
+		_, err := mw.verifyAPIKey(context.Background(), raw)
+		return err
+	}
+
+	// Never used: fine until the TTL, refused from it on, and for good.
+	unused := key("k-unused", RoleConnector)
+	if err := at(ConnectorUnusedTTL, unused); !errors.Is(err, ErrConnectorUnused) {
+		t.Fatalf("an unused connector key at the TTL: %v, want ErrConnectorUnused", err)
+	}
+	if err := at(30*24*time.Hour, unused); !errors.Is(err, ErrConnectorUnused) {
+		t.Fatalf("an unused connector key a month on: %v, want ErrConnectorUnused", err)
+	}
+
+	// Used once in time (planque's enrolment), it lives on past the TTL.
+	taken := key("k-taken", RoleConnector)
+	if err := at(ConnectorUnusedTTL-time.Second, taken); err != nil {
+		t.Fatalf("a connector key's first use just before the TTL: %v", err)
+	}
+	if err := at(30*24*time.Hour, taken); err != nil {
+		t.Fatalf("a connector key used in time, a month on: %v", err)
+	}
+
+	// The refusal doesn't stamp a use, so it can't revive the key.
+	if got, _ := store.GetByHash(context.Background(), mustHash(t, unused)); got.LastUsedAt != nil {
+		t.Fatalf("a refused unused connector key was stamped used at %v", got.LastUsedAt)
+	}
+
+	// Any other key, never used, isn't expired by this.
+	other := key("k-agent", "gateway_agent")
+	if err := at(30*24*time.Hour, other); err != nil {
+		t.Fatalf("an unused non-connector key: %v, want no refusal", err)
+	}
+}
+
+// touchFails is a store whose Touch fails, as a database that's down for
+// writes would.
+type touchFails struct{ *MemoryAPIKeyStore }
+
+func (touchFails) Touch(context.Context, string, time.Time) error { return errors.New("db down") }
+
+// A connector key's first use must be stamped: if it can't be, the request
+// is refused as the store being unavailable (503, retried), never let in
+// unrecorded, or the key planque holds would lapse ConnectorUnusedTTL later.
+// Once stamped, a failed stamp only logs, as for any key.
+func TestConnectorKeyFirstUseMustBeStamped(t *testing.T) {
+	t.Parallel()
+	minted := time.Date(2026, 11, 15, 18, 0, 0, 0, time.UTC)
+	mem := NewMemoryAPIKeyStore()
+	key := func(id string, used *time.Time, roles ...string) string {
+		gen, err := NewAPIKey("acme", minted)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := mem.Insert(context.Background(), APIKeyRecord{ID: id, Tenant: "acme", Subject: "dev-1", Roles: roles, KeyHash: gen.Hash, CreatedAt: minted, LastUsedAt: used}); err != nil {
+			t.Fatal(err)
+		}
+		return gen.Plaintext
+	}
+	mw := NewMiddleware(NewStubProvider(NewMapResolver()), touchFails{mem}, NewMapResolver(), WithClock(fixedClock(minted.Add(time.Minute))))
+
+	if _, err := mw.verifyAPIKey(context.Background(), key("k-first", nil, RoleConnector)); !errors.Is(err, ErrResolverUnavailable) {
+		t.Fatalf("a connector key's first use with a failed stamp: %v, want ErrResolverUnavailable", err)
+	}
+	used := minted.Add(time.Second)
+	if _, err := mw.verifyAPIKey(context.Background(), key("k-used", &used, RoleConnector)); err != nil {
+		t.Fatalf("a used connector key with a failed stamp: %v, want it let in", err)
+	}
+	if _, err := mw.verifyAPIKey(context.Background(), key("k-agent", nil, "gateway_agent")); err != nil {
+		t.Fatalf("another key's first use with a failed stamp: %v, want it let in", err)
+	}
+	// With a working store, the first use is stamped and let in.
+	mw = NewMiddleware(NewStubProvider(NewMapResolver()), mem, NewMapResolver(), WithClock(fixedClock(minted.Add(time.Minute))))
+	raw := key("k-ok", nil, RoleConnector)
+	if id, err := mw.verifyAPIKey(context.Background(), raw); err != nil || id.Metadata["api_key_id"] != "k-ok" {
+		t.Fatalf("a connector key's first use: %v %v", id, err)
+	}
+	if got, _ := mem.GetByHash(context.Background(), mustHash(t, raw)); got.LastUsedAt == nil {
+		t.Fatal("a connector key's first use wasn't stamped")
 	}
 }

@@ -176,3 +176,62 @@ func TestBatchReplacesOnlyTheControlServersOwnTools(t *testing.T) {
 		t.Fatalf("the vendor's tool changed: %+v", conn)
 	}
 }
+
+// A computer that approves with its own passkey (the desktop client
+// contract) connects Coach's tools with KIFF-Passkey-Assertion in place of
+// the phone's signature, the pair's half of kiff.requests.v1 included: the
+// gateway hands KIFF the assertion as sent, as `passkey`, never as a
+// signature. The same assertion again is 409, and an unsigned batch, or one
+// carrying both, is refused.
+func TestComputerConnectsCoachsToolsWithItsPasskey(t *testing.T) {
+	r := newRig(t, dev)
+	open := openToolServer(t)
+	tool := func(name string, readOnly bool) map[string]any {
+		return map[string]any{"name": name, "url": open.URL, "tool": "refund", "mode": "verify", "read_only": readOnly,
+			"audience": "https://tafs.example/mcp", "idempotency_argument": "idem", "control": true}
+	}
+	batch := map[string]any{"connections": []any{tool("taf_task", false), tool("taf_read", true)}}
+	const pair = "t=ok,a=ok,with=sha256:" + "ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12ab12"
+	post := func(headers map[string]string) (int, string) {
+		t.Helper()
+		payload, _ := json.Marshal(batch)
+		req, _ := http.NewRequest(http.MethodPost, r.srv.URL+"/v1/connections/batch", bytes.NewReader(payload))
+		req.Header.Set("Authorization", "Bearer phone-a")
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var buf bytes.Buffer
+		_, _ = buf.ReadFrom(resp.Body)
+		return resp.StatusCode, buf.String()
+	}
+	if status, body := post(nil); status != http.StatusForbidden || !strings.Contains(body, kiffapi.PasskeyAssertionHeader) {
+		t.Fatalf("unapproved: %d %s", status, body)
+	}
+	if status, body := post(map[string]string{kiffapi.DeviceSignatureHeader: "t=ok", kiffapi.PasskeyAssertionHeader: pair}); status != http.StatusForbidden {
+		t.Fatalf("both a signature and a passkey: %d %s", status, body)
+	}
+	if status, body := post(map[string]string{kiffapi.PasskeyAssertionHeader: pair}); status != http.StatusCreated {
+		t.Fatalf("the computer's passkey pair: %d %s", status, body)
+	}
+	// KIFF got the assertion as sent, as the passkey, with no signature.
+	r.api.mu.Lock()
+	last := r.api.approvals[len(r.api.approvals)-1]
+	r.api.mu.Unlock()
+	if last.Passkey != pair || last.Signature != "" {
+		t.Fatalf("handed KIFF %+v, want the passkey alone", last)
+	}
+	for _, name := range []string{"taf_task", "taf_read"} {
+		if conn, err := r.store.Get(context.Background(), "tenant-a", name); err != nil || !conn.Control {
+			t.Fatalf("%s: %+v %v", name, conn, err)
+		}
+	}
+	// The same assertion again: already used, 409, to approve it again.
+	if status, body := post(map[string]string{kiffapi.PasskeyAssertionHeader: pair}); status != http.StatusConflict {
+		t.Fatalf("the passkey pair replayed: %d %s", status, body)
+	}
+}

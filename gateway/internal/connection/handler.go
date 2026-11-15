@@ -32,7 +32,7 @@ type API interface {
 	SetPermitTargets(ctx context.Context, key string, ts []kiffapi.PermitTarget) error
 	// DeviceSigned confirms that the caller's phone signed this request
 	// (kiff/tafs#206): a phone's session connects the control server only so.
-	DeviceSigned(ctx context.Context, key, method, uri, bodySHA256, signature string) (string, error)
+	DeviceSigned(ctx context.Context, key, method, uri, bodySHA256 string, approval kiffapi.DeviceApproval) (string, error)
 	// CheckProfileApproval says whether the owner's signed approval covers
 	// a profile and KIFF's words for it (connection profiles: the owner's approval).
 	CheckProfileApproval(ctx context.Context, key string, profile, approval json.RawMessage) (kiffapi.ProfileApproval, error)
@@ -268,13 +268,16 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request, c caller) {
 			return
 		}
 		sum := sha256.Sum256(signedBody)
-		grant, err := h.API.DeviceSigned(r.Context(), c.key, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), r.Header.Get(kiffapi.DeviceSignatureHeader))
+		grant, err := h.API.DeviceSigned(r.Context(), c.key, r.Method, r.URL.RequestURI(), hex.EncodeToString(sum[:]), kiffapi.DeviceApprovalFrom(r.Header))
 		switch {
 		case errors.Is(err, kiffapi.ErrUnavailable):
-			writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't check the phone's signature; sign it again and retry")
+			writeErr(w, http.StatusServiceUnavailable, "KIFF couldn't check the device's approval; approve it again and retry")
+			return
+		case errors.Is(err, kiffapi.ErrReplayed):
+			writeErr(w, http.StatusConflict, "this approval was already used; approve the request again")
 			return
 		case err != nil:
-			writeErr(w, http.StatusForbidden, "from a phone, connecting the account's control server needs the phone's signature over this request ("+kiffapi.DeviceSignatureHeader+")")
+			writeErr(w, http.StatusForbidden, "from a phone or computer, connecting the account's control server needs the device's approval over this request ("+kiffapi.DeviceSignatureHeader+" or "+kiffapi.PasskeyAssertionHeader+")")
 			return
 		}
 		// The contract and permit targets are then saved with the phone's

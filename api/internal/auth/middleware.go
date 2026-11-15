@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -398,11 +399,28 @@ func (m *Middleware) verifyAPIKey(ctx context.Context, raw string) (Identity, er
 		// Past its expiry: refused like a revoked key.
 		return Identity{}, ErrAPIKeyExpired
 	}
+	if rec.UnusedConnectorExpired(m.clock()) {
+		// A connector key planque never took: refused like an expired key,
+		// so it can't be used later by whoever holds it (ConnectorUnusedTTL).
+		return Identity{}, ErrConnectorUnused
+	}
 	if rec.Tenant != parsed.Tenant {
 		// Defensive: the embedded tenant in the key must match the
 		// stored record. A mismatch is either a bug in Insert or
 		// tampering; either way, refuse.
 		return Identity{}, errors.New("auth: api key tenant mismatch with stored record")
+	}
+
+	// A connector key's first use must be recorded: an unused one stops
+	// authenticating ConnectorUnusedTTL after its mint, so a lost stamp
+	// would let the key planque holds lapse later. Its first request is
+	// refused as the store being unavailable (retryable), never let in
+	// unrecorded.
+	if slices.Contains(rec.Roles, RoleConnector) && rec.LastUsedAt == nil {
+		if err := m.apiKeys.Touch(ctx, rec.ID, m.clock()); err != nil {
+			return Identity{}, errors.Join(ErrResolverUnavailable, err)
+		}
+		return m.apiKeyIdentity(rec), nil
 	}
 
 	// Best-effort LastUsedAt update. A failure is logged but does
@@ -414,6 +432,11 @@ func (m *Middleware) verifyAPIKey(ctx context.Context, raw string) (Identity, er
 		)
 	}
 
+	return m.apiKeyIdentity(rec), nil
+}
+
+// apiKeyIdentity is the Identity a verified API key acts as.
+func (m *Middleware) apiKeyIdentity(rec APIKeyRecord) Identity {
 	roles := rolesInEffect(rec)
 	return Identity{
 		Subject:  rec.Subject,
@@ -426,7 +449,7 @@ func (m *Middleware) verifyAPIKey(ctx context.Context, raw string) (Identity, er
 		// "" = any environment; non-empty: requests are decided in it
 		Environment: rec.Environment,
 		Metadata:    map[string]string{"api_key_id": rec.ID},
-	}, nil
+	}
 }
 
 // enrichWallet looks up the user's wallet link and stamps

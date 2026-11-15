@@ -66,6 +66,8 @@ type fakeAPI struct {
 	// makes it answer that KIFF is unavailable. A signature "t=ok" is
 	// accepted, once.
 	signedAsks []string
+	// approvals are the device approvals DeviceSigned was given, as sent.
+	approvals  []kiffapi.DeviceApproval
 	signDown   bool
 	signedUsed map[string]bool
 	// previews are the drafts PreviewDraft was asked to word, with the
@@ -95,18 +97,25 @@ func (f *fakeAPI) PreviewDraft(_ context.Context, key string, draft json.RawMess
 	return http.StatusOK, []byte(`{"agent_id":"setup","card_title":"Coach","cards":[],"contract_digest":"d1"}`), nil
 }
 
-func (f *fakeAPI) DeviceSigned(_ context.Context, key, method, uri, bodySHA256, signature string) (string, error) {
+func (f *fakeAPI) DeviceSigned(_ context.Context, key, method, uri, bodySHA256 string, approval kiffapi.DeviceApproval) (string, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.signedAsks = append(f.signedAsks, key+" "+method+" "+uri+" "+bodySHA256)
+	f.approvals = append(f.approvals, approval)
 	if f.signDown {
 		return "", errors.Join(kiffapi.ErrUnavailable, errors.New("down"))
 	}
 	if f.signedUsed == nil {
 		f.signedUsed = map[string]bool{}
 	}
-	if signature != "t=ok" || f.signedUsed[bodySHA256] {
+	// As apps/api: exactly one of a phone's signature ("t=ok") or a computer's
+	// passkey assertion ("t=ok,a=ok…"), and each approval once (409 after).
+	ok := (approval.Signature == "t=ok") != strings.HasPrefix(approval.Passkey, "t=ok,a=ok")
+	if !ok || (approval.Signature != "" && approval.Passkey != "") {
 		return "", kiffapi.ErrNotSigned
+	}
+	if f.signedUsed[bodySHA256] {
+		return "", errors.Join(kiffapi.ErrNotSigned, kiffapi.ErrReplayed)
 	}
 	f.signedUsed[bodySHA256] = true
 	return "kdg_test", nil
@@ -938,9 +947,9 @@ func TestPhoneConnectsTheControlServerSigned(t *testing.T) {
 	if err != nil || conn.CreatedBy != "" || !conn.Control {
 		t.Fatalf("stored %+v %v: want a person's control server", conn, err)
 	}
-	// The same signed request again is refused (KIFF accepts it once).
+	// The same signed request again is refused as already used (KIFF accepts it once): 409, to approve it again.
 	_, _ = r.do(t, "owner-a", http.MethodDelete, "/v1/connections/taf_task", nil)
-	if status, body := post("phone-a", "t=ok", raw); status != http.StatusForbidden {
+	if status, body := post("phone-a", "t=ok", raw); status != http.StatusConflict {
 		t.Fatalf("the signed request replayed: %d %s", status, body)
 	}
 }
