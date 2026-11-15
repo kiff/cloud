@@ -183,9 +183,15 @@ type Resource struct {
 	// Outside: for a sends operation, the recipient may be outside the
 	// account's domain, a class of its own in the words. For a draft
 	// (none_until_approved), what it drafts reaches people outside once the
-	// owner sends it, such as a draft email or reply.
-	Outside bool `json:"outside,omitempty"`
+	// owner sends it, such as a draft email or reply. Explicit: true or
+	// false, kept as said (false: it stays inside the company), and absent
+	// when unsaid, so a profile that doesn't say keeps its digest.
+	Outside *bool `json:"outside,omitempty"`
 }
+
+// ReachesOutside says the profile marks it as reaching people outside the
+// company: outside given as true. False, or not given, says nothing of it.
+func (r Resource) ReachesOutside() bool { return r.Outside != nil && *r.Outside }
 
 // Amount is where a money operation's amount is and what it means.
 type Amount struct {
@@ -404,7 +410,7 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 		if strings.TrimSpace(r.Noun) == "" || len(r.Noun) > 40 {
 			return errors.New("resource.noun says what it is, 1 to 40 characters")
 		}
-		if r.Outside && o.Effect != EffectSends && o.Effect != EffectDraft {
+		if r.Outside != nil && o.Effect != EffectSends && o.Effect != EffectDraft {
 			return errors.New("resource.outside is only for a sends operation, or a draft (none_until_approved) that reaches people outside once sent")
 		}
 	}

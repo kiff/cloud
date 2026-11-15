@@ -1,0 +1,24 @@
+{
+  "profile_sha256": "685b0dfa0d817bb02ee20ec8f159b87079985c17f89c594a697f3c10a52ca744",
+  "words": {
+    "v": "kiff.words.v1",
+    "lines": [
+      {
+        "op": "drafts_create",
+        "kind": "does",
+        "text": "Draft a note to the team: makes a draft in Gmail. Nothing leaves until it's approved."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "scope",
+        "text": "Draft a note to the team: a Card's \"Only for\" can name which thread it acts on."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "missing",
+        "text": "Draft a note to the team: if an answer is lost, KIFF can't check whether it happened, so it stays counted."
+      }
+    ]
+  },
+  "words_sha256": "fa44ff8bd285fc5ca423d88ba0a1a0196887fa10540fbffbeb0ce3cd6236c54f"
+}

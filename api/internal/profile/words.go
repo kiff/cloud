@@ -95,9 +95,9 @@ func render(p Profile, version string) Words {
 		}
 		if r := o.Resource; r != nil {
 			switch {
-			case r.Outside && o.Effect == EffectDraft:
+			case r.ReachesOutside() && o.Effect == EffectDraft:
 				add(o.Tool, KindOutside, t+": its drafts can reach people outside your company once sent.")
-			case r.Outside:
+			case r.ReachesOutside():
 				add(o.Tool, KindOutside, t+": can reach people outside your company.")
 			}
 		}

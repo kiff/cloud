@@ -1,0 +1,19 @@
+{
+  "profile_sha256": "685b0dfa0d817bb02ee20ec8f159b87079985c17f89c594a697f3c10a52ca744",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "drafts_create",
+        "kind": "does",
+        "text": "Draft a note to the team: makes a draft in Gmail. Nothing leaves until it's approved."
+      },
+      {
+        "op": "drafts_create",
+        "kind": "scope",
+        "text": "Draft a note to the team: a Card's \"Only for\" can name which thread it acts on."
+      }
+    ]
+  },
+  "words_sha256": "2967669b6e8267374f608acd37886498a213a66383a77da8ad2d88bd7903b884"
+}

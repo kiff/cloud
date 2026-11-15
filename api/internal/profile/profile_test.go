@@ -79,14 +79,15 @@ func TestGoldenVectors(t *testing.T) {
 
 func TestInvalidVectorsAreRefused(t *testing.T) {
 	want := map[string]string{
-		"no-effect-drafted.json":    "floor rule 1",
-		"no-effect-5xx.json":        "503 can't mean nothing happened",
-		"mcp-pinned.json":           "can't be pinned",
-		"money-without-amount.json": "says where its amount is",
-		"unknown-field.json":        `unknown field "releases_on"`,
-		"check-by-a-write.json":     "only a read can check",
-		"array-in-call-path.json":   "names only",
-		"outside-on-a-write.json":   "resource.outside is only for a sends operation, or a draft",
+		"no-effect-drafted.json":        "floor rule 1",
+		"no-effect-5xx.json":            "503 can't mean nothing happened",
+		"mcp-pinned.json":               "can't be pinned",
+		"money-without-amount.json":     "says where its amount is",
+		"unknown-field.json":            `unknown field "releases_on"`,
+		"check-by-a-write.json":         "only a read can check",
+		"array-in-call-path.json":       "names only",
+		"outside-on-a-write.json":       "resource.outside is only for a sends operation, or a draft",
+		"outside-false-on-a-write.json": "resource.outside is only for a sends operation, or a draft",
 	}
 	for name, msg := range want {
 		raw, err := os.ReadFile(filepath.Join("testdata/invalid", name))
@@ -411,5 +412,54 @@ func TestWordsV2DropsKIFFsBookkeeping(t *testing.T) {
 	}
 	if _, ok := RenderVersion(Profile{}, "kiff.words.v3"); ok {
 		t.Error("an unknown version rendered")
+	}
+}
+
+// outside is kept as said: true, false (it stays inside the company) or not
+// given. false is never dropped, so the profile the phone hashes and the one
+// KIFF reads agree; not given stays absent, so no existing digest moves.
+// gmail-internal-drafts is the shared vector the connection server mirrors.
+func TestOutsideIsKeptAsSaid(t *testing.T) {
+	raw, err := os.ReadFile("testdata/valid/gmail-internal-drafts.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	inside, err := Parse(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r := inside.Operations[0].Resource; r == nil || r.Outside == nil || *r.Outside || r.ReachesOutside() {
+		t.Fatalf("outside false: %+v", r)
+	}
+	for _, line := range Render(inside).Lines {
+		if line.Kind == KindOutside {
+			t.Fatalf("an inside draft has an outside line: %+v", line)
+		}
+	}
+	unsaid := []byte(strings.Replace(string(raw), `, "outside": false`, "", 1))
+	said := []byte(strings.Replace(string(raw), `"outside": false`, `"outside": true`, 1))
+	if string(unsaid) == string(raw) || string(said) == string(raw) {
+		t.Fatal("the vector's outside wasn't found")
+	}
+	digests := map[string]string{}
+	for name, b := range map[string][]byte{"false": raw, "absent": unsaid, "true": said} {
+		p, err := Parse(b)
+		if err != nil {
+			t.Fatalf("%s: %v", name, err)
+		}
+		if name == "absent" && p.Operations[0].Resource.Outside != nil {
+			t.Fatal("absent outside became a value")
+		}
+		if name == "true" && !p.Operations[0].Resource.ReachesOutside() {
+			t.Fatal("outside true doesn't reach outside")
+		}
+		d, err := Digest(b)
+		if err != nil {
+			t.Fatal(err)
+		}
+		digests[name] = d
+	}
+	if digests["false"] == digests["absent"] || digests["false"] == digests["true"] || digests["absent"] == digests["true"] {
+		t.Fatalf("three profiles, three digests: %v", digests)
 	}
 }
