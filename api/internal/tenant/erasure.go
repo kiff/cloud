@@ -129,6 +129,9 @@ var cloudMetaNotPerTenant = map[string]string{
 	"signed_requests":                "sha256 replay ids of a phone's signed setup calls, pruned 10 minutes after use; no tenant column, nothing readable",
 	"task_pack_takebacks":            "store payment ids refunded or disputed before their pack was recorded; no tenant column, removed when the pack is recorded or after 30 days",
 	"schemas_applied":                "the hash of each store's schema last applied at boot (pgschema); no tenant or personal data",
+	"pairing_refusals":               "sha256 of a pairing QR's nonce, the refused computer key's sha256 and a refusal code, kept until the QR's exp (at most 5 minutes) and swept a day later; no tenant column, no person, no key",
+	"proof_runs":                     "integration proofs' run summaries, of KIFF's own test tenants only (the ingest refuses any other), with no person and no secret; swept after 60 days (proofs)",
+	"proof_overrides":                "operators' holds and releases of an app's writes; no tenant column, no customer's data; swept after 60 days (proofs)",
 }
 
 // cloudMetaRetained are kept, with the reason.

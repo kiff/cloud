@@ -50,3 +50,20 @@ ALTER TABLE cloud_meta.pairings ADD COLUMN IF NOT EXISTS device_kind TEXT NOT NU
 -- §5.1): 'software', and it pairs as a view device that never approves; ''
 -- otherwise.
 ALTER TABLE cloud_meta.pairings ADD COLUMN IF NOT EXISTS key_store TEXT NOT NULL DEFAULT '';
+
+-- A phone's approve that KIFF refused for a valid nonce (the desktop client
+-- contract, §5.4), so the computer's claim answers pairing_refused instead of
+-- authorization_pending until its code expires. Only the nonce's SHA-256, the
+-- refused computer key's SHA-256 and the refusal's code: no account, no
+-- person, no key. The claim is answered only when it proves that key.
+-- expires_at is no later than the QR's exp, and the pairings sweep deletes it
+-- after that.
+CREATE TABLE IF NOT EXISTS cloud_meta.pairing_refusals (
+    nonce_hash  BYTEA       PRIMARY KEY,
+    -- sha256 of the computer's device key (the QR's pub) the approve named.
+    pub_hash    BYTEA       NOT NULL,
+    -- The approve's refusal code, such as key_registered.
+    reason      TEXT        NOT NULL,
+    expires_at  TIMESTAMPTZ NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

@@ -84,6 +84,43 @@ func (s *PostgresPairingStore) DropUnclaimedBy(ctx context.Context, deviceID str
 	return nil
 }
 
+// DeleteExpired deletes, on every account, the unclaimed pairings whose exp is before
+// before, and returns how many went. A claimed one stays (PairingKeptAfterExpiry).
+// Refusals that expired before that time go too.
+func (s *PostgresPairingStore) DeleteExpired(ctx context.Context, before time.Time) (int64, error) {
+	tag, err := s.pool.Exec(ctx, `DELETE FROM cloud_meta.pairings WHERE expires_at < $1 AND claimed_at IS NULL`, before.UTC())
+	if err != nil {
+		return 0, fmt.Errorf("delete expired pairings: %w", err)
+	}
+	if _, err := s.pool.Exec(ctx, `DELETE FROM cloud_meta.pairing_refusals WHERE expires_at < $1`, before.UTC()); err != nil {
+		return tag.RowsAffected(), fmt.Errorf("delete expired pairing refusals: %w", err)
+	}
+	return tag.RowsAffected(), nil
+}
+
+func (s *PostgresPairingStore) Refuse(ctx context.Context, r PairingRefusal) error {
+	if _, err := s.pool.Exec(ctx, `INSERT INTO cloud_meta.pairing_refusals (nonce_hash, pub_hash, reason, expires_at, created_at)
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (nonce_hash) DO UPDATE SET pub_hash = EXCLUDED.pub_hash, reason = EXCLUDED.reason, expires_at = EXCLUDED.expires_at, created_at = EXCLUDED.created_at`,
+		r.NonceHash, r.PubHash, r.Reason, r.Expires.UTC(), r.CreatedAt.UTC()); err != nil {
+		return fmt.Errorf("keep pairing refusal: %w", err)
+	}
+	return nil
+}
+
+func (s *PostgresPairingStore) RefusalByNonce(ctx context.Context, nonceHash []byte, now time.Time) (PairingRefusal, error) {
+	var r PairingRefusal
+	err := s.pool.QueryRow(ctx, `SELECT nonce_hash, pub_hash, reason, expires_at, created_at FROM cloud_meta.pairing_refusals
+WHERE nonce_hash = $1 AND expires_at >= $2`, nonceHash, now.UTC()).Scan(&r.NonceHash, &r.PubHash, &r.Reason, &r.Expires, &r.CreatedAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return PairingRefusal{}, ErrPairingNotRefused
+	}
+	if err != nil {
+		return PairingRefusal{}, fmt.Errorf("read pairing refusal: %w", err)
+	}
+	return r, nil
+}
+
 func (s *PostgresPairingStore) Unclaim(ctx context.Context, id string) error {
 	if _, err := s.pool.Exec(ctx, `UPDATE cloud_meta.pairings SET claimed_at = NULL WHERE id = $1`, id); err != nil {
 		return fmt.Errorf("unclaim pairing: %w", err)

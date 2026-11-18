@@ -113,3 +113,54 @@ func TestANotSentCallIsEvidenceOfNoEffect(t *testing.T) {
 		})
 	}
 }
+
+// A call the connection (planque) refused before the vendor, with nothing
+// sent, is evidence of no effect: the gateway keeps the connection's code on
+// its record (connection_refusal, set only for refused_by "connection" with
+// sent false). Without it, the call's draw on a per-item count is never
+// given back, and the retry of the same item is held (Eval 44162956815,
+// Tickets run 3, ticket T-3001: halt_unknown). A record without the code,
+// one whose call went through, or another tenant's, is no evidence.
+func TestAConnectionRefusalIsEvidenceOfNoEffect(t *testing.T) {
+	ctx := context.Background()
+	p, err := pgxpool.New(ctx, postgresURL(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(p.Close)
+	withoutGatewaySchema(t, p)
+	r := tooloutcome.NewPostgres(p)
+	if _, err := p.Exec(ctx, `CREATE SCHEMA gateway; CREATE TABLE gateway.invocations (
+	 key text PRIMARY KEY, tenant_id text, agent_id text, tool text, state text, tool_outcome text,
+	 updated_at timestamptz, no_effect_evidence jsonb, connection_refusal text)`); err != nil {
+		t.Fatal(err)
+	}
+	at := time.Date(2026, 11, 17, 20, 46, 57, 0, time.UTC)
+	for _, tc := range []struct {
+		key, state, outcome, refusal string
+		found                        bool
+	}{
+		{"refused", "forwarded", "error", "halt_unknown", true},
+		{"no-code", "forwarded", "error", "", false},
+		{"went-through", "forwarded", "done", "halt_unknown", false},
+		{"still-forwarding", "forwarding", "", "halt_unknown", false},
+	} {
+		t.Run(tc.key, func(t *testing.T) {
+			if _, err := p.Exec(ctx, `INSERT INTO gateway.invocations VALUES($1,'t1','agent-a','reply_ticket',$2,$3,$4,NULL,$5)`,
+				tc.key, tc.state, tc.outcome, at, tc.refusal); err != nil {
+				t.Fatal(err)
+			}
+			e, found, err := r.NoEffect(ctx, "t1", tc.key)
+			if err != nil || found != tc.found {
+				t.Fatalf("found %v, want %v: %+v, %v", found, tc.found, e, err)
+			}
+			if found && (e.ProposalID != tc.key || e.Subject != "agent-a" || e.Action != "reply_ticket" || e.Source == "" ||
+				e.Source == tooloutcome.SourceNotSent || e.EvidenceID == "" || e.Reason == "" || !e.At.Equal(at)) {
+				t.Fatalf("evidence: %+v", e)
+			}
+			if _, found, err := r.NoEffect(ctx, "t2", tc.key); found || err != nil {
+				t.Fatal("cross-tenant evidence", found, err)
+			}
+		})
+	}
+}

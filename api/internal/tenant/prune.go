@@ -188,6 +188,9 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"oauth_clients":                  "no account's data",
 	"oauth_requests":                 "no account's data; expire in 10 minutes",
 	"signed_requests":                "no account's data; pruned after use",
+	"pairing_refusals":               "no account's data; expire with their QR, swept a day later",
+	"proof_runs":                     "no customer's data: KIFF's test tenants' integration proofs, swept after 60 days (proofs)",
+	"proof_overrides":                "no account's data; swept after 60 days (proofs)",
 	"access_backfilled":              "no account's data: that the groups backfill ran",
 	"access_archived_grants_cleared": "no account's data: that archived agents' grants were cleared",
 }

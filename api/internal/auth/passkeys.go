@@ -74,6 +74,9 @@ type PasskeyStore interface {
 	// ListForPerson returns a person's passkeys on the account that aren't
 	// removed, oldest first.
 	ListForPerson(ctx context.Context, tenant, subject string) ([]StoredPasskey, error)
+	// ListActiveInTenant returns every person's passkeys on the account that
+	// aren't removed: what the proofs' boot check reads.
+	ListActiveInTenant(ctx context.Context, tenant string) ([]StoredPasskey, error)
 	// Revoke removes one passkey, by its KeyID, only if it is the person's.
 	// ErrPasskeyNotFound otherwise.
 	Revoke(ctx context.Context, tenant, subject, keyID string, at time.Time) error
@@ -133,6 +136,18 @@ func (s *MemoryPasskeyStore) ListForPerson(_ context.Context, tenant, subject st
 	var out []StoredPasskey
 	for _, p := range s.keys {
 		if p.Tenant == tenant && p.Subject == subject && p.RevokedAt == nil {
+			out = append(out, p)
+		}
+	}
+	return out, nil
+}
+
+func (s *MemoryPasskeyStore) ListActiveInTenant(_ context.Context, tenant string) ([]StoredPasskey, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var out []StoredPasskey
+	for _, p := range s.keys {
+		if p.Tenant == tenant && p.RevokedAt == nil {
 			out = append(out, p)
 		}
 	}

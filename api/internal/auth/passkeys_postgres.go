@@ -99,6 +99,24 @@ WHERE tenant_id = $1 AND subject = $2 AND revoked_at IS NULL ORDER BY created_at
 	return out, rows.Err()
 }
 
+func (s *PostgresPasskeyStore) ListActiveInTenant(ctx context.Context, tenant string) ([]StoredPasskey, error) {
+	rows, err := s.pool.Query(ctx, `SELECT `+sqlPasskeyColumns+` FROM cloud_meta.passkeys
+WHERE tenant_id = $1 AND revoked_at IS NULL ORDER BY created_at, credential_id`, tenant)
+	if err != nil {
+		return nil, fmt.Errorf("list passkeys: %w", err)
+	}
+	defer rows.Close()
+	var out []StoredPasskey
+	for rows.Next() {
+		p, err := scanPasskey(rows)
+		if err != nil {
+			return nil, fmt.Errorf("read passkey: %w", err)
+		}
+		out = append(out, p)
+	}
+	return out, rows.Err()
+}
+
 func (s *PostgresPasskeyStore) Revoke(ctx context.Context, tenant, subject, keyID string, at time.Time) error {
 	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.passkeys SET revoked_at = $4
 WHERE tenant_id = $1 AND subject = $2 AND key_id = $3 AND revoked_at IS NULL`, tenant, subject, keyID, at.UTC())

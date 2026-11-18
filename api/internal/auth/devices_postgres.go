@@ -82,6 +82,24 @@ WHERE tenant_id = $1 AND subject = $2 AND revoked_at IS NULL ORDER BY created_at
 	return out, rows.Err()
 }
 
+func (s *PostgresDeviceStore) ListActiveInTenant(ctx context.Context, tenant string) ([]ApprovalDevice, error) {
+	rows, err := s.pool.Query(ctx, `SELECT `+sqlDeviceColumns+` FROM cloud_meta.approval_devices
+WHERE tenant_id = $1 AND revoked_at IS NULL ORDER BY created_at DESC`, tenant)
+	if err != nil {
+		return nil, fmt.Errorf("list devices: %w", err)
+	}
+	defer rows.Close()
+	out := []ApprovalDevice{}
+	for rows.Next() {
+		d, err := scanDevice(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, d)
+	}
+	return out, rows.Err()
+}
+
 func (s *PostgresDeviceStore) Revoke(ctx context.Context, id string, at time.Time) error {
 	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.approval_devices SET revoked_at = COALESCE(revoked_at, $2) WHERE id = $1`, id, at.UTC())
 	if err != nil {
@@ -106,7 +124,7 @@ WHERE id = $1 AND (last_used_at IS NULL OR last_used_at < $2::timestamptz - inte
 }
 
 func (s *PostgresDeviceStore) Relabel(ctx context.Context, id, name, platform, kind string) error {
-	if !ValidDevicePlatform(platform) {
+	if !storedDevicePlatform(platform) {
 		return fmt.Errorf("auth: unknown device platform %q", platform)
 	}
 	tag, err := s.pool.Exec(ctx, `UPDATE cloud_meta.approval_devices SET name = $2, platform = $3, kind = $4 WHERE id = $1`, id, name, platform, kind)

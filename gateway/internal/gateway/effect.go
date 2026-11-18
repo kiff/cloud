@@ -62,10 +62,12 @@ func (a *agent) reconcileEffects(ctx context.Context, in invocation.Invocation) 
 			}
 		}
 	}
-	// A call the gateway recorded as never sent (failed) is evidence of no
-	// effect too: apps/api reads that record itself, never this process's
-	// say-so (tooloutcome: not sent).
-	if len(in.NoEffectEvidence) == 0 && in.State != invocation.StateFailed {
+	// A call the gateway recorded as never sent (failed), or one its relay
+	// connection refused saying it sent nothing (connection_refusal), is
+	// evidence of no effect too: apps/api reads that record itself, never
+	// this process's say-so (tooloutcome: not sent, refused by the
+	// connection).
+	if len(in.NoEffectEvidence) == 0 && in.State != invocation.StateFailed && in.ConnectionRefusal == "" {
 		return
 	}
 	r, ok := a.g.API.(effectReconciler)

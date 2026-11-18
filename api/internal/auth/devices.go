@@ -62,6 +62,11 @@ var devicePlatforms = map[string]bool{"ios": true, "ipados": true, "macos": true
 // ValidDevicePlatform reports whether p is a platform KIFF knows.
 func ValidDevicePlatform(p string) bool { return devicePlatforms[p] }
 
+// storedDevicePlatform reports whether a device may be kept with platform p:
+// one ValidDevicePlatform names, or none, for a device that didn't say. A
+// device with none is never taken for a phone.
+func storedDevicePlatform(p string) bool { return p == "" || ValidDevicePlatform(p) }
+
 // NewDeviceID makes a device id: "dev_" and 26 base32 characters (130
 // random bits).
 func NewDeviceID() string {
@@ -87,6 +92,10 @@ type DeviceStore interface {
 	// ListActive returns a person's devices on an account that aren't
 	// revoked, newest first.
 	ListActive(ctx context.Context, tenant, subject string) ([]ApprovalDevice, error)
+	// ListActiveInTenant returns every person's devices on an account that
+	// aren't revoked: what the proofs' boot check reads (a test tenant may
+	// hold only proof test keys).
+	ListActiveInTenant(ctx context.Context, tenant string) ([]ApprovalDevice, error)
 	// Revoke removes a device. Idempotent; ErrDeviceNotFound when unknown.
 	Revoke(ctx context.Context, id string, at time.Time) error
 	// Touch records the device's latest use, by any of its sessions, at
@@ -166,6 +175,19 @@ func (s *MemoryDeviceStore) ListActive(_ context.Context, tenant, subject string
 	return out, nil
 }
 
+func (s *MemoryDeviceStore) ListActiveInTenant(_ context.Context, tenant string) ([]ApprovalDevice, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	out := []ApprovalDevice{}
+	for _, d := range s.byID {
+		if d.Tenant == tenant && !d.IsRevoked() {
+			out = append(out, d)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].CreatedAt.After(out[j].CreatedAt) })
+	return out, nil
+}
+
 func (s *MemoryDeviceStore) Revoke(_ context.Context, id string, at time.Time) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -198,7 +220,7 @@ func (s *MemoryDeviceStore) Touch(_ context.Context, id string, at time.Time) er
 }
 
 func (s *MemoryDeviceStore) Relabel(_ context.Context, id, name, platform, kind string) error {
-	if !ValidDevicePlatform(platform) {
+	if !storedDevicePlatform(platform) {
 		return fmt.Errorf("auth: unknown device platform %q", platform)
 	}
 	s.mu.Lock()
@@ -269,7 +291,7 @@ func (d ApprovalDevice) check() error {
 		return errors.New("auth: a device id starts with dev_")
 	case strings.TrimSpace(d.Tenant) == "" || strings.TrimSpace(d.Subject) == "":
 		return errors.New("auth: a device needs its tenant and subject")
-	case !ValidDevicePlatform(d.Platform):
+	case !storedDevicePlatform(d.Platform):
 		return fmt.Errorf("auth: unknown device platform %q", d.Platform)
 	}
 	if _, err := deviceKey(d.PublicKey); err != nil {
