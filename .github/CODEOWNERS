@@ -1,0 +1,3 @@
+# Changes to CI, the checks and the deploy need a maintainer's review.
+/.github/ @gabosarmiento
+/scripts/ @gabosarmiento

@@ -1,0 +1,59 @@
+name: test
+
+# vet and the unit tests of each module, on every pull request and every push
+# to main. The gateway's Postgres tests (what a taf is listed, held calls, the
+# ledger) skip without a database: they run here against this one.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: api
+            test: go test -timeout 120s ./...
+          - app: gateway
+            test: go test -race -timeout 120s ./...
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ matrix.app }}/go.mod
+          cache-dependency-path: ${{ matrix.app }}/go.sum
+      - run: go vet ./...
+      - run: ${{ matrix.test }}
+      - if: matrix.app == 'gateway'
+        run: go test -count=1 -timeout 600s ./...
+        env:
+          KIFF_TEST_POSTGRES_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
