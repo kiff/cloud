@@ -1,17 +1,13 @@
 name: test
 
 # vet and the unit tests of each module, on every pull request and every push
-# to main. The gateway's Postgres tests (what a taf is listed, held calls, the
-# ledger) skip without a database: they run here against this one.
+# to main, then again against Postgres 16, so no test skips for want of a
+# database.
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
   workflow_dispatch:
 
 permissions:
@@ -54,7 +50,6 @@ jobs:
           cache-dependency-path: ${{ matrix.app }}/go.sum
       - run: go vet ./...
       - run: ${{ matrix.test }}
-      - if: matrix.app == 'gateway'
-        run: go test -count=1 -timeout 600s ./...
+      - run: go test -count=1 -timeout 600s ./...
         env:
           KIFF_TEST_POSTGRES_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Checks an exported tree before it is shown to the owner or pushed (#1327):
+# Checks a tree as it's published (CI runs it on every pull request):
 # gofmt, vet, build and tests in each module, a gitleaks scan of every file,
 # and a grep for what must not be published (account and resource ids,
 # internal hostnames, keys, email addresses).
 #
-#   scripts/public-export/check.sh <out-dir>
+#   scripts/check.sh <out-dir>
 #
 # Postgres-backed tests run when KIFF_TEST_POSTGRES_URL is set and skip
 # otherwise. gitleaks is pinned and fetched by `go run`; it needs network
