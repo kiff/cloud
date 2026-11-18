@@ -22,6 +22,10 @@ func TestApprovalCheckStores(t *testing.T) {
 	t.Run("postgres", func(t *testing.T) {
 		pool := requirePostgres(t)
 		ctx := context.Background()
+		// The devices schema alters developer_sessions, so it comes after it, as at startup.
+		if err := auth.ApplyDeveloperSessionsSchema(ctx, pool); err != nil {
+			t.Fatal(err)
+		}
 		if err := auth.ApplyDevicesSchema(ctx, pool); err != nil {
 			t.Fatal(err)
 		}

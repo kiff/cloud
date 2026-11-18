@@ -1,0 +1,54 @@
+name: public check
+
+# scripts/check.sh on the tree as published: gofmt, vet, build and the tests
+# (with -race, and against Postgres, so none skips for want of a database) in
+# each module, gitleaks over every file, and the grep for what must never be
+# public (account and resource ids, internal hosts, keys, private references).
+# It reads a copy of the published paths, so the check's own patterns aren't
+# matched against itself.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: api/go.mod
+          cache-dependency-path: |
+            api/go.sum
+            gateway/go.sum
+      - name: Copy the published paths
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/published"
+          mkdir "$out"
+          git archive HEAD api gateway README.md SECURITY.md LICENSE.md SOURCE | tar -x -C "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+      - name: scripts/check.sh
+        run: scripts/check.sh "$OUT"
+        env:
+          KIFF_TEST_POSTGRES_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
