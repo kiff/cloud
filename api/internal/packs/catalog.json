@@ -1,0 +1,14 @@
+{
+  "solo": {"apple_product": "bot.tafs.solo.monthly", "google_product": "bot.tafs.solo.monthly"},
+  "packs": [
+    {"id": "pico",  "name": "Pico",  "tasks": 12,  "apple_product": "bot.tafs.pack.pico", "google_product": "bot.tafs.pack.pico"},
+    {"id": "vonk",  "name": "Vonk",  "tasks": 30,  "apple_product": "bot.tafs.pack.vonk", "google_product": "bot.tafs.pack.vonk"},
+    {"id": "rayo",  "name": "Rayo",  "tasks": 70,  "apple_product": "bot.tafs.pack.rayo", "google_product": "bot.tafs.pack.rayo"},
+    {"id": "forte", "name": "Forte", "tasks": 200, "apple_product": "bot.tafs.pack.forte", "google_product": "bot.tafs.pack.forte"},
+    {"id": "maxi",  "name": "Maxi",  "tasks": 450, "apple_product": "bot.tafs.pack.maxi", "google_product": "bot.tafs.pack.maxi"},
+    {"id": "credits-500",  "name": "500 credits",   "credits": 500,  "apple_product": "bot.tafs.credits.500",  "google_product": "bot.tafs.credits.500"},
+    {"id": "credits-1500", "name": "1,500 credits", "credits": 1500, "apple_product": "bot.tafs.credits.1500", "google_product": "bot.tafs.credits.1500"},
+    {"id": "credits-5000", "name": "5,000 credits", "credits": 5000, "apple_product": "bot.tafs.credits.5000", "google_product": "bot.tafs.credits.5000"},
+    {"id": "credits-firstmonth", "name": "First month pack", "credits": 7000, "once": true, "google_product": "bot.tafs.credits.firstmonth"}
+  ]
+}
