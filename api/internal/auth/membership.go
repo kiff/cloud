@@ -360,6 +360,10 @@ func (m *Middleware) serveWithMemberships(w http.ResponseWriter, r *http.Request
 	if id.MemberRole != "" {
 		resolved.Roles = append([]string(nil), id.Roles...)
 	}
+	if !m.keys.AllowsIdentity(ctx, id) {
+		WriteKeyRestricted(w)
+		return
+	}
 	ctx = WithIdentity(ctx, id)
 	ctx = WithActor(ctx, resolved)
 	next.ServeHTTP(w, r.WithContext(ctx))

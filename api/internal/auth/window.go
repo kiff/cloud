@@ -287,3 +287,39 @@ func (m *MemoryWindowStore) CloseAll(_ context.Context, match WindowMatch, at ti
 	}
 	return n, nil
 }
+
+// WindowOpenedByApprover reports whether open was opened by the session
+// sessionID, the one now using it, and by that session's own approval
+// authority as it stands now. A window counts only for the session that
+// opened it: another session on the same device, or another session holding
+// the same approval key, gets nothing from it, and so does a window kept with
+// no session. The authority is the session's approval key (a new
+// enrolment or re-link ends the window), or, for a session that approves with
+// its device's own passkey (ApprovalModePasskey), a passkey still registered
+// to that same device, never an account-wide one, and not marked synced.
+// Removing that passkey ends the window. Anything else, a view-only session
+// included, never counts; nor does a store that can't be read.
+func WindowOpenedByApprover(ctx context.Context, passkeys PasskeyStore, open ApprovalWindow, sessionID string, approvalKey []byte, mode string) bool {
+	if open.SessionID == "" || open.SessionID != sessionID {
+		return false
+	}
+	if len(approvalKey) > 0 {
+		return DeviceKeyFingerprint(approvalKey) == open.OpenedBy
+	}
+	if mode != ApprovalModePasskey || passkeys == nil || open.DeviceID == "" || open.OpenedBy == "" {
+		return false
+	}
+	list, err := passkeys.ListForPerson(ctx, open.Tenant, open.Subject)
+	if err != nil {
+		return false
+	}
+	for _, p := range list {
+		if p.DeviceID != open.DeviceID || (p.Synced != nil && *p.Synced) {
+			continue
+		}
+		if DeviceKeyFingerprint(p.PublicKey) == open.OpenedBy {
+			return true
+		}
+	}
+	return false
+}

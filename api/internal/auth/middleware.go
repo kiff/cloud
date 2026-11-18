@@ -39,6 +39,7 @@ type Middleware struct {
 	devices     DeviceStore           // optional; a session's approval device
 	members     Memberships           // optional; membership resolution
 	oauth       OAuthTokenResolver    // optional; enables kiff_oat_ tokens
+	keys        *KeyRestriction       // optional; keys kept to some tenants
 	clock       func() time.Time
 	logger      *slog.Logger
 }
@@ -223,6 +224,10 @@ func (m *Middleware) Wrap(next http.Handler) http.Handler {
 			resolved.Roles = append([]string(nil), id.Roles...)
 		}
 
+		if !m.keys.AllowsIdentity(r.Context(), id) {
+			WriteKeyRestricted(w)
+			return
+		}
 		ctx := WithIdentity(r.Context(), id)
 		ctx = WithActor(ctx, resolved)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -271,6 +276,12 @@ func (m *Middleware) WrapPerson(next http.Handler) http.Handler {
 		if id.APIKey {
 			writeJSON(w, http.StatusForbidden, map[string]string{"error": "people_only",
 				"message": "this route is for a person's session, not a key"})
+			return
+		}
+		// The session's own tenant, before it's cleared: a restricted key's
+		// session crosses no account it may not act on.
+		if !m.keys.AllowsIdentity(r.Context(), id) {
+			WriteKeyRestricted(w)
 			return
 		}
 		id.Tenant, id.Roles = "", nil

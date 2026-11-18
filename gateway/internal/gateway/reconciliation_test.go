@@ -277,3 +277,48 @@ func TestAnAllowedCallThatWasNeverSentGivesItsRoomBack(t *testing.T) {
 		t.Fatalf("a sent call asked for its room back: %+v, releases %v", sent, a.releases)
 	}
 }
+
+// The connection (planque) refused a call KIFF allowed, before the vendor,
+// and said so: refused_by "connection", sent false. Nothing went out, so the
+// call's draw on a Card's per-item count must be given back, or the retry of
+// the same item is held as if the first had happened (Eval 44162956815,
+// Tickets run 3: a reply drew 1 on its ticket's lifetime count of 1,
+// planque refused it with halt_unknown, and the retry was held).
+// A refusal by the vendor, one that says it was sent, or one that doesn't
+// say, gives nothing back.
+func TestAConnectionRefusalGivesTheCallsDrawBack(t *testing.T) {
+	refusal := func(by, sent string) json.RawMessage {
+		return json.RawMessage(`{"content":[{"type":"text","text":"Refused by planque: planque couldn't check whether the owner halted this agent. Nothing was sent."}],"isError":true,` +
+			`"structuredContent":{"refused_by":"` + by + `","code":"halt_unknown"` + sent + `}}`)
+	}
+	for _, tc := range []struct {
+		name    string
+		answer  json.RawMessage
+		release bool
+	}{
+		{"the connection refused it, nothing sent", refusal("connection", `,"sent":false`), true},
+		{"the vendor refused it", refusal("app", `,"sent":false`), false},
+		{"the connection says it was sent", refusal("connection", `,"sent":true`), false},
+		{"the connection doesn't say", refusal("connection", ``), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := newRig(t)
+			a := &reconciliationAPI{fakeAPI: r.api}
+			relay := refundTool
+			relay.Mode, relay.Audience = gateway.ModeRelay, "https://relay.example.com"
+			r.gw.API, r.gw.Catalog = a, catalog{relay}
+			r.gw.Credentials = creds{"t1/issue_refund": "relay-transport"}
+			r.tool.answer = tc.answer
+			got := r.call(t, "agent-key", amount(500, "op-refused"))
+			key, _ := got.call["invocation"].(string)
+			if !got.isError || r.tool.count() != 1 {
+				t.Fatalf("%+v, tool calls = %d", got, r.tool.count())
+			}
+			a.mu.Lock()
+			defer a.mu.Unlock()
+			if released := len(a.releases) == 1 && (key == "" || a.releases[0] == key); released != tc.release {
+				t.Fatalf("releases %v (invocation %q), want a release: %v", a.releases, key, tc.release)
+			}
+		})
+	}
+}

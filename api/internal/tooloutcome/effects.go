@@ -32,10 +32,19 @@ type EvidenceReader interface {
 // gateway never moves a failed call on, so nothing can send it later.
 const SourceNotSent = "gateway:not_sent"
 
+// SourceConnectionRefused is the evidence of a call KIFF allowed whose
+// relay connection refused it before sending anything: the gateway
+// recorded the connection's code (connection_refusal) only from its
+// structured answer saying `refused_by: connection` and `sent: false`. The
+// same record already gives a governed refund's claim back (the gateway's
+// refund.go), so a Card's count is given back on it too.
+const SourceConnectionRefused = "gateway:connection_refusal"
+
 // NoEffect is the trusted evidence that proposal's call had no effect:
 // the vendor's terminal refusal under terminal_no_effect_v1, the
-// gateway's own record that it was never sent, or a refund the processor
-// says failed (refunds.go).
+// gateway's own record that it was never sent, its relay connection's
+// refusal before sending, or a refund the processor says failed
+// (refunds.go).
 func (p *Postgres) NoEffect(ctx context.Context, tenant, proposal string) (mandate.NoEffectEvidence, bool, error) {
 	e, found, err := p.terminalNoEffect(ctx, tenant, proposal)
 	if found || err != nil {
@@ -44,7 +53,32 @@ func (p *Postgres) NoEffect(ctx context.Context, tenant, proposal string) (manda
 	if e, found, err = p.notSent(ctx, tenant, proposal); found || err != nil {
 		return e, found, err
 	}
+	if e, found, err = p.refusedByConnection(ctx, tenant, proposal); found || err != nil {
+		return e, found, err
+	}
 	return p.refundFailed(ctx, tenant, proposal)
+}
+
+// refusedByConnection is the evidence of a delivered call its relay
+// connection refused before sending anything.
+func (p *Postgres) refusedByConnection(ctx context.Context, tenant, proposal string) (mandate.NoEffectEvidence, bool, error) {
+	var exists bool
+	if err := p.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='gateway' AND table_name='invocations' AND column_name='connection_refusal')`).Scan(&exists); err != nil || !exists {
+		return mandate.NoEffectEvidence{}, false, err
+	}
+	var agent, action, code string
+	var at time.Time
+	err := p.pool.QueryRow(ctx, `SELECT agent_id,tool,updated_at,connection_refusal FROM gateway.invocations
+		WHERE tenant_id=$1 AND key=$2 AND state='forwarded' AND tool_outcome='error' AND connection_refusal <> ''`,
+		tenant, proposal).Scan(&agent, &action, &at, &code)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return mandate.NoEffectEvidence{}, false, nil
+	}
+	if err != nil {
+		return mandate.NoEffectEvidence{}, false, err
+	}
+	return mandate.NoEffectEvidence{TenantID: tenant, ProposalID: proposal, Subject: agent, Action: action, Source: SourceConnectionRefused,
+		EvidenceID: proposal, Reason: "the connection refused it before sending anything (" + code + ")", At: at}, true, nil
 }
 
 // notSent is the evidence of a call the gateway recorded as `failed`.

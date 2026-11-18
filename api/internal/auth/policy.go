@@ -1029,9 +1029,11 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 				"message": "KIFF couldn't read the approval window; sign it again and retry"})
 			return SignedWith{}, false
 		}
-		// The window counts only while the key that opened it is the session's
-		// approval key: a new enrolment and re-link end it.
-		if err != nil || open.ID != named || open.Tenant != id.Tenant || open.Subject != id.Subject || open.OpenedBy != DeviceKeyFingerprint(id.ApprovalKey) {
+		// The window counts only for the session that opened it, and only while
+		// what opened it is still that session's approval authority
+		// (WindowOpenedByApprover): its approval key, or its device's own
+		// passkey. A new enrolment, a re-link, or removing the passkey ends it.
+		if err != nil || open.ID != named || open.Tenant != id.Tenant || open.Subject != id.Subject || !WindowOpenedByApprover(r.Context(), p.passkeys, open, id.DeviceSessionID, id.ApprovalKey, id.ApprovalMode) {
 			writeJSON(w, http.StatusForbidden, map[string]string{"error": "window_required",
 				"message": "the approval window this was signed in isn't open: open one with the phone's approval key, behind its fingerprint, and sign it again"})
 			return SignedWith{}, false

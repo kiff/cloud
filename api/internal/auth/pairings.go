@@ -66,7 +66,30 @@ var (
 	ErrPairingUsed     = errors.New("auth: this pairing's nonce was already approved")
 	ErrPairingClaimed  = errors.New("auth: this pairing was already claimed")
 	ErrPairingProof    = errors.New("auth: the claim's proof does not verify")
+	// ErrPairingNotRefused is RefusalByNonce's answer when no live refusal
+	// is kept for the nonce.
+	ErrPairingNotRefused = errors.New("auth: no refusal is kept for this pairing")
 )
+
+// PairingRefusal is a phone's approve that KIFF refused for a valid nonce,
+// kept so the computer's claim can say so
+// instead of waiting until its code expires. KIFF keeps the nonce's hash, the
+// refused computer key's hash and a reason code, nothing else: no account, no
+// person, no key.
+type PairingRefusal struct {
+	NonceHash []byte
+	// PubHash is sha256 of the computer's device key (the QR's pub) the
+	// refused approve named. The claim is answered pairing_refused only when
+	// it proves that key (VerifyPairClaim), so a refusal planted with another
+	// key never reaches the computer that showed the QR.
+	PubHash []byte
+	// Reason is the approve's refusal code, such as "key_registered".
+	Reason string
+	// Expires is no later than the QR's own exp: a refusal never outlives
+	// its code.
+	Expires   time.Time
+	CreatedAt time.Time
+}
 
 // PairingStore keeps the pairings.
 type PairingStore interface {
@@ -85,6 +108,11 @@ type PairingStore interface {
 	// DropUnclaimedBy deletes the pairings a device approved that no
 	// computer has claimed yet: removing the device takes them back.
 	DropUnclaimedBy(ctx context.Context, deviceID string) error
+	// Refuse keeps a refusal for its nonce hash, replacing any earlier one.
+	Refuse(ctx context.Context, r PairingRefusal) error
+	// RefusalByNonce returns the refusal kept for this nonce hash that hasn't
+	// expired at now. ErrPairingNotRefused when there's none.
+	RefusalByNonce(ctx context.Context, nonceHash []byte, now time.Time) (PairingRefusal, error)
 }
 
 // NewPairingID makes a pairing id: "pair_" and 26 base32 characters.
@@ -177,13 +205,34 @@ func VerifyPairClaim(pub []byte, nonce, proofB64 string) error {
 
 // MemoryPairingStore is the in-memory PairingStore for tests and dev.
 type MemoryPairingStore struct {
-	mu   sync.Mutex
-	byID map[string]Pairing
+	mu      sync.Mutex
+	byID    map[string]Pairing
+	refused map[string]PairingRefusal // by nonce hash
 }
 
 // NewMemoryPairingStore returns an empty store.
 func NewMemoryPairingStore() *MemoryPairingStore {
-	return &MemoryPairingStore{byID: map[string]Pairing{}}
+	return &MemoryPairingStore{byID: map[string]Pairing{}, refused: map[string]PairingRefusal{}}
+}
+
+func (s *MemoryPairingStore) Refuse(_ context.Context, r PairingRefusal) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	r.NonceHash = append([]byte(nil), r.NonceHash...)
+	r.PubHash = append([]byte(nil), r.PubHash...)
+	r.Expires, r.CreatedAt = r.Expires.UTC(), r.CreatedAt.UTC()
+	s.refused[string(r.NonceHash)] = r
+	return nil
+}
+
+func (s *MemoryPairingStore) RefusalByNonce(_ context.Context, nonceHash []byte, now time.Time) (PairingRefusal, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	r, ok := s.refused[string(nonceHash)]
+	if !ok || now.After(r.Expires) {
+		return PairingRefusal{}, ErrPairingNotRefused
+	}
+	return r, nil
 }
 
 func (s *MemoryPairingStore) Insert(_ context.Context, p Pairing) error {
@@ -234,6 +283,34 @@ func (s *MemoryPairingStore) DropUnclaimedBy(_ context.Context, deviceID string)
 		}
 	}
 	return nil
+}
+
+// PairingKeptAfterExpiry is how long an unclaimed pairing is kept once its exp has passed. Nothing reads
+// it then: it can't be claimed (expired_token), and its QR can't be approved again, since the
+// approval's signed exp is checked. The day is a margin for a claim in flight. A claimed pairing is
+// kept, since it is KIFF's only record of which phone let that computer in (approved_by); account
+// erasure deletes it with the rest.
+const PairingKeptAfterExpiry = 24 * time.Hour
+
+// DeleteExpired deletes, on every account, the unclaimed pairings whose exp is before before, and
+// returns how many went. A claimed one stays (PairingKeptAfterExpiry). Refusals that expired before
+// that time go too.
+func (s *MemoryPairingStore) DeleteExpired(_ context.Context, before time.Time) (int64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var n int64
+	for id, p := range s.byID {
+		if p.ClaimedAt == nil && p.Expires.Before(before) {
+			delete(s.byID, id)
+			n++
+		}
+	}
+	for k, r := range s.refused {
+		if r.Expires.Before(before) {
+			delete(s.refused, k)
+		}
+	}
+	return n, nil
 }
 
 func (s *MemoryPairingStore) Unclaim(_ context.Context, id string) error {
