@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   test:
+    name: test (${{ matrix.app }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
