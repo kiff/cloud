@@ -103,34 +103,39 @@ jobs:
       KIFF_CLERK_FRONTEND_API: ${{ vars.KIFF_CLERK_FRONTEND_API }}
       KIFF_CLERK_PUBLISHABLE_KEY: ${{ vars.KIFF_CLERK_PUBLISHABLE_KEY }}
       KIFF_PRICING_BUSINESS_INTAKE_URL: ${{ vars.KIFF_PRICING_BUSINESS_INTAKE_URL }}
-      KIFF_DEMO_TENANT_ID: ${{ vars.KIFF_DEMO_TENANT_ID }}
-      KIFF_STUB_SUBJECTS: ${{ vars.KIFF_STUB_SUBJECTS }}
-      KIFF_APPLE_SANDBOX_TENANTS: ${{ vars.KIFF_APPLE_SANDBOX_TENANTS }}
+      # A job's env is printed in clear at the top of every step's log, and this repository's logs are public. So a
+      # value naming an account, a person, a key or a repository by id is a secret of `production` (masked), never a
+      # variable: the demo tenant, stub subjects, sandbox and test tenants, the push service account, and below the
+      # proof ids, tenants and keys. Only settings that name nothing private stay variables.
+      KIFF_DEMO_TENANT_ID: ${{ secrets.KIFF_DEMO_TENANT_ID }}
+      KIFF_STUB_SUBJECTS: ${{ secrets.KIFF_STUB_SUBJECTS }}
+      KIFF_APPLE_SANDBOX_TENANTS: ${{ secrets.KIFF_APPLE_SANDBOX_TENANTS }}
       KIFF_GOOGLE_PACKAGE_NAME: ${{ vars.KIFF_GOOGLE_PACKAGE_NAME }}
       KIFF_GOOGLE_PUSH_AUDIENCE: ${{ vars.KIFF_GOOGLE_PUSH_AUDIENCE }}
-      KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT: ${{ vars.KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT }}
-      KIFF_GOOGLE_TEST_TENANTS: ${{ vars.KIFF_GOOGLE_TEST_TENANTS }}
+      KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT: ${{ secrets.KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT }}
+      KIFF_GOOGLE_TEST_TENANTS: ${{ secrets.KIFF_GOOGLE_TEST_TENANTS }}
       # kiff.dev's apps list from planque's proofs: the repository variable KIFF_APPS_PROVED=on turns it on.
       KIFF_APPS_PROVED: ${{ vars.KIFF_APPS_PROVED }}
       # kiff.dev's download page from the computers' published releases: KIFF_DESKTOP_RELEASES=on turns it on.
       KIFF_DESKTOP_RELEASES: ${{ vars.KIFF_DESKTOP_RELEASES }}
       KIFF_DESKTOP_NOT_AVAILABLE: ${{ vars.KIFF_DESKTOP_NOT_AVAILABLE }}
-      # Integration proofs. None of these is a secret, but all ten
-      # decide what KIFF trusts: the six OIDC values which workflow's token the ingest accepts, the
-      # other four who may approve and what counts. Set them ONLY as environment variables of
-      # `production` (admin-only), never as repository variables: an environment variable overrides a
-      # repository one of the same name, and the expression stays `vars.*` either way. All ten must
-      # ALWAYS be defined in `production`, with "-" meaning none, so a same-named repository variable
-      # can never take effect; the step "Check the proof values" below fails the deploy otherwise, and
-      # deploy.sh writes "-" as empty. With any OIDC value empty, the API doesn't mount the ingest.
+      # Integration proofs. All ten decide what KIFF trusts: the six OIDC values which workflow's
+      # token the ingest accepts, the other four who may approve and what counts. Set them ONLY in
+      # `production` (admin-only), never at the repository: an environment's value overrides a
+      # repository one of the same name. The four that name ids (the repository and owner ids, the
+      # test tenants and keys) are `production` secrets, so the public log masks them; the other six
+      # name nothing private and stay environment variables. All ten must ALWAYS be defined in
+      # `production`, with "-" meaning none, so a same-named repository value can never take effect;
+      # the step "Check the proof values" below fails the deploy otherwise, and deploy.sh writes "-"
+      # as empty. With any OIDC value empty, the API doesn't mount the ingest.
       KIFF_PROOF_OIDC_AUDIENCE: ${{ vars.KIFF_PROOF_OIDC_AUDIENCE }}
       KIFF_PROOF_OIDC_REPOSITORY: ${{ vars.KIFF_PROOF_OIDC_REPOSITORY }}
-      KIFF_PROOF_OIDC_REPOSITORY_ID: ${{ vars.KIFF_PROOF_OIDC_REPOSITORY_ID }}
-      KIFF_PROOF_OIDC_OWNER_ID: ${{ vars.KIFF_PROOF_OIDC_OWNER_ID }}
+      KIFF_PROOF_OIDC_REPOSITORY_ID: ${{ secrets.KIFF_PROOF_OIDC_REPOSITORY_ID }}
+      KIFF_PROOF_OIDC_OWNER_ID: ${{ secrets.KIFF_PROOF_OIDC_OWNER_ID }}
       KIFF_PROOF_OIDC_REF: ${{ vars.KIFF_PROOF_OIDC_REF }}
       KIFF_PROOF_OIDC_WORKFLOW: ${{ vars.KIFF_PROOF_OIDC_WORKFLOW }}
-      KIFF_PROOF_TEST_TENANTS: ${{ vars.KIFF_PROOF_TEST_TENANTS }}
-      KIFF_PROOF_TEST_KEYS: ${{ vars.KIFF_PROOF_TEST_KEYS }}
+      KIFF_PROOF_TEST_TENANTS: ${{ secrets.KIFF_PROOF_TEST_TENANTS }}
+      KIFF_PROOF_TEST_KEYS: ${{ secrets.KIFF_PROOF_TEST_KEYS }}
       KIFF_PROOF_RUNNER_VERSIONS: ${{ vars.KIFF_PROOF_RUNNER_VERSIONS }}
       KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
       # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of
