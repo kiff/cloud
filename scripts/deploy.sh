@@ -940,7 +940,8 @@ if [[ $skip_smoke -eq 0 ]]; then
 		--query 'Reservations[0].Instances[0].PublicIpAddress' --output text 2>/dev/null || echo "")
 	if [[ -n "$eip" && "$eip" != "None" ]]; then
 		http_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 "http://${eip}/" || echo "000")
-		log "public probe http://${eip}/ → HTTP ${http_status} (informational; vhost-aware Caddyfile may not match bare-IP)"
+		# The address itself stays out of the log: kiff/cloud's deploy logs are public.
+		log "public probe of the box's own address → HTTP ${http_status} (informational; vhost-aware Caddyfile may not match bare-IP)"
 	fi
 fi
 
