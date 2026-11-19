@@ -1,0 +1,84 @@
+<h1 id="openclaw">OpenClaw</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this OpenClaw agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-09/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>); this page is the OpenClaw hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-09/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-09/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in the JS guard SDK
+(<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>@kiff/kiff-guard</code></a>,
+<code>packages/js/src/adapters/openclaw.ts</code>) and passes the conformance suite
+ported from the Python guard. It was verified against the OpenClaw
+plugin SDK&rsquo;s <code>before_tool_call</code> hook. This is KIFF&rsquo;s first TypeScript
+adapter — the Python <code>kiff_guard</code> package can&rsquo;t host it, so it lives in
+the JS package instead.</p>
+
+<p><strong>Shape: vote / approval-native.</strong> The <code>before_tool_call</code> hook runs the
+tool itself; the guard only votes via its return value — one governed
+receipt per call, same as the Python vote adapters. OpenClaw is the
+first framework where KIFF&rsquo;s middle outcome, <code>approval_required</code>, maps
+onto a <strong>native</strong> human-in-the-loop primitive (OpenClaw pauses the run
+and routes a real <code>/approve</code> flow) rather than collapsing to a block.</p>
+
+<h2 id="why-openclaw-matters">Why OpenClaw matters</h2>
+
+<p>OpenClaw isn&rsquo;t a quick fifth adapter — it widens the whole picture:</p>
+
+<ol>
+<li><strong>It forces the TypeScript guard SDK.</strong> Every shipped adapter is
+Python; OpenClaw is Node/TS. A TS port unlocks the entire JS agent
+ecosystem (LangGraph.js, Vercel AI SDK, Mastra) — the vibecode crowd
+KIFF Cloud targets first.</li>
+<li><strong>First native <code>approval_required</code>.</strong> OpenClaw has a real approval
+primitive (title, severity, timeout, resolution) plus an <code>/approve</code>
+UX. This is the first integration where &ldquo;clearance held for a human&rdquo;
+renders as the experience the whitepaper describes, not just a
+refusal.</li>
+<li><strong>Control-plane to control-plane.</strong> OpenClaw is itself a Gateway with
+channels, approvals, and audit. KIFF governing OpenClaw is two
+control planes composing — KIFF as the shared clearance authority
+above OpenClaw&rsquo;s runtime.</li>
+</ol>
+
+<h2 id="the-seam">The seam</h2>
+
+<p>Register the guard on your OpenClaw plugin&rsquo;s <code>api</code> via the shipped
+<code>registerKiffGuard</code> helper. It wires KIFF&rsquo;s outcomes onto the
+<code>before_tool_call</code> return contract for you:</p>
+
+<pre><code class="language-ts">import { definePluginEntry } from &quot;openclaw/plugin-sdk/plugin-entry&quot;;
+import { Guard } from &quot;@kiff/kiff-guard&quot;;
+import { registerKiffGuard } from &quot;@kiff/kiff-guard/adapters/openclaw&quot;;
+
+const guard = new Guard({ mode: &quot;observe&quot; }); // switch to enforce when ready
+
+export default definePluginEntry({
+  id: &quot;kiff-guard&quot;,
+  name: &quot;KIFF Guard&quot;,
+  register(api) {
+    registerKiffGuard(api, guard); // before_tool_call, priority 50
+  },
+});
+</code></pre>
+
+<p>Under the hood the adapter votes on each call: <code>allowed</code> proceeds and
+records that the tool ran; <code>approval_required</code> returns a <code>requireApproval</code>
+directive (title, severity, a <code>timeoutMs</code> that fails closed) so OpenClaw
+routes a real human approval; anything else returns <code>{ block: true }</code>.
+Enforce mode <strong>fails closed</strong> — if the guard can&rsquo;t reach KIFF, the tool
+is blocked. One governed receipt is recorded per call either way.</p>
+
+<h2 id="status-and-tracking">Status and tracking</h2>
+
+<p>Shipped. OpenClaw was the forcing function for the TypeScript guard SDK
+(<a href="https://github.com/kiff/kiff-cloud/blob/main/docs/design/015-open-core-and-guard-sdk-repo.md" target="_blank" rel="noreferrer noopener">RFC 015</a>),
+which now lives in <code>packages/js</code> of the public guard repo. The adapter
+and its conformance test ship there
+(<a href="https://github.com/kiff/kiff-guard/blob/main/packages/js/src/adapters/openclaw.ts" target="_blank" rel="noreferrer noopener"><code>adapters/openclaw.ts</code></a>),
+which is what moved this page from preview to verified.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Seam research (full): <a href="https://github.com/kiff/kiff-cloud/blob/main/docs/integration/frameworks/openclaw.md" target="_blank" rel="noreferrer noopener">openclaw.md</a></li>
+<li>OpenClaw plugin hooks: <a href="https://docs.openclaw.ai/plugins/hooks" target="_blank" rel="noreferrer noopener">docs.openclaw.ai</a></li>
+</ul>

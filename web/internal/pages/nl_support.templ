@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SupportNL is the support page (/support) in Dutch, at /nl/support.
+// It is a translation of Support: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ SupportNL() {
+	@components.LayoutSite("KIFF — support", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@supportHeadNL()
+			@supportWriteNL()
+			@supportStatusNL()
+			@supportTafsNL()
+			@supportDataNL()
+			@supportSecurityNL()
+			if computerAppReleased() {
+				@supportComputerNL()
+			}
+		</article>
+	}
+}
+
+templ supportHeadNL() {
+	<header class="legal-head">
+		<p class="legal-badge">Support</p>
+		<h1>Support</h1>
+		<p class="legal-meta">
+			<strong>Laatst bijgewerkt:</strong> 13 november 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Voor KIFF en voor tafs, de app van KIFF voor iPhone, iPad en
+			Android. Beide worden beheerd door Kiff Agents OÜ, Tallinn,
+			Estland.
+		</p>
+	</header>
+}
+
+templ supportWriteNL() {
+	<section id="write">
+		<h2>1. Schrijf ons</h2>
+		<p>
+			Mail naar <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>
+			vanaf het e-mailadres van je account en vertel wat er is
+			gebeurd. Een mens antwoordt, binnen de reactietijden in de
+			<a href="/legal/sla#support">service level agreement</a> { components.InEnglish("nl") } (§5).
+		</p>
+	</section>
+}
+
+templ supportStatusNL() {
+	<section id="status">
+		<h2>2. Is er iets uitgevallen?</h2>
+		<p>
+			<a href="https://status.kiff.dev">status.kiff.dev</a> draait
+			los van KIFF, dus die antwoordt ook als KIFF dat niet doet.
+		</p>
+	</section>
+}
+
+templ supportTafsNL() {
+	<section id="tafs">
+		<h2>3. Je account verwijderen</h2>
+		<p>
+			In tafs: Account → <em>Account verwijderen</em>. KIFF
+			stopt je sleutels meteen en wist zijn gegevens na een
+			respijtperiode van 30 dagen, zoals het
+			<a href="/nl/privacy">privacybeleid</a> zegt. Hulp bij de app
+			staat in de <a href="/docs/tafs">tafs-docs</a> { components.InEnglish("nl") }.
+			if WatchLive {
+				<a href="/nl/tafs/watch">tafs op je horloge</a>: wat het doet en hoe je het krijgt.
+			}
+		</p>
+	</section>
+}
+
+templ supportDataNL() {
+	<section id="data">
+		<h2>4. Je gegevens</h2>
+		<p>
+			Wil je je gegevens inzien, exporteren of verwijderen, of een
+			account dat op het web is gemaakt, mail dan naar
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportSecurityNL() {
+	<section id="security">
+		<h2>5. Beveiliging en juridisch</h2>
+		<p>
+			Beveiligingsproblemen: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+			Juridische kennisgevingen: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportComputerNL() {
+	<section id="computer">
+		<h2>6. Een computer toevoegen met je telefoon</h2>
+		<ol>
+			<li>Open tafs op de computer en kies <em>Voeg deze computer toe met je telefoon</em>. Die toont een code om te scannen.</li>
+			<li>Open op de telefoon die je al met tafs gebruikt <em>Account</em> → <em>Apparaten</em> → <em>Apparaat toevoegen</em> en scan die code.</li>
+			<li>Je telefoon vraagt of je computer een code toont. Controleer dat het dezelfde is, en keur alleen die ene computer goed, terwijl die voor je staat.</li>
+		</ol>
+		<p>Is de code verlopen of al gebruikt, kies dan op de computer <em>Toon een nieuwe code</em> en scan opnieuw. Op Linux, en op een Mac zonder Secure Enclave, toont tafs wat op je wacht maar keurt het niets goed; je keurt goed op je telefoon{ macSecurityKey("nl") }.</p>
+	</section>
+}

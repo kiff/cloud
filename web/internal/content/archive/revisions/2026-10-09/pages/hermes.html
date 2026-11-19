@@ -1,0 +1,98 @@
+<h1 id="hermes-agent-nous-research">Hermes Agent (Nous Research)</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Hermes agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-09/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>); this page is the Hermes hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-09/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-09/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was source-verified against the
+<code>NousResearch/hermes-agent</code> source on <code>main</code>, not just the docs — and a
+doc-vs-source discrepancy was resolved in favor of the source (see
+below).</p>
+
+<p><strong>Shape: inverted-control.</strong> Hermes runs the tool after the hook
+returns; the hook only votes. So the adapter uses <code>Guard.observe()</code> /
+<code>Guard.decide_only()</code>, not a <code>run</code> callback. See
+<a href="/docs/archive/2026-10-09/concepts">how the guard works</a>.</p>
+
+<p>Hermes is a CLI-first agent that takes real, irreversible actions
+(terminal, code execution, file writes, messaging gateways) — exactly
+the &ldquo;actor takes consequential action&rdquo; profile KIFF governs.</p>
+
+<h2 id="install">Install</h2>
+
+<p>The guard ships to Hermes as a <strong>plugin</strong> — a directory with
+<code>plugin.yaml</code> + <code>__init__.py</code> exposing <code>register(ctx)</code>. No fork, no
+monkeypatch.</p>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+</code></pre>
+
+<p>Then create the plugin at <code>~/.hermes/plugins/kiff-guard/</code>.</p>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<p><code>__init__.py</code>:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard
+from kiff_guard.adapters.hermes import register_kiff_guard
+
+_GUARD = Guard(mode=&quot;observe&quot;)        # zero-config audit; no KIFF account
+
+def register(ctx):
+    register_kiff_guard(ctx, _GUARD)
+</code></pre>
+
+<p>The hook fires before every tool (terminal, browser, code-exec, file
+writes, MCP) in both the CLI and the gateway, records a receipt, and
+never blocks.</p>
+
+<h2 id="activate">Activate</h2>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, _GUARD.catalog))
+</code></pre>
+
+<p>Review and activate in the <span class="archive-unlinked">dashboard</span>.</p>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Build the guard with a client and <code>mode=&quot;enforce&quot;</code>:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+
+client = HTTPClient(api_key=&quot;kiff_live_...&quot;, tool_map=ToolMap().bind(...))
+_GUARD = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;hermes&quot;, mode=&quot;enforce&quot;)
+</code></pre>
+
+<p>On a withheld decision the adapter returns Hermes&rsquo;
+<code>{&quot;action&quot;: &quot;block&quot;, &quot;message&quot;: ...}</code> directive — Hermes short-circuits
+the tool and hands <code>message</code> to the model as the tool&rsquo;s error result.
+The tool never runs. Enforce <strong>fails closed</strong> on a guard error by
+default; pass <code>fail_closed=False</code> to override.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>The pre-execution seam is the <strong><code>pre_tool_call</code></strong> plugin hook. In source
+(<code>model_tools.py</code> → <code>handle_function_call</code>), Hermes calls
+<code>get_pre_tool_call_block_message(...)</code> <em>before</em> dispatch; a non-None
+block result short-circuits the tool. The hook fires exactly once per
+tool execution and the first block wins.</p>
+
+<blockquote>
+<p><strong>Doc-vs-source discrepancy (resolved).</strong> Hermes&rsquo; plugin-build guide
+lists <code>pre_tool_call</code>&rsquo;s return as &ldquo;ignored&rdquo; (observer-only), but the
+hooks reference says it can block — and the <strong>source confirms the
+hooks reference is correct</strong>. The block directive is supported and
+stable. KIFF complements Hermes&rsquo; own <code>DANGEROUS_PATTERNS</code> local check
+by adding the tenant-wide policy + audit.</p>
+</blockquote>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/hermes.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/hermes.py</code></a></li>
+<li>Seam research (full, source-verified): <a href="https://github.com/kiff/kiff-cloud/blob/main/docs/integration/frameworks/hermes.md" target="_blank" rel="noreferrer noopener">hermes.md</a></li>
+<li>Hermes docs: <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noreferrer noopener">hermes-agent.nousresearch.com</a></li>
+</ul>

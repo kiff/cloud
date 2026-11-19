@@ -1,0 +1,37 @@
+package pages
+
+// downloadES is /tafs/download's words in Spanish, at /es/tafs/download.
+var downloadES = downloadWords{
+	Lang:             "es",
+	Title:            "Consigue tafs — KIFF",
+	Description:      "Consigue tafs en Google Play para Android. iPhone y iPad llegarán pronto al App Store.",
+	DescAvailable:    "Consigue tafs para %s.",
+	DescComingOne:    "La app para %s llegará muy pronto.",
+	DescComingMany:   "Las apps para %s llegarán muy pronto.",
+	And:              "y",
+	Head:             "Consigue tafs",
+	Sub:              "Agentes de IA para el trabajo rutinario de tu negocio, cada uno dentro de una Card que tú fijas. Lo que sea mayor espera tu aprobación en tu móvil.",
+	Phones:           "Móvil y tableta",
+	Computer:         "Ordenador",
+	NotYet:           "Muy pronto",
+	NotAvailable:     "No disponible",
+	AvailableVersion: "Versión %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Antes de abrirlo, comprueba que el SHA-256 del archivo coincide con este.",
+	DownloadFor:      "Descargar para %s",
+	QRAlt:            "Código QR que abre kiff.dev/tafs/download",
+	QRCaption:        "Escanéalo con la cámara de tu móvil para abrir esta página en él.",
+	Cost:             "Cuánto cuesta:",
+	Pricing:          "precios",
+	ComingAppStore:   "Muy pronto en el App Store",
+	IPhoneIPad:       "iPhone y iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 o posterior",
+		"ios":     "iOS y iPadOS 16 o posterior",
+		"macos13": "macOS 13 o posterior",
+		"macos":   "solo macOS 12 (Monterey)",
+		"windows": "Windows 10 u 11",
+		"linux":   "Ubuntu 24.04 o posterior",
+	},
+}

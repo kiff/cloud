@@ -1,0 +1,1165 @@
+/* app-shell.css — the authenticated app frame.
+ *
+ * The topbar + sidebar grid that wraps every signed-in surface
+ * (Overview, Studio, Activity, Playground, …). Extracted from
+ * dashboard.css so Studio — a product in its own right — can load
+ * just the frame plus its own css/studio.css, instead of pulling
+ * the whole dashboard content stylesheet for the chrome alone.
+ *
+ * Loaded right after app.css on every dashboard route (see
+ * components.LayoutApp* / dashShell). Holds:
+ *   - the app webfont bindings (Geist / IBM Plex Mono / DM Serif)
+ *   - the shell grid (topbar, sidebar, nav, scrolling main)
+ *
+ * Page content lives in the per-surface stylesheets:
+ *   dashboard.css, studio.css, playground.css.
+ *
+ * Selectors are scoped under .dash-shell / .dash-* so nothing here
+ * leaks onto the marketing surfaces (which use body.site + site.css).
+ */
+
+/* ── App typography ───────────────────────────────────────────────
+ *
+ * The signed-in app shares the redesign's three faces with the
+ * public site: Geist for body, IBM Plex Mono for the code/label
+ * voice, DM Serif Display for the one display heading per surface.
+ * The base app.css tokens fall back to open-props' system stacks;
+ * binding them here (scoped to the shell) is what actually makes
+ * the dashboard match the mockups. css/fonts.css is loaded by the
+ * shell layout so the @font-face rules are present. */
+/* .consent-shell (the OAuth consent and device pages) shares the
+   dashboard's fonts and colour tokens, so a page that asks to connect an
+   agent looks like KIFF Cloud, not like a third party. Layout rules stay
+   .dash-shell only. */
+.dash-shell,
+.wk-shell,
+.consent-shell {
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+
+  --font-body: var(--font-sans);
+  --font-code: var(--font-mono);
+  /* Display headings (page titles) use the serif; section labels
+   * and chrome keep the mono voice via --font-mono directly. */
+  --font-display: var(--font-serif);
+
+  font-family: var(--font-body);
+}
+
+/* ── Shell grid (#4 redesign: sidebar + topbar) ───────────────────
+ *
+ * A fixed topbar across the top (logo + workspace label + avatar)
+ * and a left sidebar (section nav + signed-in user at the foot),
+ * with the page content in a scrolling main column. Server-rendered;
+ * the active nav item is decided per request. */
+
+.dash-shell {
+  display: grid;
+  grid-template-columns: var(--dash-sidebar-w, 208px) 1fr;
+  grid-template-rows: var(--dash-topbar-h, 52px) 1fr;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Topbar spans both columns. */
+.dash-topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: var(--size-5);
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--bg-elev);
+  z-index: 10;
+}
+
+.dash-topbar-logo {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  width: var(--dash-sidebar-w, 208px);
+  padding: 0 var(--size-5);
+  border-right: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.dash-topbar-logo span { color: var(--accent); }
+
+/* The whole right cluster (tenant · email · avatar) is one link to
+ * account settings. Underline suppressed so it reads as chrome, not
+ * body copy; hover lifts the avatar ring + email to signal it acts. */
+.dash-topbar-account {
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dash-topbar-account:hover .dash-topbar-email { color: var(--fg); }
+.dash-topbar-account:hover .dash-avatar {
+  border-color: color-mix(in oklab, var(--accent) 70%, transparent);
+}
+
+.dash-topbar-tenant {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}
+
+.dash-topbar-email {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+  letter-spacing: 0.02em;
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 120ms ease;
+}
+
+.dash-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, var(--accent) 18%, var(--bg-elev));
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* Sidebar. */
+.dash-sidebar {
+  background: var(--bg-elev);
+  border-right: 1px solid var(--rule-soft);
+  display: flex;
+  flex-direction: column;
+  padding: var(--size-3) 0;
+  overflow-y: auto;
+}
+
+.dash-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-2) var(--size-5);
+  font-size: var(--font-size-1);
+  font-weight: 400;
+  color: var(--fg-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.dash-nav-item:hover {
+  background: color-mix(in oklab, var(--fg) 5%, transparent);
+  color: var(--fg);
+}
+
+.dash-nav-active {
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  color: var(--fg);
+  font-weight: 500;
+  border-left-color: var(--accent);
+}
+
+.dash-nav-icon {
+  width: 16px;
+  text-align: center;
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.dash-nav-active .dash-nav-icon { color: var(--accent); }
+
+.dash-sidebar-spacer { flex: 1; }
+
+.dash-sidebar-footer {
+  padding: var(--size-3) var(--size-5) var(--size-1);
+  border-top: 1px solid var(--rule-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.dash-sidebar-user {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+}
+
+/* Scrolling content column. */
+.dash-main {
+  overflow-y: auto;
+  background: var(--bg);
+  font-size: var(--font-size-1);
+}
+
+/* Mobile: collapse the grid to a single column; the sidebar
+ * becomes a horizontal scroll strip under the topbar. */
+@media (max-width: 820px) {
+  .dash-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--dash-topbar-h, 52px) auto 1fr;
+    height: auto;
+    min-height: 100dvh;
+  }
+  .dash-topbar-logo { width: auto; }
+  .dash-sidebar {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--size-1);
+    overflow-x: auto;
+    padding: var(--size-2) var(--size-3);
+    border-right: none;
+    border-bottom: 1px solid var(--rule-soft);
+    /* Hint that the strip scrolls when the 7 items overflow. */
+    -webkit-mask-image: linear-gradient(to right, #000000 calc(100% - 1.5rem), transparent);
+    mask-image: linear-gradient(to right, #000000 calc(100% - 1.5rem), transparent);
+  }
+  .dash-nav-item {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    /* ~44px tap target on touch (was --size-2 vertical). */
+    padding: var(--size-3) var(--size-3);
+    white-space: nowrap;
+  }
+  .dash-nav-active {
+    border-left: none;
+    border-bottom-color: var(--accent);
+    background: transparent;
+  }
+  .dash-sidebar-spacer,
+  .dash-sidebar-footer { display: none; }
+}
+
+/* ── v3 authenticated app shell ──────────────────────────────────
+ *
+ * The launch app now uses the light, dense operational shell from
+ * the authenticated app journey mockup (v3). Keep the
+ * tokens scoped to .dash-shell so public/marketing pages retain
+ * their own surface system. */
+.dash-shell,
+.wk-shell,
+.consent-shell {
+  color-scheme: light;
+
+  --bg: #f6f7f9;
+  --bg-elev: #ffffff;
+  --bg-code: #f3f5f8;
+  --fg: #202227;
+  --fg-muted: #7a7f8a;
+  --fg-soft: #535965;
+  --rule: #d7dce4;
+  --rule-soft: #e8ebf1;
+  --accent: #181a20;
+  --accent-soft: #2d3038;
+  --accent-ink: #ffffff;  /* text that sits on the accent (white on near-black) */
+  --danger: #b94345;
+  --warn: #9c6b09;
+  --ok: #2f9b5d;
+  --lime: #b8f13f;
+
+  /* Shell chrome density (iteration 1): a tighter sidebar + topbar so
+   * the nav frames the content instead of competing with it. Compacted
+   * from 248/64. */
+  --dash-sidebar-w: 220px;
+  --dash-topbar-h: 56px;
+  --font-display: var(--font-sans);
+
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.dash-topbar {
+  background: color-mix(in oklab, var(--bg-elev) 86%, transparent);
+  border-bottom-color: var(--rule-soft);
+  box-shadow: 0 18px 36px rgba(18, 22, 30, 0.05);
+  backdrop-filter: blur(18px);
+  padding-right: 24px;
+}
+
+.dash-topbar-logo {
+  gap: 10px;
+  width: var(--dash-sidebar-w);
+  padding: 0 18px;
+  border-right-color: var(--rule);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.dash-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Brand logo image — aligns the signed-in topbar with the public
+ * site nav, which uses the same logo PNG. */
+.dash-brand-img {
+  width: auto;
+  height: 24px;
+  display: block;
+}
+
+.dash-brand-word {
+  color: var(--fg);
+}
+
+.dash-topbar-account {
+  gap: 10px;
+}
+
+.dash-topbar-tenant,
+.dash-topbar-email {
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  max-width: 28ch;
+  padding: 0 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg-elev) 88%, transparent);
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0;
+  box-shadow: 0 8px 18px rgba(18, 22, 30, 0.04);
+}
+
+.dash-avatar {
+  width: 31px;
+  height: 31px;
+  border: 0;
+  background: #242733;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(18, 22, 30, 0.12);
+}
+
+.dash-sidebar {
+  gap: 2px;
+  padding: 16px 10px 10px;
+  background: var(--bg-elev);
+  border-right-color: var(--rule);
+  box-shadow: 14px 0 30px rgba(18, 22, 30, 0.03);
+}
+
+.dash-nav-label {
+  margin: 13px 9px 5px;
+  color: #a0a5af;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Persistent domain selector ────────────────────────────────────
+ * Heads the domain-scoped nav section: current domain + status, opening
+ * to the tenant's domains, "All domains", and "Add another domain". A
+ * no-JS <details>; closes on click-away via the shared shell script. */
+.dash-domain-select {
+  position: relative;
+  margin: 12px 2px 4px;
+}
+
+.dash-domain-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 9px;
+  background: var(--bg-elev);
+  cursor: pointer;
+  list-style: none;
+}
+
+.dash-domain-summary::-webkit-details-marker {
+  display: none;
+}
+
+.dash-domain-summary:hover {
+  border-color: var(--rule);
+}
+
+.dash-domain-copy {
+  min-width: 0;
+}
+
+.dash-domain-copy small,
+.dash-domain-copy strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-domain-copy small {
+  color: var(--fg-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dash-domain-copy strong {
+  font-size: 13px;
+}
+
+.dash-domain-caret {
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dash-domain-menu {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--bg-elev);
+  box-shadow: 0 16px 34px rgba(18, 22, 30, 0.14);
+}
+
+.dash-domain-opt {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: 6px;
+  color: var(--fg-soft);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.dash-domain-opt:hover {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.dash-domain-opt-current {
+  background: color-mix(in oklab, var(--fg) 10%, var(--bg-elev));
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.dash-domain-opt-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-domain-opt-status {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+/* Per-domain governance posture pill (shadow = advisory, enforce =
+   binding). The mode the decide path actually honors for the domain,
+   surfaced in the selector summary and each menu row. */
+.dash-domain-opt-posture {
+  justify-self: end;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.dash-domain-posture {
+  display: inline-block !important;
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dash-posture-enforce {
+  background: #e6f4ec;
+  color: #1c6b41;
+}
+
+.dash-posture-observe {
+  background: #fdf1dd;
+  color: #8a5a12;
+}
+
+.dash-posture-draft {
+  background: #eaeef6;
+  color: #3a4a6b;
+}
+
+.dash-domain-opt-all,
+.dash-domain-opt-action {
+  margin-top: 4px;
+  border-top: 1px solid var(--rule-soft);
+  border-radius: 0;
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.dash-domain-opt-all {
+  margin-top: 4px;
+}
+
+.dash-nav-label:first-child {
+  margin-top: 2px;
+}
+
+.dash-nav-item {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 35px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--fg-soft);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dash-nav-item:hover {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.dash-nav-active {
+  background: color-mix(in oklab, var(--fg) 10%, var(--bg-elev));
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.dash-nav-icon {
+  width: 20px;
+  color: #8d94a0;
+  font-size: 14px;
+}
+
+.dash-nav-active .dash-nav-icon {
+  color: var(--fg);
+}
+
+.dash-nav-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-nav-meta {
+  color: #a1a6af;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.dash-sidebar-footer {
+  gap: 6px;
+  margin-top: 10px;
+  padding: 11px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 11px;
+  background: var(--bg-elev);
+  box-shadow: 0 10px 22px rgba(18, 22, 30, 0.04);
+}
+
+.dash-sidebar-plan {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+/* The footer is a link to the docs (app.kiff.dev → kiff.dev/docs). */
+a.dash-sidebar-footer {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+a.dash-sidebar-footer:hover {
+  border-color: var(--rule);
+  box-shadow: 0 12px 26px rgba(18, 22, 30, 0.08);
+  transform: translateY(-1px);
+}
+
+.dash-sidebar-user {
+  color: var(--fg-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.dash-main {
+  background:
+    radial-gradient(circle at 18% -8%, rgba(184, 241, 63, 0.17), transparent 28rem),
+    linear-gradient(180deg, #f8f9fb 0%, #f3f5f8 100%);
+}
+
+.dash-shell .btn {
+  min-height: 38px;
+  gap: 8px;
+  padding: 0 17px;
+  border-color: var(--rule);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(18, 22, 30, 0.04);
+  transition: border-color 120ms ease, background 120ms ease,
+    box-shadow 120ms ease, transform 120ms ease, color 120ms ease;
+}
+
+.dash-shell .btn:hover {
+  border-color: #b7bec9;
+  color: var(--fg);
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  box-shadow: 0 10px 22px rgba(18, 22, 30, 0.08);
+  transform: translateY(-1px);
+}
+
+.dash-shell .btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(18, 22, 30, 0.06);
+}
+
+.dash-shell .btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.dash-shell .btn-primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 12px 24px rgba(18, 22, 30, 0.18);
+}
+
+.dash-shell .btn-primary:hover {
+  border-color: var(--accent-soft);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.dash-shell .btn-secondary {
+  background: var(--bg-elev);
+}
+
+.dash-shell .btn-danger {
+  border-color: #efc3c5;
+  background: #fff7f7;
+  color: var(--danger);
+}
+
+.dash-shell .btn-danger:hover {
+  border-color: var(--danger);
+  background: color-mix(in oklab, var(--danger) 12%, var(--bg-elev));
+  color: var(--danger);
+}
+
+@media (max-width: 820px) {
+  .dash-shell {
+    font-size: 14px;
+  }
+
+  .dash-topbar {
+    padding-right: 14px;
+  }
+
+  .dash-topbar-logo {
+    width: auto;
+    padding: 0 16px;
+    border-right: 0;
+  }
+
+  .dash-brand-word,
+  .dash-topbar-tenant,
+  .dash-topbar-email {
+    display: none;
+  }
+
+  /* Keep the topbar-right cluster (bell + avatar) tight on mobile. */
+  .dash-topbar-right {
+    gap: 8px;
+  }
+
+  /* The domain selector is a desktop-sidebar control; the mobile nav is
+   * a compact icon row, so hide it there (a dedicated mobile domain bar
+   * is a separate follow-up). Domain-scoped tabs still work via the
+   * remembered selection. */
+  .dash-domain-select {
+    display: none;
+  }
+
+  .dash-sidebar {
+    padding: 10px 12px;
+    gap: 8px;
+    box-shadow: none;
+  }
+
+  .dash-nav-label {
+    display: none;
+  }
+
+  .dash-nav-item {
+    display: inline-grid;
+    flex: 0 0 auto;
+    grid-template-columns: auto;
+    justify-items: center;
+    min-width: 112px;
+    min-height: 38px;
+    padding: 0 12px;
+  }
+
+  .dash-nav-text {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .dash-nav-icon,
+  .dash-nav-meta {
+    display: none;
+  }
+}
+
+/* ── Topbar notification bell ──────────────────────────────────────
+ * A no-JS <details> popover. Lives in app-shell.css (not
+ * dashboard.css) so it renders on every shell, including Studio. The
+ * badge shows only when there are actionable items; the count means
+ * "needs a decision". */
+.dash-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.dash-bell {
+  position: relative;
+}
+
+.dash-bell-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 50%;
+  background: var(--bg-elev);
+  color: var(--fg-soft);
+  cursor: pointer;
+  list-style: none;
+  box-shadow: 0 6px 14px rgba(18, 22, 30, 0.04);
+}
+
+.dash-bell-button::-webkit-details-marker {
+  display: none;
+}
+
+.dash-bell-button:hover {
+  color: var(--fg);
+  border-color: var(--rule);
+}
+
+.dash-bell-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dash-bell-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 2px solid var(--bg-elev);
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.dash-bell-popover {
+  display: none;
+  position: absolute;
+  z-index: 40;
+  top: 42px;
+  right: 0;
+  width: min(380px, calc(100vw - 24px));
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 13px;
+  background: var(--bg-elev);
+  box-shadow: 0 22px 48px rgba(18, 22, 30, 0.18);
+}
+
+.dash-bell[open] .dash-bell-popover {
+  display: block;
+}
+
+.dash-bell-head,
+.dash-bell-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+}
+
+.dash-bell-head {
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.dash-bell-head strong {
+  font-size: 13px;
+}
+
+.dash-bell-foot a {
+  color: var(--fg-soft);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dash-bell-foot a:hover {
+  color: var(--fg);
+}
+
+/* Overflow (⋯) menu in the popover header: a nested no-JS <details> whose
+ * panel drops below the trigger. */
+.dash-bell-menu {
+  position: relative;
+}
+
+.dash-bell-more {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  color: var(--fg-soft);
+  cursor: pointer;
+  list-style: none;
+}
+
+.dash-bell-more::-webkit-details-marker {
+  display: none;
+}
+
+.dash-bell-more:hover {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.dash-bell-more svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  stroke: none;
+}
+
+.dash-bell-menu-panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 6px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-elev);
+  box-shadow: 0 18px 38px rgba(18, 22, 30, 0.18);
+}
+
+.dash-bell-menu-panel a {
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: var(--fg-soft);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dash-bell-menu-panel a:hover {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.dash-bell-foot {
+  border-top: 1px solid var(--rule-soft);
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+}
+
+.dash-bell-empty {
+  margin: 0;
+  padding: 16px 13px;
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dash-bell-item {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: start;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--rule-soft);
+  color: inherit;
+  text-decoration: none;
+}
+
+.dash-bell-item:hover {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+}
+
+/* Actionable items (approvals) get a left accent + tint so a reviewer
+ * spots what needs a decision — the thing the badge counts. */
+.dash-bell-item-action {
+  border-left: 3px solid var(--warn);
+  background: color-mix(in oklab, var(--warn) 5%, var(--bg-elev));
+}
+
+.dash-bell-item-action:hover {
+  background: color-mix(in oklab, var(--warn) 9%, var(--bg-elev));
+}
+
+.dash-bell-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+}
+
+.dash-bell-dot-warn {
+  background: var(--warn);
+}
+
+.dash-bell-dot-error {
+  background: var(--danger);
+}
+
+.dash-bell-dot-info {
+  background: var(--fg-muted);
+}
+
+.dash-bell-item-body strong,
+.dash-bell-item-body small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-bell-item-body strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dash-bell-item-body small {
+  margin-top: 2px;
+  color: var(--fg-muted);
+  font-size: 10px;
+}
+
+.dash-bell-item time {
+  color: var(--fg-muted);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+ * Theme: dark
+ *
+ * The dashboard shell is light by default (the .dash-shell token block
+ * above). The theme boot script resolves the user's preference
+ * (light | dark | system) into an effective theme and stamps
+ * data-theme on <html>, so the CSS only needs a single dark path — no
+ * media-query duplication. Light mode is untouched; everything here is
+ * additive under html[data-theme="dark"], so there's zero light-mode
+ * regression risk.
+ *
+ * Most chrome already uses tokens (var(--bg-elev), var(--fg), …), so the
+ * token flip below does most of the work; the rest overrides the few
+ * places that hardcoded light values.
+ * ════════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] .dash-shell,
+html[data-theme="dark"] .wk-shell,
+html[data-theme="dark"] .consent-shell {
+  color-scheme: dark;
+
+  --bg: #0f1117;
+  --bg-elev: #171a22;
+  --bg-code: #0b0d13;
+  --fg: #e8eaf0;
+  --fg-muted: #8a91a1;
+  --fg-soft: #b4bac8;
+  --rule: #2b3040;
+  --rule-soft: #222736;
+  --accent: #e0a63a;       /* the logo's gold — brand accent on dark */
+  --accent-soft: #c98f2e;
+  --accent-ink: #1a1400;   /* near-black text that sits on the gold accent */
+  --danger: #e0777a;
+  --warn: #d6a44a;
+  --ok: #4bbe82;
+
+  /* Studio surface aliases become token-driven so Build flips too. */
+  --surface-1: var(--bg-elev);
+  --surface-2: #1e2230;
+  --text-1: var(--fg);
+  --text-2: var(--fg-muted);
+}
+
+/* Chrome surfaces that hardcoded light values. */
+html[data-theme="dark"] .dash-topbar {
+  background: color-mix(in oklab, var(--bg-elev) 88%, transparent);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.4);
+}
+html[data-theme="dark"] .dash-sidebar {
+  background: var(--bg-elev);
+  box-shadow: 14px 0 30px rgba(0, 0, 0, 0.28);
+}
+html[data-theme="dark"] .dash-main {
+  background:
+    radial-gradient(circle at 18% -8%, rgba(224, 166, 58, 0.10), transparent 28rem),
+    var(--bg);
+}
+html[data-theme="dark"] .dash-nav-item:hover,
+html[data-theme="dark"] .dash-domain-opt:hover {
+  background: color-mix(in oklab, var(--fg) 9%, transparent);
+}
+html[data-theme="dark"] .dash-nav-active,
+html[data-theme="dark"] .dash-domain-opt-current {
+  background: color-mix(in oklab, var(--fg) 13%, transparent);
+}
+html[data-theme="dark"] .dash-shell .btn-danger {
+  background: color-mix(in oklab, var(--danger) 16%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--danger) 45%, transparent);
+  color: var(--danger);
+}
+/* Posture pills read as soft tints on dark rather than bright light chips. */
+html[data-theme="dark"] .dash-posture-enforce { background: color-mix(in oklab, var(--ok) 22%, var(--bg-elev)); color: #a9e7c4; }
+html[data-theme="dark"] .dash-posture-observe  { background: color-mix(in oklab, var(--warn) 22%, var(--bg-elev)); color: #e7c99a; }
+html[data-theme="dark"] .dash-posture-draft   { background: color-mix(in oklab, var(--accent) 22%, var(--bg-elev)); color: #c3cdf6; }
+
+/* ── Sidebar theme switcher: label + three circular buttons ────────── */
+.dash-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 6px 9px 2px;
+  padding: 6px 4px 0;
+}
+.dash-theme-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.dash-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--bg);
+}
+.dash-theme-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dash-theme-btn:hover { color: var(--fg); background: color-mix(in oklab, var(--fg) 8%, transparent); }
+.dash-theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Active preference — driven purely from <html data-theme-pref>. */
+html[data-theme-pref="light"] .dash-theme-light,
+html[data-theme-pref="dark"] .dash-theme-dark,
+html[data-theme-pref="system"] .dash-theme-system {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.dash-bell-foot form { margin: 0; }
+
+.dash-bell-clear {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--fg-soft);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dash-bell-clear:hover { color: var(--fg); }

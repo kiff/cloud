@@ -1,0 +1,37 @@
+package pages
+
+// downloadPT is /tafs/download's words in Portuguese, at /pt/tafs/download.
+var downloadPT = downloadWords{
+	Lang:             "pt",
+	Title:            "Instale o tafs — KIFF",
+	Description:      "Instale o tafs a partir do Google Play para Android. O iPhone e o iPad chegam em breve à App Store.",
+	DescAvailable:    "Instale o tafs para %s.",
+	DescComingOne:    "A app para %s chega em breve.",
+	DescComingMany:   "As apps para %s chegam em breve.",
+	And:              "e",
+	Head:             "Instale o tafs",
+	Sub:              "Agentes de IA para o trabalho de rotina da sua empresa, cada um dentro de um Card que define. O que for maior espera pela sua aprovação no seu telemóvel.",
+	Phones:           "Telemóvel e tablet",
+	Computer:         "Computador",
+	NotYet:           "Em breve",
+	NotAvailable:     "Não disponível",
+	AvailableVersion: "Versão %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Antes de o abrir, confirme que o SHA-256 do ficheiro corresponde a este.",
+	DownloadFor:      "Transferir para %s",
+	QRAlt:            "Código QR que abre kiff.dev/tafs/download",
+	QRCaption:        "Digitalize com a câmara do seu telemóvel para abrir esta página nele.",
+	Cost:             "Quanto custa:",
+	Pricing:          "preços",
+	ComingAppStore:   "Em breve na App Store",
+	IPhoneIPad:       "iPhone e iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 ou posterior",
+		"ios":     "iOS e iPadOS 16 ou posterior",
+		"macos13": "macOS 13 ou posterior",
+		"macos":   "apenas macOS 12 (Monterey)",
+		"windows": "Windows 10 ou 11",
+		"linux":   "Ubuntu 24.04 ou posterior",
+	},
+}

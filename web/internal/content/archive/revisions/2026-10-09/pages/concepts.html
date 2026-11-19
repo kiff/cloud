@@ -1,0 +1,118 @@
+<h1 id="how-kiff-guard-works">How kiff-guard works</h1>
+
+<p>Every framework page on this site follows the same spine: <strong>install →
+observe → activate → enforce</strong>. This page explains the model behind that
+spine once, so the per-framework pages can stay short. In enforce mode,
+each tool call is decided against the agent&rsquo;s
+<a href="/docs/archive/2026-10-09/kiff-cards">Card</a> and the domain before it runs.</p>
+
+<h2 id="one-guard-two-modes">One guard, two modes</h2>
+
+<p>The guard is a thin wrapper you attach to your agent&rsquo;s tool calls. It
+has exactly two modes.</p>
+
+<p><strong><code>observe</code></strong> runs every tool, records a receipt, and learns your action
+catalog. It never calls KIFF and never blocks a tool. No client, no
+tenant, no API key — it&rsquo;s the zero-config way to
+<a href="/docs/archive/2026-10-09/connect-an-agent">connect an agent you already run</a>: see exactly
+what it does and derive a starter domain from real traffic instead of a
+blank file. (Every call is also recorded, so you get an audit trail for
+free — but the point is understanding the agent well enough to govern
+it.)</p>
+
+<p><strong><code>enforce</code></strong> asks KIFF to decide <strong>before</strong> each tool runs, and acts on
+the answer. There are three outcomes:</p>
+
+<ul>
+<li><code>allowed</code> — the tool runs.</li>
+<li><code>approval_required</code> — the call is held for a human.</li>
+<li><code>blocked</code> / <code>invalid</code> — the call is refused; the tool never runs.</li>
+</ul>
+
+<p>Guard carries the proposal to the decide path; it does not decide. Where
+the action declares <code>requires_authority</code>, the
+<a href="/docs/archive/2026-10-09/kiff-cards">KIFF Card</a> issued to the proposing actor is an
+additional gate on that decision, after state, permissions and
+parameters — and the call is refused with <code>no_mandate_issued</code> if none
+has been issued. Guard neither issues nor administers cards: issuing is
+a management action, and a runtime credential cannot grant itself
+authority.</p>
+
+<p>Enforce needs a client (an API key) and an active domain for your
+tenant. You mint the key and activate the domain in the
+<span class="archive-unlinked">dashboard</span>.</p>
+
+<h2 id="the-one-receipt-rule">The one-receipt rule</h2>
+
+<p>Every tool call produces <strong>exactly one</strong> receipt, in both modes and
+across every adapter:</p>
+
+<ul>
+<li><code>observe</code> → one <code>observed</code> receipt; the tool always ran.</li>
+<li><code>enforce</code>, allowed → one governed receipt; the tool ran.</li>
+<li><code>enforce</code>, withheld → one governed receipt; the tool did <strong>not</strong> run.</li>
+</ul>
+
+<p>This invariant is part of the guard&rsquo;s conformance suite — a contract
+every adapter must pass. It&rsquo;s what makes the audit trail trustworthy:
+one tool call, one record, never zero and never two.</p>
+
+<h2 id="two-adapter-shapes">Two adapter shapes</h2>
+
+<p>Frameworks expose their pre-tool-execution seam in one of two shapes.
+This is the only thing that differs between adapters; the guard logic
+lives in the core, once.</p>
+
+<p><strong>Middleware shape</strong> — the framework hands the guard a continuation that
+runs the tool, so the guard runs it itself:</p>
+
+<pre><code class="language-python">guard.evaluate(tool, args, run=lambda: handler())
+</code></pre>
+
+<p>The guard runs the tool on <code>allowed</code>, and raises <code>kiff_guard.Hold</code>
+(skipping the tool) on a withheld decision. Agno and LangGraph are this
+shape.</p>
+
+<p><strong>Inverted-control / vote shape</strong> — the framework runs the tool after
+the hook returns; the hook only votes. The guard never gets a <code>run</code>
+callback:</p>
+
+<pre><code class="language-python">if guard.mode == &quot;observe&quot;:
+    guard.observe(tool, args)            # record, never block
+else:
+    decision = guard.decide_only(tool, args)
+    if decision.withheld:
+        ...                              # tell the framework to skip the tool
+</code></pre>
+
+<p>Hermes and the OpenAI Agents SDK are this shape. The adapter records the
+receipt explicitly (<code>record_executed</code> / <code>record_withheld</code>) to keep the
+one-receipt rule.</p>
+
+<p>Which shape a framework uses is a property of that framework&rsquo;s API, not
+a choice — each framework page states its shape and why.</p>
+
+<h2 id="the-trust-boundary">The trust boundary</h2>
+
+<p>The guard never asserts roles or authority. An API key&rsquo;s roles govern
+what it&rsquo;s allowed to do <strong>server-side</strong>; the guard only carries the
+call. This means a compromised or buggy adapter cannot widen its own
+authority — it can only ask, and KIFF decides. The conformance suite
+pins this too: the guard never injects a <code>roles</code> field.</p>
+
+<h2 id="fail-safe-posture">Fail-safe posture</h2>
+
+<p>In <code>enforce</code>, a transport or guard error <strong>fails closed</strong> by default: a
+control tower that waves traffic through when its radar is down is the
+wrong default, so a withheld-on-error is safer than a silent allow.
+<code>observe</code> always allows (it never blocks anyway). Adapters expose a
+<code>fail_closed=False</code> override for hosts that prefer availability over the
+gate.</p>
+
+<h2 id="where-the-code-lives">Where the code lives</h2>
+
+<p>The narrative is here on docs.kiff.dev. The runnable code — the core,
+every adapter, and the conformance suite — lives in the public MIT repo
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff/kiff-guard</code></a>. Each
+framework page links out to the adapter and its example; this site never
+duplicates the code.</p>

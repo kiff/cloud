@@ -1,0 +1,21 @@
+{
+  "name": "KIFF",
+  "short_name": "KIFF",
+  "description": "A control layer on top of your AI agents' tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111318",
+  "theme_color": "#FF9A1A",
+  "icons": [
+    {
+      "src": "/static/img/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

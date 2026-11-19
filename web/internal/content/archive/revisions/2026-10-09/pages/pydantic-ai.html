@@ -1,0 +1,95 @@
+<h1 id="pydantic-ai">Pydantic AI</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Pydantic AI agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-09/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>); this page is the Pydantic AI hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-09/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-09/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was verified against the real <code>pydantic-ai</code>
+package.</p>
+
+<p><strong>Shape: vote (inverted-control).</strong> Pydantic AI runs the tool itself;
+the <code>before_tool_execute</code> hook only votes — return <code>args</code> to allow,
+raise <code>SkipToolExecution(result)</code> to block. So the guard uses
+<code>observe()</code> / <code>decide_only()</code>, not a <code>run</code> callback. See
+<a href="/docs/archive/2026-10-09/concepts">how the guard works</a>.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus Pydantic AI, the framework you're guarding:
+pip install pydantic-ai
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from pydantic_ai import Agent
+from pydantic_ai.capabilities import Hooks
+from kiff_guard import Guard
+from kiff_guard.adapters.pydantic_ai import kiff_before_tool_execute
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = Agent(
+    &quot;...&quot;,
+    tools=[refund_order, send_email],
+    capabilities=[Hooks(before_tool_execute=kiff_before_tool_execute(guard))],
+)
+</code></pre>
+
+<p>Run the agent as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Only the guard changes:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from pydantic_ai import Agent
+from pydantic_ai.capabilities import Hooks
+from kiff_guard.adapters.pydantic_ai import kiff_before_tool_execute
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+agent = Agent(&quot;...&quot;, tools=[refund_order],
+              capabilities=[Hooks(before_tool_execute=kiff_before_tool_execute(guard))])
+</code></pre>
+
+<p>In enforce mode a withheld decision raises <code>SkipToolExecution</code>, so the
+tool never runs and the reason is fed back to the model. An allowed
+decision returns the args and the tool runs. On a transport error the
+guard fails closed (skips) by default.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>Pydantic AI&rsquo;s <code>before_tool_execute</code> hook (on a <code>Hooks</code> capability) fires
+before the tool runs, with the validated <code>args</code> and a <code>call</code> carrying
+<code>tool_name</code>. Returning <code>args</code> runs the tool; raising
+<code>SkipToolExecution(result)</code> skips it — the block path.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/pydantic_ai.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/pydantic_ai.py</code></a></li>
+<li>Pydantic AI docs: <a href="https://ai.pydantic.dev/hooks/" target="_blank" rel="noreferrer noopener">ai.pydantic.dev/hooks</a> (tool execution hooks)</li>
+</ul>

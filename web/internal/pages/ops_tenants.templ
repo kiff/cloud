@@ -1,0 +1,73 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsTenants renders the cross-tenant list with click-through to the
+// per-tenant detail view.
+templ OpsTenants(rows []apiclient.OpsTenantRow, q string, chrome components.DashboardChrome) {
+	@components.OpsShell("tenants", "tenants", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · tenants</p>
+					<h1>Tenants.</h1>
+					<p class="dash-note">{ opsInt(len(rows)) } shown. Click a slug for detail.</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				<form method="get" action="/ops/tenants" class="ops-search-form">
+					<input type="text" name="q" value={ q } placeholder="Search slug, id, name, or label" class="ops-reason"/>
+					<button type="submit" class="btn btn-secondary">Search</button>
+					if q != "" {
+						<a href="/ops/tenants" class="dash-note">clear</a>
+					}
+				</form>
+				if len(rows) == 0 {
+					<p class="dash-note">No tenants match.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead>
+								<tr>
+									<th>Slug</th>
+									<th>Name</th>
+									<th>Label</th>
+									<th>Status</th>
+									<th>Plan</th>
+									<th>Billed by</th>
+									<th>Key prefix</th>
+									<th>Runs, 30 d</th>
+									<th>Credits, 30 d</th>
+									<th>Last run</th>
+									<th>Created</th>
+									<th>Last activity</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, t := range rows {
+									<tr>
+										<td><a href={ templ.SafeURL("/ops/tenants/" + t.ID) }>{ t.Slug }</a></td>
+										<td>{ t.DisplayName }</td>
+										<td>{ opsDash(t.Label) }</td>
+										<td><span class={ opsStatusClass(t.Status) }>{ t.Status }</span></td>
+										<td>{ t.Plan }</td>
+										<td>{ opsDash(t.BilledBy) }</td>
+										<td><code>{ t.KeyPrefix }</code></td>
+										<td>{ opsInt(t.Runs) }</td>
+										<td>{ opsInt64(t.Credits) }</td>
+										<td>{ opsTimePtr(t.LastRunAt) }</td>
+										<td>{ opsTime(t.CreatedAt) }</td>
+										<td>{ opsTimePtr(t.LastActivityAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}

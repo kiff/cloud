@@ -1,0 +1,113 @@
+package pages
+
+import (
+	"html/template"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/docs"
+)
+
+// DocsView is the data a docs page needs: the active page's metadata,
+// its rendered HTML body, and the full nav (grouped) so the sidebar
+// can highlight the current page. Built by the handler.
+type DocsView struct {
+	Active   docs.Page
+	Body     template.HTML
+	NavGroups []DocsNavGroup
+}
+
+// DocsNavGroup is one labelled cluster of links in the sidebar.
+type DocsNavGroup struct {
+	Label string
+	Items []docs.Page
+}
+
+// Docs renders a documentation page: shared Layout, a sidebar nav on
+// the left, and the rendered markdown in a.prose reading column on
+// the right. Same hermetic templ + embed.FS pattern as /whitepaper,
+// extended to a multi-page site.
+templ Docs(view DocsView) {
+	@components.LayoutSiteWithMeta("KIFF docs — "+view.Active.Title, view.Active.Blurb, "article", "docs", "css/prose.css", "css/docs.css") {
+		<div class="docs">
+			@docsSidebar(view)
+			<article class="docs-main">
+				@docsBreadcrumb(view.Active)
+				<div class="docs-body prose">
+					@templ.Raw(string(view.Body))
+				</div>
+				@docsFootNav()
+			</article>
+		</div>
+		<script src="/static/js/docs.js" defer></script>
+	}
+}
+
+templ docsSidebar(view DocsView) {
+	<div class="docs-nav-wrap">
+		<input type="checkbox" id="docs-nav-open" class="docs-nav-checkbox"/>
+		<label for="docs-nav-open" class="docs-nav-toggle">
+			<span>{ docsNavCurrentLabel(view) }</span>
+			<span class="docs-nav-toggle-caret" aria-hidden="true">▾</span>
+		</label>
+		<nav class="docs-nav" aria-label="Documentation">
+			for _, group := range view.NavGroups {
+			<div class="docs-nav-group">
+				<span class="docs-nav-group-title">{ group.Label }</span>
+				<ul>
+					for _, item := range group.Items {
+						<li>
+							if item.Slug == view.Active.Slug {
+								<a href={ templ.SafeURL("/docs/" + item.Slug) } class="docs-nav-link docs-nav-link-active" aria-current="page">
+									{ navLabel(item) }
+									@statusBadge(item.Status)
+								</a>
+							} else {
+								<a href={ templ.SafeURL("/docs/" + item.Slug) } class="docs-nav-link">
+									{ navLabel(item) }
+									@statusBadge(item.Status)
+								</a>
+							}
+						</li>
+					}
+				</ul>
+				</div>
+			}
+		</nav>
+	</div>
+}
+
+// docsNavCurrentLabel is the label shown on the collapsed mobile menu
+// toggle: the active page's nav label, so a reader on a phone sees
+// where they are without expanding the menu.
+func docsNavCurrentLabel(view DocsView) string {
+	return navLabel(view.Active)
+}
+
+// statusBadge renders the verified/preview pill next to a framework
+// nav item. Stable pages (quickstart, concepts) get no badge.
+templ statusBadge(s docs.Status) {
+	switch s {
+		case docs.StatusVerified:
+			<span class="docs-badge docs-badge-verified">verified</span>
+		case docs.StatusPreview:
+			<span class="docs-badge docs-badge-preview">preview</span>
+	}
+}
+
+templ docsBreadcrumb(p docs.Page) {
+	<p class="docs-eyebrow">
+		<a href="/docs">Docs</a>
+		<span aria-hidden="true">/</span>
+		<span>{ string(p.Group) }</span>
+	</p>
+}
+
+// docsFootNav is the shared footer block under every docs page: the
+// fast path back to the quickstart and out to the public repo, so a
+// reader who lands deep always has the two exits cares about.
+templ docsFootNav() {
+	<div class="docs-footnav">
+		<a href="/docs/quickstart">← Quickstart</a>
+		<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">kiff-guard on GitHub ↗</a>
+	</div>
+}

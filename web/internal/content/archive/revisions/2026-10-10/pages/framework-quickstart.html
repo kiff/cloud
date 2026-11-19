@@ -1,0 +1,120 @@
+<h1 id="build-a-domain-with-the-framework">Build a domain with the framework</h1>
+
+<p>The open-source KIFF framework (MIT, Go) is what a Card stands on: the
+domain that says which actions exist and in which states they are
+allowed. This page builds one locally. To give an agent a Card in KIFF
+Cloud without writing a domain, start with the <a href="/docs/archive/2026-10-10/quickstart">quickstart</a>
+instead.</p>
+
+<p>Pick the action you&rsquo;d never let an agent take unsupervised — a refund —
+and ship a governed version of it. You scaffold a runnable refund
+domain, run it, and watch KIFF let the good refund through and
+hold the risky one for a human, <strong>before any money moves</strong>. No account,
+no cloud, all local.</p>
+
+<p>One honest note before you start, because it decides whether this is
+worth your five minutes. The demo also refuses a repeat refund on an
+already-refunded order, and that part is table stakes: a unique
+constraint does it, and any competent tool implementation already does
+it. It is in the demo because it shows KIFF reading state, not
+because it is the reason to use one. The reason is
+<a href="/docs/archive/2026-10-10/kiff-cards">KIFF Cards</a> — the instrument that bounds what an agent does in total, which
+no per-call check can produce — and that is the hosted part today.</p>
+
+<p>This is the fast path: install → scaffold → run → read the decisions.
+KIFF is an MIT Go framework; this quickstart runs entirely on your
+machine. <a href="/docs/archive/2026-10-10/quickstart">KIFF Cloud</a> is the hosted way to run
+the same contract later — optional, not required here.</p>
+
+<h2 id="1-install-and-scaffold">1. Install and scaffold</h2>
+
+<pre><code class="language-bash">go install github.com/kiff/kiff/cmd/kiff@latest
+kiff new -scenario refund github.com/acme/refunds
+cd refunds
+go mod tidy
+make demo
+</code></pre>
+
+<p><code>kiff new -scenario refund</code> generates a runnable refund domain: an
+<code>Order</code> entity, a <code>MARK_PAID</code> action, an approval-gated <code>REFUND_ORDER</code>
+action, a headless HTTP API, and a demo script. <code>make demo</code> runs it
+end to end.</p>
+
+<blockquote>
+<p>Building against a local checkout of the framework? Add
+<code>-replace-local /path/to/kiff</code>. Want a smaller starter without the
+refund scenario? <code>kiff new github.com/acme/thing</code>.</p>
+</blockquote>
+
+<h2 id="2-the-useful-action-runs">2. The useful action runs</h2>
+
+<p><code>make demo</code> marks an order paid, then has the agent propose a refund on
+it. The refund is a real, consequential action — and it runs:</p>
+
+<pre><code class="language-text">order-2  PAID
+  agent → REFUND_ORDER  $12.00
+  KIFF  ✓ ALLOWED — the contract is satisfied → your executor refunds → REFUNDED
+</code></pre>
+
+<p>This is the point of KIFF: the agent does the work you&rsquo;d otherwise keep
+it away from, because KIFF checked the action against the
+order&rsquo;s state and your policy first. KIFF returns the decision; <strong>your
+code executes</strong> the refund on <code>allowed</code>.</p>
+
+<h2 id="3-the-risky-path-waits-the-repeat-is-refused">3. The risky path waits; the repeat is refused</h2>
+
+<p>The same domain makes the dangerous cases safe without you writing
+defensive glue:</p>
+
+<pre><code class="language-text">  agent → REFUND_ORDER  $999.00, high-risk
+  KIFF  ⏸ HELD — approval required   (the executor did NOT run)
+      human → approves
+  KIFF  ✓ ALLOWED — refund executes → REFUNDED
+
+  agent → REFUND_ORDER  (same order, retried)
+  KIFF  ✗ BLOCKED — order is already REFUNDED   (refused before money moves again)
+</code></pre>
+
+<p>A high-risk refund holds for a human; a repeat on an already-refunded
+order is refused. The agent proposing the wrong thing is normal — the
+decision in front of it is what makes proposing it safe.</p>
+
+<p>Both refusals here are the same refusal: the entity is not in a state
+that allows the action. That is worth having and it is not worth buying,
+because your database and your tool code can both do it. What neither
+can do is answer what the agent has done <em>in total</em>, because each of
+them only ever sees one call.</p>
+
+<h2 id="4-it-replays-and-it-s-on-the-record">4. It replays, and it&rsquo;s on the record</h2>
+
+<p>Every decision and execution is protocol data, not an optional log. The
+entity&rsquo;s state rebuilds from the stored events alone:</p>
+
+<pre><code class="language-text">  replay from events → REFUNDED
+      materialized == replayed
+</code></pre>
+
+<p>That replay — plus the recorded decisions and approvals — is the proof
+of what happened and why. You can verify it yourself; it isn&rsquo;t a number
+on someone&rsquo;s dashboard.</p>
+
+<h2 id="what-you-just-shipped-and-what-s-next">What you just shipped, and what&rsquo;s next</h2>
+
+<p>You put an agent on a refund and let it run, with the risky path routed
+to a human by a decision outside the agent — in five minutes, on your
+machine.</p>
+
+<ul>
+<li><strong>Understand the decision</strong> → <a href="/docs/archive/2026-10-10/concepts">How a decision is made</a>:
+events, state, typed decisions, approvals, and the no-self-approval
+rule.</li>
+<li><strong>Already have an agent?</strong> <a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>:
+through the MCP gateway, kiff-guard, or the decision API.</li>
+<li><strong>Give an agent a Card</strong> → the <a href="/docs/archive/2026-10-10/quickstart">quickstart</a>.</li>
+<li><strong>Go deeper</strong> → <a href="/docs/archive/2026-10-10/domains">Reusable operational domains</a> is the
+thing you build once and connect any agent to.</li>
+</ul>
+
+<p>The framework and every scaffold live in the public MIT repo,
+<a href="https://github.com/kiff/kiff" target="_blank" rel="noreferrer noopener"><code>kiff/kiff</code></a>. docs.kiff.dev owns the
+guided journey; the repo owns the code.</p>

@@ -1,0 +1,811 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DPAES is the Data Processing Agreement template (/legal/dpa) in
+// Spanish, at /es/legal/dpa. It is a translation of DPA: the same
+// sections, anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ DPAES() {
+	@components.LayoutSite("KIFF — acuerdo de tratamiento de datos", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@dpaHeadES()
+			@dpaPartiesES()
+			@dpaDefinitionsES()
+			@dpaScopeES()
+			@dpaSubjectMatterES()
+			@dpaNaturePurposeES()
+			@dpaCategoriesES()
+			@dpaInstructionsES()
+			@dpaProcessorObligationsES()
+			@dpaConfidentialityES()
+			@dpaSubprocessorsES()
+			@dpaTransfersES()
+			@dpaSecurityES()
+			@dpaBreachNotificationES()
+			@dpaDataSubjectRequestsES()
+			@dpaAuditES()
+			@dpaReturnDeletionES()
+			@dpaLiabilityES()
+			@dpaTermES()
+			@dpaGoverningLawES()
+			@dpaAnnex1ES()
+			@dpaAnnex2ES()
+			@dpaAnnex3ES()
+			@dpaAnnex4ES()
+		</article>
+	}
+}
+
+templ dpaHeadES() {
+	<header class="legal-head">
+		<p class="legal-badge">Plantilla de DPA · v0.1</p>
+		<h1>Acuerdo de tratamiento de datos (DPA)</h1>
+		<p class="legal-meta">
+			<strong>Versión de la plantilla:</strong> v0.1.
+			<strong>Última actualización:</strong> 17 de noviembre de 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Esta es una <em>plantilla</em> publicada, no un contrato
+			firmado. Los clientes pueden usarla como punto de partida
+			para la revisión de su departamento de compras. Un DPA
+			firmado crea obligaciones reales para Kiff Agents OÜ, cuyo
+			cumplimiento pueden exigir las autoridades de control de la
+			UE. Contacto para compras:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ dpaPartiesES() {
+	<section id="parties">
+		<h2>1. Partes</h2>
+		<p>Este DPA se celebra entre:</p>
+		<ul>
+			<li><strong>Kiff Agents OÜ</strong>, una sociedad de responsabilidad limitada estonia, código de registro 17372313, IVA EE102924327, con domicilio social en Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia (el <strong>«Encargado»</strong>); y</li>
+			<li><strong>[DENOMINACIÓN SOCIAL DEL CLIENTE]</strong>, con domicilio social en <strong>[DIRECCIÓN]</strong>, código de registro <strong>[CÓDIGO DE REGISTRO]</strong> (el <strong>«Responsable»</strong>).</li>
+		</ul>
+		<p>
+			Cada una, una «parte», y conjuntamente, las «partes». Este
+			DPA complementa las Condiciones del servicio de
+			<a href="/es/terms">/es/terms</a> y cualquier formulario de
+			pedido comercial entre las partes; en caso de conflicto en
+			materia de protección de datos, prevalece este DPA.
+		</p>
+	</section>
+}
+
+templ dpaDefinitionsES() {
+	<section id="definitions">
+		<h2>2. Definiciones</h2>
+		<p>
+			Los términos con mayúscula inicial que no se definen aquí tienen el
+			significado que les da el RGPD (Reglamento (UE) 2016/679).
+		</p>
+		<ul>
+			<li><strong>«RGPD»</strong>: el Reglamento General de Protección de Datos de la UE.</li>
+			<li><strong>«Datos Personales»</strong>, <strong>«Interesado»</strong>, <strong>«Tratamiento»</strong>, <strong>«Responsable»</strong>, <strong>«Encargado»</strong>, <strong>«Subencargado del Tratamiento»</strong>, <strong>«Violación de la Seguridad de los Datos Personales»</strong>: tal como se definen en el artículo 4 del RGPD.</li>
+			<li><strong>«Datos de Auditoría»</strong>: los Datos Personales que el Responsable envía al Servicio o genera dentro de él a través del entorno de ejecución, incluidos los eventos, las decisiones, las acciones, las aprobaciones y los recibos.</li>
+			<li><strong>«Datos de tafs»</strong>: los Datos Personales que hay en lo que tafs guarda en nombre del Responsable: las ejecuciones y los chats de cada taf (incluido lo que le devuelven las apps conectadas del Responsable) y los chats de Setup, sus informes, sus notas de memoria, los dispositivos registrados para recibir sus alertas, y las conexiones del Responsable a sus apps en planque (el registro de cada conexión y de sus aprobaciones, y el token o la clave que planque guarda para ella). El anexo 4 los describe.</li>
+			<li><strong>«Servicio»</strong>: el producto KIFF Cloud, incluido tafs, tal como se define en las Condiciones del servicio.</li>
+			<li><strong>«Cláusulas Contractuales Tipo»</strong> o <strong>«CCT»</strong>: las cláusulas contractuales tipo de 2021 de la Comisión Europea para la transferencia de Datos Personales a terceros países.</li>
+			<li><strong>«DPF»</strong>: la decisión de adecuación relativa al Marco de Privacidad de Datos UE-EE. UU. (Data Privacy Framework).</li>
+			<li><strong>«TOMs»</strong>: las medidas técnicas y organizativas descritas en el anexo 2.</li>
+		</ul>
+	</section>
+}
+
+templ dpaScopeES() {
+	<section id="scope">
+		<h2>3. Alcance y papeles</h2>
+		<p>
+			Este DPA se aplica cuando Kiff Agents OÜ trata Datos
+			Personales en nombre del Responsable en relación con el
+			Servicio. Respecto de los Datos de Auditoría y los Datos de
+			tafs, el Responsable es el responsable del tratamiento y
+			Kiff Agents OÜ es el encargado del tratamiento.
+		</p>
+		<p>
+			Los Datos Personales que tratamos sobre los titulares de
+			las cuentas del Responsable (metadatos del inicio de
+			sesión, contactos de facturación, correspondencia de
+			soporte) se rigen por nuestra
+			<a href="/es/privacy">política de privacidad</a>; respecto
+			de esos datos somos un responsable del tratamiento
+			independiente, no un encargado conforme a este DPA.
+		</p>
+	</section>
+}
+
+templ dpaSubjectMatterES() {
+	<section id="subject-matter">
+		<h2>4. Objeto y duración</h2>
+		<p>
+			<strong>Objeto:</strong> el Tratamiento de los Datos de
+			Auditoría y los Datos de tafs para prestar el Servicio.
+		</p>
+		<p>
+			<strong>Duración:</strong> desde la fecha de entrada en
+			vigor de este DPA hasta lo que ocurra más tarde: (a) la
+			terminación de las Condiciones del servicio subyacentes, o
+			(b) el borrado de todos los Datos de Auditoría conforme al
+			§16. Las disposiciones que por su naturaleza siguen
+			vigentes tras la terminación (auditoría, indemnización, ley
+			aplicable) siguen vigentes.
+		</p>
+	</section>
+}
+
+templ dpaNaturePurposeES() {
+	<section id="nature-purpose">
+		<h2>5. Naturaleza y finalidad del tratamiento</h2>
+		<p>
+			Kiff Agents OÜ trata los Datos de Auditoría solo en la
+			medida necesaria para prestar el Servicio: recibir
+			propuestas y llamadas a herramientas, evaluarlas según la
+			configuración y las Cards del Responsable, retenerlas para
+			que las apruebe una persona cuando la configuración lo
+			exige, reenviar una llamada autorizada a la app conectada o
+			emitir una autorización que la app verifica, registrar las
+			decisiones y el resultado del que informa la app, emitir
+			Recibos firmados y (cuando el Responsable lo ha
+			configurado así) publicar hashes de resumen con evidencia
+			de manipulación en un rastro público verificable. La app
+			conectada realiza la acción subyacente; una decisión de
+			autorización no prueba por sí sola que la acción se
+			realizó.
+		</p>
+		<p>
+			Para tafs, Kiff Agents OÜ también trata los Datos de tafs
+			para ejecutar cada taf que el Responsable pone en marcha:
+			ejecutarlo según su programación y en los chats con las
+			personas del Responsable, enviar sus llamadas a
+			herramientas a través de KIFF, guardar sus ejecuciones, sus
+			chats y sus notas de memoria para que pueda informar y
+			continuar su trabajo, y alertar a los dispositivos
+			registrados del Responsable cuando una llamada queda
+			retenida. A través de Setup y de planque, también
+			conecta las apps del Responsable cuando las personas del
+			Responsable inician sesión en el proveedor de la app y
+			aprueban la conexión en su dispositivo: en una app en la que planque inicia sesión por sí mismo, como Stripe, o con una clave que da el Responsable, planque guarda ese token o esa clave, cifrados, y los usa solo para hacer una llamada que KIFF ha decidido; en una conexión gestionada, Composio guarda el inicio de sesión y hace solo las llamadas que planque le pide, y planque guarda el registro de la conexión y las herramientas aprobadas. KIFF usa conexiones gestionadas solo para las apps que figuran en <a href="/es/subprocessors#composio">kiff.dev/subprocessors</a>. El anexo 4 detalla
+			los datos, dónde se guardan y durante cuánto tiempo.
+		</p>
+	</section>
+}
+
+templ dpaCategoriesES() {
+	<section id="categories">
+		<h2>6. Categorías de Interesados y de Datos Personales</h2>
+		<p>
+			Por defecto, Kiff Agents OÜ trata estas categorías de Datos
+			Personales, tal como las describe el inventario de
+			<a href="/es/security#data-we-process">/es/security#data-we-process</a>:
+		</p>
+		<ul>
+			<li><strong>Datos de la cuenta</strong>: quiénes son las personas del Responsable en su cuenta (nombres, direcciones de correo, roles), y sus agentes y las claves de estos. Los metadatos del inicio de sesión que Kiff Agents OÜ guarda como responsable del tratamiento siguen rigiéndose por el §3.</li>
+			<li><strong>Conexiones de apps</strong>: cada conexión a las apps del Responsable, las herramientas aprobadas, el registro de quién las aprobó y, cuando lo guarda planque, su token o su clave (cifrados).</li>
+			<li><strong>Registros de las acciones de los agentes</strong>: por cada llamada, quién lo pidió (agente y clave), la acción, sobre qué actuó, el resultado y sus motivos, la Card vigente, los parámetros numéricos, las llamadas retenidas y sus respuestas, y los recibos.</li>
+			<li><strong>Chats con tafs</strong>: las ejecuciones y los chats de cada taf, sus informes y sus notas de memoria, y lo que le devuelven las apps del Responsable, como describe el anexo 4.</li>
+		</ul>
+		<p>
+			Los <strong>Interesados</strong> son las personas del
+			Responsable que usan el Servicio, y las personas cuyos
+			datos aparecen en las acciones de sus agentes y en los
+			chats con tafs, como los clientes, los proveedores o el
+			personal del Responsable.
+		</p>
+		<p>
+			Qué más llega al Servicio depende de la configuración del
+			Responsable y de los datos que envía; Kiff Agents OÜ no
+			controla qué campos envía el Responsable. El Responsable
+			añade cualquier otra categoría en el anexo 1, que se
+			actualiza cuando la configuración cambia de forma
+			sustancial.
+		</p>
+	</section>
+}
+
+templ dpaInstructionsES() {
+	<section id="instructions">
+		<h2>7. Instrucciones del Responsable</h2>
+		<p>
+			Kiff Agents OÜ tratará los Datos Personales siguiendo las
+			instrucciones documentadas del Responsable. Esas
+			instrucciones comprenden este DPA, las Condiciones del
+			servicio, la documentación técnica del Servicio y las
+			medidas de seguridad en la revisión fechada de
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>,
+			y las configuraciones y las instrucciones que envían a
+			través del Servicio los usuarios autorizados del
+			Responsable.
+		</p>
+		<p>
+			El whitepaper estratégico y la documentación del framework
+			de código abierto, que se licencia por separado, son
+			referencias explicativas y no forman parte de esas
+			instrucciones de tratamiento. Publicar un documento
+			revisado no modifica, por sí solo, las instrucciones
+			aplicables a un acuerdo existente.
+		</p>
+		<p>
+			Las instrucciones que quedan fuera de ese alcance requieren
+			un acuerdo por escrito. Si Kiff Agents OÜ considera que una
+			instrucción es contraria al RGPD o a otra ley de protección
+			de datos aplicable, se lo notificará al Responsable.
+		</p>
+	</section>
+}
+
+templ dpaProcessorObligationsES() {
+	<section id="processor-obligations">
+		<h2>8. Obligaciones del Encargado (artículo 28, apartado 3)</h2>
+		<p>
+			Kiff Agents OÜ:
+		</p>
+		<ol>
+			<li>tratará los Datos Personales solo siguiendo las instrucciones documentadas del Responsable, también respecto de las transferencias internacionales, salvo que el Derecho de la UE o de un Estado miembro le obligue a hacer otra cosa (en cuyo caso Kiff Agents OÜ informará al Responsable de esa exigencia legal antes del Tratamiento, salvo que ese Derecho prohíba informar por razones importantes de interés público);</li>
+			<li>garantizará que el personal autorizado para tratar Datos Personales esté sujeto a obligaciones de confidencialidad adecuadas;</li>
+			<li>aplicará las medidas técnicas y organizativas descritas en el anexo 2;</li>
+			<li>respetará las condiciones para recurrir a Subencargados del Tratamiento establecidas en el §10;</li>
+			<li>teniendo en cuenta la naturaleza del Tratamiento, asistirá al Responsable con medidas adecuadas para que cumpla sus obligaciones de responder a las solicitudes de los Interesados conforme al capítulo III del RGPD;</li>
+			<li>asistirá al Responsable para garantizar el cumplimiento de los artículos 32 a 36 del RGPD (seguridad, notificación de violaciones de la seguridad, evaluación de impacto relativa a la protección de datos, consulta previa), teniendo en cuenta la naturaleza del Tratamiento y la información de que dispone Kiff Agents OÜ;</li>
+			<li>a elección del Responsable, borrará o devolverá todos los Datos Personales al terminar la prestación de los servicios conforme al §16, y borrará las copias existentes salvo que el Derecho de la UE o de un Estado miembro exija conservarlas;</li>
+			<li>pondrá a disposición del Responsable toda la información necesaria para demostrar el cumplimiento del artículo 28 del RGPD, y permitirá las auditorías conforme al §15 y contribuirá a ellas.</li>
+		</ol>
+	</section>
+}
+
+templ dpaConfidentialityES() {
+	<section id="confidentiality">
+		<h2>9. Confidencialidad</h2>
+		<p>
+			Kiff Agents OÜ garantiza que el personal con acceso a los
+			Datos Personales está sujeto a obligaciones de
+			confidencialidad por escrito o a una obligación legal de
+			confidencialidad adecuada. El acceso se concede según el
+			principio de mínimo privilegio y queda registrado.
+		</p>
+	</section>
+}
+
+templ dpaSubprocessorsES() {
+	<section id="sub-processors">
+		<h2>10. Subencargados del Tratamiento</h2>
+		<p>
+			El Responsable autoriza a Kiff Agents OÜ a recurrir a los
+			Subencargados del Tratamiento que figuran en el anexo 3 y
+			en <a href="/es/subprocessors">/es/subprocessors</a>, que es
+			la lista oficial. Kiff Agents OÜ impone a cada Subencargado
+			del Tratamiento obligaciones de protección de datos que no
+			protegen menos que este DPA.
+		</p>
+		<p>
+			El rastro público verificable no es un Subencargado del
+			Tratamiento. Solo recibe hashes de resumen y ningún Dato
+			Personal.
+		</p>
+		<p>
+			La revisión fechada enlazada en la sección 7 recoge la
+			lista tal como era en su fecha. Un cambio posterior surte
+			efecto conforme a esta sección, no por la publicación de
+			una revisión.
+		</p>
+		<p>
+			Cuando Kiff Agents OÜ tiene intención de recurrir a un
+			nuevo Subencargado del Tratamiento o de sustituir a uno
+			existente para el Tratamiento de los Datos Personales del
+			Responsable, Kiff Agents OÜ lo notifica al Responsable con
+			al menos treinta días de antelación. El Responsable puede
+			oponerse al cambio por motivos razonables de protección de
+			datos en un plazo de quince días desde la notificación; si
+			una objeción razonable no puede resolverse, cualquiera de
+			las partes puede poner fin a la parte afectada del Servicio
+			mediante notificación por escrito.
+		</p>
+	</section>
+}
+
+templ dpaTransfersES() {
+	<section id="transfers">
+		<h2>11. Transferencias internacionales</h2>
+		<p>
+			Cuando el Tratamiento de Datos Personales implica una
+			transferencia a un país de fuera del Espacio Económico
+			Europeo que no cuenta con una decisión de adecuación
+			conforme al artículo 45 del RGPD, las partes acuerdan que:
+		</p>
+		<ul>
+			<li>para las transferencias a Subencargados del Tratamiento certificados en el Marco de Privacidad de Datos UE-EE. UU., el DPF es el mecanismo de transferencia mientras siga en vigor;</li>
+			<li>en los demás casos, las partes incorporan por referencia las Cláusulas Contractuales Tipo de 2021 de la Comisión Europea, y se aplica el módulo 2 (de responsable a encargado) a las transferencias del Responsable a Kiff Agents OÜ y el módulo 3 (de encargado a subencargado) a las transferencias de Kiff Agents OÜ a un Subencargado del Tratamiento;</li>
+			<li>la cláusula de incorporación (cláusula 7) no se usa; las partes de las CCT son el Responsable y Kiff Agents OÜ;</li>
+			<li>los anexos I.A e I.B de las CCT se completan por referencia al anexo 1 de este DPA; el anexo II de las CCT, por referencia al anexo 2 de este DPA; el anexo III, por referencia al anexo 3 de este DPA;</li>
+			<li>se aplica la opción 2 de la cláusula 9, letra a) (autorización general por escrito), con el plazo de notificación de treinta días del §10 anterior.</li>
+		</ul>
+		<p>
+			Cuando una evaluación de impacto de la transferencia
+			indica que procede aplicar medidas complementarias, Kiff
+			Agents OÜ las aplica (cifrado en tránsito y en reposo,
+			registro de accesos, minimización de datos, como se
+			documenta en el anexo 2).
+		</p>
+	</section>
+}
+
+templ dpaSecurityES() {
+	<section id="security">
+		<h2>12. Medidas de seguridad</h2>
+		<p>
+			Kiff Agents OÜ aplica medidas técnicas y organizativas
+			apropiadas para garantizar un nivel de seguridad adecuado
+			al riesgo conforme al artículo 32 del RGPD. Las medidas del
+			anexo 2 y de la revisión fechada de
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>
+			son el nivel de referencia acordado.
+			<a href="/es/security">/es/security</a> describe las medidas
+			actuales. Kiff Agents OÜ puede actualizar las medidas,
+			siempre que el nivel general de seguridad no baje de ese
+			nivel de referencia, y notifica al Responsable por adelantado
+			cualquier cambio sustancial en ellas.
+		</p>
+	</section>
+}
+
+templ dpaBreachNotificationES() {
+	<section id="breach-notification">
+		<h2>13. Notificación de una Violación de la Seguridad de los Datos Personales</h2>
+		<p>
+			Kiff Agents OÜ notifica al Responsable toda Violación de la
+			Seguridad de los Datos Personales que afecte a los Datos
+			Personales del Responsable sin dilación indebida y, en todo
+			caso, en un plazo de setenta y dos (72) horas desde que
+			tiene conocimiento de ella. La notificación incluye, en la
+			medida en que se conozca en ese momento y actualizándose a
+			medida que haya más información:
+		</p>
+		<ul>
+			<li>la naturaleza de la Violación, incluidas las categorías y el número aproximado de Interesados y de registros afectados;</li>
+			<li>las consecuencias probables de la Violación;</li>
+			<li>las medidas adoptadas o propuestas para poner remedio a la Violación y para mitigar sus posibles efectos negativos;</li>
+			<li>el nombre y los datos de contacto de un único punto de contacto en Kiff Agents OÜ para obtener más información.</li>
+		</ul>
+		<p>
+			El plazo que el artículo 33 del RGPD da al propio
+			Responsable para notificar a su autoridad de control
+			empieza cuando el propio Responsable tiene conocimiento de
+			la Violación; esta notificación sirve de apoyo a esa
+			obligación.
+		</p>
+	</section>
+}
+
+templ dpaDataSubjectRequestsES() {
+	<section id="data-subject-requests">
+		<h2>14. Solicitudes de los Interesados</h2>
+		<p>
+			Kiff Agents OÜ asiste al Responsable, con medidas técnicas
+			y organizativas adecuadas y teniendo en cuenta la
+			naturaleza del Tratamiento, para que cumpla sus
+			obligaciones de responder a las solicitudes de los
+			Interesados que ejercen sus derechos conforme a los
+			artículos 15 a 22 del RGPD.
+		</p>
+		<p>
+			Kiff Agents OÜ acusa recibo de las solicitudes de
+			asistencia del Responsable en un plazo de cinco (5) días
+			hábiles. Las solicitudes que se reciben directamente de
+			los Interesados se remiten al Responsable sin dilación
+			indebida; Kiff Agents OÜ no responde a esas solicitudes en
+			su propio nombre, salvo para confirmar que las ha recibido
+			y dirigir al Interesado al Responsable.
+		</p>
+	</section>
+}
+
+templ dpaAuditES() {
+	<section id="audit">
+		<h2>15. Derechos de auditoría</h2>
+		<p>
+			Kiff Agents OÜ pone a disposición del Responsable toda la
+			información razonablemente necesaria para demostrar el
+			cumplimiento del artículo 28 del RGPD. Con un preaviso
+			razonable por escrito (de al menos treinta días, salvo para
+			una auditoría motivada por un incumplimiento sustancial
+			confirmado), el Responsable puede auditar a Kiff Agents OÜ
+			una vez por cada periodo de doce meses.
+		</p>
+		<p>
+			Kiff Agents OÜ todavía no tiene ningún informe SOC 2 ni
+			ISO 27001. Si se le pide, comparte su resumen de seguridad
+			de <a href="/es/security">/es/security</a> y responde a los
+			cuestionarios de seguridad del Responsable.
+		</p>
+		<p>
+			Las auditorías se realizan en horario laboral normal, no
+			interfieren de forma injustificada en el Servicio y
+			respetan la confidencialidad de los demás clientes de Kiff
+			Agents OÜ. El Responsable asume sus propios costes de
+			auditoría; cuando una auditoría revela un incumplimiento
+			sustancial por parte de Kiff Agents OÜ, Kiff Agents OÜ
+			reembolsa al Responsable sus costes razonables de
+			auditoría.
+		</p>
+	</section>
+}
+
+templ dpaReturnDeletionES() {
+	<section id="return-deletion">
+		<h2>16. Devolución o borrado de los Datos Personales</h2>
+		<p>
+			A elección del Responsable, y en un plazo de treinta días
+			desde la terminación del Servicio para el Responsable, Kiff
+			Agents OÜ devuelve los Datos de Auditoría en un formato
+			estructurado, de uso común y legible por máquina, o los
+			borra. La misma elección se aplica a los Datos de tafs. Si
+			no se elige nada dentro de ese plazo, Kiff Agents OÜ borra
+			ambos. Los Datos de tafs se borran eliminando cada taf,
+			como describe el anexo 4: después de devolver los datos del
+			Responsable, o de inmediato cuando este eligió el borrado,
+			Kiff Agents OÜ elimina los tafs que el Responsable no haya
+			eliminado, y desconecta y borra las conexiones del
+			Responsable y sus registros en planque.
+		</p>
+		<p>
+			Los hashes ya publicados en el rastro público verificable
+			permanecen porque el rastro es inmutable. Como el rastro
+			público usa salado criptográfico por inquilino (según
+			<a href="/es/security#public-trail">/es/security#public-trail</a>),
+			la destrucción de la sal del inquilino hace que esos hashes
+			publicados no puedan vincularse nunca más con los registros
+			que los produjeron.
+		</p>
+		<p>
+			De la base de datos de KIFF se hace una copia de seguridad
+			diaria, cifrada, y cada copia se guarda siete días, de modo
+			que un registro borrado desaparece de ellas en un plazo de
+			siete días desde su borrado. Los almacenes de tafs y
+			planque guardan durante 35 días copias cifradas para la
+			recuperación a un momento dado, de modo que un registro
+			borrado desaparece de ellas en un plazo de 35 días desde
+			su borrado; solo se usan para restaurar un almacén tras un
+			fallo. Los logs del servicio, que pueden nombrar la
+			cuenta, se borran en un plazo de 30 días. Kiff Agents OÜ puede conservar
+			Datos Personales cuando el Derecho de la UE o de un Estado
+			miembro exija conservarlos (por ejemplo, la Ley de
+			Contabilidad de Estonia, §12).
+		</p>
+	</section>
+}
+
+templ dpaLiabilityES() {
+	<section id="liability">
+		<h2>17. Responsabilidad</h2>
+		<p>
+			La responsabilidad de cada parte conforme a este DPA está
+			sujeta a las limitaciones y exclusiones establecidas en las
+			Condiciones del servicio, salvo cuando la ley aplicable
+			prohíba esa limitación. Cada parte responde de los daños
+			causados por su propia infracción del RGPD conforme al
+			artículo 82 del RGPD.
+		</p>
+	</section>
+}
+
+templ dpaTermES() {
+	<section id="term">
+		<h2>18. Vigencia y terminación</h2>
+		<p>
+			Este DPA entra en vigor cuando lo firman ambas partes y
+			sigue vigente durante el tiempo descrito en el §4. La
+			terminación de las Condiciones del servicio pone fin
+			automáticamente a este DPA, sin perjuicio de las
+			obligaciones que siguen vigentes.
+		</p>
+	</section>
+}
+
+templ dpaGoverningLawES() {
+	<section id="governing-law">
+		<h2>19. Ley aplicable</h2>
+		<p>
+			Este DPA se rige por las leyes de la República de Estonia,
+			sin perjuicio de las disposiciones imperativas del RGPD ni
+			de las normas de protección de los consumidores cuando
+			sean aplicables. Las disputas que surjan de este DPA están
+			sujetas a las reglas sobre jurisdicción y ley aplicable del
+			§18 de las Condiciones del servicio.
+		</p>
+	</section>
+}
+
+templ dpaAnnex1ES() {
+	<section id="annex-1">
+		<h2>Anexo 1 — Descripción del Tratamiento</h2>
+		<p>Se completa en cada ejemplar firmado.</p>
+		<dl class="legal-annex">
+			<div>
+				<dt>A. Lista de las partes</dt>
+				<dd>El Responsable y el Encargado, tal como se identifican en el §1.</dd>
+			</div>
+			<div>
+				<dt>B. Descripción de la transferencia</dt>
+				<dd>
+					<strong>Categorías de Interesados:</strong> las enumeradas en el §6, más [cualquier otra categoría que declare el Responsable].
+					<br/>
+					<strong>Categorías de Datos Personales:</strong> las enumeradas en el §6 (datos de la cuenta, conexiones de apps, registros de las acciones de los agentes, chats con tafs), más [cualquier otra categoría que declare el Responsable].
+					<br/>
+					<strong>Datos sensibles:</strong> [declaración del Responsable; por defecto: ninguno].
+					<br/>
+					<strong>Frecuencia de la transferencia:</strong> continua (cada solicitud al Servicio).
+					<br/>
+					<strong>Naturaleza del Tratamiento:</strong> la descrita en el §5.
+					<br/>
+					<strong>Finalidades del Tratamiento:</strong> las descritas en el §5.
+					<br/>
+					<strong>Plazo de conservación:</strong> según <a href="/es/privacy#retention">/es/privacy#retention</a> y el §16.
+				</dd>
+			</div>
+			<div>
+				<dt>C. Autoridad de control competente</dt>
+				<dd>La Inspección de Protección de Datos de Estonia (Andmekaitse Inspektsioon).</dd>
+			</div>
+		</dl>
+	</section>
+}
+
+templ dpaAnnex2ES() {
+	<section id="annex-2">
+		<h2>Anexo 2 — Medidas técnicas y organizativas</h2>
+		<p>
+			Un resumen adecuado para un DPA del artículo 28. Este anexo
+			y la revisión fechada de
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>
+			son el nivel de referencia acordado conforme a la sección 12.
+			<a href="/es/security">/es/security</a> muestra las medidas
+			actuales y se actualiza en un plazo de 30 días desde un
+			cambio sustancial.
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Dimensión del artículo 32</th>
+						<th>Medidas</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Seudonimización y cifrado</td>
+						<td>TLS 1.2+ en tránsito. Cifrado en reposo con los valores por defecto del proveedor de la base de datos gestionada. Claves de firma por inquilino guardadas en un servicio de claves gestionado. Está previsto guardar los correos como hash en reposo.</td>
+					</tr>
+					<tr>
+						<td>Confidencialidad</td>
+						<td>Aislamiento entre inquilinos en la capa de base de datos (un esquema de Postgres por inquilino con el <code>search_path</code> fijado). Acceso según el principio de mínimo privilegio, inicio de sesión único para el personal y acuerdos de confidencialidad para todo el personal.</td>
+					</tr>
+					<tr>
+						<td>Integridad</td>
+						<td>Cadena de auditoría de solo adición en el framework. Hashes de resumen con evidencia de manipulación publicados en un rastro público verificable.</td>
+					</tr>
+					<tr>
+						<td>Disponibilidad y resiliencia</td>
+						<td>Computación y base de datos gestionadas en <code>eu-west-1</code> (Irlanda). Comprobaciones de estado. Notas operativas en <a href="/es/security#incident">/es/security#incident</a>.</td>
+					</tr>
+					<tr>
+						<td>Restablecimiento del acceso</td>
+						<td>Procedimiento documentado de respuesta a incidentes, solo para uso interno.</td>
+					</tr>
+					<tr>
+						<td>Verificación de la eficacia</td>
+						<td>Pruebas unitarias y de integración, que se ejecutan antes de cada versión; revisión de seguridad periódica.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+}
+
+templ dpaAnnex3ES() {
+	<section id="annex-3">
+		<h2>Anexo 3 — Subencargados del Tratamiento</h2>
+		<p>
+			La lista oficial está en
+			<a href="/es/subprocessors">/es/subprocessors</a>;
+			esa lista es la que prevalece en cuanto a los Subencargados
+			del Tratamiento actuales, cambia solo conforme al procedimiento
+			de la sección 10 y se actualiza en un plazo de 30 días
+			desde cualquier cambio. En la fecha de esta versión de la
+			plantilla:
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Subencargado del Tratamiento</th>
+						<th>Servicio que presta</th>
+						<th>Región</th>
+						<th>Mecanismo de transferencia</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Amazon Web Services EMEA SARL / Amazon Web Services Inc.</td>
+						<td>Computación, Postgres gestionado, gestión de claves, redes, almacenamiento de secretos; para tafs, también sus ejecuciones, sus chats y sus notas de memoria, y las conexiones de planque</td>
+						<td>Irlanda (eu-west-1): KIFF Cloud, el servicio de tafs, las ejecuciones, los chats y las llamadas al modelo de tafs, y planque, con todo lo que almacenan. Irlanda también sirve las demos públicas de KIFF y los vídeos del sitio. Lo único que hay en Estados Unidos (us-east-1) son los certificados que CloudFront exige allí, que no contienen datos de clientes</td>
+						<td>Marco de Privacidad de Datos UE-EE. UU. / CCT como alternativa</td>
+					</tr>
+					<tr>
+						<td>Clerk, Inc.</td>
+						<td>Autenticación de usuarios y gestión de sesiones: la dirección de correo y el nombre de las personas que inician sesión, sus sesiones, la dirección IP, el dispositivo y el navegador, y la identidad de Apple, Google o GitHub cuando alguien inicia sesión con uno de ellos</td>
+						<td>Estados Unidos</td>
+						<td>Marco de Privacidad de Datos UE-EE. UU. / CCT como alternativa</td>
+					</tr>
+					<tr>
+						<td>Anthropic, PBC</td>
+						<td>Solo tafs: el modelo de IA detrás de Coach y de cada taf (Claude API), que solo recibe datos cuando la persona lo ha permitido en la app tafs. Anthropic borra lo que recibe y lo que devuelve en un plazo de 30 días, salvo que deba conservarlo más tiempo para cumplir la ley, para hacer cumplir su política de uso o porque sus condiciones comerciales dispongan otra cosa</td>
+						<td>Estados Unidos, llamado desde Irlanda (eu-west-1); la inferencia puede ejecutarse en Estados Unidos, Europa, Asia o Australia</td>
+						<td>CCT</td>
+					</tr>
+					<tr>
+						<td>Apple Inc.</td>
+						<td>Solo tafs: entrega las alertas de llamadas retenidas a los dispositivos registrados (Apple Push Notification service). Una alerta no lleva detalles de la solicitud</td>
+						<td>Estados Unidos</td>
+						<td>CCT</td>
+					</tr>
+					<tr>
+						<td>Resend, Inc.</td>
+						<td>Correo a las personas del Responsable: avisos de llamadas retenidas y de advertencias de una Card, avisos de uso y de la cuenta, y respuestas de soporte; para tafs, la puerta de correo de un taf, el correo que se le envía y sus respuestas</td>
+						<td>Estados Unidos</td>
+						<td>CCT</td>
+					</tr>
+					<tr>
+						<td>Sampark Inc. (Composio)</td>
+						<td>Solo tafs, a través de planque: guarda los inicios de sesión de las conexiones gestionadas y el bot de Slack que hay detrás de una puerta de Slack, y hace cada llamada que planque le pide, con sus datos de entrada y la respuesta del servicio. Ni un taf ni planque reciben esos inicios de sesión</td>
+						<td>Estados Unidos</td>
+						<td>CCT (módulo 3)</td>
+					</tr>
+					<tr>
+						<td>Stripe Payments Europe, Ltd. / Stripe, Inc.</td>
+						<td>Facturación, cuando está activa: el contacto de facturación de la cuenta y los recuentos de uso comunicados para facturar</td>
+						<td>UE y Estados Unidos</td>
+						<td>Marco de Privacidad de Datos UE-EE. UU. / CCT como alternativa</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			El rastro público verificable no es un Subencargado del
+			Tratamiento: solo recibe hashes de resumen y ningún Dato
+			Personal.
+		</p>
+	</section>
+}
+
+templ dpaAnnex4ES() {
+	<section id="annex-4">
+		<h2>Anexo 4 — tafs</h2>
+		<p>
+			Qué guarda tafs en nombre del Responsable, dónde y durante
+			cuánto tiempo. El Responsable elimina un taf en la app de
+			tafs; al eliminarlo se borra todo lo de abajo que se guarda «hasta
+			que se elimina el taf».
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Datos</th>
+						<th>Dónde</th>
+						<th>Qué pueden contener</th>
+						<th>Durante cuánto tiempo</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Las ejecuciones y los chats, incluidos los de Setup</td>
+						<td>El almacén propio de tafs (AWS, una región de la UE)</td>
+						<td>Los mensajes de las personas del Responsable al taf, sus respuestas y sus informes, un resumen de los mensajes anteriores de un chat largo, las llamadas a herramientas que hizo y lo que costó cada ejecución</td>
+						<td>30 días, o hasta que se elimina el taf si eso ocurre antes</td>
+					</tr>
+					<tr>
+						<td>Lo que devuelven las apps</td>
+						<td>El almacén propio de tafs (AWS, una región de la UE)</td>
+						<td>Los resultados de las apps del Responsable, que pueden incluir datos sobre sus clientes, sus proveedores o su personal</td>
+						<td>Hasta que termina la ejecución que los leyó. En un chat, los resultados de las llamadas que solo leen se guardan para los siguientes mensajes de ese chat, cifrados con una clave de la cuenta del Responsable, y se usan hasta que el chat lleva una hora inactivo y nunca más de cuatro horas después de la lectura. Después se borran automáticamente, lo que puede tardar hasta unos pocos días, durante los cuales no se usan. No se muestran en ninguna vista, informe ni exportación</td>
+					</tr>
+					<tr>
+						<td>Sobre qué actuó cada llamada</td>
+						<td>El almacén propio de tafs (AWS, una región de la UE)</td>
+						<td>Por cada llamada que un taf hace a través de KIFF, la referencia de KIFF de la llamada y el identificador de aquello sobre lo que actuó (por ejemplo, el identificador de un pago, nunca los datos del cliente), para mostrarlo en el Registro del taf. Nada más de los datos de entrada de la llamada</td>
+						<td>30 días, o hasta que se elimina el taf si eso ocurre antes</td>
+					</tr>
+					<tr>
+						<td>Las notas de memoria</td>
+						<td>El almacén propio de tafs (AWS, una región de la UE)</td>
+						<td>Lo que el taf ha aprendido sobre cómo quiere el Responsable que se haga la tarea</td>
+						<td>Hasta que se olvida la nota o se elimina el taf</td>
+					</tr>
+					<tr>
+						<td>Las solicitudes al modelo</td>
+						<td>Anthropic</td>
+						<td>Lo que una persona escribe a Coach y a los tafs, los archivos adjuntos, lo que las apps conectadas devuelven a un taf durante una ejecución y lo que hay en pantalla mientras Coach ayuda en la app; y lo que el modelo devuelve. Nunca las contraseñas y claves de las apps conectadas, ni una huella</td>
+						<td>Anthropic lo borra en un plazo de 30 días por defecto; más tarde cuando Anthropic deba conservarlo para cumplir la ley, para hacer cumplir su política de uso o porque sus condiciones comerciales dispongan otra cosa</td>
+					</tr>
+					<tr>
+						<td>La clave de KIFF del taf</td>
+						<td>El servicio propio de tafs (AWS), guardada como un secreto</td>
+						<td>La credencial que el taf usa para llegar a KIFF. Nunca se escribe en una ejecución ni en un chat</td>
+						<td>Hasta que se elimina el taf</td>
+					</tr>
+					<tr>
+						<td>La configuración del taf</td>
+						<td>El servicio propio de tafs (AWS)</td>
+						<td>Su nombre, su tarea, su programación y su presupuesto, y la cuenta y el agente de KIFF a los que pertenece</td>
+						<td>Hasta que se elimina el taf</td>
+					</tr>
+					<tr>
+						<td>Los dispositivos para las alertas</td>
+						<td>El servicio propio de tafs (AWS, eu-west-1)</td>
+						<td>El token push de cada dispositivo registrado y la persona que lo registró</td>
+						<td>Hasta que esa persona cierra sesión, se quita el dispositivo o Apple informa de que el token ya no existe</td>
+					</tr>
+					<tr>
+						<td>El token o la clave de una conexión en planque</td>
+						<td>planque (AWS, eu-west-1), cifrado con AWS KMS</td>
+						<td>En una app en la que planque inicia sesión por sí mismo, como Stripe, el token del inicio de sesión del Responsable en su proveedor, y la cuenta del proveedor a la que está ligado; en una conexión por clave, la clave que dio el Responsable. Nunca se da a un taf</td>
+						<td>Hasta que se desconecta la conexión, lo que revoca un token en el proveedor y borra el token o la clave; un inicio de sesión que aún usa otra conexión de la cuenta se conserva hasta que termina la última. Un inicio de sesión hecho solo para ver el catálogo de una app no puede usarse para hacer llamadas; si no se aprueba ninguna herramienta en el plazo de un día, se revoca en la hora siguiente</td>
+					</tr>
+					<tr>
+						<td>El inicio de sesión de una conexión gestionada</td>
+						<td>Composio (Sampark Inc., Estados Unidos)</td>
+						<td>El token o la clave del inicio de sesión del Responsable en el proveedor de una conexión gestionada. Lo guarda Composio y nunca se da a un taf ni a planque, que solo guarda el registro de la conexión y las herramientas aprobadas. Composio lo guarda aunque el inicio de sesión use la app propia de KIFF en el proveedor</td>
+						<td>Hasta que se desconecta la conexión: planque lo hace borrar entonces en Composio, que pide al proveedor que lo revoque. Un inicio de sesión que aún usa otra conexión de la cuenta se conserva hasta que termina la última. Si no se aprueba ninguna herramienta en el plazo de un día desde el inicio de sesión, se borra de la misma manera</td>
+					</tr>
+					<tr>
+						<td>Las llamadas de una conexión gestionada</td>
+						<td>Composio (Sampark Inc., Estados Unidos)</td>
+						<td>La entrada de cada llamada y la respuesta del servicio, en una llamada que planque pide a Composio</td>
+						<td>Hasta un año, en los registros de Composio; se borran en los 30 días siguientes a que KIFF deje de usar Composio</td>
+					</tr>
+					<tr>
+						<td>El registro de una conexión</td>
+						<td>planque (AWS, eu-west-1)</td>
+						<td>Las herramientas aprobadas, el estado de la conexión y sus eventos: quién aprobó cada paso, desde qué dispositivo, y su firma</td>
+						<td>Hasta que la cuenta termina; se conserva tras una desconexión como registro de las aprobaciones</td>
+					</tr>
+					<tr>
+						<td>La clave de conector de la cuenta</td>
+						<td>planque (AWS, eu-west-1), cifrada con AWS KMS</td>
+						<td>La clave de KIFF que planque usa para añadir las herramientas de una conexión a la cuenta de KIFF del Responsable. Solo puede añadir las herramientas de una conexión</td>
+						<td>Hasta que se sustituye o la cuenta termina</td>
+					</tr>
+					<tr>
+						<td>Los logs del servicio de planque</td>
+						<td>planque (AWS, eu-west-1)</td>
+						<td>Qué hizo cada solicitud y por qué se rechazó una llamada, lo que puede nombrar la cuenta, una conexión o un taf; nunca el token de un inicio de sesión</td>
+						<td>30 días</td>
+					</tr>
+					<tr>
+						<td>Los logs del servicio</td>
+						<td>El servicio propio de tafs (AWS, eu-west-1)</td>
+						<td>Los errores con los que se topó una solicitud, que pueden nombrar un taf o una sesión; nunca el cuerpo de los mensajes, las claves ni los tokens</td>
+						<td>30 días</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Las Cards, las llamadas retenidas, las respuestas y los
+			recibos de un taf son Datos de Auditoría, que KIFF guarda
+			conforme al resto de este DPA.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versión del documento:</strong> plantilla v0.1.<br/>
+			<strong>Última actualización:</strong> 17 de noviembre de 2026.
+		</p>
+	</section>
+}

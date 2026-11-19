@@ -1,0 +1,209 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsProofs renders the integration proofs' monitoring page: one row per
+// app, held apps first, with the last 30 counted runs, the 45-day strip,
+// the state the gateway uses, and the overrides.
+templ OpsProofs(v apiclient.OpsProofRows, refused bool, chrome components.DashboardChrome) {
+	@components.OpsShell("proofs", "proofs", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · integration proofs</p>
+					<h1>Proofs.</h1>
+					<p class="dash-note">Red holds an app's writes: three counted fails, or the card limit failing once. Two passes in a row clear it. Error runs and runs from an unconfirmed runner never move a state.</p>
+				</div>
+			</header>
+			if refused {
+				<p class="dash-note ops-refused" role="alert">The override was refused. It needs a reason and a length; a release also needs the owner's yes.</p>
+			}
+			<article class="dash-card">
+				if len(v.Apps) == 0 {
+					<p class="dash-note">No proof runs yet.</p>
+				} else {
+					<div class="ops-table-wrap">
+						<table class="dash-table ops-wide">
+							<thead>
+								<tr>
+									<th>App</th>
+									<th>State</th>
+									<th>Passed (last 30)</th>
+									<th>Errors</th>
+									<th>p50</th>
+									<th>Last run</th>
+									<th>Last 45 days</th>
+									<th>Override</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, row := range v.Apps {
+									<tr>
+										<td>
+											<span class="ops-code">{ row.App }</span>
+											if row.State.Entry != "" {
+												<div class="ops-proof-reason ops-code">{ row.State.Entry }</div>
+											}
+										</td>
+										<td>
+											<span class={ proofStateClass(row.State) }>{ proofStateLabel(row.State) }</span>
+											if r := proofReason(row.State.Reason); r != "" {
+												<div class="ops-proof-reason">{ r }</div>
+											}
+										</td>
+										<td class="ops-nowrap">
+											{ proofPassed(row) }
+											if row.Uncounted > 0 {
+												<div class="ops-proof-reason">{ opsInt(row.Uncounted) } uncounted</div>
+											}
+										</td>
+										<td class="ops-nowrap">{ opsInt(row.Errors) }</td>
+										<td class="ops-nowrap">{ proofMs(row.P50Ms) }</td>
+										<td class="ops-nowrap">
+											if row.LastRunID != "" {
+												<a href={ templ.SafeURL("/ops/proofs/" + row.LastRunID) }><span class={ proofOutcomeClass(row.LastOutcome) }>{ row.LastOutcome }</span></a>
+												<div class="ops-proof-reason">{ opsTime(row.LastAt) }</div>
+											} else {
+												—
+											}
+										</td>
+										<td>
+											<div class="ops-strip" aria-label="Last 45 days">
+												for _, d := range row.Strip {
+													<span class={ proofDayClass(d) } title={ proofDayTitle(d) }></span>
+												}
+											</div>
+										</td>
+										<td>@opsProofOverride(row, v.ReleaseAnyway)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}
+
+// opsProofOverride: hold anyway (any app), release anyway (a held app,
+// only when enabled, with the owner's yes), or clear the override.
+templ opsProofOverride(row apiclient.OpsProofRow, releaseAnyway bool) {
+	if row.State.Override != "" {
+		<form method="post" action={ templ.SafeURL("/ops/proofs/apps/" + row.App + "/clear") } class="ops-alert-actions">
+			<input type="text" name="reason" class="ops-reason" placeholder="Reason (required)" required aria-label="Reason"/>
+			<button type="submit" class="btn btn-secondary btn-xs">Clear override</button>
+		</form>
+	} else {
+		<form method="post" action={ templ.SafeURL("/ops/proofs/apps/" + row.App + "/hold") } class="ops-alert-actions">
+			<input type="text" name="reason" class="ops-reason" placeholder="Reason (required)" required aria-label="Reason"/>
+			<select name="for" class="ops-plan-select" aria-label="For">
+				<option value="24h">24 h</option>
+				<option value="72h">3 days</option>
+				<option value="7d">7 days</option>
+				<option value="30d">30 days</option>
+			</select>
+			<button type="submit" class="btn btn-secondary btn-xs">Hold anyway</button>
+		</form>
+		if releaseAnyway && row.State.Held {
+			<form method="post" action={ templ.SafeURL("/ops/proofs/apps/" + row.App + "/release") } class="ops-alert-actions">
+				<input type="text" name="reason" class="ops-reason" placeholder="Reason (required)" required aria-label="Reason"/>
+				<input type="text" name="owner_approval" class="ops-reason" placeholder="Owner's yes (link)" required aria-label="Owner's yes"/>
+				<select name="for" class="ops-plan-select" aria-label="For">
+					<option value="4h">4 h</option>
+					<option value="24h">24 h</option>
+					<option value="7d">7 days</option>
+				</select>
+				<button type="submit" class="btn btn-primary btn-xs">Release anyway</button>
+			</form>
+		}
+	}
+}
+
+// OpsProofRun renders one run: the Card check first, every check, the
+// summary, and the events when the API could read them.
+templ OpsProofRun(v apiclient.OpsProofReplay, chrome components.DashboardChrome) {
+	@components.OpsShell("proofs", "proofs", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow"><a href="/ops/proofs">Proofs</a> · { v.Run.App }</p>
+					<h1>{ v.Run.Job }</h1>
+					<p class="dash-note">
+						<span class={ proofOutcomeClass(v.Run.Outcome) }>{ v.Run.Outcome }</span>
+						if !v.Run.Counted {
+							<span class="dash-pill dash-pill-muted">not counted</span>
+						}
+						{ opsTime(v.Run.StartedAt) } → { opsTime(v.Run.EndedAt) } · { v.Run.Trigger }
+					</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				<h2>Card limit</h2>
+				if c, ok := proofCardCheck(v.Run); ok {
+					<p class={ proofCheckClass(c) }>
+						<strong>{ proofCheckMark(c) } { proofCheckName(c.Name) }</strong>
+						if c.Why != "" {
+							<span class="ops-proof-why">{ c.Why }</span>
+						}
+					</p>
+				} else {
+					<p class="dash-note">Not judged: the run broke before its checks.</p>
+				}
+				<h2>Checks</h2>
+				if len(v.Run.Checks) == 0 {
+					<p class="dash-note">None.</p>
+				} else {
+					<ul class="ops-risk-list">
+						for _, c := range v.Run.Checks {
+							<li class={ proofCheckClass(c) }>
+								<strong>{ proofCheckMark(c) } { proofCheckName(c.Name) }</strong>
+								if c.Why != "" {
+									<span class="ops-proof-why">{ c.Why }</span>
+								}
+							</li>
+						}
+					</ul>
+				}
+			</article>
+			<article class="dash-card">
+				<h2>Run</h2>
+				<dl class="ops-proof-facts">
+					<dt>Run</dt><dd class="ops-code">{ v.Run.RunID }</dd>
+					<dt>Entry</dt><dd class="ops-code">{ opsDash(v.Run.Entry) }</dd>
+					<dt>Rules</dt><dd class="ops-code">{ proofRules(v.Run.Rules) }</dd>
+					<dt>Tenant</dt><dd class="ops-code">{ v.Run.Tenant }</dd>
+					<dt>Thread</dt><dd class="ops-code">{ opsDash(v.Run.Thread) }</dd>
+					<dt>Timings</dt><dd>p50 { proofMs(v.Run.P50Ms) } · p95 { proofMs(v.Run.P95Ms) }</dd>
+					<dt>Runner</dt><dd class="ops-code">{ proofShortSHA(v.Run.RunnerVersion) }</dd>
+					<dt>GitHub run</dt><dd class="ops-code">{ proofGitHubRun(v.Run) }</dd>
+					<dt>Received</dt><dd>{ opsTime(v.Run.ReceivedAt) }</dd>
+					<dt>Events</dt><dd class="ops-code">{ v.Run.EventsKey }</dd>
+				</dl>
+			</article>
+			<article class="dash-card">
+				<h2>Replay</h2>
+				if v.EventsUnavailable {
+					<p class="dash-note">The events aren't readable from here yet; the summary and checks above are what the runner sent.</p>
+				} else if len(v.Events) == 0 {
+					<p class="dash-note">The run wrote no events.</p>
+				} else {
+					if v.Redacted > 0 {
+						<p class="dash-note ops-refused">{ opsInt(v.Redacted) } line(s) had secret-looking values, shown redacted.</p>
+					}
+					<ol class="ops-replay">
+						for _, e := range proofEvents(v.Events) {
+							<li>
+								<div class="ops-replay-head"><span class="ops-code">#{ e.Seq }</span> <strong>{ opsDash(e.Kind) }</strong> <span class="ops-code">{ e.At }</span></div>
+								<pre class="ops-replay-body">{ e.Body }</pre>
+							</li>
+						}
+					</ol>
+				}
+			</article>
+		</section>
+	}
+}

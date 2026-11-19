@@ -1,0 +1,264 @@
+// Package components holds shared templ partials reused across pages:
+// the redesigned public shell (site nav + footer) and the
+// authenticated app shell. Page-specific markup lives in
+// internal/pages/.
+package components
+
+import "github.com/kiff/cloud/web/internal/assets"
+
+const (
+	// Both defaults open on the card. The search description used to
+	// describe shared reality while the social one described the
+	// product, so a search result and a shared link introduced two
+	// different companies.
+	defaultSiteDescription   = "KIFF gives each AI agent a Card: which actions it may take, how much, and what happens outside it. KIFF checks every call before it runs, the owner answers what falls outside, and every decision has a signed receipt."
+	defaultSiteOGDescription = defaultSiteDescription
+)
+
+// LayoutSite is the redesigned public shell (the "paper" theme from
+// the #4 redesign). It renders the new horizontal site nav and the
+// columned site footer instead of the legacy topbar/footer, and
+// always loads css/site.css (paper tokens + shared chrome) plus the
+// fonts. Pages opt in as they migrate to the new design; legacy
+// pages keep Layout until their slice lands.
+//
+// activeNav highlights the matching primary nav link ("", "pricing",
+// "docs"); extraCSS pulls in the page's own stylesheet.
+templ LayoutSite(title, activeNav string, extraCSS ...string) {
+	@siteShell(title, defaultSiteDescription, defaultSiteOGDescription, "website", append([]string{"css/fonts.css", "css/site.css"}, extraCSS...)...) {
+		<a class="skip-link" href="#main">Skip to content</a>
+		@siteNav(activeNav)
+		<main id="main" tabindex="-1">
+			@languageRow()
+			@translationNotice()
+			{ children... }
+		</main>
+		@siteFooter()
+	}
+}
+
+// LayoutSiteWithMeta is the public shell for pages whose own content
+// supplies meaningful share metadata, such as an article summary. A
+// post's summary is the index blurb and the meta description both, so
+// this keeps a shared link showing the article rather than the site
+// tagline. Most pages use the site defaults through LayoutSite.
+templ LayoutSiteWithMeta(title, description, ogType, activeNav string, extraCSS ...string) {
+	@siteShell(title, description, description, ogType, append([]string{"css/fonts.css", "css/site.css"}, extraCSS...)...) {
+		<a class="skip-link" href="#main">Skip to content</a>
+		@siteNav(activeNav)
+		<main id="main" tabindex="-1">
+			@languageRow()
+			@translationNotice()
+			{ children... }
+		</main>
+		@siteFooter()
+	}
+}
+
+// LayoutBare is the public shell with no site nav or footer, for a page
+// that draws its own (/tafs): the <head>, the page's stylesheets, and the
+// page's own markup, which brings its skip link and its <main id="main">.
+templ LayoutBare(title, description string, css ...string) {
+	@siteShell(title, description, description, "website", css...) {
+		{ children... }
+	}
+}
+
+// siteShell is the redesigned document skeleton: same <head> wiring
+// as layoutShell but without the legacy topbar/footer (the site nav
+// and footer are rendered by LayoutSite itself). Kept separate so the
+// paper-theme pages don't carry the dark-theme chrome.
+templ siteShell(title, description, ogDescription, ogType string, css ...string) {
+	<!DOCTYPE html>
+	<html lang={ PageLanguage(ctx) }>
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ title }</title>
+			<meta name="description" content={ description }/>
+			<link rel="canonical" href={ CanonicalURL(ctx) }/>
+			@hreflangLinks()
+			<meta property="og:title" content={ title }/>
+			<meta property="og:description" content={ ogDescription }/>
+			<meta property="og:url" content={ CanonicalURL(ctx) }/>
+			<meta property="og:type" content={ ogType }/>
+			<meta property="og:site_name" content="KIFF"/>
+			<meta property="og:image" content={ ShareImageURL(ctx) }/>
+			if !HasShareImage(ctx) {
+				<meta property="og:image:width" content="1200"/>
+				<meta property="og:image:height" content="630"/>
+			}
+			<meta property="og:image:alt" content={ ShareImageAlt(ctx) }/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<meta name="twitter:title" content={ title }/>
+			<meta name="twitter:description" content={ ogDescription }/>
+			<meta name="twitter:image" content={ ShareImageURL(ctx) }/>
+			<meta name="theme-color" content="#111318"/>
+			@templ.Raw(SiteJSONLDScript())
+			<!-- Machine-readable hint: the curated LLM/agent map of the
+			     public surface. Advertised in <head> so crawlers and
+			     agents don't have to rely on the footer link or probe
+			     /llms.txt by convention. -->
+			<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt"/>
+			<link rel="stylesheet" href="/static/open-props.min.css"/>
+			<link rel="stylesheet" href="/static/app.css"/>
+			for _, href := range css {
+				if href == "css/landing.css" {
+					<link rel="stylesheet" href="/static/css/landing.css?v=20261002-1"/>
+				} else if href == "css/site.css" {
+					<link rel="stylesheet" href="/static/css/site.css?v=20261110-1"/>
+				} else if href == "css/blog.css" {
+					<link rel="stylesheet" href="/static/css/blog.css?v=20261006-2"/>
+				} else {
+					<link rel="stylesheet" href={ "/static/" + href }/>
+				}
+			}
+			<link rel="icon" type="image/x-icon" href="/static/img/favicon/favicon.ico"/>
+			<link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon/favicon-32x32.png"/>
+			<link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon/kiff-icon-64x64.png"/>
+			<link rel="icon" type="image/png" sizes="256x256" href="/static/img/favicon/kiff-icon-256x256.png"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png"/>
+			<link rel="manifest" href="/static/img/favicon/site.webmanifest"/>
+		</head>
+		<body class="site">
+			{ children... }
+		</body>
+	</html>
+}
+
+// siteNav is the redesigned horizontal marketing nav. activeNav
+// marks the current section so the matching link reads as active.
+templ siteNav(activeNav string) {
+	<header class="site-nav" role="banner" { chromeLang(ctx)... }>
+		<a href="/" class="site-logo">
+			<img src="/static/img/logo/kiff-logo-transparent-512.png" alt="KIFF" class="site-logo-img"/>
+			<span class="site-logo-text">kiff<span>.</span>dev</span>
+		</a>
+		<input type="checkbox" id="site-nav-open" class="site-nav-checkbox" aria-label="Navigation menu"/>
+		<label for="site-nav-open" class="site-nav-toggle"><span class="burger" aria-hidden="true"></span></label>
+		<nav class="site-primary-nav" aria-label="Primary">
+			<a href="/proof" class={ siteNavClass(activeNav, "proof") }>proof</a>
+			<a href="/tafs" class={ siteNavClass(activeNav, "tafs") }>tafs</a>
+			<a href="/tafs/download" class={ siteNavClass(activeNav, "download") }>download</a>
+			<a href="/pricing" class={ siteNavClass(activeNav, "pricing") }>pricing</a>
+			<a href="/docs" class={ siteNavClass(activeNav, "docs") }>docs</a>
+			if activeNav == "blog" {
+				<a href="/blog" class={ siteNavClass(activeNav, "blog") } aria-current="page">Blog</a>
+			} else {
+				<a href="/blog" class={ siteNavClass(activeNav, "blog") }>Blog</a>
+			}
+			<a href="/delegate" class="site-nav-cta">see how a card works →</a>
+		</nav>
+	</header>
+}
+
+// siteFooter is the redesigned columned marketing footer.
+templ siteFooter() {
+	<footer class="site-footer" { chromeLang(ctx)... }>
+		<div class="site-footer-brand">
+			<a href="/" class="site-logo site-footer-logo">
+				<img src="/static/img/logo/kiff-logo-transparent-512.png" alt="KIFF" class="site-logo-img site-logo-img-sm"/>
+			</a>
+			<p class="site-footer-tagline">Limits for AI agents, set by people.</p>
+		</div>
+		<nav class="site-footer-col" aria-label="Product">
+			<span class="site-footer-col-title">Product</span>
+			<a href="/proof">Proof</a>
+			<a href="/pricing">Pricing</a>
+			<a href="/whitepaper">Whitepaper</a>
+			<a href="/blog">Blog</a>
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>
+		</nav>
+		<nav class="site-footer-col" aria-label="Build">
+			<span class="site-footer-col-title">Build</span>
+			<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">Guard SDK ↗</a>
+			<a href="/docs">Docs</a>
+			<a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">Framework ↗</a>
+			<a href="/llms.txt">llms.txt</a>
+		</nav>
+		<nav class="site-footer-col" aria-label="Trust">
+			<span class="site-footer-col-title">Trust</span>
+			<a href="/support">Support</a>
+			<a href="/security">Security</a>
+			<a href="/privacy">Privacy</a>
+			<a href="/terms">Terms</a>
+			<a href="/acceptable-use">Acceptable use</a>
+			<a href="/legal/dpa">DPA</a>
+			<a href="/subprocessors">Subprocessors</a>
+			<a href="/cookies">Cookies</a>
+			<a href="/legal/sla">SLA</a>
+			<a href="https://status.kiff.dev">Status</a>
+			<a href="/docs/ai-act">EU AI Act</a>
+		</nav>
+	</footer>
+}
+
+// LayoutApp is the authenticated-app shell: the shared <head> with
+// no marketing chrome. The dashboard renders its own single top bar
+// (tabs + wordmark); the marketing nav/footer belong on the public
+// surfaces only.
+templ LayoutApp(title string) {
+	@layoutShell(title, false) {
+		{ children... }
+	}
+}
+
+// LayoutAppWithCSS is like LayoutApp but loads additional CSS files.
+// Used by dashboard surfaces that need scoped app-only styles.
+templ LayoutAppWithCSS(title string, extraCSS ...string) {
+	@layoutShell(title, false, extraCSS...) {
+		{ children... }
+	}
+}
+
+// LayoutAppThemedWithCSS is LayoutAppWithCSS plus the theme boot script
+// in <head> (light | dark | system). Only the authenticated dashboard
+// shells use it, surfaces with the topbar theme switcher, so other
+// app-shell consumers (e.g. the deck) stay script-free.
+templ LayoutAppThemedWithCSS(title string, extraCSS ...string) {
+	@layoutShell(title, true, extraCSS...) {
+		{ children... }
+	}
+}
+
+// layoutShell is the authenticated-app document skeleton: shared
+// <head>, no marketing topbar/footer (the dashboard renders its own
+// chrome). themed injects the theme boot script (dashboard shells only).
+// extraCSS loads additional static stylesheets (e.g. css/dashboard.css,
+// css/studio.css). Public pages use siteShell (via LayoutSite) instead.
+templ layoutShell(title string, themed bool, extraCSS ...string) {
+	<!DOCTYPE html>
+	<html lang={ ScreenLanguage(ctx) }>
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			if themed {
+				@templ.Raw(themeBootScript())
+			}
+			<title>{ title }</title>
+			<meta name="description" content="KIFF Cloud is the managed runtime for your operational domains: hosted decisions, approvals, and signed evidence for governed actions."/>
+			<link rel="canonical" href="https://kiff.dev"/>
+			<meta property="og:title" content={ title }/>
+			<meta property="og:description" content="The managed runtime for your KIFF operational domains, with hosted decisions, approvals, and signed evidence."/>
+			<meta property="og:url" content="https://kiff.dev"/>
+			<meta property="og:type" content="website"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<link rel="stylesheet" href={ assets.URL("open-props.min.css") }/>
+			<link rel="stylesheet" href={ assets.URL("app.css") }/>
+			for _, href := range extraCSS {
+				<link rel="stylesheet" href={ assets.URL(href) }/>
+			}
+			<link rel="icon" type="image/x-icon" href="/static/img/favicon/favicon.ico"/>
+			<link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon/favicon-32x32.png"/>
+			<link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon/kiff-icon-64x64.png"/>
+			<link rel="icon" type="image/png" sizes="256x256" href="/static/img/favicon/kiff-icon-256x256.png"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png"/>
+			<link rel="manifest" href="/static/img/favicon/site.webmanifest"/>
+		</head>
+		<body>
+			<main>
+				{ children... }
+			</main>
+		</body>
+	</html>
+}

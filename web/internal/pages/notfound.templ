@@ -1,0 +1,22 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// NotFound is the public 404 page. Unknown paths used to fall through
+// to the landing page with a 200, which search engines index as
+// duplicate pages and which hid broken links.
+templ NotFound() {
+	@components.LayoutSite("KIFF — page not found", "", "css/prose.css", "css/whitepaper.css") {
+		<article class="whitepaper">
+			<div class="whitepaper-body prose">
+				<h1>Page not found</h1>
+				<p>There is no page at this address. It may have moved, or the link may be wrong.</p>
+				<ul>
+					<li><a href="/">The KIFF home page</a></li>
+					<li><a href="/docs/quickstart">The quickstart: give an agent a Card</a></li>
+					<li><a href="/docs">All documentation</a></li>
+				</ul>
+			</div>
+		</article>
+	}
+}

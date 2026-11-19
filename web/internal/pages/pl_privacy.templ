@@ -1,0 +1,803 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// PrivacyPL is the Privacy Policy (/privacy) in Polish, at /pl/privacy.
+// It is a translation of Privacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ PrivacyPL() {
+	@components.LayoutSite("KIFF — polityka prywatności", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@privacyHeadPL()
+			@privacyWhoWeArePL()
+			@privacyScopePL()
+			@privacyRolesPL()
+			@privacyCategoriesPL()
+			@privacyLawfulBasesPL()
+			@privacySubprocessorsPL()
+			@privacyTransfersPL()
+			@privacyRetentionPL()
+			@privacyRightsPL()
+			@privacyCookiesPL()
+			@privacySecurityPL()
+			@privacyChildrenPL()
+			@privacyAutomatedPL()
+			@privacyChangesPL()
+			@privacyContactPL()
+		</article>
+	}
+}
+
+templ privacyHeadPL() {
+	<header class="legal-head">
+		<p class="legal-badge">Polityka prywatności · v0.1</p>
+		<h1>Polityka prywatności</h1>
+		<p class="legal-meta">
+			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+			<strong>Data wejścia w życie:</strong> 24 maja 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Ta polityka wyjaśnia, jak KIFF Cloud przetwarza dane
+			osobowe w witrynie, panelu, API i aplikacji tafs na
+			iPhone’a, iPada, Androida i komputery. Pytania:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ privacyWhoWeArePL() {
+	<section id="who-we-are">
+		<h2>1. Kim jesteśmy</h2>
+		<p>
+			KIFF Cloud prowadzi <strong>Kiff Agents OÜ</strong>, spółka
+			z ograniczoną odpowiedzialnością zarejestrowana w Estonii.
+			Dane rejestrowe:
+		</p>
+		<ul>
+			<li><strong>Numer rejestrowy:</strong> 17372313 (estoński rejestr przedsiębiorców e-Business Register)</li>
+			<li><strong>Numer VAT:</strong> EE102924327</li>
+			<li><strong>Adres siedziby:</strong> Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia</li>
+			<li><strong>Kontakt w sprawach prywatności:</strong> <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a></li>
+			<li><strong>Formalne zawiadomienia prawne:</strong> <a href="mailto:legal@kiff.dev">legal@kiff.dev</a></li>
+		</ul>
+		<p>
+			Ponieważ Kiff Agents OÜ ma siedzibę w Unii Europejskiej,
+			unijne ogólne rozporządzenie o ochronie danych
+			(<abbr title="ogólne rozporządzenie o ochronie danych">RODO</abbr>)
+			stosuje się do naszego przetwarzania bezpośrednio. Nie
+			potrzebujemy przedstawiciela w UE, o którym mowa
+			w artykule 27.
+		</p>
+	</section>
+}
+
+templ privacyScopePL() {
+	<section id="scope">
+		<h2>2. Zakres tej polityki</h2>
+		<p>
+			Ta polityka obejmuje dane osobowe, które przetwarzamy, gdy
+			korzystasz z:
+		</p>
+		<ul>
+			<li><a href="https://kiff.dev"><code>kiff.dev</code></a> — naszej witryny marketingowej, tej strony z polityką i publicznego widoku potwierdzeń.</li>
+			<li><a href="https://app.kiff.dev"><code>app.kiff.dev</code></a> — naszego panelu dostępnego po zalogowaniu.</li>
+			<li><a href="https://api.kiff.dev"><code>api.kiff.dev</code></a> — naszego API HTTP.</li>
+			<li id="tafs"><strong>tafs</strong> — naszej aplikacji na iPhone’a, iPada, Androida i komputery (Mac, Windows i Linux) oraz usługi, która za nią stoi (w tym agenta Setup, który łączy aplikacje firmy, i usługi planque, która przechowuje te połączenia), w której firma przekazuje zadanie agentowi AI pracującemu w ramach Card KIFF.</li>
+		</ul>
+		<p>
+			Ta polityka <em>nie</em> obejmuje frameworka open source
+			<code>kiff/kiff</code>, który możesz uruchamiać
+			samodzielnie. Gdy uruchamiasz framework na własnej
+			infrastrukturze, to Ty jesteś administratorem wszelkich
+			danych, które on przetwarza, a Kiff Agents OÜ nie
+			uczestniczy w tym przetwarzaniu.
+		</p>
+	</section>
+}
+
+templ privacyRolesPL() {
+	<section id="roles">
+		<h2>3. Nasze role według RODO</h2>
+		<p>
+			Zależnie od danych działamy w dwóch rolach:
+		</p>
+		<ul>
+			<li>
+				<strong>Administrator</strong> w odniesieniu do
+				metadanych konta i logowania, danych rozliczeniowych
+				(gdy rozliczenia są aktywne), komunikacji
+				marketingowej, na którą się zgadzasz, oraz telemetrii
+				operacyjnej naszej własnej usługi.
+			</li>
+			<li>
+				<strong>Podmiot przetwarzający</strong> w odniesieniu
+				do danych audytowych, rekordów akcji, potwierdzeń
+				decyzji i innych treści, które przepływają przez
+				środowisko wykonawcze w imieniu naszych klientów, oraz
+				tego, co tafs dla nich przechowuje (uruchomienia, czaty,
+				raporty i notatki pamięci każdego tafa).
+				Administratorami tych danych są klienci (tenanci);
+				wydają nam polecenia przez ustawienia konta
+				i konfigurację domeny. Tę relację reguluje umowa
+				powierzenia przetwarzania danych
+				(<abbr title="umowa powierzenia przetwarzania danych">DPA</abbr>);
+				opublikowane warunki znajdziesz we
+				<a href="/pl/legal/dpa">wzorze DPA</a>.
+			</li>
+		</ul>
+		<p>
+			Ta polityka dotyczy przede wszystkim przetwarzania, przy
+			którym jesteśmy administratorem. Tam, gdzie wspominamy
+			o danych przetwarzanych jako podmiot przetwarzający,
+			dokumentem bardziej szczegółowym jest DPA.
+		</p>
+	</section>
+}
+
+templ privacyCategoriesPL() {
+	<section id="categories">
+		<h2>4. Kategorie danych osobowych, które przetwarzamy</h2>
+		<p>
+			Poniższe kategorie są zgodne z technicznym wykazem na
+			stronie
+			<a href="/pl/security#data-we-process">/security#data-we-process</a>.
+			W razie rozbieżności źródłem prawdy jest strona techniczna,
+			a tę sekcję do niej dostosowujemy.
+		</p>
+		<ul>
+			<li>
+				<strong>Identyfikatory konta</strong> — Twój
+				identyfikator podmiotu z zewnętrznego systemu
+				uwierzytelniania (nadany przez naszego dostawcę
+				tożsamości) i adres e-mail, którym się logujesz. Dziś
+				przechowywane dosłownie; przechowywanie w postaci
+				skrótu (hasha) jest planowane.
+			</li>
+			<li>
+				<strong>Metadane tenanta</strong> — identyfikator
+				tenanta, slug, nazwa wyświetlana, znacznik czasu
+				utworzenia oraz język, którego ostatnio używała
+				aplikacja każdej osoby, aby e-maile, które wysyła jej
+				KIFF, przychodziły w tym języku.
+			</li>
+			<li>
+				<strong>Dane uwierzytelniające API</strong> —
+				rekordy kluczy API bez jawnej treści (przechowujemy
+				skróty, nigdy jawny tekst).
+			</li>
+			<li>
+				<strong>Dane pliku cookie sesji</strong> — plik cookie
+				sesji podpisany HMAC, ustawiany po zalogowaniu. Zobacz
+				sekcję o plikach cookie poniżej.
+			</li>
+			<li>
+				<strong>Metadane żądań HTTP</strong> — adres IP, user
+				agent, ścieżka żądania, status odpowiedzi, opóźnienie.
+				Przechowywane w logach dostępu naszego reverse proxy
+				przez ograniczony okres przechowywania, na potrzeby
+				bezpieczeństwa i zapobiegania nadużyciom.
+			</li>
+			<li>
+				<strong>Treści kontrolowane przez tenanta</strong> —
+				dane <code>parameters</code>, <code>actor</code>
+				i <code>entity</code>, które wysyłasz do środowiska
+				wykonawczego. Przechowujemy je <em>jako podmiot
+				przetwarzający</em> w imieniu klienta; to klient
+				odpowiada za to, co trafia do transmisji. Konfiguracja
+				maskowania dla poszczególnych domen jest planowana.
+			</li>
+			<li>
+				<strong>Korespondencja</strong> — e-maile, które
+				wysyłasz na nasze skrzynki wsparcia, sprzedaży,
+				bezpieczeństwa lub prywatności.
+			</li>
+			<li>
+				<strong>Aplikacja tafs</strong> — do tafs logujesz się
+				swoim kontem KIFF. Na telefonie lub tablecie aplikacja
+				przechowuje Twoją sesję w pęku kluczy urządzenia
+				(Keychain; na Androidzie w jego zaszyfrowanej pamięci).
+				Na komputerze przechowuje ją zabezpieczoną dla Twojego
+				konta użytkownika: na komputerze z Windows za pomocą
+				własnej ochrony danych Windows, na Linuksie w Twoim pęku
+				kluczy, na Macu w jego Keychain. Sesja na komputerze
+				trwa najwyżej 90 dni.
+				Aplikacja tworzy klucz podpisujący, który nigdy nie
+				opuszcza urządzenia: w Secure Enclave iPhone’a, iPada
+				lub Maca, w Keystore urządzenia z Androidem albo w TPM
+				komputera z Windows. Na Linuksie oraz na Macu bez Secure
+				Enclave klucz jest kluczem programowym przechowywanym
+				w Twoim pęku kluczy lub Keychain, a taki komputer może
+				pokazać, co czeka na Ciebie, ale nie może tego
+				zatwierdzić; zatwierdzasz na telefonie{ macSecurityKey("pl") }. Komputer
+				z Windows bez TPM nie może zalogować się do tafs. KIFF
+				przechowuje publiczną połowę klucza, nazwę i platformę
+				urządzenia oraz to, kiedy zostało dodane i ostatnio
+				użyte, aby móc sprawdzać Twoje odpowiedzi na
+				oczekujące wywołania i Twoje zatwierdzenia połączeń.
+				Jeśli zatwierdzasz kluczem dostępu na swoim komputerze,
+				takim jak Windows Hello lub klucz bezpieczeństwa, Twoja
+				twarz, odcisk palca lub PIN pozostają w systemie samego
+				komputera; KIFF przechowuje klucz publiczny klucza
+				dostępu, jego identyfikator, licznik i nazwę, nigdy nic
+				tajnego, i odrzuca klucz dostępu, który synchronizuje
+				się z innymi urządzeniami. Jeśli włączysz alerty na
+				telefonie, tablecie lub Macu, na którym działa aplikacja
+				na iPada, przechowujemy token push
+				urządzenia razem z Twoim identyfikatorem osoby w KIFF
+				oraz język, w którym wyświetlała się aplikacja, aby jej
+				alerty przychodziły w tym języku. Usługa tafs
+				przechowuje też język konta, według osoby, która
+				ostatnio rozmawiała z Coachem, przez najwyżej trzy
+				miesiące, aby raporty tafa przychodziły w tym języku.
+				Alert na telefonie przechodzi przez Apple lub Google
+				tylko z tym, który taf i czego chce, a w alercie drzwi
+				z imieniem i nazwiskiem lub adresem e-mail osoby, która
+				napisała: nigdy z kwotą ani szczegółami prośby.
+				Aplikacja dodaje je na samym urządzeniu, z KIFF, więc
+				alert na odblokowanym telefonie może pokazać kwotę,
+				sprzedawcę lub osobę. Na zablokowanym telefonie
+				z Androidem pokazuje tylko „Taf czeka na Ciebie”, i tak
+				samo na zablokowanym iPhonie, chyba że ustawisz w nim, by
+				podglądy pokazywały się zawsze. Apple Watch nie
+				przechowuje niczego na dysku, nie przechowuje sesji ani
+				klucza, komunikuje się tylko z Twoim sparowanym
+				iPhone’em, nigdy nie zatwierdza i pokazuje alerty
+				iPhone’a; może odrzucić, zablokować lub wysłać do Coacha
+				dopiero wtedy, gdy ma ustawiony kod. Zegarek
+				z Wear OS przechowuje tylko liczbę tego, co czeka na
+				Ciebie, czyszczoną, gdy telefon się wyloguje albo
+				zegarek zostanie zablokowany; nie przechowuje sesji ani
+				klucza, komunikuje się tylko z Twoim sparowanym
+				telefonem, nigdy nie zatwierdza i może odrzucić,
+				zablokować lub wysłać do Coacha tylko wtedy, gdy ma
+				blokadę ekranu i jest odblokowany. Oba zegarki wysyłają
+				to, co mówisz do Coacha, tylko jako tekst, przez
+				telefon, gdy już zezwolisz na AI. Własna usługa
+				rozpoznawania mowy zegarka, Apple lub Google, zamienia
+				Twoje słowa na ten tekst. Na komputerze z Windows lub
+				z Linuksem albo na Macu z aplikacją na macOS 12 alerty
+				tworzy sama aplikacja, gdy działa, bez tokenu push i bez
+				udziału żadnej innej firmy. W Windows i na Linuksie
+				pokazują, który taf, co chce zrobić, kwotę, dlaczego
+				i do kiedy; w aplikacji na macOS 12 pokazują słowa KIFF
+				opisujące wywołanie, gdy je włączysz, a zablokowany ekran
+				pokazuje to, na co pozwala ustawienie podglądów Maca.
+				W Windows są wyłączone, dopóki ich nie włączysz,
+				i pokazują tylko „Taf czeka na Ciebie”, gdy ekran jest
+				zablokowany. Alert pokazany przed zablokowaniem ekranu
+				zachowuje swoje szczegóły na liście powiadomień Windows.
+				Na Linuksie są włączone, dopóki ich nie wyłączysz, a to,
+				co pokazuje zablokowany ekran, zależy od Twojego
+				środowiska graficznego. Gdy łączysz aplikację, logujesz się u jej własnego dostawcy. W przypadku aplikacji, w której planque loguje się sama, takiej jak Stripe, lub klucza, który podajesz, planque przechowuje ten token lub klucz dla Twojej firmy w postaci zaszyfrowanej; w przypadku połączenia zarządzanego logowanie przechowuje Composio, usługa połączeń, z którą współpracuje planque, a planque przechowuje tylko zapis połączenia i zatwierdzone przez Ciebie narzędzia (wszystko jako podmiot przetwarzający, zobacz niżej). KIFF używa połączeń zarządzanych tylko dla aplikacji wymienionych na <a href="/pl/subprocessors#composio">/subprocessors</a>. Aplikacja tafs nie ma żadnych trackerów
+				analitycznych ani reklamowych.
+			</li>
+			<li>
+				<strong>Zakupy w App Store</strong> — gdy kupujesz
+				w tafs Solo lub pakiet kredytów, sprzedaje Ci je Apple:
+				Apple jest formalnym sprzedawcą, przyjmuje płatność
+				i przechowuje Twoje dane płatnicze. Apple przekazuje
+				nam, co kupiono, dla którego konta KIFF (losowy
+				identyfikator, który aplikacja dołącza do zakupu),
+				kiedy, identyfikator transakcji Apple, a w przypadku
+				Solo także to, kiedy okres się kończy lub odnawia.
+				Używamy tego, aby dodać kredyty lub plan do Twojego
+				konta. Apple nie przekazuje nam Twojego Apple ID,
+				imienia i nazwiska, adresu e-mail ani karty.
+			</li>
+			<li>
+				<strong>Zakupy w Google Play</strong> — na Androidzie
+				te same zakupy przechodzą przez rozliczenia Google
+				Play: Google przyjmuje płatność i przechowuje Twoje
+				dane płatnicze. Google przekazuje nam, co kupiono, dla
+				którego konta KIFF (ten sam losowy identyfikator),
+				kiedy, token zakupu i identyfikator zamówienia,
+				a w przypadku Solo także to, kiedy okres się kończy lub
+				odnawia, i używamy tego w ten sam sposób. Google nie
+				przekazuje nam Twojego konta Google, imienia
+				i nazwiska, adresu e-mail ani karty.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyLawfulBasesPL() {
+	<section id="lawful-bases">
+		<h2>5. Podstawy prawne przetwarzania</h2>
+		<p>
+			Zgodnie z artykułem 6 RODO opieramy się na następujących
+			podstawach prawnych:
+		</p>
+		<ul>
+			<li>
+				<strong>Wykonanie umowy</strong> (art. 6 ust. 1 lit. b)
+				— przy zakładaniu konta, uwierzytelnianiu, prowadzeniu
+				środowiska wykonawczego w Twoim imieniu, rozliczeniach
+				(gdy są aktywne) i podstawowych funkcjach usługi.
+			</li>
+			<li>
+				<strong>Prawnie uzasadnione interesy</strong> (art. 6
+				ust. 1 lit. f) — na potrzeby bezpieczeństwa,
+				zapobiegania oszustwom, wykrywania nadużyć, telemetrii
+				operacyjnej i ochrony usługi. Wyważamy nasze interesy
+				z Twoimi prawami i na żądanie powiemy Ci, jaki był
+				wynik tego testu równowagi.
+			</li>
+			<li>
+				<strong>Zgoda</strong> (art. 6 ust. 1 lit. a) — dla AI w aplikacji tafs: tego, co jest wysyłane do modelu AI, dzięki któremu działają Coach i Twoje tafy, opisanego <a href="#ai-in-tafs">niżej</a>. Nic nie jest wysyłane, dopóki na to nie zezwolisz, a zgodę możesz wycofać w Koncie. O zgodę poprosilibyśmy też przed ewentualnymi analitycznymi plikami cookie, opcjonalną komunikacją marketingową lub każdym nowym przetwarzaniem, które istotnie rozszerza wykorzystanie Twoich danych. Nie prowadzimy analityki, reklam ani zbędnego śledzenia.
+			</li>
+			<li>
+				<strong>Obowiązek prawny</strong> (art. 6 ust. 1 lit. c)
+				— dla dokumentacji podatkowej (estońska ustawa
+				o rachunkowości, §12, 7 lat), odpowiedzi na zgodne
+				z prawem żądania organów oraz przechowywania wymaganego
+				przepisami o przeciwdziałaniu praniu pieniędzy, o ile
+				mają zastosowanie.
+			</li>
+		</ul>
+		<h3 id="ai-in-tafs">AI w aplikacji tafs</h3>
+		<p>Aplikacja tafs pyta Cię, zanim cokolwiek trafi do AI, tymi słowami:</p>
+		<ul>
+			<li>tafs używa AI Claude firmy Anthropic, by działały Coach i Twoje tafy.</li>
+			<li>Co jest wysyłane: to, co piszesz do Coacha i Twoich tafów, załączone pliki, to, co Twoje połączone aplikacje zwracają tafowi podczas pracy, oraz to, co jest na Twoim ekranie, gdy Coach pomaga Ci w aplikacji.</li>
+			<li>Czego nigdy się nie wysyła: haseł i kluczy używanych przez Twoje połączone aplikacje ani odcisku palca.</li>
+			<li>Anthropic używa tego, by odpowiedzieć, i przechowuje do 30 dni.</li>
+			<li>Nic nie jest wysyłane, dopóki na to nie zezwolisz. Możesz to wycofać w Koncie.</li>
+		</ul>
+		<p>Taf, który działa bez nikogo obecnego w danej chwili (według harmonogramu lub gdy coś przychodzi), opiera się na zgodzie osoby, która go utworzyła lub przejęła, a w przeciwnym razie na zgodzie pierwszej osoby zarządzającej tafami konta, która na to zezwoliła.</p>
+		<p><strong>Gdy wycofasz zgodę,</strong> Coach i Twoje tafy przestają Ci odpowiadać. Taf, którego uruchomienia opierają się na Twojej zgodzie, zostaje wstrzymany: jego harmonogramy się zatrzymują, a to, co przychodzi, czeka. Wznawia pracę, gdy zgoda zostanie udzielona ponownie albo gdy przejmie go z własną zgodą ktoś, kto zarządza tafami konta. Wycofanie zgody nie zmienia tego, co wysłano wcześniej.</p>
+		<p>Anthropic figuruje na <a href="/pl/subprocessors">/subprocessors</a>, wraz z miejscem przetwarzania i przypadkami, w których może przechowywać dane dłużej.</p>
+	</section>
+}
+
+templ privacySubprocessorsPL() {
+	<section id="sub-processors">
+		<h2>6. Podmioty podprzetwarzające</h2>
+		<p>
+			Do świadczenia usługi angażujemy niewielką grupę dostawców.
+			Oficjalna, aktualna lista znajduje się na stronie
+			<a href="/pl/subprocessors">/subprocessors</a>;
+			ta strona jest aktualizowana w ciągu 30 dni od każdej
+			zmiany. Od każdego podmiotu podprzetwarzającego wymagamy,
+			na podstawie pisemnych umów, ochrony równoważnej naszej,
+			w tym unijnych standardowych klauzul umownych, gdy dane
+			osobowe opuszczają UE.
+		</p>
+		<p>
+			O istotnych przypadkach dodania lub zastąpienia podmiotów
+			podprzetwarzających, które mają wpływ na dane osobowe,
+			zawiadamiamy aktywnych klientów z wyprzedzeniem, z prawem
+			do sprzeciwu.
+		</p>
+	</section>
+}
+
+templ privacyTransfersPL() {
+	<section id="transfers">
+		<h2>7. Przekazywanie danych za granicę</h2>
+		<p>
+			Niektóre z naszych podmiotów podprzetwarzających mają
+			siedzibę poza Europejskim Obszarem Gospodarczym, głównie
+			w Stanach Zjednoczonych. Przy każdym takim przekazaniu
+			opieramy się na co najmniej jednym z następujących
+			zabezpieczeń:
+		</p>
+		<ul>
+			<li>
+				<strong>Ramy ochrony danych UE–USA</strong> — dla
+				podmiotów podprzetwarzających z USA, które uzyskały
+				certyfikację w tych ramach. Decyzja stwierdzająca
+				odpowiedni stopień ochrony obowiązuje od połowy 2023 r.;
+				śledzimy wszelkie zmiany jej statusu.
+			</li>
+			<li>
+				<strong>Standardowe klauzule umowne</strong> — moduł 2
+				(administrator–podmiot przetwarzający) dla naszych
+				bezpośrednich podmiotów podprzetwarzających i moduł 3
+				(podmiot przetwarzający–podmiot podprzetwarzający) tam,
+				gdzie występuje łańcuch podmiotów przetwarzających.
+				Stosujemy klauzule zatwierdzone przez Komisję w 2021 r.
+			</li>
+			<li>
+				<strong>Środki uzupełniające</strong> — tam, gdzie
+				ocena ryzyka wskazuje, że uzasadnione są dodatkowe
+				zabezpieczenia (szyfrowanie w transmisji
+				i w spoczynku, rejestrowanie dostępu, minimalizacja
+				danych).
+			</li>
+		</ul>
+		<p>
+			O konkretny instrument przekazania stosowany wobec danego
+			podmiotu podprzetwarzającego możesz zapytać, pisząc na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ privacyRetentionPL() {
+	<section id="retention">
+		<h2>8. Okres przechowywania</h2>
+		<p>
+			Przechowujemy dane osobowe przez najkrótszy okres zgodny
+			z celami, dla których je przetwarzamy, i z każdym mającym
+			zastosowanie obowiązkiem prawnym.
+		</p>
+		<ul>
+			<li>
+				<strong>Metadane konta i logowania</strong> — do
+				usunięcia konta. W aplikacji tafs właściciel usuwa je
+				w Konto → <em>Usuń konto</em>. Konto założone
+				w witrynie jest usuwane po wiadomości e-mail na adres
+				<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>,
+				w miesięcznym terminie z art. 12 ust. 3 RODO.
+				W obu przypadkach klucze konta przestają działać
+				natychmiast. Usunięcia w aplikacji tafs nie da się
+				cofnąć: czaty tafs, notatki i połączenia konta są
+				kasowane natychmiast, a to, co przechowuje KIFF, jest
+				kasowane w ciągu 30 dni. Po usunięciu w witrynie
+				przechowujemy dane konta przez 30-dniowy okres karencji,
+				na wypadek gdyby właściciel chciał je odzyskać,
+				a potem je kasujemy.
+			</li>
+			<li>
+				<strong>Rekordy kluczy API</strong> — do usunięcia
+				konta, także po unieważnieniu klucza. Klucz należący do
+				połączenia logowania agenta jest usuwany razem z tym
+				połączeniem, 30 dni po jego zakończeniu.
+			</li>
+			<li>
+				<strong>Pliki cookie sesji</strong> — do wygaśnięcia
+				(domyślnie 24 godziny) lub do wylogowania.
+			</li>
+			<li>
+				<strong>Logi dostępu reverse proxy</strong> — do 90
+				dni, potem agregowane lub usuwane.
+			</li>
+			<li>
+				<strong>Logi usług</strong> — to, co usługi KIFF
+				i planque zapisują podczas działania: błędy i żądania,
+				które mogą wskazywać konto, osobę lub agenta. 30 dni,
+				potem usuwane.
+			</li>
+			<li>
+				<strong>Kopie zapasowe</strong> — kopia zapasowa bazy
+				danych KIFF jest wykonywana codziennie i szyfrowana,
+				a każda kopia jest przechowywana 7 dni, więc usunięty
+				rekord znika z nich w ciągu 7 dni. Magazyny danych tafs i
+				planque przechowują przez 35 dni szyfrowane kopie do
+				odtwarzania do punktu w czasie, używane wyłącznie do
+				odtworzenia magazynu po awarii, więc usunięty rekord znika
+				z nich w ciągu 35 dni.
+			</li>
+			<li>
+				<strong>Dane audytowe tenanta</strong> — przechowywane
+				jako podmiot przetwarzający, zgodnie z konfiguracją
+				tenanta klienta. Domyślnie: przechowywane przez cały
+				okres istnienia tenanta; usuwane przy usunięciu
+				tenanta. Zobacz
+				<a href="/pl/security#deletion">/security#deletion</a>.
+			</li>
+			<li>
+				<strong>Wywołania przez bramę KIFF</strong> —
+				argumenty wywołania do chwili, gdy zostanie wysłane,
+				odrzucone lub się nie powiedzie, potem usuwane; wynik
+				narzędzia przez 24 godziny, potem usuwany. Zapis
+				decyzji i skrót (hash) argumentów są przechowywane jako
+				dane audytowe tenanta. Zobacz
+				<a href="/pl/security#data-kept">/security#data-kept</a>.
+			</li>
+			<li>
+				<strong>Wykorzystanie</strong> — dla każdego wywołania
+				przez bramę, gdy się zakończy: który agent je wykonał,
+				narzędzie oraz to, czy liczyło się jako akcja, czy było
+				bezpłatne (i dlaczego). Dla każdego uruchomienia tafa
+				lub Coacha, gdy się zakończy: taf, kiedy, kredyty
+				zużyte przez jego AI oraz to, czy się liczyły, a jeśli
+				nie, to dlaczego. Do usunięcia konta; to, co jest
+				przekazywane naszemu operatorowi płatności na potrzeby
+				rozliczeń, jest przechowywane z dokumentacją
+				rozliczeniową.
+			</li>
+			<li>
+				<strong>Połączenia logowania agenta</strong> — który
+				agent, nazwa aplikacji, kto na nie pozwolił, kiedy
+				i jego ostatnie użycie: dopóki połączenie jest aktywne,
+				a potem 30 dni po jego zakończeniu (przez ten czas
+				pozostaje na liście w panelu), po czym jest usuwane
+				razem z tokenami i kluczem API. Wszystko to jest
+				usuwane razem z kontem.
+			</li>
+			<li>
+				<strong>tafs</strong> — token push urządzenia, dopóki
+				się nie wylogujesz z aplikacji, nie usuniesz urządzenia
+				albo dopóki Apple lub Google nie zgłosi, że token
+				przestał istnieć. Klucz publiczny, nazwa, platforma
+				i daty urządzenia, dopóki go używasz; gdy je wylogujesz,
+				zostaje oznaczone jako usunięte i jest przechowywane do
+				usunięcia konta, aby KIFF mógł odrzucić spóźnioną
+				odpowiedź z niego i pokazać, które urządzenie podpisało
+				wcześniejszą. Klucz publiczny, identyfikator i nazwa
+				klucza dostępu są przechowywane tak jak dane jego
+				urządzenia. Komputer przechowuje swoją sesję najwyżej
+				90 dni albo do wylogowania. To, co tafs
+				przechowuje dla Twojej firmy, jest przechowywane jako
+				podmiot przetwarzający: uruchomienia i czaty tafa, wraz
+				z podsumowaniem czatu (i Setup), przez 30 dni,
+				to, co zwracają Twoje aplikacje, tylko do końca
+				uruchomienia (w czacie to, co taf jedynie odczytał,
+				jest przechowywane w postaci zaszyfrowanej na potrzeby
+				jego kolejnych wiadomości, używane, dopóki czat nie
+				jest bezczynny przez godzinę, a najwyżej przez cztery
+				godziny od odczytu, po czym jest automatycznie usuwane,
+				w ciągu kilku dni), a jego notatki pamięci do
+				usunięcia
+				tafa; token lub klucz połączenia w planque albo logowanie połączenia zarządzanego w Composio, dopóki go nie rozłączysz, a zapis jego zatwierdzeń do zamknięcia
+				konta; zobacz
+				<a href="/pl/legal/dpa#annex-4">Załącznik 4 do DPA</a>.
+			</li>
+			<li>
+				<strong>Dokumentacja rozliczeniowa</strong> — 7 lat od
+				końca roku obrotowego (estońska ustawa o rachunkowości,
+				§12).
+			</li>
+			<li>
+				<strong>Zakupy w App Store i Google Play</strong> —
+				to, co Apple lub Google przekazały nam o każdym
+				zakupie, pozostaje na Twoim koncie do usunięcia konta.
+				Ich raporty sprzedaży i wypłat, które przechowujemy
+				jako dokumentację rozliczeniową przez 7 lat, nie
+				wskazują Ciebie.
+			</li>
+			<li>
+				<strong>Korespondencja ze wsparciem</strong> — 3 lata
+				od ostatniego kontaktu, potem usuwana.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyRightsPL() {
+	<section id="rights">
+		<h2>9. Twoje prawa</h2>
+		<p>
+			Na podstawie RODO masz następujące prawa dotyczące Twoich
+			danych osobowych:
+		</p>
+		<ul>
+			<li><strong>Dostęp</strong> (artykuł 15) — potwierdzenie, czy przetwarzamy Twoje dane, oraz ich kopia.</li>
+			<li><strong>Sprostowanie</strong> (artykuł 16) — poprawienie danych nieprawidłowych lub niekompletnych.</li>
+			<li><strong>Usunięcie</strong> (artykuł 17) — usunięcie Twoich danych, z wyjątkami wynikającymi z prawnych obowiązków przechowywania.</li>
+			<li><strong>Ograniczenie</strong> (artykuł 18) — wstrzymanie przetwarzania na czas rozstrzygania sporu.</li>
+			<li><strong>Przenoszenie</strong> (artykuł 20) — eksport przekazanych przez Ciebie danych w formacie nadającym się do odczytu maszynowego.</li>
+			<li><strong>Sprzeciw</strong> (artykuł 21) — wobec przetwarzania opartego na prawnie uzasadnionych interesach; przestajemy, chyba że wykażemy nadrzędne podstawy.</li>
+			<li><strong>Wycofanie zgody</strong> (art. 7 ust. 3) — dla każdego przetwarzania opartego na zgodzie, np. AI w aplikacji tafs (w Koncie, zob. <a href="#ai-in-tafs">wyżej</a>). Wycofanie nie wpływa na wcześniejsze, zgodne z prawem przetwarzanie.</li>
+		</ul>
+		<p>
+			Aby skorzystać z któregokolwiek z tych praw, napisz na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Odpowiadamy w ciągu jednego miesiąca, zgodnie z art. 12
+			ust. 3; przy złożonych żądaniach możemy przedłużyć ten
+			termin o najwyżej dwa kolejne miesiące i poinformujemy Cię,
+			jeśli to zrobimy.
+		</p>
+		<h3 id="export-chats">Twoje własne czaty tafs</h3>
+		<p>
+			W aplikacji tafs Konto →  Eksportuj moje czaty
+			pobiera Twoje własne czaty z każdym tafem, łącznie
+			z czatami z Coachem, nazwy załączonych przez Ciebie plików
+			i Twoje własne notatki, jako czytelny plik i jako JSON.
+			Wyeksportować je możesz tylko Ty: administrator ani
+			właściciel konta nie może, a eksport konta KIFF ich nie
+			obejmuje.
+		</p>
+		<h3 id="delete-account">Usuwanie konta tafs</h3>
+		<p>
+			tafs to aplikacja KIFF. Aby usunąć swoje konto tafs i jego
+			dane:
+		</p>
+		<ol>
+			<li>Otwórz aplikację tafs i zaloguj się.</li>
+			<li>Przejdź do ekranu Konto, a potem dotknij <em>Usuń konto</em>.</li>
+			<li>Potwierdź. Usunięcia konta nie da się cofnąć.</li>
+		</ol>
+		<p>
+			<em>Usuń konto</em> widzi osoba, która może usunąć konto
+			firmy, zwykle jego właściciel. Jeśli nie widzisz tej opcji
+			albo nie masz już aplikacji, napisz na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			z adresu, którym się logujesz, a usuniemy Twoje dane
+			w ciągu jednego miesiąca.
+		</p>
+		<p>
+			Co jest usuwane: klucze konta przestają działać
+			natychmiast. Jego tafs, czaty, notatki, załączone pliki
+			i połączenia są kasowane natychmiast, a z ich kopii do
+			odtwarzania do punktu w czasie w ciągu 35 dni. To, co KIFF
+			przechowuje dla konta, jest kasowane w ciągu 30 dni,
+			a z kopii zapasowych w ciągu kolejnych 7 dni. Logi usług
+			wskazujące konto znikają w ciągu 30 dni. Dane audytowe
+			tenanta są usuwane razem z tenantem. Poszczególne rodzaje
+			danych opisuje sekcja <a href="#retention">Okres
+			przechowywania</a>.
+		</p>
+		<p id="delete-data">
+			Aby usunąć część swoich danych i zachować konto:
+			w aplikacji usuń czat, a razem z nim znikną jego
+			wiadomości i załączone pliki; usuń tafa, a razem z nim
+			znikną jego czaty, notatki i połączenia. W każdej innej
+			sprawie napisz na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			i podaj, co usunąć. Robimy to w ciągu jednego miesiąca.
+		</p>
+		<p>
+			Masz prawo wnieść skargę do organu nadzorczego. Naszym
+			wiodącym organem nadzorczym jest
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">estońska Inspekcja Ochrony Danych (Andmekaitse Inspektsioon)</a>.
+			Możesz też wnieść skargę do organu nadzorczego w państwie
+			członkowskim, w którym mieszkasz.
+		</p>
+	</section>
+}
+
+templ privacyCookiesPL() {
+	<section id="cookies">
+		<h2>10. Pliki cookie</h2>
+		<p>
+			Ustawiamy trzy pliki cookie; wszystkie są niezbędne,
+			własne, wysyłane tylko przez HTTPS i nieczytelne dla
+			skryptów na stronie. Według unijnych przepisów
+			o e-prywatności nie wymagają zgody; wymieniamy je, aby było
+			wiadomo, że istnieją. Szczegóły zawiera
+			<a href="/pl/cookies">polityka plików cookie</a>.
+		</p>
+		<ul>
+			<li>
+				<strong><code>kiff_session</code></strong> — utrzymuje
+				Twoje zalogowanie. Podpisany plik cookie sesji, który
+				zawiera Twój identyfikator logowania, adres e-mail oraz
+				imię i nazwisko, a także dane uwierzytelniające, których
+				panel używa w Twoim imieniu. Ustawiany dla
+				<code>.kiff.dev</code>. Pozostaje 24 godziny lub do
+				wylogowania.
+			</li>
+			<li>
+				<strong><code>kiff_flash</code></strong> — przenosi
+				jednorazową wiadomość na następną stronę, na przykład
+				„Twój klucz został utworzony”. Podpisany; nowego klucza
+				nigdy w nim nie ma. Ustawiany dla
+				<code>.kiff.dev</code>. Usuwany, gdy odczyta go
+				następna strona, a najpóźniej po 5 minutach.
+			</li>
+			<li>
+				<strong><code>kiff_cb_attempts</code></strong> — liczy,
+				ile razy strona logowania została przeładowana, aby
+				zatrzymać logowanie, które wpadło w pętlę. Wysyłany
+				tylko do tej strony. Pozostaje 5 minut i jest usuwany,
+				gdy logowanie się zaczyna lub udaje.
+			</li>
+		</ul>
+		<p>
+			Nie używamy analitycznych plików cookie, reklamowych plików
+			cookie ani żadnych trackerów innych firm. Jeśli
+			kiedykolwiek je dodamy, pokażemy baner zgody, zanim plik
+			cookie zostanie ustawiony, zgodnie z przepisami
+			o e-prywatności i wytycznymi EROD z 2023 r. dotyczącymi
+			technologii śledzenia.
+		</p>
+		<p>
+			Jeśli logujesz się przez Clerk (nasz podmiot
+			podprzetwarzający do uwierzytelniania), Clerk ustawia też
+			pliki cookie we własnej domenie frontendowej
+			(<code>clerk.kiff.dev</code>). Te pliki cookie są
+			niezbędne, aby Clerk rozpoznawał Cię w trakcie logowania,
+			i podlegają polityce prywatności Clerk oraz naszej.
+			Szczegóły znajdziesz na liście podmiotów
+			podprzetwarzających.
+		</p>
+	</section>
+}
+
+templ privacySecurityPL() {
+	<section id="security">
+		<h2>11. Bezpieczeństwo</h2>
+		<p>
+			Nasze techniczne i organizacyjne środki bezpieczeństwa są
+			opisane na stronie <a href="/pl/security">/security</a>.
+			Obejmują izolację tenantów w warstwie bazy danych,
+			TLS 1.2+ w transmisji, szyfrowanie w spoczynku domyślnymi
+			mechanizmami dostawcy usługi zarządzanej oraz kontrolę
+			dostępu opartą na zasadzie najmniejszych uprawnień.
+		</p>
+		<p>
+			O naruszeniu ochrony danych osobowych zawiadamiamy
+			klientów, których ono dotyczy, bez zbędnej zwłoki
+			i w ciągu 72 godzin od potwierdzenia, zgodnie
+			z artykułem 33 RODO. Zawiadomienie obejmuje charakter
+			naruszenia, kategorie i przybliżoną liczbę osób, których
+			dane dotyczą, oraz rekordów, których dotyczy naruszenie,
+			prawdopodobne konsekwencje oraz środki zastosowane lub
+			proponowane.
+		</p>
+	</section>
+}
+
+templ privacyChildrenPL() {
+	<section id="children">
+		<h2>12. Dzieci</h2>
+		<p>
+			KIFF Cloud to produkt infrastrukturalny dla programistów,
+			nieskierowany do dzieci. Nie zbieramy świadomie danych
+			osobowych od dzieci poniżej 16 lat. Jeśli uważasz, że
+			dziecko przekazało nam dane osobowe, napisz na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>,
+			a my je usuniemy.
+		</p>
+	</section>
+}
+
+templ privacyAutomatedPL() {
+	<section id="automated">
+		<h2>13. Zautomatyzowane podejmowanie decyzji</h2>
+		<p>
+			Środowisko wykonawcze KIFF Cloud podejmuje deterministyczne
+			decyzje według polityk na danych wysyłanych przez naszych
+			klientów. Nie są to decyzje dotyczące Ciebie, które
+			wywołują skutki prawne lub w podobny sposób istotnie na
+			Ciebie wpływają, w rozumieniu artykułu 22 RODO; są to
+			decyzje dotyczące akcji klienta (zwrotów, zamówień,
+			wiadomości itd.) wykonywanych według własnej polityki
+			klienta.
+		</p>
+		<p>
+			Klienci, którzy używają KIFF Cloud do podejmowania decyzji
+			wpływających na ich własnych użytkowników końcowych, sami
+			odpowiadają za zgodność z artykułem 22. Nasze potwierdzenia
+			kontroli zaprojektowano tak, aby dawały tym klientom ślad
+			audytowy potrzebny do wykazania nadzoru ze strony
+			człowieka, ale prawny obowiązek zapewnienia tego nadzoru
+			spoczywa na kliencie.
+		</p>
+	</section>
+}
+
+templ privacyChangesPL() {
+	<section id="changes">
+		<h2>14. Zmiany tej polityki</h2>
+		<p>
+			Możemy od czasu do czasu aktualizować tę politykę.
+			O istotnych zmianach zawiadamiamy aktywnych klientów
+			e-mailem oraz wyraźnym banerem na tej stronie przez co
+			najmniej 30 dni. Zmiany nieistotne publikujemy z nową datą
+			„ostatniej aktualizacji”.
+		</p>
+	</section>
+}
+
+templ privacyContactPL() {
+	<section id="contact">
+		<h2>15. Kontakt</h2>
+		<p>
+			Pytania o prywatność i żądania dotyczące praw:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p>
+			Formalne zawiadomienia prawne do Kiff Agents OÜ:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			lub pocztą na adres Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Estonia.
+		</p>
+		<p>
+			Wiodący organ nadzorczy w sprawach skarg:
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">estońska Inspekcja Ochrony Danych (Andmekaitse Inspektsioon)</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Wersja dokumentu:</strong> v0.1.<br/>
+			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+		</p>
+	</section>
+}

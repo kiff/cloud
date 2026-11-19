@@ -1,0 +1,151 @@
+<h1 id="reusable-operational-domains">Reusable operational domains</h1>
+
+<p>A <strong>domain</strong> is the thing you build once with KIFF: the state, the valid
+actions, the authority and approvals, the outcomes, and the evidence
+that an agentic system would otherwise rebuild around every new agent. A
+domain is the operational contract your software runs against — and the
+unit you reuse.</p>
+
+<p>That is the apex idea. The decision, the controls, the cards you issue
+against it, the receipts, and Govern are all things a domain <em>has</em>. A
+<a href="/docs/archive/2026-10-10/kiff-cards">KIFF Card</a> can only narrow what the domain already
+declares — which is why the domain comes first. Start here, and the rest
+of these pages are detail.</p>
+
+<h2 id="what-a-domain-holds">What a domain holds</h2>
+
+<p>A domain gathers, in one place, the operational facts about a slice of
+your business:</p>
+
+<ul>
+<li><strong>State</strong> — what counts as the current status of an entity (an invoice
+is <code>PENDING</code> or <code>PAID</code>; a refund is <code>REQUESTED</code> or <code>SETTLED</code>), derived
+from the events KIFF has seen.</li>
+<li><strong>Actions</strong> — the consequential operations that can be taken
+(<code>ISSUE_REFUND</code>, <code>CREATE_PAYOUT</code>, <code>PAY_INVOICE</code>) and the states each is
+allowed in.</li>
+<li><strong>Authority and approvals</strong> — who may propose what, what needs a human
+sign-off, and the thresholds that trigger it.</li>
+<li><strong>Outcomes and evidence</strong> — the terminal result of each proposal and
+the signed receipt that proves what was decided, before execution.</li>
+</ul>
+
+<p>A <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Card</a> is issued on top of a domain: it names
+actions the domain defines and narrows how much of them one agent may
+take. A Card can never grant an action the domain does not have, or allow
+it in a state the domain forbids.</p>
+
+<h2 id="reuse-is-the-point">Reuse is the point</h2>
+
+<p>The reason a domain is worth building is that it outlives any single
+agent. Once the operational contract exists, you can:</p>
+
+<ul>
+<li>connect a new agent, or replace the one you have, without rewriting
+what &ldquo;a legitimate refund&rdquo; means;</li>
+<li>put a human, a scheduled job, or a service through the same contract
+the agent acts under;</li>
+<li>change the framework underneath without changing the contract above.</li>
+</ul>
+
+<p>You build the refund domain, the payout domain, the access-change domain
+once. The agents that act through them are interchangeable. That is the
+difference between governing an agent and owning an operational domain.</p>
+
+<h2 id="how-you-build-one">How you build one</h2>
+
+<p>A domain is a <strong><code>kiff.yaml</code> — a versioned artifact that lives in your own
+repository</strong>, like a <code>docker-compose.yml</code>: committed, diffed, and reviewed
+in git alongside the code it governs. You don&rsquo;t hand-edit it in a browser
+form. You author it with your own coding agent, two on-ramps:</p>
+
+<ul>
+<li><strong>Derive from what your agent already does.</strong> Attach the guard to an
+agent you run, in observe mode, and it derives a <strong>starter domain</strong> from
+real traffic — the actions your agent actually calls, ready to review.
+This removes the blank page. See <a href="/docs/archive/2026-10-10/connect-an-agent">connect an existing
+agent</a>.</li>
+<li><strong>Author it with your coding agent.</strong> Install the <a href="/skills/kiff-domains.md">kiff-domains
+skill</a> in Cursor, Claude Code, Codex, or Gemini
+and let your agent write and extend the <code>kiff.yaml</code> against the real
+grammar — states, actions, approvals, permissions, executors — then
+<code>kiff verify</code> it locally.</li>
+</ul>
+
+<p>You bring the finished <code>kiff.yaml</code> to KIFF Cloud to validate and activate
+it. The dashboard&rsquo;s <strong>Build</strong> view is a read-only render of the running
+version — the mirror of what you have deployed, not an editor. The source
+of truth stays in your repo. See <a href="/docs/archive/2026-10-10/framework-quickstart">Build a domain with the framework</a>
+and <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+
+<h2 id="the-cloud-unit-a-governed-operation">The Cloud unit: a governed operation</h2>
+
+<p>When you run a domain on KIFF Cloud, the thing that&rsquo;s counted is a
+<strong>governed operation</strong>: one unique authenticated proposal that KIFF
+evaluates against current state and the active domain contract and
+records with a terminal outcome. Idempotent retries of the same proposal
+do not create another governed operation — the duplicate that state
+refuses is not a second billed event.</p>
+
+<p>Domains, actions, agents, integrations, and development environments are
+<strong>not metered, and there is no cap on how many you create</strong> — build as
+many as you want. They expand what the platform is worth; only governed
+operations are counted.</p>
+
+<p>The model is usage-based, analogous to how Twilio meters messages or
+Stripe meters payments: what you pay for is a <strong>continuous, verifiable
+evidence stream</strong> — every governed operation records a signed,
+tamper-evident receipt — and spend stays predictable through <strong>budgets
+and alerts</strong>, not through limits on the objects you model. See the
+<a href="/pricing">pricing page</a> for how Cloud operation is bought.</p>
+
+<h2 id="running-more-than-one-domain">Running more than one domain</h2>
+
+<p>A workspace is not limited to one domain, and each domain has its own
+lifecycle. The <strong>all-domains view</strong> is the portfolio: one row per domain
+with its state, the freshness of the runtime backing it, its recent
+governed-operation count, and the single next action to take.</p>
+
+<ul>
+<li><strong>Independent posture.</strong> Governance posture (<code>observe</code> / <code>enforce</code>) is
+per domain — one domain can be enforcing while another is still
+observing in observe. You flip a domain&rsquo;s posture from its home page;
+it takes effect on the next decision. See <a href="/docs/archive/2026-10-10/govern">Govern</a>.</li>
+<li><strong>Approvals belong to a domain.</strong> An approval is recorded against the
+domain whose contract required it, and it can only satisfy an action
+in that domain. A key scoped to one domain sees that domain&rsquo;s approval
+queue and no other; a workspace-level identity sees all of them. Two
+domains that happen to share an action name stay separate — an
+approval granted under one never authorizes the other.</li>
+<li><strong>Independent lifecycle.</strong> A domain you&rsquo;re still building appears as a
+<strong>draft</strong> — in the switcher and the portfolio — while your other
+domains keep operating. Adding or drafting a domain never puts the
+whole workspace back into setup.</li>
+<li><strong>Finish a draft with your agent.</strong> A draft&rsquo;s home shows a status
+checklist (runtime observed → action derived → finish with your agent
+→ activate in observe → first decision). The milestones reflect
+observed progress; the only deliberate actions are finishing the
+contract with your coding agent and activating the verified
+<code>kiff.yaml</code>.</li>
+</ul>
+
+<h2 id="honest-boundaries">Honest boundaries</h2>
+
+<ul>
+<li>A domain is <strong>yours</strong>. KIFF decides whether a proposed action conforms
+to the contract you declared; it does not invent authority you didn&rsquo;t
+set, and it never becomes your executor.</li>
+<li>Reuse is a property you build toward, not a marketplace claim. KIFF
+does not yet offer a public exchange of domains authored by other
+customers; reuse here means reuse across your own agents, humans, and
+services.</li>
+</ul>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>The mechanism a domain runs on → <a href="/docs/archive/2026-10-10/what-kiff-is">What KIFF is</a>.</li>
+<li>Issue an agent what it may do → <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Cards</a>.</li>
+<li>Build one locally with the open-source framework → <a href="/docs/archive/2026-10-10/framework-quickstart">Build a domain with the framework</a>.</li>
+<li>See what a decision proves → <a href="/docs/archive/2026-10-10/receipts-and-proof">Receipts &amp; proof packs</a>.</li>
+</ul>

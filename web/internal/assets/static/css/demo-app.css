@@ -1,0 +1,35 @@
+.demo-tour {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 80;
+  width: min(360px, calc(100vw - 36px));
+  border: 1px solid rgba(251, 154, 53, 0.48);
+  border-radius: 12px;
+  color: #f4f1eb;
+  background: rgba(20, 20, 24, 0.97);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.48);
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.demo-tour[hidden] { display: none; }
+.demo-tour-head { padding: 12px 14px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.demo-tour-kicker { color: #fb9a35; font-family: var(--font-mono, monospace); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+.demo-tour-close { padding: 3px 6px; border: 0; color: #8e919b; background: transparent; font-size: 20px; line-height: 1; cursor: pointer; }
+.demo-tour-body { padding: 12px 14px 14px; }
+.demo-tour-body h2 { margin: 0 0 7px; color: #f4f1eb; font-size: 18px; line-height: 1.15; }
+.demo-tour-body p { margin: 0; color: #a9abb3; font-size: 13px; line-height: 1.5; }
+.demo-tour-actions { padding: 0 14px 14px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.demo-tour-actions button { min-height: 34px; padding: 7px 11px; border: 1px solid #34363f; border-radius: 7px; color: #d8d8dc; background: #191a20; font: inherit; font-size: 12px; cursor: pointer; }
+.demo-tour-actions button:last-child { border-color: #fb9a35; color: #17110b; background: #fb9a35; }
+.demo-tour-actions button:disabled { opacity: .35; cursor: default; }
+.demo-tour-progress { height: 3px; border-radius: 99px; overflow: hidden; background: #30313a; }
+.demo-tour-progress i { display: block; height: 100%; background: #fb9a35; transition: width 180ms ease; }
+.demo-tour-launch { position: fixed; right: 24px; bottom: 22px; z-index: 79; padding: 9px 13px; border: 1px solid rgba(251,154,53,.48); border-radius: 999px; color: #f4f1eb; background: rgba(20,20,24,.96); box-shadow: 0 12px 36px rgba(0,0,0,.38); font-size: 12px; cursor: pointer; }
+.demo-fixture-badge { position: fixed; top: 68px; right: 18px; z-index: 50; padding: 5px 8px; border: 1px solid #34363f; border-radius: 999px; color: #92959f; background: rgba(16,17,22,.9); font-family: var(--font-mono, monospace); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+.demo-tour-focus { position: relative; z-index: 2; outline: 2px solid rgba(251,154,53,.8); outline-offset: 4px; border-radius: 6px; }
+
+@media (max-width: 720px) {
+  .demo-tour, .demo-tour-launch { right: 12px; bottom: 12px; }
+  .demo-fixture-badge { top: 68px; right: 10px; }
+}

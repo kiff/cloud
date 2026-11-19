@@ -1,0 +1,1256 @@
+{
+  "source": "apps/api, apps/gateway",
+  "count": 125,
+  "invariants": [
+    {
+      "statement": "only the account's connector key says a vendor signed a connection out, and each sign-out alerts once an hour at most.",
+      "category": "abuse",
+      "attack": "an agent's key or a person's session sends sign-out alerts for another taf, or a flapping vendor floods the owner's phone",
+      "refused": "anything but a connector key gets 403; a second alert for the same grant within the hour is dropped",
+      "test": "TestConnectionSignedOutAlertsOnceFromTheConnectorKey",
+      "file": "apps/api/internal/handlers/connection_signed_out_test.go",
+      "line": 20,
+      "package": "handlers"
+    },
+    {
+      "statement": "a refund is never counted in another currency than the charge's.",
+      "category": "accounting",
+      "attack": "a refund tool whose Card counts euros is called on a charge in dollars",
+      "refused": "refused before KIFF decides it, as a currency mismatch; nothing is sent or counted",
+      "test": "TestARefundOnAChargeInAnotherCurrencyIsRefused",
+      "file": "apps/gateway/internal/gateway/refund_crash_test.go",
+      "line": 166,
+      "package": "gateway"
+    },
+    {
+      "statement": "a refund whose answer was lost still takes from its charge's remainder until the processor lists it.",
+      "category": "accounting",
+      "attack": "a second request asks for the rest of a charge while the first refund's answer is lost and the processor doesn't list it yet",
+      "refused": "the lost refund counts as pending, so the second is refused over what's left or held for the owner as a second refund A €20 refund is sent and its answer is lost, and the processor doesn't list it yet. Another request then asks €90 on the same €100 charge: the case counts the lost €20 as pending, so €90 is over what's left, and nothing is sent.",
+      "test": "TestAnUnknownRefundCountsInTheNextCaseOnItsCharge",
+      "file": "apps/gateway/internal/thune/inflight_test.go",
+      "line": 21,
+      "package": "thune"
+    },
+    {
+      "statement": "an approve-once waives a Card's total only when it is a count of 0 the owner reviewed on that hold (\"Each call asks you first\"), and only for that call: the call counts as used, and the next one asks again. A non-zero total, or any money total, is never waived by approving once.",
+      "category": "accounting",
+      "attack": "approve one call on a Card that asks about each call, then send more calls hoping the approval carries them; or approve once past a 1-a-day count or a money total",
+      "refused": "the next call is held again; a non-zero count or a money total gets can_approve_once false, and an approve-once of it waits as approved_no_room",
+      "test": "TestApproveOnceWaivesOnlyACountOfZero",
+      "file": "apps/api/internal/mandate/exception_test.go",
+      "line": 436,
+      "package": "mandate"
+    },
+    {
+      "statement": "reading the Card is not a governed call. It is answered by the gateway: nothing is recorded, decided, drawn or sent to a tool.",
+      "category": "accounting",
+      "attack": "call kiff_card and expect it to count against a limit or reach a connected tool",
+      "refused": "CallTool answers kiff_card before any invocation is begun",
+      "test": "TestCardToolReadsWithoutDeciding",
+      "file": "apps/gateway/internal/gateway/card_test.go",
+      "line": 82,
+      "package": "gateway"
+    },
+    {
+      "statement": "an approval cannot carry an action past a Card's total. If the total has no room when the approved action is retried, it waits and nothing is authorized.",
+      "category": "accounting",
+      "attack": "approve one refund over the per-action limit, spend the Card's total down, then retry the approved refund",
+      "refused": "the retry is answered approved_no_room: the approval is kept, nothing is drawn or authorized",
+      "test": "TestNewCumulativeBreachAfterApprovalWaitsForRoom",
+      "file": "apps/api/internal/mandate/exception_test.go",
+      "line": 338,
+      "package": "mandate"
+    },
+    {
+      "statement": "no bonus without its audit entry. If the entry can't be written, the bonus is taken back.",
+      "category": "accounting",
+      "attack": "grant bonus credits while the operator audit log is failing",
+      "refused": "grantBonus takes the credits back when the audit write fails",
+      "test": "TestOps_BonusCredits_AuditFailureTakesTheBonusBack",
+      "file": "apps/api/internal/handlers/ops_bonus_test.go",
+      "line": 100,
+      "package": "handlers"
+    },
+    {
+      "statement": "a Card's amounts are counted in its own currency only.",
+      "category": "authority",
+      "attack": "refund $300 on a USD payment against a Card limited to 50 EUR",
+      "refused": "KIFF reads the payment's currency first; a call in another currency, or one it can't check, is refused and nothing is sent",
+      "test": "TestACallInAnotherCurrencyIsNotSent",
+      "file": "apps/gateway/internal/gateway/unit_test.go",
+      "line": 53,
+      "package": "gateway"
+    },
+    {
+      "statement": "once KIFF accepts a phone's signature for another service, that service saves the account's contract and permit targets with the phone's session, each once, within a minute, and nothing else (kiff/tafs#206).",
+      "category": "authority",
+      "attack": "a phone's session writes the contract with no grant, reuses a grant, uses it on another route, after it ended, or with another session",
+      "refused": "403 without a live grant of this session, 409 for a second use, and no route but the two writes",
+      "test": "TestADeviceGrantAdmitsTheTwoWritesOnce",
+      "file": "apps/api/internal/handlers/device_signature_test.go",
+      "line": 98,
+      "package": "handlers"
+    },
+    {
+      "statement": "the owner's halt binds in observe mode too. Observe makes KIFF's decisions advisory while an account watches what enforcing would do; a halt is the owner stopping an agent, not a decision to watch.",
+      "category": "authority",
+      "attack": "an agent of an account in observe mode keeps acting after the owner halts it, because the refusal comes back advisory",
+      "refused": "the halted refusal is labelled observe and is not advisory",
+      "test": "TestAHaltBindsInObserveMode",
+      "file": "apps/api/internal/handlers/halt_refusal_test.go",
+      "line": 85,
+      "package": "handlers"
+    },
+    {
+      "statement": "while the owner has halted an agent, or its whole account, KIFF decides none of its calls: a new call, a retry of one decided before and a held call asked again are all refused (halted), so nothing is sent and no permit is issued. Once resumed, only new calls go through: what was asked before the halt stays refused.",
+      "category": "authority",
+      "attack": "an agent keeps calling after the owner halts it, retries an operation allowed before the halt, or waits out the halt to collect a held call the owner had approved",
+      "refused": "every decision for a halted agent or account is blocked with halted; after a resume, an operation first decided before the halt is blocked with halted too",
+      "test": "TestAHaltRefusesEveryCallAndNothingFromBeforeComesBack",
+      "file": "apps/api/internal/handlers/halt_refusal_test.go",
+      "line": 23,
+      "package": "handlers"
+    },
+    {
+      "statement": "a hard refusal has nothing to approve. A call past a Card set to refuse is refused with no held call behind it, so the owner's list shows nothing to answer, and approving it by its call's id finds nothing.",
+      "category": "authority",
+      "attack": "a call past a Card set to refuse, then an approval of that refusal, by the call's id or by guessing a held call's",
+      "refused": "no held call is made, the owner's list is empty, and approve-once answers 404",
+      "test": "TestAHardRefusalHasNothingToApprove",
+      "file": "apps/api/internal/handlers/gate_c_test.go",
+      "line": 21,
+      "package": "handlers"
+    },
+    {
+      "statement": "a refund's later state comes from the connection's signed event, and changes only what it says.",
+      "category": "authority",
+      "attack": "an unsigned or forged event says a refund KIFF sent failed, to get the Card's room back",
+      "refused": "an event without the connection's signature is refused; a signed one records the refund's state once, sends nothing, and frees the request only when the money didn't move",
+      "test": "TestARefundEventRecordsTheRefundsLaterState",
+      "file": "apps/gateway/internal/gateway/refund_test.go",
+      "line": 419,
+      "package": "gateway"
+    },
+    {
+      "statement": "KIFF never changes a refund's amount quietly.",
+      "category": "authority",
+      "attack": "an agent asks for more than the charge has left",
+      "refused": "refused before KIFF decides it, with what is left; nothing is sent or counted",
+      "test": "TestARefundOverTheRemainderIsRefusedBeforeDeciding",
+      "file": "apps/gateway/internal/gateway/refund_test.go",
+      "line": 237,
+      "package": "gateway"
+    },
+    {
+      "statement": "one refund request is handled once, whichever taf picks it up.",
+      "category": "authority",
+      "attack": "the same customer request reaches two tafs, each with its own key",
+      "refused": "the second is told the first is handling it, and nothing is sent for it",
+      "test": "TestARefundRequestIsHandledOnceAcrossTafs",
+      "file": "apps/gateway/internal/gateway/refund_test.go",
+      "line": 185,
+      "package": "gateway"
+    },
+    {
+      "statement": "a refund's read-back compares the refund this call made, found by its marker, never the newest refund on the payment.",
+      "category": "authority",
+      "attack": "the owner refunds 2,000 in the vendor's dashboard between a 500 refund and KIFF's read-back",
+      "refused": "the read-back finds the call's own refund by the operation id the connection wrote on it, and matches; a read with no refund marked with the call is flagged and pauses the operation",
+      "test": "TestARefundsReadBackFindsItsOwnRefundByItsMarker",
+      "file": "apps/gateway/internal/gateway/verify_test.go",
+      "line": 228,
+      "package": "gateway"
+    },
+    {
+      "statement": "a phone's approval key is replaced only when its own person approves the new key in their browser, after the new key proved itself.",
+      "category": "authority",
+      "attack": "code holding the phone's session and device key (no prompt) swaps in an approval key of its own, or another person approves the swap",
+      "refused": "the device key alone only asks; the new key must sign the request; only the session's person, in the browser, approves; nothing changes before that",
+      "test": "TestARelinkReplacesTheApprovalKeyOnlyWhenItsPersonApproves",
+      "file": "apps/api/internal/handlers/device_relink_test.go",
+      "line": 148,
+      "package": "handlers"
+    },
+    {
+      "statement": "a person's run grant goes with each call KIFF decides, and a grant KIFF refuses sends nothing. The gateway never decides on the grant itself: only KIFF can say who it is for.",
+      "category": "authority",
+      "attack": "a run whose person may no longer use the agent, or with a forged grant, issues a refund",
+      "refused": "KIFF refuses the call on the grant and the tool receives nothing",
+      "test": "TestARunGrantGoesWithEachDecision",
+      "file": "apps/gateway/internal/gateway/grant_test.go",
+      "line": 11,
+      "package": "gateway"
+    },
+    {
+      "statement": "a tool whose profile says it moves or records money, on a connection where KIFF holds the key, asks the owner on every call: KIFF is told kiff_owner_ask with the code sealed_money, for real calls and trials, so no Card's room lets one through without a person.",
+      "category": "authority",
+      "attack": "refund a small amount through a sealed money tool, well inside the agent's Card, so no person sees it",
+      "refused": "the call's proposal carries kiff_owner_ask, and KIFF holds it for the owner; a tool that moves no money, or one a permit binds, asks nothing extra",
+      "test": "TestASealedMoneyToolAsksItsOwnerEveryCall",
+      "file": "apps/gateway/internal/gateway/owner_ask_test.go",
+      "line": 13,
+      "package": "gateway"
+    },
+    {
+      "statement": "a taf is listed only the account's tools one of its own Cards covers. Another taf's tool on the same account, and a tool of its own connection no Card covers, aren't offered: a call to one is refused, and a refused read stops the taf's writes for its session (a version's trial read through another taf's get_charge, was refused, and refunded nothing).",
+      "category": "authority",
+      "attack": "a taf on an account where another taf holds a Stripe read lists its tools",
+      "refused": "the other taf's read and the taf's own uncovered tool aren't listed; its Card's tool and KIFF's own are",
+      "test": "TestATafIsListedOnlyItsCardsTools",
+      "file": "apps/gateway/internal/gateway/covered_tools_test.go",
+      "line": 72,
+      "package": "gateway"
+    },
+    {
+      "statement": "a trial (agent~trial) reads and halts as its agent, so planque, which asks KIFF about a trial permit's subject, refuses a trial's calls under its agent's halt, and after a resume a trial permit issued before it.",
+      "category": "authority",
+      "attack": "a trial permit issued just before the owner halts the agent is sent through planque within its lifetime, or after the resume",
+      "refused": "the trial's halt is its agent's, with the same halted_at",
+      "test": "TestATrialReadsAsItsAgentsHalt",
+      "file": "apps/api/internal/handlers/halts_test.go",
+      "line": 239,
+      "package": "handlers"
+    },
+    {
+      "statement": "a write whose vendor answer doesn't match what KIFF decided is flagged and its operation paused.",
+      "category": "authority",
+      "attack": "a vendor refunds 700 where the Card decided 500, or a read-back that can't be made",
+      "refused": "the call is recorded as sent and flagged; the operation is paused and nothing more is sent through it until the owner resumes it",
+      "test": "TestAVerifyReadThatDiffersPausesTheOperation",
+      "file": "apps/gateway/internal/gateway/verify_test.go",
+      "line": 47,
+      "package": "gateway"
+    },
+    {
+      "statement": "a write that doesn't carry its amount is limited by the amount its resource has, as KIFF reads it.",
+      "category": "authority",
+      "attack": "answer a 9,000 EUR dispute through a Card that holds anything over 1,000, by leaving the amount out or naming a small one",
+      "refused": "KIFF reads the dispute's amount itself and decides on it; an amount the agent sends is refused, and so is a call whose amount can't be read",
+      "test": "TestAWriteIsLimitedByTheAmountItsResourceHas",
+      "file": "apps/gateway/internal/gateway/amount_test.go",
+      "line": 46,
+      "package": "gateway"
+    },
+    {
+      "statement": "a revision draft changes an agent's Cards only when an owner confirms it, all of them or none, keeping each revised Card's usage so its totals don't start again, and it gives no key.",
+      "category": "authority",
+      "attack": "an agent drafts a revision of its own Card with a higher limit, hoping it applies before an owner confirms, resets the day's totals, or yields a second key",
+      "refused": "nothing changes until an owner confirms; then the Card is revised under the same id with what it used kept, and no claim secret or key comes out of it",
+      "test": "TestAgentDraftRevisesTheAgentsCards",
+      "file": "apps/api/internal/handlers/agent_drafts_revision_test.go",
+      "line": 68,
+      "package": "handlers"
+    },
+    {
+      "statement": "a key bound to an agent cannot author a domain, export or delete the account, or choose what it is for, even when it holds the admin role.",
+      "category": "authority",
+      "attack": "use an admin key bound to an agent to rewrite the contract it is governed by, download every receipt, or delete the account",
+      "refused": "these act for the account's people and require the owner's or an admin's session or a key not bound to an agent",
+      "test": "TestAgentKeyCannotActForTheAccount",
+      "file": "apps/api/internal/handlers/agent_key_account_test.go",
+      "line": 18,
+      "package": "handlers"
+    },
+    {
+      "statement": "a key bound to an agent never holds the tenant_owner or admin role.",
+      "category": "authority",
+      "attack": "mint an agent's key with admin, or grant admin to it later, so domain permissions bound to admin reach the agent",
+      "refused": "minting or granting an account role onto an agent's key is refused, and a stored one resolves without it",
+      "test": "TestAgentKeyCannotHoldAccountRoles",
+      "file": "apps/api/internal/auth/agent_key_test.go",
+      "line": 41,
+      "package": "auth"
+    },
+    {
+      "statement": "an agent's own key cannot issue, share or answer for a Card, even when it holds the admin role.",
+      "category": "authority",
+      "attack": "mint an admin-role key bound to the agent, then issue itself a Card, add itself to another agent's Card, or approve its own held action",
+      "refused": "managing Cards and answering for them require the owner's or an admin's own session or key, never one bound to an agent",
+      "test": "TestAgentKeyCannotManageCards",
+      "file": "apps/api/internal/handlers/shared_card_test.go",
+      "line": 128,
+      "package": "handlers"
+    },
+    {
+      "statement": "a key bound to an agent cannot mint, grant or revoke keys, even when it holds the admin role.",
+      "category": "authority",
+      "attack": "mint an admin key bound to an agent, then use it to mint an unbound admin key and act as the account's owner",
+      "refused": "key management requires the owner's or an admin's session or a key not bound to an agent",
+      "test": "TestAgentKeyCannotManageKeys",
+      "file": "apps/api/internal/auth/agent_key_test.go",
+      "line": 16,
+      "package": "auth"
+    },
+    {
+      "statement": "a key bound to an agent reads only the Cards that agent holds, alone or shared; another agent's Card is not listed and its statement is not found, even by its id. An agent's gateway key does not reach these routes at all.",
+      "category": "authority",
+      "attack": "agent A's key lists the account's Cards, or asks for agent B's Card statement by id",
+      "refused": "gateway keys stop at the gateway route list; other agent keys see only Cards their agent holds",
+      "test": "TestAgentKeyReadsOnlyCardsItsAgentHolds",
+      "file": "apps/api/internal/handlers/mandates_agent_isolation_test.go",
+      "line": 112,
+      "package": "handlers"
+    },
+    {
+      "statement": "reading its Card gives an agent's key no way to change one.",
+      "category": "authority",
+      "attack": "an agent key that can read its Card tries to issue or revoke one",
+      "refused": "issuing and revoking stay gated on the management roles",
+      "test": "TestAgentKeyStillCannotIssueOrRevoke",
+      "file": "apps/api/internal/handlers/mandates_agent_card_test.go",
+      "line": 239,
+      "package": "handlers"
+    },
+    {
+      "statement": "no key bound to an agent, and no runtime key, reads held work: not the list of card exceptions and not one by id, whoever's agent it belongs to or whichever Card it breached, shared or not. Held work carries the call's parameters and the Card's limits.",
+      "category": "authority",
+      "attack": "an agent's gateway or runtime key lists card exceptions, or reads another agent's held call by id",
+      "refused": "reading held work needs the account roles or a person's membership; keys bound to an agent never hold either",
+      "test": "TestAgentKeysCannotReadHeldWork",
+      "file": "apps/api/internal/handlers/mandate_exceptions_isolation_test.go",
+      "line": 24,
+      "package": "handlers"
+    },
+    {
+      "statement": "no key bound to an agent, and no runtime key, watches the account's live decisions: it cannot subscribe to the event stream, so it never receives another agent's decision.",
+      "category": "authority",
+      "attack": "agent A's runtime or gateway key opens GET /v1/me/stream and waits for agent B's decisions",
+      "refused": "the stream is the account's view; it needs the account roles or a person's membership",
+      "test": "TestAgentKeysCannotWatchTheDecisionStream",
+      "file": "apps/api/internal/handlers/stream_isolation_test.go",
+      "line": 67,
+      "package": "handlers"
+    },
+    {
+      "statement": "through the real router, agent A's key reads only Cards agent A holds: not agent B's, by list or by id; a Card they share is visible to both. People and account keys read every Card.",
+      "category": "authority",
+      "attack": "agent A's runtime key lists Cards or reads agent B's Card statement by id",
+      "refused": "the Card list and statement are scoped to the key's agent; unbound runtime keys do not reach them",
+      "test": "TestAgentKeysSeeOnlyTheirOwnCardsThroughTheRouter",
+      "file": "apps/api/cmd/api/runtime_key_boundary_test.go",
+      "line": 440,
+      "package": "main"
+    },
+    {
+      "statement": "a tool that checks KIFF's execution permit never receives an allowed call without one, and that call is reported as not sent.",
+      "category": "authority",
+      "attack": "get an allowed decision for a permit-checking tool with no permit attached",
+      "refused": "the gateway does not forward it and records that it was never sent",
+      "test": "TestAllowedWithoutPermitIsNotSent",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 1081,
+      "package": "gateway"
+    },
+    {
+      "statement": "a request that asks its owner (the gateway's kiff_owner_ask, sent for a money tool on a connection where KIFF holds the key) is held for the owner on every call, however much room the Card has; approving it approves that one call, drawn on the Card's real totals; a Card set to refuse refuses it.",
+      "category": "authority",
+      "attack": "send a small refund through a sealed money tool, well inside the Card, hoping the Card's room lets it through without a person; or reuse one approval for the next call",
+      "refused": "each call is held as owner_required with the gateway's reason; an approved one draws once on the Card and the next is held again; a Card set to refuse refuses it and holds nothing",
+      "test": "TestAnOwnerAskHoldsEveryCallWhateverTheCardsRoom",
+      "file": "apps/api/internal/mandate/owner_ask_test.go",
+      "line": 27,
+      "package": "mandate"
+    },
+    {
+      "statement": "another KIFF service takes a person's act signed on their phone only when KIFF confirms that phone signed that exact request, once, and the person may connect tools (kiff/tafs#206: connecting the account's control server through the gateway).",
+      "category": "authority",
+      "attack": "a phone's session replays a signed request, changes its body, or asks without the right to connect tools; another key asks",
+      "refused": "a replay is 409, another body or path is 403, a role without tools.connect is 403, and only a phone's session may ask",
+      "test": "TestAnotherServiceAsksWhetherThePhoneSignedIt",
+      "file": "apps/api/internal/handlers/device_signature_test.go",
+      "line": 33,
+      "package": "handlers"
+    },
+    {
+      "statement": "A caller cannot escalate its own authority by decorating the actor it submits. Authority is resolved from policy-owned membership keyed by actor id; the roles on the request body carry no authorization power.",
+      "category": "authority",
+      "attack": "Submit an approval request whose body carries actor.roles = [\"admin\"]",
+      "refused": "Roles are resolved from policy for that actor id. The roles in the payload are descriptive metadata with no authorization power",
+      "test": "TestApprovalRequest_BodyActorCannotEscalate",
+      "file": "apps/api/internal/handlers/tenant_runtime_approvals_test.go",
+      "line": 299,
+      "package": "handlers"
+    },
+    {
+      "statement": "an agent's own key cannot grant or deny an approval, even one it may review by role or by grant.",
+      "category": "authority",
+      "attack": "request an approval with an agent's key, then grant it with the same key, which holds the reviewer permission",
+      "refused": "a key bound to an agent never reviews; a person on the account answers the approval",
+      "test": "TestApprovalReview_AgentKeyCannotReview",
+      "file": "apps/api/internal/handlers/tenant_runtime_approvals_test.go",
+      "line": 695,
+      "package": "handlers"
+    },
+    {
+      "statement": "a key cannot grant or deny an approval it asked for, even when it holds the reviewer permission.",
+      "category": "authority",
+      "attack": "ask for an approval with a key that may also review it, naming another actor as the requester, then grant it with the same key",
+      "refused": "the key that asked is recorded with the approval and refused its review; another reviewer answers it",
+      "test": "TestApprovalReview_KeyCannotReviewWhatItAskedFor",
+      "file": "apps/api/internal/handlers/tenant_runtime_approvals_test.go",
+      "line": 736,
+      "package": "handlers"
+    },
+    {
+      "statement": "approve once authorizes exactly one action, the one the owner saw, and does not raise the Card. That action still counts in full toward the Card's totals.",
+      "category": "authority",
+      "attack": "after the owner approves one €1,500 refund once, reuse the approval for a different amount, or send the same proposal again hoping for a second authorization",
+      "refused": "the approval binds to the request's fingerprint and is consumed once; an identical retry replays the same authorization, a changed one is refused, and the full amount is drawn from the Card",
+      "test": "TestApproveOnce",
+      "file": "apps/api/internal/mandate/exception_test.go",
+      "line": 174,
+      "package": "mandate"
+    },
+    {
+      "statement": "the agent's Card read answers only a key bound to an agent; a person or an unbound key has no agent whose Card it could show.",
+      "category": "authority",
+      "attack": "call GET /v1/me/card with a key that is not bound to an agent",
+      "refused": "the handler requires the identity's agent",
+      "test": "TestCardReadNeedsAnAgentKey",
+      "file": "apps/api/internal/handlers/mandates_agent_card_test.go",
+      "line": 226,
+      "package": "handlers"
+    },
+    {
+      "statement": "a subject cannot exceed its cumulative limit, however many individually-permitted actions it proposes. Per-action ceilings bound one mistake; this bounds the day.",
+      "category": "authority",
+      "attack": "propose a further €600 refund after €4,600 has already been refunded today, each one individually under the per-action ceiling",
+      "refused": "the draw is added to the window's running total before the decision, so the 51st compliant action is refused when the 50 before it exhausted the limit",
+      "test": "TestCumulativeLimitRefusesTheActionThatCrossesIt",
+      "file": "apps/api/internal/mandate/mandate_test.go",
+      "line": 52,
+      "package": "mandate"
+    },
+    {
+      "statement": "a call made under a trial its owner started is decided on the trial's Cards alone, drawing on them, and recorded under the trial; a call without it never sees them. Once the trial ends, its calls, held ones included, are refused.",
+      "category": "authority",
+      "attack": "an agent names a trial to get the version's higher limit for its live calls, names another agent's trial, or keeps a held trial call to be approved after the trial ended",
+      "refused": "only the key of the trial's own agent can name it; live calls get the live Card; after the end, the trial's calls are refused with trial_ended",
+      "test": "TestDecideATrialsCallOnItsTrialCards",
+      "file": "apps/api/internal/handlers/proposals_trial_test.go",
+      "line": 123,
+      "package": "handlers"
+    },
+    {
+      "statement": "an API key cannot approve a device sign-in, so an agent's key cannot turn itself into an owner session.",
+      "category": "authority",
+      "attack": "start a CLI sign-in, approve it with an agent's gateway key, and use the developer session it mints, which acts as the account's owner",
+      "refused": "approving a device sign-in requires a signed-in person; an API key gets 403 and no session is minted",
+      "test": "TestDeviceAuth_APIKeyCannotApprove",
+      "file": "apps/api/internal/handlers/device_auth_test.go",
+      "line": 330,
+      "package": "handlers"
+    },
+    {
+      "statement": "A caller cannot grant itself a permission by putting a role on the actor in the request body. The execute gate resolves roles from policy, never from the payload.",
+      "category": "authority",
+      "attack": "POST an action with actor.roles = [\"approver\"] in the request body",
+      "refused": "The execute gate reads roles from policy, never from the payload, and refuses",
+      "test": "TestExecuteGate_BodyRolesCannotEscalate",
+      "file": "apps/api/cmd/api/execute_role_gate_test.go",
+      "line": 160,
+      "package": "main"
+    },
+    {
+      "statement": "An API key past its expiry authenticates nowhere: every route the API registers answers 401 to it, an account key's and an agent's alike, as it does to a revoked key.",
+      "category": "authority",
+      "attack": "A leaked key that was meant to stop working keeps reading or acting after its expiry date",
+      "refused": "authentication checks the key's expires_at against the clock before any route or handler runs",
+      "test": "TestExpiredKeysAuthenticateNowhere",
+      "file": "apps/api/cmd/api/runtime_key_boundary_test.go",
+      "line": 381,
+      "package": "main"
+    },
+    {
+      "statement": "an expired or revoked mandate never widens authority. It is reported as expired rather than falling through to \"no mandate applies\", which would turn an expiry into a grant.",
+      "category": "authority",
+      "attack": "let a mandate lapse, then propose the action it used to bound, hoping the check finds no active mandate and waves it through",
+      "refused": "a lapsed mandate that covers the action is reported as expired, so the decide path refuses instead of treating the subject as unbounded",
+      "test": "TestExpiredMandateDoesNotFallThroughToUnbounded",
+      "file": "apps/api/internal/mandate/mandate_test.go",
+      "line": 125,
+      "package": "mandate"
+    },
+    {
+      "statement": "an external approver's answer cannot go past its grant. Over its per-call ceiling, outside its Card, past a total, after its grant is withdrawn or expires, after the Card changes, or for its own call, the answer is refused and the hold stays as it was.",
+      "category": "authority",
+      "attack": "have a connected approver service answer a held call outside what its grant covers",
+      "refused": "the answer is refused; the call stays held with its deadline unchanged, and nothing is drawn",
+      "test": "TestExternalApproverBoundaries",
+      "file": "apps/api/internal/mandate/external_approver_test.go",
+      "line": 66,
+      "package": "mandate"
+    },
+    {
+      "statement": "a tool cannot speak for KIFF: it cannot write the dev.kiff/ result metadata that clients rely on.",
+      "category": "authority",
+      "attack": "have a tool return _meta[\"dev.kiff/call\"] claiming its call was approved",
+      "refused": "the tool's dev.kiff/ keys are removed from forwarded results, the first time and on replay, and the gateway writes its own call state; the tool's other metadata passes through",
+      "test": "TestForwardedResultCannotSpeakForKIFF",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 950,
+      "package": "gateway"
+    },
+    {
+      "statement": "a gateway key is always bound to an agent. Neither creating a key nor adding a role to one yields a gateway_agent key without an agent.",
+      "category": "authority",
+      "attack": "mint a gateway_agent key with no agent_id, or add gateway_agent to an unbound key",
+      "refused": "key creation and role grants require an agent binding for gateway_agent",
+      "test": "TestGatewayKeyMustBeBoundToAnAgent",
+      "file": "apps/api/internal/auth/agent_key_test.go",
+      "line": 174,
+      "package": "auth"
+    },
+    {
+      "statement": "a trial's writes through the gateway get the decisions the same queue of real calls would get from the agent's Cards, each counting the trial's earlier allowed writes, and KIFF records nothing real for them: no draw, no held call, nothing for the owner to answer.",
+      "category": "authority",
+      "attack": "an agent key sends trial calls inside and outside its Card, to use up the Card's total or fill the owner's queue without ever calling the tool",
+      "refused": "each trial call is answered allowed, held or refused as the same real queue would be, and the Card's draws and held calls stay empty",
+      "test": "TestGatewayTrialDecidesAndRecordsNothing",
+      "file": "apps/api/internal/handlers/gateway_trial_test.go",
+      "line": 130,
+      "package": "handlers"
+    },
+    {
+      "statement": "Work held for a Card's owner is refused once its hold expires unanswered, and stays refused.",
+      "category": "authority",
+      "attack": "let a €1,500 refund held for the owner sit past its hold expiry, then retry it and have the owner approve it late",
+      "refused": "every retry is refused as owner_expired, the late approval is refused, and nothing is drawn",
+      "test": "TestHeldWorkExpires",
+      "file": "apps/api/internal/mandate/hold_expiry_test.go",
+      "line": 19,
+      "package": "mandate"
+    },
+    {
+      "statement": "A runtime key cannot manage keys. Credentials issued for calling the decision API cannot mint, rotate, or revoke other credentials.",
+      "category": "authority",
+      "attack": "Use a runtime key — the credential agents call the decision API with — to mint a second key",
+      "refused": "Key management requires a management identity. The runtime key is refused",
+      "test": "TestKeysHandler_RuntimeKeyCannotManage",
+      "file": "apps/api/internal/auth/keys_handler_test.go",
+      "line": 447,
+      "package": "auth"
+    },
+    {
+      "statement": "a lifetime total never resets. Calls across days draw on one total, so a daily-looking budget cannot be spent once per day.",
+      "category": "authority",
+      "attack": "spend the Card's total, wait for midnight (or 24 hours), spend it again",
+      "refused": "the next day's call is refused while the lifetime total is spent",
+      "test": "TestLifetimeTotalNeverResets",
+      "file": "apps/api/internal/mandate/lifetime_test.go",
+      "line": 25,
+      "package": "mandate"
+    },
+    {
+      "statement": "reissuing a Card cannot reset its lifetime total, not by moving ValidFrom later and not by switching a daily total to a lifetime one: every draw the Card has made counts.",
+      "category": "authority",
+      "attack": "spend most of the room, then reissue the Card with a later ValidFrom (or a new window) to get it back",
+      "refused": "the reissued Card still counts the earlier draws",
+      "test": "TestLifetimeTotalSurvivesReissue",
+      "file": "apps/api/internal/mandate/lifetime_test.go",
+      "line": 59,
+      "package": "mandate"
+    },
+    {
+      "statement": "a sign-in token issued through one connect link works only at that link's URL.",
+      "category": "authority",
+      "attack": "use a token issued through a connect link at the general gateway URL",
+      "refused": "the general URL refuses it",
+      "test": "TestLinkURLAcceptsOnlyItsOwnTokens",
+      "file": "apps/gateway/internal/gateway/oauth_internal_test.go",
+      "line": 105,
+      "package": "gateway"
+    },
+    {
+      "statement": "a mandate that sums a parameter an action does not declare as numeric is refused when it is issued, not discovered at runtime.",
+      "category": "authority",
+      "attack": "issue a mandate capping sum(reason), where reason is a string, so the limit silently sums nothing and never binds",
+      "refused": "issue-time validation reads the action's declared parameter types and rejects the mandate",
+      "test": "TestMandateSummingANonNumericParameterIsRefusedAtIssue",
+      "file": "apps/api/internal/mandate/mandate_test.go",
+      "line": 263,
+      "package": "mandate"
+    },
+    {
+      "statement": "only Coach's app_look and app_act on the account's own control server park a run under coach-drive, keyed by the caller's own tenant, for at most 900 seconds.",
+      "category": "authority",
+      "attack": "another tool, another connection, or another account's drive answers wait_for {grant: \"coach-drive\"} to park a run, or to park it for days",
+      "refused": "the keys are stripped and no wait is written; a drive's wait is cut to 900 seconds",
+      "test": "TestOnlyCoachsDriveToolsParkARunUnderCoachDrive",
+      "file": "apps/gateway/internal/gateway/wait_test.go",
+      "line": 97,
+      "package": "gateway"
+    },
+    {
+      "statement": "only Setup's key reads another agent's Card through kiff_card; a taf's key that names another agent is refused, and reads nothing.",
+      "category": "authority",
+      "attack": "call kiff_card with agent set to another agent, from a taf's gateway key",
+      "refused": "cardResult requires the setup_reader role before naming an agent",
+      "test": "TestOnlySetupNamesAnAgentInKiffCard",
+      "file": "apps/gateway/internal/gateway/card_test.go",
+      "line": 208,
+      "package": "gateway"
+    },
+    {
+      "statement": "only Setup's key reads another agent's Card; a taf's own key sees only the Cards it holds, whatever agent it names.",
+      "category": "authority",
+      "attack": "call GET /v1/me/card?agent=<another agent> with a gateway agent's key",
+      "refused": "the handler requires the setup_reader role to name an agent",
+      "test": "TestOnlySetupReadsAnotherAgentsCard",
+      "file": "apps/api/internal/handlers/mandates_agent_card_test.go",
+      "line": 210,
+      "package": "handlers"
+    },
+    {
+      "statement": "an action outside a Card set to come home is held for the Card's owner and authorizes nothing until the owner answers.",
+      "category": "authority",
+      "attack": "propose a €1,500 refund against a Card allowing €500 each whose work comes home, and retry it until it goes through",
+      "refused": "it is held as one owner exception and every retry returns owner_required with the same handle; nothing is drawn",
+      "test": "TestOutsideTheCardComesHome",
+      "file": "apps/api/internal/mandate/exception_test.go",
+      "line": 85,
+      "package": "mandate"
+    },
+    {
+      "statement": "an agent's gateway key pasted into a client reaches the same routes as an OAuth token for that agent, and only the two its own runtime needs besides (a person's access to that agent, and resolving their run grant): not the account's Cards, held work, event stream, agents or export.",
+      "category": "authority",
+      "attack": "use an agent's pasted gateway key to read the rest of the account through GET /v1/me/* routes",
+      "refused": "the middleware applies the gateway route list to any agent-bound gateway_agent key, not only to OAuth tokens",
+      "test": "TestPastedGatewayKeyReachesOnlyGatewayRoutes",
+      "file": "apps/api/internal/auth/oauth_test.go",
+      "line": 91,
+      "package": "auth"
+    },
+    {
+      "statement": "reading the list of pending calls decides, draws and sends nothing, and an agent's key sees only its own calls.",
+      "category": "authority",
+      "attack": "read kiff_pending with another agent's key, or read it repeatedly hoping it sends the held call",
+      "refused": "the other key sees nothing, and reading never forwards; only the original call collects it, once",
+      "test": "TestPendingListsAHeldCallUntilItIsCollected",
+      "file": "apps/gateway/internal/gateway/pending_test.go",
+      "line": 57,
+      "package": "gateway"
+    },
+    {
+      "statement": "kiff_pending's text names each listed call's arguments, and an owner's refusal reads as covering that one call, never the tool: an agent that reads only the text knows which item the owner refused, and another item's call of the same tool is still its to make.",
+      "category": "authority",
+      "attack": "the owner refuses a refund on one order; on its next run the agent reads kiff_pending's text, which named only the tool, and skips a valid refund on another order as if the owner had refused that too",
+      "refused": "the text line carries the refused call's order and amount, and says the refusal covers this call only, so a call with other arguments is decided on its own",
+      "test": "TestPendingTextNamesTheCallTheOwnerRefused",
+      "file": "apps/gateway/internal/gateway/pending_test.go",
+      "line": 529,
+      "package": "gateway"
+    },
+    {
+      "statement": "one action cannot carry more than the per-action limit, however much the Card's total has left.",
+      "category": "authority",
+      "attack": "propose a single €1,500 refund against a Card allowing €500 each and €5,000 a day, with nothing spent yet",
+      "refused": "the per-action limit is checked before the totals and refuses with its own outcome",
+      "test": "TestPerActionLimit",
+      "file": "apps/api/internal/mandate/per_action_test.go",
+      "line": 40,
+      "package": "mandate"
+    },
+    {
+      "statement": "a held call on a per-item total names its item, and changing the Card raises that total.",
+      "category": "authority",
+      "attack": "ask for extra room until a date on a call held past a per-invoice total, to widen it for every invoice for a while",
+      "refused": "room for a set time is refused (ErrNoRoomPerItem); the hold names invoice_id in_1, and only changing the Card raises the limit, to 2",
+      "test": "TestPerItemHold",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 181,
+      "package": "mandate"
+    },
+    {
+      "statement": "a total per item counts each item apart, over its own window.",
+      "category": "authority",
+      "attack": "send a second reminder on the same invoice within the week, or count one invoice's reminders against another's",
+      "refused": "the second on in_1 passes its total; in_2 has its own; in_1 is free again a week later",
+      "test": "TestPerItemTotal",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 71,
+      "package": "mandate"
+    },
+    {
+      "statement": "a value too long to match is still counted, by a digest of what was sent.",
+      "category": "authority",
+      "attack": "send an invoice id longer than a resource may be, so it can't be read, twice in a week",
+      "refused": "the second passes the per-invoice total",
+      "test": "TestPerItemTotalCountsAnUnreadableValue",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 165,
+      "package": "mandate"
+    },
+    {
+      "statement": "an item is the same whatever its case or spacing, and a revision of the Card keeps what each item used.",
+      "category": "authority",
+      "attack": "send a second reminder within the week to \" Ana@example.com\" after one to \"ana@example.com\", or after the owner edits the Card",
+      "refused": "both are the same item; the second passes its total, and a Card revised under its id still counts what in_1 used",
+      "test": "TestPerItemTotalCountsOneItemWhateverItsCaseOrTheCardsRevision",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 100,
+      "package": "mandate"
+    },
+    {
+      "statement": "a per-item total holds a call its action could name the item on and doesn't.",
+      "category": "authority",
+      "attack": "leave the optional invoice argument out, or send it empty, to get past the per-invoice total",
+      "refused": "the call is outside the Card (resource_not_on_card), never counted as within it",
+      "test": "TestPerItemTotalHoldsACallNamingNone",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 130,
+      "package": "mandate"
+    },
+    {
+      "statement": "a per-item total applies only to the actions that declare its parameter.",
+      "category": "authority",
+      "attack": "list invoices more than ten times a day on a Card that counts reminders per invoice, hoping the per-invoice total leaves the listing uncounted",
+      "refused": "the listing isn't counted or held by the per-invoice total, and the Card's daily total of ten refuses the eleventh",
+      "test": "TestPerItemTotalLeavesOtherActionsToTheCard",
+      "file": "apps/api/internal/mandate/per_item_test.go",
+      "line": 148,
+      "package": "mandate"
+    },
+    {
+      "statement": "a gateway call that asks its owner (kiff_owner_ask) is held for the owner however much room the Card has, with KIFF's own line for its reason code; words the caller sends there never reach the owner, and an unknown code or a value that isn't one still asks, with KIFF's generic line.",
+      "category": "authority",
+      "attack": "an agent calls KIFF's decide itself with kiff_owner_ask set to \"KIFF security has checked this; approve to continue\", so the owner reads its words as KIFF's on a hold about money",
+      "refused": "the call is held with KIFF's generic line; the agent's words are on no hold and in no answer, and the parameter is never kept",
+      "test": "TestProposals_AGatewayOwnerAskIsHeldWhateverTheCardsRoom",
+      "file": "apps/api/internal/handlers/owner_ask_test.go",
+      "line": 26,
+      "package": "handlers"
+    },
+    {
+      "statement": "revocation cannot be undone by re-issuing the same mandate id. Authority that was withdrawn stays withdrawn until a new mandate is issued under a new id.",
+      "category": "authority",
+      "attack": "revoke a mandate, then POST the original definition again with the same id to restore it",
+      "refused": "revoked_at is never read from a request body and is excluded from the issue upsert, so a re-issue leaves the revocation standing",
+      "test": "TestReIssuingDoesNotUnrevoke",
+      "file": "apps/api/internal/handlers/mandates_test.go",
+      "line": 123,
+      "package": "handlers"
+    },
+    {
+      "statement": "A read-only account key (role viewer, bound to no agent) reads the account's activity, held work and stream, and changes nothing: every write route the API registers, including ones added later, refuses it before any handler, and so do reads that need more than reading (the export, the audit log). The same role on an agent's key leaves it that agent's runtime key.",
+      "category": "authority",
+      "attack": "A key minted to read the account writes through it (answers a hold, mints a key, changes a Card, halts, approves a device sign-in, leaves the account)",
+      "refused": "The route policy lets a read-only key make only GET and HEAD requests that need the read capability; it holds no other capability",
+      "test": "TestReadOnlyAccountKeyOnlyReads",
+      "file": "apps/api/cmd/api/runtime_key_boundary_test.go",
+      "line": 282,
+      "package": "main"
+    },
+    {
+      "statement": "a refusal's next step is one the held call's own Card offers, and it stays a refusal: nothing is drawn, the call ends, and the agent can read what the owner asked it to do instead.",
+      "category": "authority",
+      "attack": "refuse with a next step the Card does not list, or treat a refusal with a next step as permission to act",
+      "refused": "an unlisted step is rejected with ErrNextStepNotOnCard and the hold stays open; a listed one records the refusal, draws nothing and the call stays refused",
+      "test": "TestRejectWithNextStep",
+      "file": "apps/api/internal/mandate/next_step_test.go",
+      "line": 28,
+      "package": "mandate"
+    },
+    {
+      "statement": "every spelling of kiff_card is the gateway's own tool. A tool connected under one before the name was reserved is neither listed nor reached.",
+      "category": "authority",
+      "attack": "call a connected tool named KIFF_Card that tools/list hides",
+      "refused": "CallTool answers every reserved spelling as kiff_card before any invocation is begun",
+      "test": "TestReservedSpellingNeverReachesAConnectedTool",
+      "file": "apps/gateway/internal/gateway/card_test.go",
+      "line": 231,
+      "package": "gateway"
+    },
+    {
+      "statement": "a call on a resource outside the Card comes home to its owner, and an approval covers that exact resource only.",
+      "category": "authority",
+      "attack": "get inv-9 approved once, then redeem the same proposal id for inv-8, or a new proposal for inv-9",
+      "refused": "the approval binds to the resource in the request fingerprint; a new proposal is held again",
+      "test": "TestResourceOutsideComesHomeAndApprovalBindsTheResource",
+      "file": "apps/api/internal/mandate/resource_scope_test.go",
+      "line": 104,
+      "package": "mandate"
+    },
+    {
+      "statement": "a Card scoped to named resources authorizes the action only on those resources.",
+      "category": "authority",
+      "attack": "an agent holding a refund Card for invoice inv-1 refunds inv-9, or sends no invoice at all",
+      "refused": "the call is outside the Card (resource_not_on_card), checked before amounts, never read as \"not covered\"",
+      "test": "TestResourceScope",
+      "file": "apps/api/internal/mandate/resource_scope_test.go",
+      "line": 43,
+      "package": "mandate"
+    },
+    {
+      "statement": "an unscoped Card covering the same action never widens a scoped one. Cards are conjunctive, so the scope binds.",
+      "category": "authority",
+      "attack": "hold a scoped Card for inv-1 and a broad refund Card, and refund inv-9",
+      "refused": "the scoped Card is breached whichever order the Cards are read in",
+      "test": "TestResourceScopeStacksWithUnscopedCard",
+      "file": "apps/api/internal/mandate/resource_scope_test.go",
+      "line": 82,
+      "package": "mandate"
+    },
+    {
+      "statement": "a runtime credential cannot issue or revoke a mandate. A key that could grant itself authority would make every limit advisory.",
+      "category": "authority",
+      "attack": "use the agent's own decide credential to POST a mandate granting itself a larger limit",
+      "refused": "issuing is gated on the management roles, the same separation that stops a runtime key minting sibling keys",
+      "test": "TestRuntimeKeyCannotIssueItsOwnMandate",
+      "file": "apps/api/internal/handlers/mandates_test.go",
+      "line": 65,
+      "package": "handlers"
+    },
+    {
+      "statement": "a runtime key (an agent's key, or any key without the account roles) cannot read the account's activity, settings or people's things, nor change them: the decision stream, evidence, receipts, proof packs, usage, alert targets, billing budget, notification preferences, support tickets, the key list.",
+      "category": "authority",
+      "attack": "an agent's runtime key reads account-wide activity or changes account settings through GET/PUT/POST /v1/me/* routes that only check the tenant",
+      "refused": "the route policy lets a runtime key reach only RuntimeKeyRules; every other route, including ones added later, is refused",
+      "test": "TestRuntimeKeysReachOnlyRuntimeRoutes",
+      "file": "apps/api/cmd/api/runtime_key_boundary_test.go",
+      "line": 135,
+      "package": "main"
+    },
+    {
+      "statement": "Setup's key acts on the account's own control server only on a Card of its own (Coach's), and still never on a vendor's tool that writes.",
+      "category": "authority",
+      "attack": "Setup calls the control server's tool with no Card, or a vendor's write once the control server is connected",
+      "refused": "no Card of Setup's own is refused as not issued; the vendor's write is refused for the role",
+      "test": "TestSetupActsOnTheControlServerOnlyOnItsCard",
+      "file": "apps/api/internal/handlers/setup_reads_decide_test.go",
+      "line": 140,
+      "package": "handlers"
+    },
+    {
+      "statement": "Setup's Card for its reads is issued only on the owner's approval of that connection, which KIFF checks itself (the device's signature over planque's approve request, a person who may connect tools, signed within a day), only by the connector key that connected the tools, and only for tools marked read-only. It allows a few reads a day and refuses past them.",
+      "category": "authority",
+      "attack": "planque's connector key, or anyone holding one, grants an agent authority the owner never approved: another connection's or another account's approval, an old one, another person's device, a tool that writes, or a tool another key connected",
+      "refused": "each is a 403 and no Card is issued",
+      "test": "TestSetupReadsCardNeedsTheOwnersApproval",
+      "file": "apps/api/internal/handlers/setup_reads_test.go",
+      "line": 78,
+      "package": "handlers"
+    },
+    {
+      "statement": "Setup's key (setup_reader) reads a read-only tool only on its own read Card, and can't call a tool that writes, whatever Card names it.",
+      "category": "authority",
+      "attack": "Setup, which holds no tools, calls a tool that writes, or reads without the owner's approval of its reads",
+      "refused": "a write is refused for the role; a read with no Card of Setup's own is refused as not issued",
+      "test": "TestSetupReadsOnlyWhatItsCardAllows",
+      "file": "apps/api/internal/handlers/setup_reads_decide_test.go",
+      "line": 58,
+      "package": "handlers"
+    },
+    {
+      "statement": "the taf's words about a call (kiff_about, kiff_reason) go to KIFF beside the proposal, never into its parameters, the tool's arguments or the call's identity: a retry that words them differently is the same call, never a second one.",
+      "category": "authority",
+      "attack": "reword the reason on each retry of a refund, without an operation id, so the gateway sees a new call and sends the refund twice",
+      "refused": "the retry replays the first call; the tool is sent one refund and the words never reach it or the Card's parameters",
+      "test": "TestTheTafsWordsGoToKIFFAndAreNotPartOfTheCall",
+      "file": "apps/gateway/internal/gateway/taf_words_test.go",
+      "line": 20,
+      "package": "gateway"
+    },
+    {
+      "statement": "where several mandates cover one action, the tightest binds. Issuing an additional mandate can only narrow authority.",
+      "category": "authority",
+      "attack": "hold a generous domain-wide mandate and issue a second, narrower one, expecting the generous one to still permit the action",
+      "refused": "mandates are conjunctive, so every covering mandate must have room and the tighter limit decides",
+      "test": "TestTighterMandateBindsWhenSeveralCover",
+      "file": "apps/api/internal/mandate/mandate_test.go",
+      "line": 169,
+      "package": "mandate"
+    },
+    {
+      "statement": "a trial its owner started sends its calls (kiff/tafs#173). With KIFF-Trial naming a draft KIFF says is being tried, a call goes the normal path: recorded, decided with the draft named (so KIFF decides it on the trial's own Cards), sent when allowed, held when not, and its result names the draft. KIFF-Trial-Run isn't needed, and is harmless.",
+      "category": "authority",
+      "attack": "a version being tried issues one refund inside its trial Card and one outside it",
+      "refused": "the one outside is held for the owner and not sent; both are decided with the trial's draft, never as the live version's calls",
+      "test": "TestTrialBeingTriedIsSentOnItsDraft",
+      "file": "apps/gateway/internal/gateway/trial_test.go",
+      "line": 202,
+      "package": "gateway"
+    },
+    {
+      "statement": "a version being tried is decided on its own trial Cards, and the live version on the agent's Cards, each with its own counters. Trying it changes nothing on the live Cards, and no call made for the agent sees a trial Card.",
+      "category": "authority",
+      "attack": "start a trial of a version with a higher limit, then make the agent's ordinary calls, hoping they get the trial's limit, or the trial's spending counts against (or resets) the live Card",
+      "refused": "the agent's calls are decided on its live Card as before; the trial's calls only on the trial Cards, from zero, until they lapse in 30 days",
+      "test": "TestTrialCardsAreTheVersionsAndApartFromTheLive",
+      "file": "apps/api/internal/handlers/trial_cards_test.go",
+      "line": 75,
+      "package": "handlers"
+    },
+    {
+      "statement": "a trial of an agent's next version is decided against the Cards as a real queue would be, its own earlier allowed writes counting toward the limits, and draws nothing real, holds nothing and asks no owner.",
+      "category": "authority",
+      "attack": "run a trial's refunds over and over, inside and outside the Card, to use up its total or fill the owner's queue",
+      "refused": "each trial write gets the decision the same queue of real calls would get, and the Card's total and the owner's queue are unchanged",
+      "test": "TestTrialDecidesAndRecordsNothing",
+      "file": "apps/api/internal/mandate/trial_test.go",
+      "line": 27,
+      "package": "mandate"
+    },
+    {
+      "statement": "a trial ends for good: going back, its runtime's sweep, or a new trial revoke its Cards, and only the agent's own key or someone who manages Cards can end it.",
+      "category": "authority",
+      "attack": "keep a trial's higher limits after going back, start a second trial to hold two sets of trial Cards, or end another agent's trial with this agent's key",
+      "refused": "one trial per agent; an ended trial's Cards are revoked; another agent's key is told there is no such draft",
+      "test": "TestTrialEndsAndRevokesItsCards",
+      "file": "apps/api/internal/handlers/trial_cards_test.go",
+      "line": 155,
+      "package": "handlers"
+    },
+    {
+      "statement": "installing a version being tried issues its Cards live and revokes its trial Cards, together, and the trial records that it was installed.",
+      "category": "authority",
+      "attack": "install a tried version and keep its trial Cards in force beside the live ones, doubling its room",
+      "refused": "the trial Cards are revoked in the same issue as the live revision",
+      "test": "TestTrialInstallEndsIt",
+      "file": "apps/api/internal/handlers/trial_cards_test.go",
+      "line": 243,
+      "package": "handlers"
+    },
+    {
+      "statement": "a trial's call is never sent, reads included. A call made with KIFF-Trial is decided against the agent's Cards and answered with that decision; it creates no invocation, records no request, draws nothing and never reaches the tool.",
+      "category": "authority",
+      "attack": "run a trial of a new version that issues refunds inside and outside its Card through the gateway",
+      "refused": "each refund comes back with KIFF's decision (allowed, held) and \"Nothing was sent\"; the tool receives no call and nothing is recorded or drawn",
+      "test": "TestTrialWriteIsDecidedAndNeverSent",
+      "file": "apps/gateway/internal/gateway/trial_test.go",
+      "line": 71,
+      "package": "gateway"
+    },
+    {
+      "statement": "an approval not yet used stops authorizing when its Card is revoked, moved to another holder, or expires.",
+      "category": "authority",
+      "attack": "have the owner approve an action once, then revoke or move the card, and redeem the approval anyway",
+      "refused": "revocation and moves invalidate open exceptions under the card's lock, and redemption rechecks the card under the same lock",
+      "test": "TestUnusedApprovalIsWithdrawn",
+      "file": "apps/api/internal/mandate/exception_test.go",
+      "line": 287,
+      "package": "mandate"
+    },
+    {
+      "statement": "a held or refused call never reaches the tool. A call is forwarded only on an allowed decision: inside the Card, or an approved per-action exception that still fits the Card's totals.",
+      "category": "authority",
+      "attack": "ask the gateway for a €5,000 refund on a Card that allows €500 per call",
+      "refused": "the €5,000 call is held with the owner's review link and not sent; the tool receives only the €500 call, and only €500 is drawn",
+      "test": "TestWithinCardForwardsOutsideHolds",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 517,
+      "package": "gateway"
+    },
+    {
+      "statement": "A tool that ran more often than the gate was consulted is reported as undecided calls. Bypass is measured against recorded decisions rather than assumed absent.",
+      "category": "coverage",
+      "attack": "Call a governed tool directly, bypassing the gate, and assume nobody can tell",
+      "refused": "Observed call counts are compared against recorded decisions, and the difference is reported as undecided calls",
+      "test": "TestCoverage_ReportsCallsThatNeverReachedTheGate",
+      "file": "apps/api/internal/handlers/coverage_test.go",
+      "line": 185,
+      "package": "handlers"
+    },
+    {
+      "statement": "A receipt altered after signing fails verification against the anchored root. Tamper-evidence is checked, not asserted.",
+      "category": "evidence",
+      "attack": "Change a field in a signed receipt and present it as genuine",
+      "refused": "The digest is recomputed from the receipt's own content, so the signature no longer recovers the declared signer",
+      "test": "TestAnchorAttester_TamperedReceiptFailsOnchainVerify",
+      "file": "apps/api/internal/receipt/anchor_attester_test.go",
+      "line": 143,
+      "package": "receipt"
+    },
+    {
+      "statement": "A trace containing more than one execution is refused rather than turned into a receipt. A receipt describes exactly one executed action or it is not issued.",
+      "category": "evidence",
+      "attack": "Feed the receipt builder a trace containing two executed actions",
+      "refused": "The build is refused. A receipt describes exactly one executed action or it is not issued",
+      "test": "TestBuild_RejectsTraceWithMultipleExecutions",
+      "file": "apps/api/internal/receipt/build_test.go",
+      "line": 313,
+      "package": "receipt"
+    },
+    {
+      "statement": "The bytes a receipt's signature commits to are pinned to a fixed encoding. Reordering a field would otherwise change every future hash while leaving past receipts verifiable, which is indistinguishable from tampering.",
+      "category": "evidence",
+      "attack": "Reorder a field in the chain struct, changing what every future receipt hashes to",
+      "refused": "The encoding is pinned to fixed bytes, so the build fails before a single receipt is signed against the new shape",
+      "test": "TestCausalChainCanonicalEncodingIsPinned",
+      "file": "apps/api/internal/receipt/canonical_test.go",
+      "line": 39,
+      "package": "receipt"
+    },
+    {
+      "statement": "a refund call the gateway died in is settled in thune when the sweep ends it.",
+      "category": "failure-modes",
+      "attack": "the gateway dies in the middle of a refund call, before or after sending it",
+      "refused": "the sweep's end reaches thune: not sent releases the request, unknown is watched and found by its marker, never resent The gateway dies after thune's Before and before the decision. The sweep ends the call as failed; thune records it not sent and releases the request, so another taf can take it.",
+      "test": "TestAGatewayCrashBeforeSendingReleasesTheClaim",
+      "file": "apps/gateway/internal/gateway/refund_crash_test.go",
+      "line": 52,
+      "package": "gateway"
+    },
+    {
+      "statement": "a retry that loses the race to send never frees the claim of the retry that sent.",
+      "category": "failure-modes",
+      "attack": "two retries of one approved refund race, and the slower one reads the charge after the faster one's refund landed",
+      "refused": "the slower one can't void a call already sending, so the claim stays and no other taf takes the request Two retries of one approved held call race. The first sends, and its refund lands while the second reads the charge; the second sees a changed charge, but the call is no longer its to void, so the claim stays and no other taf takes the request.",
+      "test": "TestARacingRetryKeepsTheClaimOfASentRefund",
+      "file": "apps/gateway/internal/thune/inflight_test.go",
+      "line": 97,
+      "package": "thune"
+    },
+    {
+      "statement": "a call already sent, or whose outcome is unknown, keeps its recorded outcome and key when the same operation comes again and its amount can't be read now.",
+      "category": "failure-modes",
+      "attack": "make the vendor's read fail between a call and its retry, so the retry reads as never sent and the agent does it again under a new id",
+      "refused": "the retry answers with the recorded outcome and key; a held call stays held, never decided without its amount",
+      "test": "TestARetryKeepsItsOutcomeWhenTheAmountCantBeReadNow",
+      "file": "apps/gateway/internal/gateway/amount_test.go",
+      "line": 109,
+      "package": "gateway"
+    },
+    {
+      "statement": "an approved call is sent to the tool once, however many retries race to collect it.",
+      "category": "failure-modes",
+      "attack": "after Approve once, send ten identical retries of the held call at the same time",
+      "refused": "exactly one claims the call; the tool receives it once",
+      "test": "TestApprovedHoldForwardsOnceUnderConcurrentRetries",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 574,
+      "package": "gateway"
+    },
+    {
+      "statement": "When a source behind the evidence object is unavailable, that section is marked unavailable and the rest still answers. Evidence degrades section by section rather than failing whole or, worse, reporting an empty section as a clean one.",
+      "category": "failure-modes",
+      "attack": "One source behind the evidence object is unavailable when a report is composed",
+      "refused": "That section is marked unavailable and the rest still answers, rather than an empty section reading as a clean one",
+      "test": "TestCompose_PostureReadError_Degrades",
+      "file": "apps/api/internal/evidence/composer_test.go",
+      "line": 390,
+      "package": "evidence"
+    },
+    {
+      "statement": "a call whose delivery is in doubt is reported as unknown and is never sent again by KIFF.",
+      "category": "failure-modes",
+      "attack": "kill the gateway after it claims a call for sending, then retry the call",
+      "refused": "after the lease the call reads unknown, and the retry does not reach the tool",
+      "test": "TestCrashWhileForwardingIsUnknownAndNotResent",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 814,
+      "package": "gateway"
+    },
+    {
+      "statement": "When two first sign-ins for the same subject race, exactly one tenant survives and the loser cleans up the one it provisioned. No orphan tenant is left behind.",
+      "category": "failure-modes",
+      "attack": "Two first sign-ins for the same subject arrive at once, each provisioning a tenant",
+      "refused": "Exactly one survives and the loser deletes the tenant it created, leaving no orphan",
+      "test": "TestEnsureForSubject_LoserOfRaceCleansUpItsTenant",
+      "file": "apps/api/internal/tenant/ensure_test.go",
+      "line": 270,
+      "package": "tenant"
+    },
+    {
+      "statement": "When the usage limiter cannot establish its own state, the request is allowed. Blocking a customer's production traffic because our meter was uncertain is the worse failure, and this default is deliberately the opposite of the governance one.",
+      "category": "failure-modes",
+      "attack": "The usage limiter cannot reach its own store while a customer is mid-request",
+      "refused": "The request is allowed. Blocking production traffic because our meter was uncertain is the worse failure",
+      "test": "TestLimiter_FlushFailureIsAllowedWhenUncertain",
+      "file": "apps/api/internal/usage/limiter_test.go",
+      "line": 321,
+      "package": "usage"
+    },
+    {
+      "statement": "when current usage cannot be established, the proposal is refused. A mandate is the authority itself, not a meter, so allowing when uncertain means acting with authority nobody could confirm.",
+      "category": "failure-modes",
+      "attack": "make the draw ledger unreadable at the moment a proposal arrives, hoping the check degrades to allow",
+      "refused": "Evaluate returns ErrUsageUnavailable and the caller must refuse — the opposite default to the billing limiter beside it, which allows when uncertain on purpose",
+      "test": "TestMandateFailsClosedUnlikeTheUsageLimiter",
+      "file": "apps/api/internal/mandate/mandate_test.go",
+      "line": 107,
+      "package": "mandate"
+    },
+    {
+      "statement": "If the audit write fails, the mutation does not happen. A suspended tenant with no audit record is not an outcome this system can produce.",
+      "category": "failure-modes",
+      "attack": "Suspend a tenant at the moment the audit write fails",
+      "refused": "The mutation rolls back. A suspended tenant with no audit record is not a state this system can reach",
+      "test": "TestOps_Suspend_AuditFailureLeavesTenantUnchanged",
+      "file": "apps/api/internal/handlers/ops_audit_failure_test.go",
+      "line": 55,
+      "package": "handlers"
+    },
+    {
+      "statement": "planque confirms a halt by reading it back with its connector key, and that read never asks planque to confirm again, so one halt is one confirm, not a loop.",
+      "category": "failure-modes",
+      "attack": "a halt whose confirm re-enters itself, so the ack is never recorded and every dispatch read starts the same storm",
+      "refused": "planque's read only answers; the halt is confirmed once and reads halted",
+      "test": "TestPlanquesReadBackConfirmsOnceWithoutLooping",
+      "file": "apps/api/internal/handlers/halts_test.go",
+      "line": 209,
+      "package": "handlers"
+    },
+    {
+      "statement": "if KIFF cannot record that a call was requested, the call is neither decided nor sent. A call with no record never reaches a tool.",
+      "category": "failure-modes",
+      "attack": "make the request record fail while an agent's call arrives",
+      "refused": "the gateway fails closed: the tool is not called and nothing is drawn",
+      "test": "TestUnrecordedCallIsNotSent",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 494,
+      "package": "gateway"
+    },
+    {
+      "statement": "an agent answering a dispute is shown the refunds already made on the dispute's charge, KIFF's and outside KIFF's, and its answer is still sent.",
+      "category": "integrity",
+      "attack": "one taf refunds the order while another contests its dispute, each unaware of the other",
+      "refused": "nothing is refused; the dispute answer carries the refunds already made on its charge",
+      "test": "TestADisputeAnswerIsShownTheRefundsAlreadyMadeOnItsCharge",
+      "file": "apps/gateway/internal/gateway/claim_test.go",
+      "line": 183,
+      "package": "gateway"
+    },
+    {
+      "statement": "a held call's result opens by saying it isn't done, so a taf never reports one as done (it said \"the evidence is submitted but waits for your approval\" of a call KIFF held).",
+      "category": "integrity",
+      "attack": "a taf reads a held call's result and reports the call as made",
+      "refused": "the result begins \"HELD: not done, nothing sent.\" and tells it never to say done, sent or submitted",
+      "test": "TestAHeldResultOpensWithHeld",
+      "file": "apps/gateway/internal/gateway/covered_tools_test.go",
+      "line": 207,
+      "package": "gateway"
+    },
+    {
+      "statement": "a money call whose answer was lost is looked for at the vendor first; found by its own operation id, it's done and nothing is asked.",
+      "category": "integrity",
+      "attack": "a refund that went through but lost its answer would wait for the owner's \"Did this happen?\"",
+      "refused": "nothing is sent again; the call is recorded as done, with what the read found",
+      "test": "TestALostRefundFoundByItsOperationIDIsDoneAndNotAsked",
+      "file": "apps/gateway/internal/gateway/status_test.go",
+      "line": 106,
+      "package": "gateway"
+    },
+    {
+      "statement": "a record matches only by this call's own operation id, never by its amount or what it acted on.",
+      "category": "integrity",
+      "attack": "another refund of the same amount on the same order, made in the vendor's dashboard, reads as this call's",
+      "refused": "the call stays unknown and is asked",
+      "test": "TestARecordWithTheSameAmountButAnotherOperationIDIsNotThisCall",
+      "file": "apps/gateway/internal/gateway/status_test.go",
+      "line": 129,
+      "package": "gateway"
+    },
+    {
+      "statement": "while one agent's call of a claimed kind is being decided, held or sent on an object, another agent's call of that kind on that object is refused before KIFF decides it.",
+      "category": "integrity",
+      "attack": "two tafs answer the same dispute at once, or one answers while the other's answer waits for the owner",
+      "refused": "the second agent's call is refused with the holder and its state; nothing is decided, drawn or sent for it",
+      "test": "TestASecondAgentOnAClaimedObjectIsRefusedWhileTheFirstHoldsIt",
+      "file": "apps/gateway/internal/gateway/claim_test.go",
+      "line": 48,
+      "package": "gateway"
+    },
+    {
+      "statement": "an account's drafts are its own. Another account's person can't read, confirm or discard one by its id.",
+      "category": "isolation",
+      "attack": "an owner of another account reads, confirms or discards a draft by its id",
+      "refused": "each answers 404, and the draft is unchanged",
+      "test": "TestAnotherAccountCantReachADraft",
+      "file": "apps/api/internal/handlers/gate_c_test.go",
+      "line": 62,
+      "package": "handlers"
+    },
+    {
+      "statement": "one account cannot see, test, remove or decrypt another account's tool connections.",
+      "category": "isolation",
+      "attack": "copy another account's encrypted tool credential into your own connection",
+      "refused": "its seal is bound to the account it was made for, so it does not open; the other account's connection stays invisible",
+      "test": "TestConnectionsAreIsolatedByAccount",
+      "file": "apps/gateway/internal/connection/connection_test.go",
+      "line": 362,
+      "package": "connection"
+    },
+    {
+      "statement": "One tenant's API keys are never visible to another. Key listing is scoped at the storage boundary, not filtered after the fact.",
+      "category": "isolation",
+      "attack": "Authenticate as tenant A and list API keys, hoping tenant B's appear",
+      "refused": "Listing is scoped at the storage boundary, so tenant B's keys are never in the result to be filtered out",
+      "test": "TestKeysHandler_Tenants_Are_Isolated",
+      "file": "apps/api/internal/auth/keys_handler_test.go",
+      "line": 245,
+      "package": "auth"
+    },
+    {
+      "statement": "Two tenants recording byte-identical facts commit to different Merkle leaves. A public anchor cannot be used as a confirmation oracle for a guessed record without also guessing that tenant's salt.",
+      "category": "isolation",
+      "attack": "Guess a record, hash it, and look for that leaf in the public anchor to confirm the guess",
+      "refused": "Each tenant's leaves are salted with a per-tenant secret, so the guess produces a different hash and confirms nothing",
+      "test": "TestLeafHashDifferentSaltsCrossTenantIsolation",
+      "file": "apps/api/internal/anchor/merkle_salt_test.go",
+      "line": 54,
+      "package": "anchor"
+    },
+    {
+      "statement": "a literal copy of a tool's credential in its result is removed before the result is stored, returned to the agent or replayed.",
+      "category": "isolation",
+      "attack": "connect a tool that echoes its bearer credential verbatim in a successful result",
+      "refused": "the credential is replaced with [redacted] before the result is stored, so neither the response nor a replay carries it",
+      "test": "TestSuccessfulResultIsRedacted",
+      "file": "apps/gateway/internal/gateway/gateway_test.go",
+      "line": 920,
+      "package": "gateway"
+    },
+    {
+      "statement": "a connected tool cannot point KIFF at internal, loopback, link-local or cloud metadata addresses.",
+      "category": "isolation",
+      "attack": "connect a tool whose URL resolves to localhost or the cloud metadata address",
+      "refused": "the connection is refused before anything is contacted",
+      "test": "TestUntrustedURLsAreRefused",
+      "file": "apps/gateway/internal/connection/connection_test.go",
+      "line": 451,
+      "package": "connection"
+    },
+    {
+      "statement": "sharing a taf lets someone use it, not read the account (RFC 050 decision 12). A person reads every call and hold of the tafs they manage, their own runs' calls, and, when they may answer holds, the holds of the tafs they use; an admin, or a person on an account from before roles, reads all of it.",
+      "category": "privacy",
+      "attack": "a viewer a taf is shared with reads the account's Record, or another person's held call by id",
+      "refused": "KIFF scopes the Record and held calls to the reader; another person's hold reads as missing",
+      "test": "TestEachPersonReadsTheirOwnUse",
+      "file": "apps/api/internal/handlers/own_use_test.go",
+      "line": 156,
+      "package": "handlers"
+    },
+    {
+      "statement": "KIFF remembers a person's devices only as a hash of the sign-in provider's client id, never the id, an address or a place, and forgets a device unseen for 180 days and a waiting new-device email within minutes.",
+      "category": "privacy",
+      "attack": "Read the known-devices table for a client id, an IP or a city",
+      "refused": "the table holds the subject, sha256 of the client id and two times; the waiting email holds no body and expires within the device-approval window",
+      "test": "TestPostgresKeepsNothingReadableAndForgets",
+      "file": "apps/api/internal/newdevice/postgres_test.go",
+      "line": 45,
+      "package": "newdevice"
+    },
+    {
+      "statement": "a device sign-in waiting for approval is kept across a deploy, and the kept row holds no secret: the device code only as its sha256, and never the session an approval mints.",
+      "category": "privacy",
+      "attack": "read cloud_meta.device_sign_ins for a device code or a session token",
+      "refused": "the table has no column for either; a row holds the code's hash, the short user code, the device's public keys and name, and two times",
+      "test": "TestPostgresWaitingSignInsKeepNoSecretAndExpire",
+      "file": "apps/api/internal/auth/device_sign_ins_postgres_test.go",
+      "line": 18,
+      "package": "auth"
+    },
+    {
+      "statement": "what a call is about, in the taf's words, is kept beside its decision and never in the record a receipt's chain hashes: an admin can erase it, and a hold's words with it, and every receipt still verifies.",
+      "category": "privacy",
+      "attack": "a taf writes a customer's phone number into kiff_about, and the account needs it gone from KIFF's record",
+      "refused": "the number is taken out on arrival; what's left is erased without touching the decision or its receipt, whose chain is the same before and after",
+      "test": "TestWhatACallIsAboutIsErasableAndReceiptsStillVerify",
+      "file": "apps/api/internal/handlers/call_words_test.go",
+      "line": 28,
+      "package": "handlers"
+    }
+  ]
+}

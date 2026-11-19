@@ -1,0 +1,92 @@
+<h1 id="govern">Govern</h1>
+
+<p>Govern is the evidence view for company accounts: where you watch the
+decisions on one action in a domain land on real traffic — the
+decisions it made, the receipts it produced, and the posture it&rsquo;s in.
+It&rsquo;s the evidence that lets you keep an agent on a consequential action
+and still answer &ldquo;what happened, and why?&rdquo; — the on-screen view of the
+same records a <a href="/docs/archive/2026-10-09/receipts-and-proof">proof pack</a> exports.</p>
+
+<h2 id="what-this-does">What this does</h2>
+
+<p>For one governed action over a time window, Govern shows,
+summary-first:</p>
+
+<ul>
+<li><strong>Identity</strong> — the action, entity type, environment, and current
+mode.</li>
+<li><strong>Posture</strong> — whether the control is in <code>observe</code> or <code>enforce</code>, and
+when that last changed.</li>
+<li><strong>Decisions by outcome</strong> — counts of <code>allowed</code>, <code>blocked</code>,
+<code>approval_required</code>, <code>invalid</code>, with a drill-down into individual
+decisions.</li>
+<li><strong>Receipts</strong> — the signed records, with their signature and
+verifiability status.</li>
+<li><strong>Completeness</strong> — whether the window shown is complete or truncated,
+so a partial view never reads as the whole story.</li>
+</ul>
+
+<p>It reads top-down: a one-line summary of the control&rsquo;s state, then
+detail on demand.</p>
+
+<h2 id="observe-vs-enforce">Observe vs enforce</h2>
+
+<p>A domain runs in one of two postures, and Govern is honest about which:</p>
+
+<ul>
+<li><strong><code>observe</code></strong> (advisory-only) — KIFF evaluates every action and records
+what it <em>would</em> have decided, but does not withhold anything; your
+runtime proceeds as usual. This is the on-ramp: watch real decisions
+on real traffic before you turn the gate on.</li>
+<li><strong><code>enforce</code></strong> — KIFF&rsquo;s decision is acted on: <code>allowed</code> runs,
+everything else is withheld by your runtime.</li>
+</ul>
+
+<p>Observe always reads as <em>would-have-decided</em>, never as production
+enforcement. The point of observe is to build trust before you flip to
+enforce, and the moment you flipped is itself recorded.</p>
+
+<p>Posture is <strong>per domain</strong> — each domain carries its own, so one can be
+enforcing while another is still in observe. You flip it from the
+domain&rsquo;s home page. Changing enforcement is a management action: a
+runtime key can propose and be governed, but it cannot flip the posture
+of the domain it runs under.</p>
+
+<p>A personal account doesn&rsquo;t show Govern: its Cards, Needs you and Activity
+cover the same decisions for each agent.</p>
+
+<h2 id="honest-by-design">Honest by design</h2>
+
+<p>Govern is built to state what it can and cannot show. Every section
+renders a distinct <strong>recorded</strong>, <strong>empty</strong>, or <strong>not-yet-recorded</strong>
+state rather than implying completeness:</p>
+
+<ul>
+<li>An action with no traffic yet shows an honest empty state, not a
+staged success.</li>
+<li>A section whose data isn&rsquo;t recorded yet says so plainly.</li>
+<li>Verifiability is scope-aware — a sampled result never presents itself
+as a complete-window guarantee.</li>
+</ul>
+
+<p>This matters because most dashboards imply more than they know. Govern&rsquo;s
+value depends on the opposite: if it says something happened, it
+happened, and if it can&rsquo;t show something, it says so.</p>
+
+<h2 id="what-it-does-not-show">What it does not show</h2>
+
+<ul>
+<li>It does not show that an action executed downstream — only what KIFF
+decided. KIFF is the decision, not the runner.</li>
+<li>It does not present demo or synthetic data as real customer evidence.</li>
+<li>It does not claim reviewer attribution the product doesn&rsquo;t record yet
+(see <a href="/docs/archive/2026-10-09/whats-real-today">What&rsquo;s real today</a>).</li>
+</ul>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>What the receipts here prove → <a href="/docs/archive/2026-10-09/receipts-and-proof">Receipts &amp; proof
+packs</a>.</li>
+<li>The full honesty line → <a href="/docs/archive/2026-10-09/whats-real-today">What&rsquo;s real today</a>.</li>
+</ul>

@@ -1,0 +1,83 @@
+package pages
+
+import (
+	"fmt"
+	"strings"
+)
+
+// The prices /tafs states and the models it names, in one place: a price
+// changes here, once, for all eight languages.
+
+// Today's prices, in euro cents, VAT included: Solo's month and its credits,
+// and each pack of credits by its size. The same as the plans show.
+const (
+	TafsSoloCents   = 1250
+	TafsSoloCredits = 500
+)
+
+// TafsPackCents is each pack of credits' price, by its credits.
+var TafsPackCents = map[int]int{500: 1150, 1500: 2999, 5000: 8499}
+
+// The models tafs run on, as kiff/tafs' definitions name them: a taf's work
+// (tafdef.ts' MODEL) and Coach (setupdef.ts' SETUP_MODEL). Named as facts,
+// where the cost is explained: no logo, no claim about Anthropic.
+const (
+	TafsWorkModel  = "Claude Sonnet 5.5"
+	TafsCoachModel = "Claude Opus 5.5"
+)
+
+// tafsCostWords write money and numbers as one language does, with the line
+// that says KIFF has no tie to Anthropic.
+type tafsCostWords struct {
+	// Lang writes money and numbers: "en", "de", "fr", "es", "it", "pt",
+	// "nl" or "pl".
+	Lang string
+	// NotAffiliated closes the page's footer, after "Part of Claude for
+	// Startups.": KIFF has no tie to Anthropic, said in plain words.
+	NotAffiliated string
+}
+
+// money writes cents as the language does: "€42.49", "42,49 €", "€ 42,49".
+func (w tafsCostWords) money(cents int) string {
+	whole, frac := cents/100, cents%100
+	switch w.Lang {
+	case "en":
+		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
+	case "nl":
+		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
+	}
+	return fmt.Sprintf("%s,%02d €", w.number(whole), frac)
+}
+
+// number writes n with the language's thousands mark: "2,000", "2.000",
+// "2 000", or none ("2000"), as its page already writes the packs.
+func (w tafsCostWords) number(n int) string {
+	sep := ""
+	switch w.Lang {
+	case "en":
+		sep = ","
+	case "de", "es", "it", "nl":
+		sep = "."
+	case "fr":
+		sep = " "
+	}
+	s := fmt.Sprint(n)
+	if sep == "" || len(s) <= 3 {
+		return s
+	}
+	var parts []string
+	for len(s) > 3 {
+		parts = append([]string{s[len(s)-3:]}, parts...)
+		s = s[:len(s)-3]
+	}
+	return s + sep + strings.Join(parts, sep)
+}
+
+var tafsCostEN = tafsCostWords{Lang: "en", NotAffiliated: "KIFF is not affiliated with or endorsed by Anthropic."}
+var tafsCostDE = tafsCostWords{Lang: "de", NotAffiliated: "KIFF steht in keiner Verbindung zu Anthropic und wird von Anthropic nicht unterstützt."}
+var tafsCostFR = tafsCostWords{Lang: "fr", NotAffiliated: "KIFF n'est ni affilié à Anthropic ni approuvé par Anthropic."}
+var tafsCostES = tafsCostWords{Lang: "es", NotAffiliated: "KIFF no está afiliado a Anthropic ni cuenta con su respaldo."}
+var tafsCostIT = tafsCostWords{Lang: "it", NotAffiliated: "KIFF non è affiliato ad Anthropic né approvato da Anthropic."}
+var tafsCostPT = tafsCostWords{Lang: "pt", NotAffiliated: "O KIFF não é afiliado à Anthropic nem aprovado por ela."}
+var tafsCostNL = tafsCostWords{Lang: "nl", NotAffiliated: "KIFF is niet verbonden aan Anthropic en wordt niet door Anthropic onderschreven."}
+var tafsCostPL = tafsCostWords{Lang: "pl", NotAffiliated: "KIFF nie jest powiązany z firmą Anthropic ani przez nią popierany."}

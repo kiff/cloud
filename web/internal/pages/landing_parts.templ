@@ -1,0 +1,237 @@
+package pages
+
+// Shared building blocks for the homepage and /how-it-works. Kept small
+// and single-purpose so both pages compose the same vocabulary.
+
+// ── Hero flow diagram ───────────────────────────────────────────────
+
+// approvalQueueDiagram is the before and after of the same month.
+//
+// The argument is arithmetic and it does not survive prose: a column of
+// identical rows each ending at a person, beside a column where three
+// run and the fourth stops. A reader does the multiplication themselves,
+// which is the only way that number ever means anything to them.
+//
+// Four rows, not a realistic thousand. The pattern is the point and a
+// wall of rows reads as decoration.
+// mandateCard renders the thing a customer issues: one agent, the
+// actions it may take, the states those actions are legal in, a ceiling
+// over a window, an expiry, and a revoke.
+//
+// Shaped like a card on purpose — that is the mental model people
+// already have for "bounded authority you hand someone" — and labelled
+// so it cannot be mistaken for one. A card checks merchant and amount.
+// This checks which action, on an entity in which state, by which
+// subject, against a total that counts whatever the consequence is:
+// mandate.Quantity is `count` or `sum(param)`, and the package
+// deliberately does not know what a currency is.
+//
+// Every field here maps to a real one on mandate.Mandate — Subject,
+// Grants (with EntityStates), Aggregates (Quantity/Limit/Window),
+// ValidUntil, RevokedAt. Nothing is invented for the page.
+type mandateCardSpec struct {
+	variant       string
+	subject       string
+	domain        string
+	action        string
+	conditionLead string
+	condition     string
+	limit         string
+	window        string
+	used          string
+	remaining     string
+	meterMax      string
+	meterNow      string
+	entity        string
+	movement      string
+}
+
+func refundCardSpec() mandateCardSpec {
+	return mandateCardSpec{
+		variant: "refund", subject: "support-agent", domain: "card-refund · example",
+		action: "REFUND_ORDER", conditionLead: "the order is", condition: "PAID",
+		limit: "€5,000", window: "per calendar day", used: "€4,000 used",
+		remaining: "€1,000 remaining", meterMax: "5000", meterNow: "4000",
+		entity: "on ord_8812", movement: "−€4,000",
+	}
+}
+
+func planCardSpec() mandateCardSpec {
+	return mandateCardSpec{
+		variant: "orders", subject: "support-agent", domain: "subscription-plan-change · example",
+		action: "CHANGE_PLAN", conditionLead: "the subscription is", condition: "ACTIVE",
+		limit: "40", window: "changes per day", used: "9 used",
+		remaining: "31 remaining", meterMax: "40", meterNow: "9",
+		entity: "on sub_4471", movement: "1 change",
+	}
+}
+
+func creditCardSpec() mandateCardSpec {
+	return mandateCardSpec{
+		variant: "credits", subject: "support-agent", domain: "retention-credit · example",
+		action: "ISSUE_STORE_CREDIT", conditionLead: "the customer is", condition: "ELIGIBLE",
+		limit: "€2,000", window: "per calendar day", used: "€750 used",
+		remaining: "€1,250 remaining", meterMax: "2000", meterNow: "750",
+		entity: "for cus_2048", movement: "−€250",
+	}
+}
+templ mandateCard(card mandateCardSpec) {
+	<div class={ "lp-mandate", "lp-mandate-" + card.variant }>
+		<div class="lp-mandate-head">
+			<div class="lp-mandate-brand">
+				<img src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+				<span class="lp-mandate-kind">KIFF Card · issued</span>
+			</div>
+			<span class="lp-mandate-live">active</span>
+		</div>
+		<span class="lp-mandate-subject">{ card.subject }</span>
+		<span class="lp-mandate-domain">{ card.domain }</span>
+		<div class="lp-mandate-rows">
+			<div class="lp-mandate-row">
+				<span class="lp-mandate-k">may do</span>
+				<span class="lp-mandate-v"><code>{ card.action }</code></span>
+			</div>
+			<div class="lp-mandate-row">
+				<span class="lp-mandate-k">only when</span>
+				<span class="lp-mandate-v">{ card.conditionLead } <code>{ card.condition }</code></span>
+			</div>
+			<div class="lp-mandate-row">
+				<span class="lp-mandate-k">up to</span>
+				<span class="lp-mandate-v lp-mandate-strong">{ card.limit } <span>{ card.window }</span></span>
+			</div>
+		</div>
+		<div class="lp-mandate-balance">
+			<div class="lp-mandate-balance-figures"><span>{ card.used }</span><strong>{ card.remaining }</strong></div>
+			<div class="lp-mandate-meter" role="meter" aria-label="Card balance used" aria-valuemin="0" aria-valuemax={ card.meterMax } aria-valuenow={ card.meterNow }><span></span></div>
+		</div>
+		<div class="lp-mandate-movement">
+			<span>{ card.action } <small>{ card.entity }</small></span>
+			<strong>{ card.movement } <small>authorized</small></strong>
+		</div>
+		<span class="lp-mandate-foot">Only the owner can change the ceiling or revoke this card.</span>
+	</div>
+}
+
+templ lifecycleRow(name, first, second, third, fourth string) {
+	<div class="lp-lifecycle-row">
+		<strong>{ name }</strong>
+		<span>{ first }</span><i>→</i><span>{ second }</span><i>→</i><span>{ third }</span><i>→</i><span>{ fourth }</span>
+	</div>
+}
+
+// ── Reusable pieces ─────────────────────────────────────────────────
+
+// step renders one numbered card in a three- (or five-) card row.
+templ step(num, title, desc string) {
+	<div class="lp-step">
+		<span class="lp-step-num">{ num }</span>
+		<span class="lp-step-title">{ title }</span>
+		<span class="lp-step-desc">{ desc }</span>
+	</div>
+}
+
+// fwTag renders one agent-framework chip in the framework-neutral band.
+templ fwTag(name string) {
+	<span class="lp-fw-tag">{ name }</span>
+}
+
+// cloudFeature renders one item in the Cloud feature strip.
+templ cloudFeature(title, desc string) {
+	<div class="lp-cloud-feature">
+		<span class="lp-cloud-feature-title">{ title }</span>
+		<span class="lp-cloud-feature-desc">{ desc }</span>
+	</div>
+}
+
+// ── After-sign-in dashboard showcase ────────────────────────────────
+
+// dashboardShowcase renders a browser-framed mock of the real dashboard
+// a user lands on after sign-in: the sidebar, the active domain, its
+// live decision counts, and the domain card. Built in markup (not a
+// screenshot) so it stays in sync with the product's shape.
+templ dashboardShowcase() {
+	<div class="lp-app" data-demo-shell>
+		<div class="lp-app-poster" data-demo-poster aria-hidden="true">
+			<div class="lp-app-chrome">
+				<span class="lp-app-dots"><i></i><i></i><i></i></span>
+				<span class="lp-app-url">app.kiff.dev/cards</span>
+			</div>
+			<div class="lp-app-body">
+			<aside class="lp-app-side">
+				<div class="lp-app-brand">kiff<span>.dev</span></div>
+				<span class="lp-app-nav lp-app-nav-active">Cards</span>
+				<span class="lp-app-nav">Agents</span>
+				<span class="lp-app-nav">Activity</span>
+				<div class="lp-app-navgroup">setup</div>
+				<span class="lp-app-nav">Domain</span>
+				<span class="lp-app-nav">Build</span>
+				<span class="lp-app-nav">Govern</span>
+				<span class="lp-app-nav">API keys</span>
+				<div class="lp-app-navgroup">account</div>
+				<span class="lp-app-nav">Settings</span>
+			</aside>
+			<main class="lp-app-main">
+				<div class="lp-app-titlerow">
+					<span class="lp-app-title">Cards</span>
+				</div>
+				<p class="lp-app-sub">The authority your agents can use now.</p>
+				<div class="lp-app-cards">
+					@appCard("card-refunds-eu", "support-agent", "REFUND_ORDER · card-refund", "€5,000 / day")
+					@appCard("card-store-credits", "support-agent", "ISSUE_STORE_CREDIT · retention-credit", "€2,000 / day")
+					@appCard("card-plan-changes", "support-agent", "CHANGE_PLAN · subscription-plan-change", "40 / day")
+				</div>
+			</main>
+			</div>
+		</div>
+		<a class="lp-demo-play" href="/demo/cards?tour=1&amp;step=0" data-demo-launch>
+			<span class="lp-demo-play-icon">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.2v9.6L17 12 9 7.2Z"/></svg>
+			</span>
+			<span><strong>Explore the real KIFF app</strong><small>Fully navigable · sample data</small></span>
+		</a>
+		<div class="lp-demo-stage" data-demo-stage hidden>
+			<div class="lp-demo-stage-chrome">
+				<span class="lp-app-dots"><i></i><i></i><i></i></span>
+				<span class="lp-app-url">app.kiff.dev · interactive demo</span>
+				<div class="lp-demo-stage-actions">
+					<a href="/demo/cards?tour=1&amp;step=0" target="_blank" rel="noopener">Open full screen ↗</a>
+					<button type="button" data-demo-close>Close demo</button>
+				</div>
+			</div>
+			<iframe data-demo-frame data-src="/demo/cards?tour=1&amp;step=0&amp;embed=1" title="KIFF interactive application demo" sandbox="allow-scripts allow-forms allow-downloads"></iframe>
+		</div>
+	</div>
+	<script src="/static/js/demo-launcher.js" defer></script>
+}
+
+// ── "Five lines" wow: the integration + what it catches ─────────────
+
+// codeLine renders one line of the integration diff. marker "+" marks a
+// line KIFF adds (highlighted); "" is your existing, unchanged code.
+templ codeLine(marker string, text string) {
+	<div class={ "lp-code-line", templ.KV("lp-code-line-add", marker == "+") }>
+		<span class="lp-code-mark">{ marker }</span>
+		<span class="lp-code-text">{ text }</span>
+	</div>
+}
+
+// outcome renders one attempt → verdict card in the wow band.
+templ outcome(try, verdict, tone string) {
+	<div class={ "lp-outcome", "lp-outcome-" + tone }>
+		<div class="lp-outcome-head">
+			<span class="lp-outcome-try">{ try }</span>
+			<span class={ "lp-outcome-verdict", "lp-outcome-verdict-" + tone }>{ verdict }</span>
+		</div>
+		<span class="lp-outcome-note">{ children... }</span>
+	</div>
+}
+
+// appCard renders one agent card in the Cards poster mock.
+templ appCard(id, holder, grant, ceiling string) {
+	<div class="lp-app-card">
+		<span class="lp-app-card-id">{ id }</span>
+		<span class="lp-app-card-meta">held by { holder }</span>
+		<span class="lp-app-card-meta">{ grant }</span>
+		<span class="lp-app-card-ceiling">{ ceiling }</span>
+	</div>
+}

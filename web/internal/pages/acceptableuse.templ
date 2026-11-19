@@ -1,0 +1,136 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// AcceptableUse renders the Acceptable Use Policy at /acceptable-use:
+// what a customer and its agents (tafs included) may not do through
+// KIFF, what we may do when the policy is broken, and how to report
+// abuse. §5 of the Terms points here, so this is the one list of
+// forbidden uses.
+//
+// Draft for legal review. Keep public text free of private repository
+// links, internal review notes, and source paths.
+templ AcceptableUse() {
+	@components.LayoutSite("KIFF — acceptable use policy", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@aupHead()
+			@aupScope()
+			@aupRules()
+			@aupEnforcement()
+			@aupReporting()
+			@aupChanges()
+		</article>
+	}
+}
+
+templ aupHead() {
+	<header class="legal-head">
+		<p class="legal-badge">Acceptable use policy · v0.1</p>
+		<h1>Acceptable Use Policy</h1>
+		<p class="legal-meta">
+			<strong>Last updated:</strong> 23 October 2026.
+		</p>
+		<p class="legal-disclaimer">
+			This policy is part of the <a href="/terms">Terms of
+			Service</a> (§5) between Kiff Agents OÜ and its Customers.
+			Words defined in the Terms mean the same here. Questions:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ aupScope() {
+	<section id="scope">
+		<h2>1. Who it applies to</h2>
+		<p>
+			It applies to every use of the Service: the website, the
+			dashboard, the API, the gateway, and tafs. It covers you,
+			the people you let into your account, and every agent that
+			acts through it, whether you built the agent or it is a
+			taf.
+		</p>
+		<p>
+			An agent's action is your action. A Card, a held call
+			approved by one of your people, or a taf you started does
+			not move the responsibility to us. If an agent does
+			something this policy forbids, you have broken the policy.
+		</p>
+	</section>
+}
+
+templ aupRules() {
+	<section id="rules">
+		<h2>2. What you may not do</h2>
+		<p>You and your agents may not use the Service to:</p>
+		<ul>
+			<li id="unlawful"><strong>Break the law, or anyone's rights.</strong> Do anything unlawful where you, the people affected, or we operate, or help someone else do it. Infringe anyone's rights, including their intellectual property.</li>
+			<li id="unauthorized"><strong>Act without authority.</strong> Act on a system, account or tool you are not authorized to use, or connect a tool with a sign-in that is not yours to give.</li>
+			<li id="fraud"><strong>Commit fraud, or move money you have no right to move.</strong> Deceive anyone for gain, impersonate a person or business, or pay, refund, transfer or credit funds that you are not entitled to control.</li>
+			<li id="third-party"><strong>Break a tool's own terms.</strong> Use a third-party tool connected to KIFF in a way its provider's terms forbid, including going past its rate limits or reselling access you may not resell.</li>
+			<li id="bypass"><strong>Get around KIFF's decisions.</strong> Try to bypass, disable or trick a decision, a Card, a limit or a hold. This includes splitting one action into many to stay under a limit, making a call to a tool directly once KIFF has refused or held it, approving your own agent's held call through a second identity, or forging a receipt.</li>
+			<li id="security-testing"><strong>Test security without permission.</strong> Scan, probe, load-test or attack the Service, another customer, or any system you do not own, unless the owner has agreed in writing. To test KIFF itself, write to <a href="mailto:security@kiff.dev">security@kiff.dev</a> first.</li>
+			<li id="spam"><strong>Send spam or harass anyone.</strong> Send unsolicited bulk messages, or threaten, stalk, bully or abuse a person.</li>
+			<li id="illegal-content"><strong>Handle illegal content.</strong> Create, store or send content that is illegal, including child sexual abuse material.</li>
+			<li id="malware"><strong>Spread malware.</strong> Create, store or send malware or exploit code.</li>
+			<li id="other-tenants"><strong>Take data that isn't yours.</strong> Scrape, mass-export or otherwise extract data beyond your own account, or try to work out another customer's data.</li>
+			<li id="competing"><strong>Copy the Service.</strong> Reverse-engineer the hosted Service to build a competing product, or use the Service to develop products or services that compete with it. This does not apply to the open-source framework, which its MIT license governs.</li>
+		</ul>
+	</section>
+}
+
+templ aupEnforcement() {
+	<section id="enforcement">
+		<h2>3. What we may do</h2>
+		<p>
+			We do not watch what you send, but we act on what we find
+			and on credible reports. If we believe the policy has been
+			broken, we may, depending on how serious it is:
+		</p>
+		<ul>
+			<li><strong>refuse</strong> a call, a request or a connection;</li>
+			<li><strong>suspend</strong> an agent, a key, a person's access or the whole account, at once where the harm is serious or ongoing;</li>
+			<li><strong>end</strong> the account under §9 of the <a href="/terms#term">Terms</a>.</li>
+		</ul>
+		<p>
+			We tell you what we did and why. Where we can, we give you
+			a chance to fix the problem first. We don't give notice
+			first when the use is illegal, or when people or money are
+			at immediate risk. We may also report unlawful activity to
+			the authorities.
+		</p>
+	</section>
+}
+
+templ aupReporting() {
+	<section id="reporting">
+		<h2>4. Reporting abuse</h2>
+		<p>
+			If you think someone is using KIFF against this policy,
+			tell us. Say what happened, when, and anything that helps
+			us find it, such as a receipt or a call's reference.
+		</p>
+		<ul>
+			<li>A security issue or an attack: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			<li>Any other abuse: <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.</li>
+		</ul>
+	</section>
+}
+
+templ aupChanges() {
+	<section id="changes">
+		<h2>5. Changes</h2>
+		<p>
+			We may update this policy. We give notice of material
+			changes the same way as for the Terms (§16).
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Document version:</strong> v0.1.<br/>
+			<strong>Last updated:</strong> 23 October 2026.
+		</p>
+	</section>
+}

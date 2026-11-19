@@ -1,0 +1,143 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Operator support-ticket triage. OpsSupport is the cross-tenant
+// queue; OpsSupportDetail is one ticket, its thread, and the
+// operator's reply + status forms. Rendered on the shared ops shell —
+// plain server-rendered tables and POST forms, no JS.
+
+// OpsSupport renders the triage queue with a status filter.
+templ OpsSupport(rows []apiclient.OpsSupportTicket, status string, chrome components.DashboardChrome) {
+	@components.OpsShell("support", "support", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · support</p>
+					<h1>Support.</h1>
+					<p class="dash-note">{ opsInt(len(rows)) } shown. Private tenant tickets — answer here and the submitter gets an email with a link back.</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				<form method="get" action="/ops/support" class="ops-search-form">
+					<label class="ops-field-label" for="status-filter">Filter by status</label>
+					<select id="status-filter" name="status" class="ops-plan-select">
+						@opsSupportStatusOption("", "All", status)
+						@opsSupportStatusOption("open", "Open", status)
+						@opsSupportStatusOption("in_progress", "In progress", status)
+						@opsSupportStatusOption("answered", "Answered", status)
+						@opsSupportStatusOption("closed", "Closed", status)
+					</select>
+					<button type="submit" class="btn btn-secondary">Apply</button>
+					if status != "" {
+						<a href="/ops/support" class="dash-note">clear</a>
+					}
+				</form>
+				if len(rows) == 0 {
+					<p class="dash-note">No tickets match.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead>
+								<tr>
+									<th>Ticket</th>
+									<th>Tenant</th>
+									<th>Category</th>
+									<th>Status</th>
+									<th>Last update</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, t := range rows {
+									<tr>
+										<td><a href={ templ.SafeURL("/ops/support/" + t.ID) }>{ t.Title }</a></td>
+										<td>{ t.TenantID }</td>
+										<td>{ t.Category }</td>
+										<td><span class={ opsSupportStatusClass(t.Status) }>{ opsSupportStatusLabel(t.Status) }</span></td>
+										<td>{ opsTime(t.UpdatedAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}
+
+templ opsSupportStatusOption(value, label, selected string) {
+	if value == selected {
+		<option value={ value } selected>{ label }</option>
+	} else {
+		<option value={ value }>{ label }</option>
+	}
+}
+
+// OpsSupportDetail renders one ticket, its full thread, and the
+// operator's reply + status controls.
+templ OpsSupportDetail(v apiclient.OpsSupportDetail, chrome components.DashboardChrome) {
+	@components.OpsShell(v.Ticket.Title, "support", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow"><a href="/ops/support">← all tickets</a></p>
+					<h1>{ v.Ticket.Title }</h1>
+					<div class="ops-state-line">
+						<span class="label">Status</span> <span class={ opsSupportStatusClass(v.Ticket.Status) }>{ opsSupportStatusLabel(v.Ticket.Status) }</span>
+						<span class="label">Category</span> <span class="dash-pill dash-pill-info">{ v.Ticket.Category }</span>
+					</div>
+					<p class="dash-note">Tenant { v.Ticket.TenantID } · { v.Ticket.AuthorSubject } · opened { opsTime(v.Ticket.CreatedAt) }</p>
+				</div>
+			</header>
+
+			<article class="dash-card">
+				<h2>Conversation</h2>
+				<div class="dash-thread-msg">
+					<p class="dash-thread-meta"><strong>{ opsSupportAuthorLabel("user") }</strong> · { opsTime(v.Ticket.CreatedAt) }</p>
+					<p class="dash-thread-body">{ v.Ticket.Body }</p>
+				</div>
+				for _, m := range v.Messages {
+					<div class="dash-thread-msg">
+						<p class="dash-thread-meta"><strong>{ opsSupportAuthorLabel(m.AuthorKind) }</strong> · { opsTime(m.CreatedAt) }</p>
+						<p class="dash-thread-body">{ m.Body }</p>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<div class="ops-action-block">
+					<h3>Reply</h3>
+					<p class="dash-note">Your reply moves the ticket to <strong>answered</strong> and emails the submitter a link back to this thread (never the message body).</p>
+					<form method="post" action={ templ.SafeURL("/ops/support/" + v.Ticket.ID + "/reply") } class="ops-action-form">
+						<div class="ops-field">
+							<label class="ops-field-label" for="reply-body">Message</label>
+							<textarea id="reply-body" name="body" class="dash-textarea" rows="5" required placeholder="Answer the tenant…"></textarea>
+						</div>
+						<button type="submit" class="btn btn-primary">Send reply</button>
+					</form>
+				</div>
+
+				<div class="ops-action-block">
+					<h3>Status</h3>
+					<p class="dash-note">Set the ticket state directly — e.g. take it <strong>in progress</strong> while you look into it, or <strong>close</strong> it when resolved.</p>
+					<form method="post" action={ templ.SafeURL("/ops/support/" + v.Ticket.ID + "/status") } class="ops-action-form">
+						<div class="ops-field">
+							<label class="ops-field-label" for="status-select">New status</label>
+							<select id="status-select" name="status" class="ops-plan-select">
+								@opsSupportStatusOption("open", "Open", v.Ticket.Status)
+								@opsSupportStatusOption("in_progress", "In progress", v.Ticket.Status)
+								@opsSupportStatusOption("answered", "Answered", v.Ticket.Status)
+								@opsSupportStatusOption("closed", "Closed", v.Ticket.Status)
+							</select>
+						</div>
+						<button type="submit" class="btn btn-secondary">Update status</button>
+					</form>
+				</div>
+			</article>
+		</section>
+	}
+}

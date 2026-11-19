@@ -1,0 +1,261 @@
+/* Walkthrough: a full-viewport, one-decision-per-step form.
+ *
+ * Designed at 390px first, then given room. Colours come from the app
+ * shell's tokens (.wk-shell carries the same light and dark set as
+ * .dash-shell), so the walkthrough follows the user's theme. One type
+ * scale, one control style, no fine print under 14px. */
+
+.wk {
+  --wk-radius: 16px;
+  --wk-gap: 22px;
+  --wk-col: 560px;
+  --wk-sel-bg: color-mix(in oklab, var(--accent) 9%, var(--bg-elev));
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wk [hidden] { display: none !important; }
+.wk-mono { font-family: var(--font-mono); }
+.wk-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Top: cancel, where you are, progress. */
+.wk-top {
+  position: sticky; top: 0; z-index: 2;
+  padding: 10px 20px 12px;
+  background: color-mix(in oklab, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.wk-top-row, .wk-progress, .wk-col, .wk-bar-row { max-width: var(--wk-col); margin: 0 auto; }
+.wk-top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.wk-cancel {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+  color: var(--fg-muted); text-decoration: none; font-size: 15px;
+}
+.wk-cancel:hover { color: var(--fg); }
+.wk-count { font-family: var(--font-mono); font-size: 14px; color: var(--fg-muted); }
+.wk-progress { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.wk-progress span { height: 4px; border-radius: 999px; background: var(--rule); transition: background .2s; }
+.wk-progress span.is-on { background: var(--accent); }
+.wk:not(.is-js) .wk-progress { display: none; }
+
+/* The step. */
+.wk-main { flex: 1; padding: 28px 20px 40px; }
+.wk-col { display: flex; flex-direction: column; gap: var(--wk-gap); }
+.wk-form { display: flex; flex-direction: column; gap: 48px; }
+.wk.is-js .wk-form { gap: 0; }
+.wk-step { display: flex; flex-direction: column; gap: var(--wk-gap); }
+.wk-head { display: flex; flex-direction: column; gap: 8px; }
+.wk-head h1, .wk-empty h1 {
+  margin: 0; font-family: var(--font-sans); font-size: 26px; font-weight: 700;
+  line-height: 1.2; letter-spacing: -0.01em; color: var(--fg);
+}
+.wk-head h1:focus { outline: none; }
+.wk-head p, .wk-empty p { margin: 0; color: var(--fg-muted); }
+.wk-head .wk-err { margin: 4px 0 0; color: var(--danger); font-weight: 600; }
+
+/* Messages above the form. */
+.wk-msg {
+  display: flex; flex-direction: column; gap: 4px; margin: 0;
+  padding: 14px 16px; border-radius: 14px;
+  background: var(--bg-elev); border: 1px solid var(--rule); color: var(--fg);
+}
+.wk-msg-warn { border-color: color-mix(in oklab, var(--danger) 55%, var(--rule)); }
+.wk-empty { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; padding-top: 32px; }
+
+/* Choice cards: the one pattern for every decision. */
+.wk-choices { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.wk-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.wk-choice {
+  position: relative; display: flex; align-items: center; gap: 14px;
+  min-height: 64px; padding: 14px 16px; box-sizing: border-box;
+  background: var(--bg-elev); border: 1.5px solid var(--rule); border-radius: var(--wk-radius);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.wk-choice:hover { border-color: color-mix(in oklab, var(--accent) 45%, var(--rule)); }
+.wk-choice > input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.wk-choice:has(> input:checked) { border-color: var(--accent); background: var(--wk-sel-bg); }
+.wk-choice:has(> input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wk-choice-tall { flex-direction: column; align-items: flex-start; gap: 6px; padding: 16px 18px; }
+.wk-choice-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; color: var(--fg); overflow-wrap: anywhere; }
+.wk-choice-body .wk-mono { font-size: 15px; font-weight: 600; }
+.wk-sub { font-size: 14px; color: var(--fg-muted); }
+.wk-strong { font-size: 17px; font-weight: 700; color: var(--fg); }
+.wk-body { font-size: 15px; color: var(--fg-soft); }
+.wk-glyph { font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1; }
+
+.wk-radio, .wk-check {
+  flex: none; width: 22px; height: 22px; box-sizing: border-box;
+  border: 2px solid var(--rule); transition: border .15s, background .15s;
+}
+.wk-radio { border-radius: 50%; }
+.wk-check { border-radius: 6px; display: grid; place-items: center; }
+.wk-choice:has(> input:checked) .wk-radio { border: 7px solid var(--accent); }
+.wk-choice:has(> input:checked) .wk-check { background: var(--accent); border-color: var(--accent); }
+.wk-choice:has(> input:checked) .wk-check::after {
+  content: ""; width: 10px; height: 5px; margin-top: -3px;
+  border: solid var(--accent-ink); border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg);
+}
+
+.wk-chip {
+  flex: none; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 3px 10px;
+  background: var(--rule-soft); color: var(--fg-soft);
+}
+.wk-chip-medium { background: color-mix(in oklab, var(--warn) 20%, var(--bg-elev)); color: var(--fg); }
+.wk-chip-high { background: color-mix(in oklab, var(--danger) 22%, var(--bg-elev)); color: var(--fg); }
+
+.wk-route-head { display: inline-flex; align-items: center; gap: 10px; }
+.wk-tag {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .08em;
+  border-radius: 6px; padding: 4px 8px; background: var(--rule); color: var(--fg);
+}
+.wk-tag-ask { background: var(--accent); color: var(--accent-ink); }
+
+/* Fields. */
+.wk-field { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.wk-label { font-size: 14px; font-weight: 600; color: var(--fg-soft); padding: 0; }
+.wk-unit { font-family: var(--font-mono); font-size: 13px; font-weight: 400; color: var(--fg-muted); margin-left: 4px; }
+.wk-input {
+  box-sizing: border-box; width: 100%; min-width: 0; min-height: 52px; padding: 0 14px;
+  background: var(--bg-elev); color: var(--fg); font: inherit; font-size: 16px;
+  border: 1.5px solid var(--rule); border-radius: 12px; color-scheme: inherit;
+}
+.wk-input:focus { outline: none; border-color: var(--accent); }
+select.wk-input { appearance: none; padding-right: 36px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--fg-muted) 50%), linear-gradient(135deg, var(--fg-muted) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.wk-big { font-size: 20px; font-weight: 600; }
+
+/* Segmented choices. */
+.wk-seg {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px;
+  padding: 4px; background: var(--rule-soft); border-radius: 12px;
+}
+.wk-seg label { position: relative; }
+.wk-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wk-seg span {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 6px;
+  border-radius: 9px; font-size: 14px; font-weight: 600; color: var(--fg-soft); cursor: pointer; text-align: center;
+}
+.wk-seg input:checked + span { background: var(--accent); color: var(--accent-ink); }
+.wk-seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Pills: domains and entity states. */
+.wk-domains, .wk-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.wk-pill {
+  position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px;
+  border: 1.5px solid var(--rule); border-radius: 999px; color: var(--fg); text-decoration: none; font-size: 14px; cursor: pointer;
+}
+.wk-pill input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wk-pill.is-on, .wk-pill:has(input:checked) { border-color: var(--accent); background: var(--wk-sel-bg); }
+.wk-pill:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Helper blocks. */
+.wk-note {
+  display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px;
+  background: var(--rule-soft); border-radius: 14px; font-size: 14px; color: var(--fg-soft);
+}
+.wk-note-icon { flex: none; margin-top: 2px; color: var(--fg-muted); }
+.wk-list { margin: 0; padding: 0 0 0 18px; font-size: 14px; color: var(--fg-soft); }
+.wk-step > .wk-list { padding: 0; list-style: none; font-size: 16px; color: var(--fg); background: var(--bg-elev); border-radius: var(--wk-radius); }
+.wk-step > .wk-list li { padding: 14px 16px; }
+.wk-step > .wk-list li + li { border-top: 1px solid var(--rule-soft); }
+.wk-list-forms { display: flex; flex-direction: column; gap: 4px; margin-top: 20px; }
+.wk-amount { display: flex; align-items: center; gap: 10px; }
+.wk-amount > span { font-family: var(--font-mono); color: var(--fg-muted); }
+
+/* What shows only for one answer. Works without JavaScript. */
+.wk-form:has([name="quantity_kind"][value="count"]:checked) .wk-if-sum,
+.wk-form.is-count-only .wk-if-sum { display: none; }
+.wk-form:not(.is-count-only):not(:has([name="quantity_kind"][value="count"]:checked)) .wk-if-count { display: none; }
+.wk-form:has([name="on_exceed"][value="refuse"]:checked) .wk-if-ask { display: none; }
+.wk-if-ask { padding: 0 4px 4px; }
+.wk-form:has([name="task"][data-count]:checked) .wk-if-money { display: none; }
+.wk-form:not(:has([name="task"][data-count]:checked)) .wk-if-times { display: none; }
+.wk-note a { color: var(--fg); font-weight: 600; }
+.wk-form:has([name="quantity_kind"][value="count"]:checked) .wk-amounts,
+.wk-form.is-count-only .wk-amounts { grid-template-columns: minmax(0, 1fr); }
+
+/* Review: the Card itself, then the answers. */
+.wk-card {
+  position: relative; aspect-ratio: 1.586; border-radius: 20px; overflow: hidden; color: #f3eee6;
+  background: linear-gradient(150deg, #34312d 0%, #1a1816 48%, #0b0a09 100%);
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 18px 40px rgba(0,0,0,.35);
+}
+.wk-seam { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 0 5px rgba(242,163,58,.65)); }
+.wk-seam path { fill: none; stroke: #f2a33a; stroke-width: 2.5; }
+.wk-card-tag { position: absolute; top: 18px; left: 18px; background: #3a3f4a; color: #eceef2; }
+.wk-card-tag.wk-tag-ask { background: #f2b300; color: #1a1400; }
+.wk-card-lines { position: absolute; left: 20px; right: 88px; bottom: 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.wk-card-agent { font-size: 13px; color: #a79f93; }
+.wk-card-actions { font-size: 18px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wk-card-limit { font-size: 13px; color: #d6cfc4; }
+.wk:not(.is-js) .wk-card, .wk:not(.is-js) .wk-rows, .wk:not(.is-js) [data-wk-summary] { display: none; }
+
+.wk-rows { margin: 0; background: var(--bg-elev); border: 1px solid var(--rule-soft); border-radius: var(--wk-radius); }
+.wk-rows > div { display: flex; align-items: center; gap: 12px; padding: 6px 8px 6px 16px; border-bottom: 1px solid var(--rule-soft); }
+.wk-rows > div:last-child { border-bottom: 0; }
+.wk-rows dt { flex: none; width: 72px; font-size: 14px; color: var(--fg-muted); }
+.wk-rows dd { margin: 0; }
+.wk-rows dd:nth-of-type(1) { flex: 1; min-width: 0; color: var(--fg); overflow-wrap: anywhere; }
+.wk-link {
+  appearance: none; background: none; border: 0; min-height: 44px; padding: 0 8px;
+  color: var(--fg); font: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+
+.wk-adv { border: 1.5px solid var(--rule); border-radius: var(--wk-radius); }
+.wk-adv summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 52px; padding: 0 16px; cursor: pointer; list-style: none; font-weight: 600; color: var(--fg);
+}
+.wk-adv summary::-webkit-details-marker { display: none; }
+.wk-adv-body { display: flex; flex-direction: column; gap: 18px; padding: 4px 16px 18px; }
+
+/* Bottom bar: the only place an action lives. Pinned to the bottom of
+ * the screen in the walkthrough; at the end of the form without JS. */
+.wk-bar { margin-top: 32px; padding: 12px 0 16px; border-top: 1px solid var(--rule-soft); }
+.wk.is-js .wk-main { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+.wk.is-js .wk-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; margin: 0;
+  padding: 12px 20px calc(16px + env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--bg) 94%, transparent); backdrop-filter: blur(8px);
+}
+.wk-bar-row { display: flex; gap: 10px; }
+.wk-btn {
+  appearance: none; display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 0 22px; border-radius: 14px; border: 0;
+  font: inherit; font-size: 16px; font-weight: 700; text-decoration: none; cursor: pointer;
+}
+.wk-btn-primary { flex: 1; background: var(--accent); color: var(--accent-ink); }
+.wk-btn-primary:hover { background: var(--accent-soft); }
+.wk-btn-quiet { background: var(--rule-soft); color: var(--fg); }
+.wk-btn-half { flex: 1; }
+.wk-btn-danger { flex: 1; background: var(--danger); color: #fff; }
+.wk-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wk:not(.is-js) [data-wk-back], .wk:not(.is-js) [data-wk-next] { display: none; }
+
+@media (min-width: 720px) {
+  .wk-main { padding-top: 56px; }
+  .wk-head h1, .wk-empty h1 { font-size: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wk * { transition: none !important; }
+}
+
+/* One step on its own, to change a Card that exists: no
+ * progress, only that step, what changes, and Save. */
+.wk-single .wk-progress { display: none; }
+.wk-single .wk-step .wk-card, .wk-single .wk-step .wk-rows { display: none; }
+.wk-change { max-width: var(--wk-col); margin: 0 auto 10px; font-size: 15px; font-weight: 600; color: var(--fg); overflow-wrap: anywhere; }
+.wk-btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* A command or URL to copy, on an agent's connect sheet. */
+.wk-code { margin: 6px 0 0; padding: 12px 14px; background: var(--bg-elev); border: 1px solid var(--rule-soft); border-radius: var(--wk-radius); font: 13px/1.5 var(--font-mono, monospace); white-space: pre-wrap; overflow-wrap: anywhere; }

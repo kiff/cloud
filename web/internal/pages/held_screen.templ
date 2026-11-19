@@ -1,0 +1,188 @@
+package pages
+
+import (
+	"net/url"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/words"
+)
+
+// HeldScreenView drives a held call's screen as the tafs app opens it
+// (/needs-you/{id}?lang=): one job, answering it, in the app's language.
+// What the call is, its amount, why it's held and what it sends are KIFF's
+// own lines, in that language (apps/api); the screen's words are around
+// them. Every detail and the call's history stay on /needs-you/{id}, the
+// dashboard's view, in English.
+type HeldScreenView struct {
+	Lang      string
+	W         words.Held
+	E         *apiclient.CardException
+	Flash     *DashboardFlash
+	LoadError string
+}
+
+// heldAction is where an answer posts, keeping the screen and its language.
+func (v HeldScreenView) heldAction(answer string) string {
+	return needsYouHref(v.E.ID) + "/" + answer + "?lang=" + url.QueryEscape(v.Lang)
+}
+
+// heldCards are the Cards a held call is outside, once each.
+func heldCards(e apiclient.CardException) []string {
+	var ids []string
+	seen := map[string]bool{}
+	for _, b := range e.Breaches {
+		if b.MandateID != "" && !seen[b.MandateID] {
+			seen[b.MandateID] = true
+			ids = append(ids, b.MandateID)
+		}
+	}
+	return ids
+}
+
+// heldDeadline is when a held call must be answered by, in numbers that
+// read the same in every language ("2026-11-10 15:04 CET"), or "".
+func heldDeadline(e apiclient.CardException, loc *time.Location) string {
+	if e.ExpiresAt == nil {
+		return ""
+	}
+	return e.ExpiresAt.In(loc).Format("2006-01-02 15:04 MST")
+}
+
+// heldSummary is KIFF's name for the call, or its action when KIFF gave none.
+func heldSummary(e apiclient.CardException) string {
+	if e.Summary != "" {
+		return e.Summary
+	}
+	return e.Action
+}
+
+// HeldScreen renders a held call's screen.
+templ HeldScreen(v HeldScreenView) {
+	@components.LayoutAppThemedWithCSS("KIFF — "+v.W.Heading, "css/fonts.css", "css/app-shell.css", "css/auth.css", "css/consent.css", "css/cards.css") {
+		<div class="consent-shell">
+			<header class="consent-topbar">
+				<a class="consent-brand" href="/tafs" aria-label={ words.TafsByKIFF }>
+					<img class="consent-brand-img" src="/static/img/tafs/tafs-icon-512.png" alt="" aria-hidden="true"/>
+					<img class="consent-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+					<span class="consent-brand-word">{ words.TafsByKIFF }</span>
+				</a>
+			</header>
+			<section class="auth-card consent-card ny-screen">
+				<p class="eyebrow">{ v.W.Heading }</p>
+				@flashBanner(v.Flash)
+				if v.LoadError != "" {
+					<div class="auth-error">{ v.LoadError }</div>
+				} else if v.E != nil {
+					@heldScreenCall(v, *v.E)
+				}
+			</section>
+		</div>
+	}
+}
+
+templ heldScreenCall(v HeldScreenView, e apiclient.CardException) {
+	<div class="ny-item-head">
+		<span class={ "dash-portfolio-state", exceptionStateClass(e) }>{ v.W.StatusOf(e.Status) }</span>
+		<span class="ny-agent"><code>{ e.Subject }</code></span>
+	</div>
+	<h1 class="ny-headline">
+		{ heldSummary(e) }
+		if e.AmountText != "" {
+			<span class="ny-amount">{ e.AmountText }</span>
+		}
+	</h1>
+	if e.ReasonText != "" || len(heldCards(e)) > 0 {
+		<section class="ny-block">
+			<h2>{ v.W.Why }</h2>
+			if e.ReasonText != "" {
+				<p><strong>{ e.ReasonText }</strong></p>
+			}
+			for _, id := range heldCards(e) {
+				<p class="dash-note">{ v.W.Card } <a href={ templ.SafeURL("/cards/" + url.PathEscape(id)) }><code>{ id }</code></a></p>
+			}
+		</section>
+	}
+	if e.ArgumentsUnavailable {
+		<p class="dash-note dash-note-warn">{ v.W.ArgsUnavailable }</p>
+	} else if e.Arguments != nil && len(e.Arguments) == 0 {
+		<p class="dash-note">{ v.W.NoArgs }</p>
+	} else if len(e.Details) > 0 {
+		<section class="ny-block">
+			<h2>{ v.W.Sends }</h2>
+			<ul class="ny-details">
+				for _, d := range e.Details {
+					<li><code>{ d }</code></li>
+				}
+			</ul>
+		</section>
+	}
+	switch e.Status {
+		case "held":
+			<div class="ny-answer">
+				if by := heldDeadline(e, components.TimeZone(ctx)); by != "" {
+					<p class="ny-deadline">{ v.W.AnswerBy(by) }</p>
+				}
+				if pastTotalHint(e) != "" && components.Can(ctx, "holds.answer") {
+					<p class="dash-note">
+						{ v.W.PastTotal }
+						if !components.Can(ctx, "cards.manage") {
+							{ " " + v.W.ManagerCanAdd }
+						}
+					</p>
+				}
+				<div class="ny-answers">
+					if components.Can(ctx, "holds.answer") && e.MayApproveOnce() {
+						<form method="post" action={ templ.SafeURL(v.heldAction("approve-once")) }>
+							<button class="btn btn-primary" type="submit">{ v.W.ApproveOnce }</button>
+						</form>
+					}
+					if components.Can(ctx, "cards.manage") && e.HasCumulativeBreach() {
+						for _, b := range e.Breaches {
+							if b.Outcome == "limit_reached" {
+								<a class="btn" href={ templ.SafeURL("/cards/"+url.PathEscape(b.MandateID)+"/extra-room") }>{ v.W.ExtraRoom }</a>
+							}
+						}
+					} else if components.Can(ctx, "cards.manage") {
+						<form method="post" action={ templ.SafeURL(v.heldAction("change-card")) }>
+							<button class="btn" type="submit">{ v.W.ReviseCard }</button>
+						</form>
+					}
+					if components.Can(ctx, "holds.answer") {
+						for _, step := range e.NextSteps {
+							<form method="post" action={ templ.SafeURL(v.heldAction("reject")) }>
+								<input type="hidden" name="next_step" value={ step }/>
+								<button class="btn" type="submit">{ NextStepLabel(step) }</button>
+							</form>
+						}
+						<form method="post" action={ templ.SafeURL(v.heldAction("reject")) }>
+							<button class="btn" type="submit">{ v.W.Refuse }</button>
+						</form>
+					}
+					if !components.Can(ctx, "holds.answer") && !components.Can(ctx, "cards.manage") {
+						<p class="dash-note">{ v.W.RoleCantAnswer }</p>
+					}
+				</div>
+				<details class="ny-how">
+					<summary>{ v.W.HowTitle }</summary>
+					<p class="dash-note">{ v.W.HowOnce }</p>
+					<p class="dash-note">{ v.W.HowURL }</p>
+				</details>
+			</div>
+		case "approved_no_room":
+			<p class="dash-note dash-note-warn">{ v.W.NoRoom }</p>
+			if components.Can(ctx, "holds.answer") {
+				<form method="post" action={ templ.SafeURL(v.heldAction("reject")) }><button class="btn" type="submit">{ v.W.Refuse }</button></form>
+			}
+		case "unavailable":
+			<p class="dash-note dash-note-warn">{ v.W.Unavailable }</p>
+		default:
+			if e.ResolvedBy != "" && e.Resolution == "change-card" {
+				<p>{ v.W.CardChangedBy(e.ResolvedBy) }</p>
+			} else if e.ResolvedBy != "" {
+				<p>{ v.W.AnsweredBy(e.ResolvedBy) }</p>
+			}
+	}
+	<p class="ny-back"><a href={ templ.SafeURL(needsYouHref(e.ID)) } lang="en">{ v.W.FullDetails }</a></p>
+}

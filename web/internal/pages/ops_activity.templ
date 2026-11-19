@@ -1,0 +1,66 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsActivity renders the cross-tenant receipts feed, newest first —
+// the at-a-glance "is the system healthy" view.
+templ OpsActivity(rows []apiclient.OpsActivityRow, chrome components.DashboardChrome) {
+	@components.OpsShell("activity", "activity", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · activity</p>
+					<h1>Recent activity.</h1>
+					<p class="dash-note">Receipts across all tenants, newest first.</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				if len(rows) == 0 {
+					<p class="dash-note">No recent activity.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead>
+								<tr>
+									<th>Issued</th>
+									<th>Tenant</th>
+									<th>Action</th>
+									<th>Outcome</th>
+									<th>Trace</th>
+									<th>Anchored</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, a := range rows {
+									<tr>
+										<td>{ opsTime(a.IssuedAt) }</td>
+										<td><a href={ templ.SafeURL("/ops/tenants/" + a.TenantID) }>{ a.TenantID }</a></td>
+										<td>{ a.Action }</td>
+										<td>
+											if a.Outcome != "" {
+												<span class={ opsOutcomeClass(a.Outcome) }>{ a.Outcome }</span>
+											} else {
+												<span class="dash-pill dash-pill-muted">—</span>
+											}
+										</td>
+										<td>{ a.TraceID }</td>
+										<td>
+											if a.Anchored {
+												<span class="dash-pill dash-pill-ok">anchored</span>
+											} else {
+												<span class="dash-pill dash-pill-muted">pending</span>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}

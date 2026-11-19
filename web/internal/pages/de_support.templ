@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SupportDE is the support page (/support) in German, at /de/support.
+// It is a translation of Support: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ SupportDE() {
+	@components.LayoutSite("KIFF — Support", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@supportHeadDE()
+			@supportWriteDE()
+			@supportStatusDE()
+			@supportTafsDE()
+			@supportDataDE()
+			@supportSecurityDE()
+			if computerAppReleased() {
+				@supportComputerDE()
+			}
+		</article>
+	}
+}
+
+templ supportHeadDE() {
+	<header class="legal-head">
+		<p class="legal-badge">Support</p>
+		<h1>Support</h1>
+		<p class="legal-meta">
+			<strong>Zuletzt aktualisiert:</strong> 13. November 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Für KIFF und für tafs, KIFFs App für iPhone, iPad und Android.
+			Beide werden von Kiff Agents OÜ, Tallinn, Estland, betrieben.
+		</p>
+	</header>
+}
+
+templ supportWriteDE() {
+	<section id="write">
+		<h2>1. Schreib uns</h2>
+		<p>
+			Schreib an <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>
+			von der E-Mail-Adresse deines Kontos und sag, was passiert ist.
+			Ein Mensch antwortet, innerhalb der Antwortzeiten in der
+			<a href="/legal/sla#support">Service-Level-Vereinbarung</a> { components.InEnglish("de") }
+			(§5).
+		</p>
+	</section>
+}
+
+templ supportStatusDE() {
+	<section id="status">
+		<h2>2. Ist etwas ausgefallen?</h2>
+		<p>
+			<a href="https://status.kiff.dev">status.kiff.dev</a> läuft
+			getrennt von KIFF, antwortet also auch dann, wenn KIFF es nicht tut.
+		</p>
+	</section>
+}
+
+templ supportTafsDE() {
+	<section id="tafs">
+		<h2>3. Dein Konto löschen</h2>
+		<p>
+			In tafs: Konto → <em>Konto löschen</em>. KIFF sperrt deine
+			Schlüssel sofort und löscht seine Aufzeichnungen nach einer
+			Schonfrist von 30 Tagen, wie es die
+			<a href="/de/privacy">Datenschutzerklärung</a> sagt. Hilfe zur App
+			findest du in der <a href="/docs/tafs">tafs-Doku</a> { components.InEnglish("de") }.
+			if WatchLive {
+				<a href="/de/tafs/watch">tafs auf deiner Uhr</a>: was es kann und wie du es bekommst.
+			}
+		</p>
+	</section>
+}
+
+templ supportDataDE() {
+	<section id="data">
+		<h2>4. Deine Daten</h2>
+		<p>
+			Um deine Daten einzusehen, zu exportieren oder zu löschen, oder ein
+			im Web angelegtes Konto, schreib an
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportSecurityDE() {
+	<section id="security">
+		<h2>5. Sicherheit und Rechtliches</h2>
+		<p>
+			Sicherheitsprobleme: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+			Rechtliche Mitteilungen: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportComputerDE() {
+	<section id="computer">
+		<h2>6. Einen Computer mit deinem Handy hinzufügen</h2>
+		<ol>
+			<li>Öffne tafs auf dem Computer und wähle <em>Diesen Computer mit deinem Handy hinzufügen</em>. Er zeigt einen Code zum Scannen.</li>
+			<li>Öffne auf dem Telefon, das du schon mit tafs nutzt, <em>Konto</em> → <em>Geräte</em> → <em>Gerät hinzufügen</em> und scanne diesen Code.</li>
+			<li>Dein Handy fragt, ob dein Computer einen Code zeigt. Prüfe, dass es derselbe ist, und bestätige nur diesen einen Computer, während er vor dir steht.</li>
+		</ol>
+		<p>Ist der Code abgelaufen oder schon benutzt, wähle auf dem Computer <em>Neuen Code zeigen</em> und scanne erneut. Unter Linux und auf einem Mac ohne Secure Enclave zeigt tafs, was auf dich wartet, bestätigt aber nichts; du bestätigst auf deinem Handy{ macSecurityKey("de") }.</p>
+	</section>
+}

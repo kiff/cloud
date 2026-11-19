@@ -1,0 +1,122 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Support renders /support: how to reach a person, where to see whether
+// something is down, and how to delete an account. It is the support URL
+// the App Store listing points to, so it names no price and no way to buy:
+// Apple's rules on metadata apply to what the listing links to.
+//
+// Keep reply times in step with the SLA (§5), and the deletion steps with
+// what the app and the privacy policy do. Keep public text free of private
+// repository links and internal review notes. Help with using the app
+// lives in the tafs docs; this page only says how to reach a person.
+templ Support() {
+	@components.LayoutSite("KIFF — support", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@supportHead()
+			@supportWrite()
+			@supportStatus()
+			@supportTafs()
+			@supportData()
+			@supportSecurity()
+			if computerAppReleased() {
+				@supportComputer()
+			}
+		</article>
+	}
+}
+
+templ supportHead() {
+	<header class="legal-head">
+		<p class="legal-badge">Support</p>
+		<h1>Support</h1>
+		<p class="legal-meta">
+			<strong>Last updated:</strong> 13 November 2026.
+		</p>
+		<p class="legal-disclaimer">
+			For KIFF and for tafs, KIFF's app for iPhone, iPad and Android. Both are
+			run by Kiff Agents OÜ, Tallinn, Estonia.
+		</p>
+	</header>
+}
+
+templ supportWrite() {
+	<section id="write">
+		<h2>1. Write to us</h2>
+		<p>
+			Write to <a href="mailto:hello@kiff.dev">hello@kiff.dev</a> from
+			your account's email and say what happened. A person answers, within
+			the reply times in the
+			<a href="/legal/sla#support">service-level agreement</a> (§5).
+		</p>
+	</section>
+}
+
+templ supportStatus() {
+	<section id="status">
+		<h2>2. Is something down?</h2>
+		<p>
+			<a href="https://status.kiff.dev">status.kiff.dev</a> runs apart
+			from KIFF, so it answers when KIFF doesn't.
+		</p>
+	</section>
+}
+
+templ supportTafs() {
+	<section id="tafs">
+		<h2>3. Delete your account</h2>
+		<p>
+			In tafs: Account → <em>Delete account</em>. KIFF stops your keys at
+			once and erases its records after a 30-day grace window, as the
+			<a href="/privacy">privacy policy</a> says. Help with the app is in
+			the <a href="/docs/tafs">tafs docs</a>.
+			if WatchLive {
+				<a href="/tafs/watch">tafs on your watch</a>: what it does and how to get it.
+			}
+		</p>
+	</section>
+}
+
+templ supportData() {
+	<section id="data">
+		<h2>4. Your data</h2>
+		<p>
+			To see, export or delete your data, or an account made on the web,
+			write to <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportSecurity() {
+	<section id="security">
+		<h2>5. Security and legal</h2>
+		<p>
+			Security issues: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+			Legal notices: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+// supportComputer is how a computer joins: the tafs app on it is added with
+// the phone, in the app's own words (app/strings: pair.title,
+// sign_in.pair_how, settings.devices.pair_check, pair.new_code). Keep it in
+// step with the apps' pairing screens.
+templ supportComputer() {
+	<section id="computer">
+		<h2>6. Add a computer with your phone</h2>
+		<ol>
+			<li>On the computer, open tafs and choose <em>Add this computer with your phone</em>. It shows a code to scan.</li>
+			<li>On the phone you already use with tafs, open <em>Account</em> → <em>Devices</em> → <em>Add a device</em>, and scan that code.</li>
+			<li>Your phone asks whether your computer shows a code. Check that it's the same, and approve only that one computer, with it in front of you.</li>
+		</ol>
+		<p>
+			If the code expired or was already used, choose <em>Show a new code</em> on
+			the computer and scan again. On Linux, and on a Mac without a Secure
+			Enclave, tafs shows what waits for you but doesn't approve; you approve
+			on your phone{ macSecurityKey("en") }.
+		</p>
+	</section>
+}

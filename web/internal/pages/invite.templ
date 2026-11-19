@@ -1,0 +1,74 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// InviteView backs /invite/{token}. The signed-in person sees which
+// account, which role, and who invited them, and accepts explicitly;
+// the link alone grants nothing.
+type InviteView struct {
+	Token   string
+	Preview *apiclient.InvitePreview
+	ErrMsg  string
+}
+
+func inviteRoleWhat(role string) string {
+	for _, r := range roleSummaries {
+		if r.Role == role {
+			return r.What
+		}
+	}
+	return ""
+}
+
+templ InvitePage(v InviteView) {
+	@components.LayoutAppWithCSS("KIFF — invitation", "css/auth.css") {
+		<section class="auth-card">
+			<p class="eyebrow">Invitation</p>
+			if v.ErrMsg != "" {
+				<h1>This invitation can't be used</h1>
+				<div class="auth-error">{ v.ErrMsg }</div>
+				<p class="auth-note"><a href="/cards">Go to your dashboard</a></p>
+			} else if v.Preview != nil {
+				<h1>
+					if v.Preview.Account != "" {
+						Join { v.Preview.Account }
+					} else {
+						Join this account
+					}
+				</h1>
+				<p class="auth-note">{ v.Preview.InvitedBy } invited you as <strong>{ components.RoleLabel(v.Preview.Role) }</strong>. { inviteRoleWhat(v.Preview.Role) }</p>
+				<p class="auth-note">You join with the account you are signed in with now. Your other accounts are not affected.</p>
+				<form method="post" action={ templ.SafeURL("/invite/" + url.PathEscape(v.Token)) } class="auth-form">
+					<button type="submit">Accept the invitation</button>
+				</form>
+				<p class="auth-note">Not you, or not expected? Close this page; nothing happens unless you accept. <a href="/sign-out">Sign out</a></p>
+			}
+		</section>
+	}
+}
+
+// NoAccess is shown when the signed-in person has no account they can
+// work in: their access is suspended, or they were removed.
+templ NoAccess(why string) {
+	@components.LayoutAppWithCSS("KIFF — no access", "css/auth.css") {
+		<section class="auth-card">
+			<p class="eyebrow">Account access</p>
+			if why == "suspended" {
+				<h1>Your access is suspended</h1>
+				<p class="auth-note">An admin of the account suspended your access. They can restore it, with the same role as before.</p>
+			} else if why == "not_member" {
+				<h1>You are not on this account</h1>
+				<p class="auth-note">This sign-in is not a member of the account. Ask one of its admins for an invitation, and open the link while signed in.</p>
+			} else {
+				<h1>You are no longer on this account</h1>
+				<p class="auth-note">An admin removed you from the account. To come back, ask them for a new invitation.</p>
+			}
+			<p class="auth-note"><a href="/sign-out">Sign out</a></p>
+		</section>
+	}
+}

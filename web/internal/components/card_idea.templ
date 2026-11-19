@@ -1,0 +1,36 @@
+package components
+
+// CardIdea is the one definition of a KIFF Card the public site shares. A
+// card is a written delegation of authority (a "mandate" in the API, the
+// mandates design), not a payment card and not an access badge. The
+// closest everyday instrument is a licence: it names what the holder may
+// operate, where and under what conditions, it is earned and widened on a
+// record, it can be suspended at once, and it is backed by a logbook.
+//
+// Every property below must stay true of the shipped product: actions and
+// entity states (the domain), a count or sum limit over a window, expiry,
+// owner-only ceiling changes, revocation and the per-card statement.
+// Anything not shipped belongs in the builders page's "where this goes".
+templ CardIdea() {
+	<div class="card-idea">
+		<div class="card-idea-grid">
+			<div>
+				<span class="card-idea-k">what it covers</span>
+				<p>The actions this agent may take. A licence lists the aircraft you may fly; a card lists the operations you may run.</p>
+			</div>
+			<div>
+				<span class="card-idea-k">when it is valid</span>
+				<p>Only in the business states your domain defines: a refund only on a paid order, a deploy only on a passing build.</p>
+			</div>
+			<div>
+				<span class="card-idea-k">how much</span>
+				<p>A limit on any countable consequence over a window: euros refunded, customers changed, deploys shipped.</p>
+			</div>
+			<div>
+				<span class="card-idea-k">who holds the pen</span>
+				<p>An owner issues it, widens it as the record earns it, and can revoke it at once. The agent cannot change its own card. Every use is in its statement.</p>
+			</div>
+		</div>
+		<p class="card-idea-note">Not a payment card, and not a badge. The domain decides whether an action is valid at all; the card decides how much of it this agent has been given. A limit bounds exposure. It does not make a wrong action right.</p>
+	</div>
+}

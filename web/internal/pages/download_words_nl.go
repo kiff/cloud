@@ -1,0 +1,37 @@
+package pages
+
+// downloadNL is /tafs/download's words in Dutch, at /nl/tafs/download.
+var downloadNL = downloadWords{
+	Lang:             "nl",
+	Title:            "Download tafs — KIFF",
+	Description:      "Download tafs op Google Play voor Android. iPhone en iPad komen naar de App Store.",
+	DescAvailable:    "Download tafs voor %s.",
+	DescComingOne:    "De app voor %s is binnenkort beschikbaar.",
+	DescComingMany:   "De apps voor %s zijn binnenkort beschikbaar.",
+	And:              "en",
+	Head:             "Download tafs",
+	Sub:              "AI-agents voor het routinewerk van je bedrijf, elk binnen een Card die jij instelt. Alles wat groter is, wacht op jouw goedkeuring op je telefoon.",
+	Phones:           "Telefoon en tablet",
+	Computer:         "Computer",
+	NotYet:           "Binnenkort beschikbaar",
+	NotAvailable:     "Niet beschikbaar",
+	AvailableVersion: "Versie %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Controleer voor het openen dat de SHA-256 van het bestand hiermee overeenkomt.",
+	DownloadFor:      "Download voor %s",
+	QRAlt:            "QR-code die kiff.dev/tafs/download opent",
+	QRCaption:        "Scan met de camera van je telefoon om deze pagina daar te openen.",
+	Cost:             "Wat het kost:",
+	Pricing:          "prijzen",
+	ComingAppStore:   "Binnenkort in de App Store",
+	IPhoneIPad:       "iPhone en iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 of hoger",
+		"ios":     "iOS en iPadOS 16 of hoger",
+		"macos13": "macOS 13 of hoger",
+		"macos":   "alleen macOS 12 (Monterey)",
+		"windows": "Windows 10 of 11",
+		"linux":   "Ubuntu 24.04 of hoger",
+	},
+}

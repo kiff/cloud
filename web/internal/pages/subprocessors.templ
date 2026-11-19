@@ -1,0 +1,173 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Subprocessors renders the list of subprocessors at /subprocessors:
+// each vendor that touches personal data for KIFF, what it does, the
+// data it touches, and where. Built from the services the code calls
+// (hosting, identity, payment, email) and, for tafs, from the owner's
+// confirmation (Anthropic, Apple, the regions).
+//
+// This is the official list: the DPA (§10, Annex 3) and /security point
+// here. Keep the DPA's Annex 3 in step with it.
+//
+// Draft for legal review. Keep public text free of private repository
+// links, internal review notes, and source paths.
+templ Subprocessors() {
+	@components.LayoutSite("KIFF — subprocessors", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@subprocessorsHead()
+			@subprocessorsList()
+			@subprocessorsNotListed()
+			@subprocessorsChanges()
+		</article>
+	}
+}
+
+templ subprocessorsHead() {
+	<header class="legal-head">
+		<p class="legal-badge">Subprocessors · v0.1</p>
+		<h1>Subprocessors</h1>
+		<p class="legal-meta">
+			<strong>Last updated:</strong> 17 November 2026.
+		</p>
+		<p class="legal-disclaimer">
+			The companies Kiff Agents OÜ uses to run KIFF Cloud and
+			tafs that handle personal data on its behalf. This is the
+			official list. The
+			<a href="/legal/dpa">Data Processing Agreement</a> governs
+			how we engage them. Questions:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ subprocessorsList() {
+	<section id="list">
+		<h2>1. The list</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Subprocessor</th>
+						<th>What it does for KIFF</th>
+						<th>Data it touches</th>
+						<th>Location</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="aws">
+						<td>Amazon Web Services</td>
+						<td>Hosting: the servers, the database and its backups, key management, secrets and monitoring. For tafs, its own store and planque's connections</td>
+						<td>Everything KIFF keeps: accounts and the people who sign in, Cards, decisions, receipts, logs. For tafs, runs, chats, memory notes, and connection tokens (encrypted)</td>
+						<td>Ireland (eu-west-1): KIFF Cloud, the tafs service, tafs's runs, chats and model calls, and planque, with all they store. Ireland also serves KIFF's public demos and the site's videos. The only thing in the United States (us-east-1) is the certificates CloudFront requires there, which hold no customer data</td>
+					</tr>
+					<tr id="clerk">
+						<td>Clerk</td>
+						<td>Identity: sign-in and sessions for KIFF accounts</td>
+						<td>The email address and name of the people who sign in, their sessions, IP address, device and browser, and the identity from Apple, Google or GitHub when someone signs in with one of them</td>
+						<td>United States</td>
+					</tr>
+					<tr id="stripe">
+						<td>Stripe</td>
+						<td>Payment: checkout, invoices and the billing portal on a paid plan</td>
+						<td>The billing contact and payment details entered at Stripe's checkout, and the usage counts reported for invoicing</td>
+						<td>EU and United States</td>
+					</tr>
+					<tr id="resend">
+						<td>Resend</td>
+						<td>Email: held-call and Card-warning notices, usage and account notices, and support replies. For tafs, a taf's email door: the mail people send to it, and its answers</td>
+						<td>The recipient's email address and the notice. A held-call notice names the agent, the action, its amount and the Card it is outside of. For an email door, the messages, their senders and attachments</td>
+						<td>United States</td>
+					</tr>
+					<tr id="cloudflare">
+						<td>Cloudflare</td>
+						<td>Email: receives mail sent to kiff.dev addresses, such as support and privacy requests, and forwards it to the team's mailboxes (Email Routing)</td>
+						<td>The messages people send to kiff.dev addresses: sender, recipients, subject, body and attachments</td>
+						<td>United States, on Cloudflare's worldwide network</td>
+					</tr>
+					<tr id="google-workspace">
+						<td>Google Workspace</td>
+						<td>Email: the team's mailboxes, where mail sent to kiff.dev addresses arrives once Cloudflare forwards it, support and privacy requests among it</td>
+						<td>The messages people send to kiff.dev addresses: sender, recipients, subject, body and attachments</td>
+						<td>United States, and the other countries where Google keeps Workspace data</td>
+					</tr>
+					<tr id="composio">
+						<td>Composio</td>
+						<td>For tafs, through planque: holds the sign-ins of managed connections (the services a customer connects through its sign-in page), and the Slack bot behind a Slack door, and makes each call planque asks for.
+							@composioUse("en")
+						</td>
+						<td>The connected services' sign-ins (tokens or keys), held by Composio and never given to a taf or to planque; each call's input and the service's answer; a Slack door's messages</td>
+						<td>United States</td>
+					</tr>
+					<tr id="apple">
+						<td>Apple</td>
+						<td>Push notifications to devices registered in the tafs app (Apple Push Notification service): held calls, a door's messages, and a tool that signed a taf out</td>
+						<td>The device's push token and the alert's text: which taf, and in a door's alert the name or email address of who wrote in. No amounts or request details</td>
+						<td>United States</td>
+					</tr>
+					<tr id="google">
+						<td>Google</td>
+						<td>The tafs app on Android: push notifications to devices registered for alerts (Firebase Cloud Messaging), and purchases through Google Play's billing</td>
+						<td>The device's push token and the alert's text: which taf, and in a door's alert the name or email address of who wrote in, with no amounts or request details; for a purchase, what was bought, the account's random id, the purchase's token and order id</td>
+						<td>United States</td>
+					</tr>
+					<tr id="anthropic">
+						<td>Anthropic</td>
+						<td>AI models: the model behind Coach and each taf (Claude API). tafs only</td>
+						<td>What's sent to it: what you write to Coach and your tafs, the files you attach, what your connected apps return to a taf while it works, and what's on your screen while Coach helps you in the app; and the model's reply. Never sent: the passwords and keys your connected apps use, or your fingerprint. Sent only once you allow it in the tafs app (see <a href="/privacy#ai-in-tafs">Privacy</a>). Anthropic keeps it up to 30 days, longer only where law, its usage policy or its terms require</td>
+						<td>United States, called from Ireland (eu-west-1); inference may run in the United States, Europe, Asia or Australia</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		@composioApps("en")
+		<p>
+			Where a subprocessor is outside the European Economic
+			Area, the transfer rests on the EU–US Data Privacy
+			Framework or the Standard Contractual Clauses, as §11 of
+			the <a href="/legal/dpa#transfers">DPA</a> sets out.
+		</p>
+	</section>
+}
+
+templ subprocessorsNotListed() {
+	<section id="not-listed">
+		<h2>2. Who is not on the list</h2>
+		<ul>
+			<li>
+				<strong>Your own tools.</strong> When KIFF sends an
+				agent's call to a tool you connected, such as your
+				payment or support system, that tool works for you, not
+				for us. Its provider is your vendor.
+			</li>
+			<li>
+				<strong>The public verifiable trail.</strong> Only
+				summary hashes are published to it. It receives no
+				personal data.
+			</li>
+		</ul>
+	</section>
+}
+
+templ subprocessorsChanges() {
+	<section id="changes">
+		<h2>3. Changes</h2>
+		<p>
+			Before we add or replace a subprocessor that handles your
+			personal data, we tell you at least thirty days ahead, and
+			you may object, as §10 of the
+			<a href="/legal/dpa#sub-processors">DPA</a> sets out. We
+			update this page within 30 days of any change.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Document version:</strong> v0.1.<br/>
+			<strong>Last updated:</strong> 17 November 2026.
+		</p>
+	</section>
+}

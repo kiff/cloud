@@ -1,0 +1,666 @@
+/* site.css, shared chrome + tokens for the redesigned public site
+ * (the "paper" theme, #4 redesign).
+ *
+ * Scoped to body.site so the legacy dark pages (still on Layout) are
+ * untouched until their slice migrates. Holds the paper design
+ * tokens, the site nav, the site footer, and the shared primitives
+ * (container, section header, buttons) every redesigned marketing
+ * page reuses. Page-specific styles live in css/<surface>.css.
+ *
+ * Loaded with css/fonts.css (self-hosted DM Serif Display / IBM Plex
+ * Mono / Geist). No Google Fonts <link> at runtime.
+ */
+
+/* ── Paper tokens ───────────────────────────────────────────────── */
+
+body.site {
+  color-scheme: light;
+
+  /* Restrained, cool, light system, modelled on premium product
+   * sites (near-monochrome, one accent used sparingly, semantic
+   * color quarantined to artifacts). Deliberately not the warm
+   * cream + terracotta of the source mockups. */
+  --ink: #11141b;          /* primary text + dark surfaces */
+  --paper: #f7f8fa;        /* page background (cool near-white) */
+  --paper-2: #eef0f4;      /* raised panels */
+  --paper-3: #e2e5ec;      /* deeper panels / hovers */
+
+  --surface-dark: #111318;      /* dark bands, graphite */
+  --surface-dark-2: #171A20;   /* cards on dark bands */
+
+  /* One brand accent, amber/gold, premium and controlled.
+   * Used sparingly: eyebrow, one key phrase per heading,
+   * interactive hovers, border signals. Never as decoration. */
+  --accent: #FF9A1A;           /* primary amber */
+  --accent-light: #FFC24A;     /* bright gold highlight */
+  --accent-pale: rgba(255, 154, 26, 0.10); /* warm amber tint */
+  --accent-border: rgba(255, 154, 26, 0.22);
+
+  /* Extended graphite palette for premium dark surfaces */
+  --graphite: #111318;
+  --graphite-deep: #08090B;
+  --graphite-card: #171A20;
+  --amber-border-dark: rgba(255, 184, 64, 0.14);
+
+  /* Text on dark */
+  --fg-on-dark: #F8F4EA;
+  --muted-on-dark: #B8AA96;
+
+  /* Semantic, amber replaces warn/yellow; deep red for block */
+  --green-signal: #1f7a47;
+  --green-pale: #e6f1ea;
+  --red-signal: #8A2E22;
+  --red-pale: rgba(130, 38, 28, 0.10);
+  --warn: #B65A12;            /* burnt amber for pause/hold */
+
+  --muted: #726B61;           /* 4.9:1 on --paper (WCAG AA); was #7B746A at 4.3:1 */
+  --muted-2: #A09890;
+  --border: rgba(17, 20, 27, 0.10);
+  --border-strong: rgba(17, 20, 27, 0.22);
+
+  --serif: 'DM Serif Display', Georgia, serif;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --sans: 'Geist', system-ui, sans-serif;
+
+  --site-radius: 4px;
+  --site-max: 1200px;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Compatibility aliases: the prose-heavy secondary pages (docs,
+ * whitepaper, security, legal, receipt) were authored against the
+ * dark base tokens (--fg/--bg/--rule/...). Rather than rewrite each
+ * file, map those names to the paper palette inside body.site so the
+ * same CSS renders correctly on the light theme. Page-specific files
+ * stay token-driven; only these aliases differ between themes. */
+body.site {
+  --fg: var(--ink);
+  --fg-soft: #3b424f;
+  --fg-muted: var(--muted);
+  --bg: var(--paper);
+  --bg-elev: #ffffff;
+  --bg-code: #08090B;
+  --rule: var(--border-strong);
+  --rule-soft: var(--border);
+  --rule-width: 1px;
+  --accent-soft: var(--accent);
+  --danger: var(--red-signal);
+  --warn: #B65A12;
+  --ok: var(--green-signal);
+  --max-page: var(--site-max);
+  --max-prose: 68ch;
+}
+
+/* Paint the document element too, so short pages and scroll
+ * overscroll never reveal the legacy dark app.css html background
+ * below the footer. */
+html:has(body.site) {
+  background: #0d0e12;
+}
+
+/* The public site now uses one dark shell. Product pages continue the
+ * graphite canvas, while reading pages place an off-white document inside
+ * it. Keeping this in the shared layer makes transitions between landing,
+ * proof, docs, and legal surfaces feel deliberate rather than inherited. */
+body.site:has(.whitepaper),
+body.site:has(.legal),
+body.site:has(.docs),
+body.site:has(.pr-hero),
+body.site:has(.vid-hero),
+body.site:has(.spot),
+body.site:has(.spot-index) {
+  background-color: #0d0e12;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+body.site:has(.pr-hero),
+body.site:has(.vid-hero),
+body.site:has(.spot),
+body.site:has(.spot-index) {
+  color-scheme: dark;
+  --ink: #f6f1e7;
+  --paper: #f6f1e7;
+  --paper-2: #121318;
+  --paper-3: #191a20;
+  --muted: #a6a39d;
+  --muted-2: #777872;
+  --border: rgba(246, 241, 231, 0.10);
+  --border-strong: rgba(246, 241, 231, 0.20);
+  --fg: #f6f1e7;
+  --fg-soft: #c6c1b8;
+  --fg-muted: #8f8d88;
+  --bg: #0d0e12;
+  --bg-elev: #15161b;
+  --rule: rgba(246, 241, 231, 0.20);
+  --rule-soft: rgba(246, 241, 231, 0.10);
+  color: var(--ink);
+}
+
+body.site h1,
+body.site h2,
+body.site h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+/* Heading em, add a thin space before italic phrases so they don't
+ * collide with the preceding upright text at large sizes. The
+ * word-spacing on em only affects the gap before it; the italic
+ * portion itself keeps normal word-spacing. */
+body.site h1 em,
+body.site h2 em,
+body.site h3 em {
+  font-style: italic;
+  color: var(--accent);
+  padding-left: 0.18em;
+}
+
+body.site a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Shared layout primitives ───────────────────────────────────── */
+
+.site-container {
+  max-width: var(--site-max);
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.site-section {
+  border-bottom: 0.5px solid var(--border);
+}
+
+.site-section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 1rem;
+}
+
+.site-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-pale);
+  border: 0.5px solid var(--accent-border);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.site-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+/* Colors are scoped under body.site so they win over the generic
+ * `body.site a { color: inherit }` rule (which otherwise made the
+ * solid primary button render dark-on-dark). */
+
+.site-btn {
+  display: inline-block;
+  padding: 11px 22px;
+  border-radius: var(--site-radius);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+body.site .site-btn-primary {
+  background: var(--graphite, #111318);
+  color: #F8F4EA;
+  border-color: var(--graphite, #111318);
+}
+
+body.site .site-btn-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+body.site .site-btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--border-strong);
+  font-weight: 400;
+}
+
+body.site .site-btn-secondary:hover {
+  background: var(--accent-pale);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+body.site .site-btn-accent {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+body.site .site-btn-accent:hover {
+  background: var(--accent-light);
+  border-color: var(--accent-light);
+  color: #111318;
+}
+
+/* ── Keyboard and motion (WCAG 2.2 AA) ──────────────────────────── */
+
+/* The skip link is the first focusable element on every public page.
+   It stays off screen until a keyboard user tabs to it. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 200;
+  padding: 0.6rem 1rem;
+  background: #FF9A1A;
+  color: #111318;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0.75rem; }
+main:focus { outline: none; }
+
+/* A visible focus ring on every interactive element that doesn't draw
+   its own, so keyboard users can always see where they are. */
+body.site a:focus-visible,
+body.site button:focus-visible,
+body.site summary:focus-visible,
+body.site input:focus-visible,
+body.site select:focus-visible,
+body.site textarea:focus-visible {
+  outline: 2px solid #FF9A1A;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Site nav ───────────────────────────────────────────────────── */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13, 14, 18, 0.97);
+  border-bottom: 0.5px solid rgba(246, 241, 231, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  height: 56px;
+}
+
+/* Logo image variant (replaces text logo on public pages) */
+.site-logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+.site-logo-img-sm {
+  height: 28px;
+}
+
+.site-footer-logo {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.site-logo img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+.site-logo-text {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: #f6f1e7;
+  letter-spacing: 0.02em;
+}
+
+.site-logo-text span { color: var(--accent); }
+
+.site-nav-checkbox,
+.site-nav-toggle {
+  display: none;
+}
+
+.site-nav-toggle {
+  list-style: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.site-primary-nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.site-nav-link,
+.site-primary-nav a {
+  font-size: 13px;
+  color: #aaa8a2;
+  text-decoration: none;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  transition: color 0.15s;
+}
+
+.site-nav-link:hover,
+.site-primary-nav a:hover {
+  color: var(--accent);
+}
+
+.site-primary-nav .site-nav-active {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.site-nav-cta {
+  background: transparent;
+  color: #F8F4EA !important;
+  padding: 6px 16px;
+  border-radius: var(--site-radius);
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  border: 1px solid rgba(255, 154, 26, 0.7);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.site-nav-cta:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: var(--accent) !important;
+}
+
+.burger {
+  display: inline-block;
+  width: 1.25rem;
+  height: 0.875rem;
+  position: relative;
+}
+
+.burger::before,
+.burger::after,
+.burger {
+  background: linear-gradient(#f6f1e7, #f6f1e7) no-repeat;
+  background-size: 100% 2px;
+}
+
+.burger { background-position: 0 50%; }
+
+.burger::before,
+.burger::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-position: 0 0;
+}
+
+.burger::after { background-position: 0 100%; }
+
+/* ── Site footer ────────────────────────────────────────────────── */
+
+.site-footer {
+  border-top: 0.5px solid rgba(246, 241, 231, 0.16);
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 0.8fr);
+  gap: 2rem;
+  background: #0d0e12;
+}
+
+.site-footer-brand .site-logo {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.site-footer-tagline {
+  font-size: 13px;
+  color: #aaa8a2;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.site-footer-badge {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #aaa8a2;
+  background: rgba(255, 154, 26, 0.08);
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 0.5px solid var(--accent-border);
+}
+
+.site-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.site-footer-col-title {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #f6f1e7;
+  letter-spacing: 0.03em;
+}
+
+body.site .site-footer-col a,
+body.site .site-footer-col a:visited {
+  font-size: 13px;
+  color: #c6c1b8;
+  text-decoration: none;
+  transition: color 0.15s;
+  font-weight: 300;
+}
+
+body.site .site-footer-col a:hover,
+body.site .site-footer-col a:focus-visible { color: #f6f1e7; }
+
+/* ── Responsive chrome ──────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .site-nav { padding: 0 1.5rem; }
+  .site-container { padding: 0 1.5rem; }
+
+  /* The menu collapses to a sliver when the header becomes the
+     containing block for its own fixed descendant. Any of these
+     properties does that, and a single one reaching .site-nav from any
+     stylesheet is enough — so they are pinned off here rather than
+     fixed after the fact.
+     
+     This was previously scoped to body.site:has(.lp-hero), which left
+     every other page unprotected and is why the bug read as
+     intermittent: it depended on which page you opened the menu from.
+     The overlay below no longer derives its height from bottom: 0
+     either, so even if one of these slips back the menu still opens at
+     full height. Belt and braces, because the failure is invisible
+     until someone reports it from a phone. */
+  .site-nav {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    filter: none;
+    transform: none;
+    perspective: none;
+    contain: none;
+    will-change: auto;
+  }
+
+  .site-nav-checkbox {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Burger toggle stays pinned top-right; it sits above the overlay
+     so it doubles as the close (X) control without moving. */
+  .site-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    z-index: 110;
+  }
+
+  .site-nav-checkbox:focus-visible + .site-nav-toggle {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Closed: the panel is hidden. */
+  .site-primary-nav {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 1.5rem;
+  }
+
+  /* Open: full-viewport overlay below the 56px header bar, with its
+     own opaque background so it no longer bleeds into the page.
+     
+     The height is stated rather than derived from bottom: 0. A fixed
+     element whose containing block turned out to be the 56px header
+     resolves bottom: 0 against the header and collapses; an explicit
+     height opens correctly either way, which is the whole point of
+     writing it this way.
+     
+     100dvh tracks the mobile URL bar as it hides and shows. 100vh is
+     the fallback for browsers without it and is the large viewport, so
+     the menu is at worst slightly taller than the visible area and
+     scrolls — never shorter, never clipped. */
+  .site-nav-checkbox:checked ~ .site-primary-nav {
+    display: flex;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
+    max-height: none;
+    z-index: 105;
+    background: #0d0e12;
+    border-top: 0.5px solid rgba(246, 241, 231, 0.16);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    gap: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  /* Larger tap targets inside the overlay. */
+  .site-nav-checkbox:checked ~ .site-primary-nav a {
+    font-size: 17px;
+    width: 100%;
+    padding: 0.75rem 0;
+    border-bottom: 0.5px solid rgba(246, 241, 231, 0.10);
+  }
+
+  .site-nav-checkbox:checked ~ .site-primary-nav a:last-child { border-bottom: none; }
+
+  /* CTA reads as a button, not a list row. */
+  .site-nav-checkbox:checked ~ .site-primary-nav .site-nav-cta {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem !important;
+    text-align: center;
+    border-bottom: none;
+    font-size: 15px !important;
+  }
+
+  /* Morph the burger into an X while open. */
+  .site-nav-checkbox:checked + .site-nav-toggle .burger { background-image: none; }
+  .site-nav-checkbox:checked + .site-nav-toggle .burger::before,
+  .site-nav-checkbox:checked + .site-nav-toggle .burger::after {
+    background-position: 0 50%;
+  }
+  .site-nav-checkbox:checked + .site-nav-toggle .burger::before { transform: rotate(45deg); }
+  .site-nav-checkbox:checked + .site-nav-toggle .burger::after { transform: rotate(-45deg); }
+}
+
+.burger::before,
+.burger::after,
+.burger { transition: transform 0.15s ease, background-image 0.15s ease; }
+
+/* On a phone the footer is short: each column is one wrapped row of
+   links under its title, so the footer is about half a screen. */
+@media (max-width: 720px) {
+  .site-footer { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 16px; }
+  .site-footer-brand .site-logo { margin-bottom: 0.25rem; }
+  .site-footer-col { flex-direction: row; flex-wrap: wrap; gap: 0.35rem 0.9rem; align-items: baseline; }
+  .site-footer-col-title { width: 100%; margin-bottom: 0; }
+}
+
+/* The row of languages on a page that has translations, and the notice
+   a translated legal page opens with. Both sit above the page's own
+   content, at the reading width of the legal pages. */
+.lang-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  max-width: 72ch;
+  margin: 1.25rem auto 0;
+  padding: 0 1.25rem;
+  font-size: 0.875rem;
+}
+.lang-row a { color: inherit; opacity: 0.75; text-decoration: none; }
+.lang-row a:hover,
+.lang-row a:focus-visible { opacity: 1; text-decoration: underline; }
+.lang-row-current { font-weight: 600; }
+
+.translation-notice {
+  max-width: 72ch;
+  margin: 1rem auto 0;
+  padding: 0.75rem 1.25rem;
+  border-left: 3px solid currentColor;
+  font-size: 0.9375rem;
+}

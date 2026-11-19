@@ -1,0 +1,47 @@
+package pages
+
+// tafsPL is /pl/tafs.
+var tafsPL = tafsWords{
+	Cost:        tafsCostPL,
+	Title:       "tafs: agenci AI, którzy wykonują Twoją rutynową pracę",
+	Description: "tafs to aplikacja, w której agenci AI, zwani tafs, wykonują rutynową pracę Twojej firmy, na przykład odpowiadają na e-maile, w granicach limitów, które ustawiasz na Card. Wszystko ponad limity czeka na Twoje „tak”.",
+	Skip:        "Przejdź do treści", Menu: "Menu główne", Languages: "Języki", Pricing: "Ceny", Download: "Pobierz", Scroll: "Przewiń",
+
+	H1: "Asystent, który prowadzi", H1Em: "rutynową pracę Twojej firmy.",
+	Lede:     "W aplikacjach, których już używasz. To Ty ustalasz jego limity, ważne działania czekają na Twoje „tak”, a AI nigdy nie widzi Twoich haseł ani kluczy.",
+	Jobs:     [4]string{"Potwierdzaj każde zgłoszenie", "Odzywaj się do nowych leadów", "Pilnuj spóźnionych paczek", "Zatrzymuj klientów, którzy rezygnują"},
+	HeroRing: "bez dostępu na ślepo · podpisane w telefonie ·", YesNo: "tak/nie",
+
+	Taf: tafsScreen{Big: "Taf to zadanie, które dajesz agentowi.", Small: "tafs wykonuje je dla Twojej firmy.", Giant: "taf", Idx: "Co to jest",
+		Ring: "le taf · zadanie · praca · le taf ·", Stickers: []string{"Ty je dajesz.", "on je wykonuje."}},
+	Problem: tafsScreen{Big: "Większość AI prosi o klucze do wszystkiego i liczy, że jakoś to będzie.",
+		Small: "Dlatego zadania, które się liczą, nigdy nie zostają przekazane. Uważamy, że to postawione na głowie.", Giant: "Na ślepo?", Idx: "Problem",
+		Ring: "Twoi klienci · Twoje dane · Twoje terminy ·", Stickers: []string{"pełny dostęp", "✕ nie, dziękuję"}},
+	Stop:      "stop",
+	Does:      tafsScreen{Idx: "Co robi", Ring: "zgłoszenia · leady · paczki · rezygnacje · przypomnienia ·"},
+	DoesLines: [3][2]string{{"Zdejmuje z Ciebie", "rutynę."}, {"Każdy klient", "dostaje odpowiedź."}, {"Chroni Cię przed", "kłopotami."}},
+	Different: tafsScreen{Big: "Brak odpowiedzi oznacza nie.",
+		Small: "Każdy taf działa w ramach Card, którą podpisujesz. Limity są poza AI, więc nie da się ich obejść gadaniem.",
+		Giant: "Twoje zasady.", Idx: "Co jest inne", Ring: "hostowane przez kiff · w UE · sprawdzane poza AI ·"},
+	Card: tafsCard{Label: "Przykładowa Card", AskLabel: "Zatwierdzenie w telefonie", Title: "Odpowiedzi dla klientów", Signed: "podpisana w telefonie",
+		Rows:  [3][2]string{{"Robi", "Odpowiada na zgłoszenia, do 40 dziennie"}, {"Pyta", "Odpowiedź obiecująca zwrot, rabat lub wymianę czeka na Ciebie"}, {"Nigdy", "Nic spoza tej Card"}},
+		Needs: "Czeka na Ciebie", Question: "Wysłać M. Dupont odpowiedź z obietnicą wymiany?", Why: "Obietnice czekają na Twoje „tak” na Card Odpowiedzi dla klientów.", No: "Odrzuć", Yes: "Zatwierdź"},
+	CardLine: "Card to limity, które ustalasz dla tafa: co może robić, w jakich aplikacjach, jak często i które działania czekają na Twoje „tak”. Wszystko, czego na niej nie ma, jest odrzucane.",
+	Names: tafsScreen{Big: "Trzy francuskie słowa", Idx: "Skąd te nazwy",
+		Stickers: []string{"Przekaż tafa. Trzymaj klucze w planque. Kiff."}},
+	Glosses: [3]string{"zadanie, które przekazujesz.", "kryjówka, w której zostają Twoje klucze.", "to uczucie, gdy wszystko jest zrobione dobrze."},
+	Why: tafsScreen{Big: "Automatyzacja ma wzmacniać firmę, a nie wystawiać ją na ryzyko.", Giant: "Bez ryzyka.", Idx: "Po co istniejemy",
+		Stickers: []string{"Kontrola zostaje u Ciebie", "Dowód na wszystko", "Otwarty kod", "Prywatność przede wszystkim"}},
+	Price: tafsScreen{Big: "Zacznij od małego. Zwiększ, gdy masz dużo pracy.",
+		Small: "%s miesięcznie na start, z %s kredytami, z VAT. Działa na %s i %s.", Idx: "Ile kosztuje",
+		Ring: "kredyty nigdy nie wygasają · bez niespodzianek na rachunku ·", Stickers: []string{"Doładowanie", "od %s", "Intensywne użycie", "~160 € / mies."}},
+	Get: tafsScreen{Big: "Już w Google Play.", Small: "Android: w Google Play w 33 krajach i regionach.", Giant: "pobierz.", Idx: "Pobierz",
+		Stickers: []string{"Pobierz z", "App Store, wkrótce", "Wierzymy w otwarty kod. Przeczytaj go na GitHubie.", "Na komputer: macOS, Windows i Linux →"}},
+
+	Tagline: "Zasady pod spodem tafs. Hostowane w UE.", Legal: "Prawne",
+	OpenCode: "Otwarty kod", Docs: "Dokumentacja", Security: "Bezpieczeństwo", Whitepaper: "Whitepaper", Privacy: "Prywatność", Terms: "Regulamin",
+	TafsPrivacy: "Prywatność tafs", TafsTerms: "Regulamin tafs",
+	Google: tafsGoogle{Head: "Co tafs robi z Twoim kontem Google",
+		Text: "Gdy połączysz aplikację Google, taf używa jej tylko w ramach swojej Card. tafs nie tworzy ani nie edytuje obrazów ani filmów: jego AI pisze tekst. Nigdy nie używa interfejsów API Google ani danych użytkownika Google, żeby tworzyć, edytować lub udostępniać czyjekolwiek intymne wizerunki (intymne obrazy bez zgody, NCII) ani żaden inny wizerunek osoby.",
+		Link: "Jak tafs traktuje Twoje dane Google"},
+}

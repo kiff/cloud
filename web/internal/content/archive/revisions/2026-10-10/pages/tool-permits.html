@@ -1,0 +1,119 @@
+<h1 id="tools-that-check-kiff-no-key-at-kiff">Tools that check KIFF: no key at KIFF</h1>
+
+<p>By default, a tool you connect to the <a href="/docs/archive/2026-10-10/mcp-gateway">KIFF MCP gateway</a> gives KIFF a credential. KIFF stores it encrypted and sends it with each allowed call. That works, but KIFF then holds a key that could act on the tool without the agent.</p>
+
+<p>A connection can instead say who holds that key. There are three choices:</p>
+
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Who holds the tool&rsquo;s key</th>
+<th>What KIFF sends the tool</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>sealed</code> (the default)</td>
+<td>KIFF, stored encrypted</td>
+<td>the call and the stored credential</td>
+</tr>
+
+<tr>
+<td><code>verify</code></td>
+<td>nobody: the tool checks KIFF itself</td>
+<td>the call and an <strong>execution permit</strong></td>
+</tr>
+
+<tr>
+<td><code>relay</code></td>
+<td>your relay, from your own vault</td>
+<td>the call and an execution permit</td>
+</tr>
+</tbody>
+</table>
+<p>The mode is set per connection and shown per connection under <strong>Tools</strong>. An account with any <code>sealed</code> connection still gives KIFF that connection&rsquo;s key.</p>
+
+<h2 id="the-execution-permit">The execution permit</h2>
+
+<p>For each call the agent&rsquo;s Card allows, KIFF signs a short-lived permit and sends it in the <code>KIFF-Permit</code> header of the <code>tools/call</code> request. The permit names:</p>
+
+<ul>
+<li>the KIFF account, and the connection&rsquo;s audience (an identifier you choose, such as the tool&rsquo;s URL);</li>
+<li>the tool, and a hash of the exact arguments sent (<a href="https://www.rfc-editor.org/rfc/rfc8785" target="_blank" rel="noreferrer noopener">RFC 8785</a> canonical JSON, then SHA-256);</li>
+<li>the operation id, which KIFF also passes as the tool&rsquo;s idempotency argument;</li>
+<li>the agent, the Card that allowed the call, and the decision.</li>
+</ul>
+
+<p>It is a JWT signed with Ed25519 (<code>alg: Ed25519</code>, <code>typ: kiff-permit+jwt</code>). It lives 60 seconds, and KIFF issues at most one per operation. A held call gets its permit when the owner approves it and the agent retries, so a long hold never produces an expired permit.</p>
+
+<p>KIFF publishes its verification keys at <code>https://api.kiff.dev/.well-known/kiff-permit-keys.json</code>.</p>
+
+<h2 id="verify-mode-the-tool-checks-the-permit">Verify mode: the tool checks the permit</h2>
+
+<p>Use this for a tool you run. Install the verifier and call it before the tool does anything:</p>
+
+<pre><code class="language-bash">pip install &quot;kiff-guard[verifier]&quot;
+</code></pre>
+
+<pre><code class="language-python">from kiff_guard.permit import JWKSKeys, SQLiteStore, Verifier
+
+verifier = Verifier(
+    issuer=&quot;https://api.kiff.dev&quot;,
+    audience=&quot;https://refunds.example.com/mcp&quot;,  # the connection's audience
+    tenant=&quot;&lt;your KIFF account id&gt;&quot;,
+    keys=JWKSKeys(),
+    store=SQLiteStore(&quot;/var/lib/refunds/permits.db&quot;),
+)
+
+outcome = verifier.run(headers[&quot;KIFF-Permit&quot;], &quot;refund_order&quot;, arguments, adapter)
+</code></pre>
+
+<p><code>adapter</code> makes the one downstream call (<code>execute</code>) and finds its result again (<code>lookup</code>). <a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff_guard.permit.stripe.StripeRefunds</code></a> is the reference adapter for Stripe refunds.</p>
+
+<p>The verifier refuses the call unless all of these hold:</p>
+
+<ul>
+<li>the permit is signed by a key KIFF currently publishes, with <code>alg: Ed25519</code> and <code>typ: kiff-permit+jwt</code>;</li>
+<li>it was issued by <code>https://api.kiff.dev</code>, for this audience and this account;</li>
+<li>it names this tool, and its arguments hash equals the hash of the arguments received;</li>
+<li>its lifetime is at most 60 seconds, and it was not issued in the future;</li>
+<li>for a new operation, it has not expired (with 30 seconds of clock tolerance, so at most 90 seconds after KIFF&rsquo;s decision).</li>
+</ul>
+
+<p>Then it runs the operation <strong>at most once</strong>:</p>
+
+<ul>
+<li>The operation is claimed in a durable store before anything is sent, and the permit is checked again just before sending.</li>
+<li>A second presentation, a retry or a concurrent request for the same operation gets the recorded result. It is never sent a second time.</li>
+<li>If the process dies or the answer is lost, the verifier never resends. It looks the result up with the adapter&rsquo;s <code>lookup</code>. What it cannot settle is marked <code>unknown</code> and listed by <code>verifier.unknown()</code> for a person to check. Run <code>verifier.sweep(...)</code> on start-up and periodically, because KIFF does not send an operation whose answer was lost again.</li>
+</ul>
+
+<p>You can add your own limits with <code>policy=</code>. A permit never widens what your tool allows.</p>
+
+<h2 id="relay-mode-your-relay-holds-the-key">Relay mode: your relay holds the key</h2>
+
+<p>Use this for a service that will not check KIFF&rsquo;s permit (Stripe, Zendesk). Run <code>kiff_guard.permit.relay.Relay</code> next to your vault. It verifies the permit exactly as above, makes the one downstream call it is configured for with the key from your environment, and returns the result. It serves only the tools you list; it is not a proxy.</p>
+
+<p>KIFF reaches the relay with a transport credential (a bearer token; mTLS in front of it is recommended). KIFF holds that credential. On its own it runs nothing, because every call also needs a valid permit.</p>
+
+<h2 id="moving-a-connection">Moving a connection</h2>
+
+<p>Under <strong>Tools</strong>, choose <strong>Change who holds the key</strong> on the connection. Over the API:</p>
+
+<pre><code class="language-bash">curl -s -X PUT https://mcp.kiff.dev/v1/connections/refund_order/mode \
+  -H &quot;Authorization: Bearer $OWNER_KEY&quot; -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;mode&quot;: &quot;verify&quot;, &quot;audience&quot;: &quot;https://refunds.example.com/mcp&quot;}'
+</code></pre>
+
+<p>KIFF reaches the tool the new way before anything changes. The tool name and audience go into the permit from this connection, set by an owner or admin, never from the call itself, and the amount the Card checks is the one in the arguments the permit signs. Moving to <code>verify</code> deletes the credential KIFF held, in the same change. Moving back to <code>sealed</code> needs the credential again. A <code>verify</code> or <code>relay</code> connection needs an idempotency argument, because the permit binds the operation id the tool de-duplicates on.</p>
+
+<h2 id="what-does-not-change">What does not change</h2>
+
+<ul>
+<li><strong>KIFF still decides.</strong> Whoever holds KIFF&rsquo;s signing key could authorize calls until verifiers stop trusting it. Verifiers refetch the keys at least every five minutes, and stop trusting a removed key at the next fetch. A key set that cannot be refreshed for an hour fails closed. A pinned key set (<code>PinnedKeys</code>, for offline use) expires with each key, and <code>distrust=[...]</code> refuses a key whatever KIFF publishes.</li>
+<li><strong>The gateway still sees the call.</strong> Tool names and arguments reach KIFF, because the Card decides on them. The tool&rsquo;s response still returns to the agent through the gateway and is purged after 24 hours. What leaves KIFF is the downstream key, and only that.</li>
+<li><strong>A compromised gateway can still ask for calls.</strong> It carries each agent&rsquo;s own key to KIFF, so within each agent&rsquo;s Card it could ask for calls the agent did not make. Each such call is still a Card decision with a receipt, and your verifier&rsquo;s <code>policy=</code> still applies.</li>
+<li><strong>Revoking a Card stops new permits at once.</strong> A permit already issued can still start its call for up to 90 seconds.</li>
+</ul>

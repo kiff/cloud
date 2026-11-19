@@ -1,0 +1,2866 @@
+/* dashboard.css — authenticated app surfaces.
+ *
+ * Loaded after app.css on /dashboard/* (and Studio/Playground).
+ * Holds the dashboard shell, cards, tables, onboarding, plan, and
+ * overview rules formerly interleaved in app.css, followed by the
+ * route-level layout overrides. The marketing system stays in
+ * app.css and the per-surface css/ files.
+ */
+
+/* ── Dashboard ────────────────────────────────────────────────── */
+
+.dash {
+  max-width: var(--max-page);
+  margin: 0 auto;
+  padding: var(--size-5) var(--size-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+/* Overview two-column layout (part D). Mirrors the Studio
+ * tab's body grid: a wider runtime-signal column on the left and
+ * a narrower "what to do next" rail on the right. Collapses to a
+ * single column below 900px, matching .studio-body. Referenced by
+ * dashboard.templ but previously unstyled, so Overview stacked as
+ * one column. */
+.dash-overview-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--size-4);
+  align-items: start;
+}
+
+.dash-overview-runtime,
+.dash-overview-next {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .dash-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--size-4);
+}
+
+.dash-header-text {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.dash-header h1 {
+  margin: 0 0 var(--size-2) 0;
+  /* DM Serif Display (via --font-display, bound on .dash-shell) is
+   * the one display face per surface — the mockup's "Welcome,
+   * Gabriel Sarmiento" voice. Serif runs a touch larger than the
+   * old mono heading and wants a normal weight. */
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--font-size-5);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Dashboard eyebrow — small uppercase label above the page
+ * heading. Previously unstyled (rendered as plain body text),
+ * which is why the dashboard headers felt inconsistent with the
+ * rest of the app. Matches the section-head treatment. */
+.dash .eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--size-2);
+}
+
+.dash-signout {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.dash-steps {
+  margin: 0;
+  padding-left: var(--size-5);
+  display: grid;
+  gap: var(--size-2);
+  font-size: var(--font-size-1);
+  color: var(--fg-soft);
+}
+
+.dash-steps strong {
+  color: var(--fg);
+}
+
+.dash-card {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-4);
+  background: color-mix(in oklab, var(--bg-elev) 60%, transparent);
+}
+
+.dash-card h2 {
+  margin-top: 0;
+  /* Card headings keep the mono label voice; the serif display
+   * face is reserved for the one page title per surface. */
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--font-size-2);
+}
+
+.dash-controls {
+  max-width: min(1180px, calc(100vw - var(--size-8)));
+}
+
+.dash-controls-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: var(--size-5);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--rule-soft));
+  background: color-mix(in oklab, var(--accent) 5%, var(--bg-elev) 62%);
+}
+
+.dash-controls-hero h2 {
+  font-size: var(--font-size-5);
+  line-height: 1.02;
+}
+
+.dash-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--size-4);
+}
+
+.dash-controls-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--size-3);
+  margin: 0;
+}
+
+.dash-controls-facts div {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  background: color-mix(in oklab, black 12%, transparent);
+}
+
+.dash-controls-facts dt {
+  color: var(--fg-muted);
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+}
+
+.dash-controls-facts dd {
+  margin: var(--size-1) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.dash-controls-receipt .dash-dl dd {
+  overflow-wrap: anywhere;
+}
+
+.dash-controls-attempt {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  margin: var(--size-3) 0;
+  background: color-mix(in oklab, var(--accent) 4%, transparent);
+}
+
+.dash-controls-attempt p {
+  margin-bottom: 0;
+}
+
+.dash-controls-attempt-blocked {
+  border-color: color-mix(in oklab, var(--accent) 32%, var(--rule-soft));
+}
+
+.dash-controls-proof-form {
+  margin: 0;
+}
+
+.dash-controls-scenario {
+  border-style: dashed;
+}
+
+.dash-controls-operator {
+  margin-top: var(--size-4);
+}
+
+.dash-operator-grid dd {
+  overflow-wrap: anywhere;
+}
+
+.dash-controls-steps {
+  margin: var(--size-3) 0 0;
+  padding-left: 1.25rem;
+  color: var(--fg-soft);
+}
+
+.dash-controls-steps li + li {
+  margin-top: var(--size-2);
+}
+
+@media (max-width: 820px) {
+  .dash-controls {
+    max-width: none;
+  }
+
+  .dash-controls-hero,
+  .dash-controls-grid,
+  .dash-controls-facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--size-2) var(--size-4);
+  margin: 0;
+}
+
+.dash-dl dt {
+  color: var(--fg-muted);
+  font-size: var(--font-size-1);
+}
+
+.dash-dl dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.dash-note {
+  color: var(--fg-soft);
+  font-size: var(--font-size-1);
+}
+
+.dash-warn {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3) var(--size-4);
+  background: color-mix(in oklab, orange 8%, var(--bg-elev) 60%);
+  font-size: var(--font-size-1);
+}
+
+.dash-flash {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-4);
+  font-size: var(--font-size-1);
+}
+
+.dash-flash-success {
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--rule-soft));
+  background: color-mix(in oklab, var(--accent) 6%, var(--bg-elev) 60%);
+}
+
+.dash-flash-error {
+  border-color: color-mix(in oklab, red 35%, var(--rule-soft));
+  background: color-mix(in oklab, red 6%, var(--bg-elev) 60%);
+}
+
+.dash-code {
+  font-family: var(--font-code);
+  font-size: 0.92em;
+  background: color-mix(in oklab, black 30%, var(--bg-elev) 70%);
+  padding: var(--size-3);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.dash-inline-form {
+  display: flex;
+  gap: var(--size-3);
+  margin: var(--size-3) 0;
+  flex-wrap: wrap;
+}
+
+.dash-inline-form input {
+  flex: 1 1 14ch;
+  min-width: 0;
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-1);
+  /* Fixed layout so the table respects its grid-column width
+   * (1.5fr on Overview) instead of letting long cell content
+   * (entity codes, reason text) push it past the column and
+   * overlap the next-action rail. Cells wrap/break below. */
+  table-layout: fixed;
+}
+
+.dash-table th,
+.dash-table td {
+  text-align: left;
+  padding: var(--size-2) var(--size-3);
+  border-bottom: 1px solid var(--rule-soft);
+  /* Long codes/reasons wrap rather than forcing the column wider. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  vertical-align: top;
+}
+
+.dash-table th {
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.dash-table-action-form {
+  margin: 0;
+}
+
+/* Proposals table (Overview, in the 1.5fr runtime column). With
+ * table-layout:fixed the 6 columns would default to equal widths;
+ * weight them so the date and outcome/receipt pills don't wrap to
+ * 3 lines while Entity/Reasons (the variable-length text) get the
+ * room. Percentages sum to 100. */
+.dash-proposals-table {
+  table-layout: fixed;
+}
+
+.dash-proposals-table th:nth-child(1), /* When    */
+.dash-proposals-table td:nth-child(1) { width: 14%; }
+.dash-proposals-table th:nth-child(2), /* Entity  */
+.dash-proposals-table td:nth-child(2) { width: 22%; }
+.dash-proposals-table th:nth-child(3), /* Action  */
+.dash-proposals-table td:nth-child(3) { width: 20%; }
+.dash-proposals-table th:nth-child(4), /* Outcome */
+.dash-proposals-table td:nth-child(4) { width: 14%; }
+.dash-proposals-table th:nth-child(5), /* Reasons */
+.dash-proposals-table td:nth-child(5) { width: 18%; }
+.dash-proposals-table th:nth-child(6), /* Receipt */
+.dash-proposals-table td:nth-child(6) { width: 12%; }
+
+/* The Entity cell stacks the id (code) over its type; keep the
+ * code from forcing the column wide. */
+.dash-proposals-table td:nth-child(2) code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* The When column should not wrap, but allow overflow on narrow screens */
+.dash-proposals-table td:nth-child(1) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile: make proposals table horizontally scrollable */
+@media (max-width: 720px) {
+  .dash-proposals-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .dash-proposals-table {
+    min-width: 600px;
+  }
+}
+
+.dash-pill {
+  display: inline-block;
+  padding: 2px var(--size-2);
+  border-radius: 999px;
+  font-size: 0.85em;
+}
+
+.dash-pill-ok {
+  background: color-mix(in oklab, var(--accent) 14%, var(--bg-elev) 70%);
+  color: var(--accent);
+}
+
+.dash-pill-info {
+  background: color-mix(in oklab, var(--fg-soft) 12%, var(--bg-elev) 70%);
+  color: var(--fg-soft);
+}
+
+.dash-pill-warn {
+  background: color-mix(in oklab, orange 12%, var(--bg-elev) 70%);
+  color: var(--fg-soft);
+}
+
+.dash-pill-error {
+  background: color-mix(in oklab, tomato 14%, var(--bg-elev) 70%);
+  color: tomato;
+}
+
+.dash-pill-muted {
+  background: color-mix(in oklab, var(--fg-soft) 8%, var(--bg-elev) 70%);
+  color: var(--fg-soft);
+}
+
+/* ── connection status — folded into the governance card ──
+ *
+ * The connection signal is now a quiet footer line inside the
+ * governance card (govConnectionLine) rather than its own bordered
+ * box, so the Overview front door reads as one calm statement. */
+.dash-govstate-conn {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  margin: var(--size-3) 0 0;
+  padding-top: var(--size-3);
+  border-top: 1px solid var(--rule-soft);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.dash-govstate-conn strong {
+  color: var(--fg-soft);
+  font-weight: 500;
+}
+
+.dash-govstate-conn-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+  opacity: 0.4;
+  flex: 0 0 auto;
+}
+
+.dash-govstate-conn-dot-on {
+  background: var(--ok);
+  opacity: 1;
+}
+
+.dash-govstate-conn-on strong {
+  color: var(--fg);
+}
+
+.btn-sm {
+  padding: var(--size-1) var(--size-2);
+  font-size: var(--font-size-0);
+}
+
+
+/* ── advanced (collapsed by default) ─────────────────────── */
+.dash-advanced {
+  border-style: dashed;
+}
+
+.dash-advanced > summary {
+  cursor: pointer;
+  font-size: var(--font-size-1);
+  color: var(--fg-soft);
+  padding: var(--size-2) 0;
+}
+
+.dash-advanced[open] > summary {
+  margin-bottom: var(--size-3);
+}
+
+.dash-advanced-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+/* ---------- onboarding ---------- */
+
+.onboarding-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  margin-right: var(--size-3);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent) 22%, var(--bg-elev) 60%);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.dash-flash-warn {
+  border-color: color-mix(in oklab, oklch(80% 0.15 80) 45%, var(--rule-soft));
+  background: color-mix(in oklab, oklch(80% 0.15 80) 8%, var(--bg-elev) 60%);
+}
+
+.dash-snippet-tabs {
+  display: grid;
+  gap: var(--size-3);
+  margin-top: var(--size-4);
+}
+
+.dash-snippet-tabs > details {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3) var(--size-4);
+  background: var(--bg);
+}
+
+.dash-snippet-tabs > details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.dash-snippet-tabs > details[open] > summary {
+  margin-bottom: var(--size-3);
+}
+
+.dash-snippet-tabs > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+
+/* ---------- onboarding YAML editor ---------- */
+
+.dash-yaml-editor {
+  display: grid;
+  gap: var(--size-3);
+  margin-top: var(--size-4);
+}
+
+/* ---------- onboarding guided builder ---------- */
+
+.dash-builder-form {
+  display: grid;
+  gap: var(--size-4);
+  margin-top: var(--size-4);
+}
+
+.dash-builder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--size-4);
+}
+
+.dash-builder-form .dash-label {
+  display: grid;
+  gap: var(--size-2);
+}
+
+.dash-builder-form .dash-label input[type="text"] {
+  font-family: var(--font-code);
+  font-size: 0.95em;
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.dash-builder-form .dash-label input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.dash-builder-form .dash-label small {
+  font-weight: 400;
+  color: var(--fg-soft);
+}
+
+.dash-builder-radio {
+  display: grid;
+  gap: var(--size-2);
+  border: none;
+  padding: 0;
+}
+
+.dash-builder-radio legend {
+  font-weight: 600;
+  font-size: 0.95em;
+  margin-bottom: var(--size-2);
+}
+
+.dash-builder-radio label {
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.dash-label {
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.dash-yaml {
+  width: 100%;
+  font-family: var(--font-code);
+  font-size: 0.95em;
+  line-height: 1.45;
+  padding: var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  resize: vertical;
+  min-height: 16em;
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+.dash-yaml:focus {
+  outline: 2px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--rule-soft));
+}
+
+.dash-yaml-actions {
+  display: flex;
+  gap: var(--size-3);
+  flex-wrap: wrap;
+}
+
+.dash-yaml-help {
+  margin-top: var(--size-4);
+  border: 1px dashed var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3) var(--size-4);
+  background: color-mix(in oklab, var(--bg) 96%, var(--bg-elev));
+}
+
+.dash-yaml-help > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dash-yaml-help-body {
+  padding-top: var(--size-3);
+}
+
+.dash-example-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--size-3);
+}
+
+.dash-example-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--size-3);
+  align-items: center;
+  padding: var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.dash-example-row p {
+  margin: 0;
+}
+/* ---------- plan card ---------- */
+
+.dash-card-soft {
+  background: color-mix(in oklab, var(--accent) 4%, var(--bg-elev) 60%);
+  border-color: color-mix(in oklab, var(--accent) 25%, var(--rule-soft));
+}
+
+.dash-card-warn {
+  background: color-mix(in oklab, oklch(80% 0.15 80) 8%, var(--bg-elev) 60%);
+  border-color: color-mix(in oklab, oklch(80% 0.15 80) 45%, var(--rule-soft));
+}
+
+.dash-plan-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--size-3);
+  margin-bottom: var(--size-2);
+}
+
+.dash-plan-head h2,
+.dash-plan-head .eyebrow {
+  margin: 0;
+}
+
+.dash-plan-name {
+  margin: 0 0 var(--size-4);
+  font-family: var(--font-mono);
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  line-height: 1.1;
+}
+
+.dash-plan-meter-wrap {
+  display: grid;
+  gap: var(--size-2);
+  margin-top: var(--size-4);
+}
+
+.dash-plan-meter-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-3);
+  color: var(--fg-soft);
+  font-size: var(--font-size-0);
+}
+
+.dash-plan-meter {
+  width: 100%;
+  height: var(--size-3);
+  accent-color: var(--accent);
+}
+
+.dash-plan-actions {
+  display: flex;
+  gap: var(--size-3);
+  flex-wrap: wrap;
+  margin-top: var(--size-3);
+}
+
+.dash-connect-card {
+  display: grid;
+  gap: var(--size-4);
+}
+
+.dash-connect-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+  gap: var(--size-3);
+}
+
+.dash-connect-actions {
+  display: flex;
+  gap: var(--size-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dash-connect-key-form {
+  margin: 0;
+}
+
+.dash-snippet-tabs {
+  display: flex;
+  gap: var(--size-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--size-2);
+}
+
+.dash-snippet-tab {
+  min-height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+  color: var(--fg-soft);
+  font-size: var(--font-size-0);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dash-snippet-tab-active {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--rule-soft));
+  background: color-mix(in oklab, var(--accent) 8%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.dash-connect-code {
+  margin: 0;
+  max-height: 34rem;
+}
+
+/* ---------- governed activity card ---------- */
+
+.dash-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--size-3);
+  margin: var(--size-4) 0;
+  padding: 0;
+}
+
+.dash-activity-cell {
+  background: var(--bg-elev);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-2);
+  padding: var(--size-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.dash-activity-cell dt {
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-1);
+  margin: 0;
+}
+
+.dash-activity-cell dd {
+  font-size: var(--font-size-5);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  color: var(--text-0);
+}
+
+.dash-activity-allowed {
+  border-color: color-mix(in oklab, oklch(75% 0.15 145) 35%, var(--rule-soft));
+}
+
+.dash-activity-approval {
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--rule-soft));
+}
+
+.dash-activity-blocked {
+  border-color: color-mix(in oklab, oklch(70% 0.18 25) 35%, var(--rule-soft));
+}
+
+/* The app-shell chrome (topbar, sidebar, nav, grid) and the app
+ * webfont bindings live in css/app-shell.css now, shared by every
+ * signed-in surface (including Studio). This file holds only the
+ * dashboard *content* styles. */
+
+
+/* ── Overview governance-state headline ────────────────────
+ *
+ * The first card in the Overview runtime column. Tells a new tenant
+ * exactly where they stand in three honest states — fresh / observed
+ * / governed — so the front door never reads as an empty-domain
+ * error and never misleads observed traffic as enforced. */
+
+.dash-govstate h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.dash-govstate-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+  opacity: 0.5;
+  flex: 0 0 auto;
+}
+
+/* observed = watching, not enforcing — warm/amber to read as
+ * "in progress, not yet locked". */
+.dash-govstate-dot-observe {
+  background: var(--warn);
+  opacity: 1;
+}
+
+/* governed = enforcing — accent/green to read as "live". */
+.dash-govstate-dot-on {
+  background: var(--ok);
+  opacity: 1;
+}
+
+.dash-govstate-observed {
+  border-color: color-mix(in oklab, var(--warn) 30%, var(--rule-soft));
+}
+
+.dash-govstate-governed {
+  border-color: color-mix(in oklab, var(--ok) 30%, var(--rule-soft));
+}
+
+.dash-govstate-catalog-label {
+  margin: var(--size-3) 0 var(--size-2);
+  font-family: var(--font-display);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.dash-govstate-catalog {
+  list-style: none;
+  margin: 0 0 var(--size-3);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+}
+
+.dash-govstate-catalog li {
+  margin: 0;
+}
+
+.dash-govstate-catalog code {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg-code) 55%, transparent);
+  border: 1px solid var(--rule-soft);
+  font-size: 0.9em;
+}
+
+/* Docs wayfinding card — persistent right-rail link to
+ * the docs, rendered in every tenant state. */
+.dash-docs-wayfinding {
+  border-style: dashed;
+}
+
+/* ── Route-level layout overrides (load last) ──────────────────── */
+
+.dash-main {
+  padding: clamp(var(--size-4), 3vw, var(--size-6));
+}
+
+.dash {
+  width: 100%;
+  max-width: min(100%, 88rem);
+  padding: 0;
+}
+
+.dash-header {
+  margin-bottom: var(--size-1);
+}
+
+.dash-header h1 {
+  max-width: 24ch;
+}
+
+.dash-header .dash-note {
+  max-width: 76ch;
+  margin-top: var(--size-2);
+}
+
+.dash-card {
+  padding: clamp(16px, 1.6vw, 20px);
+}
+
+.dash-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--size-3);
+  margin-bottom: var(--size-2);
+}
+
+.dash-card-heading h2,
+.dash-card-heading .dash-note {
+  margin: 0;
+}
+
+.dash-card-heading .dash-note {
+  margin-top: var(--size-1);
+}
+
+.dash-table-wrap,
+.dash-proposals-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dash-table {
+  min-width: 48rem;
+}
+
+.dash-decisions-table {
+  min-width: 60rem;
+}
+
+.dash-guard-table {
+  min-width: 56rem;
+}
+
+.dash-guard-table td:first-child {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.dash-guard-draft-form {
+  margin-bottom: var(--size-1);
+}
+
+.dash-approvals {
+  min-width: 72rem;
+}
+
+/* ── Pending-approval cards ────────────────────────────────────────
+ * The actionable approval queue is a stack of cards, not a wide table:
+ * the review action (note + Grant/Deny) spans the full width so there's
+ * room to write and the buttons are always visible — no horizontal
+ * scroll. */
+.dash-approval-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dash-approval-card {
+  padding: 14px 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--warn) 4%, var(--bg-elev));
+  scroll-margin-top: 80px;
+}
+
+/* Briefly ring the card a notification deep-linked to (#ap-<id>). */
+.dash-approval-card:target {
+  border-color: color-mix(in oklab, var(--warn) 55%, var(--rule-soft));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--warn) 18%, transparent);
+}
+
+.dash-approval-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dash-approval-action {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dash-approval-when {
+  margin-left: auto;
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dash-approval-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 10px;
+  color: var(--fg-soft);
+  font-size: 12px;
+}
+
+.dash-approval-review {
+  margin: 0;
+}
+
+.dash-approval-review textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.dash-approval-review textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.dash-approval-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dash-approval-detail {
+  margin-top: 10px;
+}
+
+/* Collapsed "Full context" disclosure beneath each approval row.
+   Reuses .dash-dl for the field grid; the detail row spans the
+   whole table and is visually recessed so the queue still reads
+   as a list of actionable rows. */
+.dash-approval-detail-row > td {
+  padding-top: 0;
+  border-top: none;
+}
+
+.dash-approval-detail {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  padding: var(--size-2) var(--size-3);
+}
+
+.dash-approval-detail > summary {
+  cursor: pointer;
+  color: var(--fg-soft);
+  font-size: var(--font-size-1);
+  list-style-position: inside;
+}
+
+.dash-approval-detail[open] > summary {
+  margin-bottom: var(--size-3);
+}
+
+.dash-main-activity .dash,
+.dash-main-approvals .dash,
+.dash-main-keys .dash {
+  max-width: min(100%, 96rem);
+}
+
+.dash-main-activity .dash-card,
+.dash-main-approvals .dash-card,
+.dash-main-keys .dash-card {
+  padding: clamp(16px, 1.8vw, 22px);
+}
+
+.dash-main-overview .dash-overview-grid {
+  grid-template-columns: minmax(0, 1.7fr) minmax(20rem, 0.8fr);
+  gap: clamp(var(--size-4), 2vw, var(--size-6));
+}
+
+.dash-main-playground .dash {
+  max-width: min(100%, 96rem);
+}
+
+.dash-main-playground .dash-advanced-body {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1.1fr);
+  gap: var(--size-4);
+}
+
+.dash-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--size-4);
+  align-items: start;
+}
+
+.dash-settings-grid .dash-card {
+  min-height: 100%;
+}
+
+@media (min-width: 1180px) {
+  .dash-settings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dash-settings-grid .dash-card:first-child,
+  .dash-settings-grid .dash-card:nth-child(3) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 900px) {
+  .dash-main-overview .dash-overview-grid,
+  .dash-main-playground .dash-advanced-body,
+  .dash-settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .dash-card-heading {
+    display: grid;
+  }
+
+  .dash-table {
+    min-width: 42rem;
+  }
+}
+
+/* ── v3 app content primitives ─────────────────────────────────── */
+/* Content-frame density (iteration 2): the page header + content column.
+ * The old H1 (clamp up to 3.45rem/weight 750) read as a marketing title
+ * on every dashboard view and pushed the actual work below the fold. This
+ * brings the title, eyebrow, supporting note, and column padding down to
+ * an app-shell scale so the page leads with the content, not its heading. */
+.dash-main {
+  padding: 22px 26px 40px;
+}
+
+.dash {
+  max-width: min(100%, 1180px);
+  gap: 18px;
+}
+
+.dash-page-head,
+.dash-header {
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 0;
+}
+
+.dash-header-text {
+  flex-basis: min(100%, 680px);
+}
+
+.dash-header h1 {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.dash-header .dash-note {
+  max-width: 78ch;
+  margin-top: 8px;
+  color: var(--fg-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.dash .eyebrow {
+  margin-bottom: 6px;
+  color: #9aa1ad;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.dash-header-actions,
+.dash-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dash-header-actions {
+  justify-content: flex-end;
+  margin-left: auto;
+  padding-top: 20px;
+}
+
+.dash-card {
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-elev);
+  box-shadow: 0 1px 2px rgba(18, 22, 30, 0.04);
+  color: var(--fg);
+}
+
+.dash-card h2 {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+/* Multi-domain apex list. The cards are <a> elements (domainListCard),
+ * which are display:inline by default — with only .dash-card's border/
+ * background/shadow and no display, the anchor collapses to an inline
+ * sliver while its block children (<h2>/<p>) spill out over it, so the
+ * card reads as a stray white box laid over the text. Make the grid a
+ * grid and each link a real block card. Scoped to the domain list; the
+ * other .dash-card surfaces are <div>/<article> and unaffected. */
+.dash-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--size-4);
+  width: 100%;
+}
+
+.dash-card-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.dash-card-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.dash-card-link h2 {
+  margin: 0 0 var(--size-1);
+}
+
+.dash-note {
+  color: var(--fg-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.dash-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 24px;
+  padding: 3px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg-soft);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.dash-pill-ok {
+  border-color: #cdebd8;
+  background: #edf9f1;
+  color: #247447;
+}
+
+.dash-pill-warn {
+  border-color: #f0dfb7;
+  background: #fff8e7;
+  color: #8a5a08;
+}
+
+.dash-pill-info {
+  border-color: #cfe0fa;
+  background: #eef5ff;
+  color: #315f9b;
+}
+
+.dash-pill-error {
+  border-color: #f2c8cb;
+  background: #fff1f2;
+  color: #aa3339;
+}
+
+.dash-pill-muted {
+  border-color: var(--rule-soft);
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg-muted);
+}
+
+/* First-run value module on the domain home: lead with the
+   value event when the domain has never produced a decision. */
+.dash-firstrun {
+  display: grid;
+  gap: var(--size-3);
+}
+
+.dash-firstrun h2 {
+  margin: 0;
+}
+
+/* Verify-the-loop section: per-action backing +
+   observed reconciliation on the domain apex. */
+.dash-verify-list {
+  display: grid;
+  gap: var(--size-2);
+}
+
+.dash-verify-row {
+  display: grid;
+  gap: 2px;
+}
+
+.dash-verify-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  flex-wrap: wrap;
+}
+
+.dash-verify-foot {
+  margin-top: var(--size-3);
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--size-2);
+}
+
+
+  max-width: min(100%, 1164px);
+}
+
+.dash-overview-start {
+  display: grid;
+  gap: 26px;
+}
+
+.dash-hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: center;
+  min-height: 278px;
+  padding: 32px;
+  overflow: hidden;
+}
+
+.dash-hero-empty {
+  background:
+    radial-gradient(circle at 92% 18%, rgba(184, 241, 63, 0.22), transparent 18rem),
+    #fff;
+}
+
+.dash-hero-live {
+  background:
+    radial-gradient(circle at 88% 10%, rgba(47, 155, 93, 0.16), transparent 18rem),
+    #fff;
+}
+
+.dash-hero-content {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dash-hero-content h2 {
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  line-height: 1.08;
+}
+
+.dash-hero-content .dash-note {
+  max-width: 58ch;
+  font-size: 15px;
+}
+
+.dash-next-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.dash-next-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 70px;
+  padding: 13px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--bg-elev) 86%, transparent);
+  box-shadow: 0 10px 20px rgba(18, 22, 30, 0.04);
+}
+
+.dash-next-row strong,
+.dash-next-row small {
+  display: block;
+}
+
+.dash-next-row strong {
+  font-size: 14px;
+}
+
+.dash-next-row small {
+  margin-top: 2px;
+  color: var(--fg-muted);
+  font-size: 12px;
+}
+
+.dash-next-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dash-next-row-now .dash-next-num {
+  background: var(--lime);
+  color: #1c210f;
+}
+
+.dash-journey-card {
+  padding: 22px;
+}
+
+.dash-journey {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.dash-journey-step {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dash-journey-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 44px;
+  right: 14px;
+  top: 15px;
+  height: 1px;
+  background: var(--rule);
+}
+
+.dash-journey-step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-size: 12px;
+  font-weight: 750;
+  z-index: 1;
+}
+
+.dash-journey-step strong {
+  font-size: 14px;
+}
+
+.dash-journey-step small {
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.dash-overview-summary {
+  padding: 22px;
+}
+
+.dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dash-metric {
+  min-width: 0;
+  padding: 0 20px;
+  border-right: 1px solid var(--rule-soft);
+}
+
+.dash-metric:first-child {
+  padding-left: 0;
+}
+
+.dash-metric:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.dash-metric span,
+.dash-metric small {
+  display: block;
+  color: var(--fg-muted);
+}
+
+.dash-metric span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dash-metric strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--fg);
+  font-size: 29px;
+  line-height: 1;
+}
+
+.dash-metric small {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.dash-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dash-fact-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dash-fact {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+}
+
+.dash-fact span,
+.dash-fact strong {
+  display: block;
+}
+
+.dash-fact span {
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dash-fact strong {
+  margin-top: 9px;
+  color: var(--fg);
+  font-size: 14px;
+  overflow-wrap: break-word;
+}
+
+.dash-settings-v3-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.52fr);
+}
+
+.dash-settings-v3-grid .dash-card:first-child {
+  grid-column: span 1;
+}
+
+.dash-settings-v3-grid .dash-card:nth-child(2) {
+  grid-column: span 1;
+}
+
+.dash-danger-card {
+  border-color: #efc3c5;
+  background: #fff7f7;
+}
+
+/* --- per-domain governance posture card --- */
+.dash-posture-state {
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.dash-posture-state.dash-posture-unset {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg-muted);
+}
+
+.dash-posture-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--size-2);
+}
+
+.dash-posture-form {
+  margin: 0;
+}
+
+.dash-posture-btn {
+  min-height: 36px;
+}
+
+/* The active mode renders as a filled, non-interactive chip so the
+   current posture reads at a glance; the other mode is a real button. */
+.dash-posture-btn-current {
+  cursor: default;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.dash-posture-btn-current.dash-posture-enforce {
+  background: #1c6b41;
+  color: #fff;
+}
+
+.dash-posture-btn-current.dash-posture-observe {
+  background: #8a5a12;
+  color: #fff;
+}
+
+.dash-posture-foot {
+  margin-top: var(--size-2);
+}
+
+/* --- All-domains portfolio (multi-domain operational rollup) --- */
+.dash-portfolio-approvals {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 1px solid #f0d8a8;
+  border-radius: 10px;
+  background: #fdf6e7;
+  color: var(--fg);
+  text-decoration: none;
+}
+.dash-portfolio-approvals:hover { border-color: #e6c072; }
+.dash-portfolio-approvals-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c98a12;
+}
+.dash-portfolio-approvals strong { font-size: 13px; font-weight: 600; }
+.dash-portfolio-approvals-cta {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8a5a12;
+}
+
+.dash-portfolio {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-elev);
+}
+.dash-portfolio-head,
+.dash-portfolio-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) 110px 1fr 1fr 1.1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+}
+.dash-portfolio-head {
+  border-bottom: 1px solid var(--rule);
+  color: var(--fg-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.dash-portfolio-row {
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--fg);
+  text-decoration: none;
+  min-height: 52px;
+}
+.dash-portfolio-row:last-child { border-bottom: 0; }
+.dash-portfolio-row:hover { background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev)); }
+.dash-portfolio-name { font-weight: 700; font-size: 14px; }
+.dash-portfolio-actions,
+.dash-portfolio-activity { font-size: 12px; color: var(--fg-soft); }
+.dash-portfolio-muted { color: var(--fg-muted); }
+.dash-portfolio-next { font-size: 12px; font-weight: 700; color: var(--fg); }
+
+.dash-portfolio-state {
+  justify-self: start;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.dash-portfolio-state-enforce { background: #e6f4ec; color: #1c6b41; }
+.dash-portfolio-state-observe { background: #fdf1dd; color: #8a5a12; }
+.dash-portfolio-state-active { background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev)); color: var(--fg-soft); }
+.dash-portfolio-state-draft { background: #eaeef6; color: #3a4a6b; }
+
+.dash-portfolio-runtime {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--fg-soft);
+}
+.dash-portfolio-runtime-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dash-portfolio-runtime-live { color: #1c6b41; }
+.dash-portfolio-runtime-connected { color: #2d6cdf; }
+.dash-portfolio-runtime-idle { color: var(--fg-muted); }
+
+@media (max-width: 720px) {
+  .dash-portfolio-head { display: none; }
+  .dash-portfolio-row {
+    grid-template-columns: 1fr auto;
+    row-gap: 4px;
+    padding: 14px 14px;
+  }
+  .dash-portfolio-name { grid-column: 1; }
+  .dash-portfolio-state { grid-column: 2; grid-row: 1; justify-self: end; }
+  .dash-portfolio-actions,
+  .dash-portfolio-activity { grid-column: 1; }
+  .dash-portfolio-next { grid-column: 1 / -1; margin-top: 4px; color: var(--accent, #2d6cdf); }
+}
+
+.dash-delete-form {
+  display: grid;
+  gap: 10px;
+  align-items: start;
+}
+
+.dash-input {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: inherit;
+}
+
+.dash-table th,
+.dash-table td {
+  border-bottom-color: var(--rule-soft);
+}
+
+.dash-table th {
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dash-code {
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-code);
+  color: var(--fg);
+}
+
+@media (max-width: 980px) {
+  .dash-main {
+    padding: 24px 18px 46px;
+  }
+
+  .dash-hero-card,
+  .dash-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-metric {
+    padding: 16px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .dash-metric:first-child {
+    padding-top: 0;
+  }
+
+  .dash-metric:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .dash-fact-grid,
+  .dash-fact-grid-two,
+  .dash-connect-grid,
+  .dash-settings-v3-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-journey {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-journey-step:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .dash-header h1 {
+    font-size: 26px;
+  }
+
+  .dash-header .dash-note {
+    font-size: 13px;
+  }
+
+  .dash-header-actions {
+    justify-content: flex-start;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .dash-hero-card {
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .dash-next-row {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  .dash-next-row .dash-pill {
+    grid-column: 2;
+  }
+}
+
+/* ── Domain apex detail (the authenticated-surface design/031) ──────────────────────────
+ * The single-domain view is a cohesive, editable stack of section
+ * cards (identity, actions, lifecycle, agents). Scope a consistent
+ * gap and a lighter card treatment here so the four sections read as
+ * one object rather than four heavy floating cards — the global
+ * .dash-card shadow stacked four times was the offset grey-band look
+ * on this surface. Scoped to .dash-domain-detail so other pages are
+ * untouched. */
+.dash-domain-detail {
+  display: grid;
+  gap: var(--size-4);
+  width: 100%;
+}
+
+.dash-domain-detail .dash-card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  background: var(--bg-elev);
+}
+
+/* Section headings sit on one row with their edit action, vertically
+ * centered (the global heading aligns to flex-start for title+note
+ * blocks; the domain sections are single-line titles). */
+.dash-domain-detail .dash-card-heading {
+  align-items: center;
+  margin-bottom: var(--size-2);
+}
+
+.dash-domain-detail h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+/* The identity card keeps its title+note block left-aligned to the
+ * action group at the top. */
+.dash-domain-detail .dash-card:first-child .dash-card-heading {
+  align-items: flex-start;
+}
+
+.dash-domain-detail .dash-list {
+  margin: 0;
+}
+
+/* Domain switcher: move between a tenant's domains from
+   a domain's detail/home when there is more than one. */
+.dash-domain-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--size-3, 16px);
+}
+
+.dash-domain-switcher-label {
+  font-size: var(--font-size-0, 0.85rem);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 2px;
+}
+
+.dash-domain-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-2, 8px);
+  border: 1px solid var(--rule-soft, #2a2f3a);
+  color: var(--fg-soft, #c8cdd6);
+  font-size: var(--font-size-0, 0.85rem);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dash-domain-chip:hover {
+  border-color: var(--accent, #6aa1ff);
+  color: var(--fg, var(--bg-elev));
+}
+
+.dash-domain-chip-current {
+  background: color-mix(in oklab, var(--accent, #6aa1ff) 16%, transparent);
+  border-color: color-mix(in oklab, var(--accent, #6aa1ff) 45%, transparent);
+  color: var(--fg, var(--bg-elev));
+  font-weight: 600;
+}
+
+.dash-domain-chip-all {
+  color: var(--fg-muted);
+}
+
+/* New-domain authoring form: paste the domain YAML to
+   create an additional domain. Mirrors the editor surfaces elsewhere —
+   monospace body, full-width, calm border. */
+.dash-field-label {
+  display: block;
+  font-size: var(--font-size-0, 0.85rem);
+  color: var(--fg-muted);
+  margin-bottom: 6px;
+}
+
+.dash-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.9em;
+  line-height: 1.5;
+  /* Readability fix, applied to every .dash-textarea (prose or code):
+     the dashboard is a light theme, so var(--fg) is dark and rendered
+     dark-on-dark against this dark panel. Pin a light foreground on the
+     dark surface. The surface stays dark regardless of theme on purpose
+     (hardcoded hex); the accent tracks the brand token (var). */
+  color: #e8ecf3;
+  background: #12141b;
+  border: 1px solid #2a2f3a;
+  border-radius: 8px;
+  padding: 12px 14px;
+  resize: vertical;
+  margin-bottom: var(--size-3, 1rem);
+}
+
+.dash-textarea::placeholder {
+  color: #6b7280;
+}
+
+.dash-textarea:focus {
+  outline: none;
+  border-color: var(--accent-amber, #e0a03a);
+  box-shadow: 0 0 0 3px rgba(224, 160, 58, 0.18);
+}
+
+/* Code-surface affordances for the YAML domain editor ONLY — kept off
+   the shared class so prose textareas (support replies, bug reports,
+   operator replies) keep wrapping normally. */
+.dash-textarea--code {
+  font-size: 13px;
+  line-height: 1.6;
+  tab-size: 2;
+  -moz-tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+  caret-color: var(--accent-amber, #e0a03a);
+}
+
+/* Support ticket thread. Each message is a calm block with a
+   light rule between entries; the meta line names the side and time. */
+.dash-thread-msg {
+  padding: var(--size-3, 1rem) 0;
+  border-bottom: 1px solid var(--rule-soft, var(--border, #2a2f3a));
+}
+
+.dash-thread-msg:last-child {
+  border-bottom: 0;
+}
+
+.dash-thread-meta {
+  margin: 0 0 6px;
+  font-size: var(--font-size-0, 0.85rem);
+  color: var(--fg-muted, var(--fg-soft));
+}
+
+.dash-thread-body {
+  margin: 0;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+/* ── Notifications page ────────────────────────────────────────────
+ * Server-rendered filter chips + a flat feed list. Severity colours
+ * match the topbar bell dots. */
+.dash-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dash-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--bg-elev);
+  color: var(--fg-soft);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.dash-filter:hover {
+  border-color: var(--rule);
+  color: var(--fg);
+}
+
+.dash-filter-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.dash-filter-active:hover {
+  color: var(--accent-ink);
+}
+
+.dash-notif-list {
+  padding: 0;
+  overflow: hidden;
+}
+
+.dash-notif-row {
+  display: grid;
+  grid-template-columns: 84px minmax(90px, 0.5fr) minmax(0, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule-soft);
+  color: inherit;
+}
+
+.dash-notif-row:last-child {
+  border-bottom: 0;
+}
+
+/* Actionable rows (approvals) stand out from informational ones. */
+.dash-notif-row-action {
+  border-left: 3px solid var(--warn);
+  background: color-mix(in oklab, var(--warn) 4%, var(--bg-elev));
+}
+
+.dash-notif-scope {
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.dash-notif-action {
+  justify-self: end;
+}
+
+.dash-notif-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--fg) 7%, transparent);
+}
+
+.dash-notif-pill-warn {
+  color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 14%, transparent);
+}
+
+.dash-notif-pill-error {
+  color: var(--danger);
+  background: color-mix(in oklab, var(--danger) 14%, transparent);
+}
+
+.dash-notif-body strong,
+.dash-notif-body small {
+  display: block;
+}
+
+.dash-notif-body strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dash-notif-body small {
+  margin-top: 2px;
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dash-notif-time {
+  color: var(--fg-muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .dash-notif-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    row-gap: 6px;
+  }
+
+  .dash-notif-scope {
+    display: none;
+  }
+
+  .dash-notif-body {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Notification settings (rules) ─────────────────────────────────
+ * A compact table of toggleable rules. Each row's toggle is a no-JS
+ * form posting the target state. */
+.dash-rule-list {
+  padding: 0;
+  overflow: hidden;
+}
+
+.dash-rule-head,
+.dash-rule-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(90px, 0.5fr) minmax(90px, 0.5fr) minmax(100px, 0.5fr) 64px 96px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 18px;
+}
+
+.dash-rule-head {
+  border-bottom: 1px solid var(--rule);
+  color: var(--fg-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dash-rule-row {
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.dash-rule-row:last-child {
+  border-bottom: 0;
+}
+
+.dash-rule-name strong,
+.dash-rule-name small {
+  display: block;
+}
+
+.dash-rule-name strong {
+  font-size: 13px;
+}
+
+.dash-rule-name small {
+  margin-top: 2px;
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dash-rule-cell {
+  color: var(--fg-soft);
+  font-size: 12px;
+}
+
+.dash-rule-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dash-rule-status-on {
+  color: var(--ok);
+}
+
+.dash-rule-status-off {
+  color: var(--fg-muted);
+}
+
+.dash-rule-form {
+  margin: 0;
+  justify-self: end;
+}
+
+.dash-rule-foot {
+  margin-top: 4px;
+}
+
+@media (max-width: 720px) {
+  .dash-rule-head {
+    display: none;
+  }
+
+  .dash-rule-row {
+    grid-template-columns: 1fr auto;
+    row-gap: 4px;
+  }
+
+  .dash-rule-name {
+    grid-column: 1 / -1;
+  }
+
+  .dash-rule-cell {
+    display: none;
+  }
+}
+
+/* Small secondary hint under a form/control — lighter than .dash-note. */
+.dash-hint {
+  margin: 10px 0 0;
+  color: var(--fg-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* ── Header disclosure (no-JS dropdown) ────────────────────────────
+ * A <details> whose <summary> is a primary button and whose panel is a
+ * small dropdown form. Used for "Create API key" so the CTA sits in the
+ * header (mockup) while the real labeled mint form stays intact. */
+.dash-disclosure {
+  position: relative;
+}
+
+.dash-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.dash-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.dash-disclosure-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg-elev);
+  box-shadow: 0 18px 38px rgba(18, 22, 30, 0.16);
+}
+
+/* The account switcher: a long account name is cut in the
+ * header and wraps in the list, so neither runs off the screen. */
+.dash-account-switch > summary {
+  max-width: min(22rem, 60vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-account-switch .dash-disclosure-panel .btn {
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.dash-disclosure-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--fg-soft);
+  font-size: 12px;
+}
+
+/* The Create form's key kinds: each radio beside its words. */
+.dash-key-kind {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+}
+
+.dash-key-kind label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--fg);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dash-disclosure-panel .dash-key-kind input[type="radio"] {
+  min-height: 0;
+  margin: 3px 0 0;
+  padding: 0;
+  flex: none;
+}
+
+.dash-disclosure-panel input {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.dash-disclosure-panel input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.dash-disclosure-panel .dash-hint {
+  margin: 0;
+}
+
+/* API keys table: only four narrow columns, so drop the global
+ * .dash-table min-width (48rem) that was forcing horizontal scroll and
+ * pushing the Revoke button off-screen. Keep the id on one line and the
+ * action right-aligned. */
+/* table-layout:fixed + width:100% makes the table exactly the card width
+ * no matter the content, so the Revoke column can never be pushed past a
+ * horizontal scroll. Columns get proportional widths; long cells
+ * truncate instead of forcing the table wider. */
+.dash-table.dash-keys-table {
+  min-width: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Eight columns: Label, Kind, Agent, Last used, Expires, Key id, Created,
+ * Action. The widths must add up to 100% (Action is 14%, below): with
+ * table-layout:fixed a column left out gets nothing, which squeezed Key id
+ * and Created to one character. A new column means a new width here. */
+.dash-keys-table th:nth-child(1),
+.dash-keys-table td:nth-child(1) {
+  width: 16%;
+}
+
+.dash-keys-table th:nth-child(2),
+.dash-keys-table td:nth-child(2) {
+  width: 13%;
+}
+
+.dash-keys-table th:nth-child(3),
+.dash-keys-table td:nth-child(3) {
+  width: 13%;
+}
+
+.dash-keys-table th:nth-child(4),
+.dash-keys-table td:nth-child(4) {
+  width: 11%;
+}
+
+.dash-keys-table th:nth-child(5),
+.dash-keys-table td:nth-child(5) {
+  width: 11%;
+}
+
+.dash-keys-table th:nth-child(6),
+.dash-keys-table td:nth-child(6) {
+  width: 12%;
+}
+
+.dash-keys-table th:nth-child(7),
+.dash-keys-table td:nth-child(7) {
+  width: 10%;
+}
+
+.dash-keys-table td:nth-child(1),
+.dash-keys-table td:nth-child(3),
+.dash-keys-table td:nth-child(6) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-keys-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.dash-keys-action-col {
+  width: 14%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dash-keys-table .dash-table-action-form {
+  margin: 0;
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+/* ── Compact API-key reveal ────────────────────────────────────────
+ * The one-time plaintext after minting. Discrete: a slim accent-tinted
+ * card, the key on a single scrollable mono line — not a huge grey block. */
+.dash-keyreveal {
+  margin-bottom: var(--size-3);
+  padding: 12px 14px;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--rule-soft));
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--accent) 5%, var(--bg-elev) 70%);
+}
+
+.dash-keyreveal-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dash-keyreveal-head strong {
+  font-size: 13px;
+}
+
+.dash-keyreveal-note {
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+
+.dash-keyreveal-key {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #12151b;
+  color: #e8ebf1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow-x: auto;
+  user-select: all;
+}
+
+.dash-keyreveal-meta {
+  display: block;
+  margin-top: 6px;
+  color: var(--fg-muted);
+  font-size: 10px;
+}
+
+.dash-keyreveal-meta code {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+ * Theme: dark — dashboard content surfaces
+ *
+ * Additive overrides for the content surfaces that hardcoded light
+ * values (#fff, light tints). The token flip in app-shell.css handles
+ * everything token-driven; this covers the rest. Light mode untouched.
+ * ════════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] .dash-card,
+html[data-theme="dark"] .dash-domain-detail .dash-card,
+html[data-theme="dark"] .dash-input,
+html[data-theme="dark"] .dash-portfolio,
+html[data-theme="dark"] .dash-chip,
+html[data-theme="dark"] .dash-keyreveal,
+html[data-theme="dark"] .dash-bell-popover,
+html[data-theme="dark"] .dash-bell-menu-panel {
+  background: var(--bg-elev);
+}
+html[data-theme="dark"] .dash-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+html[data-theme="dark"] .dash-domain-detail .dash-card {
+  box-shadow: none;
+}
+html[data-theme="dark"] .dash-portfolio-row:hover {
+  background: color-mix(in oklab, var(--fg) 6%, transparent);
+}
+html[data-theme="dark"] .dash-portfolio-state-active {
+  background: color-mix(in oklab, var(--fg) 12%, transparent);
+  color: var(--fg-soft);
+}
+
+/* Semantic tint cards/callouts: soft tints on the dark surface rather
+ * than bright light panels. */
+html[data-theme="dark"] .dash-danger-card {
+  background: color-mix(in oklab, var(--danger) 12%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--danger) 40%, transparent);
+}
+html[data-theme="dark"] .dash-portfolio-approvals {
+  background: color-mix(in oklab, var(--warn) 14%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--warn) 40%, transparent);
+}
+html[data-theme="dark"] .dash-portfolio-approvals-cta { color: #e7c99a; }
+html[data-theme="dark"] .dash-posture-state-enforce { background: color-mix(in oklab, var(--ok) 22%, var(--bg-elev)); color: #a9e7c4; }
+html[data-theme="dark"] .dash-posture-state-observe  { background: color-mix(in oklab, var(--warn) 22%, var(--bg-elev)); color: #e7c99a; }
+html[data-theme="dark"] .dash-posture-state-draft   { background: color-mix(in oklab, var(--accent) 22%, var(--bg-elev)); color: #c3cdf6; }
+html[data-theme="dark"] .dash-pill-warn  { background: color-mix(in oklab, var(--warn) 16%, var(--bg-elev)); border-color: color-mix(in oklab, var(--warn) 40%, transparent); color: #e7c99a; }
+html[data-theme="dark"] .dash-pill-error { background: color-mix(in oklab, var(--danger) 16%, var(--bg-elev)); border-color: color-mix(in oklab, var(--danger) 40%, transparent); color: #e79a9d; }
+
+/* Dark variants for the remaining semantic tint chips/cards that keep
+ * dark text on a light tint (loud on a dark surface). Soft tint bg +
+ * light ink instead. */
+html[data-theme="dark"] .dash-pill-ok {
+  background: color-mix(in oklab, var(--ok) 20%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--ok) 38%, transparent);
+  color: #a9e7c4;
+}
+html[data-theme="dark"] .dash-pill-info {
+  background: color-mix(in oklab, var(--fg-soft) 16%, var(--bg-elev));
+  border-color: var(--rule);
+  color: var(--fg);
+}
+html[data-theme="dark"] .dash-card-warn {
+  background: color-mix(in oklab, var(--warn) 12%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--warn) 40%, transparent);
+}
+html[data-theme="dark"] .dash-card-soft {
+  background: color-mix(in oklab, var(--accent) 12%, var(--bg-elev));
+  border-color: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+/* ── Domain page: header, tabs, overview ─────────────────────── */
+.dash-domain-status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin: .5rem 0 0; }
+.dash-domain-status .dash-note { margin: 0; }
+.dash-domain-tabs { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-bottom: .4rem; border-bottom: 1px solid var(--rule-soft, var(--rule)); }
+.dash-domain-tabs a { padding: .7rem .05rem; border-bottom: 2px solid transparent; color: var(--fg-muted); text-decoration: none; }
+.dash-domain-tabs a:hover { color: var(--fg); }
+.dash-domain-tabs a.is-current { color: var(--fg); border-bottom-color: #e77b0b; }
+.dash-attention { border-color: color-mix(in oklab, #e77b0b 45%, var(--rule)); }
+.dash-attention h2 { margin: 0 0 .6rem; font-size: 1.05rem; }
+.dash-attention-list { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.dash-attention-list li { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; }
+.dash-attention-list a { white-space: nowrap; font-size: .9rem; }
+.dash-domain-cards h2, .dash-domain-activity h2 { margin: 0; font-size: 1.15rem; }
+.dash-domain-action { padding: .9rem 0; border-top: 1px solid var(--rule-soft, var(--rule)); }
+.dash-domain-action-head { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .45rem; }
+.dash-domain-action-head strong { font-family: var(--dash-mono, monospace); font-size: .95rem; }
+.dash-domain-action-head small { color: var(--fg-muted); font-size: .8rem; }
+.dash-domain-action .dash-note { margin: 0; }
+.dash-domain-card-list { display: grid; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+.dash-domain-card-list a { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr) auto; align-items: center; gap: .8rem; padding: .55rem .7rem; border: 1px solid var(--rule-soft, var(--rule)); border-radius: .6rem; color: inherit; text-decoration: none; }
+.dash-domain-card-list a:hover { border-color: color-mix(in oklab, #e77b0b 45%, var(--rule)); }
+.dash-domain-card-list code { overflow-wrap: anywhere; }
+.dash-domain-card-list span { color: var(--fg-muted); font-size: .9rem; }
+.dash-domain-activity { display: grid; gap: .8rem; }
+@media (max-width: 640px) {
+  .dash-domain-card-list a { grid-template-columns: 1fr auto; }
+  .dash-domain-card-list a > span:not(.ac-status) { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* Section tabs, shared by a Card's page and Settings: plain links, the
+   current one underlined. */
+.ac-detail-tabs { display:flex; gap:1.75rem; border-bottom:1px solid var(--rule,#e7e2d9); overflow-x:auto; }
+.ac-detail-tabs a { padding:.8rem .05rem; border-bottom:2px solid transparent; color:var(--fg-muted,#766f65); text-decoration:none; white-space:nowrap; }
+.ac-detail-tabs a.is-current { color:var(--fg,#181713); border-bottom-color:#e77b0b; }
+@media (max-width: 640px) {
+  .ac-detail-tabs { gap:1rem; }
+  .ac-detail-tabs a { padding-inline:.15rem; font-size:.84rem; }
+}
+
+/* Settings (one topic per tab). */
+.st-page .ac-detail-tabs { margin-bottom: var(--size-3); }
+.st-panel { display:grid; gap: var(--size-3); max-width: 64rem; }
+.st-panel .dash-card h2 { margin:0; font-size: 1rem; }
+.st-row { display:flex; align-items:center; justify-content:space-between; gap: var(--size-4); flex-wrap:wrap; }
+.st-row-text { min-width:0; flex:1 1 20rem; display:grid; gap: var(--size-2); }
+.st-row-text .dash-note { margin:0; }
+.st-facts { display:grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--size-2) var(--size-5); margin:0; }
+.st-facts div { min-width:0; }
+.st-facts dt { color: var(--fg-muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.st-facts dd { margin: 4px 0 0; color: var(--fg); font-weight: 600; overflow-wrap:anywhere; }
+.st-facts-ids { grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--size-3); margin-top: var(--size-2); }
+.st-id { display:flex; align-items:center; gap: var(--size-2); }
+.st-id code { font-family: var(--font-mono, monospace); font-size: 13px; white-space: nowrap; overflow-x:auto; padding: 6px 10px; border:1px solid var(--rule-soft); border-radius: 8px; background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev)); min-width:0; }
+
+.st-kind { display:grid; gap: 14px; }
+.st-kind-head { display:grid; gap: var(--size-1); }
+.st-kind-head .dash-note { margin:0; max-width: 46rem; }
+.st-kind-options { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--size-3); }
+.st-kind-option { display:grid; grid-template-columns: 7.5rem minmax(0,1fr); gap: var(--size-3); padding: 14px; border:1px solid var(--rule-soft); border-radius: 12px; background: color-mix(in oklab, var(--fg) 4%, var(--bg-elev)); }
+.st-kind-option.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.st-kind-body { display:grid; align-content:start; gap: var(--size-2); min-width:0; }
+.st-kind-body h3 { margin:0; font-size: 1rem; }
+.st-kind-body p { margin:0; color: var(--fg-soft); font-size: 14px; }
+.st-kind-body ul { margin:0; padding-left: 1.1rem; color: var(--fg-muted); font-size: 13px; display:grid; gap: 2px; }
+.st-kind-body .dash-pill, .st-kind-body .btn { justify-self:start; margin-top: var(--size-1); }
+.st-sketch { display:grid; align-content:start; gap: 3px; padding: 8px; border:1px solid var(--rule-soft); border-radius: 8px; background: var(--bg); font-size: 10px; line-height: 1.2; color: var(--fg-soft); }
+.st-sketch span { padding: 2px 6px; border-radius: 4px; background: color-mix(in oklab, var(--fg) 7%, transparent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.st-sketch .st-sketch-label { background:none; padding: 4px 6px 0; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-muted); }
+.st-sketch .st-sketch-setup { background: color-mix(in oklab, var(--accent) 22%, transparent); color: var(--fg); }
+
+.st-confirm { display:grid; gap: var(--size-2); padding: var(--size-3); border:1px solid var(--accent); border-radius: 12px; background: color-mix(in oklab, var(--accent) 10%, var(--bg-elev)); }
+.st-confirm h3 { margin:0; font-size: 1rem; }
+.st-confirm p { margin:0; color: var(--fg-soft); font-size: 14px; }
+.st-confirm-actions { display:flex; gap: var(--size-2); flex-wrap:wrap; }
+
+@media (max-width: 860px) {
+  .st-kind-options { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 480px) {
+  .st-kind-option { grid-template-columns: minmax(0,1fr); }
+}
+
+/* Needs attention: open work across agents, one row each. */
+.att-count { color:var(--fg-muted); font-size:13px; }
+.att-list { border:1px solid var(--rule); border-radius:12px; background:var(--bg-elev); overflow:hidden; }
+.att-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 20px; padding:16px 18px; border-bottom:1px solid var(--rule-soft); }
+.att-row:last-child { border-bottom:0; }
+.att-row.is-unread { box-shadow:inset 3px 0 0 var(--accent); }
+.att-main { min-width:0; }
+.att-head { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.att-action { font-size:15px; font-weight:700; }
+.att-new { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.att-why { margin:8px 0 0; padding:0; list-style:none; font-size:14px; color:var(--fg); }
+.att-facts { display:flex; flex-wrap:wrap; gap:4px 18px; margin:10px 0 0; font-size:12px; }
+.att-facts div { display:flex; gap:6px; min-width:0; }
+.att-facts dt { color:var(--fg-muted); }
+.att-facts dd { margin:0; color:var(--fg-soft); }
+.att-actions { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:flex-end; gap:8px; }
+.att-actions form { margin:0; }
+.att-note { grid-column:1 / -1; margin:0; color:var(--fg-muted); font-size:12px; }
+@media (max-width: 720px) {
+  .att-row { grid-template-columns:1fr; }
+  .att-actions { justify-content:flex-start; }
+}
+
+/* The account default is a named time zone; Cards retain their own zone. */
+.st-time-zone-form { display:grid; gap:var(--size-2); max-width:28rem; }
+.st-time-zone-form select { width:100%; min-width:0; padding:.65rem .75rem; color:var(--fg); background:var(--bg-elev); border:1px solid var(--rule); border-radius:8px; font:inherit; }
+.st-time-zone-form .btn { justify-self:start; }
+.st-setting-form { display:grid; gap:var(--size-2); max-width:28rem; }
+.st-setting-form input { width:100%; min-width:0; padding:.65rem .75rem; color:var(--fg); background:var(--bg-elev); border:1px solid var(--rule); border-radius:8px; font:inherit; }
+.st-setting-form .btn { justify-self:start; }
+
+/* ── Gateway key reveal: the key alone first, then "Use it
+ * with…" — radio tabs that switch with CSS alone, one copy button per
+ * block, named for what it copies. ───────────────────────────────── */
+.gw-key { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.gw-key .gw-key-value { flex: 1 1 auto; min-width: 0; margin-top: 0; }
+.gw-formats { margin-top: var(--size-3); }
+.gw-use { margin: 0 0 6px; font-size: 12px; color: var(--fg-muted); }
+.gw-radio { position: absolute; opacity: 0; pointer-events: none; }
+.gw-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.gw-tab { padding: 4px 10px; border: 1px solid var(--rule-soft); border-radius: 999px; font-size: 12px; cursor: pointer; color: var(--fg-muted); }
+.gw-tab:hover { color: var(--fg); }
+.gw-panel { display: none; }
+.gw-panel p { margin: 6px 0; font-size: 12px; }
+.gw-block { position: relative; margin-bottom: 8px; }
+.gw-block .gw-copy { position: absolute; top: 6px; right: 6px; z-index: 1; }
+.gw-block .ac-prompt { padding-top: 2.4rem; }
+.gw-radio-claude:checked ~ .gw-panel-claude,
+.gw-radio-codex:checked ~ .gw-panel-codex,
+.gw-radio-env:checked ~ .gw-panel-env,
+.gw-radio-curl:checked ~ .gw-panel-curl { display: block; }
+.gw-radio-claude:checked ~ .gw-tabs .gw-tab-claude,
+.gw-radio-codex:checked ~ .gw-tabs .gw-tab-codex,
+.gw-radio-env:checked ~ .gw-tabs .gw-tab-env,
+.gw-radio-curl:checked ~ .gw-tabs .gw-tab-curl { border-color: var(--accent); color: var(--fg); background: color-mix(in oklab, var(--accent) 12%, transparent); }
+.gw-radio:focus-visible ~ .gw-tabs .gw-tab { outline-offset: 2px; }
+@media (max-width: 520px) {
+  .gw-key { flex-direction: column; align-items: stretch; }
+}
+
+/* ── People ─────────────────────────────────────────────
+ * Mobile first: each person is a small card — who, then role, then
+ * the actions — and from 760px the same rows line up as columns under
+ * one header. Controls never share a cell, so nothing overlaps. */
+.pp-card { display: grid; gap: var(--size-3); }
+.pp-card > h2, .pp-card > .dash-note, .pp-card > .dash-hint { margin: 0; }
+.pp-members { list-style: none; margin: 0; padding: 0; display: grid; }
+.pp-members-head { display: none; }
+.pp-member {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "who access" "role role" "actions actions";
+  gap: 12px 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.pp-member:first-of-type { padding-top: 0; }
+.pp-member:last-child { border-bottom: 0; padding-bottom: 0; }
+.pp-member-who { grid-area: who; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.pp-member-role { grid-area: role; min-width: 0; }
+.pp-member-access { grid-area: access; justify-self: end; }
+.pp-member-actions { grid-area: actions; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.pp-member-actions:empty { display: none; }
+.pp-avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, var(--accent) 14%, var(--bg-elev));
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.pp-member-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+.pp-member-name strong { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; min-width: 0; }
+.pp-member-name .dash-pill { font-size: 11px; }
+.pp-role-label { color: var(--fg-muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.pp-role-form { display: flex; gap: 8px; align-items: center; }
+.pp-role-form select {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 .75rem;
+  color: var(--fg);
+  background: var(--bg-elev);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+}
+.pp-role-form select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pp-member .btn-sm { min-height: 36px; white-space: nowrap; }
+.pp-member-actions > form { margin: 0; }
+/* On a phone the two actions share the row evenly. */
+.pp-member-actions > form, .pp-member-actions > .dash-disclosure { flex: 1 1 0; }
+.pp-member-actions > form .btn, .pp-member-actions > .dash-disclosure > summary { width: 100%; justify-content: center; }
+/* On a phone the remove confirmation opens in the row, full width,
+   instead of as a dropdown that could run off the screen. */
+.pp-member-actions .dash-disclosure[open] { flex-basis: 100%; }
+.pp-member-actions .dash-disclosure-panel { position: static; width: 100%; margin-top: 8px; box-shadow: none; }
+@media (min-width: 760px) {
+  .pp-members-head,
+  .pp-member {
+    grid-template-columns: minmax(0, 1.5fr) minmax(13rem, 1.2fr) 6rem 12.5rem;
+    grid-template-areas: "who role access actions";
+  }
+  .pp-members-head {
+    display: grid;
+    gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-soft);
+    color: var(--fg-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .pp-members-head span:last-child { text-align: right; }
+  .pp-member, .pp-member:first-of-type { padding: 14px 0; }
+  .pp-member:last-child { padding-bottom: 0; }
+  .pp-member-access { justify-self: start; }
+  .pp-member-actions { justify-content: flex-end; }
+  .pp-member-actions > form, .pp-member-actions > .dash-disclosure { flex: none; }
+  .pp-member-actions > form .btn, .pp-member-actions > .dash-disclosure > summary { width: auto; }
+  .pp-member-actions .dash-disclosure[open] { flex-basis: auto; }
+  .pp-member-actions .dash-disclosure-panel { position: absolute; width: min(320px, calc(100vw - 32px)); margin-top: 0; box-shadow: 0 18px 38px rgba(18, 22, 30, 0.16); }
+  .pp-role-label { display: none; }
+}
+
+.pp-roles { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 0; }
+.pp-roles div { display: grid; gap: 6px; align-content: start; padding: 14px; border: 1px solid var(--rule-soft); border-radius: 10px; background: color-mix(in oklab, var(--fg) 2%, var(--bg-elev)); }
+.pp-roles dt { color: var(--fg); font-size: 13px; font-weight: 650; }
+.pp-roles dd { margin: 0; color: var(--fg-muted); font-size: 13px; line-height: 1.45; }
+@media (min-width: 560px) { .pp-roles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .pp-roles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* Small tables on People fit the card instead of scrolling: they have
+   few columns. Numbers line up on the right. */
+.dash-table.pp-table { min-width: 0; table-layout: auto; }
+.pp-table th { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.pp-table th, .pp-table td { padding: 12px 8px; vertical-align: middle; }
+.pp-table td { font-size: 14px; }
+.pp-table th:first-child, .pp-table td:first-child { padding-left: 0; }
+.pp-table th:last-child, .pp-table td:last-child { padding-right: 0; }
+.pp-table tbody tr:last-child td { border-bottom: 0; }
+.pp-table-num th:not(:first-child), .pp-table-num td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pp-table-num td:first-child { overflow-wrap: anywhere; }
+.pp-table td:last-child .dash-table-action-form { display: flex; justify-content: flex-end; }
+.pp-invites td:last-child, .pp-invites th:last-child { text-align: right; }
+.pp-row-muted td { color: var(--fg-muted); }

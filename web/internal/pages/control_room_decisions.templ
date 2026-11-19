@@ -1,0 +1,127 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+)
+
+// ControlRoomDecisions is the Govern page's decisions section. The
+// counts live once, in the metric strip above (ControlRoomMetrics) —
+// they used to be repeated here as a headline sentence AND a per-outcome
+// grid, which read as the same numbers three times. This is now just a
+// light "Decisions" label + the rows table.
+templ ControlRoomDecisions(e *ControlEvidence) {
+	<section class="dash-card cr-card">
+		<div class="cr-card-head">
+			<div>
+				<p class="eyebrow">Decisions</p>
+			</div>
+			<span class="dash-pill dash-pill-muted">{ controlRoomWindowLabel(e) }</span>
+		</div>
+		@controlRoomDecisionsTable(e)
+		if len(e.Decisions.Rows) > 0 && e.Decisions.Truncated {
+			<p class="dash-note">Rows are capped; the counts above are still window-complete.</p>
+		}
+	</section>
+}
+
+// controlRoomDecisionsTable is just the decisions rows table (no card,
+// no counts headline), so the domain Activity page can render it under
+// the clickable outcome summary without duplicating the counts. Renders
+// an honest empty note when the current page/filter has no rows.
+templ controlRoomDecisionsTable(e *ControlEvidence) {
+	if len(e.Decisions.Rows) > 0 {
+		<div class="cr-table-wrap">
+			<table class="cr-table">
+				<thead>
+					<tr>
+						<th>When</th>
+						<th>Outcome</th>
+						<th>Entity</th>
+						<th>State</th>
+						<th>Actor</th>
+						<th>Reasons</th>
+						<th>Tool</th>
+						<th>Receipt</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, row := range e.Decisions.Rows {
+						<tr>
+							<td>{ row.CreatedAt.Format("Jan 2, 15:04") }</td>
+							<td><span class={ "dash-pill", controlRoomOutcomePillClass(row.Outcome) }>{ row.Outcome }</span></td>
+							<td><code>{ row.EntityID }</code></td>
+							<td>@controlRoomStateCell(row)</td>
+							<td>{ controlFallback(row.ActorID, controlFallback(row.PrincipalSubject, "not recorded")) }</td>
+							<td>@controlRoomReasonCell(row)</td>
+							<td>@controlRoomToolCell(row)</td>
+							<td>@controlRoomReceiptCell(row)</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	} else {
+		<p class="dash-note">No decisions match this filter in the current window.</p>
+	}
+}
+
+
+// controlRoomReasonCell renders why a decision went the way it did, and
+// leads to the card when the card is why.
+//
+// A refusal on the mandate gate is the one reason on this table that a
+// reader can act on somewhere else: the answer is to look at what the
+// agent holds, or to issue it something. `no_mandate_issued` especially
+// — that is a wiring state, and someone meeting it has wired everything
+// correctly and is being told nothing was issued.
+templ controlRoomReasonCell(row apiclient.ProposalDecision) {
+	{ controlRoomReasonLabel(row) }
+	if cardsHref, ok := cardsForRefusalHref(row); ok {
+		<a class="cr-reason-link" href={ templ.SafeURL(cardsHref) }>cards held by this agent →</a>
+	}
+}
+
+// controlRoomToolCell says how an allowed call ended at the tool,
+// next to the decision: the decision and its receipt are
+// what KIFF authorized; this is what the tool reported. The
+// tool's own message is in the title.
+templ controlRoomToolCell(row apiclient.ProposalDecision) {
+	if l := toolOutcomeLabel(row.ToolOutcome); l != "" {
+		<span class={ "cr-tool", templ.KV("cr-tool-warn", toolOutcomeWarns(row.ToolOutcome.Status)) } title={ row.ToolOutcome.Message }>{ l }</span>
+	} else {
+		<span class="cr-tool-none">—</span>
+	}
+}
+
+// controlRoomReceiptCell renders the receipt linkage as a real link to
+// the receipt page when a trace id is present (the one obvious step
+// from a decision to its proof), falling back to the plain status
+// label when there is no linked receipt yet.
+templ controlRoomReceiptCell(row apiclient.ProposalDecision) {
+	if row.ReceiptTraceID != "" {
+		<a class="cr-receipt-link" href={ templ.SafeURL("/dashboard/receipts/" + url.PathEscape(row.ReceiptTraceID)) }>
+			<code>{ controlRoomReceiptLabel(row) }</code> →
+		</a>
+	} else {
+		<span class="cr-receipt-none">{ controlRoomReceiptLabel(row) }</span>
+	}
+}
+
+// controlRoomStateCell surfaces the state KIFF reconstructed and decided
+// against: "<state> of <allowed…>" so a refusal reads as "decided
+// against the entity's actual state", not a black box. Empty for
+// decisions recorded before state-at-decision or pre-state outcomes.
+templ controlRoomStateCell(row apiclient.ProposalDecision) {
+	if row.StateAtDecision != "" {
+		<code>{ row.StateAtDecision }</code>
+		if len(row.AllowedStates) > 0 {
+			<span class="cr-state-allowed" title={ "Action allowed from: " + controlRoomAllowedStatesLabel(row) }>
+				{ controlRoomStateContextLabel(row) }
+			</span>
+		}
+	} else {
+		<span class="cr-state-none">not recorded</span>
+	}
+}

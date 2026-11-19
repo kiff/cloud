@@ -1,0 +1,196 @@
+<h1 id="decisions">Decisions</h1>
+
+<p>A decision is KIFF&rsquo;s answer to &ldquo;is this action allowed, right now?&rdquo; —
+produced <strong>before</strong> the action runs. This page covers what&rsquo;s evaluated,
+the four outcomes, and the lifecycle from proposal to recorded decision.</p>
+
+<h2 id="what-this-does">What this does</h2>
+
+<p>Your runtime proposes an action. KIFF evaluates that proposal against
+the entity&rsquo;s current state and the control&rsquo;s policy, and returns a
+decision. Your runtime then acts on the answer: run the action on
+<code>allowed</code>, withhold it otherwise. The decision happens at the gate, not
+after the fact.</p>
+
+<h2 id="the-decision-flow">The decision flow</h2>
+
+<pre><code>your runtime: about to run an action
+        │
+        ▼
+   propose to KIFF  ──►  KIFF evaluates:
+        │                 • entity's current state (from events)
+        │                 • the control's policy + thresholds
+        │                 • required parameters present?
+        │                 • does the actor's identity hold authority?
+        │                 • does this action need an approval?
+        │                 • and only if the action declares
+        │                   requires_authority: the card issued to
+        │                   this actor, and what it has left
+        ▼
+   decision returned: allowed | blocked | approval_required | invalid
+        │
+        ▼
+your runtime acts on it:
+   allowed            → run the action
+   blocked / invalid  → do not run
+   approval_required  → hold until a human resolves it
+        │
+        ▼
+   one signed receipt recorded, either way
+</code></pre>
+
+<h2 id="the-card-where-an-action-calls-for-one">The card, where an action calls for one</h2>
+
+<p>The card is the last gate, and only for actions that ask for it. An
+action that does not declare <code>requires_authority</code> is decided without any
+card at all — state, permissions, parameters and approval, as before.</p>
+
+<p>Where it does declare it:</p>
+
+<ul>
+<li><strong><code>no_mandate_issued</code></strong> — nothing has been issued to this actor for
+this action. A <code>blocked</code> decision with its own reason, because the
+integrator who meets it has wired everything correctly and the answer
+is that nobody has issued anything yet.</li>
+<li><strong><code>key_not_bound_to_agent</code></strong> — the action requires a card, or the
+named agent holds a card covering it, and the API key that sent it is
+not issued for any agent, so nothing ties the <code>actor_id</code> it named to
+the card&rsquo;s holder. Use the key created for the agent on its card&rsquo;s
+page.</li>
+<li><strong><code>actor_not_key_holder</code></strong> — the API key is issued for one agent and
+the proposal names another. Checked on every action, not only those
+that need a card: a key issued for an agent only ever acts as it.</li>
+<li><strong><code>mandate_limit_reached</code></strong> — the proposed action would exceed the
+card&rsquo;s remaining authority for this window. Note what that does <em>not</em>
+say: the card need not be empty. A €2,000 refund against €1,000 of
+remaining authority is refused under this reason while €1,000 is still
+there for something smaller. Refused, not sent for approval: more room
+is an owner&rsquo;s decision, taken deliberately and recorded.</li>
+<li><strong>The draw is recorded when the action is authorized</strong>, not when your
+runtime executes it. KIFF never learns whether you ran it, so an
+authorization you chose not to act on still counts.</li>
+</ul>
+
+<p>See <a href="/docs/archive/2026-10-09/kiff-cards">KIFF Cards</a>.</p>
+
+<h2 id="the-four-outcomes">The four outcomes</h2>
+
+<ul>
+<li><strong><code>allowed</code></strong> — the proposal satisfies the policy for the current
+state. Your runtime runs the action.</li>
+<li><strong><code>blocked</code></strong> — a governance answer: the proposal is well-formed, but
+the action is not permitted in this state or breaks a rule (over a
+threshold, wrong state, missing authority). KIFF evaluated it and said
+no. Your runtime does not run it.</li>
+<li><strong><code>approval_required</code></strong> — the action needs a human sign-off first. It
+is held; your runtime does not run it until the approval is resolved.</li>
+<li><strong><code>invalid</code></strong> — the proposal is a <strong>broken request</strong>, not a governance
+answer: it is malformed or misconfigured against the contract — a
+required parameter is missing, a parameter fails the contract&rsquo;s
+constraints, the contract is invalid, or it has no executor. There was
+nothing to decide; the request itself needs fixing.</li>
+</ul>
+
+<p>A useful invariant: anything that is not exactly <code>allowed</code> means the
+action should not run. When KIFF runs in enforce mode through the guard,
+that withholding is the default behavior, and an error fails closed
+(withheld) rather than silently allowing. See <a href="/docs/archive/2026-10-09/concepts">How the guard
+works</a> for the fail-safe posture.</p>
+
+<h3 id="blocked-vs-invalid-a-decision-vs-a-broken-request"><code>blocked</code> vs <code>invalid</code> — a decision vs a broken request</h3>
+
+<p>The two are distinct on purpose, and your integration should treat them
+differently:</p>
+
+<ul>
+<li><strong><code>blocked</code> is a governance decision.</strong> KIFF looked at a valid request
+and refused it. It returns successfully (the decision <em>is</em> the
+result), counts as a governed operation, and surfaces in your evidence
+and alerts — it&rsquo;s a real thing that happened.</li>
+<li><strong><code>invalid</code> is not a governance decision.</strong> The request never got as
+far as one — either it was malformed/misconfigured, or the data plane
+couldn&rsquo;t evaluate it right then. Either way it comes back as an error
+(not a success), is <strong>not</strong> counted as a governed operation, and does
+not raise a governance alert. Two sub-cases, and they call for
+different handling:
+
+<ul>
+<li><strong>Malformed or misconfigured</strong> (missing/invalid parameter, invalid
+contract, no executor) → a client/config error (an HTTP <code>4xx</code>) that
+is yours to <strong>fix</strong> — the same way a bad request to any API is the
+caller&rsquo;s to correct, not a policy event.</li>
+<li><strong>Transient data-plane error</strong> (the runtime, state store, or action
+registry was briefly unavailable) → returned as an HTTP <code>5xx</code> you
+should <strong>retry</strong>, not fix; nothing was wrong with your request.</li>
+</ul></li>
+</ul>
+
+<p>So a missing or invalid parameter is <code>invalid</code> (fix your request), not
+<code>blocked</code> (a policy said no). Branch on this: on <code>blocked</code>, respect the
+decision; on <code>invalid</code>, <strong>fix</strong> a <code>4xx</code> or <strong>retry</strong> a <code>5xx</code>.</p>
+
+<h2 id="what-data-is-evaluated">What data is evaluated</h2>
+
+<p>A decision is made against:</p>
+
+<ul>
+<li><strong>the entity&rsquo;s state</strong> at the moment of the proposal, derived from the
+events KIFF has recorded — not a value the caller asserts;</li>
+<li><strong>the control&rsquo;s policy</strong> — permitted states, required parameters,
+thresholds, approval rules — which you defined;</li>
+<li><strong>the actor&rsquo;s identity</strong>, resolved server-side. The roles a request
+carries are descriptive; authority is resolved from policy keyed to an
+authenticated identity, never from what the caller claims about
+itself. An action taken with an API key is attributed to <strong>that key</strong>,
+not to whoever minted it — so give each agent its own key and the
+record distinguishes them; share one key across a fleet and they
+appear as a single actor.</li>
+</ul>
+
+<h2 id="the-proposal-decision-lifecycle">The proposal / decision lifecycle</h2>
+
+<ol>
+<li><strong>Proposal</strong> — your runtime submits the action it intends to take,
+with the entity and parameters.</li>
+<li><strong>Evaluation</strong> — KIFF reads the current state and applies the policy.</li>
+<li><strong>Decision</strong> — one of the four outcomes is returned, synchronously,
+before execution.</li>
+<li><strong>Hold (if <code>approval_required</code>)</strong> — the proposal waits for a human
+resolution rather than running.</li>
+<li><strong>Record</strong> — exactly one signed receipt captures what was decided and
+on what basis. See <a href="/docs/archive/2026-10-09/receipts-and-proof">Receipts &amp; proof
+packs</a>.</li>
+</ol>
+
+<h3 id="reading-an-entity-s-lifecycle">Reading an entity&rsquo;s lifecycle</h3>
+
+<p>The proposals, validations, approvals, and executions KIFF has recorded
+for a single entity can be read back as one chronological, read-only
+view — the entity&rsquo;s governed history in order, assembled from records
+KIFF already keeps. It&rsquo;s a projection, not a new decision path: it
+changes nothing and simply surfaces what happened. Like every read
+surface it is scoped to your tenant — you only ever see your own
+entities — and a valid entity with no history yet returns an empty
+lifecycle rather than an error.</p>
+
+<h2 id="example-shape">Example shape</h2>
+
+<p>The exact request/response contract for the decide endpoint and the
+guard&rsquo;s <code>enforce</code> mode lives with the runnable code in the public guard
+repo, <a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff/kiff-guard</code></a>, and on
+each <a href="/docs/archive/2026-10-09/agno">framework page</a>. Conceptually, your runtime sends the
+action and entity, and receives a decision with an outcome and a trace
+reference for the receipt:</p>
+
+<pre><code class="language-text">proposal:   action=ISSUE_REFUND  entity=order/ord_4821  amount_cents=2500
+decision:   outcome=blocked  reason=state_not_allowed  (order already FULLY_REFUNDED)
+            → one receipt recorded; your runtime does not issue the refund
+</code></pre>
+
+<h2 id="what-kiff-does-not-do-here">What KIFF does not do here</h2>
+
+<p>KIFF returns the decision. It does not execute the action on <code>allowed</code> —
+<strong>your runtime does</strong> — and it does not undo anything downstream. The
+decision proves what was authorized before execution; it does not prove
+what your system did afterward. That distinction is the heart of
+<a href="/docs/archive/2026-10-09/receipts-and-proof">Receipts &amp; proof packs</a>.</p>

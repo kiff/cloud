@@ -1,0 +1,396 @@
+/* spot.css, enablement-proof infographics at /spot and /spot/{slug}.
+ *
+ * The bucket-1 counterpart to proof.css: the boundary as the thing that lets
+ * you put an agent on a money flow, not as loss prevention. Same dark deck
+ * universe; native CSS over the shared tokens (the web-stack design: hermetic Go + templ +
+ * native CSS, no JS, no build step).
+ */
+
+.spot,
+.spot-index {
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-body: var(--font-sans);
+  --font-display: var(--font-serif);
+  font-family: var(--font-body);
+  color: var(--fg);
+  background: var(--bg);
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(var(--size-5), 5vw, var(--size-8)) clamp(var(--size-4), 5vw, var(--size-7)) var(--size-9);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Dark-stage refinement. Keep the existing proof anatomy, but present it as
+ * one ruled operational surface instead of a collection of light cards. */
+body.site:has(.spot) .spot,
+body.site:has(.spot-index) .spot-index {
+  background: transparent;
+}
+
+body.site:has(.spot) .spot-head h1,
+body.site:has(.spot-index) .spot-index-head h1,
+body.site:has(.spot) .spot-detail-block h2,
+body.site:has(.spot-index) .spot-card-flow {
+  color: var(--ink);
+}
+
+body.site:has(.spot) .spot-side,
+body.site:has(.spot) .spot-loop-step,
+body.site:has(.spot-index) .spot-card {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: var(--rule-soft);
+  border-radius: 0;
+}
+
+body.site:has(.spot-index) .spot-grid {
+  gap: 1px;
+  padding: 1px;
+  background: var(--rule-soft);
+}
+
+body.site:has(.spot-index) .spot-card:hover {
+  background: rgba(255, 154, 26, 0.045);
+  border-color: var(--accent);
+  transform: none;
+}
+
+body.site:has(.spot) .spot-chip,
+body.site:has(.spot-index) .spot-chip {
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+body.site:has(.spot) .spot-after {
+  background: rgba(31, 122, 71, 0.08);
+}
+
+body.site:has(.spot) .spot-loop {
+  gap: 1px;
+  padding: 1px;
+  background: var(--rule-soft);
+}
+
+body.site:has(.spot) .spot-loop-num {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  justify-content: flex-start;
+}
+
+/* ── Back link + head ────────────────────────────────────────── */
+
+.spot-back {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  text-decoration: none;
+  margin-bottom: var(--size-6);
+}
+
+.spot-back:hover { color: var(--accent); }
+
+.spot-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 var(--size-2);
+}
+
+.spot-head h1,
+.spot-index-head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1.05;
+  margin: 0 0 var(--size-3);
+  color: var(--fg);
+}
+
+.spot-tagline,
+.spot-index-lede {
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--fg-soft);
+  margin: 0 0 var(--size-4);
+  max-width: 44rem;
+}
+
+/* ── Chips ───────────────────────────────────────────────────── */
+
+.spot-head-chips,
+.spot-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+}
+
+.spot-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--bg-elev) 60%, transparent);
+  white-space: nowrap;
+}
+
+.spot-chip-model {
+  color: var(--fg-soft);
+  border-color: color-mix(in oklab, var(--ok) 35%, var(--rule));
+  background: color-mix(in oklab, var(--ok) 8%, transparent);
+}
+
+.spot-chip-action {
+  color: var(--accent);
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--rule));
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+
+/* ── Cross the line: before → action → after ─────────────────── */
+
+.spot-cross {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: var(--size-3);
+  margin: var(--size-7) 0;
+}
+
+.spot-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-5);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-3, 12px);
+  background: var(--bg-elev);
+}
+
+.spot-side-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.spot-side-text {
+  font-size: var(--font-size-1);
+  color: var(--fg-soft);
+  line-height: 1.5;
+}
+
+/* "before" is neutral (the flow stayed off agents), not a loss/danger. */
+.spot-before {
+  border-color: var(--rule);
+  background: color-mix(in oklab, var(--bg-elev) 70%, transparent);
+}
+
+/* "after" is the win: you ship it. */
+.spot-after {
+  border-color: color-mix(in oklab, var(--ok) 38%, var(--rule));
+  background: color-mix(in oklab, var(--ok) 7%, var(--bg-elev));
+}
+.spot-after .spot-side-label { color: var(--ok); }
+
+.spot-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-1);
+  padding: 0 var(--size-2);
+  text-align: center;
+}
+
+.spot-line-action {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-1);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.spot-line-note {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.spot-line-detail {
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+  line-height: 1.4;
+  max-width: 12rem;
+}
+
+/* ── The loop ────────────────────────────────────────────────── */
+
+.spot-loop {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-3);
+  margin: var(--size-7) 0;
+}
+
+.spot-loop-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-4);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-2, 8px);
+  background: color-mix(in oklab, var(--bg-elev) 55%, transparent);
+}
+
+.spot-loop-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--accent);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, var(--rule));
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+
+.spot-loop-text {
+  font-size: var(--font-size-1);
+  line-height: 1.45;
+  color: var(--fg-soft);
+}
+
+.spot-loop-text code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-code);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  color: #e8eaf0;
+}
+
+.spot-allow { color: var(--ok); }
+.spot-noop { color: var(--accent); }
+
+/* ── Flow + why ──────────────────────────────────────────────── */
+
+.spot-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-5);
+  margin: var(--size-7) 0;
+}
+
+.spot-detail-block h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-4);
+  margin: 0 0 var(--size-3);
+  color: var(--fg);
+}
+
+.spot-detail-block p {
+  font-size: var(--font-size-2);
+  line-height: 1.6;
+  color: var(--fg-soft);
+  margin: 0;
+}
+
+/* ── Footers ─────────────────────────────────────────────────── */
+
+.spot-foot,
+.spot-index-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--size-3);
+  margin-top: var(--size-7);
+  padding-top: var(--size-4);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.spot-foot-link,
+.spot-index-foot a {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+
+.spot-foot-link:hover,
+.spot-index-foot a:hover { color: var(--accent); }
+
+/* ── Index grid + cards ──────────────────────────────────────── */
+
+.spot-index-head { margin-bottom: var(--size-6); }
+
+.spot-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--size-4);
+}
+
+.spot-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  height: 100%;
+  padding: var(--size-5);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-3, 12px);
+  background: var(--bg-elev);
+  text-decoration: none;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.spot-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.spot-card-flow {
+  font-family: var(--font-display);
+  font-size: var(--font-size-4);
+  color: var(--fg);
+}
+
+.spot-card-tagline {
+  font-size: var(--font-size-1);
+  line-height: 1.45;
+  color: var(--fg-soft);
+  flex: 1;
+}
+
+.spot-card-ship {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .spot-cross { grid-template-columns: 1fr; }
+  .spot-line { padding: var(--size-2) 0; }
+  .spot-line-detail { max-width: none; }
+  .spot-loop { grid-template-columns: 1fr 1fr; }
+  .spot-detail { grid-template-columns: 1fr; gap: var(--size-5); }
+}
+
+@media (max-width: 420px) {
+  .spot-loop { grid-template-columns: 1fr; }
+}

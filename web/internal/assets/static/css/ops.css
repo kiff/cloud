@@ -1,0 +1,180 @@
+/* Operator console layout polish. Scoped to.ops-* classes;
+   reuses the dashboard's light tokens. No theme change — just makes the
+   control-plane workflows readable: alert table sizing, inline action
+   forms, labeled reason fields, and the tenant action area. */
+
+/* ── Tables: keep columns from collapsing; scroll on narrow viewports ── */
+.ops-table-wrap {
+  overflow-x: auto;
+}
+.ops-wide {
+  min-width: 760px;
+}
+.ops-wide th,
+.ops-wide td {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* The free-text "detail" column may wrap; everything else stays tidy. */
+.ops-wide td.ops-detail {
+  white-space: normal;
+  min-width: 220px;
+}
+.ops-nowrap { white-space: nowrap; }
+
+/* Monospace for kinds / ids so they read as machine tokens. */
+.ops-code {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.85em;
+  color: var(--fg-soft, #555555);
+}
+
+/* ── Inline alert action form: one reason input + two small buttons ── */
+.ops-alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+}
+.ops-alert-actions .ops-reason {
+  width: 180px;
+  margin: 0;
+}
+.btn-xs {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  border-radius: 6px;
+}
+
+/* ── Reason inputs ──────────────────────────────────────────────── */
+.ops-reason {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--rule, #d8dce2);
+  border-radius: 8px;
+  background: var(--bg, #fff);
+  color: var(--fg, #1a1a1a);
+}
+.ops-reason:focus {
+  outline: 2px solid var(--accent, #2f6feb);
+  outline-offset: 1px;
+  border-color: var(--accent, #2f6feb);
+}
+.ops-field-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--fg-soft, #555555);
+  margin-bottom: 0.3rem;
+}
+
+/* ── Tenant operator-action area ────────────────────────────────── */
+.ops-action-block {
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--rule-soft, #eef0f3);
+}
+.ops-action-block:first-of-type { border-top: 0; }
+.ops-action-block h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.98rem;
+}
+.ops-action-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+.ops-action-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.ops-action-row .ops-field { max-width: 360px; flex: 1 1 240px; }
+.ops-plan-select {
+  padding: 0.5rem 0.65rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--rule, #d8dce2);
+  border-radius: 8px;
+  background: var(--bg, #fff);
+}
+
+/* Make the current status/plan obvious. */
+.ops-state-line {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+.ops-state-line .label {
+  font-size: 0.8rem;
+  color: var(--fg-soft, #555555);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ── Risk-signals card ──────────────────────────────────────────── */
+.ops-risk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ops-risk-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ops-search-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+.ops-search-form .ops-reason { max-width: 320px; margin: 0; }
+
+/* ── Integration proofs: history strip, checks, replay ─────────────── */
+.ops-strip { display: flex; gap: 2px; }
+.ops-strip-day {
+  width: 6px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--rule, #d8dce2);
+}
+.ops-strip-green { background: var(--ok, #2f9b5d); }
+.ops-strip-amber { background: var(--warn, #9c6b09); }
+.ops-strip-red { background: var(--danger, #b94345); }
+.ops-proof-reason { font-size: 0.8rem; color: var(--fg-soft, #555555); margin-top: 0.2rem; }
+.ops-refused { color: var(--danger, #b94345); }
+.ops-check-ok strong { color: var(--ok, #2f9b5d); }
+.ops-check-fail strong { color: var(--danger, #b94345); }
+.ops-check-card { font-size: 1.05rem; }
+.ops-proof-why { margin-left: 0.5rem; color: var(--fg-soft, #555555); }
+.ops-proof-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+}
+.ops-proof-facts dd { margin: 0; overflow-wrap: anywhere; }
+.ops-replay { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.ops-replay-head { display: flex; gap: 0.5rem; align-items: baseline; }
+.ops-replay-body {
+  margin: 0.25rem 0 0;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--rule, #d8dce2);
+  border-radius: 8px;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.8rem;
+  overflow-x: auto;
+  white-space: pre;
+}

@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"net/url"
+	"strconv"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+type CardRoomView struct {
+	Email, Subject, DisplayName string
+	Statement                   *apiclient.MandateStatement
+	Error                       string
+	Preview                     *apiclient.ExtraRoomRequest
+	End                         time.Time
+}
+
+func roomBase(l apiclient.MandateLimit) int64 {
+	if l.BaseLimit == 0 && l.ExtraRoom == 0 {
+		return l.Limit
+	}
+	return l.BaseLimit
+}
+func roomValue(l apiclient.MandateLimit, n int64) string {
+	if l.Unit != "" {
+		return scaledNumber(n, l.Scale) + " " + l.Unit
+	}
+	if l.Quantity == "count" {
+		return countOf(n, "call", "calls")
+	}
+	return strconv.FormatInt(n, 10) + " " + l.Quantity
+}
+func roomKey(l apiclient.MandateLimit) string { return l.Quantity + "|" + l.Window + "|" + l.Measure }
+
+func roomPreviewAmount(v CardRoomView) string {
+	if v.Preview == nil || v.Statement == nil {
+		return ""
+	}
+	for _, l := range v.Statement.Limits {
+		if l.Quantity == v.Preview.Quantity && l.Window == v.Preview.Window && l.Measure == v.Preview.Measure {
+			return roomValue(l, v.Preview.Amount)
+		}
+	}
+	return strconv.FormatInt(v.Preview.Amount, 10) + " " + v.Preview.Quantity
+}
+
+templ CardRoom(v CardRoomView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Extra room", "cards", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header"><div><h1>Review extra room</h1><p class="dash-note">More room on one of this Card's totals. It doesn't approve a held call or change the per-call limit.</p></div></header>
+			if v.Error != "" {
+				<p class="dash-note dash-note-warn">{ v.Error }</p>
+			}
+			if v.Statement != nil {
+				{{ id := v.Statement.Mandate.ID }}
+				<p><a href={ templ.SafeURL("/cards/" + url.PathEscape(id)) }>← { id }</a></p>
+				if v.Preview != nil {
+					for _, l := range v.Statement.Limits {
+						if l.Quantity == v.Preview.Quantity && l.Window == v.Preview.Window && l.Measure == v.Preview.Measure {
+							<p>Adding <strong>{ roomPreviewAmount(v) }</strong> to the limit of <strong>{ roomLimitLabel(v.Statement.Limits, l) }</strong>, for every agent that holds this Card.</p>
+							<p class="dash-note">Base limit: { roomValue(l,roomBase(l)) }. Extra room already added: { roomValue(l,l.ExtraRoom) }. Limit after this: { roomValue(l,l.Limit+v.Preview.Amount) }.</p>
+						}
+					}
+					if v.Preview.Duration == "permanent" {
+						<p class="dash-note dash-note-warn">This raises the base limit for good.</p>
+					} else {
+						<p>Ends <strong>{ components.LocalTime(ctx, v.End) }</strong>.</p>
+						if note := roomDayZoneNote(v.Statement.Mandate, v.Preview.Window, components.TimeZone(ctx)); note != "" && v.Preview.Duration == "this_window" {
+							<p class="dash-note">{ note }</p>
+						}
+						<p class="dash-note">When it ends, the extra room goes and what was used still counts. It doesn't start again if the agent retries.</p>
+					}
+					<form class="ag-new" method="post" action={ templ.SafeURL("/cards/" + url.PathEscape(id) + "/extra-room") }>
+						<input type="hidden" name="revision_id" value={ v.Preview.ID }/>
+						<input type="hidden" name="quantity" value={ v.Preview.Quantity }/>
+						<input type="hidden" name="window" value={ v.Preview.Window }/>
+						<input type="hidden" name="measure" value={ v.Preview.Measure }/>
+						<input type="hidden" name="amount" value={ strconv.FormatInt(v.Preview.Amount, 10) }/>
+						<input type="hidden" name="duration" value={ v.Preview.Duration }/>
+						<input type="hidden" name="until" value={ v.Preview.Until.Format(time.RFC3339Nano) }/>
+						<input type="hidden" name="window_end" value={ v.Preview.WindowEnd.Format(time.RFC3339Nano) }/>
+						<input type="hidden" name="base_limit" value={ strconv.FormatInt(*v.Preview.ExpectedBase, 10) }/>
+						<p class="dash-note">Added as { v.Email }. KIFF checks every Card again when the agent collects a held call.</p>
+						<button class="btn btn-primary" type="submit">Add this extra room</button>
+					</form>
+				} else {
+					<form class="ag-new" method="post" action={ templ.SafeURL("/cards/" + url.PathEscape(id) + "/extra-room/preview") }>
+						<label for="room-limit">Which limit</label>
+						<select id="room-limit" name="limit" class="dash-input" required>
+							for _, l := range v.Statement.Limits {
+								if !l.Unavailable() && !l.PerItem() {
+									<option value={ roomKey(l) }>{ roomLimitLabel(v.Statement.Limits, l) }</option>
+								}
+							}
+						</select>
+						<label for="room-amount">How much more</label><input id="room-amount" class="dash-input" name="amount" type="text" inputmode="decimal" autocomplete="off" required/>
+						<p class="dash-note">For a call limit, a number of calls. For a money limit, an amount in its currency, such as 10 or 12.50.</p>
+						<label for="room-duration">For how long</label><select id="room-duration" class="dash-input" name="duration"><option value="this_window">Until the current window ends</option><option value="until_date">Until a date</option><option value="permanent">For good (raises the base limit)</option></select>
+						<div class="room-until">
+							<label for="room-until">Until (your time, { components.TimeZone(ctx).String() })</label><input id="room-until" class="dash-input" name="until" type="datetime-local"/>
+						</div>
+						<p class="dash-note">The next screen shows exactly when the current window ends.</p>
+						<button class="btn btn-primary" type="submit">Review</button>
+					</form>
+				}
+			}
+		</section>
+	}
+}

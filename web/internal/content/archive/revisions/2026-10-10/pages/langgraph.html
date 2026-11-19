@@ -1,0 +1,87 @@
+<h1 id="langgraph-langchain">LangGraph / LangChain</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this LangGraph agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the LangGraph hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was checked against the current LangChain
+middleware API, including the built-in <code>ShellAllowListMiddleware</code> that
+uses the same block pattern.</p>
+
+<p><strong>Shape: middleware.</strong> The seam is <code>wrap_tool_call</code> — the guard runs the
+tool via the <code>handler</code> continuation, so <code>Guard.evaluate(run=...)</code> fits
+directly. (Not <code>interrupt()</code>; see the note below.)</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+pip install langgraph langchain
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from langchain.agents import create_agent
+from langchain.agents.middleware import wrap_tool_call
+from kiff_guard import Guard
+from kiff_guard.adapters.langgraph import kiff_wrap_tool_call
+
+guard = Guard(mode=&quot;observe&quot;)                 # zero-config audit
+kiff_mw = wrap_tool_call(kiff_wrap_tool_call(guard))
+
+agent = create_agent(model=&quot;...&quot;, tools=[...], middleware=[kiff_mw])
+</code></pre>
+
+<p>Run the agent, then read the trail from <code>guard.receipts</code>.</p>
+
+<h2 id="activate">Activate</h2>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<p>Review the draft and activate it in the <span class="archive-unlinked">dashboard</span>.</p>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+
+client = HTTPClient(api_key=&quot;kiff_live_...&quot;, tool_map=ToolMap().bind(...))
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+kiff_mw = wrap_tool_call(kiff_wrap_tool_call(guard))
+
+agent = create_agent(model=&quot;...&quot;, tools=[...], middleware=[kiff_mw])
+</code></pre>
+
+<p>On a withheld decision the middleware returns a <code>ToolMessage</code>
+(<code>status=&quot;error&quot;</code>) carrying the reason <strong>without</strong> calling the handler —
+the tool never runs, and the model sees the message as the tool result.
+This is exactly the short-circuit LangChain&rsquo;s own
+<code>ShellAllowListMiddleware</code> uses to reject disallowed shell commands.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p><code>wrap_tool_call(request, handler) -&gt; ToolMessage | Command</code>.
+<code>request.tool_call[&quot;name&quot;] / [&quot;args&quot;] / [&quot;id&quot;]</code> carry the call. Calling
+<code>handler(request)</code> runs the tool; returning a <code>ToolMessage</code> without
+calling it blocks. <code>langchain</code> is imported lazily, so <code>import kiff_guard</code>
+never requires it.</p>
+
+<h2 id="why-not-interrupt">Why not <code>interrupt()</code></h2>
+
+<p><code>interrupt()</code> pauses the graph and persists state for a <strong>human</strong> to
+resume — the right tool for a human approval pause, but heavyweight and
+asynchronous, not a synchronous &ldquo;is this tool allowed right now&rdquo; gate.
+KIFF&rsquo;s gate is a machine decision that returns in milliseconds, so it
+belongs in <code>wrap_tool_call</code>. When a withheld decision <em>is</em> an
+<code>approval_required</code>, the host app can bridge it into an <code>interrupt()</code> on
+top of the gate.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/langgraph.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/langgraph.py</code></a></li>
+<li>Seam research: <a href="https://github.com/kiff/kiff-cloud/blob/main/docs/integration/frameworks/langgraph.md" target="_blank" rel="noreferrer noopener">langgraph.md</a></li>
+<li>LangChain middleware: <a href="https://docs.langchain.com/oss/python/langchain/middleware/custom" target="_blank" rel="noreferrer noopener">docs.langchain.com</a></li>
+</ul>

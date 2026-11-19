@@ -1,0 +1,595 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CardsView is the product surface over mandates.
+//
+// Nothing here is a second authorization system. A card *is* a mandate,
+// rendered as the thing a customer issued rather than as configuration
+// they set: the holder's name first, a status, what it may do, and how
+// much of its authority is left. The data comes from the same
+// /v1/me/mandates and /statement the old Limits page read.
+//
+// The vocabulary is deliberately not the code's. `mandate` stays in the
+// API, the package and the schema; what a customer sees is a card, a
+// holder, authority, used, remaining, a statement and a revoke. Help
+// text may say mandate — nothing else should.
+type CardsView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+	Flash       *DashboardFlash
+	Me          *apiclient.Me
+
+	Cards     []apiclient.Mandate
+	Statement *apiclient.MandateStatement
+
+	// SelectedID is the card whose statement is open.
+	SelectedID string
+
+	// Holder narrows the list to one agent, set when the page was
+	// reached from a refusal in the activity timeline. The page has to
+	// say so: a filtered empty list and a tenant with no cards at all
+	// are different facts, and the first-run copy is wrong for the
+	// first one.
+	Holder string
+	View   string
+	Status string
+
+	// Usage is the balance per card id, so the list can show used and
+	// remaining without opening each statement.
+	//
+	// Every limit, not the first one. A card may carry several
+	// aggregates and the decide path refuses on the first that is
+	// exhausted, so reading one and reporting it as the balance can
+	// show room on a card that refuses. Absent or unread renders as
+	// unknown, never as zero: an unreadable balance shown as unused is
+	// the one error that makes a ceiling look larger than it is.
+	Usage map[string]CardBalance
+
+	LoadError        string
+	StatementError   string
+	NotConfiguredMsg string
+}
+
+// CardBalance is what the list knows about one card's usage: every
+// limit on it, and whether the statement could be read at all.
+//
+// A card with two aggregates has two balances and the tighter one
+// decides, because the decide path refuses on the first limit that is
+// exhausted. Reporting only one of them is how a card shows room it
+// does not have.
+type CardBalance struct {
+	Limits []apiclient.MandateLimit
+	// Unread means the statement call itself failed, so nothing is
+	// known about this card's balance — which is not the same as a
+	// card with no limits.
+	Unread bool
+}
+
+// Readable returns the limits whose usage came back.
+func (b CardBalance) Readable() []apiclient.MandateLimit {
+	out := make([]apiclient.MandateLimit, 0, len(b.Limits))
+	for _, l := range b.Limits {
+		if !l.Unavailable() && !l.PerItem() {
+			out = append(out, l)
+		}
+	}
+	return out
+}
+
+// Unknown reports whether any part of this card's balance is missing —
+// the whole statement, or one limit the api could not price. Either
+// way the figures on the card are incomplete and must say so.
+func (b CardBalance) Unknown() bool {
+	if b.Unread {
+		return true
+	}
+	for _, l := range b.Limits {
+		if l.Unavailable() {
+			return true
+		}
+	}
+	return false
+}
+
+// PartlyKnown reports whether some of this card's balance came back and
+// some did not, which reads differently from knowing nothing: the
+// figures on the card are real but incomplete.
+func (b CardBalance) PartlyKnown() bool {
+	return b.Unknown() && len(b.Readable()) > 0
+}
+
+// Exhausted reports whether any readable limit has nothing left. One is
+// enough: the first refusal decides.
+func (b CardBalance) Exhausted() bool {
+	for _, l := range b.Readable() {
+		if l.Remaining <= 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// cardStatus is the state a holder reads first, ordered by how much it
+// matters to someone deciding whether to act.
+//
+// Exhausted outranks Unknown: a limit known to be spent is decisive
+// whatever else could not be read. Unknown outranks Active, because a
+// card whose balance we cannot see is not one a person should read as
+// having room.
+func cardStatus(m apiclient.Mandate, b CardBalance) string {
+	switch {
+	case m.RevokedAt != nil:
+		return "Revoked"
+	case m.ValidUntil != nil && m.ValidUntil.Before(time.Now()):
+		return "Expired"
+	case b.Exhausted():
+		return "Exhausted"
+	case b.Unknown():
+		return "Unknown"
+	case m.Active:
+		return "Active"
+	}
+	return "Inactive"
+}
+
+func statusTone(s string) string {
+	switch s {
+	case "Active":
+		return "ok"
+	case "Exhausted", "Unknown":
+		return "warn"
+	case "Revoked", "Expired":
+		return "off"
+	}
+	return "off"
+}
+
+// cardActivityHref points at this holder's proposals in the domain it
+// acts in — every outcome, refusals included, which the statement
+// deliberately does not carry.
+//
+// It carries the card id as well as the actor, because an agent may
+// hold more than one card and the page it lands on has to be able to
+// lead back to the right statement.
+func cardActivityHref(m apiclient.Mandate) string {
+	return ActivityAgentHref(m.Subject)
+}
+
+// cardActions lists what the card authorises, which is the answer to
+// "what can this agent do" and belongs on the face of it.
+// cardPerAction names a card's per-action limits, "—" when it has none.
+func cardPerAction(m apiclient.Mandate) string {
+	var out []string
+	for _, g := range m.Grants {
+		for _, p := range g.PerActionMax {
+			out = append(out, g.Action+": at most "+strconv.FormatInt(p.Max, 10)+" of "+p.Quantity)
+		}
+	}
+	if len(out) == 0 {
+		return "—"
+	}
+	return strings.Join(out, "; ")
+}
+
+func cardActions(m apiclient.Mandate) string {
+	if len(m.Grants) == 0 {
+		return "—"
+	}
+	out := make([]string, 0, len(m.Grants))
+	for _, g := range m.Grants {
+		out = append(out, g.Action)
+	}
+	return strings.Join(out, ", ")
+}
+
+// cardStates names the entity states the grant is confined to. Empty
+// means the action contract's own states apply — a mandate never widens
+// what the domain permits, so "wherever the action is legal" is the
+// truthful rendering of an unset list, not "anywhere".
+func cardStates(m apiclient.Mandate) string {
+	for _, g := range m.Grants {
+		if len(g.EntityStates) > 0 {
+			return strings.Join(g.EntityStates, ", ")
+		}
+	}
+	return "wherever the action is legal"
+}
+
+// eachItem ends a per-item total's label: " for each invoice id"; "" for
+// one total.
+func eachItem(per string) string {
+	if per == "" {
+		return ""
+	}
+	return " for each " + strings.ReplaceAll(per, "_", " ")
+}
+
+// windowLabel renders a reset period as a person would say it.
+func windowLabel(w string) string {
+	switch w {
+	case "calendar_day":
+		return "per calendar day"
+	case "rolling_24h":
+		return "per rolling 24h"
+	case "rolling_1h":
+		return "per rolling hour"
+	case "rolling_7d":
+		return "per rolling 7 days"
+	case "lifetime":
+		return "in total"
+	}
+	return w
+}
+
+// resetIn says how long until the ceiling refills, which is the number a
+// holder actually wants when a card is exhausted. Only calendar windows
+// have a knowable reset from the window start; a rolling window drains
+// continuously and saying "resets in" of it would be a lie.
+func resetIn(l apiclient.MandateLimit) string {
+	if l.WindowStarted == nil || l.Window != "calendar_day" {
+		return ""
+	}
+	d := time.Until(l.WindowStarted.Add(24 * time.Hour))
+	if d <= 0 {
+		return ""
+	}
+	return fmt.Sprintf("in %dh %02dm", int(d.Hours()), int(d.Minutes())%60)
+}
+
+func expiryLabel(m apiclient.Mandate) string {
+	if m.RevokedAt != nil {
+		return "revoked " + m.RevokedAt.Format("2 Jan 2006")
+	}
+	if m.ValidUntil == nil {
+		return "no expiry"
+	}
+	return m.ValidUntil.Format("2 Jan 2006")
+}
+
+// fillClass buckets the meter to 5% steps and names a class for it.
+//
+// Not an inline style. templ sanitises the `style` attribute, and a
+// width computed per render would be the only inline style in the
+// codebase — a bucketed class keeps the stylesheet the single place
+// that decides how this looks, and the loss of precision is invisible
+// on a 20rem bar.
+func fillClass(l apiclient.MandateLimit) string {
+	return fmt.Sprintf("ac-fill-%d", (usedPct(l)+2)/5*5)
+}
+
+// usedPct drives the meter. Clamped at 100 so an over-draw — possible
+// when a ceiling is lowered below what is already spent — renders as
+// full rather than overflowing its track.
+func usedPct(l apiclient.MandateLimit) int {
+	if l.Limit <= 0 {
+		return 0
+	}
+	p := int(l.Used * 100 / l.Limit)
+	if p > 100 {
+		return 100
+	}
+	if p < 0 {
+		return 0
+	}
+	return p
+}
+
+templ Cards(v CardsView) {
+	@components.DashboardLayoutWithCSS(
+		"KIFF Cloud — Cards",
+		"cards",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+		"css/cards.css",
+	) {
+		<section class="dash">
+			<header class="dash-header dash-page-head">
+				<div class="dash-header-text">
+					<h1>Cards</h1>
+					<p class="dash-note">What your agents may do, and how much.</p>
+				</div>
+				<div class="dash-header-actions">
+					if components.IsPersonal(ctx) {
+						<a class="btn btn-primary" href="/tools">Give an agent a Card</a>
+					} else {
+						<a class="btn btn-primary" href="/cards/new">Issue a card</a>
+					}
+				</div>
+			</header>
+			if v.Flash != nil {
+				@flashBanner(v.Flash)
+			}
+			if v.Holder != "" {
+				<div class="ac-holder-filter">
+					<span>Cards held by <strong>{ v.Holder }</strong>.</span>
+					<a href="/cards">Show every card</a>
+				</div>
+			}
+			<nav class="ac-inventory-bar" aria-label="Card inventory">
+				<div class="ac-status-tabs">
+					<a class={ templ.KV("is-current", v.Status == "active") } href={ templ.SafeURL(cardsIndexHref(v, "active", v.View)) }>Active</a>
+					<a class={ templ.KV("is-current", v.Status == "revoked") } href={ templ.SafeURL(cardsIndexHref(v, "revoked", v.View)) }>Revoked</a>
+					<a class={ templ.KV("is-current", v.Status == "archived") } href={ templ.SafeURL(cardsIndexHref(v, "archived", v.View)) }>Archived</a>
+				</div>
+				<div class="ac-view-toggle" aria-label="View">
+					<a class={ templ.KV("is-current", v.View != "list") } href={ templ.SafeURL(cardsIndexHref(v, v.Status, "gallery")) }>Gallery</a>
+					<a class={ templ.KV("is-current", v.View == "list") } href={ templ.SafeURL(cardsIndexHref(v, v.Status, "list")) }>List</a>
+				</div>
+			</nav>
+			if v.NotConfiguredMsg != "" {
+				<p class="dash-note">{ v.NotConfiguredMsg }</p>
+			} else if v.LoadError != "" {
+				<p class="dash-note dash-note-warn">{ v.LoadError }</p>
+			} else if len(v.Cards) == 0 && v.Holder != "" {
+				<div class="dash-empty ac-empty">
+					<h2>{ v.Holder } holds no Card</h2>
+					<p class="dash-note">Actions that need a Card are refused for this agent until it holds one.</p>
+					<a class="btn btn-primary" href={ templ.SafeURL("/cards/new?subject=" + url.QueryEscape(v.Holder)) }>Issue a card to { v.Holder }</a>
+				</div>
+			} else if len(v.Cards) == 0 {
+				@cardsEmpty()
+			} else if v.View == "list" {
+				@cardList(v)
+			} else if v.Holder != "" {
+				<div class="ac-grid">
+					for _, m := range v.Cards {
+						@cardTile(m, v)
+					}
+				</div>
+			} else {
+				for _, g := range cardsByHolder(v.Cards) {
+					<section class="ac-agent" aria-label={ "Cards held by " + g.Holder }>
+						<header class="ac-agent-head">
+							<h2>{ g.Holder }</h2>
+							<span class="ac-agent-count">{ cardCountLabel(len(g.Cards)) }</span>
+							if v.Status == "active" {
+								<a href={ templ.SafeURL("/cards/new?subject=" + url.QueryEscape(g.Holder)) }>Give { g.Holder } another card</a>
+							}
+						</header>
+						<div class="ac-grid">
+							for _, m := range g.Cards {
+								@cardTile(m, v)
+							}
+						</div>
+					</section>
+				}
+			}
+		</section>
+	}
+}
+
+// holderGroup is one agent and the cards it holds.
+type holderGroup struct {
+	Holder string
+	Cards  []apiclient.Mandate
+}
+
+// cardsByHolder groups cards by the agent that holds them, agents in
+// name order and each agent's cards in the order they came.
+func cardsByHolder(cards []apiclient.Mandate) []holderGroup {
+	idx := map[string]int{}
+	var out []holderGroup
+	for _, m := range cards {
+		i, ok := idx[m.Subject]
+		if !ok {
+			i = len(out)
+			idx[m.Subject] = i
+			out = append(out, holderGroup{Holder: m.Subject})
+		}
+		out[i].Cards = append(out[i].Cards, m)
+	}
+	sort.SliceStable(out, func(a, b int) bool { return out[a].Holder < out[b].Holder })
+	return out
+}
+
+func cardCountLabel(n int) string {
+	if n == 1 {
+		return "1 card"
+	}
+	return strconv.Itoa(n) + " cards"
+}
+
+func cardsIndexHref(v CardsView, status, view string) string {
+	q := url.Values{}
+	q.Set("status", status)
+	q.Set("view", view)
+	if v.Holder != "" {
+		q.Set("holder", v.Holder)
+	}
+	return "/cards?" + q.Encode()
+}
+
+templ cardList(v CardsView) {
+	<div class="ac-list" role="list">
+		for _, m := range v.Cards {
+			{{ bal := v.Usage[m.ID] }}
+			<a role="listitem" class="ac-list-row" href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+				<span class="ac-list-mark" aria-hidden="true"></span>
+				<span><strong>{ m.Subject }</strong><small>{ cardActions(m) }</small>@cardRouteBadge(m)</span>
+				<span><small>Domain</small>{ m.Domain } · { m.Environment }</span>
+				<span><small>Authority</small>
+					if len(m.Aggregates) > 0 {
+						{ authorityValue(m.Aggregates[0].Limit, m.Aggregates[0].Quantity) } { windowLabel(m.Aggregates[0].Window) }{ eachItem(m.Aggregates[0].Per) }
+					}
+				</span>
+				<span class={ "ac-status", "ac-status-" + statusTone(cardStatus(m, bal)) }>{ cardStatus(m, bal) }</span>
+			</a>
+		}
+	</div>
+}
+
+// cardsEmpty is the first run, and it does not offer to create
+// authority for anyone. The whole point of the control is that a person
+// decided; a starter card issued by the product would be the product
+// granting authority to itself.
+templ cardsEmpty() {
+	<div class="dash-empty ac-empty">
+		<h2>No Cards yet</h2>
+		<p class="dash-note">A Card lets one agent do one kind of job, up to a limit you set. Until an agent holds one, those actions are refused. Nothing is issued automatically.</p>
+		if components.IsPersonal(ctx) {
+			<p class="dash-note">Connect the tool first, then give the agent a Card for it.</p>
+			<a class="btn btn-primary" href="/tools">Give an agent a Card</a>
+		} else {
+			<a class="btn btn-primary" href="/cards/new">Issue a card</a>
+		}
+	</div>
+}
+
+templ cardTile(m apiclient.Mandate, v CardsView) {
+	{{ bal := v.Usage[m.ID] }}
+	{{ status := cardStatus(m, bal) }}
+	<a class={ "ac-card", "ac-card-" + statusTone(status) } href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+		@kCard(m, bal, status)
+		@kUsage(bal)
+		if bal.Unknown() {
+			<p class="ac-unknown">
+				if bal.PartlyKnown() {
+					One of this Card’s limits couldn’t be read, so the figure above isn’t the whole balance.
+				} else {
+					This Card’s balance couldn’t be read. Until it can, KIFF refuses calls against it.
+				}
+			</p>
+		}
+		<span class="sr-only">Open card { m.ID }</span>
+	</a>
+}
+
+// cardStatement is the artifact that makes a card feel held rather
+// than configured: the ceiling, what has been drawn, what is left, and
+// the movements that got it there.
+templ cardStatement(v CardsView) {
+	<section class="ac-statement">
+		<header class="ac-statement-head">
+			<div>
+				<p class="eyebrow">statement</p>
+				<h2>{ v.SelectedID }</h2>
+			</div>
+			if v.Statement != nil {
+				<span class="ac-statement-holder">{ v.Statement.Mandate.Subject }</span>
+			}
+		</header>
+		if v.StatementError != "" {
+			<p class="dash-note dash-note-warn">{ v.StatementError }</p>
+		} else if v.Statement != nil {
+			<div class="ac-statement-limits">
+				for _, l := range v.Statement.Limits {
+					<div class="ac-statement-limit">
+						<span class="ac-sl-q"><code>{ l.Quantity }</code> { windowLabel(l.Window) }{ eachItem(l.Per) }</span>
+						if l.PerItem() {
+							<span class="ac-sl-fig">Ceiling <strong>{ fmt.Sprintf("%d", l.Limit) }</strong></span>
+							<span class="ac-sl-fig">Counted apart for each { l.Per }</span>
+						} else if l.Unavailable() {
+							<span class="ac-sl-unknown">balance unreadable</span>
+						} else {
+							<span class="ac-sl-fig">Ceiling <strong>{ fmt.Sprintf("%d", l.Limit) }</strong></span>
+							<span class="ac-sl-fig">Used <strong>{ fmt.Sprintf("%d", l.Used) }</strong></span>
+							<span class="ac-sl-fig">Remaining <strong>{ fmt.Sprintf("%d", l.Remaining) }</strong></span>
+						}
+					</div>
+				}
+			</div>
+			if v.Statement.MovementsError != "" {
+				// Never the empty-window sentence. One says the agent
+				// did nothing; the other says we could not tell.
+				<p class="dash-note dash-note-warn">{ v.Statement.MovementsError }</p>
+			} else if len(v.Statement.Draws) == 0 {
+				<p class="dash-note">Nothing used in the current window.</p>
+			} else {
+				<table class="ac-ledger">
+					<thead>
+						<tr>
+							<th>Time</th>
+							<th>What</th>
+							<th class="ac-num">Drew</th>
+							<th class="ac-num">Drawn by then</th>
+							<th>Reference</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, d := range v.Statement.Draws {
+							<tr>
+								<td>{ d.DrawnAt.Format("15:04") }</td>
+								<td>
+									{ d.What() }
+									// Authorized, never executed. The caller's system runs
+									// the action afterwards and does not report back, so
+									// this is the only thing the row can claim.
+									<span class="ac-effect">authorized</span>
+								</td>
+								<td class="ac-num">−{ fmt.Sprintf("%d", d.Amount) }</td>
+								<td class="ac-num">
+									if len(d.DrawnTotals) == 0 {
+										—
+									} else {
+										for _, t := range d.DrawnTotals {
+											<span class="ac-subtotal">
+												{ fmt.Sprintf("%d", t.DrawnTotal) }
+												// Named, because one quantity can be capped
+												// over two windows at once and a bare number
+												// would be one of them without saying which.
+												<span class="ac-subtotal-w">{ windowLabel(t.Window) }</span>
+											</span>
+										}
+									}
+								</td>
+								<td><code class="ac-ref">{ d.ProposalID }</code></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+			if v.Statement.Note != "" {
+				<p class="dash-note ac-note">{ sentenceCase(v.Statement.Note) }</p>
+			}
+			@cardHistory(v.Statement)
+		}
+	</section>
+}
+
+// cardHistory is what the card used to be. Re-issuing an id overwrites
+// the row, so without this the product could not say what the authority
+// was yesterday or who changed it — and "more room is an owner's
+// decision" is not a claim you can make about a change nobody can see.
+templ cardHistory(st *apiclient.MandateStatement) {
+	<div class="ac-history">
+		<h3 class="ac-history-head">Issued and changed</h3>
+		if st.RevisionsError != "" {
+			<p class="dash-note dash-note-warn">{ st.RevisionsError }</p>
+		} else if len(st.Revisions) == 0 {
+			<p class="dash-note">
+				No history recorded for this Card. It was issued before KIFF kept one, so it may still have changed.
+			</p>
+		} else {
+			<table class="ac-ledger">
+				<thead>
+					<tr><th>When</th><th>Ceiling</th><th>Per action</th><th>Holder</th><th>By</th></tr>
+				</thead>
+				<tbody>
+					for i, r := range st.Revisions {
+						<tr>
+							<td>{ r.ChangedAt.Format("2006-01-02 15:04") }</td>
+							<td>{ revisionCeiling(r) }</td>
+							<td>{ revisionPerAction(r) }</td>
+							<td>{ revisionHolder(st.Revisions, i) }</td>
+							<td>{ r.By() }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<p class="dash-note ac-note">
+				Each row is the Card after that change. A change doesn’t reset what was already used, so raising a ceiling adds only the difference.
+			</p>
+		}
+	</div>
+}

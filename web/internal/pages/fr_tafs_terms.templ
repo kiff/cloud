@@ -1,0 +1,64 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsFR is tafs's terms (/tafs/terms) in French, at /fr/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ TafsTermsFR() {
+	@components.LayoutSiteWithMeta("conditions d'utilisation de tafs", "Les conditions d'utilisation de tafs, l'app de KIFF : qui la fournit, votre compte, ce que fait un taf et comment vous le contrôlez, l'utilisation acceptable, les tarifs, la responsabilité et la fin.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · conditions d'utilisation</p>
+				<h1>Conditions d'utilisation de tafs</h1>
+				<p class="legal-meta"><strong>Dernière mise à jour :</strong> 14 novembre 2026.</p>
+				<p class="legal-disclaimer">Ces conditions s'appliquent à tafs, l'app de KIFF pour iPhone, iPad, Android et ordinateurs, et au service qui la fait fonctionner. tafs fait partie de KIFF Cloud, et cette page reprend ce que les <a href="/fr/terms">conditions d'utilisation de KIFF</a> en disent, sans rien y ajouter. Les conditions de KIFF s'appliquent à tout ce que cette page ne couvre pas. Questions : <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. Qui fournit tafs</h2>
+				<p>tafs est fourni par <strong>Kiff Agents OÜ</strong>, une société à responsabilité limitée établie en Estonie (code d'immatriculation 17372313), à l'adresse Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonie. En créant un compte ou en utilisant tafs de toute autre manière, vous acceptez ces conditions et les conditions de KIFF. Si vous les acceptez pour une société, vous confirmez avoir le pouvoir de l'engager.</p>
+			</section>
+			<section id="account">
+				<h2>2. Votre compte</h2>
+				<p>Vous vous connectez à tafs avec un compte KIFF. Fournissez des informations exactes et gardez vos identifiants confidentiels ; vous êtes responsable de toute activité sur votre compte et de chaque personne à qui vous y donnez accès. Vous devez avoir au moins 16 ans, ou l'âge du consentement numérique dans votre pays si celui-ci est plus élevé.</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. Ce que fait un taf</h2>
+				<p>Dans tafs, vous confiez une mission à un taf : un agent IA qui travaille selon un planning avec les outils que vous connectez, dans les Cards KIFF que vous émettez pour lui. Anthropic fournit le modèle d'IA qu'il utilise. Setup, un agent IA de tafs, vous aide à connecter un outil et à configurer un taf, mais ne connecte rien de lui-même : vous vous connectez chez le fournisseur de l'outil lui-même, et vous approuvez sur votre appareil chaque connexion, les outils qu'un taf peut utiliser, et ses Cards.</p>
+				<p>Les rapports, les messages et les notes de mémoire d'un taf sont écrits par un modèle d'IA et peuvent être faux. Vérifiez ce qui compte avant de vous y fier. Tout ce qu'un taf écrit à quelqu'un d'extérieur à votre entreprise indique qu'un agent IA l'a écrit.</p>
+			</section>
+			<section id="control">
+				<h2>4. Votre contrôle : la Card et les approbations</h2>
+				<p>Un taf n'atteint vos outils que par KIFF, qui vérifie chaque appel au regard des Cards du taf avant qu'il soit envoyé. Un appel qui reste dans une Card que vous avez émise est effectué sur votre instruction. Un appel hors d'une Card est retenu ou refusé, selon ce que dit la Card. Un appel retenu n'est effectué qu'après l'approbation d'une personne que votre compte autorise à répondre aux appels retenus.</p>
+				<p>Vous choisissez la mission et les Cards de chaque taf, vous répondez à ses appels retenus, et vous vous assurez que vous avez le droit d'utiliser les outils et les comptes que vous connectez. Vous pouvez bloquer un taf ou tous, mettre un taf en pause, révoquer n'importe laquelle de ses Cards, ou le supprimer. Dès l'instant où vous bloquez un taf ou révoquez une Card, KIFF n'autorise plus aucun nouvel appel de ce taf ou au titre de cette Card. Une demande déjà envoyée au fournisseur d'un outil peut encore aboutir : nous arrêtons les nouveaux appels, et nous ne pouvons pas défaire ce qu'un fournisseur a fait. Les <a href="/fr/terms#tafs">conditions d'utilisation de KIFF, § 3A</a>, en donnent le détail.</p>
+				<p>Au titre du règlement sur l'IA de l'UE, Kiff Agents OÜ est le fournisseur de tafs et vous en êtes le déployeur. N'utilisez tafs que pour les missions qu'il propose, et jamais pour un usage que le règlement sur l'IA interdit ou classe à haut risque, comme les décisions sur l'emploi d'une personne, son crédit ou son accès à des services essentiels.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. Utilisation acceptable</h2>
+				<p>Vous, vos collaborateurs et vos tafs devez respecter la <a href="/fr/acceptable-use">politique d'utilisation acceptable</a>. L'action d'un agent est votre action. Entre autres, vous ne pouvez pas utiliser tafs pour enfreindre la loi, agir sur un système ou un compte que vous n'êtes pas autorisé à utiliser, connecter un outil avec des identifiants de connexion qu'il ne vous appartient pas de fournir, envoyer du spam, ou contourner une Card, une limite ou une retenue. Nous pouvons suspendre immédiatement en cas de violation crédible.</p>
+			</section>
+			<section id="fees">
+				<h2>6. Tarifs</h2>
+				<p>À la date de cette mise à jour, Solo coûte { tafsFR.Cost.money(TafsSoloCents) } par mois, TVA comprise, avec { tafsFR.Cost.number(TafsSoloCredits) } crédits par mois, et est vendu dans l'app via l'App Store ou Google Play. Les packs de crédits, achetés dans l'app, commencent à { tafsFR.Cost.money(TafsPackCents[TafsSoloCredits]) } ; ils n'expirent pas. Chaque exécution d'un taf utilise des crédits pour l'IA qu'elle a utilisée. Coach et la configuration de tafs sont inclus, dans les limites d'un usage raisonnable de Coach. Les prix en vigueur sont sur la <a href="/pricing">page des tarifs</a> (en anglais) ; tafs fait aussi partie du forfait Company de KIFF.</p>
+				<p>Il n'y a pas de période d'essai. Solo acheté dans l'app se gère et se résilie dans vos abonnements Apple ou Google Play, selon les conditions de cette boutique pour le paiement, le renouvellement et les remboursements. Un forfait court jusqu'à la fin de la période que vous avez payée. Si vous êtes un consommateur dans l'UE, vous pouvez vous rétracter dans les 14 jours suivant l'achat. Les <a href="/fr/terms#fees">conditions d'utilisation de KIFF, § 8</a>, en donnent le détail.</p>
+			</section>
+			<section id="liability">
+				<h2>7. Responsabilité</h2>
+				<p>À l'exception des garanties prévues par les conditions de KIFF (§ 10), tafs est fourni « en l'état » et « selon disponibilité ». Dans toute la mesure permise par la loi, aucune partie n'est responsable des dommages indirects ou consécutifs, et la responsabilité totale de chaque partie est limitée comme le prévoient les <a href="/fr/terms#liability">conditions d'utilisation de KIFF, § 12</a>. Rien ne limite une responsabilité que la loi ne permet pas de limiter.</p>
+			</section>
+			<section id="termination">
+				<h2>8. Fin</h2>
+				<p>Vous pouvez arrêter à tout moment : supprimez votre compte dans l'app, dans Compte → <em>Supprimer le compte</em>. Exportez d'abord vos chats, depuis Compte → Exporter mes chats. Nous pouvons mettre fin à votre utilisation en cas de manquement substantiel auquel il n'est pas remédié dans les trente jours suivant une notification, ou immédiatement en cas de violation de la politique d'utilisation acceptable. Vos droits de partir et d'emporter vos données figurent dans les <a href="/fr/terms#term">conditions d'utilisation de KIFF, § 9</a>.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. Modifications et droit applicable</h2>
+				<p>Nous modifions ces conditions de la manière dont les conditions de KIFF le prévoient pour elles-mêmes (§ 16). Elles sont régies par le droit de la République d'Estonie, et les litiges relèvent du tribunal du comté de Harju, à Tallinn. Si vous êtes un consommateur résidant dans un autre État membre de l'UE, les règles impératives de protection des consommateurs de votre pays de résidence continuent de s'appliquer.</p>
+			</section>
+			<section id="contact">
+				<h2>10. Contact</h2>
+				<p>Questions contractuelles : <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Aide avec l'app : <a href="mailto:support@kiff.dev">support@kiff.dev</a>. Confidentialité : <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ; la façon dont tafs traite les données personnelles est décrite dans la <a href="/fr/tafs/privacy">politique de confidentialité de tafs</a>.</p>
+			</section>
+		</article>
+	}
+}

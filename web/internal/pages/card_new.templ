@@ -1,0 +1,315 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CardNew is the issuance form: the product's central act, a person
+// deciding in advance what one agent may do and how much of it.
+//
+// It is a walkthrough: five steps, one decision each, in the order
+// someone says it: who, what, how much, what happens past it, then a
+// review. It fills the viewport and is designed at phone width first.
+// Every step is one section of a single form that posts the same fields
+// to POST /cards. Without JavaScript the steps simply stack, and the
+// form still issues the Card; the small script below only shows one
+// step at a time and writes the review.
+templ CardNew(v CardNewView) {
+	@components.LayoutAppThemedWithCSS(
+		cardNewTitle(v),
+		"css/fonts.css",
+		"css/app-shell.css",
+		"css/walkthrough.css",
+	) {
+		@wkFrame(cardNewCancel(v), cardNewLabel(v), 5, v.StartStep(), v.Single) {
+					if v.Flash != nil && v.Flash.Message != "" {
+						<p class="wk-msg">{ v.Flash.Message }</p>
+					}
+					if v.Rejected != "" {
+						<div class="wk-msg wk-msg-warn" role="alert">
+							<strong>This Card was not issued.</strong>
+							<span>{ v.Rejected }</span>
+						</div>
+					}
+					if v.State() == "unconfigured" {
+						<p class="wk-msg">{ v.NotConfiguredMsg }</p>
+					}
+					if v.State() == "error" {
+						<p class="wk-msg wk-msg-warn">{ v.LoadError }</p>
+					}
+					if v.State() == "nodomain" {
+						<section class="wk-empty">
+							<h1>No actions to put on a Card yet</h1>
+							<p>A Card uses the actions a domain declares. Create a domain first.</p>
+							<a class="wk-btn wk-btn-primary" href="/dashboard/domains/new">Create a domain</a>
+						</section>
+					}
+					if v.State() == "ready" {
+						@cardWalkForm(v)
+					}
+		}
+	}
+}
+
+func cardNewCancel(v CardNewView) string {
+	if v.Single {
+		return "/cards/" + url.PathEscape(v.Editing) + "/settings"
+	}
+	if v.Editing != "" {
+		return "/cards/" + url.PathEscape(v.Editing)
+	}
+	return "/cards"
+}
+
+func cardNewLabel(v CardNewView) string {
+	if v.Single {
+		return "Change this Card"
+	}
+	if v.Editing != "" {
+		return "Changing " + v.Editing
+	}
+	return "Issue a Card"
+}
+
+func cardNewTitle(v CardNewView) string {
+	if v.Editing != "" {
+		return "KIFF Cloud — Change " + v.Editing
+	}
+	return "KIFF Cloud — Issue a Card"
+}
+
+templ cardWalkForm(v CardNewView) {
+	<form method="post" action="/cards" class={ "wk-form", templ.KV("is-count-only", v.CountingOnly()) } id="wk-form" data-wk-issue novalidate>
+		<input type="hidden" name="domain" value={ v.SelectedDomain }/>
+		<section class="wk-step" data-wk-step="1" data-wk-check="agent" data-wk-msg="Choose the agent, or type its id." aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">Which agent is this Card for?</h1>
+				if len(v.Agents) > 0 {
+					<p>These agents have already asked KIFF for decisions.</p>
+				} else {
+					<p>Type the id the agent sends when it asks KIFF for a decision.</p>
+				}
+			</div>
+			if len(v.Domains) > 1 && v.Editing == "" {
+				<nav class="wk-domains" aria-label="Domain">
+					for _, d := range v.Domains {
+						<a
+							class={ "wk-pill", templ.KV("is-on", d.Name == v.SelectedDomain) }
+							href={ templ.SafeURL("/cards/new?advanced=1&domain=" + url.QueryEscape(d.Name)) }
+							if d.Name == v.SelectedDomain {
+								aria-current="true"
+							}
+						>{ d.Name }</a>
+					}
+				</nav>
+			}
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Agent</legend>
+				for _, a := range v.AgentChoices() {
+					<label class="wk-choice">
+						<input type="radio" name="subject_choice" value={ a.ID } checked?={ a.Checked } data-wk-agent/>
+						<span class="wk-choice-body">
+							<span class="wk-mono">{ a.ID }</span>
+							<span class="wk-sub">{ a.Hint }</span>
+						</span>
+						<span class="wk-radio" aria-hidden="true"></span>
+					</label>
+				}
+				if len(v.Agents) > 0 {
+					<label class="wk-choice">
+						<input type="radio" name="subject_choice" value="other" checked?={ v.OtherAgentChecked() } data-wk-agent/>
+						<span class="wk-choice-body">
+							<span>Another agent</span>
+							<span class="wk-sub">Type its id</span>
+						</span>
+						<span class="wk-radio" aria-hidden="true"></span>
+					</label>
+				}
+			</fieldset>
+			<label class={ "wk-field", templ.KV("wk-other", len(v.Agents) > 0) }>
+				<span class="wk-label">Agent id</span>
+				<input class="wk-input wk-mono" name="subject" value={ v.OtherAgentValue() } placeholder="e.g. refund-agent" maxlength="200" autocomplete="off" data-wk-subject/>
+			</label>
+			<aside class="wk-note">
+				@wkInfoIcon()
+				<span>It has to match the id the agent already sends.</span>
+			</aside>
+		</section>
+		<section class="wk-step" data-wk-step="2" data-wk-sum="actions" data-wk-check={ cardNewActionsCheck(v) } data-wk-msg="Pick at least one action." aria-labelledby="wk-h2">
+			<div class="wk-head">
+				<h1 id="wk-h2">What may it do?</h1>
+				<p>Pick the actions this Card covers. The domain still decides the rest.</p>
+			</div>
+			if v.Form.PreservedGrants != "" {
+				<input type="hidden" name="preserved_grants" value={ v.Form.PreservedGrants }/>
+				<aside class="wk-note">
+					@wkInfoIcon()
+					<span>This Card’s actions are more detailed than this form can edit, so they are kept exactly as they are. Change them through the API.</span>
+				</aside>
+				<ul class="wk-list">
+					for _, line := range PreservedGrantLines(v.Form.PreservedGrants) {
+						<li class="wk-mono">{ line }</li>
+					}
+				</ul>
+			}
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Actions</legend>
+				for _, a := range v.ActionsForForm() {
+					<label class="wk-choice">
+						<input type="checkbox" name="actions" value={ a.Name } checked?={ v.IsChecked(a.Name) } data-wk-action/>
+						<span class="wk-check" aria-hidden="true"></span>
+						<span class="wk-choice-body">
+							<span class="wk-mono">{ a.Name }</span>
+							if actionDetail(a) != "" {
+								<span class="wk-sub">{ actionDetail(a) }</span>
+							}
+						</span>
+						if a.Risk != "" {
+							<span class={ riskChip(a.Risk) }>{ a.Risk }</span>
+						}
+					</label>
+				}
+			</fieldset>
+		</section>
+		<section class="wk-step" data-wk-step="3" data-wk-sum="limit" data-wk-check="positive:limit" data-wk-msg="Enter a whole number above zero." aria-labelledby="wk-h3">
+			<div class="wk-head">
+				<h1 id="wk-h3">How much, and how often?</h1>
+				if v.Single {
+					<p>This is the room the agent has. Saving keeps what is already counted.</p>
+				} else {
+					<p>This is the room the agent has. What happens past it is the next step.</p>
+				}
+			</div>
+			if v.CountingOnly() {
+				<input type="hidden" name="quantity_kind" value="count"/>
+				<aside class="wk-note">
+					@wkInfoIcon()
+					<span><strong>Counting how many times these actions run.</strong> Adding up an amount needs a number declared on every action you pick, and this domain declares none.</span>
+				</aside>
+			} else {
+				<fieldset class="wk-grid2">
+					<legend class="wk-sr">What to limit</legend>
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="quantity_kind" value="sum" checked?={ v.SummingIsSelected() } data-wk-kind/>
+						<span class="wk-glyph" aria-hidden="true">Σ</span>
+						<span class="wk-strong">A total amount</span>
+						<span class="wk-sub">Add up { v.SumUnit() }</span>
+					</label>
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="quantity_kind" value="count" checked?={ !v.SummingIsSelected() } data-wk-kind/>
+						<span class="wk-glyph" aria-hidden="true">#</span>
+						<span class="wk-strong">A number of actions</span>
+						<span class="wk-sub">Count each one</span>
+					</label>
+				</fieldset>
+				if v.OnlyParameter() != "" {
+					<input type="hidden" name="parameter" value={ v.OnlyParameter() }/>
+				} else {
+					<label class="wk-field wk-if-sum">
+						<span class="wk-label">Add up</span>
+						<select class="wk-input" name="parameter">
+							for _, p := range v.SummableParameters() {
+								<option value={ p.Name } selected?={ v.ParameterSelected(p.Name) }>{ p.Label() }</option>
+							}
+						</select>
+					</label>
+				}
+			}
+			<div class="wk-grid2 wk-amounts">
+				<label class="wk-field">
+					<span class="wk-label"><span class="wk-if-sum">Total <span class="wk-unit">{ v.SumUnit() }</span></span><span class="wk-if-count">Actions</span></span>
+					<input class="wk-input wk-big" type="text" inputmode="numeric" pattern="[0-9]*" name="limit" data-wk-num="int" value={ v.Form.Limit } placeholder="e.g. 1000" data-wk-limit/>
+				</label>
+				if v.Form.PreservedGrants == "" && !v.CountingOnly() {
+					<label class="wk-field wk-if-sum">
+						<span class="wk-label">Most in one action</span>
+						<input class="wk-input wk-big" type="text" inputmode="numeric" pattern="[0-9]*" name="per_action_max" data-wk-num="int" value={ v.Form.PerActionMax } placeholder="optional" data-wk-per/>
+					</label>
+				}
+			</div>
+			if !v.CountingOnly() {
+				<aside class="wk-note wk-if-sum">
+					@wkInfoIcon()
+					<span>In the parameter’s own units. If the domain keeps money in cents, 110000 is 1,100.00.</span>
+				</aside>
+			}
+			@wkWindowField(v.WindowChoices())
+		</section>
+		@wkRouteStep("4", v.OnExceedAsk(), v.HoldChoices(), false, "")
+		<section class="wk-step" data-wk-step="5" aria-labelledby="wk-h5">
+			<div class="wk-head">
+				if v.Single {
+					<h1 id="wk-h5">Change the details</h1>
+					<p>Its name, end date, the states it acts in, and what its limit measures.</p>
+				} else if v.Editing != "" {
+					<h1 id="wk-h5">Check the changes</h1>
+					<p>Saving issues this Card again under the same name. Actions already counted still count, so raising a limit adds the difference, not a fresh window.</p>
+				} else {
+					<h1 id="wk-h5">Check the Card</h1>
+					<p data-wk-summary>Review the answers, then issue it.</p>
+				}
+			</div>
+			@wkReviewCard(true, "", "", "")
+			<dl class="wk-rows" data-wk-rows>
+				<div><dt>Agent</dt><dd data-wk-row="agent"></dd><dd><button type="button" class="wk-link" data-wk-goto="1">Edit</button></dd></div>
+				<div><dt>Actions</dt><dd data-wk-row="actions"></dd><dd><button type="button" class="wk-link" data-wk-goto="2">Edit</button></dd></div>
+				<div><dt>Limit</dt><dd data-wk-row="limit"></dd><dd><button type="button" class="wk-link" data-wk-goto="3">Edit</button></dd></div>
+				<div><dt>Past it</dt><dd data-wk-row="route"></dd><dd><button type="button" class="wk-link" data-wk-goto="4">Edit</button></dd></div>
+			</dl>
+			<details class="wk-adv" open?={ v.Single }>
+				<summary><span>Advanced</span><span class="wk-sub">Name, end date, states, measure</span></summary>
+				<div class="wk-adv-body">
+					<label class="wk-field">
+						<span class="wk-label">Card name</span>
+						<input class="wk-input wk-mono" name="id" value={ v.Form.ID } placeholder="made from the agent’s id" maxlength="200"/>
+					</label>
+					<label class="wk-field">
+						<span class="wk-label">Ends on (optional)</span>
+						<input class="wk-input" type="date" name="valid_until" value={ v.Form.ValidUntil }/>
+						<span class="wk-sub">The Card stops at the end of this day, UTC. Left empty, it holds until revoked.</span>
+					</label>
+					<label class="wk-field">
+						<span class="wk-label">Environment (optional)</span>
+						<input class="wk-input" name="environment" value={ v.Form.Environment } placeholder="anywhere the agent acts" maxlength="200"/>
+					</label>
+					for _, a := range v.ActionsForForm() {
+						if len(a.AllowedStates) > 0 {
+							<fieldset class="wk-field" data-wk-states-for={ a.Name }>
+								<legend class="wk-label">Only when <span class="wk-mono">{ a.Name }</span>’s entity is</legend>
+								<div class="wk-pills">
+									for _, st := range a.AllowedStates {
+										<label class="wk-pill">
+											<input type="checkbox" name={ "states." + a.Name } value={ st } checked?={ v.StateIsChecked(a.Name, st) }/>
+											<span class="wk-mono">{ st }</span>
+										</label>
+									}
+								</div>
+								<span class="wk-sub">None picked: every state the domain allows.</span>
+							</fieldset>
+						}
+					}
+					<label class="wk-field">
+						<span class="wk-label">What the limit measures</span>
+						<select class="wk-input" name="measure">
+							<option value="" selected?={ v.Form.Measure == "" }>Default: counts measure attempts, totals measure effects</option>
+							<option value="attempts" selected?={ v.Form.Measure == "attempts" }>Attempts: a tool refusal keeps the draw</option>
+							<option value="effects" selected?={ v.Form.Measure == "effects" }>Effects: released only when the tool proves nothing happened</option>
+						</select>
+						<span class="wk-sub">Approving one action never adds room to a total. Its full amount is counted before it runs.</span>
+					</label>
+				</div>
+			</details>
+		</section>
+		if v.Editing != "" {
+			if v.Single {
+				@wkBar("Save change")
+			} else {
+				@wkBar("Save this Card")
+			}
+		} else {
+			@wkBar("Issue this Card")
+		}
+	</form>
+}

@@ -1,0 +1,21 @@
+package pages
+
+templ ControlRoomIdentity(e *ControlEvidence) {
+	<section class="dash-card cr-card cr-identity">
+		<div class="cr-card-head">
+			<div>
+				<p class="eyebrow">Control identity</p>
+				<h2>{ e.Control.Domain } / { e.Control.Action }</h2>
+			</div>
+			<span class={ "dash-pill", controlStatusClass(e.Control.Status) }>{ e.Control.Status }</span>
+		</div>
+		<dl class="cr-facts">
+			<div><dt>control id</dt><dd><code>{ e.Control.ID }</code></dd></div>
+			<div><dt>entity</dt><dd><code>{ e.Control.Entity }</code></dd></div>
+			<div><dt>environment</dt><dd><code>{ controlFallback(e.Control.Environment, "dev") }</code></dd></div>
+			<div><dt>workflow</dt><dd><code>{ controlFallback(e.Control.Workflow, "default") }</code></dd></div>
+			<div><dt>activated</dt><dd>{ controlEvidenceActivatedLabel(e) }</dd></div>
+			<div><dt>activated by</dt><dd>{ controlFallback(e.Control.ActivatedBy, "not recorded") }</dd></div>
+		</dl>
+	</section>
+}

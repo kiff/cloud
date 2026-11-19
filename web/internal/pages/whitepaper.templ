@@ -1,0 +1,33 @@
+package pages
+
+import (
+	"html/template"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Whitepaper renders the KIFF Cards whitepaper as a long-form
+// document page. The markdown is maintained in this repository under
+// CC BY 4.0; rendering happens server-side at request time
+// (memoized in the whitepaper package).
+//
+// The page wears the same Layout as the landing — same topbar,
+// same footer — but the main column is constrained to a reading
+// width and the typography is tuned for body prose via the .prose
+// class on the rendered container.
+templ Whitepaper(rendered template.HTML) {
+	@components.LayoutSiteWithMeta("KIFF Cards — whitepaper", "How KIFF Cards define an agent's authority for delegated work: tasks, actions, limits, owner approvals and enforcement before execution.", "article", "", "css/prose.css", "css/whitepaper.css") {
+		<article class="whitepaper">
+			<header class="whitepaper-head">
+				<p class="eyebrow">Whitepaper · CC BY 4.0</p>
+				<p class="whitepaper-source">
+					Delegated work, current authority and the path to execution.
+					Revision 1 · 11 October 2026.
+				</p>
+			</header>
+			<div class="whitepaper-body prose">
+				@templ.Raw(string(rendered))
+			</div>
+		</article>
+	}
+}

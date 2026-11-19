@@ -1,0 +1,62 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsConsumption renders the run ledger's last 30 days: each account's
+// runs of each agent per UTC day, newest first, with their total.
+templ OpsConsumption(c apiclient.OpsConsumption, chrome components.DashboardChrome) {
+	@components.OpsShell("consumption", "consumption", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · consumption</p>
+					<h1>Consumption.</h1>
+					<p class="dash-note">Runs that ended from { opsTime(c.From) } to { opsTime(c.To) }, from the run ledger. Credits are what counted runs used; AI cost is what the model calls cost.</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				<div class="dash-metrics">
+					<div class="dash-metric"><span>Runs</span><strong>{ opsInt(c.Total.Runs) }</strong><small>{ opsInt(c.Total.Counted) } counted</small></div>
+					<div class="dash-metric"><span>Credits</span><strong>{ opsInt64(c.Total.Credits) }</strong><small>{ opsInt64(c.Total.Over) } free overshoot</small></div>
+					<div class="dash-metric"><span>AI cost</span><strong>{ opsUSD(c.Total.CostMicroUSD) }</strong><small>30 days</small></div>
+				</div>
+			</article>
+			<article class="dash-card">
+				if len(c.Rows) == 0 {
+					<p class="dash-note">No runs in these 30 days.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead>
+								<tr><th>Day</th><th>Account</th><th>Label</th><th>Taf</th><th>Runs</th><th>Counted</th><th>Credits</th><th>Overshoot</th><th>AI cost</th></tr>
+							</thead>
+							<tbody>
+								for _, r := range c.Rows {
+									<tr>
+										<td>{ r.Day.UTC().Format("2006-01-02") }</td>
+										<td><a href={ templ.SafeURL("/ops/tenants/" + r.TenantID) }>{ opsDash(r.Slug) }</a></td>
+										<td>{ opsDash(r.Label) }</td>
+										<td>
+											{ r.RuntimeAgent }
+											if r.Setup {
+												<span class="dash-note">· Setup</span>
+											}
+										</td>
+										<td>{ opsInt(r.Runs) }</td>
+										<td>{ opsInt(r.Counted) }</td>
+										<td>{ opsInt64(r.Credits) }</td>
+										<td>{ opsInt64(r.Over) }</td>
+										<td>{ opsUSD(r.CostMicroUSD) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}

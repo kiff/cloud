@@ -1,0 +1,561 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+)
+
+// DashboardView is the input to the Dashboard template. Built
+// by the dashboard handler from the session + per-session
+// apiclient calls.
+type DashboardView struct {
+	// SettingsTab is the Settings tab shown (SettingsTabFor), and
+	// SwitchTo a view kind awaiting confirmation there ("" for none).
+	SettingsTab string
+	SwitchTo    string
+	Email       string
+	Subject     string
+	DisplayName string
+	APIBaseURL  string
+
+	// CurrentDomain scopes the sidebar's domain-facets (Domain, Govern,
+	// Activity) to the tenant's remembered selection so a hop through a
+	// non-domain tab (Runtimes, Settings) keeps the nav pointed at the
+	// same domain — instead of Govern flipping between "all domains" and
+	// "one domain" depending on where you came from. Empty = unscoped.
+	CurrentDomain string
+
+	Me        *apiclient.Me
+	Templates []apiclient.Template
+	Receipts  []apiclient.Receipt
+	Keys      []apiclient.KeyListItem
+	KeyCount  int
+	// Usage is the current-period counter snapshot from
+	// /v1/me/usage. Carried into the view so Overview and
+	// Activity can summarize proposal counts without a second
+	// round-trip on a static page.
+	Usage *apiclient.Usage
+
+	// Meters is the account's tasks and actions this period, from GET
+	// /v1/me/usage; nil when it couldn't be read.
+	Meters *apiclient.MeterUsage
+
+	// Budget is the tenant's self-set monthly governed-operation
+	// budget from /v1/me/billing-budget, in governed operations;
+	// 0 means unset. Surfaced by the account-level consumption
+	// view alongside used-vs-allowance.
+	Budget int
+
+	// Proposals is the most recent proposal decisions from
+	// GET /v1/proposals. Drives the Activity tab's "Latest
+	// decisions" table.
+	Proposals []apiclient.ProposalDecision
+	// LastReceivedAt is the timestamp of the most recent
+	// proposal. Used by the connection-status header on the
+	// Overview tab. Nil when no proposals exist.
+	LastReceivedAt *time.Time
+	// Domain is the tenant's active domain summary. Used by the
+	// empty-state snippet on the Overview tab to parameterize
+	// the first-proposal curl example off the user's own domain.
+	Domain *apiclient.Domain
+
+	// GuardConnections is the tenant's connected guard runtime
+	// inventory. One company can run many agents and workflows,
+	// so this is grouped by project / environment / agent /
+	// workflow instead of being a single connected boolean.
+	GuardConnections []apiclient.GuardConnection
+
+	// Draft is the tenant's saved domain draft, if any. Observe
+	// mode derives a starter catalog from real agent traffic
+	// (export_yaml) and saves it here, so a tenant with no
+	// active Domain but a Draft has *observed* activity to show
+	// — the Overview's aha. Parsed carries the derived action
+	// catalog when the draft YAML is valid.
+	Draft *apiclient.Draft
+
+	// PendingApprovalsCount is the count of pending approvals
+	// for the tenant. Drives the runtime-signal surfaces'
+	// pending strip on the Activity-class tabs.
+	PendingApprovalsCount int
+
+	// ConnectSnippet selects the language snippet on /dashboard/runtimes.
+	// It is driven by ?snippet= so the page stays server-rendered.
+	ConnectSnippet string
+
+	// NotificationsFilter is the active filter on /dashboard/notifications
+	// ("" = all | "approval" | "runtime"), driven by ?filter= so the page
+	// stays server-rendered. The feed itself is read from the request
+	// context (populated by the notifications middleware), not this view.
+	NotificationsFilter string
+
+	// NotificationPrefs is the tenant's per-rule notification preferences
+	// (rule key → enabled), for the notification settings page. Absent
+	// rules render as enabled (default-on).
+	NotificationPrefs map[string]bool
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// NextAction is the contextual right-column card on the Overview
+// tab. Computed server-side by the handler from the same data
+// that already populates DashboardView (Me, Domain, Keys, Usage,
+// Proposals); no extra round-trip.
+//
+// One of the canonical states maps to one card per render:
+//
+//   - NextActionAuthorDomain   — no active domain saved yet
+//   - NextActionMintKey        — domain saved, no API key
+//   - NextActionFirstProposal  — domain + key, no proposal sent
+//   - NextActionReviewApprovals — has a pending approval
+//   - NextActionAddAction      — fully operating; nudge to evolve
+type NextAction struct {
+	// Kind is the canonical state name (above). Stable across
+	// renders; tests assert on this string.
+	Kind string
+	// Title is the card heading.
+	Title string
+	// Body is the one-paragraph explanation under the heading.
+	Body string
+	// CTAText is the button label.
+	CTAText string
+	// CTAHref is the destination the button navigates to.
+	CTAHref string
+}
+
+// DashboardFlash is the per-render flash payload shown as a
+// banner. Populated from session.Flash when present.
+type DashboardFlash struct {
+	Kind         string
+	Message      string
+	KeyID        string
+	KeyPlaintext string
+	KeyLabel     string
+	Template     string
+	Body         string
+	Slug         string // Template slug for "Run decision" button in event_sent flash
+}
+
+templ flashBanner(f *DashboardFlash) {
+	if f != nil {
+		switch f.Kind {
+			case "key_revealed", "approver_key_revealed":
+				<div class="dash-keyreveal">
+					<div class="dash-keyreveal-head">
+						if f.Kind=="approver_key_revealed" {
+ <strong>External approver credential created</strong>
+ }else{
+ <strong>API key created</strong>
+ }
+						<span class="dash-keyreveal-note">Copy it now — it won't be shown again.</span>
+					</div>
+					if f.KeyPlaintext != "" {
+						<code class="dash-keyreveal-key">{ f.KeyPlaintext }</code>
+					} else {
+						<p class="dash-note dash-note-warn">This key can't be shown again. Revoke it and create another.</p>
+					}
+					if f.Kind=="approver_key_revealed" {
+ <p>Keep this credential in the separate approver service. It cannot run tools or change your Card.</p>
+ <p><a href="/docs/external-approvers">Run the connector with KIFF_APPROVER_KEY →</a></p>
+ }
+ <small class="dash-keyreveal-meta">Label { f.KeyLabel } · id <code>{ f.KeyID }</code></small>
+				</div>
+			case "key_revoked":
+				<div class="dash-flash dash-flash-success">
+					<strong>Key revoked.</strong> { f.Message }
+				</div>
+			case "key_reauth":
+				<div class="dash-flash dash-flash-warn">
+					<strong>Sign in again first.</strong> { f.Message }
+					<a href="/sign-out?next=%2Fdashboard%2Fkeys">Sign in again</a>
+				</div>
+			case "mandate_issued":
+				<div class="dash-flash dash-flash-success">
+					<strong>Card in force.</strong> { f.Message }
+				</div>
+			case "key_role_granted":
+				<div class="dash-flash dash-flash-success">
+					<strong>Role granted.</strong> { f.Message }
+				</div>
+			case "mandate_revoked":
+				<div class="dash-flash dash-flash-success">
+					<strong>Card revoked.</strong> { f.Message }
+				</div>
+			case "card_test_allowed":
+				<div class="dash-flash dash-flash-success">
+					<strong>Test request allowed.</strong> { f.Message }
+				</div>
+			case "card_test_refused":
+				<div class="dash-flash dash-flash-error">
+					<strong>Test request refused.</strong> { f.Message }
+				</div>
+			case "card_test_held":
+				<div class="dash-flash dash-flash-warn">
+					<strong>Held for an approver.</strong> { f.Message }
+				</div>
+			case "owner_answered":
+				<div class="dash-flash dash-flash-success">
+					<strong>Answer saved.</strong> { f.Message }
+				</div>
+			case "template_set":
+				<div class="dash-flash dash-flash-success">
+					Domain <code>{ f.Template }</code> applied. Send a sample event below.
+				</div>
+			case "event_sent":
+				<div class="dash-flash dash-flash-success">
+					<strong>{ f.Message }</strong>
+					if f.Body != "" {
+						<p class="dash-note">
+							trace_id <code>{ f.Body }</code> —
+							<a href={ templ.SafeURL("/dashboard/receipts/" + f.Body) }>open the receipt</a>
+						</p>
+					}
+					if f.Slug != "" {
+						<p class="dash-note" style="margin-top: 0.75rem;">
+							<form method="post" action={ templ.URL("/dashboard/decisions/" + f.Slug) } style="display: inline;">
+								<button type="submit" class="btn btn-primary" style="margin-left: 0.5rem;">
+									Run decision
+								</button>
+							</form>
+						</p>
+					}
+				</div>
+			case "approval_granted":
+				<div class="dash-flash dash-flash-success">Approval { f.Message } granted.</div>
+			case "approval_denied":
+				<div class="dash-flash dash-flash-success">Approval { f.Message } denied.</div>
+			case "domain_created":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "domain_deleted":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "domain_updated":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "support_created":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "support_replied":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "notification_saved":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "pack_request_declined":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "card_holders_changed":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "tools_changed":
+				<div class="dash-flash dash-flash-success">{ f.Message }</div>
+			case "error":
+				<div class="dash-flash dash-flash-error">{ f.Message }</div>
+		}
+	}
+}
+
+templ keyPanel(v DashboardView) {
+	<article class="dash-card">
+		<div class="dash-card-heading">
+			<div>
+				<h2>Active keys</h2>
+				if len(v.Keys) == 0 {
+					<p class="dash-note">No API keys have been created.</p>
+				}
+			</div>
+			<span class="dash-pill dash-pill-muted">{ fmt.Sprintf("%d active", v.KeyCount) }</span>
+		</div>
+		if len(v.Keys) > 0 {
+			<div class="dash-table-wrap">
+				<table class="dash-table dash-keys-table">
+					<thead>
+						<tr><th>Label</th><th>Kind</th><th>Agent</th><th>Last used</th><th>Expires</th><th>Key id</th><th>Created</th><th class="dash-keys-action-col">Action</th></tr>
+					</thead>
+					<tbody>
+						for _, k := range keysByUse(v.Keys) {
+							<tr>
+								<td>
+									if k.Label != "" {
+										{ k.Label }
+									} else {
+										<em>(no label)</em>
+									}
+								</td>
+								<td class="dash-keys-kind">{ keyKind(k) }</td>
+								<td>
+									if k.AgentID != "" {
+										<a href={ templ.SafeURL(agentHref(k.AgentID) + "/keys") }><code>{ k.AgentID }</code></a>
+									} else {
+										<span class="dash-note">—</span>
+									}
+								</td>
+								<td>{ keyLastUsed(k) }</td>
+								<td class="dash-keys-expires">{ keyExpiryWords(k, time.Now()) }</td>
+								<td><code class="dash-keys-id" title={ k.ID }>{ shortKeyID(k.ID) }</code></td>
+								<td>{ formatKeyCreated(k.CreatedAt) }</td>
+								<td class="dash-keys-action-col">
+									<form method="post" action={ templ.SafeURL("/dashboard/keys/" + k.ID + "/revoke") } class="dash-table-action-form">
+										<button type="submit" class="btn btn-danger btn-sm">Revoke</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</article>
+}
+
+templ decisionsTable(v DashboardView, heading string) {
+	<article class="dash-card">
+		<h2>{ heading }</h2>
+		if len(v.Receipts) == 0 {
+			<p class="dash-note">
+				No decisions yet. Apply a starter domain and send a sample event.
+			</p>
+		} else {
+			<div class="dash-table-wrap">
+				<table class="dash-table dash-decisions-table">
+					<thead>
+						<tr>
+							<th>When</th>
+							<th>Entity</th>
+							<th>Action</th>
+							<th>Anchored</th>
+							<th>Receipt</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, r := range v.Receipts {
+							@decisionRow(r)
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</article>
+}
+
+templ decisionRow(r apiclient.Receipt) {
+	<tr>
+		<td><time datetime={ r.IssuedAt.Format("2006-01-02T15:04:05Z") }>{ r.IssuedAt.Format("Jan 2, 15:04") }</time></td>
+		<td><code>{ r.EntityID }</code> <small>({ r.EntityType })</small></td>
+		<td><code>{ r.ActionName }</code></td>
+		<td>
+			if r.Attestation != nil && r.Attestation.AnchorTxHash != "" {
+				<span class="dash-pill dash-pill-ok">✓ Anchored</span>
+			} else if r.Attestation != nil {
+				<span class="dash-pill dash-pill-info">signed</span>
+			} else {
+				<span class="dash-pill dash-pill-warn">pending</span>
+			}
+		</td>
+		<td>
+			<a href={ templ.SafeURL("/dashboard/receipts/" + r.TraceID) }>open</a>
+		</td>
+	</tr>
+}
+
+// greetingFor returns a one-line greeting using the best name we
+// have. Order: provider-supplied display name, email, subject, fallback.
+func greetingFor(displayName, email, subject string) string {
+	switch {
+	case displayName != "":
+		return "Welcome, " + displayName
+	case email != "":
+		return "Welcome, " + email
+	case subject != "":
+		// Subject ids look like "user_3ECCfEXfaS7…" — pure noise.
+		// We render them only as a last-resort fallback, and trim
+		// to the first 8 chars to keep the heading legible.
+		short := subject
+		if len(short) > 12 {
+			short = short[:12] + "…"
+		}
+		return "Welcome, " + short
+	default:
+		return "Welcome"
+	}
+}
+
+func guardModePillClass(c apiclient.GuardConnection) string {
+	if guardHealth(c) == "offline" {
+		return "dash-pill-muted"
+	}
+	if c.Mode == "enforce" {
+		return "dash-pill-ok"
+	}
+	return "dash-pill-info"
+}
+
+func guardHealth(c apiclient.GuardConnection) string {
+	if c.LastSeenAt.IsZero() {
+		return "unknown"
+	}
+	age := time.Since(c.LastSeenAt)
+	switch {
+	case age <= 3*time.Minute:
+		return "active"
+	case age <= 30*time.Minute:
+		return "stale"
+	default:
+		return "offline"
+	}
+}
+
+func guardHealthLabel(c apiclient.GuardConnection) string {
+	switch guardHealth(c) {
+	case "active":
+		return "active"
+	case "stale":
+		return "stale"
+	case "offline":
+		return "offline"
+	default:
+		return "unknown"
+	}
+}
+
+func guardHealthPillClass(c apiclient.GuardConnection) string {
+	switch guardHealth(c) {
+	case "active":
+		return "dash-pill-ok"
+	case "stale":
+		return "dash-pill-warn"
+	default:
+		return "dash-pill-muted"
+	}
+}
+
+func guardFleetLabel(rows []apiclient.GuardConnection) string {
+	active := 0
+	for _, c := range rows {
+		if guardHealth(c) == "active" {
+			active++
+		}
+	}
+	if active == len(rows) {
+		return fmt.Sprintf("%d active", active)
+	}
+	return fmt.Sprintf("%d/%d active", active, len(rows))
+}
+
+func guardFleetPillClass(rows []apiclient.GuardConnection) string {
+	for _, c := range rows {
+		if guardHealth(c) == "offline" {
+			return "dash-pill-warn"
+		}
+	}
+	return "dash-pill-ok"
+}
+
+func guardLastSeenLabel(c apiclient.GuardConnection) string {
+	if c.LastSeenAt.IsZero() {
+		return "never"
+	}
+	return timeAgo(c.LastSeenAt)
+}
+
+// plural returns one of two words depending on n. Tiny helper
+// kept here to avoid pulling a humanize dependency.
+func plural(n int, one, many string) string {
+	if n == 1 {
+		return one
+	}
+	return many
+}
+
+
+func planStatusPillClass(v DashboardView) string {
+	if planIsPaid(v.Me) {
+		return "dash-pill-ok"
+	}
+	return "dash-pill-muted"
+}
+
+func planStatusLabel(me *apiclient.Me) string {
+	switch canonicalPlan(me) {
+	case "trial":
+		return "trial"
+	case "internal":
+		return "internal"
+	}
+	return "paid"
+}
+
+// canonicalPlan is the account's v1 plan: trial, solo, team, company or
+// internal. Anything else is the trial, as the API reads it: there is no
+// free tier.
+func canonicalPlan(me *apiclient.Me) string {
+	if me == nil {
+		return "trial"
+	}
+	p := me.CanonicalPlan
+	if p == "" {
+		p = me.Plan
+	}
+	switch p {
+	case "solo", "team", "company", "internal":
+		return p
+	}
+	return "trial"
+}
+
+func planDisplayName(me *apiclient.Me) string {
+	switch canonicalPlan(me) {
+	case "solo":
+		return "Solo"
+	case "team":
+		return "Team"
+	case "company":
+		return "Company"
+	case "internal":
+		return "Internal"
+	}
+	return "Trial"
+}
+
+// planIsPaid reports whether the account is on a paid plan.
+func planIsPaid(me *apiclient.Me) bool {
+	switch canonicalPlan(me) {
+	case "solo", "team", "company":
+		return true
+	}
+	return false
+}
+
+// pendingApprovalsLabel returns a small "N pending approval(s)"
+// label for the runtime-signal strip on Overview. Singular form
+// when N == 1; plural otherwise.
+func pendingApprovalsLabel(n int) string {
+	if n == 1 {
+		return "1 pending approval"
+	}
+	return fmt.Sprintf("%d pending approvals", n)
+}
+
+// timeAgo renders a human-readable relative time string.
+// Kept intentionally simple — no external dependency.
+func timeAgo(t time.Time) string {
+	d := time.Since(t)
+	switch {
+	case d < time.Minute:
+		return "just now"
+	case d < time.Hour:
+		m := int(d.Minutes())
+		return fmt.Sprintf("%d %s ago", m, plural(m, "minute", "minutes"))
+	case d < 24*time.Hour:
+		h := int(d.Hours())
+		return fmt.Sprintf("%d %s ago", h, plural(h, "hour", "hours"))
+	default:
+		days := int(d.Hours() / 24)
+		return fmt.Sprintf("%d %s ago", days, plural(days, "day", "days"))
+	}
+}
+
+// escapeReceiptPath URL-escapes a receipt trace id for use in
+// dashboard receipt links. Today trace ids are server-generated, but
+// escaping is cheap defense-in-depth in case a future change ever
+// sources trace ids from a customer-controlled idempotency key.
+func escapeReceiptPath(traceID string) string {
+	return url.PathEscape(traceID)
+}

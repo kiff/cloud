@@ -1,0 +1,128 @@
+<h1 id="what-kiff-is">What KIFF is</h1>
+
+<p>KIFF lets your business decide what each AI agent may do, and change it
+without redeploying the agent.</p>
+
+<p>Today the rules for an agent usually live in its prompt, its config or
+its code, so every change is a release. With KIFF they live on a
+<a href="/docs/archive/2026-10-09/kiff-cards">KIFF Card</a> the business controls: which actions the
+agent may take, in which states, how much, and until when. Before the
+agent acts, it asks KIFF. KIFF answers against the card and the current
+state, and your own system does the work.</p>
+
+<p>What that gives the company:</p>
+
+<ul>
+<li><strong>Change a limit without a release.</strong> The owner raises, lowers or
+revokes the card; the next request uses the new terms.</li>
+<li><strong>Stop one agent, not all of them.</strong> Each agent holds its own cards,
+and no two agents share one. Revoking a card withdraws only the
+authority that card granted: the agent&rsquo;s next request that needed it
+is refused, unless another active card of that agent also covers the
+action. Other agents are untouched.</li>
+<li><strong>Start a new model small.</strong> Give it its own card with a low limit and
+raise it when its statement looks right.</li>
+<li><strong>Keep every change on record.</strong> Each card has a statement: its limit,
+what was used, what is left, and every change with who made it.</li>
+</ul>
+
+<p>Only an owner or admin can issue, change or revoke a card. The agent&rsquo;s
+own key can only ask.</p>
+
+<h2 id="how-a-decision-is-made">How a decision is made</h2>
+
+<p>KIFF puts an agent on the consequential actions you&rsquo;ve kept it away
+from — refunds, payouts, payments, role changes — by <strong>deciding the
+action before it runs</strong>: whether this specific action, on this specific
+entity, is allowed right now. The useful action goes through, the
+out-of-policy one is refused, and the duplicate can&rsquo;t fire twice.</p>
+
+<p>The thing you build once is a
+<a href="/docs/archive/2026-10-09/domains">reusable operational domain</a> — the state, valid actions,
+authority, approvals, and evidence your agents share. This page is about
+the mechanism that makes the actions against it safe to hand over.</p>
+
+<h2 id="what-this-does">What this does</h2>
+
+<p>KIFF sits in front of an action and answers one question: <em>is this
+specific action, on this specific entity, allowed right now, given the
+entity&rsquo;s state and your policy?</em> The answer is one of four outcomes —
+<code>allowed</code>, <code>blocked</code>, <code>approval_required</code>, or <code>invalid</code> — and it is
+produced before the action executes, not after.</p>
+
+<p>The refund runs when the order is in a state that permits it. The same
+refund is refused once the order is already refunded. A high-value one
+waits for a human. You get to say yes to the agent doing real work
+because the cases you were afraid of are handled before the action, not by
+hoping the model behaves.</p>
+
+<p>Every answer leaves a record: a signed receipt of what was decided, on
+what basis, at that moment — support for the claim, not the headline.</p>
+
+<h2 id="what-kiff-is-not">What KIFF is not</h2>
+
+<p>KIFF is the <strong>decision, not the runner.</strong> This distinction is
+load-bearing, so it&rsquo;s worth being blunt about it:</p>
+
+<ul>
+<li>KIFF does <strong>not</strong> execute your action. It does not move the money,
+send the email, or write to your database.</li>
+<li>KIFF&rsquo;s direct API decision path does <strong>not</strong> hold provider credentials
+or proxy your action. Its separate MCP gateway stores connected remote
+MCP bearer credentials encrypted and forwards those tool calls only after
+an <code>allowed</code> decision.</li>
+<li>KIFF does <strong>not</strong> run your agent or manage your workflow.</li>
+</ul>
+
+<p>In direct API integrations, your system stays the executor: it runs the
+action after <code>allowed</code> and withholds it otherwise. With the MCP gateway,
+KIFF forwards a connected tool call after <code>allowed</code>, and that remote tool
+performs the business operation. KIFF does not run your agent. In either
+path, only actions routed through KIFF are checked.</p>
+
+<h2 id="what-you-own-vs-what-kiff-decides">What you own vs what KIFF decides</h2>
+
+<p>A clean way to hold the split:</p>
+
+<p><strong>You own:</strong></p>
+
+<ul>
+<li>the policy — which actions need approval, what the thresholds are,
+who may authorize what;</li>
+<li>the state — what counts as the current state of an entity (an invoice
+is <code>PENDING</code> or <code>PAID</code>, a refund is <code>REQUESTED</code>);</li>
+<li>the thresholds and approval rules;</li>
+<li>execution — your runtime runs the action when KIFF says <code>allowed</code>.</li>
+</ul>
+
+<p><strong>KIFF decides:</strong></p>
+
+<ul>
+<li>whether a proposed action is permitted against that state and policy,
+before it runs;</li>
+<li>and produces the receipt that proves what was decided.</li>
+</ul>
+
+<p>KIFF derives the <em>observed action surface</em> for you — when you attach
+kiff-guard in observe mode, it learns which tools your agent actually
+calls and hands you a starter domain from real traffic (see
+<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>). But the policy,
+state model, and approval rules in that domain are yours to set. KIFF
+never invents authority you didn&rsquo;t declare.</p>
+
+<h2 id="the-shortest-path-through-the-product">The shortest path through the product</h2>
+
+<ol>
+<li><strong>Give one agent a Card</strong> — connect a tool, issue the Card, and
+answer its first held call. See the <a href="/docs/archive/2026-10-09/quickstart">quickstart</a>.</li>
+<li><strong>Connect the agents you already run</strong> — through the MCP gateway, with
+kiff-guard in your own code, or with one call to the decision API. See
+<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>.</li>
+<li><strong>Decide how you&rsquo;re asked</strong> — what is held, for how long, and where
+you hear about it. See <a href="/docs/archive/2026-10-09/approvals">Held calls and approvals</a>.</li>
+<li><strong>Build the domain underneath when you need it</strong> — the state and rules
+that let a Card say <em>refund, only on a paid order</em>. See
+<a href="/docs/archive/2026-10-09/domains">Domains</a>.</li>
+</ol>
+
+<p>If you only read one more page, read <a href="/docs/archive/2026-10-09/kiff-cards">KIFF Cards</a>.</p>

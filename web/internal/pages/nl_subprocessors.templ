@@ -1,0 +1,171 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SubprocessorsNL is the list of subprocessors (/subprocessors) in
+// Dutch, at /nl/subprocessors. It is a translation of Subprocessors: the
+// same sections, anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ SubprocessorsNL() {
+	@components.LayoutSite("KIFF — subverwerkers", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@subprocessorsHeadNL()
+			@subprocessorsListNL()
+			@subprocessorsNotListedNL()
+			@subprocessorsChangesNL()
+		</article>
+	}
+}
+
+templ subprocessorsHeadNL() {
+	<header class="legal-head">
+		<p class="legal-badge">Subverwerkers · v0.1</p>
+		<h1>Subverwerkers</h1>
+		<p class="legal-meta">
+			<strong>Laatst bijgewerkt:</strong> 17 november 2026.
+		</p>
+		<p class="legal-disclaimer">
+			De bedrijven die Kiff Agents OÜ gebruikt om KIFF Cloud en
+			tafs te laten draaien en die namens Kiff Agents OÜ
+			persoonsgegevens verwerken. Dit is de officiële lijst. De
+			<a href="/nl/legal/dpa">Verwerkersovereenkomst</a> regelt
+			hoe we ze inschakelen. Vragen:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ subprocessorsListNL() {
+	<section id="list">
+		<h2>1. De lijst</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Subverwerker</th>
+						<th>Wat hij voor KIFF doet</th>
+						<th>Welke gegevens hij verwerkt</th>
+						<th>Locatie</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="aws">
+						<td>Amazon Web Services</td>
+						<td>Hosting: de servers, de database en de back-ups ervan, sleutelbeheer, geheimen en monitoring. Voor tafs: de eigen opslag van tafs en de koppelingen van planque</td>
+						<td>Alles wat KIFF bewaart: accounts en de mensen die inloggen, Cards, beslissingen, ontvangstbewijzen, logs. Voor tafs: runs, chats, geheugennotities en tokens van koppelingen (versleuteld)</td>
+						<td>Ierland (eu-west-1): KIFF Cloud, de tafs-dienst, de runs, chats en modelaanroepen van tafs, en planque, met alles wat ze opslaan. Ook de openbare demo's van KIFF en de video's van de site komen uit Ierland. Het enige in de Verenigde Staten (us-east-1) zijn de certificaten die CloudFront daar vereist; die bevatten geen klantgegevens</td>
+					</tr>
+					<tr id="clerk">
+						<td>Clerk</td>
+						<td>Identiteit: inloggen en sessies voor KIFF-accounts</td>
+						<td>Het e-mailadres en de naam van de mensen die inloggen, hun sessies, IP-adres, apparaat en browser, en de identiteit van Apple, Google of GitHub als iemand met een daarvan inlogt</td>
+						<td>Verenigde Staten</td>
+					</tr>
+					<tr id="stripe">
+						<td>Stripe</td>
+						<td>Betaling: afrekenen, facturen en het factureringsportaal bij een betaald abonnement</td>
+						<td>De contactpersoon voor facturering en de betaalgegevens die bij het afrekenen van Stripe zijn ingevuld, en de gebruikstellingen die voor de facturering worden doorgegeven</td>
+						<td>EU en Verenigde Staten</td>
+					</tr>
+					<tr id="resend">
+						<td>Resend</td>
+						<td>E-mail: meldingen over vastgehouden aanroepen en Card-waarschuwingen, meldingen over gebruik en het account, en antwoorden van support. Voor tafs: de e-maildeur van een taf, dus de mail die mensen ernaartoe sturen en zijn antwoorden</td>
+						<td>Het e-mailadres van de ontvanger en de melding. Een melding over een vastgehouden aanroep noemt de agent, de actie, het bedrag en de Card waar de aanroep buiten valt. Voor een e-maildeur: de berichten, hun afzenders en bijlagen</td>
+						<td>Verenigde Staten</td>
+					</tr>
+					<tr id="cloudflare">
+						<td>Cloudflare</td>
+						<td>E-mail: ontvangt mail aan kiff.dev-adressen, zoals support- en privacyverzoeken, en stuurt die door naar de mailboxen van het team (Email Routing)</td>
+						<td>De berichten die naar kiff.dev-adressen worden gestuurd: afzender, ontvangers, onderwerp, tekst en bijlagen</td>
+						<td>Verenigde Staten, via het wereldwijde netwerk van Cloudflare</td>
+					</tr>
+					<tr id="google-workspace">
+						<td>Google Workspace</td>
+						<td>E-mail: de mailboxen van het team, waar mail aan kiff.dev-adressen aankomt nadat Cloudflare die heeft doorgestuurd, waaronder support- en privacyverzoeken</td>
+						<td>De berichten die naar kiff.dev-adressen worden gestuurd: afzender, ontvangers, onderwerp, tekst en bijlagen</td>
+						<td>Verenigde Staten en de andere landen waar Google Workspace-gegevens bewaart</td>
+					</tr>
+					<tr id="composio">
+						<td>Composio</td>
+						<td>Voor tafs, via planque: bewaart de logins van beheerde koppelingen (de diensten die een klant via de inlogpagina van Composio koppelt) en de Slack-bot achter een Slack-deur, en doet elke aanroep waar planque om vraagt.
+							@composioUse("nl")
+						</td>
+						<td>De logins van de gekoppelde diensten (tokens of sleutels), die Composio bewaart en die nooit aan een taf of aan planque worden gegeven; de invoer van elke aanroep en het antwoord van de dienst; de berichten van een Slack-deur</td>
+						<td>Verenigde Staten</td>
+					</tr>
+					<tr id="apple">
+						<td>Apple</td>
+						<td>Pushmeldingen naar apparaten die in de tafs-app zijn geregistreerd (Apple Push Notification service): vastgehouden aanroepen, de berichten van een deur en een app die een taf heeft uitgelogd</td>
+						<td>Het pushtoken van het apparaat en de tekst van de melding: welk taf, en bij de melding van een deur de naam of het e-mailadres van wie er schreef. Geen bedragen of details van het verzoek</td>
+						<td>Verenigde Staten</td>
+					</tr>
+					<tr id="google">
+						<td>Google</td>
+						<td>De tafs-app op Android: pushmeldingen naar apparaten die voor meldingen zijn geregistreerd (Firebase Cloud Messaging), en aankopen via de facturering van Google Play</td>
+						<td>Het pushtoken van het apparaat en de tekst van de melding: welk taf, en bij de melding van een deur de naam of het e-mailadres van wie er schreef, zonder bedragen of details van het verzoek; bij een aankoop: wat er is gekocht, de willekeurige id van het account, het token van de aankoop en de order-id</td>
+						<td>Verenigde Staten</td>
+					</tr>
+					<tr id="anthropic">
+						<td>Anthropic</td>
+						<td>AI-modellen: het model achter Coach en elk taf (Claude API). Alleen tafs</td>
+						<td>Wat ernaartoe gaat: wat je aan Coach en je tafs schrijft, de bestanden die je bijvoegt, wat je gekoppelde apps een taf teruggeven terwijl hij werkt, en wat er op je scherm staat terwijl Coach je in de app helpt; en het antwoord van het model. Nooit verzonden: de wachtwoorden en sleutels die je gekoppelde apps gebruiken, of je vingerafdruk. Pas verzonden als je het toestaat in de tafs-app (zie <a href="/nl/privacy#ai-in-tafs">Privacy</a>). Anthropic bewaart het tot 30 dagen, langer alleen waar de wet, zijn gebruiksbeleid of zijn voorwaarden dat vereisen</td>
+						<td>Verenigde Staten, aangeroepen vanuit Ierland (eu-west-1); de inferentie kan draaien in de Verenigde Staten, Europa, Azië of Australië</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		@composioApps("nl")
+		<p>
+			Zit een subverwerker buiten de Europese Economische
+			Ruimte, dan berust de doorgifte op het EU-VS Data Privacy
+			Framework of op de standaardcontractbepalingen, zoals §11
+			van de <a href="/nl/legal/dpa#transfers">Verwerkersovereenkomst</a>
+			beschrijft.
+		</p>
+	</section>
+}
+
+templ subprocessorsNotListedNL() {
+	<section id="not-listed">
+		<h2>2. Wie niet op de lijst staat</h2>
+		<ul>
+			<li>
+				<strong>Je eigen apps.</strong> Als KIFF de aanroep
+				van een agent doorstuurt naar een app die je hebt
+				gekoppeld, zoals je betaal- of supportsysteem, dan
+				werkt die app voor jou, niet voor ons. De aanbieder
+				ervan is jouw leverancier.
+			</li>
+			<li>
+				<strong>Het openbare, verifieerbare spoor.</strong>
+				Daarin worden alleen samenvattende hashes
+				gepubliceerd. Het ontvangt geen persoonsgegevens.
+			</li>
+		</ul>
+	</section>
+}
+
+templ subprocessorsChangesNL() {
+	<section id="changes">
+		<h2>3. Wijzigingen</h2>
+		<p>
+			Voordat we een subverwerker toevoegen of vervangen die je
+			persoonsgegevens verwerkt, laten we je dat minstens dertig
+			dagen van tevoren weten, en je mag bezwaar maken, zoals
+			§10 van de
+			<a href="/nl/legal/dpa#sub-processors">Verwerkersovereenkomst</a>
+			beschrijft. We werken deze pagina bij binnen 30 dagen na
+			elke wijziging.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Documentversie:</strong> v0.1.<br/>
+			<strong>Laatst bijgewerkt:</strong> 17 november 2026.
+		</p>
+	</section>
+}

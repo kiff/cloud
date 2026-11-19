@@ -1,0 +1,51 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// WelcomeView backs /welcome: what the account is for.
+type WelcomeView struct {
+	Email, DisplayName string
+	Flash              *DashboardFlash
+	// Next is where the owner was going, on this site.
+	Next string
+}
+
+// AccountKindSaved is the sentence after a change in Settings.
+func AccountKindSaved(kind string) string {
+	if kind == "personal" {
+		return "This account is now set up for you: your Cards, agents and tools."
+	}
+	return "This account is now set up for a company: the full workspace, with domains, contracts and API keys."
+}
+
+templ Welcome(v WelcomeView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Welcome", "", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<header class="dash-header dash-page-head">
+				<div class="dash-header-text">
+					<h1>Who is this account for?</h1>
+					<p class="dash-note">It changes what you see, not what KIFF does. You can change it later in Settings.</p>
+				</div>
+			</header>
+			@flashBanner(v.Flash)
+			<div class="wl-choices">
+				<form method="post" action="/welcome" class="wl-choice">
+					<input type="hidden" name="next" value={ v.Next }/>
+					<input type="hidden" name="kind" value="personal"/>
+					<h2>For me</h2>
+					<p>Your own agents and the tools they use. Give each agent a Card, and answer what falls outside it.</p>
+					<p class="dash-note">My Cards, My agents, Connected tools, Needs you and Activity.</p>
+					<button class="btn btn-primary" type="submit">It's for me</button>
+				</form>
+				<form method="post" action="/welcome" class="wl-choice">
+					<input type="hidden" name="next" value={ v.Next }/>
+					<input type="hidden" name="kind" value="company"/>
+					<h2>For a company</h2>
+					<p>A team's agents, the contracts they act under, and the keys your systems use.</p>
+					<p class="dash-note">The full workspace: Cards, agents, tools, domains, contracts and API keys.</p>
+					<button class="btn btn-secondary" type="submit">It's for a company</button>
+				</form>
+			</div>
+		</section>
+	}
+}

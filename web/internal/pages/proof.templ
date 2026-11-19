@@ -1,0 +1,156 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/proofs"
+	"github.com/kiff/cloud/web/internal/content/videos"
+)
+
+// ProofIndex renders /proof: what is proven, one line each. The Refund
+// Card test run on the live service comes first (the recording and what
+// it shows), then links to every other recording and short film (each
+// plays on its own /proof/videos page), then the domain proofs, then
+// /invariants.
+templ ProofIndex(all []proofs.Proof) {
+	@components.LayoutSiteWithMeta(
+		"Proof — KIFF",
+		"A synthetic KIFF Card test run on KIFF’s production services, no customer data: seven decisions, three authorized, four refused, the owner raising the limit and revoking the card, every decision with a signed receipt. Plus product and agent demo videos.",
+		"website", "proof", "css/home.css", "css/proof.css", "css/proof-share.css",
+	) {
+		<div class="k-home pf-index">
+			<section class="k-hero" id="verified-run">
+				<p class="k-kicker">proof · synthetic test run · 22 Sep 2026</p>
+				<h1 class="k-display">Run on the live service. <span>Not a mockup.</span></h1>
+				<p class="k-sub">A refunds agent on a real KIFF Card. A synthetic test run on KIFF’s production services, with no customer data.</p>
+				<div class="k-proof-video">
+					@kWindow("app.kiff.dev · refund card run") {
+						<video controls preload="none" playsinline poster={ videos.CardsAtWork.Poster() }>
+							<source src={ videos.CardsAtWork.Src720() } type="video/mp4"/>
+							Your browser can't play embedded video.
+							<a href={ templ.SafeURL(videos.CardsAtWork.Src720()) }>Download the recording</a>.
+						</video>
+					}
+				</div>
+				@proofVideoShare(videos.CardsAtWork)
+				<ul class="pf-lines">
+					<li>No card yet: a €3,000 refund is <b class="k-no-t">refused</b>.</li>
+					<li>€5,000 a day: €3,000 and €2,000 <b class="k-ok">allowed</b>, €2,500 and €500 over what was left <b class="k-no-t">refused</b>.</li>
+					<li>Owner raises the limit to €8,000: the next €1,000 is <b class="k-ok">allowed</b>.</li>
+					<li>Owner revokes the card: the next €500 is <b class="k-no-t">refused</b>.</li>
+				</ul>
+				<p class="k-small">7 decisions, 7 signed receipts. “Allowed” is not “executed”: the company’s own system runs the refund.</p>
+			</section>
+			<section id="videos">
+				<h2 class="k-h2">More recordings</h2>
+				<ul class="pf-links">
+					for _, c := range append(videos.Demos()[1:], videos.ProductTours()...) {
+						<li><a href={ templ.SafeURL(c.PagePath()) }>{ c.Title }</a></li>
+					}
+				</ul>
+				<h2 class="k-h2" id="capsules">Short films, under a minute</h2>
+				<p class="k-small">An illustrated scenario with fictional data; the recordings above show real calls.</p>
+				<ul class="pf-links">
+					for _, c := range videos.Capsules() {
+						<li>
+							<a href={ templ.SafeURL(c.PagePath()) }>{ c.Title }</a>
+							if c.Portrait {
+								<span>· portrait, for phones</span>
+							} else {
+								<span>· landscape, for slides</span>
+							}
+						</li>
+					}
+				</ul>
+			</section>
+			<section id="domain-evidence">
+				<h2 class="k-h2">Domain proofs</h2>
+				<p class="k-small">The domain refuses an action its state no longer allows. They are not card evidence.</p>
+				<ul class="pf-links">
+					for _, p := range all {
+						<li><a href={ templ.SafeURL("/proof/" + p.Slug) }>{ p.Title }</a>: { p.WithDetail }</li>
+					}
+				</ul>
+				<p class="k-small"><a class="k-link" href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">Run them yourself: kiff-guard on GitHub ↗</a></p>
+			</section>
+			<section>
+				<h2 class="k-h2">Every guarantee, with its test</h2>
+				<p class="k-small"><a class="k-link" href="/invariants">See the invariants →</a> · <a class="k-link" href="/pricing">Get it live with us →</a></p>
+			</section>
+		</div>
+	}
+}
+
+// Proof renders one infographic at /proof/{slug}: the without/with
+// contrast, the decision loop, and the state-machine reason the
+// repeat was refused.
+templ Proof(p proofs.Proof) {
+	@components.LayoutSite("KIFF proof — "+p.Title, "", "css/proof.css") {
+		<main class="proof">
+			<a class="proof-back" href="/deck/sales">← sales deck</a>
+			<header class="proof-head">
+				<p class="proof-eyebrow">cookbook proof · { p.Recipe }</p>
+				<h1>{ p.Title }</h1>
+				<p class="proof-tagline">{ p.Tagline }</p>
+				<div class="proof-head-chips">
+					<span class="proof-chip">{ p.Framework }</span>
+					if p.Regulation != "" {
+						<span class="proof-chip proof-chip-reg">{ p.Regulation }</span>
+					}
+					<span class="proof-chip proof-chip-action">{ p.Action }</span>
+				</div>
+			</header>
+
+			<section class={ "proof-contrast", templ.KV("is-money", p.Accent == "money"), templ.KV("is-count", p.Accent != "money") }>
+				<div class="proof-side proof-without">
+					<span class="proof-side-label">without kiff</span>
+					<span class="proof-side-value">{ p.WithoutValue }</span>
+					<span class="proof-side-detail">{ p.WithoutDetail }</span>
+				</div>
+				<div class="proof-gate">
+					<span class="proof-gate-action">{ p.Action }</span>
+					<span class="proof-gate-arrow">state-aware gate ↓</span>
+				</div>
+				<div class="proof-side proof-with">
+					<span class="proof-side-label">with kiff</span>
+					<span class="proof-side-value">{ p.WithValue }</span>
+					<span class="proof-side-detail">{ p.WithDetail }</span>
+				</div>
+			</section>
+
+			<section class="proof-loop" aria-label="The decision loop">
+				<div class="proof-loop-step">
+					<span class="proof-loop-num">1</span>
+					<span class="proof-loop-text">Agent proposes <code>{ p.Action }</code> on a { p.Entity }.</span>
+				</div>
+				<div class="proof-loop-step">
+					<span class="proof-loop-num">2</span>
+					<span class="proof-loop-text">KIFF reads the { p.Entity }'s current state — before anything runs.</span>
+				</div>
+				<div class="proof-loop-step">
+					<span class="proof-loop-num">3</span>
+					<span class="proof-loop-text">First call: state allows it → <strong class="proof-allow">executed</strong>, receipt signed.</span>
+				</div>
+				<div class="proof-loop-step">
+					<span class="proof-loop-num">4</span>
+					<span class="proof-loop-text">State is now <code>{ p.BlockState }</code> → every repeat <strong class="proof-block">refused</strong>, receipt signed.</span>
+				</div>
+			</section>
+
+			<section class="proof-detail">
+				<div class="proof-detail-block">
+					<h2>The scenario</h2>
+					<p>{ p.Scenario }</p>
+				</div>
+				<div class="proof-detail-block">
+					<h2>Why it was refused</h2>
+					<p>{ p.Why }</p>
+				</div>
+			</section>
+
+			<footer class="proof-foot">
+				<a class="proof-foot-link" href="/proof">← all six proofs</a>
+				<a class="proof-foot-link" href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">Run this proof — kiff-guard ↗</a>
+			</footer>
+		</main>
+	}
+}

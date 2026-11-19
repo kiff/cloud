@@ -1,0 +1,136 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// AcceptableUsePT is the Acceptable Use Policy (/acceptable-use) in
+// Portuguese (pt-PT), at /pt/acceptable-use. It is a translation of
+// AcceptableUse: the same sections, anchors, links and figures, held to
+// it by TestTranslationsKeepTheEnglishPage. The English page governs.
+// Change the English page first, then this one.
+templ AcceptableUsePT() {
+	@components.LayoutSite("KIFF — política de utilização aceitável", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@aupHeadPT()
+			@aupScopePT()
+			@aupRulesPT()
+			@aupEnforcementPT()
+			@aupReportingPT()
+			@aupChangesPT()
+		</article>
+	}
+}
+
+templ aupHeadPT() {
+	<header class="legal-head">
+		<p class="legal-badge">Política de utilização aceitável · v0.1</p>
+		<h1>Política de Utilização Aceitável</h1>
+		<p class="legal-meta">
+			<strong>Última atualização:</strong> 23 de outubro de 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Esta política faz parte dos <a href="/pt/terms">Termos de
+			Serviço</a> (§5) entre a Kiff Agents OÜ e os seus Clientes.
+			As palavras definidas nos Termos têm aqui o mesmo
+			significado. Perguntas:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ aupScopePT() {
+	<section id="scope">
+		<h2>1. A quem se aplica</h2>
+		<p>
+			Aplica-se a qualquer utilização do Serviço: o site, o
+			painel, a API, o gateway e o tafs. Abrange-o a si, as
+			pessoas a quem dá acesso à sua conta e todos os agentes que
+			atuam através dela, quer tenha sido você a criar o agente,
+			quer se trate de um taf.
+		</p>
+		<p>
+			A ação de um agente é uma ação sua. Um Card, uma chamada
+			retida aprovada por uma das suas pessoas ou um taf que
+			você iniciou não transferem a responsabilidade para nós.
+			Se um agente fizer algo que esta política proíbe, foi você
+			que violou a política.
+		</p>
+	</section>
+}
+
+templ aupRulesPT() {
+	<section id="rules">
+		<h2>2. O que não pode fazer</h2>
+		<p>Você e os seus agentes não podem usar o Serviço para:</p>
+		<ul>
+			<li id="unlawful"><strong>Violar a lei ou os direitos de alguém.</strong> Fazer algo ilegal no local onde você, as pessoas afetadas ou nós operamos, ou ajudar outra pessoa a fazê-lo. Infringir os direitos de alguém, incluindo a sua propriedade intelectual.</li>
+			<li id="unauthorized"><strong>Agir sem autorização.</strong> Agir num sistema, numa conta ou numa app que não está autorizado a usar, ou ligar uma app com um início de sessão que não lhe cabe a si dar.</li>
+			<li id="fraud"><strong>Cometer fraude ou movimentar dinheiro que não tem o direito de movimentar.</strong> Enganar alguém para obter um ganho, fazer-se passar por uma pessoa ou empresa, ou pagar, reembolsar, transferir ou creditar fundos que não tem o direito de controlar.</li>
+			<li id="third-party"><strong>Violar os termos da própria app.</strong> Usar uma app de terceiros ligada ao KIFF de uma forma que os termos do seu fornecedor proíbem, incluindo ultrapassar os seus limites de pedidos ou revender um acesso que não pode revender.</li>
+			<li id="bypass"><strong>Contornar as decisões do KIFF.</strong> Tentar contornar, desativar ou enganar uma decisão, um Card, um limite ou uma retenção. Isto inclui dividir uma ação em várias para ficar abaixo de um limite, fazer uma chamada diretamente a uma app depois de o KIFF a ter recusado ou retido, aprovar a chamada retida do seu próprio agente através de uma segunda identidade, ou falsificar um recibo.</li>
+			<li id="security-testing"><strong>Testar a segurança sem autorização.</strong> Analisar, sondar, submeter a testes de carga ou atacar o Serviço, outro cliente ou qualquer sistema que não seja seu, salvo se o proprietário tiver concordado por escrito. Para testar o próprio KIFF, escreva primeiro para <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			<li id="spam"><strong>Enviar spam ou assediar alguém.</strong> Enviar mensagens em massa não solicitadas, ou ameaçar, perseguir, intimidar ou maltratar uma pessoa.</li>
+			<li id="illegal-content"><strong>Lidar com conteúdo ilegal.</strong> Criar, guardar ou enviar conteúdo ilegal, incluindo material de abuso sexual de crianças.</li>
+			<li id="malware"><strong>Espalhar malware.</strong> Criar, guardar ou enviar malware ou código de exploração de vulnerabilidades.</li>
+			<li id="other-tenants"><strong>Levar dados que não são seus.</strong> Recolher de forma automatizada, exportar em massa ou extrair de outro modo dados para além da sua própria conta, ou tentar descobrir os dados de outro cliente.</li>
+			<li id="competing"><strong>Copiar o Serviço.</strong> Fazer engenharia inversa do Serviço alojado para criar um produto concorrente, ou usar o Serviço para desenvolver produtos ou serviços que concorram com ele. Isto não se aplica à framework de código aberto, que é regida pela sua licença MIT.</li>
+		</ul>
+	</section>
+}
+
+templ aupEnforcementPT() {
+	<section id="enforcement">
+		<h2>3. O que podemos fazer</h2>
+		<p>
+			Não vigiamos o que envia, mas agimos com base no que
+			encontramos e em denúncias credíveis. Se acreditarmos que a
+			política foi violada, podemos, consoante a gravidade:
+		</p>
+		<ul>
+			<li><strong>recusar</strong> uma chamada, um pedido ou uma ligação;</li>
+			<li><strong>suspender</strong> um agente, uma chave, o acesso de uma pessoa ou toda a conta, de imediato quando o dano for grave ou continuar a ocorrer;</li>
+			<li><strong>encerrar</strong> a conta ao abrigo do §9 dos <a href="/pt/terms#term">Termos</a>.</li>
+		</ul>
+		<p>
+			Dizemos-lhe o que fizemos e porquê. Sempre que possível,
+			damos-lhe primeiro a oportunidade de corrigir o problema.
+			Não avisamos previamente quando a utilização é ilegal, ou
+			quando pessoas ou dinheiro estão em risco imediato. Podemos
+			também comunicar atividades ilegais às autoridades.
+		</p>
+	</section>
+}
+
+templ aupReportingPT() {
+	<section id="reporting">
+		<h2>4. Denunciar abusos</h2>
+		<p>
+			Se achar que alguém está a usar o KIFF contra esta
+			política, diga-nos. Indique o que aconteceu, quando, e tudo
+			o que nos ajude a encontrá-lo, como um recibo ou a
+			referência de uma chamada.
+		</p>
+		<ul>
+			<li>Um problema de segurança ou um ataque: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			<li>Qualquer outro abuso: <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.</li>
+		</ul>
+	</section>
+}
+
+templ aupChangesPT() {
+	<section id="changes">
+		<h2>5. Alterações</h2>
+		<p>
+			Podemos atualizar esta política. Avisamos das alterações
+			substanciais da mesma forma que para os Termos (§16).
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versão do documento:</strong> v0.1.<br/>
+			<strong>Última atualização:</strong> 23 de outubro de 2026.
+		</p>
+	</section>
+}

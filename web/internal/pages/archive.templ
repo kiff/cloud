@@ -1,0 +1,104 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/archive"
+)
+
+// The dated documentation archive: unchanging copies of /docs and
+// /security that the DPA and the Terms can point at. Every archived
+// page says it is an archived copy and links the current page.
+
+// archiveDate is a revision's capture date in words: "9 October 2026".
+func archiveDate(r *archive.Revision) string {
+	return r.CapturedAt.UTC().Format("2 January 2006")
+}
+
+// shortCommit is a commit cut to 12 characters for display.
+func shortCommit(c string) string {
+	if len(c) > 12 {
+		return c[:12]
+	}
+	return c
+}
+
+templ ArchiveIndex(revs []*archive.Revision) {
+	@components.LayoutSiteWithMeta("KIFF docs — dated revisions", "Dated, unchanging copies of the KIFF technical documentation and security page.", "website", "docs", "css/prose.css", "css/docs.css") {
+		<div class="docs archive">
+			<article class="docs-main">
+				<div class="docs-body prose">
+					<h1>Dated documentation revisions</h1>
+					<p>Each revision is a copy of the KIFF technical documentation and the security page as they were on the date shown. A revision never changes after it is captured. The current pages are at <a href="/docs">/docs</a> and <a href="/security">/security</a>.</p>
+					if len(revs) == 0 {
+						<p>No revision has been captured yet.</p>
+					} else {
+						<ul class="archive-revisions">
+							for _, r := range revs {
+								<li>
+									<a href={ templ.SafeURL(archive.IndexHref(r.Revision)) }>{ archiveDate(r) }</a>
+									<span class="archive-meta">{ "revision " + r.Revision + " · commit " + shortCommit(r.SourceCommit) }</span>
+								</li>
+							}
+						</ul>
+					}
+				</div>
+			</article>
+		</div>
+	}
+}
+
+templ ArchiveRevision(r *archive.Revision) {
+	@components.LayoutSiteWithMeta("KIFF docs — revision "+r.Revision, "The KIFF technical documentation and security page as of "+archiveDate(r)+".", "website", "docs", "css/prose.css", "css/docs.css") {
+		<div class="docs archive">
+			<article class="docs-main">
+				<div class="docs-body prose">
+					@archiveBanner(r, archive.Page{})
+					<h1>{ "Documentation as of " + archiveDate(r) }</h1>
+					<p>{ "Captured " + r.CapturedAt.UTC().Format("2006-01-02 15:04 UTC") + " from commit " + r.SourceCommit + "." }</p>
+					<ul class="archive-pages">
+						for _, p := range r.DocsPages() {
+							<li><a href={ templ.SafeURL(archive.Href(r.Revision, p.Slug)) }>{ p.Title }</a></li>
+						}
+						if sec, _, ok := r.Page(archive.SecuritySlug); ok {
+							<li><a href={ templ.SafeURL(archive.Href(r.Revision, sec.Slug)) }>{ sec.Title }</a></li>
+						}
+					</ul>
+					<p><a href="/docs/archive">All revisions</a></p>
+				</div>
+			</article>
+		</div>
+	}
+}
+
+templ ArchivedPage(r *archive.Revision, p archive.Page, body string) {
+	@components.LayoutSiteWithMeta(p.Title+" — revision "+r.Revision, "An archived copy of "+p.Title+" as of "+archiveDate(r)+".", "article", "docs", "css/prose.css", "css/docs.css", "css/security.css") {
+		<div class="docs archive">
+			<article class="docs-main">
+				<div class="docs-body prose">
+					@archiveBanner(r, p)
+				</div>
+				if p.Kind == archive.KindSecurity {
+					@templ.Raw(body)
+				} else {
+					<div class="docs-body prose">
+						@templ.Raw(body)
+					</div>
+				}
+			</article>
+		</div>
+	}
+}
+
+// archiveBanner says the page is an archived copy and links the current
+// one. p is empty on a revision's index.
+templ archiveBanner(r *archive.Revision, p archive.Page) {
+	<aside class="archive-banner" role="note">
+		<strong>{ "Archived revision of " + archiveDate(r) + "." }</strong>
+		{ " This copy does not change. " }
+		if p.Current != "" {
+			<a href={ templ.SafeURL(p.Current) }>Current version</a>
+			{ " · " }
+		}
+		<a href={ templ.SafeURL(archive.IndexHref(r.Revision)) }>{ "All pages in revision " + r.Revision }</a>
+	</aside>
+}

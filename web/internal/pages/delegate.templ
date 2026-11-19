@@ -1,0 +1,392 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/delegate"
+)
+
+// Delegate is /delegate: write a delegation, see it become a Card, give
+// the Card to an agent, watch the agent draw it down and meet a limit,
+// move the Card to another agent, and browse Cards for business and
+// personal use. The live part runs the delegate engine on the server;
+// every click replays the session's action log (see delegate.Replay).
+templ Delegate(v DelegateView) {
+	@components.LayoutSiteWithMeta(
+		"Delegate to an agent with a Card | KIFF",
+		"Write what you are willing to delegate, turn it into a Card, and hand it to an agent. The Card sets how far the agent can go, counts what it uses, and stays yours when you change agents.",
+		"website", "", "css/delegate.css") {
+		@dgHero(v.Session.Card)
+		@dgWrite(v.Session.Card)
+		<section class="dg-band" id="try">
+			<div class="dg-wrap">
+				<h2 class="dg-h2">Give it to an agent</h2>
+				<p class="dg-lede">Inside the Card, the agent works. Outside it, the work comes home to you.</p>
+				@DelegateLive(v.Session)
+			</div>
+		</section>
+		@dgRules()
+		@dgGallery(v.Session.Card.ID)
+		@dgClose()
+		<script src="/static/js/htmx.min.js" defer></script>
+	}
+}
+
+templ dgHero(b delegate.Blueprint) {
+	<section class="dg-hero">
+		<div class="dg-wrap">
+			<h1 class="dg-h1">Skills belong to agents. <em>Cards belong to you.</em></h1>
+			<p class="dg-lede dg-lede-lg">A skill is what an agent can do. A Card is how far you let it go: one job, a limit per action and a total. Move it to another agent and its balance and history go with it.</p>
+			<div class="dg-hero-cta">
+				<a class="dg-btn dg-btn-primary" href="#dg-live">Try it with sample agents</a>
+			</div>
+		</div>
+	</section>
+}
+
+// dgWrite is the grammar lesson: the delegation sentence with each part
+// labelled by the job it does, and the Card line it becomes. Hovering a
+// part lights up its line (CSS :has, no script).
+templ dgWrite(b delegate.Blueprint) {
+	<section class="dg-section" id="write">
+		<div class="dg-wrap">
+			<h2 class="dg-h2">One sentence becomes a Card</h2>
+			<nav class="dg-picks" aria-label="Choose a Card to build">
+				for _, c := range delegate.Catalog {
+					<a class={ "dg-pick", templ.KV("is-on", c.ID == b.ID) } href={ templ.SafeURL(dgUseHref(c.ID)) }>{ c.Name }</a>
+				}
+			</nav>
+			<div class="dg-anatomy">
+				<p class="dg-sentence">
+					for _, p := range b.Sentence {
+						if p.Role == delegate.RoleText {
+							<span>{ p.Text }</span>
+						} else {
+							<span class={ "dg-part", dgRoleClass(p.Role) } tabindex="0">
+								<mark>{ p.Text }</mark>
+								<small>{ delegate.RoleLabel(p.Role) }</small>
+							</span>
+						}
+					}
+				</p>
+			</div>
+		</div>
+	</section>
+}
+
+// DelegateLive is the part htmx swaps: the Card as it is now, and the
+// one thing the owner or the agent can do next.
+templ DelegateLive(s delegate.Session) {
+	<div id="dg-live" class={ "dg-live", "dg-last-" + dgChangeKind(s) }>
+		<form class="dg-form" method="post" action="/delegate/step" hx-post="/delegate/step" hx-target="#dg-live" hx-swap="outerHTML show:#dg-live:top">
+			<input type="hidden" name="card" value={ s.Card.ID }/>
+			<input type="hidden" name="log" value={ s.CurrentLog() }/>
+			<p class="dg-disclosure"><b>Sample agents and actions.</b> The Card rules run for real as you click.</p>
+			// Phone tabs (hidden on desktop). The server opens the tab where
+			// the last step changed something, so a demo never needs a scroll.
+			<input class="dg-tab-radio" type="radio" name="dgtab" id="dg-tab-card" checked?={ dgTab(s) == "card" }/>
+			<input class="dg-tab-radio" type="radio" name="dgtab" id="dg-tab-queue" checked?={ dgTab(s) == "queue" }/>
+			<input class="dg-tab-radio" type="radio" name="dgtab" id="dg-tab-log" checked?={ dgTab(s) == "log" }/>
+			<div class="dg-live-grid">
+				@dgLiveCard(s)
+				<div class="dg-live-side">
+					if s.Last != nil {
+						<p class={ "dg-change", "dg-change-" + s.Last.Kind } role="status">{ s.Last.Summary }</p>
+					}
+					if s.Holder == "" && !s.Revoked {
+						@dgConnect(s)
+					} else {
+						@dgWork(s)
+					}
+				</div>
+			</div>
+			@dgStatement(s)
+			@dgTabBar(s)
+		</form>
+	</div>
+}
+
+// dgTabBar is the phone's bottom bar: the one thing to do next, and the
+// three views of the Card.
+templ dgTabBar(s delegate.Session) {
+	<nav class="dg-tabbar" aria-label="Card views">
+		if s.Last != nil {
+			<p class="dg-tabbar-news">{ s.Last.Summary }</p>
+		}
+		<div class="dg-tabbar-action">
+			if _, waiting := s.Waiting(); waiting {
+				<label class="dg-btn dg-btn-primary" for="dg-tab-queue">Needs you: decide</label>
+			} else if s.Holder == "" && !s.Revoked {
+				if a, ok := dgSuggested(s); ok {
+					<button class="dg-btn dg-btn-primary" type="submit" name="step" value={ "a:" + a.ID }>Approve: give it to { a.Name }</button>
+				}
+			} else if s.CanRun() {
+				<button class="dg-btn dg-btn-primary" type="submit" name="step" value="auto">Let it run on its own</button>
+			} else if !s.Revoked {
+				for i, a := range s.MoveTargets() {
+					if i == 0 {
+						<button class="dg-btn dg-btn-primary" type="submit" name="step" value={ "m:" + a.ID }>Move the Card to { a.Name }</button>
+					}
+				}
+			} else {
+				<a class="dg-btn dg-btn-primary" href={ templ.SafeURL(dgUseHref(s.Card.ID)) }>Start again</a>
+			}
+		</div>
+		<div class="dg-tabs">
+			<label for="dg-tab-card">Card<small>{ s.Card.Format(s.Remaining()) }</small></label>
+			<label for="dg-tab-queue">
+				Queue
+				if n := len(s.Pending); n > 0 {
+					<b class="dg-badge">{ dgItoa(n) }</b>
+				}
+				<small>{ dgQueueHint(s) }</small>
+			</label>
+			<label for="dg-tab-log">Statement<small>{ dgLines(len(s.Entries)) }</small></label>
+		</div>
+	</nav>
+}
+
+templ dgLiveCard(s delegate.Session) {
+	<figure class={ "dg-card", templ.KV("is-revoked", s.Revoked) }>
+		<div class="dg-card-top"><span>KIFF Card · { dgRevision(s) }</span><span class={ templ.KV("dg-flash", dgChangeKind(s) == "moved" || dgChangeKind(s) == "assigned") }>
+			if s.Revoked {
+				revoked
+			} else if s.Holder == "" {
+				not given to an agent
+			} else {
+				held by { dgHolderName(s) }
+			}
+		</span></div>
+		<p class="dg-card-name">{ s.Card.Name }</p>
+		<p class="dg-card-owner">Owned by { s.Card.Owner }</p>
+		<ul class="dg-terms">
+			for _, r := range delegate.Roles {
+				<li class={ "dg-term", dgRoleClass(r), templ.KV("dg-hit", dgLineHeld(s, r)), templ.KV("dg-grew", dgLineChanged(s, r)) }><span>{ delegate.RoleLabel(r) }</span><b>{ s.Card.Line(r) }</b></li>
+			}
+		</ul>
+		<div class={ "dg-balance", templ.KV("dg-flash", dgChangeKind(s) == "drew" || dgChangeKind(s) == "auto") }>
+			<span>left { s.Card.Window }</span>
+			<strong>{ s.Card.Format(s.Remaining()) }</strong>
+			if d := dgDeltaLabel(s); d != "" {
+				<em class="dg-delta" aria-hidden="true">{ d }</em>
+			}
+			<div class="dg-meter" aria-hidden="true"><i { templ.Attributes{"style": dgMeterStyle(s)}... }></i></div>
+		</div>
+		if s.Revoked {
+			<p class="dg-stamp">Revoked. The statement stays.</p>
+		} else if s.Holder != "" {
+			// Owner controls on the Card itself, for phones, where the
+			// queue panel's owner row is hidden. Desktop shows that row.
+			<div class="dg-card-actions">
+				// Move is offered here while the bar is busy with something else;
+				// once the work is done the bar's main action is the move.
+				if _, waiting := s.Waiting(); waiting || s.CanRun() {
+					for _, a := range s.MoveTargets() {
+						<button class="dg-btn" type="submit" name="step" value={ "m:" + a.ID }>Move to { a.Name }</button>
+					}
+				}
+				<button class="dg-btn dg-btn-danger" type="submit" name="step" value="x">Revoke</button>
+			</div>
+		}
+	</figure>
+}
+
+// dgConnect is the wallet step: the agents the owner runs, what each can
+// do, and which one the match suggests. The owner only approves.
+templ dgConnect(s delegate.Session) {
+	<div class="dg-step">
+		<h3>Connect the Card to an agent</h3>
+		<p class="dg-muted">KIFF suggests the agent whose skills fit this Card. You approve.</p>
+		<ul class="dg-agents">
+			for _, v := range delegate.Match(s.Card, s.Agents) {
+				<li class={ "dg-agent", templ.KV("is-suggested", v.Suggested), templ.KV("is-unfit", !v.Fits) }>
+					<div class="dg-agent-head">
+						<b>{ v.Agent.Name }</b>
+						if v.Suggested {
+							<span class="dg-tag">suggested</span>
+						}
+					</div>
+					<div class="dg-wallet">
+						<span class="dg-slot-label">skills</span>
+						for _, sk := range v.Agent.Skills {
+							<span class={ "dg-chip", templ.KV("is-match", sk == s.Card.Skill) }>{ sk }</span>
+						}
+						<span class="dg-slot-label">cards</span>
+						if v.Suggested {
+							<span class="dg-chip dg-chip-card is-pending">{ s.Card.Name } · pending</span>
+						} else {
+							<span class="dg-chip dg-chip-empty">none</span>
+						}
+					</div>
+					<p class="dg-why">{ v.Why }</p>
+					if v.Suggested {
+						<button class="dg-btn dg-btn-primary" type="submit" name="step" value={ "a:" + v.Agent.ID }>Approve: give the Card to { v.Agent.Name }</button>
+					} else if v.Fits {
+						<button class="dg-btn dg-btn-quiet" type="submit" name="step" value={ "a:" + v.Agent.ID }>Give it to { v.Agent.Name } instead</button>
+					}
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+// dgWork is what happens once an agent holds the Card.
+templ dgWork(s delegate.Session) {
+	<div class="dg-step">
+		if s.Revoked {
+			<h3>The Card is back with { s.Card.Owner }</h3>
+			<p class="dg-muted">No agent can draw on it. Its statement below is the full record of what was done with it.</p>
+			<a class="dg-btn" href={ templ.SafeURL(dgUseHref(s.Card.ID)) }>Start again</a>
+		} else {
+			if _, waiting := s.Waiting(); waiting {
+				<div class="dg-needs">
+					<p class="dg-needs-head">{ dgWaitingCount(s) }</p>
+					<div class="dg-needs-what"><b>{ dgWaitingWhat(s) }</b><strong>{ dgWaitingAmount(s) }</strong></div>
+					<p class="dg-needs-why">{ dgWaitingAllows(s) } <b>{ dgWaitingOver(s) }</b></p>
+					<p class="dg-source">Decision source: { dgWaitingSource(s) }</p>
+					<p class="dg-needs-ask">This is outside what you delegated. What do you want to do?</p>
+					<div class="dg-needs-choices">
+						<button class="dg-btn dg-btn-primary" type="submit" name="step" value="ok">Approve once</button>
+						<button class="dg-btn" type="submit" name="step" value="change">{ dgChangeLabel(s) }</button>
+						<button class="dg-btn dg-btn-quiet" type="submit" name="step" value="no">Reject</button>
+					</div>
+					<p class="dg-muted dg-needs-note">Approve once runs this action only; the Card stays as it is. Change Card changes the delegation for everything after it.</p>
+				</div>
+			}
+			if s.CanRun() {
+				<h3>{ dgHolderName(s) } is working</h3>
+			} else {
+				<h3>{ dgHolderName(s) } has finished the queue</h3>
+			}
+			if s.CanRun() {
+				<div class="dg-next">
+					<span class="dg-muted">The agent wants to</span>
+					<b>{ dgSampleWhat(s) }</b>
+					<strong>{ dgSampleAmount(s) }</strong>
+					<span class="dg-source">Decision source: { dgSampleSource(s) }</span>
+				</div>
+				<p class="dg-ask">Would the Card authorize it?</p>
+				<div class="dg-run">
+					<button class="dg-btn dg-btn-primary" type="submit" name="step" value="r">See what the Card decides</button>
+					<button class="dg-btn" type="submit" name="step" value="auto">Let it run on its own</button>
+				</div>
+				<p class="dg-muted dg-run-note">Running on its own, everything inside the Card goes through without you. Anything outside comes home and waits here.</p>
+			} else {
+				<p class="dg-muted">That was the sample work. Now try the two things only the owner can do.</p>
+				<p class="dg-real"><a class="dg-btn dg-btn-primary" href={ templ.SafeURL(dgRealHref(s.Card.ID)) }>Make this Card for your agent</a> <span class="dg-muted">{ dgRealNote(s.Card.ID) }</span></p>
+			}
+			<div class="dg-owner">
+				<span class="dg-slot-label">owner</span>
+				for _, a := range s.MoveTargets() {
+					<button class="dg-btn" type="submit" name="step" value={ "m:" + a.ID }>Move the Card to { a.Name }</button>
+				}
+				<button class="dg-btn dg-btn-danger" type="submit" name="step" value="x">Revoke the Card</button>
+			</div>
+		}
+	</div>
+}
+
+templ dgStatement(s delegate.Session) {
+	<div class="dg-statement">
+		<p class="dg-slot-label">Statement · one Card, every holder</p>
+		if len(s.Entries) == 0 {
+			<p class="dg-muted">Nothing yet. Every action and every owner change will be recorded here.</p>
+		} else {
+			<ol>
+				for _, e := range s.Statement() {
+					<li class={ "dg-row", "dg-row-" + string(e.Outcome), templ.KV("is-new", dgIsNewest(s, e)) }>
+						<span class="dg-row-who">{ e.Who }</span>
+						<span class="dg-row-what">
+							{ e.What }
+							if e.Reason != "" {
+								<small>{ e.Reason }</small>
+							}
+							if e.Source != "" {
+								<small class="dg-row-source">decided by { e.Source }</small>
+							}
+						</span>
+						<span class="dg-row-delta">{ dgEntryDelta(s, e) }</span>
+						<span class="dg-row-left">{ dgEntryLeft(s, e) }</span>
+					</li>
+				}
+			</ol>
+		}
+	</div>
+}
+
+// dgRules is what the five-screen walkthrough used to say, one line each.
+templ dgRules() {
+	<section class="dg-section" id="how">
+		<div class="dg-wrap">
+			<h2 class="dg-h2">How a Card decides</h2>
+			<ul class="dg-rules">
+				<li>The per-action limit catches one large mistake; the total catches many small ones.</li>
+				<li>A model can judge an action. Only the Card authorizes it, and only you change the Card.</li>
+				<li>Every action and every change is a line on the Card’s statement, and a revoked Card keeps it.</li>
+			</ul>
+		</div>
+	</section>
+}
+
+// dgGallery is the Card gallery: Cards a business gives the agents that
+// work for it, and Cards a person gives their own agents.
+templ dgGallery(current string) {
+	<section class="dg-section dg-gallery" id="gallery">
+		<div class="dg-wrap">
+			<h2 class="dg-h2">Cards to start from</h2>
+			for _, aud := range []delegate.Audience{delegate.Business, delegate.Personal} {
+				<h3 class="dg-gallery-head">{ dgAudienceLabel(aud) }</h3>
+				<div class="dg-gallery-grid">
+					for _, b := range delegate.ByAudience(aud) {
+						@dgGalleryItem(b, b.ID == current)
+					}
+				</div>
+			}
+		</div>
+	</section>
+}
+
+templ dgGalleryItem(b delegate.Blueprint, current bool) {
+	<details class="dg-gcard" id={ "card-" + b.ID }>
+		<summary>
+			<span class="dg-gcard-name">{ b.Name }</span>
+			<span class="dg-gcard-sum">{ b.Summary }</span>
+		</summary>
+		<div class="dg-gcard-body">
+			<p class="dg-sentence dg-sentence-sm">
+				for _, p := range b.Sentence {
+					if p.Role == delegate.RoleText {
+						<span>{ p.Text }</span>
+					} else {
+						<span class={ "dg-part", dgRoleClass(p.Role) }><mark>{ p.Text }</mark></span>
+					}
+				}
+			</p>
+			<h4>Why it is set like this</h4>
+			<ul>
+				for _, r := range delegate.Roles {
+					if why, ok := b.Why[r]; ok {
+						<li><b>{ delegate.RoleLabel(r) }: { b.Line(r) }.</b> { why }</li>
+					}
+				}
+			</ul>
+			<p class="dg-muted">Held by an agent with the <b>{ b.Skill }</b> skill.</p>
+			if current {
+				<a class="dg-btn" href="#try">This is the Card above</a>
+			} else {
+				<a class="dg-btn dg-btn-primary" href={ templ.SafeURL(dgUseHref(b.ID)) }>Use this Card</a>
+			}
+		</div>
+	</details>
+}
+
+templ dgClose() {
+	<section class="dg-band dg-close">
+		<div class="dg-wrap">
+			<h2 class="dg-h2">Give your first agent a Card</h2>
+			<div class="dg-hero-cta">
+				<a class="dg-btn dg-btn-primary" href={ templ.SafeURL(CardStartHref("", "", "")) }>Issue your own Card</a>
+				<a class="dg-btn" href="/docs/kiff-cards">How Cards work</a>
+			</div>
+		</div>
+	</section>
+}

@@ -1,0 +1,169 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SubprocessorsIT is the list of subprocessors (/subprocessors) in
+// Italian, at /it/subprocessors. It is a translation of Subprocessors:
+// the same sections, anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ SubprocessorsIT() {
+	@components.LayoutSite("KIFF — sub-responsabili del trattamento", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@subprocessorsHeadIT()
+			@subprocessorsListIT()
+			@subprocessorsNotListedIT()
+			@subprocessorsChangesIT()
+		</article>
+	}
+}
+
+templ subprocessorsHeadIT() {
+	<header class="legal-head">
+		<p class="legal-badge">Sub-responsabili del trattamento · v0.1</p>
+		<h1>Sub-responsabili del trattamento</h1>
+		<p class="legal-meta">
+			<strong>Ultimo aggiornamento:</strong> 17 novembre 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Le aziende di cui Kiff Agents OÜ si serve per far funzionare
+			KIFF Cloud e tafs e che trattano dati personali per suo
+			conto. Questo è l'elenco ufficiale.
+			L'<a href="/it/legal/dpa">Accordo sul trattamento dei dati</a>
+			regola il modo in cui le incarichiamo. Domande:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ subprocessorsListIT() {
+	<section id="list">
+		<h2>1. L'elenco</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Sub-responsabile</th>
+						<th>Cosa fa per KIFF</th>
+						<th>Dati che tocca</th>
+						<th>Luogo</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="aws">
+						<td>Amazon Web Services</td>
+						<td>Hosting: i server, il database e i suoi backup, la gestione delle chiavi, i segreti e il monitoraggio. Per tafs, il suo archivio e i collegamenti di planque</td>
+						<td>Tutto ciò che KIFF conserva: gli account e le persone che accedono, le Card, le decisioni, le ricevute, i log. Per tafs, le esecuzioni, le chat, le note di memoria e i token dei collegamenti (cifrati)</td>
+						<td>Irlanda (eu-west-1): KIFF Cloud, il servizio tafs, le esecuzioni, le chat e le chiamate al modello di tafs, e planque, con tutto ciò che conservano. Dall'Irlanda vengono serviti anche le demo pubbliche di KIFF e i video del sito. L'unica cosa negli Stati Uniti (us-east-1) sono i certificati che CloudFront richiede lì, che non contengono dati dei clienti</td>
+					</tr>
+					<tr id="clerk">
+						<td>Clerk</td>
+						<td>Identità: accesso e sessioni per gli account KIFF</td>
+						<td>L'indirizzo email e il nome delle persone che accedono, le loro sessioni, l'indirizzo IP, il dispositivo e il browser, e l'identità fornita da Apple, Google o GitHub quando qualcuno accede con uno di essi</td>
+						<td>Stati Uniti</td>
+					</tr>
+					<tr id="stripe">
+						<td>Stripe</td>
+						<td>Pagamento: checkout, fatture e portale di fatturazione per un piano a pagamento</td>
+						<td>Il contatto di fatturazione e i dati di pagamento inseriti nel checkout di Stripe, e i conteggi di utilizzo comunicati per la fatturazione</td>
+						<td>UE e Stati Uniti</td>
+					</tr>
+					<tr id="resend">
+						<td>Resend</td>
+						<td>Email: gli avvisi di chiamata trattenuta e quelli sulle Card, gli avvisi su utilizzo e account, e le risposte dell'assistenza. Per tafs, la porta email di un taf: i messaggi che le persone le inviano e le sue risposte</td>
+						<td>L'indirizzo email del destinatario e l'avviso. Un avviso di chiamata trattenuta indica l'agente, l'azione, il suo importo e la Card i cui limiti supera. Per una porta email, i messaggi, i loro mittenti e gli allegati</td>
+						<td>Stati Uniti</td>
+					</tr>
+					<tr id="cloudflare">
+						<td>Cloudflare</td>
+						<td>Email: riceve la posta inviata agli indirizzi kiff.dev, come le richieste di assistenza e sulla privacy, e la inoltra alle caselle del team (Email Routing)</td>
+						<td>I messaggi inviati agli indirizzi kiff.dev: mittente, destinatari, oggetto, testo e allegati</td>
+						<td>Stati Uniti, sulla rete mondiale di Cloudflare</td>
+					</tr>
+					<tr id="google-workspace">
+						<td>Google Workspace</td>
+						<td>Email: le caselle del team, dove arriva la posta inviata agli indirizzi kiff.dev dopo che Cloudflare la inoltra, comprese le richieste di assistenza e sulla privacy</td>
+						<td>I messaggi inviati agli indirizzi kiff.dev: mittente, destinatari, oggetto, testo e allegati</td>
+						<td>Stati Uniti e gli altri paesi in cui Google conserva i dati di Workspace</td>
+					</tr>
+					<tr id="composio">
+						<td>Composio</td>
+						<td>Per tafs, tramite planque: custodisce gli accessi dei collegamenti gestiti (i servizi che un cliente collega tramite la sua pagina di accesso) e il bot Slack dietro una porta Slack, ed esegue ogni chiamata che planque richiede.
+							@composioUse("it")
+						</td>
+						<td>Gli accessi dei servizi collegati (token o chiavi), custoditi da Composio e mai dati a un taf né a planque; i dati in ingresso di ogni chiamata e la risposta del servizio; i messaggi di una porta Slack</td>
+						<td>Stati Uniti</td>
+					</tr>
+					<tr id="apple">
+						<td>Apple</td>
+						<td>Notifiche push ai dispositivi registrati nell'app tafs (Apple Push Notification service): le chiamate trattenute, i messaggi di una porta e un'app che ha disconnesso un taf</td>
+						<td>Il token push del dispositivo e il testo dell'avviso: quale taf e, nell'avviso di una porta, il nome o l'indirizzo email di chi ha scritto. Nessun importo e nessun dettaglio della richiesta</td>
+						<td>Stati Uniti</td>
+					</tr>
+					<tr id="google">
+						<td>Google</td>
+						<td>L'app tafs su Android: le notifiche push ai dispositivi registrati per gli avvisi (Firebase Cloud Messaging) e gli acquisti tramite la fatturazione di Google Play</td>
+						<td>Il token push del dispositivo e il testo dell'avviso: quale taf e, nell'avviso di una porta, il nome o l'indirizzo email di chi ha scritto, senza importi né dettagli della richiesta; per un acquisto, cosa è stato comprato, l'id casuale dell'account, il token dell'acquisto e l'id dell'ordine</td>
+						<td>Stati Uniti</td>
+					</tr>
+					<tr id="anthropic">
+						<td>Anthropic</td>
+						<td>Modelli di IA: il modello dietro Coach e ogni taf (Claude API). Solo per tafs</td>
+						<td>Cosa le viene inviato: ciò che scrivi a Coach e ai tuoi taf, i file che alleghi, ciò che le tue app collegate restituiscono a un taf mentre lavora e ciò che è sul tuo schermo mentre Coach ti aiuta nell'app; e la risposta del modello. Mai inviato: le password e le chiavi usate dalle tue app collegate, né la tua impronta. Inviato solo quando lo consenti nell'app tafs (vedi <a href="/it/privacy#ai-in-tafs">Privacy</a>). Anthropic lo conserva fino a 30 giorni, più a lungo solo se lo richiedono la legge, la sua politica d'uso o i suoi termini</td>
+						<td>Stati Uniti, con chiamate dall'Irlanda (eu-west-1); l'inferenza può avvenire negli Stati Uniti, in Europa, in Asia o in Australia</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		@composioApps("it")
+		<p>
+			Quando un sub-responsabile si trova fuori dallo Spazio
+			economico europeo, il trasferimento si basa sul
+			Data Privacy Framework UE–USA o sulle Clausole contrattuali
+			tipo, come stabilisce il §11
+			del <a href="/it/legal/dpa#transfers">DPA</a>.
+		</p>
+	</section>
+}
+
+templ subprocessorsNotListedIT() {
+	<section id="not-listed">
+		<h2>2. Chi non è nell'elenco</h2>
+		<ul>
+			<li>
+				<strong>Le tue app.</strong> Quando KIFF invia la
+				chiamata di un agente a un'app che hai collegato,
+				come il tuo sistema di pagamento o di assistenza,
+				quell'app lavora per te, non per noi. Il suo fornitore è
+				un tuo fornitore.
+			</li>
+			<li>
+				<strong>La traccia pubblica verificabile.</strong> Vi
+				vengono pubblicati solo hash di riepilogo. Non riceve
+				dati personali.
+			</li>
+		</ul>
+	</section>
+}
+
+templ subprocessorsChangesIT() {
+	<section id="changes">
+		<h2>3. Modifiche</h2>
+		<p>
+			Prima di aggiungere o sostituire un sub-responsabile che
+			tratta i tuoi dati personali, ti avvisiamo con almeno trenta
+			giorni di anticipo, e puoi opporti, come stabilisce il §10
+			del <a href="/it/legal/dpa#sub-processors">DPA</a>.
+			Aggiorniamo questa pagina entro 30 giorni da ogni modifica.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versione del documento:</strong> v0.1.<br/>
+			<strong>Ultimo aggiornamento:</strong> 17 novembre 2026.
+		</p>
+	</section>
+}

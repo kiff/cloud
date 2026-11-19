@@ -1,0 +1,94 @@
+package pages
+
+import (
+	"fmt"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/notify"
+)
+
+// DashboardNotifications renders /dashboard/notifications: the full,
+// filterable notification feed. The feed is read from the request
+// context (composed by the notifications middleware from pending
+// approvals + runtime health), so this template stays a pure
+// presentation surface. Server-rendered filter chips (?filter=), no
+// JS.
+templ DashboardNotifications(v DashboardView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — notifications",
+		"notifications",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.CurrentDomain),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Workspace · Notifications</p>
+					<h1>Notifications</h1>
+ <a href="/needs-you">Open Needs you</a>
+					<p class="dash-note">The same feed as the bell.</p>
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn btn-secondary" href="/dashboard/settings?tab=notifications">Notification settings</a>
+				</div>
+			</header>
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+			@flashBanner(v.Flash)
+			if v.Me != nil {
+				@notificationsFilters(v)
+				@notificationsFeed(v)
+			}
+		</section>
+	}
+}
+
+// notificationsFilters renders the server-side filter chips (All /
+// Approvals / Runtime health), each carrying its match count.
+templ notificationsFilters(v DashboardView) {
+	<div class="dash-filters" role="group" aria-label="Filter notifications">
+		<a class={ notificationsChipClass(v.NotificationsFilter, "") } href={ templ.SafeURL(notificationsFilterHref("")) }>
+			{ fmt.Sprintf("All · %d", notificationsCount(ctx, "")) }
+		</a>
+		<a class={ notificationsChipClass(v.NotificationsFilter, string(notify.KindApproval)) } href={ templ.SafeURL(notificationsFilterHref(string(notify.KindApproval))) }>
+			{ fmt.Sprintf("Approvals · %d", notificationsCount(ctx, string(notify.KindApproval))) }
+		</a>
+		<a class={ notificationsChipClass(v.NotificationsFilter, string(notify.KindRuntime)) } href={ templ.SafeURL(notificationsFilterHref(string(notify.KindRuntime))) }>
+			{ fmt.Sprintf("Runtime health · %d", notificationsCount(ctx, string(notify.KindRuntime))) }
+		</a>
+	</div>
+}
+
+// notificationsFeed renders the filtered feed, or an honest empty state.
+templ notificationsFeed(v DashboardView) {
+	if notificationsCount(ctx, v.NotificationsFilter) == 0 {
+		<article class="dash-card">
+			<h2>Nothing here</h2>
+			<p class="dash-note">
+				No notifications match this filter.
+			</p>
+		</article>
+	} else {
+		<article class="dash-card dash-notif-list">
+			for _, it := range notificationsFiltered(ctx, v.NotificationsFilter) {
+				<div class={ "dash-notif-row", templ.KV("dash-notif-row-action", it.Actionable) }>
+					<span class={ "dash-notif-pill", "dash-notif-pill-" + string(it.Severity) }>{ notificationKindLabel(it.Kind) }</span>
+					<span class="dash-notif-scope">{ it.Scope }</span>
+					<span class="dash-notif-body">
+						<strong>{ it.Title }</strong>
+						if it.Subtitle != "" {
+							<small>{ it.Subtitle }</small>
+						}
+					</span>
+					<time class="dash-notif-time">{ it.TimeLabel }</time>
+					if it.ActionLabel != "" {
+						<a class="btn btn-secondary btn-sm dash-notif-action" href={ templ.SafeURL(it.Href) }>{ it.ActionLabel }</a>
+					}
+				</div>
+			}
+		</article>
+	}
+}

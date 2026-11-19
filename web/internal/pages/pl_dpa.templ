@@ -1,0 +1,811 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DPAPL is the Data Processing Agreement template (/legal/dpa) in Polish,
+// at /pl/legal/dpa. It is a translation of DPA: the same sections,
+// anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ DPAPL() {
+	@components.LayoutSite("KIFF — umowa powierzenia przetwarzania danych", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@dpaHeadPL()
+			@dpaPartiesPL()
+			@dpaDefinitionsPL()
+			@dpaScopePL()
+			@dpaSubjectMatterPL()
+			@dpaNaturePurposePL()
+			@dpaCategoriesPL()
+			@dpaInstructionsPL()
+			@dpaProcessorObligationsPL()
+			@dpaConfidentialityPL()
+			@dpaSubprocessorsPL()
+			@dpaTransfersPL()
+			@dpaSecurityPL()
+			@dpaBreachNotificationPL()
+			@dpaDataSubjectRequestsPL()
+			@dpaAuditPL()
+			@dpaReturnDeletionPL()
+			@dpaLiabilityPL()
+			@dpaTermPL()
+			@dpaGoverningLawPL()
+			@dpaAnnex1PL()
+			@dpaAnnex2PL()
+			@dpaAnnex3PL()
+			@dpaAnnex4PL()
+		</article>
+	}
+}
+
+templ dpaHeadPL() {
+	<header class="legal-head">
+		<p class="legal-badge">Wzór DPA · v0.1</p>
+		<h1>Umowa powierzenia przetwarzania danych (DPA)</h1>
+		<p class="legal-meta">
+			<strong>Wersja wzoru:</strong> v0.1.
+			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+		</p>
+		<p class="legal-disclaimer">
+			To jest opublikowany <em>wzór</em>, a nie podpisana umowa.
+			Klienci mogą go używać jako punktu wyjścia do oceny
+			w procesie zakupowym. Podpisana DPA tworzy po stronie Kiff
+			Agents OÜ rzeczywiste obowiązki, które mogą egzekwować
+			unijne organy nadzorcze. Kontakt w sprawach zakupowych:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ dpaPartiesPL() {
+	<section id="parties">
+		<h2>1. Strony</h2>
+		<p>Niniejszą DPA zawierają:</p>
+		<ul>
+			<li><strong>Kiff Agents OÜ</strong>, estońska spółka z ograniczoną odpowiedzialnością, numer rejestrowy 17372313, numer VAT EE102924327, z siedzibą pod adresem Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia (<strong>„Podmiot Przetwarzający”</strong>); oraz</li>
+			<li><strong>[PEŁNA NAZWA KLIENTA]</strong>, z siedzibą pod adresem <strong>[ADRES]</strong>, numer rejestrowy <strong>[NUMER REJESTROWY]</strong> (<strong>„Administrator”</strong>).</li>
+		</ul>
+		<p>
+			Każda z nich to „strona”, a razem „strony”. Niniejsza DPA
+			uzupełnia Warunki korzystania z usługi na stronie
+			<a href="/pl/terms">/terms</a> oraz każdy handlowy formularz
+			zamówienia między stronami; w razie sprzeczności
+			w sprawach ochrony danych pierwszeństwo ma niniejsza DPA.
+		</p>
+	</section>
+}
+
+templ dpaDefinitionsPL() {
+	<section id="definitions">
+		<h2>2. Definicje</h2>
+		<p>
+			Terminy pisane wielką literą, których tu nie zdefiniowano,
+			mają znaczenie nadane im w RODO (rozporządzenie (UE)
+			2016/679).
+		</p>
+		<ul>
+			<li><strong>„RODO”</strong> — unijne ogólne rozporządzenie o ochronie danych.</li>
+			<li><strong>„Dane Osobowe”</strong>, <strong>„Osoba, której dane dotyczą”</strong>, <strong>„Przetwarzanie”</strong>, <strong>„Administrator”</strong>, <strong>„Podmiot Przetwarzający”</strong>, <strong>„Podmiot Podprzetwarzający”</strong>, <strong>„Naruszenie Ochrony Danych Osobowych”</strong> — zgodnie z definicjami w artykule 4 RODO.</li>
+			<li><strong>„Dane Audytowe”</strong> — Dane Osobowe, które Administrator przekazuje do Usługi lub wytwarza w niej przez środowisko wykonawcze, w tym zdarzenia, decyzje, akcje, zatwierdzenia i potwierdzenia.</li>
+			<li><strong>„Dane tafs”</strong> — Dane Osobowe w tym, co tafs przechowuje w imieniu Administratora: uruchomienia i czaty każdego tafa (w tym to, co zwracają mu połączone aplikacje Administratora) oraz czaty Setup, jego raporty, jego notatki pamięci, urządzenia zarejestrowane do jego alertów oraz połączenia Administratora z jego aplikacjami w planque (zapis każdego połączenia i jego zatwierdzeń oraz token lub klucz, który planque dla niego przechowuje). Opisuje je Załącznik 4.</li>
+			<li><strong>„Usługa”</strong> — produkt KIFF Cloud, w tym tafs, zgodnie z definicją w Warunkach korzystania z usługi.</li>
+			<li><strong>„Standardowe Klauzule Umowne”</strong> lub <strong>„SCC”</strong> — standardowe klauzule umowne Komisji Europejskiej z 2021 r. dotyczące przekazywania Danych Osobowych do państw trzecich.</li>
+			<li><strong>„DPF”</strong> — decyzja stwierdzająca odpowiedni stopień ochrony w ramach ochrony danych UE–USA (EU–US Data Privacy Framework).</li>
+			<li><strong>„TOM”</strong> — środki techniczne i organizacyjne opisane w Załączniku 2.</li>
+		</ul>
+	</section>
+}
+
+templ dpaScopePL() {
+	<section id="scope">
+		<h2>3. Zakres i role</h2>
+		<p>
+			Niniejsza DPA ma zastosowanie, gdy Kiff Agents OÜ
+			przetwarza Dane Osobowe w imieniu Administratora w związku
+			z Usługą. W odniesieniu do Danych Audytowych i Danych tafs
+			Administrator jest Administratorem, a Kiff Agents OÜ jest
+			Podmiotem Przetwarzającym.
+		</p>
+		<p>
+			Dane Osobowe, które przetwarzamy na temat posiadaczy kont
+			Administratora (metadane logowania, osoby kontaktowe do
+			rozliczeń, korespondencja ze wsparciem), podlegają naszej
+			<a href="/pl/privacy">polityce prywatności</a>;
+			w odniesieniu do tych danych jesteśmy niezależnym
+			Administratorem, a nie Podmiotem Przetwarzającym na
+			podstawie niniejszej DPA.
+		</p>
+	</section>
+}
+
+templ dpaSubjectMatterPL() {
+	<section id="subject-matter">
+		<h2>4. Przedmiot i czas trwania</h2>
+		<p>
+			<strong>Przedmiot:</strong> Przetwarzanie Danych Audytowych
+			i Danych tafs w celu świadczenia Usługi.
+		</p>
+		<p>
+			<strong>Czas trwania:</strong> od dnia wejścia niniejszej
+			DPA w życie do późniejszego z następujących zdarzeń:
+			(a) rozwiązania Warunków korzystania z usługi, na których
+			się ona opiera, albo (b) usunięcia wszystkich Danych
+			Audytowych zgodnie z §16. Postanowienia, które ze swej
+			natury obowiązują po rozwiązaniu umowy (audyt, zwolnienie
+			z odpowiedzialności, prawo właściwe), pozostają w mocy.
+		</p>
+	</section>
+}
+
+templ dpaNaturePurposePL() {
+	<section id="nature-purpose">
+		<h2>5. Charakter i cel przetwarzania</h2>
+		<p>
+			Kiff Agents OÜ przetwarza Dane Audytowe wyłącznie
+			w zakresie niezbędnym do świadczenia Usługi: przyjmuje
+			propozycje i wywołania narzędzi, ocenia je według
+			konfiguracji i Card Administratora, pozostawia je jako
+			oczekujące na zatwierdzenie przez człowieka, gdy wymaga
+			tego konfiguracja, przekazuje autoryzowane wywołanie do
+			połączonej aplikacji albo wydaje autoryzację, którą
+			aplikacja weryfikuje, zapisuje decyzje i wynik zgłoszony
+			przez aplikację, wystawia podpisane Potwierdzenia oraz
+			(gdy Administrator tak to skonfigurował) publikuje
+			w publicznym weryfikowalnym śladzie zbiorcze skróty
+			(hashe) ujawniające każdą manipulację. Samą akcję wykonuje
+			połączona aplikacja; sama decyzja o autoryzacji nie jest
+			dowodem, że akcja została wykonana.
+		</p>
+		<p>
+			W przypadku tafs Kiff Agents OÜ przetwarza też Dane tafs,
+			aby prowadzić każdego tafa, którego uruchamia
+			Administrator: uruchamia go według harmonogramu
+			i w czatach z osobami po stronie Administratora, wysyła
+			jego wywołania narzędzi przez KIFF, przechowuje jego
+			uruchomienia, czaty i notatki pamięci, aby mógł raportować
+			i kontynuować pracę, oraz powiadamia zarejestrowane
+			urządzenia Administratora, gdy wywołanie jest oczekujące.
+			Przez Setup i planque łączy też aplikacje
+			Administratora, gdy osoby po stronie Administratora logują
+			się u dostawcy aplikacji i zatwierdzają połączenie na swoim
+			urządzeniu: w przypadku aplikacji, w której planque loguje się sama, takiej jak Stripe, lub klucza podanego przez Administratora planque przechowuje ten token lub klucz w postaci zaszyfrowanej i używa go wyłącznie do wykonania wywołania, o którym zdecydował KIFF; w przypadku połączenia zarządzanego logowanie przechowuje Composio, które wykonuje tylko wywołania, o które prosi planque, a planque przechowuje zapis połączenia i zatwierdzone narzędzia. KIFF używa połączeń zarządzanych tylko dla aplikacji wymienionych na <a href="/pl/subprocessors#composio">kiff.dev/subprocessors</a>. Załącznik 4 określa,
+			jakie to dane, gdzie są przechowywane i jak długo.
+		</p>
+	</section>
+}
+
+templ dpaCategoriesPL() {
+	<section id="categories">
+		<h2>6. Kategorie Osób, których dane dotyczą, i Danych Osobowych</h2>
+		<p>
+			Domyślnie Kiff Agents OÜ przetwarza następujące kategorie
+			Danych Osobowych, zgodnie z wykazem na stronie
+			<a href="/pl/security#data-we-process">/security#data-we-process</a>:
+		</p>
+		<ul>
+			<li><strong>Dane konta</strong>: kim są osoby po stronie Administratora na jego koncie (imiona i nazwiska, adresy e-mail, role) oraz jego agenci i ich klucze. Metadane logowania, które Kiff Agents OÜ przechowuje jako administrator, pozostają objęte §3.</li>
+			<li><strong>Połączenia z aplikacjami</strong>: każde połączenie z aplikacjami Administratora, zatwierdzone narzędzia, zapis tego, kto je zatwierdził, oraz – jeśli przechowuje go planque – jego token lub klucz (zaszyfrowany).</li>
+			<li><strong>Zapisy akcji agentów</strong>: dla każdego wywołania: kto pytał (agent i klucz), akcja, to, na czym działała, wynik i jego powody, obowiązująca Card, parametry liczbowe, oczekujące wywołania i odpowiedzi na nie oraz potwierdzenia.</li>
+			<li><strong>Czaty z tafs</strong>: uruchomienia i czaty każdego tafa, jego raporty i notatki pamięci oraz to, co zwracają mu aplikacje Administratora, jak opisuje Załącznik 4.</li>
+		</ul>
+		<p>
+			<strong>Osobami, których dane dotyczą</strong>, są osoby po
+			stronie Administratora, które korzystają z Usługi, oraz
+			osoby, których dane pojawiają się w akcjach jego agentów
+			i w czatach z tafs, takie jak klienci, dostawcy lub
+			pracownicy Administratora.
+		</p>
+		<p>
+			To, co jeszcze trafia do Usługi, zależy od konfiguracji
+			Administratora i danych, które on wysyła; Kiff Agents OÜ
+			nie ma wpływu na to, które pola wysyła Administrator.
+			Wszelkie dalsze kategorie Administrator dodaje
+			w Załączniku 1, który jest aktualizowany, gdy konfiguracja
+			istotnie się zmienia.
+		</p>
+	</section>
+}
+
+templ dpaInstructionsPL() {
+	<section id="instructions">
+		<h2>7. Polecenia Administratora</h2>
+		<p>
+			Kiff Agents OÜ będzie przetwarzać Dane Osobowe zgodnie
+			z udokumentowanymi poleceniami Administratora. Na te
+			polecenia składają się niniejsza DPA, Warunki korzystania
+			z usługi, dokumentacja techniczna Usługi i środki
+			bezpieczeństwa w datowanej wersji na stronie
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>
+			oraz konfiguracje i polecenia przekazywane przez Usługę
+			przez upoważnionych użytkowników Administratora.
+		</p>
+		<p>
+			Strategiczny whitepaper i dokumentacja osobno
+			licencjonowanego frameworka open source to materiały
+			objaśniające i nie są częścią tych poleceń dotyczących
+			przetwarzania. Samo opublikowanie zmienionego dokumentu
+			nie zmienia poleceń mających zastosowanie do istniejącej
+			umowy.
+		</p>
+		<p>
+			Polecenia wykraczające poza ten zakres wymagają pisemnego
+			porozumienia. Jeśli Kiff Agents OÜ uzna, że polecenie jest
+			sprzeczne z RODO lub innymi mającymi zastosowanie
+			przepisami o ochronie danych, zawiadomi o tym
+			Administratora.
+		</p>
+	</section>
+}
+
+templ dpaProcessorObligationsPL() {
+	<section id="processor-obligations">
+		<h2>8. Obowiązki Podmiotu Przetwarzającego (art. 28 ust. 3)</h2>
+		<p>
+			Kiff Agents OÜ:
+		</p>
+		<ol>
+			<li>będzie przetwarzać Dane Osobowe wyłącznie na udokumentowane polecenie Administratora, także w odniesieniu do przekazywania danych za granicę, chyba że inne postępowanie nakazuje prawo UE lub państwa członkowskiego (w takim przypadku Kiff Agents OÜ poinformuje Administratora o tym wymogu prawnym przed rozpoczęciem Przetwarzania, o ile prawo to nie zakazuje udzielania takiej informacji z uwagi na ważny interes publiczny);</li>
+			<li>zapewni, aby osoby upoważnione do Przetwarzania Danych Osobowych były związane odpowiednimi zobowiązaniami do zachowania poufności;</li>
+			<li>wdroży środki techniczne i organizacyjne opisane w Załączniku 2;</li>
+			<li>będzie przestrzegać warunków korzystania z usług Podmiotów Podprzetwarzających określonych w §10;</li>
+			<li>biorąc pod uwagę charakter Przetwarzania, będzie pomagać Administratorowi, przez odpowiednie środki, wywiązywać się z obowiązku odpowiadania na żądania Osób, których dane dotyczą, na podstawie rozdziału III RODO;</li>
+			<li>będzie pomagać Administratorowi wywiązywać się z obowiązków określonych w artykułach 32–36 RODO (bezpieczeństwo, zgłaszanie naruszeń, ocena skutków dla ochrony danych, uprzednie konsultacje), biorąc pod uwagę charakter Przetwarzania i informacje dostępne Kiff Agents OÜ;</li>
+			<li>po zakończeniu świadczenia usług, zależnie od decyzji Administratora, usunie lub zwróci wszystkie Dane Osobowe zgodnie z §16 oraz usunie istniejące kopie, chyba że prawo UE lub państwa członkowskiego nakazuje ich przechowywanie;</li>
+			<li>udostępni Administratorowi wszelkie informacje niezbędne do wykazania zgodności z artykułem 28 RODO oraz umożliwi audyty na podstawie §15 i będzie się do nich przyczyniać.</li>
+		</ol>
+	</section>
+}
+
+templ dpaConfidentialityPL() {
+	<section id="confidentiality">
+		<h2>9. Poufność</h2>
+		<p>
+			Kiff Agents OÜ zapewnia, że osoby mające dostęp do Danych
+			Osobowych są związane pisemnymi zobowiązaniami do
+			zachowania poufności albo podlegają odpowiedniemu
+			ustawowemu obowiązkowi zachowania poufności. Dostęp jest
+			przyznawany zgodnie z zasadą najmniejszych uprawnień i jest
+			rejestrowany.
+		</p>
+	</section>
+}
+
+templ dpaSubprocessorsPL() {
+	<section id="sub-processors">
+		<h2>10. Podmioty Podprzetwarzające</h2>
+		<p>
+			Administrator upoważnia Kiff Agents OÜ do korzystania
+			z usług Podmiotów Podprzetwarzających wymienionych
+			w Załączniku 3 i na stronie
+			<a href="/pl/subprocessors">/subprocessors</a>, która jest
+			oficjalną listą. Kiff Agents OÜ nakłada na każdy Podmiot
+			Podprzetwarzający obowiązki w zakresie ochrony danych
+			zapewniające ochronę nie mniejszą niż niniejsza DPA.
+		</p>
+		<p>
+			Publiczny weryfikowalny ślad nie jest Podmiotem
+			Podprzetwarzającym. Trafiają do niego wyłącznie zbiorcze
+			skróty (hashe) i żadne Dane Osobowe.
+		</p>
+		<p>
+			Datowana wersja, do której prowadzi sekcja 7, utrwala
+			listę według stanu na swój dzień. Późniejsza zmiana staje
+			się skuteczna na podstawie tej sekcji, a nie przez
+			opublikowanie nowej wersji.
+		</p>
+		<p>
+			Gdy Kiff Agents OÜ zamierza zaangażować nowy Podmiot
+			Podprzetwarzający lub zastąpić dotychczasowy przy
+			Przetwarzaniu Danych Osobowych Administratora, zawiadamia
+			o tym Administratora z co najmniej trzydziestodniowym
+			wyprzedzeniem. Administrator może w ciągu piętnastu dni od
+			zawiadomienia sprzeciwić się zmianie z uzasadnionych
+			powodów związanych z ochroną danych; jeśli uzasadnionego
+			sprzeciwu nie uda się uwzględnić, każda ze stron może za
+			pisemnym zawiadomieniem wypowiedzieć tę część Usługi,
+			której dotyczy zmiana.
+		</p>
+	</section>
+}
+
+templ dpaTransfersPL() {
+	<section id="transfers">
+		<h2>11. Przekazywanie danych za granicę</h2>
+		<p>
+			Gdy Przetwarzanie Danych Osobowych wiąże się z ich
+			przekazaniem do państwa spoza Europejskiego Obszaru
+			Gospodarczego, wobec którego nie wydano decyzji
+			stwierdzającej odpowiedni stopień ochrony na podstawie
+			artykułu 45 RODO, strony uzgadniają, że:
+		</p>
+		<ul>
+			<li>przy przekazywaniu danych Podmiotom Podprzetwarzającym certyfikowanym w ramach ochrony danych UE–USA instrumentem przekazania jest DPF, dopóki pozostaje w mocy;</li>
+			<li>w pozostałych przypadkach strony włączają przez odesłanie Standardowe Klauzule Umowne Komisji Europejskiej z 2021 r., przy czym moduł 2 (administrator–podmiot przetwarzający) stosuje się do przekazywania danych przez Administratora do Kiff Agents OÜ, a moduł 3 (podmiot przetwarzający–podmiot podprzetwarzający) do przekazywania danych przez Kiff Agents OÜ do Podmiotu Podprzetwarzającego;</li>
+			<li>klauzula przystąpienia (klauzula 7) nie jest stosowana; stronami SCC są Administrator i Kiff Agents OÜ;</li>
+			<li>załączniki I.A i I.B do SCC wypełnia się przez odesłanie do Załącznika 1 do niniejszej DPA; załącznik II do SCC przez odesłanie do Załącznika 2 do niniejszej DPA; załącznik III przez odesłanie do Załącznika 3 do niniejszej DPA;</li>
+			<li>stosuje się wariant 2 klauzuli 9 lit. a) (ogólne pisemne zezwolenie), z trzydziestodniowym terminem zawiadomienia z §10 powyżej.</li>
+		</ul>
+		<p>
+			Gdy z oceny skutków przekazania danych wynika, że
+			właściwe są środki uzupełniające, Kiff Agents OÜ je wdraża
+			(szyfrowanie w transmisji i w spoczynku, rejestrowanie
+			dostępu, minimalizacja danych zgodnie z opisem
+			w Załączniku 2).
+		</p>
+	</section>
+}
+
+templ dpaSecurityPL() {
+	<section id="security">
+		<h2>12. Środki bezpieczeństwa</h2>
+		<p>
+			Kiff Agents OÜ wdraża odpowiednie środki techniczne
+			i organizacyjne, aby zapewnić stopień bezpieczeństwa
+			odpowiadający ryzyku, zgodnie z artykułem 32 RODO. Środki
+			z Załącznika 2 i z datowanej wersji na stronie
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>
+			stanowią uzgodniony poziom bazowy.
+			Strona <a href="/pl/security">/security</a> opisuje
+			aktualne środki. Kiff Agents OÜ może aktualizować środki,
+			o ile ogólny poziom bezpieczeństwa nie spadnie poniżej
+			tego poziomu bazowego, i z wyprzedzeniem zawiadamia
+			Administratora o ich istotnej zmianie.
+		</p>
+	</section>
+}
+
+templ dpaBreachNotificationPL() {
+	<section id="breach-notification">
+		<h2>13. Zawiadomienie o Naruszeniu Ochrony Danych Osobowych</h2>
+		<p>
+			Kiff Agents OÜ zawiadamia Administratora o Naruszeniu
+			Ochrony Danych Osobowych, które dotyczy Danych Osobowych
+			Administratora, bez zbędnej zwłoki, a w każdym razie
+			w ciągu siedemdziesięciu dwóch (72) godzin od chwili, gdy
+			się o nim dowie. Zawiadomienie zawiera, w zakresie znanym
+			w danej chwili i uzupełnianym w miarę pojawiania się
+			dalszych informacji:
+		</p>
+		<ul>
+			<li>charakter Naruszenia, w tym kategorie i przybliżoną liczbę Osób, których dane dotyczą, oraz rekordów, których dotyczy Naruszenie;</li>
+			<li>prawdopodobne konsekwencje Naruszenia;</li>
+			<li>środki zastosowane lub proponowane w celu zaradzenia Naruszeniu i złagodzenia jego ewentualnych negatywnych skutków;</li>
+			<li>imię i nazwisko oraz dane kontaktowe jednego punktu kontaktowego w Kiff Agents OÜ, od którego można uzyskać dalsze informacje.</li>
+		</ul>
+		<p>
+			Własny termin Administratora na zgłoszenie do jego organu
+			nadzorczego na podstawie artykułu 33 RODO biegnie od
+			chwili, gdy o Naruszeniu dowie się sam Administrator; to
+			zawiadomienie pomaga mu wywiązać się z tego obowiązku.
+		</p>
+	</section>
+}
+
+templ dpaDataSubjectRequestsPL() {
+	<section id="data-subject-requests">
+		<h2>14. Żądania Osób, których dane dotyczą</h2>
+		<p>
+			Kiff Agents OÜ pomaga Administratorowi, przez odpowiednie
+			środki techniczne i organizacyjne oraz biorąc pod uwagę
+			charakter Przetwarzania, wywiązywać się z obowiązku
+			odpowiadania na żądania Osób, których dane dotyczą,
+			korzystających ze swoich praw na podstawie artykułów
+			15–22 RODO.
+		</p>
+		<p>
+			Kiff Agents OÜ potwierdza otrzymanie prośby Administratora
+			o pomoc w ciągu pięciu (5) dni roboczych. Żądania
+			otrzymane bezpośrednio od Osób, których dane dotyczą, są
+			przekazywane Administratorowi bez zbędnej zwłoki; Kiff
+			Agents OÜ nie odpowiada na te żądania we własnym imieniu,
+			poza potwierdzeniem ich otrzymania i skierowaniem Osoby,
+			której dane dotyczą, do Administratora.
+		</p>
+	</section>
+}
+
+templ dpaAuditPL() {
+	<section id="audit">
+		<h2>15. Prawo do audytu</h2>
+		<p>
+			Kiff Agents OÜ udostępnia Administratorowi wszelkie
+			informacje zasadnie niezbędne do wykazania zgodności
+			z artykułem 28 RODO. Po pisemnym
+			zawiadomieniu z odpowiednim wyprzedzeniem (co najmniej trzydzieści dni, z wyjątkiem
+			audytu wywołanego potwierdzonym istotnym naruszeniem)
+			Administrator może przeprowadzić audyt Kiff Agents OÜ raz
+			w okresie dwunastu miesięcy.
+		</p>
+		<p>
+			Kiff Agents OÜ nie ma jeszcze raportu SOC 2 ani ISO 27001.
+			Na żądanie udostępnia swój przegląd bezpieczeństwa ze
+			strony <a href="/pl/security">/security</a> i odpowiada na
+			kwestionariusze bezpieczeństwa Administratora.
+		</p>
+		<p>
+			Audyty są prowadzone w zwykłych godzinach pracy, nie
+			zakłócają nadmiernie działania Usługi i respektują
+			poufność pozostałych klientów Kiff Agents OÜ. Administrator
+			ponosi własne koszty audytu; gdy audyt wykaże istotną
+			niezgodność po stronie Kiff Agents OÜ, Kiff Agents OÜ
+			zwraca Administratorowi uzasadnione koszty audytu.
+		</p>
+	</section>
+}
+
+templ dpaReturnDeletionPL() {
+	<section id="return-deletion">
+		<h2>16. Zwrot lub usunięcie Danych Osobowych</h2>
+		<p>
+			Zależnie od decyzji Administratora i w ciągu trzydziestu
+			dni od zakończenia świadczenia Usługi na rzecz
+			Administratora Kiff Agents OÜ albo zwraca Dane Audytowe
+			w ustrukturyzowanym, powszechnie używanym formacie
+			nadającym się do odczytu maszynowego, albo je usuwa. Ten
+			sam wybór dotyczy Danych tafs. Jeśli Administrator nie
+			dokona wyboru w tym terminie, Kiff Agents OÜ usuwa jedne
+			i drugie. Dane tafs są usuwane przez usunięcie każdego
+			tafa, jak opisuje Załącznik 4: po zwróceniu danych
+			Administratora albo od razu, gdy wybrał on usunięcie, Kiff
+			Agents OÜ usuwa każdego tafa, którego Administrator nie
+			usunął sam, oraz rozłącza i usuwa połączenia Administratora
+			i ich zapisy w planque.
+		</p>
+		<p>
+			Skróty już opublikowane w publicznym weryfikowalnym
+			śladzie pozostają, ponieważ ślad jest niezmienny. Ponieważ
+			publiczny ślad stosuje kryptograficzne solenie osobne dla
+			każdego tenanta (zgodnie z
+			<a href="/pl/security#public-trail">/security#public-trail</a>),
+			zniszczenie soli tenanta sprawia, że tych opublikowanych
+			skrótów trwale nie da się powiązać z rekordami,
+			z których powstały.
+		</p>
+		<p>
+			Kopia zapasowa bazy danych KIFF jest wykonywana codziennie
+			i szyfrowana, a każda kopia jest przechowywana siedem dni,
+			więc usunięty rekord znika z nich w ciągu siedmiu dni od
+			usunięcia. Magazyny danych tafs i planque przechowują
+			przez 35 dni szyfrowane kopie do odtwarzania do punktu w
+			czasie, więc usunięty rekord znika z nich w ciągu 35 dni
+			od usunięcia; służą one wyłącznie do odtworzenia magazynu
+			po awarii. Logi usług, które mogą wskazywać konto, są
+			usuwane w ciągu 30 dni. Kiff Agents OÜ może zachować Dane Osobowe,
+			gdy ich przechowywanie nakazuje prawo UE lub państwa
+			członkowskiego (na przykład estońska ustawa
+			o rachunkowości, §12).
+		</p>
+	</section>
+}
+
+templ dpaLiabilityPL() {
+	<section id="liability">
+		<h2>17. Odpowiedzialność</h2>
+		<p>
+			Odpowiedzialność każdej ze stron na podstawie niniejszej
+			DPA podlega ograniczeniom i wyłączeniom określonym
+			w Warunkach korzystania z usługi, chyba że mające
+			zastosowanie prawo zakazuje takiego ograniczenia. Każda ze
+			stron odpowiada za szkodę spowodowaną własnym naruszeniem
+			RODO zgodnie z artykułem 82 RODO.
+		</p>
+	</section>
+}
+
+templ dpaTermPL() {
+	<section id="term">
+		<h2>18. Okres obowiązywania i rozwiązanie</h2>
+		<p>
+			Niniejsza DPA wchodzi w życie z chwilą podpisania przez
+			obie strony i obowiązuje przez czas opisany w §4.
+			Rozwiązanie Warunków korzystania z usługi automatycznie
+			rozwiązuje niniejszą DPA, z zastrzeżeniem obowiązków,
+			które pozostają w mocy.
+		</p>
+	</section>
+}
+
+templ dpaGoverningLawPL() {
+	<section id="governing-law">
+		<h2>19. Prawo właściwe</h2>
+		<p>
+			Niniejsza DPA podlega prawu Republiki Estońskiej, bez
+			uszczerbku dla bezwzględnie obowiązujących przepisów RODO
+			oraz przepisów o ochronie konsumentów, o ile mają
+			zastosowanie. Spory wynikające z niniejszej DPA podlegają
+			zasadom dotyczącym sądu właściwego i wyboru prawa z §18
+			Warunków korzystania z usługi.
+		</p>
+	</section>
+}
+
+templ dpaAnnex1PL() {
+	<section id="annex-1">
+		<h2>Załącznik 1 — Opis Przetwarzania</h2>
+		<p>Wypełniany osobno dla każdej podpisanej umowy.</p>
+		<dl class="legal-annex">
+			<div>
+				<dt>A. Wykaz stron</dt>
+				<dd>Administrator i Podmiot Przetwarzający wskazani w §1.</dd>
+			</div>
+			<div>
+				<dt>B. Opis przekazywania danych</dt>
+				<dd>
+					<strong>Kategorie Osób, których dane dotyczą:</strong> wymienione w §6 oraz [wszelkie dalsze kategorie, które deklaruje Administrator].
+					<br/>
+					<strong>Kategorie Danych Osobowych:</strong> wymienione w §6 (dane konta, połączenia z aplikacjami, zapisy akcji agentów, czaty z tafs) oraz [wszelkie dalsze kategorie, które deklaruje Administrator].
+					<br/>
+					<strong>Dane wrażliwe:</strong> [deklaracja Administratora; domyślnie: brak].
+					<br/>
+					<strong>Częstotliwość przekazywania:</strong> ciągła (każde żądanie do Usługi).
+					<br/>
+					<strong>Charakter Przetwarzania:</strong> opisany w §5.
+					<br/>
+					<strong>Cele Przetwarzania:</strong> opisane w §5.
+					<br/>
+					<strong>Okres przechowywania:</strong> zgodnie z <a href="/pl/privacy#retention">/privacy#retention</a> i §16.
+				</dd>
+			</div>
+			<div>
+				<dt>C. Właściwy organ nadzorczy</dt>
+				<dd>Estońska Inspekcja Ochrony Danych (Andmekaitse Inspektsioon).</dd>
+			</div>
+		</dl>
+	</section>
+}
+
+templ dpaAnnex2PL() {
+	<section id="annex-2">
+		<h2>Załącznik 2 — Środki techniczne i organizacyjne</h2>
+		<p>
+			Podsumowanie odpowiednie dla DPA zawieranej na podstawie
+			artykułu 28. Ten Załącznik i datowana wersja na stronie
+			<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>
+			stanowią uzgodniony poziom bazowy, o którym mowa w sekcji 12.
+			Strona <a href="/pl/security">/security</a> pokazuje
+			aktualne środki i jest aktualizowana w ciągu 30 dni od
+			istotnej zmiany.
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Wymiar z artykułu 32</th>
+						<th>Środki</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Pseudonimizacja i szyfrowanie</td>
+						<td>TLS 1.2+ w transmisji. Szyfrowanie w spoczynku domyślnymi mechanizmami dostawcy zarządzanej bazy danych. Klucze podpisujące osobne dla każdego tenanta, przechowywane w zarządzanej usłudze kluczy. Haszowanie adresów e-mail w spoczynku jest planowane.</td>
+					</tr>
+					<tr>
+						<td>Poufność</td>
+						<td>Izolacja tenantów w warstwie bazy danych (osobny schemat Postgres dla każdego tenanta z przypiętym <code>search_path</code>). Dostęp według zasady najmniejszych uprawnień, jednokrotne logowanie dla personelu, umowy o zachowaniu poufności z całym personelem.</td>
+					</tr>
+					<tr>
+						<td>Integralność</td>
+						<td>Łańcuch audytowy tylko do dopisywania na poziomie frameworka. Zbiorcze skróty (hashe) ujawniające każdą manipulację, publikowane w publicznym weryfikowalnym śladzie.</td>
+					</tr>
+					<tr>
+						<td>Dostępność i odporność</td>
+						<td>Zarządzana moc obliczeniowa i baza danych w <code>eu-west-1</code> (Irlandia). Kontrole stanu. Uwagi operacyjne na stronie <a href="/pl/security#incident">/security#incident</a>.</td>
+					</tr>
+					<tr>
+						<td>Przywracanie dostępu</td>
+						<td>Udokumentowany runbook reagowania na incydenty, wyłącznie wewnętrzny.</td>
+					</tr>
+					<tr>
+						<td>Testowanie skuteczności</td>
+						<td>Testy jednostkowe i integracyjne, uruchamiane przed każdym wydaniem; okresowy przegląd bezpieczeństwa.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+}
+
+templ dpaAnnex3PL() {
+	<section id="annex-3">
+		<h2>Załącznik 3 — Podmioty Podprzetwarzające</h2>
+		<p>
+			Oficjalna lista znajduje się na stronie
+			<a href="/pl/subprocessors">/subprocessors</a>;
+			ta lista jest wiążąca co do aktualnych Podmiotów
+			Podprzetwarzających, zmienia się wyłącznie w trybie
+			określonym w sekcji 10 i jest aktualizowana w ciągu 30 dni
+			od każdej zmiany. Według stanu na tę wersję wzoru:
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Podmiot Podprzetwarzający</th>
+						<th>Świadczona usługa</th>
+						<th>Region</th>
+						<th>Instrument przekazania</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Amazon Web Services EMEA SARL / Amazon Web Services Inc.</td>
+						<td>Moc obliczeniowa, zarządzany Postgres, zarządzanie kluczami, sieć, przechowywanie sekretów; dla tafs także jego uruchomienia, czaty i notatki pamięci oraz połączenia planque</td>
+						<td>Irlandia (eu-west-1): KIFF Cloud, usługa tafs, uruchomienia, czaty i wywołania modelu tafs oraz planque, ze wszystkim, co przechowują. Z Irlandii działają też publiczne wersje demonstracyjne KIFF i filmy na stronie. Jedyne, co znajduje się w Stanach Zjednoczonych (us-east-1), to certyfikaty, których CloudFront tam wymaga i które nie zawierają danych klientów</td>
+						<td>Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
+					</tr>
+					<tr>
+						<td>Clerk, Inc.</td>
+						<td>Uwierzytelnianie użytkowników i zarządzanie sesjami: adres e-mail oraz imię i nazwisko osób, które się logują, ich sesje, adres IP, urządzenie i przeglądarka oraz tożsamość z Apple, Google lub GitHub, gdy ktoś loguje się przez jedną z tych usług</td>
+						<td>Stany Zjednoczone</td>
+						<td>Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
+					</tr>
+					<tr>
+						<td>Anthropic, PBC</td>
+						<td>Tylko tafs: model AI, dzięki któremu działają Coach i każdy taf (Claude API), który otrzymuje dane dopiero, gdy osoba zezwoli na to w aplikacji tafs. Anthropic usuwa to, co otrzymuje i zwraca, w ciągu 30 dni, chyba że musi to przechowywać dłużej, aby przestrzegać prawa lub egzekwować swoje zasady użytkowania, albo gdy jego warunki handlowe stanowią inaczej</td>
+						<td>Stany Zjednoczone, wywoływane z Irlandii (eu-west-1); wnioskowanie może odbywać się w Stanach Zjednoczonych, Europie, Azji lub Australii</td>
+						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Apple Inc.</td>
+						<td>Tylko tafs: dostarcza alerty o oczekujących wywołaniach na zarejestrowane urządzenia (Apple Push Notification service). Alert nie zawiera szczegółów prośby</td>
+						<td>Stany Zjednoczone</td>
+						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Resend, Inc.</td>
+						<td>E-maile do osób po stronie Administratora: powiadomienia o oczekujących wywołaniach i ostrzeżenia dotyczące Card, powiadomienia o wykorzystaniu i koncie oraz odpowiedzi wsparcia; dla tafs: drzwi e-mailowe tafa, czyli poczta do niego wysyłana i jego odpowiedzi</td>
+						<td>Stany Zjednoczone</td>
+						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Sampark Inc. (Composio)</td>
+						<td>Tylko tafs, przez planque: przechowuje logowania połączeń zarządzanych oraz bota Slacka stojącego za drzwiami w Slacku i wykonuje każde wywołanie, o które prosi planque, z jego danymi wejściowymi i odpowiedzią usługi. Ani taf, ani planque nie otrzymują tych logowań</td>
+						<td>Stany Zjednoczone</td>
+						<td>SCC (moduł 3)</td>
+					</tr>
+					<tr>
+						<td>Stripe Payments Europe, Ltd. / Stripe, Inc.</td>
+						<td>Rozliczenia, gdy są aktywne: osoba kontaktowa konta do rozliczeń i liczniki wykorzystania przekazywane do fakturowania</td>
+						<td>UE i Stany Zjednoczone</td>
+						<td>Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Publiczny weryfikowalny ślad nie jest Podmiotem
+			Podprzetwarzającym: trafiają do niego wyłącznie zbiorcze
+			skróty (hashe) i żadne Dane Osobowe.
+		</p>
+	</section>
+}
+
+templ dpaAnnex4PL() {
+	<section id="annex-4">
+		<h2>Załącznik 4 — tafs</h2>
+		<p>
+			Co tafs przechowuje w imieniu Administratora, gdzie i jak
+			długo. Administrator usuwa tafa w aplikacji tafs; jego
+			usunięcie kasuje wszystko, co poniżej jest przechowywane
+			„do usunięcia tafa”.
+		</p>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Dane</th>
+						<th>Gdzie</th>
+						<th>Co mogą zawierać</th>
+						<th>Jak długo</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Uruchomienia i czaty, w tym czaty Setup</td>
+						<td>Własny magazyn danych tafs (AWS, region w UE)</td>
+						<td>Wiadomości osób po stronie Administratora do tafa, jego odpowiedzi i raporty, podsumowanie wcześniejszych wiadomości długiego czatu, wykonane przez niego wywołania narzędzi oraz koszt każdego uruchomienia</td>
+						<td>30 dni albo do usunięcia tafa, jeśli nastąpi ono wcześniej</td>
+					</tr>
+					<tr>
+						<td>To, co zwracają aplikacje</td>
+						<td>Własny magazyn danych tafs (AWS, region w UE)</td>
+						<td>Wyniki z aplikacji Administratora, które mogą zawierać dane o jego klientach, dostawcach lub pracownikach</td>
+						<td>Do końca uruchomienia, które je odczytało. W czacie wyniki wywołań, które jedynie odczytują dane, są przechowywane na potrzeby kolejnych wiadomości tego czatu, zaszyfrowane kluczem konta Administratora, i używane, dopóki czat nie jest bezczynny przez godzinę, a nigdy dłużej niż cztery godziny od odczytu. Potem są automatycznie usuwane, co może potrwać do kilku dni; w tym czasie nie są używane. Nie są pokazywane w żadnym widoku, raporcie ani eksporcie</td>
+					</tr>
+					<tr>
+						<td>To, na czym działało każde wywołanie</td>
+						<td>Własny magazyn danych tafs (AWS, region w UE)</td>
+						<td>Dla każdego wywołania, które taf wykonuje przez KIFF: numer referencyjny KIFF dla tego wywołania i identyfikator tego, na czym wywołanie działało (na przykład identyfikator płatności, nigdy dane klienta), aby pokazać je w Rejestrze tafa. Nic więcej z danych wejściowych wywołania</td>
+						<td>30 dni albo do usunięcia tafa, jeśli nastąpi ono wcześniej</td>
+					</tr>
+					<tr>
+						<td>Notatki pamięci</td>
+						<td>Własny magazyn danych tafs (AWS, region w UE)</td>
+						<td>To, czego taf nauczył się o tym, jak Administrator chce, aby zadanie było wykonywane</td>
+						<td>Do zapomnienia notatki albo do usunięcia tafa</td>
+					</tr>
+					<tr>
+						<td>Żądania do modelu</td>
+						<td>Anthropic</td>
+						<td>To, co osoba pisze do Coacha i tafów, załączone pliki, to, co połączone aplikacje zwracają tafowi podczas uruchomienia, oraz to, co jest na ekranie, gdy Coach pomaga w aplikacji; i to, co model zwraca. Nigdy hasła i klucze połączonych aplikacji ani odcisk palca</td>
+						<td>Domyślnie usuwane przez Anthropic w ciągu 30 dni; dłużej tam, gdzie Anthropic musi to przechowywać, aby przestrzegać prawa lub egzekwować swoje zasady użytkowania, albo gdy jego warunki handlowe stanowią inaczej</td>
+					</tr>
+					<tr>
+						<td>Klucz KIFF tafa</td>
+						<td>Własna usługa tafs (AWS), przechowywany jako sekret</td>
+						<td>Dane uwierzytelniające, których taf używa, aby połączyć się z KIFF. Nigdy niezapisywane w uruchomieniu ani czacie</td>
+						<td>Do usunięcia tafa</td>
+					</tr>
+					<tr>
+						<td>Konfiguracja tafa</td>
+						<td>Własna usługa tafs (AWS)</td>
+						<td>Jego nazwa, zadanie, harmonogram i budżet oraz konto KIFF i agent, do których należy</td>
+						<td>Do usunięcia tafa</td>
+					</tr>
+					<tr>
+						<td>Urządzenia do alertów</td>
+						<td>Własna usługa tafs (AWS, eu-west-1)</td>
+						<td>Token push każdego zarejestrowanego urządzenia i osoba, która je zarejestrowała</td>
+						<td>Dopóki ta osoba się nie wyloguje, urządzenie nie zostanie usunięte albo Apple nie zgłosi, że token przestał istnieć</td>
+					</tr>
+					<tr>
+						<td>Token lub klucz połączenia w planque</td>
+						<td>planque (AWS, eu-west-1), zaszyfrowany przez AWS KMS</td>
+						<td>W przypadku aplikacji, w której planque loguje się sama, takiej jak Stripe, token z logowania Administratora u jej dostawcy i konto u dostawcy, z którym jest związany; w przypadku połączenia przez klucz – klucz podany przez Administratora. Nigdy nieprzekazywany tafowi</td>
+						<td>Do rozłączenia połączenia, które unieważnia token u dostawcy i usuwa token lub klucz; logowanie, którego nadal używa inne połączenie konta, pozostaje do usunięcia ostatniego z nich. Logowania wykonanego tylko po to, by zobaczyć katalog narzędzi aplikacji, nie da się użyć do wywołań; jeśli w ciągu doby nie zostaną zatwierdzone żadne narzędzia, jest ono unieważniane w ciągu następnej godziny</td>
+					</tr>
+					<tr>
+						<td>Logowanie połączenia zarządzanego</td>
+						<td>Composio (Sampark Inc., Stany Zjednoczone)</td>
+						<td>Token lub klucz z logowania Administratora u dostawcy połączenia zarządzanego. Przechowywany przez Composio i nigdy nieprzekazywany tafowi ani planque, która przechowuje tylko zapis połączenia i zatwierdzone narzędzia. Composio przechowuje go także wtedy, gdy logowanie korzysta z własnej aplikacji KIFF u dostawcy</td>
+						<td>Do rozłączenia połączenia: planque zleca wtedy jego usunięcie w Composio, które prosi dostawcę o jego unieważnienie. Logowanie, którego nadal używa inne połączenie konta, pozostaje do usunięcia ostatniego z nich. Jeśli w ciągu doby od logowania nie zostaną zatwierdzone żadne narzędzia, jest usuwane w ten sam sposób</td>
+					</tr>
+					<tr>
+						<td>Wywołania połączenia zarządzanego</td>
+						<td>Composio (Sampark Inc., Stany Zjednoczone)</td>
+						<td>Dane wejściowe każdego wywołania i odpowiedź usługi, dla wywołania, o które planque prosi Composio</td>
+						<td>Do roku, w logach Composio; usuwane w ciągu 30 dni od zaprzestania korzystania z Composio przez KIFF</td>
+					</tr>
+					<tr>
+						<td>Zapis połączenia</td>
+						<td>planque (AWS, eu-west-1)</td>
+						<td>Zatwierdzone narzędzia, status połączenia i jego zdarzenia: kto zatwierdził każdy krok, z którego urządzenia, oraz podpis tej osoby</td>
+						<td>Do zamknięcia konta; po rozłączeniu zachowywany jako zapis zatwierdzeń</td>
+					</tr>
+					<tr>
+						<td>Klucz konektora konta</td>
+						<td>planque (AWS, eu-west-1), zaszyfrowany przez AWS KMS</td>
+						<td>Klucz KIFF, którego planque używa, aby dodawać narzędzia połączenia do konta KIFF Administratora. Może tylko dodawać narzędzia połączenia</td>
+						<td>Do jego wymiany albo do zamknięcia konta</td>
+					</tr>
+					<tr>
+						<td>Logi usługi planque</td>
+						<td>planque (AWS, eu-west-1)</td>
+						<td>Co zrobiło każde żądanie i dlaczego wywołanie zostało odrzucone, co może wskazywać konto, połączenie lub tafa; nigdy token logowania</td>
+						<td>30 dni</td>
+					</tr>
+					<tr>
+						<td>Logi usługi</td>
+						<td>Własna usługa tafs (AWS, eu-west-1)</td>
+						<td>Błędy, na które natrafiło żądanie, co może wskazywać tafa lub sesję; nigdy treść wiadomości, klucze ani tokeny</td>
+						<td>30 dni</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Card tafa, oczekujące wywołania, odpowiedzi na nie
+			i potwierdzenia to Dane Audytowe, przechowywane przez KIFF
+			na podstawie pozostałej części niniejszej DPA.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Wersja dokumentu:</strong> wzór v0.1.<br/>
+			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+		</p>
+	</section>
+}

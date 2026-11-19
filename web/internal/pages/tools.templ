@@ -1,0 +1,457 @@
+package pages
+
+import (
+	"net/url"
+	"strconv"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/gatewayclient"
+)
+
+// ToolsView backs /tools: the remote MCP tools the account connected to
+// the KIFF gateway. Agents reach them through mcp.kiff.dev, and each
+// call is checked against the agent's Card first.
+type ToolsView struct {
+	Email, Subject, DisplayName string
+	Flash                       *DashboardFlash
+	Tools                       []gatewayclient.Connection
+	LoadError                   string
+	// Groups are the tools by server, narrowed by Filter; Chips are the
+	// filters. CardsError: the Cards could not be read, so no tool is
+	// called uncovered.
+	Groups     []ToolGroup
+	Chips      []ToolChip
+	Filter     ToolsFilter
+	CardsError string
+	// NotConfigured: this deployment has no gateway to talk to.
+	NotConfigured bool
+}
+
+// ToolsNewView backs /tools/new and its second step. Step 1 asks for the
+// server and credential; step 2 lists the server's tools, each with its
+// own form.
+type ToolsNewView struct {
+	Email, Subject, DisplayName string
+	Error                       string
+	NotConfigured               bool
+	// URL is what the owner typed (step 1) or the gateway's normalised
+	// URL (step 2).
+	URL string
+	// Credential is carried from step 1 into step 2's forms on a
+	// no-store response, and never shown after the tool is saved.
+	Credential string
+	// Discovered is set on step 2.
+	Discovered []gatewayclient.DiscoveredTool
+	// Chosen and the fields after it keep the owner's choices when a
+	// save is refused.
+	Chosen, Name, AmountArg, AmountUnit, IdempotencyArg string
+	OutcomeContract string
+	// ResourceArg is the argument chosen as what each call is on.
+	ResourceArg string
+	OutcomeLookupTool string
+	ReadOnly                                bool
+	// AmountPath, ResourcePath and FixedArgs connect one operation of a
+	// generic tool: where the amount and the resource sit, and the
+	// arguments KIFF always sends, as the owner typed them.
+	AmountPath, ResourcePath, FixedArgs string
+}
+
+templ Tools(v ToolsView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Tools", "tools", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Gateway</p>
+					<h1>Tools</h1>
+					<p class="dash-note">Remote MCP tools your agents reach through KIFF. Each call is checked against the agent's Card first. Remove the agent's direct access to the same tool.</p>
+				</div>
+				if !v.NotConfigured {
+					<a class="btn btn-primary" href="/tools/new">Connect a tool</a>
+				}
+			</header>
+			@flashBanner(v.Flash)
+			if v.NotConfigured {
+				<div class="dash-warn">Tools cannot be connected from this deployment: it has no KIFF gateway configured.</div>
+			} else if v.LoadError != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.LoadError }</div>
+			} else if len(v.Tools) == 0 {
+				<div class="ny-empty">
+					<span class="ny-empty-dot" aria-hidden="true"></span>
+					<div>
+						<strong>No tools are connected.</strong>
+						<p class="dash-note">Connect a remote MCP server's tool, then give an agent a Card for it. See <a href="/docs/mcp-gateway">Use the KIFF MCP gateway</a>.</p>
+					</div>
+				</div>
+			} else {
+				@toolsFind(v)
+				if v.CardsError != "" {
+					<p class="dash-note dash-note-warn">{ v.CardsError }</p>
+				}
+				if len(v.Groups) == 0 {
+					<div class="ny-empty">
+						<span class="ny-empty-dot" aria-hidden="true"></span>
+						<div>
+							<strong>No tool matches.</strong>
+							<p class="dash-note"><a href="/tools">Show every tool</a></p>
+						</div>
+					</div>
+				}
+				for _, g := range v.Groups {
+					@toolGroup(v, g)
+				}
+			}
+		</section>
+	}
+}
+
+// toolsFind is the search and the filters. Both are links and a GET
+// form, so the list works without script.
+templ toolsFind(v ToolsView) {
+	<div class="tl-find">
+		<form class="tl-search" method="get" action="/tools" role="search">
+			<label class="tl-sr" for="tl-q">Find a tool</label>
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+			<input id="tl-q" type="search" name="q" value={ v.Filter.Q } maxlength="100" placeholder="Find a tool by name or what it does"/>
+			if v.Filter.Show != "" {
+				<input type="hidden" name="show" value={ v.Filter.Show }/>
+			}
+		</form>
+		<nav class="tl-chips" aria-label="Show">
+			for _, c := range v.Chips {
+				<a class={ "tl-chip", templ.KV("is-current", c.Current) } href={ templ.SafeURL(c.Href) }
+					if c.Current {
+						aria-current="page"
+					}
+				>
+					{ c.Label }
+					<span class={ "tl-chip-count", templ.KV("is-warn", c.Warn && c.Count > 0) }>{ strconv.Itoa(c.Count) }</span>
+				</a>
+			}
+		</nav>
+	</div>
+}
+
+// toolGroup is one server's tools. It folds away; a search or filter
+// keeps every group open.
+templ toolGroup(v ToolsView, g ToolGroup) {
+	<details class="tl-group" open>
+		<summary>
+			<span class="ac-si">@rowIcon(iconLink)</span>
+			<span class="tl-group-text">
+				<span class="tl-host">{ g.Host }</span>
+				<small>{ toolGroupLine(g, v.Filter) }</small>
+			</span>
+			<svg class="tl-fold" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+		</summary>
+		<div class="ac-slist tl-list">
+			<div class="tl-head" aria-hidden="true"><span>Tool</span><span>What it does</span><span>What a Card limits</span><span>Cards</span><span></span></div>
+			for _, r := range g.Tools {
+				@toolRow(r)
+			}
+			<a class="tl-add" href={ templ.SafeURL(addFromServerHref(g.URL)) }>+ Add a tool from this server</a>
+		</div>
+	</details>
+}
+
+// toolRow opens the tool's own page, where its Cards and Settings
+// are. One line here; the whole description is there.
+templ toolRow(r ToolListRow) {
+	<a class="tl-row" id={ "tool-" + r.Tool.Name } href={ templ.SafeURL(toolHref(r.Tool.Name)) }>
+		<span class="tl-name">{ r.Tool.Name }</span>
+		<span class="tl-desc">{ toolOneLine(r.Tool) }</span>
+		<span class="tl-tags">
+			<span class={ "tl-tag tl-limit", templ.KV("is-quiet", r.Tool.ReadOnly) }>{ toolLimit(r.Tool) }</span>
+			<span class={ "tl-tag tl-cards", templ.KV("is-warn", r.CardsKnown && r.Cards == 0) }>{ toolCardsLabel(r) }</span>
+		</span>
+		<span class="tl-chev">@chevron()</span>
+	</a>
+}
+
+templ ToolsNew(v ToolsNewView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Connect a tool", "tools", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<a class="ac-back" href="/tools">← Tools</a>
+			<header class="dash-header dash-page-head">
+				<div class="dash-header-text">
+					<h1>Connect a tool</h1>
+					if len(v.Discovered) == 0 {
+						<p class="dash-note">The server must be a remote MCP server at a public HTTPS address. KIFF lists its tools with the credential before anything is saved.</p>
+					} else {
+						<p class="dash-note">{ toolsFoundLine(len(v.Discovered)) } at <code>{ v.URL }</code>. Choose the one to connect.</p>
+					}
+				</div>
+			</header>
+			if v.NotConfigured {
+				<div class="dash-warn">Tools cannot be connected from this deployment: it has no KIFF gateway configured.</div>
+			} else {
+				if v.Error != "" {
+					<p class="dash-note dash-note-warn">{ v.Error }</p>
+				}
+				if len(v.Discovered) == 0 {
+					<form class="ag-new" method="post" action="/tools/discover">
+						<label for="tool-url">Server URL</label>
+						<input id="tool-url" class="dash-input" name="url" type="url" required maxlength="2048" placeholder="https://tools.example.com/mcp" value={ v.URL }/>
+						<label for="tool-cred">Credential (optional)</label>
+						<input id="tool-cred" class="dash-input" name="credential" type="password" autocomplete="off" maxlength="8192"/>
+						<p class="dash-note">Sent to the server as a bearer token. KIFF stores it encrypted and never shows it again. OAuth is not supported yet.</p>
+						<button class="btn btn-primary" type="submit">List the server's tools</button>
+					</form>
+				} else {
+					for _, t := range v.Discovered {
+						@discoveredTool(v, t)
+					}
+					<p class="ny-back"><a href="/tools/new">← Use another server</a></p>
+				}
+			}
+		</section>
+	}
+}
+
+templ discoveredTool(v ToolsNewView, t gatewayclient.DiscoveredTool) {
+	<details class="ny-item tl-pick" open?={ v.Chosen == t.Name || len(v.Discovered) == 1 }>
+		<summary class="ny-item-head">
+			<span class="ny-action"><code>{ t.Name }</code></span>
+			if t.Description != "" {
+				<span class="dash-note">{ t.Description }</span>
+			}
+		</summary>
+		<form class="ag-new" method="post" action="/tools">
+			<input type="hidden" name="url" value={ v.URL }/>
+			<input type="hidden" name="credential" value={ v.Credential }/>
+			<input type="hidden" name="tool" value={ t.Name }/>
+			<label for={ "name-" + t.Name }>Name your agents see</label>
+			<input id={ "name-" + t.Name } class="dash-input" name="name" type="text" required maxlength="64" pattern="[A-Za-z][A-Za-z0-9_]*" value={ chosenOr(v, t.Name, v.Name, defaultToolName(t.Name)) }/>
+			<p class="dash-note">Letters, digits and underscores, starting with a letter. It is also the action a Card grants.</p>
+			<label for={ "amount-" + t.Name }>Amount a Card limits</label>
+			<select id={ "amount-" + t.Name } class="dash-input" name="amount_argument">
+				<option value="">None</option>
+				for _, a := range t.IntegerArgs {
+					<option value={ a } selected?={ v.Chosen == t.Name && v.AmountArg == a }>{ a }</option>
+				}
+			</select>
+			if len(t.IntegerArgs) == 0 {
+				<p class="dash-note">This tool has no whole-number argument, so a Card can limit how often it is called but not an amount.</p>
+			} else {
+				<p class="dash-note">A whole-number argument. A Card limits it per call and sums it over time, in the tool's own units.</p>
+				<label for={ "unit-" + t.Name }>What that amount is</label>
+				<select id={ "unit-" + t.Name } class="dash-input" name="amount_unit">
+					{{ def := discoveredUnitDefault(v, t.Name, t.IntegerArgs) }}
+					for _, o := range amountUnitOptions {
+						<option value={ o.Value } selected?={ o.Value == def }>{ o.Label }</option>
+					}
+				</select>
+				<p class="dash-note">Shown beside every amount on its Cards and in Needs you. It changes no limit: KIFF still counts the whole numbers the tool receives.</p>
+			}
+			<label for={ "idem-" + t.Name }>Idempotency key</label>
+			<select id={ "idem-" + t.Name } class="dash-input" name="idempotency_argument">
+				<option value="">None</option>
+				for _, a := range t.StringArgs {
+					<option value={ a } selected?={ v.Chosen == t.Name && v.IdempotencyArg == a }>{ a }</option>
+				}
+			</select>
+			<p class="dash-note">If the tool accepts an idempotency key, KIFF fills it for each call and hides it from agents.</p>
+			<label for={ "resource-" + t.Name }>What each call is on (optional)</label>
+			<select id={ "resource-" + t.Name } class="dash-input" name="resource_argument">
+				<option value="">Nothing in particular</option>
+				for _, a := range t.StringArgs {
+					<option value={ a } selected?={ v.Chosen == t.Name && v.ResourceArg == a }>{ a }</option>
+				}
+			</select>
+			<p class="dash-note">A text argument naming what a call acts on, such as an order number. Cards can then name which ones an agent may act on. You can change this later in the tool's Settings.</p>
+			<label class="dash-checkbox">
+				<input type="checkbox" name="outcome_contract" value="terminal_no_effect_v1" checked?={ v.Chosen == t.Name && v.OutcomeContract == "terminal_no_effect_v1" }/>
+				Release effect amounts on a trusted, final no-effect refusal
+			</label>
+			<p class="dash-note">Enable this only when the executor supports KIFF's terminal no-effect contract and cannot perform the operation later. An idempotency argument is required. Ordinary errors and timeouts keep the amount reserved; attempt limits always count the call.</p>
+			<label for={ "lookup-" + t.Name }>Read-only operation status tool (optional)</label>
+			<input id={ "lookup-" + t.Name } class="dash-input" name="outcome_lookup_tool" value={ v.OutcomeLookupTool }/>
+			<p class="dash-note">For a lost response, KIFF can read this trusted executor's status using the original operation key. It must declare read-only access and accept the same idempotency argument. It never resends the action; an unresolved outcome stays charged.</p>
+			<details class="wk-adv" open?={ v.Chosen == t.Name && (v.FixedArgs != "" || v.AmountPath != "" || v.ResourcePath != "") }>
+				<summary>For a tool that takes the action as an argument</summary>
+				<p class="dash-note">Some tools do many actions through one argument. Connect each action you want to limit as its own tool: fix the action here, and say where its amount is.</p>
+				<label for={ "fixed-" + t.Name }>Always send (optional)</label>
+				<textarea id={ "fixed-" + t.Name } class="dash-input" name="fixed_arguments" rows="2" placeholder={ `{"stripe_api_operation_id": "PostRefunds"}` }>{ chosenOr(v, t.Name, v.FixedArgs, "") }</textarea>
+				<p class="dash-note">A JSON object. KIFF sends these on every call and hides them from agents; a call that sets one is refused.</p>
+				<label for={ "amountpath-" + t.Name }>Amount at (optional)</label>
+				<input id={ "amountpath-" + t.Name } class="dash-input" name="amount_path" placeholder="parameters.amount" value={ chosenOr(v, t.Name, v.AmountPath, "") }/>
+				<p class="dash-note">Where the amount is when it sits inside another argument. Use it instead of "Amount a Card limits". A call without it is refused, never counted as zero.</p>
+				if len(t.IntegerArgs) == 0 {
+					<label for={ "unitpath-" + t.Name }>What that amount is</label>
+					<select id={ "unitpath-" + t.Name } class="dash-input" name="amount_unit">
+						for _, o := range amountUnitOptions {
+							<option value={ o.Value } selected?={ v.Chosen == t.Name && o.Value == v.AmountUnit }>{ o.Label }</option>
+						}
+					</select>
+				}
+				<label for={ "resourcepath-" + t.Name }>What each call is on, at (optional)</label>
+				<input id={ "resourcepath-" + t.Name } class="dash-input" name="resource_path" placeholder="parameters.charge" value={ chosenOr(v, t.Name, v.ResourcePath, "") }/>
+				<p class="dash-note">The same for what a call acts on, such as a charge. These work only while KIFF holds the tool's credential.</p>
+			</details>
+			<label class="tl-check">
+				<input type="checkbox" name="read_only" value="true" checked?={ v.Chosen == t.Name && v.ReadOnly }/>
+				This tool only reads
+			</label>
+			<p class="dash-note">Calls are still checked against the Card. A read-only tool is never answered with an earlier call's result. Leave it unchecked for anything that changes something: identical calls within 10 minutes are then done once. KIFF can't check this. To change it, remove the tool and connect it again.</p>
+			<button class="btn btn-primary" type="submit">Connect { t.Name }</button>
+		</form>
+	</details>
+}
+
+// ToolCard is the Card for one connected tool, as the same walkthrough as
+// every other Card form: agent, limits, what happens past them, then a
+// review. It posts the same fields to POST /tools/<name>/card.
+templ ToolCard(v ToolCardView) {
+	@components.LayoutAppThemedWithCSS("KIFF Cloud — Card for a tool", "css/fonts.css", "css/app-shell.css", "css/walkthrough.css") {
+		@wkFrame(toolCardCancel(v), toolCardLabel(v), 4, v.StartStep(), v.Single) {
+			if v.NotConfigured {
+				<p class="wk-msg wk-msg-warn">Cards for tools cannot be issued from this deployment: it has no KIFF gateway configured.</p>
+			} else if v.LoadError != "" {
+				<p class="wk-msg wk-msg-warn">{ v.LoadError }</p>
+			} else {
+				if v.Error != "" {
+					<div class="wk-msg wk-msg-warn" role="alert">
+						<strong>This Card was not issued.</strong>
+						<span>{ v.Error }</span>
+					</div>
+				}
+				<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/card") } data-wk-agent-choice="agent_choice" data-wk-agent-text="agent" novalidate>
+					<section class="wk-step" data-wk-step="1" data-wk-check="agent" data-wk-msg="Choose the agent, or type its name." aria-labelledby="wk-h1">
+						<div class="wk-head">
+							<h1 id="wk-h1">Which agent may use <span class="wk-mono">{ v.Tool.Name }</span>?</h1>
+							<p>The agent connected to KIFF with its own key. Issuing again for the same agent and tool changes its Card.</p>
+						</div>
+						if len(v.Agents) > 0 {
+							<fieldset class="wk-choices">
+								<legend class="wk-sr">Agent</legend>
+								for _, a := range v.AgentChoices() {
+									<label class="wk-choice">
+										<input type="radio" name="agent_choice" value={ a.ID } checked?={ a.Checked }/>
+										<span class="wk-choice-body">
+											<span class="wk-mono">{ a.ID }</span>
+											<span class="wk-sub">{ a.Hint }</span>
+										</span>
+										<span class="wk-radio" aria-hidden="true"></span>
+									</label>
+								}
+								<label class="wk-choice">
+									<input type="radio" name="agent_choice" value="other" checked?={ v.OtherAgentChecked() }/>
+									<span class="wk-choice-body">
+										<span>Another agent</span>
+										<span class="wk-sub">Type its name</span>
+									</span>
+									<span class="wk-radio" aria-hidden="true"></span>
+								</label>
+							</fieldset>
+						}
+						<label class={ "wk-field", templ.KV("wk-other", len(v.Agents) > 0) }>
+							<span class="wk-label">Agent name</span>
+							if len(v.Agents) > 0 {
+								<input class="wk-input wk-mono" name="agent" value={ v.OtherAgentValue() } maxlength="200" autocomplete="off" placeholder="e.g. refund-agent"/>
+							} else {
+								<input class="wk-input wk-mono" name="agent" value={ v.Form.Agent } maxlength="200" autocomplete="off" placeholder="e.g. refund-agent"/>
+							}
+						</label>
+					</section>
+					<section class="wk-step" data-wk-step="2" data-wk-sum="limit" data-wk-check={ v.LimitCheck() } data-wk-msg="Set a total or a number of calls." aria-labelledby="wk-h2">
+						<div class="wk-head">
+							<h1 id="wk-h2">How much, and how often?</h1>
+							<p>This is the room the agent has. Leave a limit empty for none of that kind.</p>
+						</div>
+						if v.Tool.AmountArg != "" {
+							<div class="wk-grid2">
+								<label class="wk-field">
+									<span class="wk-label">Total <span class="wk-unit">{ toolAmountUnit(v.Tool) }</span></span>
+									<input class="wk-input wk-big" name="total" data-wk-num="sep" type="text" inputmode="numeric" placeholder="e.g. 2000" value={ v.Form.Total }/>
+								</label>
+								<label class="wk-field">
+									<span class="wk-label">Most per call</span>
+									<input class="wk-input wk-big" name="per_call" data-wk-num="sep" type="text" inputmode="numeric" placeholder="optional" value={ v.Form.PerCall }/>
+								</label>
+							</div>
+							<aside class="wk-note">
+								@wkInfoIcon()
+								if u := amountUnitLabel(v.Tool.AmountUnit, v.Tool.AmountScale); u != "" {
+									<span>In { u }: what <span class="wk-mono">{ v.Tool.AmountArg }</span> counts.</span>
+								} else {
+									<span>In the tool’s own units: whatever <span class="wk-mono">{ v.Tool.AmountArg }</span> counts.</span>
+								}
+								<span hidden data-wk-amount-unit={ amountUnitLabel(v.Tool.AmountUnit, v.Tool.AmountScale) }></span>
+							</aside>
+						}
+						<label class="wk-field">
+							<span class="wk-label">Number of calls</span>
+							<input class="wk-input wk-big" name="calls" data-wk-num="sep" type="text" inputmode="numeric" placeholder={ toolCallsPlaceholder(v) } value={ v.Form.Calls }/>
+						</label>
+						@wkWindowField(wkWindowChoices(v.Form.Window))
+					</section>
+					@wkRouteStep("3", v.Form.OnExceed != "refuse", wkHoldChoices(v.Form.Hold), true, v.Form.NextSteps)
+					<section class="wk-step" data-wk-step="4" aria-labelledby="wk-h4">
+						<div class="wk-head">
+							<h1 id="wk-h4">Check the Card</h1>
+							<p>You are emailed when a call is held. Calls inside the Card go through; nothing past it is sent to the tool unless someone approves it.</p>
+						</div>
+						@wkReviewCard(true, v.Tool.Name, "", "tool-limit")
+						<dl class="wk-rows">
+							<div><dt>Agent</dt><dd data-wk-row="agent"></dd><dd><button type="button" class="wk-link" data-wk-goto="1">Edit</button></dd></div>
+							<div><dt>Limits</dt><dd data-wk-val="tool-limit"></dd><dd><button type="button" class="wk-link" data-wk-goto="2">Edit</button></dd></div>
+							<div><dt>Past it</dt><dd data-wk-row="route"></dd><dd><button type="button" class="wk-link" data-wk-goto="3">Edit</button></dd></div>
+						</dl>
+						<details class="wk-adv">
+							<summary><span>Advanced</span><span class="wk-sub">What each limit measures</span></summary>
+							<div class="wk-adv-body">
+								if v.Tool.AmountArg != "" {
+									<label class="wk-field">
+										<span class="wk-label">Amount limit measures</span>
+										<select class="wk-input" name="amount_measure">
+											<option value="effects" selected?={ v.Form.AmountMeasure != "attempts" }>Effects: released only when the tool proves nothing happened</option>
+											<option value="attempts" selected?={ v.Form.AmountMeasure == "attempts" }>Attempts: a tool refusal keeps the amount counted</option>
+										</select>
+									</label>
+								}
+								<label class="wk-field">
+									<span class="wk-label">Call limit measures</span>
+									<select class="wk-input" name="count_measure">
+										<option value="attempts" selected?={ v.Form.CountMeasure != "effects" }>Attempts: refused calls still count</option>
+										<option value="effects" selected?={ v.Form.CountMeasure == "effects" }>Effects: released only when the tool proves nothing happened</option>
+									</select>
+									<span class="wk-sub">Each call’s full amount is counted before it runs. Retries and holds add nothing. Changing a measure never changes earlier calls.</span>
+								</label>
+							</div>
+						</details>
+					</section>
+					if v.Single {
+						@wkBar("Save change")
+					} else {
+						@wkBar("Issue the Card")
+					}
+				</form>
+			}
+		}
+	}
+}
+
+// toolCardCancel goes back to where the change was opened: a Card's
+// Settings when one step of it is being changed.
+func toolCardCancel(v ToolCardView) string {
+	if v.Single {
+		return "/cards/" + url.PathEscape(v.Editing) + "/settings"
+	}
+	return "/tools"
+}
+
+func toolCardLabel(v ToolCardView) string {
+	if v.Single {
+		return "Change this Card"
+	}
+	if v.Tool.Name != "" {
+		return "Card for " + v.Tool.Name
+	}
+	return "Card for a tool"
+}
+
+func toolCallsPlaceholder(v ToolCardView) string {
+	if v.Tool.AmountArg != "" {
+		return "optional"
+	}
+	return "e.g. 20"
+}

@@ -1,0 +1,44 @@
+package pages
+
+import (
+	"net/url"
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+)
+
+templ ControlRoomControlNav(v DashboardControlsView) {
+	<aside class="cr-control-nav" aria-label="Governed actions">
+		<p class="eyebrow">Governed actions</p>
+		for _, ctrl := range v.Controls {
+			<a class={ "cr-control-link", controlRoomControlLinkClass(v, ctrl) } href={ templ.SafeURL(governControlHref(v, ctrl.ID)) }>
+				<span>{ ctrl.Domain }</span>
+				<small class="cr-control-count">{ controlRoomActionsCountLabel(ctrl) }</small>
+				<small>
+					{ controlFallback(ctrl.Environment, "dev") } / { controlFallback(ctrl.Workflow, "default") }
+				</small>
+			</a>
+		}
+	</aside>
+}
+
+// governControlHref links a governed-action nav card, preserving the
+// active domain scope and window so switching controls doesn't reset
+// them. control_id is always present; domain/window are added when set.
+func governControlHref(v DashboardControlsView, controlID string) string {
+	href := "/dashboard/govern?control_id=" + url.QueryEscape(controlID)
+	if d := strings.TrimSpace(v.CurrentDomain); d != "" {
+		href += "&domain=" + url.QueryEscape(d)
+	}
+	if w := windowQueryValue(v.Window); w != "" {
+		href += "&window=" + w
+	}
+	return href
+}
+
+func controlRoomControlLinkClass(v DashboardControlsView, ctrl apiclient.Control) string {
+	if ctrl.ID == controlRoomSelectedControlID(v) {
+		return "cr-control-link-active"
+	}
+	return ""
+}

@@ -1,0 +1,281 @@
+package pages
+
+import (
+	"strconv"
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/desktop"
+)
+
+// AppStoreURL is tafs's App Store listing. It is linked only once the app is
+// live there (DownloadView.AppStoreLive): never a page that doesn't open.
+const AppStoreURL = "https://apps.apple.com/app/id6822760338"
+
+// The requirements each app really has: the Android app's minSdk 30, the iOS
+// app's deployment target 16.0 (kiff/tafs android/app/build.gradle.kts,
+// ios/project.yml).
+const (
+	downloadAndroidNeeds = "Android 11 or later"
+	downloadIOSNeeds     = "iOS and iPadOS 16 or later"
+)
+
+// DesktopApp is one computer download on /tafs/download.
+type DesktopApp struct {
+	// OS is the download's channel (package desktop): "macos13", "macos",
+	// "windows" or "linux".
+	OS string
+	// Device is what the handler calls the computer: "macos" for both Macs.
+	Device string
+	// Name is how the page names it: "macOS", "macOS 12".
+	Name string
+	// Family is the name the description uses for its computer: both Macs are
+	// "macOS", so the sentence names the Mac once.
+	Family string
+	// Needs is the app's requirement, as its build sets it.
+	Needs string
+	// State is desktop.StateAvailable, StateComingSoon or StateNotAvailable.
+	State string
+	// URL is the file to download, from the computer's published release
+	// (package desktop). Empty unless it's available: the page then says it's
+	// coming soon, or not available, and links nowhere.
+	URL string
+	// Version, Size (bytes) and SHA256 are the release's, shown beside the link.
+	Version string
+	Size    int64
+	SHA256  string
+}
+
+// DesktopApps are the computer downloads, each in the state its channel's
+// published release gives it (package desktop): with KIFF_DESKTOP_RELEASES
+// off, nothing is read and all are coming soon.
+//
+// The Mac has two, since a browser can't say which macOS it runs (Safari gives
+// every Mac the same version): macOS 13 and later get the Catalyst app, and
+// macOS 12 gets tafs-macos. Each is labelled by its macOS and has its own
+// state.
+func DesktopApps() []DesktopApp {
+	apps := []DesktopApp{
+		{OS: "macos13", Device: "macos", Name: "macOS", Family: "macOS", Needs: "macOS 13 or later"},
+		{OS: "windows", Device: "windows", Name: "Windows", Family: "Windows", Needs: "Windows 10 or 11"},
+		{OS: "linux", Device: "linux", Name: "Linux", Family: "Linux", Needs: "Ubuntu 24.04 or later"},
+		// Last and quiet: only for the Macs that stay on macOS 12, never the
+		// download a newer Mac is offered.
+		{OS: "macos", Device: "macos", Name: "macOS 12", Family: "macOS", Needs: "macOS 12 (Monterey) only"},
+	}
+	for i := range apps {
+		state, r := desktop.Of(apps[i].OS)
+		apps[i].State = state
+		if state == desktop.StateAvailable {
+			apps[i].URL, apps[i].Version, apps[i].Size, apps[i].SHA256 = r.URL, r.Version, r.Size, r.SHA256
+		}
+	}
+	return apps
+}
+
+// DownloadView is /download: the Play link, whether the App Store listing is
+// live, and the device asking, which store comes first.
+type DownloadView struct {
+	PlayURL      string
+	AppStoreLive bool
+	// Device is "ios", "android", "macos", "windows", "linux", or "" for a
+	// device the page can't name.
+	Device string
+	// Desktop is the computers' apps, in the page's order.
+	Desktop []DesktopApp
+	// W is the page's words; empty is English.
+	W downloadWords
+}
+
+// words is the page's words: English unless a language was given.
+func (v DownloadView) words() downloadWords {
+	if v.W.Lang == "" {
+		return downloadEN
+	}
+	return v.W
+}
+
+// phone says the visitor is on a phone or tablet, which has no use for the QR
+// code.
+func (v DownloadView) phone() bool { return v.Device == "ios" || v.Device == "android" }
+
+// device is the computer a download is for: its Device, or its OS for a row
+// that names none.
+func (a DesktopApp) device() string {
+	if a.Device != "" {
+		return a.Device
+	}
+	return a.OS
+}
+
+// desktopFirst is the computers' apps in one order for every visitor: macOS
+// 13 and later first, then Windows, then Linux, and the macOS 12 app last
+// (the owner, 18 Nov 2026: the one on top is the one that works best). Only
+// the phones put the visitor's own first.
+func (v DownloadView) desktopFirst() []DesktopApp {
+	out := make([]DesktopApp, 0, len(v.Desktop))
+	for _, a := range v.Desktop {
+		if a.OS != "macos" {
+			out = append(out, a)
+		}
+	}
+	for _, a := range v.Desktop {
+		if a.OS == "macos" {
+			out = append(out, a)
+		}
+	}
+	return out
+}
+
+// big says whether a is the computer shown big: macOS 13 and later, for
+// every visitor. The macOS 12 app is never big.
+func (v DownloadView) big(a DesktopApp) bool { return a.OS == "macos13" }
+
+// shortVersion is a release's version as the page shows it: the macOS 13+
+// app's tag without its "mac-" prefix ("v1.0"), as its release names it.
+func shortVersion(v string) string { return strings.TrimPrefix(v, "mac-") }
+
+// shared is the words both download pages share, in the page's language.
+func (v DownloadView) shared() getWords { return getFor(v.words().Lang) }
+
+// Download is /tafs/download in v's language (English when v.W is empty), one screen: what tafs is in one line, then tafs
+// for each device, the visitor's own first and big. A phone sees the stores
+// first; a computer sees the computers first, and a QR code that opens this
+// page on a phone.
+templ Download(v DownloadView) {
+	@components.LayoutSiteWithMeta(v.words().Title, v.description(), "website", "download", "css/home.css", "css/download.css") {
+		<div class="k-home">
+			<section class="k-hero k-download" id="get" aria-labelledby="download-title">
+				<h1 id="download-title" class="k-display">{ v.words().Head }</h1>
+				<p class="k-sub">{ v.words().Sub }</p>
+				if v.phone() {
+					@downloadPhones(v)
+					@downloadComputers(v)
+					@downloadWatches(v)
+				} else {
+					@downloadComputers(v)
+					@downloadWatches(v)
+					@downloadPhones(v)
+					<figure class="dl-qr">
+						<img src="/static/img/download/qr-download.svg" alt={ v.words().QRAlt } width="174" height="174"/>
+						<figcaption>{ v.words().QRCaption }</figcaption>
+					</figure>
+				}
+				<p class="k-small">{ v.words().Cost } <a href="/pricing">{ v.words().Pricing }</a>{ v.words().inEnglish() }.</p>
+				<p class="k-small dl-legal">{ v.shared().Notice }</p>
+			</section>
+		</div>
+	}
+}
+
+// downloadPhones is the two stores, the phone's own first and big.
+templ downloadPhones(v DownloadView) {
+	<h2 class="dl-group">{ v.words().Phones }</h2>
+	<div class="dl-stores">
+		if v.Device == "ios" {
+			@downloadIOS(v, true)
+			@downloadAndroid(v, false)
+		} else {
+			@downloadAndroid(v, v.Device == "android")
+			@downloadIOS(v, false)
+		}
+	</div>
+}
+
+// downloadComputers is tafs for each computer, the visitor's own first and big.
+// Each row carries its state and release as data attributes, which the
+// download check (cmd/downloadcheck) reads: data-state, data-version,
+// data-size (bytes, 0 unless available) and data-sha256.
+templ downloadComputers(v DownloadView) {
+	<h2 class="dl-group">{ v.words().Computer }</h2>
+	<div class="dl-stores dl-rows">
+		for _, a := range v.desktopFirst() {
+			<div class={ "dl-store", templ.KV("dl-first", v.big(a)), "dl-os-" + a.OS, templ.KV("dl-pending", a.URL == "" && a.State != desktop.StateNotAvailable) } data-os={ a.OS } data-state={ a.State } data-version={ a.Version } data-size={ strconv.FormatInt(a.Size, 10) } data-sha256={ a.SHA256 }>
+				<div class="dlr">
+					<div class="dlr-t">
+						<p class="dl-name">
+							{ a.Name }
+							if a.OS == "linux" {
+								@tux()
+							}
+						</p>
+						<p class="k-small dlr-needs">{ v.words().needs(a.OS, a.Needs) }</p>
+						if a.URL != "" && a.Version != "" {
+							<span class="dlr-ver">{ shortVersion(a.Version) } · { v.words().size(a.Size) }</span>
+						}
+					</div>
+					if a.URL != "" {
+						<a href={ templ.SafeURL(a.URL) } class="dl-get">{ v.words().downloadFor(a.Name) }<i aria-hidden="true">↓</i></a>
+					} else if a.State == desktop.StateNotAvailable {
+						<p class="dl-soon">{ v.words().notAvailable() }</p>
+					}
+				</div>
+				if a.URL != "" && a.Version != "" {
+					<details class="dlr-more">
+						<summary>{ v.shared().Fold }</summary>
+						<p class="k-small dl-file">{ v.words().version(shortVersion(a.Version)) } · { v.words().size(a.Size) }</p>
+						<p class="k-small dl-sha">{ v.words().sha() } <code>{ a.SHA256 }</code></p>
+						<p class="k-small">{ v.words().checkHow() }</p>
+					</details>
+				}
+			</div>
+		}
+	</div>
+}
+
+// downloadWatches is the watches, shown before they ship: each says how it
+// will arrive, quieter than a download and linking nowhere. Wear OS turns
+// into a link to its Play listing once the watch is on Google Play
+// (WatchLive, KIFF_WATCH_LIVE), Apple Watch with the iPhone app it ships in
+// (AppStoreLive, KIFF_APP_STORE_LIVE).
+templ downloadWatches(v DownloadView) {
+	<div class="dl-watches">
+		@watchTile("dl-os-wearos", "Wear OS", WatchesSub, v.shared().WearOS, WatchLive, v.PlayURL)
+		@watchTile("dl-os-applewatch", "Apple Watch", "", v.shared().AppleWatch, v.AppStoreLive, AppStoreURL)
+	</div>
+}
+
+// watchTile is one watch: a link to its store once live, else a quiet tile
+// with its state line.
+templ watchTile(class, name, sub, state string, live bool, url string) {
+	if live && url != "" {
+		<a class={ "dl-watch", "dl-watch-live", class } href={ templ.SafeURL(url) } rel="noopener">
+			<b class="dl-watch-name">{ name }</b>
+			if sub != "" {
+				<span class="dl-watch-sub">{ sub }</span>
+			}
+		</a>
+	} else {
+		<div class={ "dl-watch", class } aria-disabled="true">
+			<b class="dl-watch-name">{ name }</b>
+			if sub != "" {
+				<span class="dl-watch-sub">{ sub }</span>
+			}
+			<span class="dl-watch-state">{ state }</span>
+		</div>
+	}
+}
+
+// tux is Linux's penguin, Larry Ewing's Tux (credited in the notice), beside
+// the word Linux.
+templ tux() {
+	<svg class="dl-tux" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"></path></svg>
+}
+
+templ downloadAndroid(v DownloadView, first bool) {
+	<div class={ "dl-store", templ.KV("dl-first", first) }>
+		<a href={ templ.SafeURL(v.PlayURL) } class="dl-badge dl-play"><img src={ "/static/" + v.shared().PlayBadge } alt="Google Play" width="646" height="192"/></a>
+		<p class="k-small">{ v.words().needs("android", downloadAndroidNeeds) }</p>
+	</div>
+}
+
+templ downloadIOS(v DownloadView, first bool) {
+	<div class={ "dl-store", templ.KV("dl-first", first) }>
+		if v.AppStoreLive {
+			<a href={ templ.SafeURL(AppStoreURL) } class="dl-badge dl-apple"><img src="/static/img/download/app-store-badge.svg" alt="Download on the App Store" width="120" height="40"/></a>
+		} else {
+			<p class="dl-soon">{ v.words().ComingAppStore }</p>
+		}
+		<p class="k-small">{ v.words().iPhoneIPad() }</p>
+	</div>
+}

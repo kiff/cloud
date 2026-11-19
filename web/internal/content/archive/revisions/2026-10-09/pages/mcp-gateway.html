@@ -1,0 +1,192 @@
+<h1 id="use-the-kiff-mcp-gateway">Use the KIFF MCP gateway</h1>
+
+<p>Already have an AI agent that can connect to remote MCP servers? You can put KIFF between that agent and the tools it uses:</p>
+
+<pre><code class="language-text">your agent ──MCP──▶ mcp.kiff.dev ──MCP──▶ your connected tool
+                           │
+                           └── checks the agent's Card first
+</code></pre>
+
+<p>KIFF does not host the agent. The agent still plans the work; the connected tool still performs it. KIFF checks each call against the Card before it forwards the call. For this to be a boundary, connect the tool to KIFF and remove the agent&rsquo;s direct access to that same tool.</p>
+
+<p>This is a different integration from <a href="/docs/archive/2026-10-09/connect-an-agent">kiff-guard</a>, which you add to code you can change. Using Claude Code or Codex? The <a href="/docs/archive/2026-10-09/agent-skill">KIFF skill</a> walks through these steps with you. The gateway is for remote MCP tools. New to KIFF? The <a href="/docs/archive/2026-10-09/quickstart">quickstart</a> walks through the same steps in the dashboard.</p>
+
+<h2 id="what-you-need">What you need</h2>
+
+<ul>
+<li>A KIFF account, signed in as its owner or an admin.</li>
+<li>A remote MCP server reachable at a public HTTPS URL. Private, loopback, link-local, metadata and reserved addresses are refused.</li>
+<li>An agent that can connect to a remote MCP server over HTTP. The production flow has been tested with Claude Code and Codex.</li>
+<li>A bearer credential for the tool server, if it requires one. KIFF stores connected tool credentials encrypted. To keep the key away from KIFF entirely, the tool can check KIFF&rsquo;s execution permit itself instead: see <a href="/docs/archive/2026-10-09/tool-permits">Tools that check KIFF</a>. OAuth and arbitrary non-MCP web APIs are not supported yet.</li>
+</ul>
+
+<h2 id="1-connect-a-remote-mcp-tool">1. Connect a remote MCP tool</h2>
+
+<p>Signed in to KIFF Cloud as the account&rsquo;s owner or an admin, open <strong>Tools</strong> and choose <strong>Connect a tool</strong>:</p>
+
+<ol>
+<li>Enter the server&rsquo;s URL and, if it needs one, its bearer credential. KIFF lists the server&rsquo;s tools with that credential; nothing is saved yet.</li>
+<li>Choose the tool to connect, the name your agent will see, the amount argument a Card limits (whole-number arguments only), the idempotency argument KIFF fills (text arguments only), and whether the tool only reads.</li>
+</ol>
+
+<p>From the same page you can test a connected tool, replace its credential (the old one is kept unless the new one works), change who holds its key (<a href="/docs/archive/2026-10-09/tool-permits">verify or relay mode</a>) or remove it. The credential is never shown again after it is saved.</p>
+
+<h3 id="with-the-gateway-api">With the gateway API</h3>
+
+<p>The same steps work over the API for a caller that already holds an owner or admin API key (see the note on API keys below). Prepare the request body in a local file readable only by you, such as <code>connection.json</code>:</p>
+
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;issue_refund&quot;,
+  &quot;url&quot;: &quot;https://tools.example.com/mcp&quot;,
+  &quot;tool&quot;: &quot;refund&quot;,
+  &quot;amount_argument&quot;: &quot;amount_eur&quot;,
+  &quot;amount_unit&quot;: &quot;EUR&quot;,
+  &quot;amount_scale&quot;: 0,
+  &quot;idempotency_argument&quot;: &quot;idempotency_key&quot;,
+  &quot;credential&quot;: &quot;&lt;tool server bearer token&gt;&quot;
+}
+</code></pre>
+
+<p>Then send it with your owner or admin key:</p>
+
+<pre><code class="language-bash">curl -s -X POST https://mcp.kiff.dev/v1/connections \
+  -H &quot;Authorization: Bearer $OWNER_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  --data-binary @connection.json
+</code></pre>
+
+<p><code>tool</code> is the name exposed by the remote server; <code>name</code> is the name your agent will see. Set <code>amount_argument</code> to the tool&rsquo;s integer amount parameter if the Card should limit amounts. Set <code>idempotency_argument</code> if the tool accepts an idempotency key. Omit either field if it does not apply. Use the same units your tool expects when you set Card limits. <code>amount_unit</code> and <code>amount_scale</code> are optional and only change how amounts are shown: a currency code or a word for the unit, and the number of decimal places the tool&rsquo;s integer carries. A tool that takes cents uses <code>&quot;amount_unit&quot;: &quot;EUR&quot;, &quot;amount_scale&quot;: 2</code>, so a limit of 5000 reads as 50.00 EUR. KIFF still checks the whole numbers either way.</p>
+
+<p>KIFF checks that the URL, tool and credential work before saving the connection. The gateway then updates the account&rsquo;s tool contract. Treat the tool credential as a secret: do not commit the request file or paste a real credential into a command that will be saved in shell history. Remove the local request file after the connection is saved.</p>
+
+<h2 id="2-give-the-agent-a-card">2. Give the agent a Card</h2>
+
+<p>In KIFF Cloud, open <strong>Tools</strong> and choose <strong>Give an agent a Card</strong> on the connected tool. Name the agent and set, in the tool&rsquo;s own units, the most per call, a total and a number of calls per day, per 24 hours or per hour, what happens to a call outside the Card (held for you, or refused), and how long a held call waits for your answer. Issuing again for the same agent and tool changes its Card; <strong>Change limits</strong> on the Card starts from its current terms.</p>
+
+<p>Each agent needs its own key bound to that agent and limited to the <code>gateway_agent</code> role. The key must be created by a caller that holds the <code>admin</code> role, because a key can only grant roles its creator already holds.</p>
+
+<p>Signed in as an admin, open the agent under <strong>Agents</strong> (<strong>My agents</strong> in a personal account), go to its <strong>Tools</strong> tab and choose <strong>Connect to the KIFF gateway</strong>. KIFF creates the key and shows it once, already inside the configuration for Claude Code and Codex; copy it then. In a company account, only an admin can do this, and anyone else is told so.</p>
+
+<p>To do the same with the API, use your admin API key (<code>$ADMIN_KEY</code>):</p>
+
+<pre><code class="language-bash">curl -s -X POST https://api.kiff.dev/v1/keys \
+  -H &quot;Authorization: Bearer $ADMIN_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;label&quot;:&quot;my-agent&quot;,&quot;roles&quot;:[&quot;gateway_agent&quot;],&quot;agent_id&quot;:&quot;my-agent&quot;}'
+</code></pre>
+
+<p>A solo account owner has the <code>admin</code> role, and so does their signed-in session in KIFF Cloud, which is why the dashboard steps above work. An API key created on <strong>API keys</strong> (<code>/dashboard/keys</code>) holds no roles, so it cannot connect tools or create gateway keys: there is no way yet to create an <code>admin</code> API key from the dashboard. Use the dashboard for these steps; the API calls are for an operator who already holds an admin key.</p>
+
+<p>A gateway key is good only for the gateway. Like a sign-in connection for the same agent, it reaches only the routes the gateway calls: it cannot list the account&rsquo;s Cards, read another agent&rsquo;s held work, or change anything on the account.</p>
+
+<h2 id="3-point-the-agent-at-kiff">3. Point the agent at KIFF</h2>
+
+<p>Configure the agent&rsquo;s remote MCP server URL as <code>https://mcp.kiff.dev/mcp</code> and give it the gateway key as a bearer token.</p>
+
+<p>For Claude Code, the MCP server entry has this shape:</p>
+
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;kiff&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://mcp.kiff.dev/mcp&quot;,
+      &quot;headers&quot;: {
+        &quot;Authorization&quot;: &quot;Bearer &lt;gateway agent key&gt;&quot;
+      }
+    }
+  }
+}
+</code></pre>
+
+<p>For Codex, set <code>mcp_servers.kiff.url</code> to that URL and <code>mcp_servers.kiff.bearer_token_env_var</code> to the environment variable holding the gateway key. Keep the secret out of the configuration file if that file is checked in.</p>
+
+<h2 id="4-let-kiff-check-each-call">4. Let KIFF check each call</h2>
+
+<p>When the agent calls the connected tool, KIFF checks the agent&rsquo;s Card first:</p>
+
+<ul>
+<li>If the call is within the Card, KIFF forwards it to the tool.</li>
+<li>If the Card requires an owner decision, KIFF holds the call and returns a link. KIFF also emails the account owner, once per held call, with what the agent asked for and the same link. Open it in KIFF Cloud, signed in, and choose an answer; nothing can be approved from the email itself. Approval authorizes the call; the agent must retry before KIFF forwards it. In Claude Code (2.1.287 or later), the chat also offers to open the link, on accounts where that is on. See <a href="/docs/archive/2026-10-09/approvals">Held calls and approvals</a>.</li>
+<li>A held call waits for the owner&rsquo;s answer for the Card&rsquo;s hold expiry, 10 minutes unless the Card sets another (from 1 minute to 7 days, <code>hold_expiry</code> when the Card is issued). If nobody answers in time it is refused, nothing is sent, and a late answer is not accepted; the agent has to ask again with a new <code>kiff_operation_id</code>. An answer given in time stands until the agent collects it.</li>
+<li>If the call is refused, KIFF does not forward it.</li>
+</ul>
+
+<p>If the client runs tool calls as <strong>MCP tasks</strong> (the gateway declares the
+<code>tasks</code> capability), a held call is answered with a working task instead of
+a result that says to retry. The client waits on the task; it completes once
+the call is forwarded, refused or expired, and the conversation continues
+with the outcome. Only the key that made the call can read its task.</p>
+
+<p>The gateway records calls so retries do not forward the same held action twice. If the tool&rsquo;s response is lost after a call was sent, the result may be unknown; KIFF will not send that action again automatically. When the tool supports idempotency, configure its idempotency argument as shown above.</p>
+
+<p>The gateway adds an optional <code>kiff_operation_id</code> argument to every tool. Give each new action a new id, and reuse the id when retrying the same action:</p>
+
+<ul>
+<li>A call with an id KIFF has seen is the same call, at any time: it gets that call&rsquo;s outcome and is never forwarded again. The same id with different arguments is refused.</li>
+<li>Without an id, an identical call (same tool, same arguments) within 10 minutes is treated as a retry of the first and gets its outcome, with a note saying so. Two genuinely separate identical actions in that window are done once; give each its own id to do both.</li>
+<li>A tool connected as read-only is never answered with an earlier call&rsquo;s result: a second identical read reaches the tool again once the first has finished.</li>
+</ul>
+
+<h2 id="what-the-agent-knows-before-it-calls">What the agent knows before it calls</h2>
+
+<p>Each tool the gateway lists ends with a line saying what the agent&rsquo;s Card allows for it: the most one call may carry, how much of each total is left in its window, and whether a call over the Card is held for an approver or refused. A tool no Card of the agent&rsquo;s covers says that calls to it are refused. For example:</p>
+
+<pre><code class="language-text">Your KIFF Card: Card mdt-refunds covers this tool: up to 1000 amount_eur per call; 3800 of 5000 amount_eur left today. A call over it is held for a person to approve.
+</code></pre>
+
+<p>The gateway also lists its own read-only tool, <code>kiff_card</code>. It shows the same Cards with the numbers as they are now, the same ones the Card&rsquo;s statement shows. Calling it is not a governed call: nothing is recorded, decided or drawn, and nothing reaches a connected tool. No connected tool can be named <code>kiff_card</code>.</p>
+
+<p>These numbers are information, read when the agent asks. They can change between that read and the call, for example when another agent on the same Card draws from it. The decision KIFF makes when the call arrives is what counts. <code>kiff_card</code> shows only the Cards the agent holds, and reading a Card gives the agent no way to issue, change or revoke one.</p>
+
+<p>The gateway also lists <code>kiff_pending</code>, read-only as well. It lists this credential&rsquo;s own calls that wait for the owner, are being sent, or have an unknown outcome, newest first, from the last 7 days, 50 at a time. When there are more, the result has a <code>next_cursor</code> to pass back as <code>cursor</code>:</p>
+
+<pre><code class="language-json">{&quot;name&quot;: &quot;kiff_pending&quot;, &quot;arguments&quot;: {}}
+</code></pre>
+
+<p>These are the parameters for an MCP <code>tools/call</code> request. For the next page, use <code>{&quot;name&quot;: &quot;kiff_pending&quot;, &quot;arguments&quot;: {&quot;cursor&quot;: &quot;&lt;next_cursor&gt;&quot;}}</code>.</p>
+
+<p>For a held call, the result includes the original arguments and the owner&rsquo;s answer: <code>waiting</code>, <code>approved</code>, <code>refused</code>, or <code>ended</code> without approval. <code>unavailable</code> means KIFF could not read the answer; it is not a refusal or proof that nobody approved. A client must preserve recovery and check again. For every call, the list gives the <code>kiff_operation_id</code> that collects it. A call made without one is listed under KIFF&rsquo;s own id, so it can still be collected after the 10-minute identical-call window. Reuse the listed original arguments, including any idempotency argument the agent supplied; the downstream tool still receives KIFF&rsquo;s own idempotency value.</p>
+
+<p>Reading the list sends nothing, uses no approval and draws nothing from the Card. Collecting a call is the agent&rsquo;s own call, made again with the same tool, original arguments and listed id; an approved call is sent at most once. When recovering work in a new session, read the pending list first using the same credential that made the calls.</p>
+
+<p>In Claude Code, the optional <code>kiff</code> plugin checks held calls and brings the owner&rsquo;s answer into the conversation. Its bounded scans continue across checks and its notices are announced once. See <a href="/docs/archive/2026-10-09/agent-skill#optional-card-status-notices-and-recovery-in-claude-code">installation, permissions and recovery</a>.</p>
+
+<h2 id="what-the-agent-gets-back">What the agent gets back</h2>
+
+<p>A successful authorization and a successful tool response are separate facts. A forwarded call can still return a tool error, and a missing response leaves the outcome unknown. KIFF Cloud records the tool&rsquo;s reported outcome alongside the decision; see <a href="/docs/archive/2026-10-09/approvals#approval-and-the-tool-s-outcome">approval and the tool&rsquo;s outcome</a>.</p>
+
+<p>A forwarded call returns the tool&rsquo;s own result, unchanged. Every result KIFF writes itself (held, refused, still being decided, sent with no answer yet, failed, or unknown) has text for the model with the next step, and the same facts for the program running the agent in the result&rsquo;s <code>_meta</code>, under <code>dev.kiff/call</code>:</p>
+
+<pre><code class="language-json">{
+  &quot;state&quot;: &quot;held&quot;,
+  &quot;invocation&quot;: &quot;tc-…&quot;,
+  &quot;operation_id&quot;: &quot;order-1042-refund&quot;,
+  &quot;sent&quot;: &quot;no&quot;,
+  &quot;exception_id&quot;: &quot;exc-…&quot;,
+  &quot;review_url&quot;: &quot;https://app.kiff.dev/needs-you/exc-…&quot;,
+  &quot;hold_expires_at&quot;: &quot;2026-10-01T12:10:00Z&quot;,
+  &quot;retry&quot;: &quot;same_call&quot;,
+  &quot;retry_after_s&quot;: 30
+}
+</code></pre>
+
+<ul>
+<li><code>state</code>: <code>held</code>, <code>refused</code>, <code>failed</code>, <code>unknown</code>, <code>deciding</code>, <code>forwarding</code>, or <code>forwarded</code> on a repeated call.</li>
+<li><code>sent</code>: whether the tool received the call: <code>no</code>, <code>yes</code> or <code>unknown</code>.</li>
+<li><code>retry</code>: <code>same_call</code> (repeat the identical call to get the answer), <code>new_call</code> (this call is over; a new attempt needs a new <code>kiff_operation_id</code>, after the next step in the text) or <code>none</code> (do not retry, for example when the owner rejected it or the result is unknown).</li>
+<li><code>reasons</code>: machine-readable codes, such as <code>no_mandate_issued</code>, <code>mandate_per_action_exceeded</code> or <code>mandate_owner_expired</code>.</li>
+<li><code>hold_expires_at</code>: on a held call, when it stops waiting for the owner and is refused.</li>
+<li><code>repeat</code>: <code>true</code> when an identical call without an id was answered with an earlier call&rsquo;s outcome.</li>
+</ul>
+
+<h2 id="limits-to-understand">Limits to understand</h2>
+
+<ul>
+<li>Only calls to tools connected through KIFF are governed. A direct connection, shell, browser or another route to the same service sits outside this Card.</li>
+<li>The gateway currently connects remote MCP servers only. It does not connect arbitrary HTTP APIs or use OAuth.</li>
+<li>The prompt in the chat works only with clients KIFF has verified: today Claude Code 2.1.287 or later, on MCP revision 2026-07-28. Every other client gets the held result with its link, and the owner still gets the email and Needs you.</li>
+<li>Claude Code and Codex passed production smoke tests with a temporary test tool. That verified the gateway path; it was not a customer transaction or a test of every MCP client and server.</li>
+<li>Codex prompts for approval before every MCP tool call by default. Add <code>default_tools_approval_mode = &quot;approve&quot;</code> under <code>[mcp_servers.kiff]</code> in your Codex config (not at the top level) to let it forward calls without pausing.</li>
+</ul>
+
+<p>For the product story and the production test details, see <a href="/blog/putting-kiff-between-an-agent-and-its-tools">Putting KIFF between an agent and its tools</a>.</p>

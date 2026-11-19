@@ -1,0 +1,1715 @@
+/* studio.css — KIFF Studio authoring surface (loaded with dashboard.css). */
+
+/* ── Studio ──────────────────────────────────────────────
+ *
+ * Progressive domain-authoring surface at /dashboard/studio.
+ * Mirrors the kiff-studio-evolution mockup: a slim stage strip, a
+ * single framed "app window" with a titlebar, a two-column body
+ * (block builder + live YAML) inside, and a footer row of
+ * primitive explainer cards.
+ *
+ * All selectors live under .studio / .studio-* so this block does
+ * not interact with any other dashboard page.
+ */
+
+.studio {
+  --st-rule: var(--rule-soft);
+  --st-rule-strong: var(--rule);
+  --st-card: color-mix(in oklab, var(--bg-elev) 55%, transparent);
+  --st-window: color-mix(in oklab, var(--bg-elev) 35%, transparent);
+  --st-accent: var(--accent);
+  --st-gap: var(--size-3);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--size-4) var(--size-4) var(--size-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+.studio-banner {
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: var(--size-2) var(--size-3);
+  background: color-mix(in oklab, orange 7%, var(--bg-elev) 55%);
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+}
+
+/* Success/info banner — a draft import that landed, etc. Green
+ * rather than the amber "heads up" error tone. */
+.studio-banner-ok {
+  background: color-mix(in oklab, var(--accent) 8%, var(--bg-elev) 55%);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--st-rule));
+  color: var(--fg);
+}
+
+.studio-banner-ok strong {
+  color: var(--accent);
+}
+
+/* ── Enforcement header (the proof pricing design-06-04) ───────────
+ *
+ * The value-oriented lead of the page: "is this action governed
+ * before it runs, or are we just watching?" — answered before any
+ * authoring chrome. Three states (enforcing / observed / drafting)
+ * mirror the dashboard Overview's governance card. */
+.studio-enforce {
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: var(--size-4);
+  background: var(--st-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.studio-enforce-line {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}
+
+.studio-enforce-kicker {
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.studio-enforce-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+  opacity: 0.5;
+  flex: 0 0 auto;
+}
+
+.studio-enforce-dot-on {
+  background: var(--ok);
+  opacity: 1;
+  box-shadow: 0 0 7px color-mix(in oklab, var(--ok) 70%, transparent);
+}
+
+.studio-enforce-dot-observe {
+  background: var(--warn);
+  opacity: 1;
+}
+
+.studio-enforce-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+.studio-enforce-title code {
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  color: var(--accent);
+}
+
+.studio-enforce-desc {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--fg-soft);
+  font-size: var(--font-size-1);
+  line-height: 1.55;
+}
+
+.studio-enforce-actions {
+  margin-top: var(--size-1);
+}
+
+/* State accents: enforcing reads "live" (ok/green edge); observed
+ * reads "in progress" (warm/amber edge); drafting stays neutral. */
+.studio-enforce-on {
+  border-color: color-mix(in oklab, var(--ok) 32%, var(--st-rule));
+  background: color-mix(in oklab, var(--ok) 5%, var(--st-card));
+}
+
+.studio-enforce-observe {
+  border-color: color-mix(in oklab, var(--warn) 32%, var(--st-rule));
+  background: color-mix(in oklab, var(--warn) 5%, var(--st-card));
+}
+
+.studio-observed {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: var(--size-4);
+  align-items: start;
+  border: 1px solid color-mix(in oklab, var(--st-accent) 32%, var(--st-rule));
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--st-accent) 5%, var(--st-window));
+  padding: var(--size-4);
+}
+
+.studio-observed-kicker {
+  margin: 0 0 var(--size-1);
+  font-family: var(--font-code);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--st-accent);
+}
+
+.studio-observed-copy h2 {
+  margin: 0 0 var(--size-2);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  line-height: 1.05;
+}
+
+.studio-observed-copy p {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--fg-soft);
+}
+
+.studio-observed-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--size-2) var(--size-3);
+  margin: 0;
+}
+
+.studio-observed-facts div {
+  min-width: 0;
+}
+
+.studio-observed-facts dt {
+  margin-bottom: 2px;
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.studio-observed-facts dd {
+  margin: 0;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .studio-observed {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Slim stage strip ───────────────────────────────────────── */
+
+.studio-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-4);
+  border-bottom: 1px solid var(--st-rule);
+  padding-bottom: var(--size-3);
+}
+
+.studio-strip-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-top: var(--size-2);
+  border-top: 2px solid transparent;
+  min-width: 0;
+}
+
+.studio-strip-label {
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  opacity: 0.7;
+}
+
+.studio-strip-name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+
+.studio-strip-hint {
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.studio-strip-item.studio-stage-reached .studio-strip-name {
+  color: var(--fg-soft);
+}
+
+.studio-strip-item.studio-stage-active {
+  border-top-color: var(--st-accent);
+}
+
+.studio-strip-item.studio-stage-active .studio-strip-label,
+.studio-strip-item.studio-stage-active .studio-strip-name {
+  color: var(--st-accent);
+}
+
+.studio-strip-item.studio-stage-active .studio-strip-hint {
+  color: var(--fg-soft);
+  opacity: 1;
+}
+
+/* clickable strip tabs (preview mode) */
+.studio-strip-tab {
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+
+.studio-strip-tab:hover {
+  border-top-color: color-mix(in oklab, var(--st-accent) 50%, var(--st-rule));
+}
+
+.studio-strip-tab:hover .studio-strip-name {
+  color: var(--fg);
+}
+
+/* ── Framed window ──────────────────────────────────────────── */
+
+.studio-window {
+  border: 1px solid var(--st-rule-strong);
+  border-radius: var(--radius);
+  background: var(--st-window);
+  overflow: hidden;
+}
+
+.studio-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+  flex-wrap: wrap;
+  padding: var(--size-2) var(--size-3);
+  border-bottom: 1px solid var(--st-rule);
+  background: color-mix(in oklab, var(--bg-elev) 50%, transparent);
+}
+
+.studio-titlebar-id {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  min-width: 0;
+}
+
+.studio-titlebar-app {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--font-size-1);
+  color: var(--fg);
+}
+
+.studio-titlebar-sep {
+  color: var(--fg-muted);
+  opacity: 0.6;
+}
+
+.studio-titlebar-domain {
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--bg-code) 55%, transparent);
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: 2px var(--size-2);
+}
+
+.studio-titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  flex-wrap: wrap;
+}
+
+.studio-tab {
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  text-decoration: none;
+  padding: var(--size-1) var(--size-2);
+  border-radius: var(--radius);
+  border: 1px solid var(--st-rule);
+  color: var(--fg-soft);
+  background: var(--bg);
+}
+
+.studio-tab-yaml {
+  color: var(--bg);
+  background: var(--st-accent);
+  border-color: var(--st-accent);
+  font-weight: 600;
+}
+
+.studio-tab-yaml:hover {
+  color: var(--bg);
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+.studio-tab-ghost:hover {
+  color: var(--fg);
+  border-color: var(--fg-muted);
+}
+
+.studio-save {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-1);
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  padding-right: var(--size-1);
+}
+
+.studio-save-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--fg-muted);
+}
+
+.studio-save-saved .studio-save-dot {
+  background: var(--st-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--st-accent) 25%, transparent);
+}
+
+.studio-preview-badge {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(82% 0.10 70);
+  border: 1px solid color-mix(in oklab, oklch(80% 0.12 70) 40%, var(--st-rule));
+  background: color-mix(in oklab, oklch(80% 0.12 70) 9%, var(--bg));
+  border-radius: 999px;
+  padding: 2px var(--size-2);
+}
+
+/* ── Two-column body ────────────────────────────────────────── */
+
+.studio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.studio-builder {
+  padding: var(--size-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  min-width: 0;
+}
+
+/* The YAML is the artifact, not the interface (the proof pricing design amendment
+ * 2026-06-04). It collapses below the builder instead of taking
+ * the larger of two columns. Folded by default; the developer who
+ * wants to read or export it opens it. */
+.studio-yaml-panel {
+  border-top: 1px solid var(--st-rule);
+}
+
+.studio-yaml-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-3) var(--size-4);
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-code);
+  user-select: none;
+}
+
+.studio-yaml-summary::-webkit-details-marker { display: none; }
+
+.studio-yaml-summary-label {
+  font-size: 0.72rem;
+  color: var(--fg);
+  letter-spacing: 0.04em;
+}
+
+.studio-yaml-summary-hint {
+  font-size: 0.62rem;
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.studio-yaml-summary-chev {
+  margin-left: auto;
+  color: var(--fg-muted);
+  transition: transform 120ms ease;
+}
+
+.studio-yaml-panel[open] .studio-yaml-summary-chev {
+  transform: rotate(90deg);
+}
+
+.studio-yaml-summary:hover .studio-yaml-summary-label {
+  color: var(--accent);
+}
+
+.studio-yaml {
+  background: var(--bg-code);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--st-rule);
+}
+
+/* section labels */
+
+.studio-section {
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  opacity: 0.7;
+  margin: var(--size-2) 0 0 0;
+}
+
+.studio-section:first-child {
+  margin-top: 0;
+}
+
+/* ── Typed primitive cards ──────────────────────────────────── */
+
+.studio-card {
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  background: var(--st-card);
+  overflow: hidden;
+}
+
+.studio-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  cursor: pointer;
+  list-style: none;
+}
+
+.studio-card-head::-webkit-details-marker {
+  display: none;
+}
+
+.studio-card-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--st-rule-strong);
+  background: var(--bg);
+  color: var(--fg-soft);
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.studio-card-name {
+  font-family: var(--font-code);
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  color: var(--fg);
+  margin-right: auto;
+  word-break: break-word;
+}
+
+.studio-card-chev {
+  color: var(--fg-muted);
+  transition: transform 120ms ease;
+}
+
+.studio-card[open] .studio-card-chev {
+  transform: rotate(90deg);
+}
+
+.studio-tag {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  padding: 2px var(--size-2);
+  border-radius: 999px;
+  border: 1px solid var(--st-rule);
+  color: var(--fg-muted);
+  background: color-mix(in oklab, var(--fg-soft) 8%, var(--bg));
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.tag-entity  { color: oklch(80% 0.10 240); border-color: color-mix(in oklab, oklch(80% 0.10 240) 35%, var(--st-rule)); }
+.tag-state   { color: oklch(82% 0.09 175); border-color: color-mix(in oklab, oklch(80% 0.10 175) 35%, var(--st-rule)); }
+.tag-action  { color: oklch(85% 0.10 80);  border-color: color-mix(in oklab, oklch(80% 0.12 80) 35%, var(--st-rule)); }
+.tag-role    { color: oklch(80% 0.10 305); border-color: color-mix(in oklab, oklch(80% 0.10 305) 35%, var(--st-rule)); }
+.tag-audit   { color: oklch(80% 0.10 305); border-color: color-mix(in oklab, oklch(80% 0.10 305) 35%, var(--st-rule)); }
+.tag-adapter { color: oklch(82% 0.09 175); border-color: color-mix(in oklab, oklch(80% 0.10 175) 35%, var(--st-rule)); }
+
+.studio-card-body {
+  padding: var(--size-3);
+  border-top: 1px solid var(--st-rule);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.studio-card-note {
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  color: var(--fg-soft);
+  margin: 0;
+}
+
+/* ── Form fields ────────────────────────────────────────────── */
+
+.studio-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin: 0;
+}
+
+/* Read-only projection fields: Build renders the running
+   domain, it doesn't edit it. Label + value, never a disabled input. */
+.studio-rofields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin: 0;
+}
+
+.studio-rofield {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-3);
+}
+
+.studio-rofield-label {
+  flex: 0 0 8.5rem;
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.studio-rofield-value {
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.studio-rofield-empty {
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+/* Source-of-truth banner: the domain shown is the running version; the
+   kiff.yaml lives in the developer's repo (docker-compose model). */
+.studio-source-note {
+  margin: var(--size-2) 0 var(--size-3);
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--st-rule, var(--rule-soft));
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--accent) 5%, transparent);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--fg-soft);
+}
+
+.studio-source-note code {
+  font-family: var(--font-code);
+  font-size: 0.95em;
+}
+
+.studio-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-2);
+}
+
+.studio-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studio-field > span {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+.studio-field input,
+.studio-field select {
+  padding: var(--size-1) var(--size-2);
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  min-width: 0;
+}
+
+.studio-field input:focus,
+.studio-field select:focus {
+  outline: none;
+  border-color: var(--st-accent);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--st-accent) 25%, transparent);
+}
+
+.studio-field-error {
+  color: tomato;
+  font-size: 0.7rem;
+}
+
+.studio-field-hint {
+  color: var(--fg-muted);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.studio-field-hint code {
+  font-family: var(--font-code);
+  font-size: 0.95em;
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--bg-code) 50%, transparent);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+@media (max-width: 680px) {
+  .studio-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* state chips + transitions */
+
+.studio-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-1);
+}
+
+.studio-chip {
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  padding: 2px var(--size-2);
+  border-radius: 999px;
+  border: 1px solid var(--st-rule);
+  color: var(--fg-soft);
+  background: var(--bg);
+}
+
+.studio-chip-initial {
+  color: var(--fg-muted);
+  border-style: dashed;
+}
+
+.studio-chip-state {
+  color: oklch(85% 0.07 175);
+  border-color: color-mix(in oklab, oklch(80% 0.10 175) 30%, var(--st-rule));
+}
+
+.studio-transitions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+}
+
+.studio-transition {
+  display: flex;
+  gap: var(--size-2);
+  align-items: baseline;
+}
+
+.studio-transition-event {
+  color: oklch(85% 0.10 80);
+}
+
+.studio-transition-arrow {
+  color: var(--fg-muted);
+}
+
+/* role / policy */
+
+.studio-role {
+  border-top: 1px dashed var(--st-rule);
+  padding-top: var(--size-1);
+}
+
+.studio-role:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.studio-role-name {
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  color: var(--fg);
+}
+
+.studio-role-perms {
+  margin: 2px 0 0 0;
+  padding-left: var(--size-4);
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  color: var(--fg-soft);
+}
+
+.studio-boundary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-1);
+  padding: var(--size-2);
+  border-radius: var(--radius);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.studio-boundary-glyph {
+  flex: 0 0 auto;
+}
+
+.studio-boundary-holds {
+  border: 1px solid color-mix(in oklab, var(--st-accent) 35%, var(--st-rule));
+  background: color-mix(in oklab, var(--st-accent) 6%, transparent);
+  color: var(--st-accent);
+}
+
+.studio-boundary-solo {
+  border: 1px solid color-mix(in oklab, orange 35%, var(--st-rule));
+  background: color-mix(in oklab, orange 6%, transparent);
+  color: oklch(82% 0.12 70);
+}
+
+/* ── Risk pills ─────────────────────────────────────────────── */
+
+.studio-pill {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  padding: 2px var(--size-2);
+  border-radius: 999px;
+  border: 1px solid var(--st-rule);
+  color: var(--fg-soft);
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.studio-pill-risk-low {
+  color: var(--fg-soft);
+}
+
+.studio-pill-risk-med {
+  color: oklch(84% 0.12 80);
+  border-color: color-mix(in oklab, oklch(80% 0.12 80) 40%, var(--st-rule));
+  background: color-mix(in oklab, oklch(80% 0.12 80) 9%, var(--bg));
+}
+
+.studio-pill-risk-high {
+  color: oklch(82% 0.17 25);
+  border-color: color-mix(in oklab, oklch(70% 0.18 25) 45%, var(--st-rule));
+  background: color-mix(in oklab, oklch(70% 0.18 25) 12%, var(--bg));
+}
+
+.studio-pill-risk-critical {
+  color: white;
+  border-color: oklch(60% 0.20 25);
+  background: oklch(50% 0.20 25);
+}
+
+/* ── YAML pane ──────────────────────────────────────────────── */
+
+.studio-yaml-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-2) var(--size-3);
+  border-bottom: 1px solid color-mix(in oklab, white 8%, var(--bg-code));
+}
+
+.studio-yaml-name {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, white 55%, var(--bg-code));
+}
+
+.studio-yaml-live {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  color: var(--st-accent);
+}
+
+.studio-yaml-live::before {
+  content: "● ";
+}
+
+.studio-yaml-draft,
+.studio-yaml-example {
+  color: color-mix(in oklab, white 55%, var(--bg-code));
+}
+
+.studio-yaml-example {
+  color: oklch(82% 0.10 70);
+}
+
+.studio-yaml-body {
+  margin: 0;
+  padding: var(--size-3);
+  color: color-mix(in oklab, white 82%, var(--bg-code));
+  font-family: var(--font-code);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+  flex: 1;
+}
+
+.studio-yaml-body code {
+  font-family: inherit;
+  font-size: inherit;
+  white-space: inherit;
+  color: inherit;
+}
+
+.studio-scaffold {
+  padding: var(--size-3);
+  border-top: 1px solid color-mix(in oklab, white 8%, var(--bg-code));
+}
+
+.studio-scaffold-label {
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, white 55%, var(--bg-code));
+  margin: 0 0 var(--size-1) 0;
+}
+
+.studio-scaffold ul {
+  margin: 0;
+  padding-left: var(--size-4);
+  font-family: var(--font-code);
+  font-size: 0.76rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studio-scaffold a {
+  color: var(--st-accent);
+}
+
+/* ── Explainer footer row ───────────────────────────────────── */
+
+.studio-explainers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--st-gap);
+}
+
+.studio-explainer {
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  background: var(--st-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.studio-explainer-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-1);
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+.studio-explainer-primitive .studio-explainer-kind { color: var(--st-accent); }
+.studio-explainer-convention .studio-explainer-kind { color: oklch(82% 0.10 240); }
+.studio-explainer-mechanic .studio-explainer-kind { color: oklch(82% 0.10 305); }
+
+.studio-explainer-sep { opacity: 0.5; }
+
+.studio-explainer-name { color: var(--fg-soft); }
+
+.studio-explainer-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.25;
+}
+
+.studio-explainer-body {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--fg-soft);
+  line-height: 1.45;
+}
+
+.studio-explainer-body code {
+  font-family: var(--font-code);
+  font-size: 0.92em;
+  background: color-mix(in oklab, var(--bg-code) 55%, transparent);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+/* ── v3 Studio guided setup ────────────────────────────────────── */
+.studio-v3 {
+  --st-rule: var(--rule-soft);
+  --st-rule-strong: var(--rule);
+  --st-card: color-mix(in oklab, var(--bg-elev) 86%, transparent);
+  --st-window: #fff;
+  --st-accent: #2f6fd6;
+  --st-gap: 18px;
+
+  max-width: min(100%, 1164px);
+  padding: 30px 34px 56px;
+  gap: 26px;
+}
+
+.studio-v3 .studio-banner {
+  border-color: var(--rule-soft);
+  border-radius: 12px;
+  background: #fff8e7;
+  color: var(--fg-soft);
+}
+
+.studio-v3 .studio-strip {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--bg-elev) 86%, transparent);
+  box-shadow: 0 18px 36px rgba(18, 22, 30, 0.06);
+  padding: 0;
+}
+
+.studio-v3 .studio-strip-item {
+  position: relative;
+  min-height: 96px;
+  padding: 24px 22px 18px;
+  border-top: 0;
+  border-right: 1px solid var(--rule-soft);
+  text-decoration: none;
+}
+
+.studio-v3 .studio-strip-item:last-child {
+  border-right: 0;
+}
+
+.studio-v3 .studio-strip-label {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: var(--bg-elev);
+  color: var(--fg-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  font-weight: 800;
+}
+
+.studio-v3 .studio-stage-active {
+  background: color-mix(in oklab, var(--accent) 6%, var(--bg-elev));
+  box-shadow: inset 0 3px 0 #5b89ee;
+}
+
+.studio-v3 .studio-stage-active .studio-strip-label,
+.studio-v3 .studio-stage-reached:first-child .studio-strip-label {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: #1c210f;
+}
+
+.studio-v3 .studio-strip-name {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.studio-v3 .studio-strip-hint {
+  margin-top: 4px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  opacity: 1;
+}
+
+.studio-v3 .studio-observed,
+.studio-v3 .studio-window,
+.studio-v3 .studio-explainer {
+  border-color: var(--rule-soft);
+  border-radius: 12px;
+  background: var(--st-card);
+  box-shadow: 0 1px 2px rgba(18, 22, 30, 0.04);
+}
+
+.studio-v3 .studio-observed {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.75fr);
+  padding: 24px;
+}
+
+.studio-v3 .studio-observed-kicker,
+.studio-v3 .studio-section {
+  color: var(--fg-muted);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.studio-v3 .studio-observed-copy h2 {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 750;
+}
+
+.studio-v3 .studio-observed-copy p,
+.studio-v3 .studio-observed-facts dt,
+.studio-v3 .studio-observed-facts dd {
+  color: var(--fg-soft);
+}
+
+.studio-v3 .studio-observed-facts dd {
+  color: var(--fg);
+}
+
+.studio-v3 .studio-window {
+  overflow: hidden;
+}
+
+.studio-v3 .studio-titlebar {
+  padding: 18px 22px;
+  border-bottom-color: var(--rule-soft);
+  background: var(--bg-elev);
+}
+
+.studio-v3 .studio-titlebar-app {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.studio-v3 .studio-body {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.56fr);
+  gap: 18px;
+  padding: 22px;
+}
+
+.studio-v3 .studio-card,
+.studio-v3 .studio-yaml-panel {
+  border-color: var(--rule-soft);
+  border-radius: 14px;
+  background: var(--bg-elev);
+}
+
+.studio-v3 .studio-card-head,
+.studio-v3 .studio-yaml-summary {
+  border-bottom-color: var(--rule-soft);
+  background: var(--bg-elev);
+  color: var(--fg);
+}
+
+.studio-v3 .studio-card-name,
+.studio-v3 .studio-yaml-summary-label {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: 750;
+}
+
+.studio-v3 .studio-tag,
+.studio-v3 .studio-pill,
+.studio-v3 .studio-preview-badge,
+.studio-v3 .studio-tab {
+  border-color: var(--rule-soft);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg-soft);
+}
+
+.studio-v3 .studio-fields input,
+.studio-v3 .studio-fields select {
+  border-color: var(--rule-soft);
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.studio-v3 .studio-field > span,
+.studio-v3 .studio-field-hint,
+.studio-v3 .studio-card-note {
+  color: var(--fg-muted);
+}
+
+.studio-v3 .studio-yaml,
+.studio-v3 .studio-yaml-body {
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+  color: var(--fg);
+}
+
+.studio-v3 .studio-yaml-head {
+  border-bottom-color: var(--rule-soft);
+}
+
+.studio-v3 .studio-yaml-live {
+  color: #247447;
+}
+
+.studio-v3 .studio-explainers {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .studio-v3 {
+    padding: 24px 18px 46px;
+  }
+
+  .studio-v3 .studio-strip,
+  .studio-v3 .studio-body,
+  .studio-v3 .studio-observed {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-v3 .studio-strip-item {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .studio-v3 .studio-strip-item:last-child {
+    border-bottom: 0;
+  }
+}
+
+/* ── Action-first onboarding ─────────────────────────── */
+
+.studio-af-intro {
+  margin: 0 0 var(--size-3);
+  max-width: 70ch;
+  color: var(--fg-soft);
+}
+
+.studio-candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--size-4);
+  margin-bottom: var(--size-4);
+}
+
+.studio-candidate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  border: 1px solid color-mix(in oklab, var(--st-accent) 32%, var(--st-rule));
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--st-accent) 5%, var(--st-window));
+  padding: var(--size-4);
+}
+
+.studio-candidate-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--size-2);
+}
+
+.studio-candidate-kicker {
+  margin: 0 0 var(--size-1);
+  font-family: var(--font-code);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--st-accent);
+}
+
+.studio-candidate-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  line-height: 1.05;
+}
+
+.studio-candidate-sub {
+  margin: var(--size-1) 0 0;
+  color: var(--fg-soft);
+}
+
+.studio-candidate-grounded {
+  flex: none;
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--st-accent);
+  border: 1px solid color-mix(in oklab, var(--st-accent) 40%, var(--st-rule));
+  border-radius: var(--radius);
+  padding: 2px 8px;
+}
+
+.studio-candidate-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--size-2) var(--size-3);
+  margin: 0;
+}
+
+.studio-candidate-facts div { min-width: 0; }
+
+.studio-candidate-facts dt {
+  margin-bottom: 2px;
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.studio-candidate-facts dd {
+  margin: 0;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.studio-candidate-label {
+  margin: 0 0 var(--size-1);
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.studio-candidate-fields ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.studio-candidate-fields li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-2);
+}
+
+.studio-candidate-ftype { color: var(--fg-muted); font-size: 0.85em; }
+
+.studio-candidate-req {
+  font-family: var(--font-code);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--st-accent);
+}
+
+.studio-candidate-policy {
+  border-top: 1px solid var(--st-rule);
+  padding-top: var(--size-2);
+}
+
+.studio-candidate-policy-note {
+  margin: 0;
+  color: var(--fg-soft);
+  font-size: 0.9em;
+}
+
+.studio-candidate-confirm { margin-top: auto; }
+
+.studio-af-empty {
+  border: 1px dashed var(--st-rule);
+  border-radius: var(--radius);
+  background: var(--st-window);
+  padding: var(--size-5);
+  max-width: 72ch;
+}
+
+.studio-af-empty h2 {
+  margin: var(--size-1) 0 var(--size-2);
+  font-family: var(--font-display);
+}
+
+.studio-af-empty p { margin: 0 0 var(--size-2); color: var(--fg-soft); }
+.studio-af-empty-hint { font-size: 0.9em; }
+
+.studio-af-replay {
+  margin-top: var(--size-4);
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+}
+
+.studio-af-replay summary { cursor: pointer; color: var(--fg); }
+.studio-af-replay-note { margin: var(--size-2) 0; color: var(--fg-soft); font-size: 0.9em; }
+
+.studio-af-replay textarea {
+  width: 100%;
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  background: var(--st-window);
+  color: var(--fg);
+  border: 1px solid var(--st-rule);
+  border-radius: var(--radius);
+  padding: var(--size-2);
+  margin-bottom: var(--size-2);
+  resize: vertical;
+}
+
+@media (max-width: 900px) {
+  .studio-candidate-facts { grid-template-columns: 1fr; }
+}
+
+/* ── Review governance note (the authenticated-surface design; decision A) ─────── */
+.studio-governance-note {
+  margin-block: var(--size-3);
+  padding: var(--size-3) var(--size-4);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-left: var(--border-size-2, 3px) solid var(--accent, #6aa1ff);
+  border-radius: var(--radius-2);
+  background: var(--surface-2, color-mix(in oklab, var(--surface-1) 90%, transparent));
+  color: var(--text-2);
+  font-size: var(--font-size-1);
+  line-height: 1.5;
+}
+.studio-governance-note strong { color: var(--text-1); }
+
+/* ── Codebase handoff: block-free completion path ── */
+.studio-handoff {
+  margin-block: var(--size-3);
+  padding: var(--size-4);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-radius: var(--radius-3);
+  background: var(--surface-2, color-mix(in oklab, var(--surface-1) 90%, transparent));
+}
+.studio-handoff-copy { max-width: 60ch; }
+.studio-handoff-kicker {
+  margin: 0 0 var(--size-1);
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+}
+.studio-handoff-copy h2 { margin: 0 0 var(--size-2); font-size: var(--font-size-3); }
+.studio-handoff-copy p { margin: 0; color: var(--text-2); }
+.studio-handoff-steps {
+  margin: var(--size-3) 0;
+  padding-left: var(--size-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+  color: var(--text-2);
+  font-size: var(--font-size-1);
+}
+.studio-handoff-steps code {
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+}
+.studio-handoff-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin-top: var(--size-3);
+  padding-top: var(--size-3);
+  border-top: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+}
+.studio-handoff-label { font-size: var(--font-size-1); color: var(--text-1); }
+.studio-handoff-textarea {
+  width: 100%;
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  line-height: 1.5;
+  padding: var(--size-2);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-radius: var(--radius-2);
+  background: var(--bg-code, #0d1117);
+  color: var(--text-1);
+  resize: vertical;
+}
+.studio-handoff-form button { align-self: flex-start; }
+
+/* ── Journey cue: the three-step, assistant-driven sequence ────────── */
+.studio-journey {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--size-2);
+  margin: var(--size-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.studio-journey-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-radius: var(--radius-2);
+  background: var(--surface-1, var(--bg-elev));
+}
+.studio-journey-num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg) 10%, var(--bg-elev));
+  color: var(--text-2);
+  font-family: var(--font-code);
+  font-size: 11px;
+  font-weight: 700;
+}
+.studio-journey-item.studio-stage-active .studio-journey-num,
+.studio-journey-item.studio-stage-reached .studio-journey-num {
+  background: #181a20;
+  color: #fff;
+}
+.studio-journey-body { display: flex; flex-direction: column; min-width: 0; }
+.studio-journey-name { font-size: 12px; font-weight: 700; color: var(--text-1); }
+.studio-journey-hint { margin-top: 2px; font-size: 10px; color: var(--text-2); }
+.studio-journey-item.studio-stage-pending { opacity: 0.62; }
+
+/* ── Draft setup checklist: the in-progress domain's status mirror ─── */
+.studio-setup {
+  margin-block: var(--size-3);
+  padding: var(--size-4);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-radius: var(--radius-3);
+  background: var(--surface-1, var(--bg-elev));
+}
+.studio-setup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-2);
+  margin-bottom: var(--size-3);
+}
+.studio-setup-kicker {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.studio-setup-badge {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #eaeef6;
+  color: #3a4a6b;
+  font-size: 10px;
+  font-weight: 700;
+}
+.studio-setup-steps {
+  display: grid;
+  gap: var(--size-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.studio-setup-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-3);
+}
+.studio-setup-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.studio-setup-done .studio-setup-mark { background: #e6f4ec; color: #1c6b41; }
+.studio-setup-current .studio-setup-mark { background: #181a20; color: #fff; }
+.studio-setup-pending .studio-setup-mark {
+  background: transparent;
+  color: var(--text-2);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+}
+.studio-setup-body { display: flex; flex-direction: column; }
+.studio-setup-label { font-size: 13px; font-weight: 600; color: var(--text-1); }
+.studio-setup-pending .studio-setup-label { color: var(--text-2); font-weight: 500; }
+.studio-setup-hint { font-size: 11px; color: var(--text-2); }
+.studio-setup-foot {
+  margin: var(--size-3) 0 0;
+  font-size: var(--font-size-0);
+  color: var(--text-2);
+}
+
+/* ── One-instruction prompt: the copyable handoff to the AI agent ──── */
+.studio-prompt {
+  margin-top: var(--size-3);
+  border: var(--border-size-1) solid var(--st-rule, var(--rule-soft));
+  border-radius: var(--radius-2);
+  overflow: hidden;
+  /* Always a dark terminal-style block: the prompt is meant to be
+   * copied into an agent, and its label + text are light. --bg-code is
+   * light in the dashboard's light theme, which made the light text
+   * invisible — so pin an explicit dark surface regardless of theme. */
+  background: #0d1117;
+}
+.studio-prompt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  border-bottom: var(--border-size-1) solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+.studio-prompt-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9aa4b2;
+}
+.studio-prompt-copy { flex: none; }
+.studio-prompt-copied { background: #1c6b41 !important; border-color: #1c6b41 !important; }
+.studio-prompt-text {
+  margin: 0;
+  max-height: 340px;
+  overflow: auto;
+  padding: var(--size-3);
+  font-family: var(--font-code);
+  font-size: var(--font-size-0);
+  line-height: 1.55;
+  color: #e6edf3;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.studio-handoff-manual { margin-top: var(--size-3); }
+.studio-handoff-manual > summary {
+  cursor: pointer;
+  font-size: var(--font-size-0);
+  color: var(--text-2);
+}
+
+@media (max-width: 720px) {
+  .studio-journey { grid-template-columns: 1fr; }
+}
+
+/* ── Page-header alignment (iteration 2) ───────────────────────────
+ * Build/Studio uses AppShellLayout, which loads app.css + app-shell.css
+ * + studio.css but NOT dashboard.css — so the compacted .dash-header
+ * scale used on every other dashboard view never reached this page and
+ * the title read a size larger. Restate the same header scale here,
+ * scoped to Studio's page head, so Build lines up with Domains,
+ * Runtimes, Activity, etc. Keep these values in sync with the
+ * .dash-header block in dashboard.css. */
+.studio-page-head {
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.studio-page-head .eyebrow {
+  margin-bottom: 6px;
+  color: #9aa1ad;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.studio-page-head h1 {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+}
+
+.studio-page-head .dash-note {
+  max-width: 78ch;
+  margin-top: 8px;
+  color: var(--fg-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.studio-page-head .dash-header-actions {
+  padding-top: 20px;
+}
+
+@media (max-width: 720px) {
+  .studio-page-head h1 {
+    font-size: 26px;
+  }
+
+  .studio-page-head .dash-note {
+    font-size: 13px;
+  }
+
+  .studio-page-head .dash-header-actions {
+    padding-top: 0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+ * Theme: dark — Build/Studio surfaces
+ *
+ * The setup checklist, journey cue, and handoff cards already read
+ * var(--surface-1) / var(--st-card) / var(--text-1), which the
+ * app-shell dark token block flips. This covers the two spots that
+ * hardcoded a light card surface. The prompt block is intentionally a
+ * fixed dark terminal surface in both themes. Light mode untouched.
+ * ════════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] .studio-v3 {
+  --st-card: rgba(255, 255, 255, 0.04);
+}
+html[data-theme="dark"] .studio-setup-badge {
+  background: color-mix(in oklab, var(--accent) 22%, var(--bg-elev));
+  color: #c3cdf6;
+}
+html[data-theme="dark"] .studio-strip-item,
+html[data-theme="dark"] .studio-window,
+html[data-theme="dark"] .studio-handoff {
+  border-color: var(--rule);
+}
+
+/* Dark variant for the "done" milestone mark (light green tint → soft). */
+html[data-theme="dark"] .studio-setup-done .studio-setup-mark {
+  background: color-mix(in oklab, var(--ok) 24%, var(--bg-elev));
+  color: #a9e7c4;
+}

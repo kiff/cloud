@@ -1,0 +1,459 @@
+package pages
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/quickstart"
+)
+
+// DashboardRuntimes is the guard-runtime inventory at
+// /dashboard/runtimes. It mirrors the API-keys page
+// (DashboardKeys): a focused, full-width surface reached from a
+// card on Settings rather than a primary nav item, so the left
+// menu stays lean. Highlights "settings" in the nav for the same
+// reason the keys page does — it's a workspace-class surface.
+//
+// The connection inventory is already loaded onto DashboardView
+// by the shared handler (GuardConnections), so no new fetch is
+// needed.
+templ DashboardRuntimes(v DashboardView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — runtimes",
+		"agents", // runtime detail sits under Agents in the nav
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.CurrentDomain),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Workspace · Runtimes</p>
+					<h1>Runtimes</h1>
+					<p class="dash-note">Agents connected through the guard, across domains. Status shows how recently each called KIFF.</p>
+				</div>
+			</header>
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+			@flashBanner(v.Flash)
+			if v.Me != nil {
+				@connectPanel(v)
+				@runtimesPanel(v)
+			}
+		</section>
+	}
+}
+
+templ connectPanel(v DashboardView) {
+	<article class="dash-card dash-connect-card">
+		<div class="dash-card-heading">
+			<div>
+				<h2>Connect an agent</h2>
+				<p class="dash-note">Point an agent at KIFF for one action. Start in observe; switch to enforce once the decisions look right.</p>
+			</div>
+		</div>
+		<div class="dash-connect-grid">
+			<div class="dash-fact">
+				<span>API endpoint</span>
+				<strong><code>{ connectAPIBase(v) }</code></strong>
+			</div>
+			<div class="dash-fact">
+				<span>API key</span>
+				<strong>{ fmt.Sprintf("%d active", v.KeyCount) }</strong>
+			</div>
+		</div>
+		<div class="dash-connect-actions">
+			<form method="post" action="/dashboard/keys" class="dash-inline-form dash-connect-key-form">
+				<input type="hidden" name="label" value="connect"/>
+				<input type="hidden" name="next" value="/dashboard/runtimes"/>
+				<button type="submit" class="btn btn-secondary">Create connect key</button>
+			</form>
+			<a href="/dashboard/keys" class="btn btn-secondary">Manage keys</a>
+		</div>
+		<div class="dash-connect-snippet">
+			<nav class="dash-snippet-tabs" aria-label="Snippet language">
+				<a class={ connectSnippetTabClass(v, "assistant") } href="/dashboard/runtimes?snippet=assistant">AI assistant</a>
+				<a class={ connectSnippetTabClass(v, "curl") } href="/dashboard/runtimes?snippet=curl">curl</a>
+				<a class={ connectSnippetTabClass(v, "python") } href="/dashboard/runtimes?snippet=python">Python</a>
+				<a class={ connectSnippetTabClass(v, "js") } href="/dashboard/runtimes?snippet=js">JavaScript</a>
+				<a class={ connectSnippetTabClass(v, "go") } href="/dashboard/runtimes?snippet=go">Go</a>
+			</nav>
+			if connectSnippetLanguage(v) == "assistant" {
+				<p class="dash-note dash-connect-hint">
+					Paste this into your coding assistant with your project open. It routes your agent's action through KIFF using this endpoint and a key.
+				</p>
+			}
+			<pre class="dash-code dash-connect-code"><code>{ connectSnippet(v) }</code></pre>
+		</div>
+	</article>
+}
+
+templ runtimesPanel(v DashboardView) {
+	if len(v.GuardConnections) == 0 {
+		<article class="dash-card">
+			<h2>Runtimes</h2>
+			<p class="dash-note">
+				No runtimes yet. Install the guard in your agent and point it at KIFF.
+			</p>
+		</article>
+	} else {
+		@runtimeInventory(v)
+	}
+}
+
+// runtimeInventory renders the tenant's connected runtimes as a
+// workspace-wide list. Guard connections are tenant-scoped, not
+// domain-scoped: a runtime authenticates with an API key and calls the
+// proposal gate, and the same agent may propose against more than one
+// domain. So the honest framing is workspace-wide — "every agent
+// connected to this workspace" — not "within <the currently selected
+// domain>", which previously mislabeled a cross-domain list under
+// whichever domain the nav happened to be scoped to.
+//
+// Per-domain attribution (grouping a runtime under the domain whose
+// controls it has proposed against, derivable from decisions —) is a
+// future enhancement; until it lands, presenting the inventory as
+// workspace-wide is the truthful view.
+templ runtimeInventory(v DashboardView) {
+	<article class="dash-card">
+		<header class="dash-header">
+			<div class="dash-header-text">
+				<h2>Connected runtimes</h2>
+				<p class="dash-note">
+					{ fmt.Sprintf("%d %s connected to this workspace.", len(v.GuardConnections), plural(len(v.GuardConnections), "runtime", "runtimes")) }
+				</p>
+			</div>
+		</header>
+		@runtimesTable(v.GuardConnections)
+	</article>
+}
+
+templ runtimesTable(conns []apiclient.GuardConnection) {
+	<div class="dash-table-wrap">
+		<table class="dash-table">
+			<thead>
+				<tr>
+					<th>Status</th>
+					<th>Runtime</th>
+					<th>Mode</th>
+					<th>Adapter</th>
+					<th>Last seen</th>
+					<th>Calls</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, c := range conns {
+					@runtimeRow(c)
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ runtimeRow(c apiclient.GuardConnection) {
+	<tr>
+		<td><span class={ "dash-pill", runtimeStatusClass(c) }>{ runtimeStatusLabel(c) }</span></td>
+		<td>
+			<code>{ runtimeName(c) }</code>
+			if runtimeContext(c) != "" {
+				<small>{ runtimeContext(c) }</small>
+			}
+		</td>
+		<td><code>{ firstNonEmptyOrDash(c.Mode) }</code></td>
+		<td>
+			<code>{ firstNonEmptyOrDash(c.Adapter) }</code>
+			if c.SDKVersion != "" {
+				<small>{ c.SDKVersion }</small>
+			}
+		</td>
+		<td><time datetime={ c.LastSeenAt.Format("2006-01-02T15:04:05Z") }>{ c.LastSeenAt.Format("Jan 2, 15:04") }</time></td>
+		<td>{ fmt.Sprintf("%d", c.SeenCount) }</td>
+		<td>
+			@runtimeRevokeAction(c)
+		</td>
+	</tr>
+}
+
+// runtimeRevokeAction offers the one control lever the guard API gives us
+// over a runtime: revoke the API key it authenticates with. The guard has
+// no per-runtime mutation (connect/list/observe only), so "remove this
+// runtime" is really "revoke its key" — the runtime stops being able to
+// call the gate, and the row ages into idle. Rendered only when the API
+// stamped a key id (JWT-authed runtimes carry none). Posts to the shared
+// key-revoke handler with next set back to this page.
+templ runtimeRevokeAction(c apiclient.GuardConnection) {
+	if c.KeyID != "" {
+		<form method="post" action={ templ.SafeURL("/dashboard/keys/" + c.KeyID + "/revoke") } class="dash-table-action-form">
+			<input type="hidden" name="next" value="/dashboard/runtimes"/>
+			<button type="submit" class="btn btn-danger btn-sm">Revoke key</button>
+		</form>
+	} else {
+		<span class="dash-note dash-note-muted">—</span>
+	}
+}
+
+// runtimeStatusLabel / runtimeStatusClass derive a freshness
+// state from LastSeenAt: live (under an hour), recent (under a
+// day), idle (older). The guard upserts LastSeenAt on every call,
+// so this is an honest "is this runtime still talking to us" read.
+func runtimeStatusLabel(c apiclient.GuardConnection) string {
+	switch {
+	case time.Since(c.LastSeenAt) < time.Hour:
+		return "live"
+	case time.Since(c.LastSeenAt) < 24*time.Hour:
+		return "recent"
+	default:
+		return "idle"
+	}
+}
+
+func runtimeStatusClass(c apiclient.GuardConnection) string {
+	switch {
+	case time.Since(c.LastSeenAt) < time.Hour:
+		return "dash-pill-ok"
+	case time.Since(c.LastSeenAt) < 24*time.Hour:
+		return "dash-pill-info"
+	default:
+		return "dash-pill-muted"
+	}
+}
+
+// runtimeName picks the most specific human-facing label for a
+// connection: workflow, then agent, then project.
+func runtimeName(c apiclient.GuardConnection) string {
+	if name := firstNonEmpty(c.Workflow, c.AgentID, c.Project); name != "" {
+		return name
+	}
+	return "—"
+}
+
+// runtimeContext is the secondary line under the runtime name:
+// project · environment · agent, skipping whatever already shows
+// as the name and any empty fields.
+func runtimeContext(c apiclient.GuardConnection) string {
+	name := runtimeName(c)
+	var parts []string
+	for _, p := range []string{c.Project, c.Environment, c.AgentID} {
+		if p != "" && p != name {
+			parts = append(parts, p)
+		}
+	}
+	return strings.Join(parts, " · ")
+}
+
+// runtimesLastSeenLabel returns the most recent LastSeenAt across
+// all connections, for the Settings runtimes summary card.
+func runtimesLastSeenLabel(conns []apiclient.GuardConnection) string {
+	var latest time.Time
+	for _, c := range conns {
+		if c.LastSeenAt.After(latest) {
+			latest = c.LastSeenAt
+		}
+	}
+	if latest.IsZero() {
+		return "—"
+	}
+	return latest.Format("Jan 2, 15:04")
+}
+
+func firstNonEmptyOrDash(s string) string {
+	if strings.TrimSpace(s) == "" {
+		return "—"
+	}
+	return s
+}
+
+// firstNonEmpty returns the first non-blank string, or "" if all
+// are blank. Local to pages (the handlers package has its own).
+func firstNonEmpty(vals ...string) string {
+	for _, v := range vals {
+		if strings.TrimSpace(v) != "" {
+			return v
+		}
+	}
+	return ""
+}
+
+func connectAPIBase(v DashboardView) string {
+	base := strings.TrimSpace(v.APIBaseURL)
+	if base == "" {
+		return "https://api.kiff.dev"
+	}
+	return strings.TrimRight(base, "/")
+}
+
+func connectSnippetLanguage(v DashboardView) string {
+	switch strings.ToLower(strings.TrimSpace(v.ConnectSnippet)) {
+	case "assistant", "ai":
+		return "assistant"
+	case "python":
+		return "python"
+	case "javascript", "js":
+		return "js"
+	case "go":
+		return "go"
+	default:
+		return "curl"
+	}
+}
+
+func connectSnippetTabClass(v DashboardView, lang string) string {
+	if connectSnippetLanguage(v) == lang {
+		return "dash-snippet-tab dash-snippet-tab-active"
+	}
+	return "dash-snippet-tab"
+}
+
+func connectSnippet(v DashboardView) string {
+	base := connectAPIBase(v)
+	switch connectSnippetLanguage(v) {
+	case "assistant":
+		return quickstart.ConnectPrompt(base)
+	case "python":
+		return pythonConnectSnippet(base)
+	case "js":
+		return jsConnectSnippet(base)
+	case "go":
+		return goConnectSnippet(base)
+	default:
+		return curlConnectSnippet(base)
+	}
+}
+
+func curlConnectSnippet(base string) string {
+	return fmt.Sprintf(`export KIFF_API_URL=%q
+export KIFF_API_KEY="kiff_live_..."
+
+curl -sS "$KIFF_API_URL/v1/proposals/decide" \
+  -H "Authorization: Bearer $KIFF_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "proposal-refund-001",
+    "entity_type": "Order",
+    "entity_id": "order_123",
+    "action_name": "refund_order",
+    "actor_id": "agent:refund-bot",
+    "parameters": {
+      "amount_cents": 4999,
+      "reason": "duplicate charge"
+    }
+  }'`, base)
+}
+
+func pythonConnectSnippet(base string) string {
+	return fmt.Sprintf(`import os
+import requests
+
+api_url = os.environ.get("KIFF_API_URL", %q)
+api_key = os.environ["KIFF_API_KEY"]
+
+decision = requests.post(
+    f"{api_url}/v1/proposals/decide",
+    headers={"Authorization": f"Bearer {api_key}"},
+    json={
+        "id": "proposal-refund-001",
+        "entity_type": "Order",
+        "entity_id": "order_123",
+        "action_name": "refund_order",
+        "actor_id": "agent:refund-bot",
+        "parameters": {
+            "amount_cents": 4999,
+            "reason": "duplicate charge",
+        },
+    },
+    timeout=10,
+).json()
+
+if decision["outcome"] == "allowed":
+    issue_refund()
+elif decision["outcome"] == "approval_required":
+    queue_for_review(decision["proposal_id"])
+else:
+    raise RuntimeError(decision.get("message", decision["outcome"]))`, base)
+}
+
+func jsConnectSnippet(base string) string {
+	return fmt.Sprintf(`const apiUrl = process.env.KIFF_API_URL ?? %q;
+
+const res = await fetch(apiUrl + "/v1/proposals/decide", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer " + process.env.KIFF_API_KEY,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    id: "proposal-refund-001",
+    entity_type: "Order",
+    entity_id: "order_123",
+    action_name: "refund_order",
+    actor_id: "agent:refund-bot",
+    parameters: {
+      amount_cents: 4999,
+      reason: "duplicate charge"
+    }
+  })
+});
+
+const decision = await res.json();
+if (decision.outcome === "allowed") {
+  await issueRefund();
+} else if (decision.outcome === "approval_required") {
+  await queueForReview(decision.proposal_id);
+} else {
+  throw new Error(decision.message ?? decision.outcome);
+}`, base)
+}
+
+func goConnectSnippet(base string) string {
+	return fmt.Sprintf(`package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"os"
+)
+
+func main() {
+	apiURL := os.Getenv("KIFF_API_URL")
+	if apiURL == "" {
+		apiURL = %q
+	}
+
+	body := []byte(`+"`"+`{
+	  "id": "proposal-refund-001",
+	  "entity_type": "Order",
+	  "entity_id": "order_123",
+	  "action_name": "refund_order",
+	  "actor_id": "agent:refund-bot",
+	  "parameters": {
+	    "amount_cents": 4999,
+	    "reason": "duplicate charge"
+	  }
+	}`+"`"+`)
+	req, _ := http.NewRequest("POST", apiURL+"/v1/proposals/decide", bytes.NewReader(body))
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("KIFF_API_KEY"))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	var decision struct {
+		ProposalID string `+"`"+`json:"proposal_id"`+"`"+`
+		Outcome    string `+"`"+`json:"outcome"`+"`"+`
+		Message    string `+"`"+`json:"message"`+"`"+`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&decision); err != nil {
+		panic(err)
+	}
+}`, base)
+}

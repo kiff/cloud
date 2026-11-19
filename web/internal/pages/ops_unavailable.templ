@@ -1,0 +1,25 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// OpsUnavailable renders when the operator console cannot reach
+// apps/api (not configured, or an upstream read failed). It does not
+// leak the underlying error to the browser — the handler logs it.
+templ OpsUnavailable(surface string, chrome components.DashboardChrome) {
+	@components.OpsShell(surface, "", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator</p>
+					<h1>{ surface } unavailable.</h1>
+					<p class="dash-note">
+						The operator console could not load this view right now. The
+						upstream API is unreachable or not configured. Check the
+						service logs; this surface reads through apps/api and renders
+						nothing of its own.
+					</p>
+				</div>
+			</header>
+		</section>
+	}
+}

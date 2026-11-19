@@ -1,0 +1,559 @@
+/* blog.css, /blog site chrome (loaded with prose.css). */
+
+/* ── Blog (/blog, /blog/{slug}) ──────────────────────────────────
+ *
+ * Posts are markdown with YAML frontmatter (internal/content/blog)
+ * rendered through the same hermetic templ + embed.FS pattern as
+ * /docs and /whitepaper. The reading column stays one measure; a
+ * long post gets a contents nav in the margin (see below), not a
+ * sidebar that narrows it. The rendered body reuses .prose verbatim;
+ * these rules add the page frame, the index list, and the post
+ * header. */
+
+.blog-index,
+.blog-post-layout {
+  --fg: #11141b;
+  --fg-soft: #3b424f;
+  --fg-muted: #73716d;
+  --rule-soft: rgba(17, 20, 27, 0.10);
+  --blog-accent: #a85a0a;
+  --blog-toc-active-bg: rgba(168, 90, 10, 0.08);
+  max-width: 52rem;
+  margin: clamp(2rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
+  padding: 0 clamp(1.25rem, 5vw, 2rem);
+  color: var(--fg-soft);
+}
+
+/* .blog-index has no sibling column to share the frame with, so it
+ * keeps the card look (background/border/shadow/padding) directly.
+ * .blog-post-layout hands that look to .blog-post instead — see
+ * below — because at the wide breakpoint the card must sit in the
+ * second grid column while the TOC lives outside it, in the margin. */
+.blog-index {
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem);
+  background: #f7f8fa;
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+}
+
+.blog-post {
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 3.5rem) clamp(3rem, 7vw, 6rem);
+  background: #f7f8fa;
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+  min-width: 0;
+}
+
+.blog-index-head,
+.blog-post-head {
+  padding-bottom: var(--size-5);
+  border-bottom: 1px solid var(--rule-soft);
+  margin-bottom: var(--size-6);
+}
+
+.blog-index-head h1,
+.blog-post-head h1 {
+  color: var(--fg);
+  margin: 0.35em 0 0;
+  text-wrap: balance;
+}
+
+.blog-index-lede {
+  color: var(--fg-muted);
+  margin: 0.6em 0 0;
+}
+
+.blog-post-meta {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  margin: 0.7em 0 0;
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+/* Index list. Numbered in markup (<ol>) because the order is
+ * meaningful — newest first — but the numerals are noise. */
+.blog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+}
+
+.blog-list-item + .blog-list-item {
+  padding-top: var(--size-6);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.blog-date {
+  display: block;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.blog-list-title {
+  margin: 0.3em 0 0;
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  text-wrap: balance;
+}
+
+.blog-list-title a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.blog-list-title a:hover,
+.blog-list-title a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog-list-summary {
+  margin: 0.5em 0 0;
+  color: var(--fg-soft);
+  max-width: 60ch;
+}
+
+.blog-empty {
+  color: var(--fg-muted);
+}
+
+/* Diagrams ship as inline SVG inside the markdown, so they inherit
+ * the prose column's width and must not overflow it. */
+.blog-post .prose svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: var(--size-5) 0;
+}
+
+@media (max-width: 40rem) {
+  .blog-index,
+  .blog-post {
+    box-shadow: none;
+  }
+}
+
+/* ── Contents nav ─────────────────────────────────────────────────
+ *
+ * A post's own reading column stays a single measure (see the note
+ * at the top of this file) — the TOC sits in the page margin instead
+ * of narrowing it, and only appears once blog.Headings finds 3+
+ * headings, so a short note never grows a rail with one link in it. */
+
+.blog-post-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--size-6);
+}
+
+.blog-toc {
+  padding-bottom: var(--size-4);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.blog-toc-label {
+  margin: 0 0 var(--size-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.blog-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.blog-toc a {
+  display: block;
+  padding: 0.35rem 0.55rem;
+  border-inline-start: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  color: var(--fg-soft);
+  text-decoration: none;
+  font-size: 0.88rem;
+}
+
+.blog-toc a:hover,
+.blog-toc a:focus-visible {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog-toc-h3 {
+  padding-left: 0.75em;
+}
+
+.blog-toc-desktop {
+  display: none;
+}
+
+.blog-toc-mobile {
+  margin-bottom: var(--size-6);
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+}
+
+.blog-toc-mobile summary {
+  cursor: pointer;
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.blog-toc-mobile .blog-toc {
+  margin-top: 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.blog-toc-mobile .blog-toc-label {
+  display: none;
+}
+
+.blog-toc a:focus-visible,
+.blog-toc-mobile summary:focus-visible,
+.blog-back:focus-visible {
+  outline: 2px solid var(--blog-accent);
+  outline-offset: 3px;
+}
+
+.blog-post .prose :is(h2, h3, h4)[id] {
+  scroll-margin-top: 6rem;
+}
+
+@supports (scroll-target-group: auto) and selector(a:target-current) {
+  .blog-toc ol {
+    scroll-target-group: auto;
+  }
+  .blog-toc a:target-current {
+    color: var(--fg);
+    background: var(--blog-toc-active-bg);
+    border-inline-start-color: var(--blog-accent);
+    font-weight: 600;
+  }
+}
+
+@media (min-width: 64rem) {
+  /* Only a layout that actually rendered a TOC gets the two-column
+   * grid — a single grid child under a 2-column template auto-places
+   * into the first (narrow) column instead of spanning both, so this
+   * must stay conditional rather than apply to every .blog-post-layout. */
+  .blog-post-layout-with-toc {
+    /* Widen the frame here so the card keeps its ~52rem reading
+     * measure once the TOC column and gap are subtracted from it,
+     * instead of the two splitting the narrower single-column width. */
+    max-width: calc(52rem + 13rem + 3rem);
+    grid-template-columns: 13rem minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .blog-post-layout-with-toc .blog-post {
+    max-width: 52rem;
+  }
+
+  .blog-toc-desktop {
+    display: block;
+    position: sticky;
+    top: 5rem;
+    max-height: calc(100vh - 6rem);
+    max-height: calc(100dvh - 6rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+  }
+
+  .blog-toc-mobile {
+    display: none;
+  }
+
+  .blog-toc {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.blog-post-summary {
+  margin: 1rem 0 0;
+  line-height: 1.65;
+  color: var(--fg-soft);
+}
+
+.blog-back {
+  color: var(--fg-soft);
+  text-decoration: none;
+  font-size: 0.88rem;
+}
+
+.blog-back:hover {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.blog-related {
+  margin-top: var(--size-7);
+  padding-top: var(--size-6);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.blog-related h2 {
+  color: var(--fg);
+  font-size: 1.4rem;
+  margin: 0 0 var(--size-5);
+}
+
+.blog-related .blog-card + .blog-card {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--size-5);
+}
+
+.blog-post-footer {
+  margin-top: var(--size-6);
+  padding-top: var(--size-5);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.blog-read-time {
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+}
+
+.blog-post .prose .blog-image-trigger {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.blog-post .prose .blog-image-trigger:focus-visible {
+  outline: 2px solid var(--blog-accent);
+  outline-offset: 4px;
+}
+
+/* Native popovers keep the article URL and scroll position intact. */
+.blog-post .prose .blog-image-preview {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: calc(100vw - 2rem);
+  height: calc(100vh - 2rem);
+  height: calc(100dvh - 2rem);
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.blog-post .prose .blog-image-preview:popover-open {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.blog-image-preview::backdrop {
+  background: rgba(9, 12, 18, 0.94);
+}
+
+.blog-post .prose .blog-image-close {
+  align-self: flex-end;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0.35rem;
+  background: #171d29;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.blog-post .prose .blog-image-close:focus-visible {
+  outline: 2px solid #ff9a1a;
+  outline-offset: 3px;
+}
+
+.blog-post .prose .blog-image-preview img {
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  flex: 1 1 0;
+  object-fit: contain;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* ── Taxonomy: kind chips, tags, year groups ─────────────────────
+ *
+ * Grouping and filtering are derived from what exists — year headings
+ * inside the index rather than /blog/{year} archives, and tag views
+ * that 404 when empty. Structure that only appears once there is
+ * something to structure, so the site never shows an empty room. */
+
+.blog-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  padding: 0.25em 0.7em;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--fg-soft);
+  text-decoration: none;
+  background: var(--bg-elev, #fff);
+}
+
+.blog-tag:hover,
+.blog-tag:focus-visible {
+  border-color: rgba(17, 20, 27, 0.35);
+  color: var(--fg);
+}
+
+.blog-tag-count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75em;
+  color: var(--fg-muted);
+}
+
+.blog-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+  margin: var(--size-3) 0 0;
+  padding: 0;
+}
+
+/* Kind is a label, not a section — semantic colour, distinct from the
+ * site accent, so an essay and a changelog are separable at a glance. */
+.blog-kind {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+
+.blog-kind-essay { color: #1f6f63; }
+.blog-kind-note { color: #4a5568; }
+.blog-kind-changelog { color: #2c5282; }
+.blog-kind-announcement { color: #8a5a00; }
+.blog-kind-report { color: #6b3fa0; }
+.blog-kind-draft { color: #a81f16; }
+
+.blog-year + .blog-year {
+  margin-top: var(--size-7);
+}
+
+.blog-year-head {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+  margin: 0 0 var(--size-4);
+  padding-bottom: var(--size-2);
+  border-bottom: 1px solid var(--rule-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.blog-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+}
+
+.blog-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.blog-card-title {
+  margin: 0.35em 0 0;
+  font-size: clamp(1.2rem, 2.3vw, 1.5rem);
+  text-wrap: balance;
+}
+
+.blog-card-title a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.blog-card-title a:hover,
+.blog-card-title a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog-card-summary {
+  margin: 0.5em 0 0;
+  color: var(--fg-soft);
+  max-width: 62ch;
+}
+
+/* The index: one post per row — title, date, one line of summary. */
+.blog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+
+.blog-item-title {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.blog-item-title:hover,
+.blog-item-title:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog-item-meta {
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  margin: 0.2em 0 0;
+  font-size: 0.82rem;
+  color: var(--fg-muted);
+}
+
+.blog-item-summary {
+  margin: 0.15em 0 0;
+  color: var(--fg-soft);
+  font-size: 0.92rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

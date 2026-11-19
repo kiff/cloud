@@ -1,0 +1,731 @@
+package pages
+
+import (
+	"net/url"
+	"strconv"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// NeedsYouView backs /needs-you: actions held for the owner because they fall outside
+// a Card (the mandates design amendment, "the work comes home"). Inside the
+// Card, the agent works; outside it, the work comes home here.
+type NeedsYouView struct {
+	Email, Subject, DisplayName string
+	Flash                       *DashboardFlash
+	Me                          *apiclient.Me
+	Held                        []apiclient.CardException
+	BudgetWarnings []apiclient.AttentionItem
+	BudgetWarningsError string
+	// WarningsOpen counts every open Card warning, not only this page's.
+	// WarningsPage is the page shown, of 100; WarningsMore: there is a next.
+	WarningsOpen int
+	WarningsPage int
+	WarningsMore bool
+	// WarningsUnread are the open warnings this person has not
+	// seen: what the badge and the line on Waiting count.
+	WarningsUnread int
+	// Approvals are the domain approvals waiting for a person, Blocked the
+	// calls a domain rule blocked (formerly Needs attention), each a page
+	// of 100 from the API with its open count.
+	Approvals      []apiclient.AttentionItem
+	ApprovalsOpen  int
+	ApprovalsPage  int
+	ApprovalsMore  bool
+	ApprovalsError string
+	// HoldsError: the Card holds could not be read; the rest of the page
+	// still shows. *Incomplete: work items still being projected, or that
+	// failed to be, so a list may be missing some.
+	HoldsError          string
+	ApprovalsIncomplete bool
+	BlockedIncomplete   bool
+	Blocked        []apiclient.AttentionItem
+	BlockedOpen    int
+	BlockedPage    int
+	BlockedMore    bool
+	BlockedError   string
+	// Answered is the recent history: approved, rejected, changed,
+	// used or withdrawn, so an owner can see what they decided.
+	Answered  []apiclient.CardException
+	LoadError string
+	// Detail is set on /needs-you/{id}.
+	Detail *apiclient.CardException
+	// SharedBy is how many agents hold each shared Card, by Card id, so
+	// "Change the card" can say it changes the Card for all of them (the
+	// mandates design amendment, "a Card can be shared"). Cards held by
+	// one agent are absent.
+	SharedBy map[string]int
+	// Filter narrows the Answered table; Agents are the agents it can be
+	// narrowed to. AnsweredAny: something was answered before the filter,
+	// so an empty table says "nothing matches", not "nothing answered".
+	Filter      AnsweredFilter
+	Agents      []string
+	AnsweredAny bool
+	// Tab is the tab shown: waiting, warnings or answered.
+	Tab string
+}
+
+templ NeedsYou(v NeedsYouView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Needs you", needsYouTab(ctx), chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Cards</p>
+					<h1>Needs you</h1>
+				</div>
+			</header>
+			@flashBanner(v.Flash)
+			if v.LoadError != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.LoadError }</div>
+			} else if v.Detail != nil && v.Detail.NeedsOwner() {
+				@needsYouItem(*v.Detail, true, v.SharedBy)
+				<p class="ny-back"><a href="/needs-you">← Waiting</a></p>
+			} else if v.Detail != nil {
+				@answeredStory(*v.Detail)
+				<p class="ny-back"><a href={ templ.SafeURL(needsYouTabHref(NeedsYouAnswered, AnsweredFilter{})) }>← Answered</a></p>
+			} else {
+				if v.HoldsError != "" {
+					<p class="dash-note dash-note-warn">{ v.HoldsError }</p>
+				}
+				@needsYouTabs(v)
+				switch v.Tab {
+					case NeedsYouWarnings:
+						@needsYouWarnings(v)
+					case NeedsYouBlocked:
+						@needsYouBlocked(v)
+					case NeedsYouAnswered:
+						@needsYouAnswered(v)
+					default:
+						@needsYouWaiting(v)
+				}
+			}
+		</section>
+	}
+}
+
+// needsYouTabs are the three tabs, each with what it
+// holds. They re-read with the page (liveRegions), so a
+// new hold shows its count on any tab.
+templ needsYouTabs(v NeedsYouView) {
+	<nav class="ac-detail-tabs" id="ny-tabs" aria-label="Needs you" data-live-src={ needsYouLiveHref(v) }>
+		if v.ApprovalsError != "" || v.HoldsError != "" {
+			@needsYouTabLink(v, NeedsYouWaiting, "Waiting", "?")
+		} else {
+			@needsYouTabLink(v, NeedsYouWaiting, "Waiting", strconv.Itoa(waitingCount(v)))
+		}
+		if v.BudgetWarningsError != "" {
+			@needsYouTabLink(v, NeedsYouWarnings, "Warnings", "?")
+		} else {
+			@needsYouTabLink(v, NeedsYouWarnings, "Warnings", strconv.Itoa(v.WarningsUnread))
+		}
+		if v.BlockedError != "" {
+			@needsYouTabLink(v, NeedsYouBlocked, "Blocked", "?")
+		} else {
+			@needsYouTabLink(v, NeedsYouBlocked, "Blocked", strconv.Itoa(v.BlockedOpen))
+		}
+		@needsYouTabLink(v, NeedsYouAnswered, "Answered", "")
+	</nav>
+}
+
+templ needsYouTabLink(v NeedsYouView, tab, label, count string) {
+	<a class={ templ.KV("is-current", v.Tab == tab) } href={ templ.SafeURL(needsYouTabHref(tab, AnsweredFilter{})) }
+		if v.Tab == tab {
+			aria-current="page"
+		}
+	>
+		{ label }
+		if count != "" && count != "0" {
+			<span class={ "ac-tab-count", templ.KV("is-warn", tab == NeedsYouWarnings || (tab == NeedsYouWaiting && count != "0")) }>{ count }</span>
+		}
+	</a>
+}
+
+// needsYouWaiting is what waits for an answer, and one line when a Card
+// is running low. The page re-checks it every 15 seconds while open.
+templ needsYouWaiting(v NeedsYouView) {
+	<div id="ny-live" class="ny-tab" data-live-src={ needsYouLiveHref(v) }>
+		if v.ApprovalsIncomplete {
+			<p class="dash-note dash-note-warn">Some recent decisions are still being processed, so domain approvals may be missing here.</p>
+		}
+		if waitingCount(v) == 0 && v.ApprovalsError == "" && v.HoldsError == "" && !v.ApprovalsIncomplete {
+			<div class="ny-empty">
+				<span class="ny-empty-dot" aria-hidden="true"></span>
+				<div>
+					<strong>Nothing is waiting for you.</strong>
+					<p class="dash-note">Calls outside a Card, and calls a domain rule holds for approval, wait here.</p>
+				</div>
+			</div>
+		} else if waitingCount(v) > 0 {
+			<div class="dash-portfolio-approvals ny-callout">
+				<span class="dash-portfolio-approvals-dot" aria-hidden="true"></span>
+				<strong>{ waitingLine(waitingCount(v)) }</strong>
+			</div>
+		}
+		for _, e := range v.Held {
+			@needsYouItem(e, false, v.SharedBy)
+		}
+		if v.ApprovalsError != "" {
+			<p class="dash-note dash-note-warn">{ v.ApprovalsError }</p>
+		}
+		if v.ApprovalsPage > 0 || v.ApprovalsMore {
+			<p class="dash-note">{ approvalsRange(v) }, oldest first.</p>
+		}
+		for _, it := range v.Approvals {
+			@needsYouWorkRow(v, it, approvalsHref(v.ApprovalsPage))
+		}
+		if v.ApprovalsPage > 0 || v.ApprovalsMore {
+			<nav class="ny-pager" aria-label="Domain approval pages">
+				if v.ApprovalsPage > 0 {
+					<a class="btn btn-secondary" href={ templ.SafeURL(approvalsHref(v.ApprovalsPage - 1)) }>Earlier approvals</a>
+				}
+				if v.ApprovalsMore {
+					<a class="btn btn-secondary" href={ templ.SafeURL(approvalsHref(v.ApprovalsPage + 1)) }>More approvals</a>
+				}
+			</nav>
+		}
+		if n := v.WarningsUnread; n > 0 {
+			<a class="ny-warn-line" href={ templ.SafeURL(needsYouTabHref(NeedsYouWarnings, v.Filter)) }>
+				<span class="ny-warn-dot" aria-hidden="true"></span>
+				<span>{ warningsLine(n) }</span>
+				<strong>Warnings ›</strong>
+			</a>
+		}
+	</div>
+}
+
+// needsYouBlocked are the calls a domain rule blocked (formerly in Needs
+// attention): someone looks into each, then marks it resolved.
+templ needsYouBlocked(v NeedsYouView) {
+	<div id="ny-live" class="ny-tab" data-live-src={ needsYouLiveHref(v) }>
+		<p class="dash-note">Calls a domain rule refused. Nothing ran. Marking one resolved closes it here and authorizes nothing.</p>
+		if v.BlockedIncomplete {
+			<p class="dash-note dash-note-warn">Some recent decisions are still being processed, so blocked calls may be missing here.</p>
+		}
+		if v.BlockedError != "" {
+			<p class="dash-note dash-note-warn">{ v.BlockedError }</p>
+		} else if v.BlockedOpen == 0 && len(v.Blocked) == 0 && v.BlockedIncomplete {
+			<p class="dash-note">None are listed yet.</p>
+		} else if v.BlockedOpen == 0 && len(v.Blocked) == 0 {
+			<div class="ny-empty">
+				<span class="ny-empty-dot" aria-hidden="true"></span>
+				<div><strong>Nothing is blocked.</strong></div>
+			</div>
+		} else if len(v.Blocked) == 0 {
+			<p class="dash-note">No blocked calls on this page. <a href={ templ.SafeURL(needsYouBlockedHref(0)) }>First page</a></p>
+		} else if v.BlockedPage > 0 || v.BlockedMore {
+			<p class="dash-note">{ blockedRange(v) }, oldest first.</p>
+		}
+		for _, it := range v.Blocked {
+			@needsYouWorkRow(v, it, needsYouBlockedHref(v.BlockedPage))
+		}
+		if v.BlockedPage > 0 || v.BlockedMore {
+			<nav class="ny-pager" aria-label="Blocked pages">
+				if v.BlockedPage > 0 {
+					<a class="btn btn-secondary" href={ templ.SafeURL(needsYouBlockedHref(v.BlockedPage - 1)) }>Previous page</a>
+				}
+				if v.BlockedMore {
+					<a class="btn btn-secondary" href={ templ.SafeURL(needsYouBlockedHref(v.BlockedPage + 1)) }>Next page</a>
+				}
+			</nav>
+		}
+	</div>
+}
+
+// needsYouWorkRow is a domain approval or a blocked call. Assign to me,
+// Release and Mark resolved post to the work item and come back to back.
+templ needsYouWorkRow(v NeedsYouView, it apiclient.AttentionItem, back string) {
+	<article class="ny-work" id={ it.ID }>
+		<div class="ny-item-head">
+			<span class={ "dash-portfolio-state", templ.KV("dash-portfolio-state-observe", it.Kind == "approval"), templ.KV("dash-portfolio-state-active", it.Kind != "approval") }>{ workKindLabel(it) }</span>
+			if it.ActorID != "" {
+				<span class="ny-agent"><code>{ it.ActorID }</code></span>
+			}
+			if it.DomainID != "" {
+				<span class="ny-when">{ it.DomainID }</span>
+			}
+			<span class="ny-when">{ components.LocalTime(ctx, it.CreatedAt) }</span>
+		</div>
+		<h3 class="ny-headline">
+			<code>{ it.Action }</code>
+			if it.EntityID != "" && it.EntityID != it.SourceID {
+				<span class="ny-agent">on <code title={ it.EntityID }>{ shortID(it.EntityID) }</code></span>
+			}
+		</h3>
+		<ul class="att-why">
+			for _, line := range attentionWhy(it) {
+				<li>{ line }</li>
+			}
+		</ul>
+		<div class="ny-warning-actions">
+			if it.Kind == "approval" {
+				// The approval's own grant
+				// and deny, returning here.
+				<form method="post" action={ templ.SafeURL("/dashboard/approvals/" + url.PathEscape(it.SourceID) + "/grant") }>
+					<input type="hidden" name="back" value={ back }/>
+					<button type="submit" class="btn btn-primary">Approve</button>
+				</form>
+				<form method="post" action={ templ.SafeURL("/dashboard/approvals/" + url.PathEscape(it.SourceID) + "/deny") }>
+					<input type="hidden" name="back" value={ back }/>
+					<button type="submit" class="btn btn-secondary">Deny</button>
+				</form>
+			} else {
+				<a class="btn" href={ templ.SafeURL("/activity/" + url.PathEscape(it.SourceID)) }>Open the call</a>
+			}
+			if it.Assignee == "" {
+				@workActionForm(it, "claim", "Assign to me", back)
+			} else if it.Assignee == v.Subject {
+				@workActionForm(it, "release", "Release", back)
+				if it.Kind == "blocked" {
+					@workActionForm(it, "resolve", "Mark resolved", back)
+				}
+			} else {
+				<span class="dash-note">{ it.Assignee } has it.</span>
+			}
+		</div>
+	</article>
+}
+
+templ workActionForm(it apiclient.AttentionItem, action, label, back string) {
+	<form method="post" action={ templ.SafeURL("/dashboard/attention/" + url.PathEscape(it.ID) + "/" + action) }>
+		<input type="hidden" name="revision" value={ strconv.FormatInt(it.Revision, 10) }/>
+		<input type="hidden" name="back" value={ back }/>
+		<button type="submit" class="btn btn-secondary">{ label }</button>
+	</form>
+}
+
+// needsYouWarnings are the open Card warnings, one compact row each. No
+// call waits because of them.
+templ needsYouWarnings(v NeedsYouView) {
+	<div id="ny-live" class="ny-tab" data-live-src={ needsYouLiveHref(v) }>
+		<p class="dash-note">Cards close to a limit. No call is waiting on these.</p>
+		if v.BudgetWarningsError != "" {
+			<p class="dash-note dash-note-warn">{ v.BudgetWarningsError }</p>
+		} else if v.WarningsOpen == 0 && len(v.BudgetWarnings) == 0 {
+			<div class="ny-empty">
+				<span class="ny-empty-dot" aria-hidden="true"></span>
+				<div><strong>No Card is running low.</strong></div>
+			</div>
+		} else if len(v.BudgetWarnings) == 0 {
+			<p class="dash-note">No warnings on this page. <a href={ templ.SafeURL(needsYouWarningsHref(0)) }>First page</a></p>
+		} else if v.WarningsPage > 0 || v.WarningsMore {
+			<p class="dash-note">{ warningsRange(v) }, oldest first.</p>
+		}
+		for _, w := range v.BudgetWarnings {
+			<article class="ny-warning">
+				<div class="ny-warning-head">
+					<strong>{ warningTitle(w.Reason) }</strong>
+					if w.Unread {
+						<span class="att-new">New</span>
+					}
+					<span class="ny-when">{ components.LocalTime(ctx, w.CreatedAt) }</span>
+				</div>
+				<code class="ny-warning-card">{ w.SourceID }</code>
+				<p>{ w.Reason }</p>
+				<div class="ny-warning-actions">
+					<a class="btn" href={ templ.SafeURL("/cards/" + url.PathEscape(w.SourceID)) }>Open the Card</a>
+					if components.Can(ctx, "cards.manage") {
+						<a class="btn" href={ templ.SafeURL("/cards/" + url.PathEscape(w.SourceID) + "/extra-room") }>Add extra room</a>
+					}
+					if w.Assignee == "" || w.Assignee == v.Subject {
+						<form method="post" action={ templ.SafeURL("/needs-you/warnings/" + url.PathEscape(w.ID) + "/dismiss") }>
+							<input type="hidden" name="revision" value={ strconv.FormatInt(w.Revision, 10) }/>
+							if w.Assignee != "" {
+								<input type="hidden" name="held" value="mine"/>
+							}
+							if v.WarningsPage > 0 {
+								<input type="hidden" name="page" value={ strconv.Itoa(v.WarningsPage) }/>
+							}
+							<button type="submit" class="btn btn-secondary">Dismiss</button>
+						</form>
+					} else {
+						<span class="dash-note">{ w.Assignee } is handling this one.</span>
+					}
+				</div>
+			</article>
+		}
+		if v.WarningsPage > 0 || v.WarningsMore {
+			<nav class="ny-pager" aria-label="Warning pages">
+				if v.WarningsPage > 0 {
+					<a class="btn btn-secondary" href={ templ.SafeURL(needsYouWarningsHref(v.WarningsPage - 1)) }>Previous page</a>
+				}
+				if v.WarningsMore {
+					<a class="btn btn-secondary" href={ templ.SafeURL(needsYouWarningsHref(v.WarningsPage + 1)) }>Next page</a>
+				}
+			</nav>
+		}
+	</div>
+}
+
+// needsYouAnswered is the answer history.
+templ needsYouAnswered(v NeedsYouView) {
+	<div id="ny-live" class="ny-tab" data-live-src={ needsYouTabHref(NeedsYouAnswered, v.Filter) }>
+		if v.HoldsError != "" {
+			// The answers come from the same read as the holds: unknown, not
+			// empty.
+			<p class="dash-note">Your answers could not be loaded either. Try again shortly.</p>
+		} else if v.AnsweredAny {
+			@answeredTable(v)
+		} else {
+			<div class="ny-empty">
+				<span class="ny-empty-dot" aria-hidden="true"></span>
+				<div><strong>Nothing answered yet.</strong></div>
+			</div>
+		}
+	</div>
+}
+
+// needsYouItem is one action outside a card: what the agent wanted, which
+// Card it is outside of and by how much, and the three answers.
+templ needsYouItem(e apiclient.CardException, detail bool, sharedBy map[string]int) {
+	<article class={ "ny-item", templ.KV("is-held", e.Status == "held") } id={ "exc-" + e.ID }>
+		<div class="ny-item-head">
+			<span class={ "dash-portfolio-state", exceptionStateClass(e) }>{ exceptionStatusLabel(e) }</span>
+			<span class="ny-agent"><code>{ e.Subject }</code></span>
+			<span class="ny-when">{ exceptionWhen(e, components.TimeZone(ctx)) }</span>
+		</div>
+		// One headline: the action and its amount in its unit.
+		<h3 class="ny-headline">
+			<code>{ e.Action }</code>
+			if amt := exceptionAmount(e); amt != "" {
+				<span class="ny-amount">{ amt }</span>
+			}
+		</h3>
+		if e.EntityID != "" && !isCallKey(e.EntityID) {
+			<p class="ny-sub">on <code>{ e.EntityID }</code></p>
+		}
+		if isCallKey(e.EntityID) || isCallKey(e.ProposalID) {
+			<p class="ny-callid" title={ callIDOf(e) }>call { shortID(callIDOf(e)) }</p>
+		}
+		if amountsUnread(e) {
+			// a review: a failed read is said, never guessed as euros.
+			<p class="dash-note dash-note-warn">The currency and decimal places couldn't be read, so amounts are shown as stored numbers. Reload or check the tool before you answer.</p>
+		}
+		if mixedUnitCards(e) {
+			// a review: a Card whose actions disagree on the unit has a
+			// total in no one unit; it is not read as euros.
+			<p class="dash-note dash-note-warn">This Card's actions use different currencies or decimal places, so its limits are shown as stored numbers.</p>
+		}
+		// Why it is here: what it is over, named as the Card's limit.
+		<ul class="ny-why">
+			for _, b := range e.Breaches {
+				<li>
+					<strong>{ breachLine(b) }</strong>
+					<span>Card <a href={ templ.SafeURL("/cards/" + url.PathEscape(b.MandateID)) }><code>{ b.MandateID }</code></a> allows { breachAllows(b) }.</span>
+				</li>
+			}
+		</ul>
+		if e.ArgumentsUnavailable {
+			// a review: a failed read is said, never shown as a call
+			// without arguments. The agent's account of the call is not
+			// a substitute for reading it.
+			<p class="dash-note dash-note-warn">What this call would send to the tool could not be read. Reload to try again, and don’t approve it on the agent’s description.</p>
+		} else if e.Arguments != nil && len(e.Arguments) == 0 {
+			<p class="dash-note">Sent to the tool with no arguments.</p>
+		} else if args := callArgs(e, detail); len(args) > 0 {
+			// What the call will be sent with, so the answer is about
+			// this order and these exact values.
+			<section class="ny-block">
+				<h4>What it sends to the tool</h4>
+				<dl class={ "ny-args", templ.KV("is-full", detail) } aria-label="Sent to the tool with">
+					for _, a := range args {
+						<div>
+							<dt>{ a.Name }</dt>
+							<dd>
+								<code>{ a.Value }</code>
+								if a.Means != "" {
+									<span class="ny-arg-means">{ a.Means }</span>
+								}
+							</dd>
+						</div>
+					}
+				</dl>
+				if anyShortened(args) {
+					<p class="dash-note"><a href={ templ.SafeURL(needsYouHref(e.ID)) }>See every value in full</a> before you answer.</p>
+				}
+			</section>
+		}
+		if detail && len(e.PriorApprovals) > 0 {
+			<details><summary>Earlier answers</summary>
+				for _, approval := range e.PriorApprovals {
+					if approval.ExternalAnswer != nil && approval.ExternalAnswer.Decision == "defer" {
+						<p class="dash-note">Deferred by { externalAnswerName(approval.ExternalAnswer) }
+							if approval.At != nil {
+								<span> at { components.LocalTime(ctx, *approval.At) }</span>
+							}
+							. Reason: { externalAnswerReason(approval.ExternalAnswer) }. This earlier answer did not approve the action.</p>
+					} else {
+						<p class="dash-note">Approved by { approval.By }
+							if approval.ExternalAnswer != nil {
+								<span> ({ externalAnswerName(approval.ExternalAnswer) }): { externalAnswerReason(approval.ExternalAnswer) }</span>
+							}
+							if approval.At != nil {
+								<span> at { components.LocalTime(ctx, *approval.At) }</span>
+							}
+							. This earlier approval does not widen the current Card.</p>
+					}
+				}
+			</details>
+		}
+		if e.Status == "held" {
+			if e.ExternalAnswer != nil {
+				@nyWhoDecided(e)
+			}
+			<div class="ny-answer">
+				if by := answerByLabel(e, components.TimeZone(ctx)); by != "" {
+					<p class="ny-deadline">Answer by { by }. After that it is refused, and the agent has to ask again.</p>
+				}
+				if hint := pastTotalHint(e); hint != "" && components.Can(ctx, "holds.answer") {
+					<p class="dash-note">
+						{ hint }
+						if !components.Can(ctx, "cards.manage") {
+							Someone who manages Cards can add it.
+						}
+					</p>
+				}
+				<div class="ny-answers">
+					// What a role cannot do is not offered; the API refuses it
+					// anyway, and also applies separation of duties.
+					if components.Can(ctx, "holds.answer") && e.MayApproveOnce() {
+						<form method="post" action={ templ.SafeURL(needsYouHref(e.ID) + "/approve-once") }>
+							<button class="btn btn-primary" type="submit">Approve once</button>
+						</form>
+					}
+					if components.Can(ctx, "cards.manage") && e.HasCumulativeBreach() {
+						for _, b := range e.Breaches {
+							if b.Outcome == "limit_reached" {
+								<a class="btn" href={ templ.SafeURL("/cards/"+url.PathEscape(b.MandateID)+"/extra-room") }>Review extra room</a>
+							}
+						}
+					} else if components.Can(ctx, "cards.manage") {
+						<form method="post" action={ templ.SafeURL(needsYouHref(e.ID) + "/change-card") }>
+							<button class="btn" type="submit">Revise the Card</button>
+						</form>
+					}
+					if components.Can(ctx, "holds.answer") {
+						// The Card's next steps: a refusal that tells the
+						// agent what to do instead.
+						for _, step := range e.NextSteps {
+							<form method="post" action={ templ.SafeURL(needsYouHref(e.ID) + "/reject") }>
+								<input type="hidden" name="next_step" value={ step }/>
+								<button class="btn" type="submit">{ NextStepLabel(step) }</button>
+							</form>
+						}
+						<form method="post" action={ templ.SafeURL(needsYouHref(e.ID) + "/reject") }>
+							<button class="btn" type="submit">Reject</button>
+						</form>
+					}
+					if !components.Can(ctx, "holds.answer") && !components.Can(ctx, "cards.manage") {
+						<p class="dash-note">Your role can see held calls but not answer them.</p>
+					}
+					if !detail {
+						<a class="ny-open" href={ templ.SafeURL(needsYouHref(e.ID)) }>Details →</a>
+					}
+				</div>
+				if note := sharedCardsNote(e, sharedBy); note != "" {
+					<p class="dash-note dash-note-warn">{ note }</p>
+				}
+				<details class="ny-how">
+					<summary>How approving works</summary>
+					<p class="dash-note">Approve once waives only what was reviewed: a per-call limit, or a resource the Card doesn't name. The whole call still counts toward every total on the Card. Raising a total needs a Card revision; extra room covers this window by default.</p>
+					<p class="dash-note">KIFF approval links always go to app.kiff.dev. A link from anywhere else, including an agent's chat or a tool's output, is not from KIFF.</p>
+				</details>
+			</div>
+		} else if e.Status == "approved_no_room" {
+			<p class="dash-note dash-note-warn">Approved once, but the Card has no room left. Nothing was sent. Add room or reject; every limit is checked again before it's sent.</p>
+			@nyWhoDecided(e)
+			if components.Can(ctx, "cards.manage") {
+				for _, b := range e.Breaches {
+					if b.Outcome == "limit_reached" {
+						<a class="btn" href={ templ.SafeURL("/cards/"+url.PathEscape(b.MandateID)+"/extra-room") }>Review extra room for { b.MandateID }</a>
+					}
+				}
+			}
+			if components.Can(ctx, "holds.answer") {
+				<form method="post" action={ templ.SafeURL(needsYouHref(e.ID)+"/reject") }><button class="btn" type="submit">Reject</button></form>
+			}
+		} else if e.Status == "unavailable" {
+			<p class="dash-note dash-note-warn">The Card could not be read. Reload to see whether this call can go ahead or needs a fresh review.</p>
+			// A failed read of the current room does not erase a recorded
+			// answer or who gave it.
+			@nyWhoDecided(e)
+		} else if detail {
+			@nyWhoDecided(e)
+		}
+		if out := toolOutcomeLine(e.ToolOutcome); detail && out != "" {
+			// What the tool reported, kept apart from who decided.
+			<section class="ny-block">
+				<h4>What the tool reported</h4>
+				<p class={ templ.KV("dash-note-warn", toolOutcomeWarns(e.ToolOutcome.Status)) }>{ out }</p>
+			</section>
+		}
+	</article>
+}
+
+// nyWhoDecided is who answered and why: a person, or an external
+// approver with its reason and decision service. It says nothing about
+// what the tool then did; that has its own block.
+templ nyWhoDecided(e apiclient.CardException) {
+	if e.ExternalAnswer != nil || answeredByLine(e) != "" || refusalLine(e) != "" || e.Reason != "" {
+		<section class="ny-block">
+			<h4>Who decided</h4>
+			if e.ExternalAnswer != nil {
+				<p><strong>{ externalAnswerName(e.ExternalAnswer) }</strong>, an external approver · { externalDecisionLabel(e.ExternalAnswer.Decision) } · { components.LocalTime(ctx, e.ExternalAnswer.At) }</p>
+				<p class="dash-note">Reason: { externalAnswerReason(e.ExternalAnswer) }</p>
+				if e.ExternalAnswer.Model != "" {
+					<p class="dash-note">Decision service: { e.ExternalAnswer.Model }</p>
+				}
+				if e.Status == "held" {
+					<p class="dash-note">Still yours to answer before the deadline.</p>
+				}
+			}
+			if line := answeredByLine(e); line != "" {
+				<p>{ line }</p>
+			}
+			if line := refusalLine(e); line != "" {
+				<p class="dash-note">{ line }</p>
+			}
+			if e.Reason != "" {
+				<p class="dash-note">{ exceptionReasonLabel(e.Reason) }</p>
+			}
+		</section>
+	}
+}
+
+// answeredTable is what was answered, one action per row: the owner's
+// answer and what came of it in separate columns, filterable by answer
+// and by agent.
+templ answeredTable(v NeedsYouView) {
+	<div class="ny-filters">
+		<div class="dash-filters" role="group" aria-label="Filter by answer">
+			for _, c := range answeredFilters {
+				<a class={ "dash-filter", templ.KV("dash-filter-active", v.Filter.Answer == c.Value) } href={ templ.SafeURL(v.Filter.with(c.Value, v.Filter.Agent)) }>{ c.Label }</a>
+			}
+		</div>
+		if len(v.Agents) > 1 || v.Filter.Agent != "" {
+			<div class="dash-filters" role="group" aria-label="Filter by agent">
+				<a class={ "dash-filter", templ.KV("dash-filter-active", v.Filter.Agent == "") } href={ templ.SafeURL(v.Filter.with(v.Filter.Answer, "")) }>All agents</a>
+				for _, a := range v.Agents {
+					<a class={ "dash-filter", templ.KV("dash-filter-active", v.Filter.Agent == a) } href={ templ.SafeURL(v.Filter.with(v.Filter.Answer, a)) }><code>{ a }</code></a>
+				}
+			</div>
+		}
+	</div>
+	if len(v.Answered) == 0 {
+		<p class="dash-note">Nothing answered matches this filter. <a href={ templ.SafeURL(needsYouTabHref(NeedsYouAnswered, AnsweredFilter{})) }>Show all</a></p>
+	} else {
+		<div class="dash-portfolio ny-history">
+			<div class="dash-portfolio-head" aria-hidden="true">
+				<span>Action</span>
+				<span>Agent · card</span>
+				<span>Answer</span>
+				<span>What happened</span>
+				<span>When ({ components.TimeZone(ctx).String() })</span>
+			</div>
+			for _, e := range v.Answered {
+				<a class="dash-portfolio-row" href={ templ.SafeURL(needsYouHref(e.ID)) }>
+					<span class="dash-portfolio-name"><code>{ e.Action }</code> <span class="ny-row-amount">{ exceptionAmount(e) }</span></span>
+					<span class="ny-row-who"><code>{ e.Subject }</code>
+						if c := answeredCard(e); c != "" {
+							<small>{ c }</small>
+						}
+					</span>
+					<span><span class={ "dash-portfolio-state", exceptionAnswerClass(e) }>{ exceptionAnswerLabel(e) }</span>
+ if e.ExternalAnswer!=nil {
+<small>{externalAnswerName(e.ExternalAnswer)}</small>
+}
+ </span>
+					<span class={ "ny-row-outcome", templ.KV("is-warn", e.ToolOutcome != nil && toolOutcomeWarns(e.ToolOutcome.Status)) }>{ answeredOutcomeLabel(e) }</span>
+					<span class="dash-portfolio-muted">{ exceptionWhenShort(e, components.TimeZone(ctx)) }</span>
+				</a>
+			}
+		</div>
+	}
+}
+
+// answeredStory is an answered call told plainly: one sentence of what
+// happened, why it came to the owner, a timeline, and the ids folded
+// away for tracing.
+templ answeredStory(e apiclient.CardException) {
+	<article class="ny-story" id={ "exc-" + e.ID }>
+		<div class="ny-item-head">
+			<span class={ "dash-portfolio-state", exceptionAnswerClass(e) }>{ exceptionAnswerLabel(e) }</span>
+			<span class="ny-agent"><code>{ e.Subject }</code></span>
+			<span class="ny-when">{ exceptionWhen(e, components.TimeZone(ctx)) }</span>
+		</div>
+		<h3 class="ny-headline">
+			<code>{ e.Action }</code>
+			if amt := exceptionAmount(e); amt != "" {
+				<span class="ny-amount">{ amt }</span>
+			}
+		</h3>
+		<section class="ny-story-lead">
+			<p>{ storyLead(e) }</p>
+			if after := storyAfter(e); after != "" {
+				<p class="dash-note">{ after }</p>
+			}
+		</section>
+		if reasons := storyReasons(e); len(reasons) > 0 {
+			<section class="ny-story-block">
+				<h4>Why it came to you</h4>
+				<ul class="ny-story-rows">
+					for _, r := range reasons {
+						<li><strong>{ r.Title }</strong><span>{ r.Text }</span></li>
+					}
+				</ul>
+				for _, id := range storyCards(e) {
+					<p class="dash-note">Card <a href={ templ.SafeURL("/cards/" + url.PathEscape(id)) }><code>{ id }</code></a></p>
+				}
+			</section>
+		}
+		if args := callArgs(e, true); len(args) > 0 {
+			<section class="ny-story-block">
+				<h4>What it would have sent</h4>
+				<dl class="ny-args is-full" aria-label="Sent to the tool with">
+					for _, a := range args {
+						<div>
+							<dt>{ a.Name }</dt>
+							<dd>
+								<code>{ a.Value }</code>
+								if a.Means != "" {
+									<span class="ny-arg-means">{ a.Means }</span>
+								}
+							</dd>
+						</div>
+					}
+				</dl>
+			</section>
+		}
+		<section class="ny-story-block">
+			<h4>What happened</h4>
+			<ol class="ny-timeline">
+				for _, st := range storySteps(e) {
+					<li class={ "is-" + st.Kind }>
+						<strong>{ st.Title }</strong>
+						if st.At != nil {
+							<span class="ny-when">{ components.LocalTime(ctx, *st.At) }</span>
+						}
+						if st.Detail != "" {
+							<p class="dash-note">{ st.Detail }</p>
+						}
+					</li>
+				}
+			</ol>
+		</section>
+		<details class="ny-trace">
+			<summary>Details for tracing</summary>
+			<dl class="ny-args">
+				if id := callIDOf(e); id != "" {
+					<div><dt>Call</dt><dd><code>{ id }</code></dd></div>
+				}
+				<div><dt>Held call</dt><dd><code>{ e.ID }</code></dd></div>
+				if line := answeredByLine(e); line != "" {
+					<div><dt>Answered</dt><dd>{ line }</dd></div>
+				}
+				if e.ExternalAnswer != nil && e.ExternalAnswer.Model != "" {
+					<div><dt>Decision service</dt><dd>{ e.ExternalAnswer.Model }</dd></div>
+				}
+			</dl>
+		</details>
+	</article>
+}

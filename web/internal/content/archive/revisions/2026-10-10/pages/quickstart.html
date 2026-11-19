@@ -1,0 +1,143 @@
+<h1 id="quickstart-give-an-agent-a-card">Quickstart: give an agent a Card</h1>
+
+<p>Give one agent a <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Card</a> and watch KIFF check its
+calls against it. You connect a tool, issue the Card, point the agent at
+KIFF, and answer the first call that goes over the limit. No code, about
+ten minutes.</p>
+
+<p>You need:</p>
+
+<ul>
+<li>an account at <a href="https://app.kiff.dev" target="_blank" rel="noreferrer noopener">app.kiff.dev</a> (free);</li>
+<li>an agent that can use a remote MCP server, such as Claude Code or
+Codex;</li>
+<li>a remote MCP server at a public HTTPS address. Any public one works to
+try it.</li>
+</ul>
+
+<p>Already run an agent in your own code instead, with a framework such as
+LangGraph or the OpenAI Agents SDK? See <a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>
+for kiff-guard. The Card works the same way.</p>
+
+<h2 id="1-say-who-the-account-is-for">1. Say who the account is for</h2>
+
+<p>The first time you sign in, KIFF asks <strong>Who is this account for?</strong></p>
+
+<ul>
+<li><strong>For me</strong>: your own agents and tools. You see My Cards, My agents,
+Connected tools, Needs you and Activity.</li>
+<li><strong>For a company</strong>: the full workspace, with domains, contracts and API
+keys as well.</li>
+</ul>
+
+<p>It changes what you see, not what KIFF does. You can change it later in
+<strong>Settings → Dashboard view</strong>.</p>
+
+<h2 id="2-connect-a-tool">2. Connect a tool</h2>
+
+<p>Open <strong>Connected tools</strong> and choose <strong>Connect a tool</strong>.</p>
+
+<ol>
+<li>Enter the server&rsquo;s URL and, if it needs one, its bearer credential.
+KIFF lists the server&rsquo;s tools. Nothing is saved yet.</li>
+<li>Choose the tool, the name your agent will see, and whether the tool
+only reads. If the tool takes a whole-number amount, choose it, so a
+Card can limit amounts as well as calls.</li>
+</ol>
+
+<p>KIFF stores the credential encrypted and never shows it again.</p>
+
+<p><img src="/docs/archive/2026-10-10/assets/connected-tools.jpg" alt="Connected tools in KIFF Cloud: one connected read-only tool, with Give an agent a Card, Test, Replace credential and Remove." /></p>
+
+<p><em>A connected tool, from a KIFF test account.</em></p>
+
+<h2 id="3-give-the-agent-a-card">3. Give the agent a Card</h2>
+
+<p>Add the agent on <strong>My agents</strong> if it isn&rsquo;t there yet. Then, on the
+connected tool, choose <strong>Give an agent a Card</strong>:</p>
+
+<ul>
+<li><strong>Agent</strong>: the agent&rsquo;s name.</li>
+<li><strong>Number of calls</strong>, per day, per 24 hours or per hour. With an amount
+argument, also the most per call and a total.</li>
+<li><strong>A call outside the Card</strong>: hold it for you to answer, or refuse it.</li>
+<li><strong>A held call waits</strong>: 10 minutes by default, up to 7 days.</li>
+</ul>
+
+<p>Choose <strong>Issue the Card</strong>. The Card is in force at once, and its page
+shows the limit, what is used and what is left.</p>
+
+<p><img src="/docs/archive/2026-10-10/assets/card-issued.jpg" alt="An issued Card: holder claude-e2e-agent, authority wiki_structure, 2 per rolling hour, 2 remaining." /></p>
+
+<p><em>The Card&rsquo;s page right after it is issued, from a KIFF test account.</em></p>
+
+<h2 id="4-point-the-agent-at-kiff">4. Point the agent at KIFF</h2>
+
+<p>Open the agent on <strong>My agents</strong>, go to its <strong>Tools</strong> tab, and choose
+<strong>Connect to the KIFF gateway</strong>. KIFF creates a key for this agent,
+which can ask for decisions and nothing else, and shows it once inside
+the configuration to paste.</p>
+
+<p><img src="/docs/archive/2026-10-10/assets/agent-tools-tab.jpg" alt="The agent&rsquo;s Tools tab: Use tools through KIFF, with the gateway URL, and the connected tools it can reach." /></p>
+
+<p><em>An agent&rsquo;s Tools tab, from a KIFF test account.</em></p>
+
+<p>For Claude Code, the configuration looks like this:</p>
+
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;kiff&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://mcp.kiff.dev/mcp&quot;,
+      &quot;headers&quot;: { &quot;Authorization&quot;: &quot;Bearer &lt;the agent's key&gt;&quot; }
+    }
+  }
+}
+</code></pre>
+
+<p>Keep the key out of anything you commit. If the agent can also reach the
+same tool directly, remove that access: the Card only binds calls that go
+through KIFF.</p>
+
+<h2 id="5-use-it-and-go-over-the-limit-once">5. Use it, and go over the limit once</h2>
+
+<p>Ask the agent to use the tool. Calls inside the Card go through and
+return the tool&rsquo;s own result. When a call goes over the Card:</p>
+
+<ul>
+<li>nothing is sent to the tool;</li>
+<li>the agent is told the call is waiting for you, with a link;</li>
+<li>you get an email, and the call appears on <strong>Needs you</strong>;</li>
+<li>in Claude Code, the chat also offers to open the link.</li>
+</ul>
+
+<p>Open the link, signed in, and choose <strong>Approve once</strong>, <strong>Change the card
+to allow it</strong>, or <strong>Reject</strong>. The agent retries the same call and gets
+your answer. If nobody answers in time, the call is refused and nothing is
+sent. See <a href="/docs/archive/2026-10-10/approvals">Held calls and approvals</a>.</p>
+
+<p>Approve once waives a per-action threshold and still charges the full
+call. A cumulative ceiling needs <strong>Review extra room</strong>, defaulting to
+<strong>This window only</strong>, or an explicit permanent budget revision. If an
+approved call no longer fits, it waits for room rather than running
+past the ceiling.</p>
+
+<h2 id="what-you-have-now">What you have now</h2>
+
+<ul>
+<li>One Card that says what this agent may do with this tool, and how
+much.</li>
+<li>A record of every call on <strong>Activity</strong>, and the Card&rsquo;s statement of
+every draw and change.</li>
+<li>A way to stop the agent: revoke its key on its <strong>Keys</strong> tab, or revoke
+the Card. Other agents keep their access.</li>
+</ul>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>What a Card can say → <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Cards</a>.</li>
+<li>Agents in your own code → <a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>.</li>
+<li>The gateway in detail, with its API → <a href="/docs/archive/2026-10-10/mcp-gateway">Use the KIFF MCP gateway</a>.</li>
+<li>What KIFF does and does not do → <a href="/docs/archive/2026-10-10/what-kiff-is">What KIFF is</a>.</li>
+</ul>

@@ -1,0 +1,182 @@
+/* /privacy, /terms, /legal/dpa, and /ai-act. Familiar document reading
+ * surface, deliberately framed by the dark KIFF shell. */
+
+.legal {
+  --fg: #11141b;
+  --fg-soft: #3b424f;
+  --fg-muted: #73716d;
+  --bg: #f7f8fa;
+  --bg-elev: #ffffff;
+  --surface-soft: #eef0f4;
+  --rule: rgba(17, 20, 27, 0.22);
+  --rule-soft: rgba(17, 20, 27, 0.10);
+  max-width: 64rem;
+  margin: clamp(2rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 7vw, 7rem);
+  color: var(--fg-soft);
+  background: #f7f8fa;
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+}
+
+.legal.prose h1,
+.legal.prose h2,
+.legal.prose h3,
+.legal.prose strong,
+.legal.prose em { color: var(--fg); }
+
+.legal-head {
+  margin: 0 0 var(--size-7);
+  padding-bottom: var(--size-5);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.legal-head h1 {
+  margin-top: 1rem;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+}
+
+.legal-badge {
+  display: inline-block;
+  margin: 0 0 var(--size-3);
+  padding: 0;
+  color: #9a5a00;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.legal-meta {
+  margin: var(--size-3) 0;
+  color: var(--fg-muted);
+  font-size: var(--font-size-1);
+}
+
+.legal-meta strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.legal-disclaimer {
+  margin: var(--size-4) 0 0;
+  padding: var(--size-3) var(--size-4);
+  color: var(--fg-soft);
+  background: #eef0f4;
+  border-left: 3px solid var(--accent);
+}
+
+.legal-footnote {
+  margin: var(--size-4) 0 0;
+  color: var(--fg-muted);
+  font-size: var(--font-size-0);
+  line-height: 1.6;
+}
+
+/* Long words never push past the page. A German or Dutch heading
+ * ("Auftragsverarbeitungsvertrag"), a URL or a code name breaks inside
+ * the column: at a hyphen where the browser knows the page's language
+ * (each page carries its own lang), anywhere as the last resort. Body
+ * text hyphenates only on a phone, where a long word needs it. */
+.legal h1,
+.legal h2,
+.legal h3,
+.legal p,
+.legal li {
+  overflow-wrap: anywhere;
+}
+
+.legal h1,
+.legal h2,
+.legal h3 {
+  hyphens: auto;
+}
+
+@media (max-width: 720px) {
+  .legal p,
+  .legal li {
+    hyphens: auto;
+  }
+}
+
+/* In a table, "anywhere" would let the browser squeeze a column to one
+ * letter; cells break at hyphens and between words instead, and the
+ * table scrolls on its own (below) if it is still wider than the page. */
+.legal td,
+.legal th {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.legal a,
+.legal code {
+  overflow-wrap: anywhere;
+}
+
+/* A table keeps to the column: its cells wrap first. One still wider
+ * than the page (four columns on a phone, in a language the browser
+ * can't hyphenate) scrolls sideways in its own box, never the page. The
+ * box takes keyboard focus so it can be scrolled without a pointer. */
+.legal-table {
+  margin: var(--size-4) 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  /* A soft shadow on an edge only while more table lies past it: the
+   * page-coloured covers scroll with the table and hide the shadows at
+   * its ends. */
+  background:
+    linear-gradient(to right, #f7f8fa 45%, rgba(247, 248, 250, 0)) left / 2rem 100% no-repeat local,
+    linear-gradient(to left, #f7f8fa 45%, rgba(247, 248, 250, 0)) right / 2rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(17, 20, 27, 0.18), transparent) left / 0.8rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(17, 20, 27, 0.18), transparent) right / 0.8rem 100% no-repeat scroll;
+}
+
+.legal-table > table {
+  margin: 0;
+}
+
+.legal-table:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.legal.prose th {
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 720px) {
+  .legal.prose table {
+    font-size: var(--font-size-0);
+  }
+
+  .legal.prose th,
+  .legal.prose td {
+    padding: 0.4rem 0.45rem;
+  }
+
+  .legal.prose th:first-child,
+  .legal.prose td:first-child {
+    padding-left: 0;
+  }
+
+  .legal-head h1 {
+    font-size: clamp(2rem, 9vw, 2.4rem);
+  }
+}
+
+@media (max-width: 720px) {
+  .legal {
+    margin-top: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+  }
+}
+
+/* The apps connected through Composio, under /subprocessors' table: names in
+ * as many columns as fit, never splitting a name. */
+.legal .app-columns { columns: 12rem auto; column-gap: 2rem; padding-left: 1.2rem; }
+.legal .app-columns li { break-inside: avoid; }

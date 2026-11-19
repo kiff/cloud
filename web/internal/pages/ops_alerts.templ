@@ -1,0 +1,72 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsAlerts renders the operator review queue: open alerts synced
+// from the command-center risk signals, with ack/resolve. Each row
+// carries one required reason field shared by both actions, so no
+// triage lands in the audit trail without a note.
+templ OpsAlerts(alerts []apiclient.OpsAlert, chrome components.DashboardChrome) {
+	@components.OpsShell("alerts", "alerts", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · review queue</p>
+					<h1>Alerts.</h1>
+					<p class="dash-note">{ opsInt(len(alerts)) } open. Synced from live risk signals; a reason is required to ack or resolve.</p>
+				</div>
+				<div class="dash-header-actions">
+					<form method="post" action="/ops/alerts/sync">
+						<button type="submit" class="btn btn-secondary">Refresh from signals</button>
+					</form>
+				</div>
+			</header>
+			<article class="dash-card">
+				if len(alerts) == 0 {
+					<p class="dash-note">No open alerts. Use “Refresh from signals” to recompute from current usage.</p>
+				} else {
+					<div class="ops-table-wrap">
+						<table class="dash-table ops-wide">
+							<thead>
+								<tr>
+									<th>Severity</th>
+									<th>Tenant</th>
+									<th>Kind</th>
+									<th>Detail</th>
+									<th>Seen</th>
+									<th>Resolve / acknowledge</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, a := range alerts {
+									<tr>
+										<td><span class={ opsRiskClass(a.Severity) }>{ a.Severity }</span></td>
+										<td class="ops-nowrap"><a href={ templ.SafeURL("/ops/tenants/" + a.TenantID) }>{ opsAlertSlug(a) }</a></td>
+										<td><span class="ops-code">{ a.Kind }</span></td>
+										<td class="ops-detail">{ a.Detail }</td>
+										<td class="ops-nowrap">{ opsInt(a.Count) }×</td>
+										<td>@opsAlertActions(a)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}
+
+// opsAlertActions renders one reason field and both action buttons.
+// The buttons use formaction so a single required reason input serves
+// ack and resolve.
+templ opsAlertActions(a apiclient.OpsAlert) {
+	<form method="post" action={ templ.SafeURL("/ops/alerts/" + a.ID + "/resolve") } class="ops-alert-actions">
+		<input type="text" name="reason" class="ops-reason" placeholder="Reason (required)" required aria-label="Reason"/>
+		<button type="submit" class="btn btn-secondary btn-xs" formaction={ "/ops/alerts/" + a.ID + "/ack" }>Ack</button>
+		<button type="submit" class="btn btn-primary btn-xs">Resolve</button>
+	</form>
+}

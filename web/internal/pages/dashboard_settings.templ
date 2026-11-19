@@ -1,0 +1,468 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DashboardSettings renders the Settings tab at /dashboard/settings.
+// It carries account identity, workspace identifiers, API-key
+// wayfinding, data export, and deletion controls. Server-rendered +
+// plain forms. No JS.
+templ DashboardSettings(v DashboardView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — Settings",
+		"settings",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.CurrentDomain),
+	) {
+		<section class="dash st-page">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Settings</p>
+					<h1>Account &amp; workspace</h1>
+				</div>
+			</header>
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+			@flashBanner(v.Flash)
+			<nav class="ac-detail-tabs" aria-label="Settings sections">
+				for _, t := range settingsTabs {
+					<a
+						class={ templ.KV("is-current", v.SettingsTab == t.ID) }
+						href={ templ.SafeURL("/dashboard/settings?tab=" + t.ID) }
+						if v.SettingsTab == t.ID {
+							aria-current="page"
+						}
+					>{ t.Label }</a>
+				}
+			</nav>
+			<div class="st-panel">
+				switch v.SettingsTab {
+					case "workspace":
+						if v.Me != nil {
+							@settingsWorkspaceCard(v)
+							@settingsAPIAccessCard()
+						}
+					case "usage":
+						if v.Me != nil {
+							@settingsConsumptionCard(v)
+						}
+					case "data":
+						@settingsExportCard()
+						if v.Me != nil {
+							@settingsDangerCard(v)
+						}
+					case "notifications":
+						if v.Me != nil {
+							@settingsNotificationsCard(v)
+						}
+					case "view":
+						if v.Me != nil {
+							@accountKindSetting(v.SwitchTo)
+						}
+					default:
+						@settingsAccountCard(v)
+						if v.Me != nil {
+							@settingsAccountName(v.Me)
+							@settingsTimeZone(v.Me)
+							@settingsHeldCallsCard(v.Me.ChatApprovals)
+						}
+				}
+			</div>
+		</section>
+	}
+}
+
+templ settingsAccountCard(v DashboardView) {
+	<article class="dash-card st-row">
+		<div class="st-row-text">
+			<h2>Account</h2>
+			<dl class="st-facts">
+				if v.DisplayName != "" {
+					<div><dt>Name</dt><dd>{ v.DisplayName }</dd></div>
+				}
+				if v.Email != "" {
+					<div><dt>Email</dt><dd>{ v.Email }</dd></div>
+				}
+				if v.Me != nil {
+					<div><dt>Plan</dt><dd>{ planDisplayName(v.Me) }</dd></div>
+				}
+			</dl>
+		</div>
+		<form method="post" action="/sign-out">
+			<button type="submit" class="btn btn-secondary">Sign out</button>
+		</form>
+	</article>
+}
+
+// accountKindSetting is the Settings control for what the account is
+// for. The kind is only read by the web app to choose the sidebar and a
+// few labels; the API stores it and nothing else reads it, so switching
+// moves and deletes nothing. A switch is confirmed on a second step
+// (?switch=) so the POST is never one click away.
+templ accountKindSetting(switchTo string) {
+	{{ current := components.AccountKindFrom(ctx) }}
+	<section class="dash-card st-kind" aria-labelledby="st-kind-h">
+		<div class="st-kind-head">
+			<h2 id="st-kind-h">What this dashboard shows</h2>
+			<p class="dash-note">This changes the sidebar, a few labels, and whether held calls are offered in the agent's chat by default. Nothing is moved or deleted, and you can switch back at any time.</p>
+		</div>
+		if switchTo == "personal" || switchTo == "company" {
+			<div class="st-confirm" role="alertdialog" aria-labelledby="st-confirm-h">
+				<h3 id="st-confirm-h">
+					if switchTo == "company" {
+						Switch to the company view?
+					} else {
+						Switch to the personal view?
+					}
+				</h3>
+				<p>
+					if switchTo == "company" {
+						The sidebar will also show Domain, Build, Govern and API keys. Nothing is moved or deleted.
+					} else {
+						The sidebar will hide Domain, Build, Govern and API keys. They keep working, and their pages stay reachable by link.
+					}
+				</p>
+				<div class="st-confirm-actions">
+					<form method="post" action="/dashboard/account-kind">
+						<input type="hidden" name="kind" value={ switchTo }/>
+						<button type="submit" class="btn btn-primary">
+							if switchTo == "company" {
+								Switch to company view
+							} else {
+								Switch to personal view
+							}
+						</button>
+					</form>
+					<a class="btn btn-secondary" href="/dashboard/settings?tab=view">Cancel</a>
+				</div>
+			</div>
+		}
+		<div class="st-kind-options">
+			@kindOption("personal", current, switchTo, "For me", "Your own agents and the tools they use.",
+				[]string{"My Cards, My agents, Connected tools", "Needs you as its own item", "Domains, contracts and API keys are hidden"},
+				[]string{"My Cards", "My agents", "Connected tools", "Needs you", "Activity"}, nil)
+			@kindOption("company", current, switchTo, "For a company", "A team's agents, the contracts they act under, and the keys your systems use.",
+				[]string{"Cards, Agents, Tools, Activity", "Domain, Build and Govern for contracts", "API keys for your systems"},
+				[]string{"Cards", "Agents", "Tools", "Activity"}, []string{"Domain", "Build", "Govern", "API keys"})
+		</div>
+	</section>
+}
+
+// kindOption is one of the two views: a small sidebar sketch of what it
+// shows, a sentence, what it lists, and either "Current view" or a link
+// to the confirmation step.
+templ kindOption(kind, current, switchTo, title, sentence string, bullets, nav, setup []string) {
+	<article class={ "st-kind-option", templ.KV("is-current", current == kind) }>
+		<div class="st-sketch" aria-hidden="true">
+			for _, n := range nav {
+				<span>{ n }</span>
+			}
+			if len(setup) > 0 {
+				<span class="st-sketch-label">Setup</span>
+				for _, n := range setup {
+					<span class="st-sketch-setup">{ n }</span>
+				}
+			}
+		</div>
+		<div class="st-kind-body">
+			<h3>{ title }</h3>
+			<p>{ sentence }</p>
+			<ul>
+				for _, b := range bullets {
+					<li>{ b }</li>
+				}
+			</ul>
+			if current == kind {
+				<span class="dash-pill">Current view</span>
+			} else if switchTo != kind {
+				<a class="btn btn-secondary btn-sm" href={ templ.SafeURL("/dashboard/settings?tab=view&switch=" + kind) }>
+					if kind == "company" {
+						Use the company view
+					} else {
+						Use the personal view
+					}
+				</a>
+			}
+		</div>
+	</article>
+}
+
+// settingsHeldCallsCard says where a held call reaches the owner, and
+// turns the chat prompt on or off.
+templ settingsHeldCallsCard(chat bool) {
+	<article class="dash-card st-row">
+		<div class="st-row-text">
+			<h2>Held calls</h2>
+			<p class="dash-note">A call outside an agent's Card is always emailed to you and shown on Needs you.</p>
+			<p class="dash-note">
+				if chat {
+					<strong>Also offered in the agent's chat: on.</strong>
+				} else {
+					<strong>Also offered in the agent's chat: off.</strong>
+				}
+				Clients KIFF has verified, such as Claude Code, show a link to the call's Needs you page. Only you, signed in, can answer there; a reply in the chat answers nothing. On by default for a personal account.
+			</p>
+		</div>
+		<form method="post" action="/dashboard/chat-approvals">
+			if chat {
+				<input type="hidden" name="enabled" value="false"/>
+				<button type="submit" class="btn btn-secondary">Stop offering in the chat</button>
+			} else {
+				<input type="hidden" name="enabled" value="true"/>
+				<button type="submit" class="btn btn-secondary">Offer in the chat</button>
+			}
+		</form>
+	</article>
+}
+
+templ settingsExportCard() {
+	<article class="dash-card st-row">
+		<div class="st-row-text">
+			<h2>Export your data</h2>
+			<p class="dash-note">A JSON file with your account, Cards, decisions and records.</p>
+		</div>
+		<a href="/dashboard/account/export" class="btn btn-secondary" download>Export my data</a>
+	</article>
+}
+
+// settingsAPIAccessCard points to where keys live: the account's API keys
+// page (hidden from a personal sidebar) and each agent's own page.
+templ settingsAPIAccessCard() {
+	<article class="dash-card st-row">
+		<div class="st-row-text">
+			<h2>API access</h2>
+			<p class="dash-note">Keys your own systems use are on API keys. An agent's keys, including its gateway keys, are on that agent's page.</p>
+		</div>
+		<div class="dash-plan-actions">
+			<a class="btn btn-secondary" href="/dashboard/keys">API keys</a>
+			<a class="btn btn-secondary" href="/agents">Agents</a>
+		</div>
+	</article>
+}
+
+templ settingsWorkspaceCard(v DashboardView) {
+	<article class="dash-card">
+		<div class="dash-card-heading">
+			<div>
+				<h2>Workspace</h2>
+				<p class="dash-note">Identifiers support may ask for, and your plan.</p>
+			</div>
+			<span class={ "dash-pill", planStatusPillClass(v) }>{ planStatusLabel(v.Me) }</span>
+		</div>
+		@settingsBillingBanner(v)
+		<dl class="st-facts st-facts-ids">
+			@settingsID("Tenant slug", "st-tenant-slug", v.Me.TenantSlug)
+			@settingsID("Tenant ID", "st-tenant-id", v.Me.TenantID)
+			<div><dt>Plan</dt><dd>{ planDisplayName(v.Me) }</dd></div>
+		</dl>
+		if line := billingSourceLine(v); line != "" {
+			<p class="dash-note st-billing-source">{ line }</p>
+		}
+		if appleSoloMovesToTeam(v) {
+			<p class="dash-note st-solo-to-team">To add people, move to Team here. The Solo days you've paid Apple for become Team days, at no charge. Then cancel Solo with Apple so it doesn't renew.</p>
+		}
+		if line := appleSoloStillRenews(v); line != "" {
+			<p class="dash-note st-solo-renews">{ line } <a href={ templ.SafeURL(appleManageURL(v)) } target="_blank" rel="noopener">Cancel with Apple</a></p>
+		}
+		<div class="dash-plan-actions">
+			if billedByApple(v) {
+				if appleSoloMovesToTeam(v) {
+					<a class="btn btn-primary" href="/dashboard/checkout?plan=team">Move to Team</a>
+				}
+				<a class="btn btn-secondary" href={ templ.SafeURL(appleManageURL(v)) } target="_blank" rel="noopener">Manage with Apple</a>
+			} else {
+				if v.Me.HasBilling && v.Me.BillingStatus != "canceled" {
+					<form method="post" action="/dashboard/billing/portal">
+						<button type="submit" class="btn btn-secondary">Manage billing</button>
+					</form>
+				} else if canonicalPlan(v.Me) == "trial" {
+					<a class="btn btn-primary" href="/dashboard/checkout?plan=team">{ trialActionLabel(v) }</a>
+				}
+				<a class="btn btn-secondary" href="/pricing">See pricing</a>
+			}
+		</div>
+	</article>
+}
+
+// settingsBillingBanner renders a billing-state notice from the
+// Stripe-synced billing_status. past_due is a deliberate grace state
+// (the runtime keeps serving) so the copy reassures rather than
+// alarms; canceled says the account has no plan now. active / empty
+// render nothing.
+templ settingsBillingBanner(v DashboardView) {
+	if v.Me != nil && v.Me.BillingStatus == "past_due" {
+		<div class="dash-warn dash-billing-banner">
+			<strong>We couldn't process your last payment.</strong>
+			Update your payment card to keep your subscription. Your service is unaffected for now.
+		</div>
+	} else if v.Me != nil && v.Me.BillingStatus == "canceled" {
+		<div class="dash-note dash-billing-banner">
+			<strong>Your subscription was canceled.</strong>
+			KIFF refuses this workspace's calls until a plan is chosen again. Choose one any time.
+		</div>
+	}
+}
+
+// settingsConsumptionCard shows what the account used this
+// period: its tafs tasks and KIFF actions
+// against what the plan includes.
+templ settingsConsumptionCard(v DashboardView) {
+	<article class="dash-card">
+		<div class="dash-card-heading">
+			<div>
+				<h2>Usage</h2>
+				<p class="dash-note">Tasks and actions this period — { consumptionPeriodLabel(v) }.</p>
+			</div>
+			<span class="dash-pill dash-pill-muted">{ consumptionPctLabel(v) }</span>
+		</div>
+		<div class="dash-fact-grid dash-fact-grid-two">
+			<div class="dash-fact"><span>Tafs tasks</span><strong>{ consumptionTasks(v) }</strong></div>
+			<div class="dash-fact"><span>KIFF actions</span><strong>{ consumptionActions(v) }</strong></div>
+		</div>
+		if left := tasksLeftLine(v); left != "" {
+			<p class="dash-note st-tasks-left"><strong>{ left }</strong> — { tasksBreakdown(v) }.</p>
+		}
+		if v.Meters != nil && len(v.Meters.PackList) > 0 {
+			<ul class="st-packs">
+				for _, p := range v.Meters.PackList {
+					<li>{ packHeld(p) }</li>
+				}
+			</ul>
+		}
+		<p class="dash-note">{ consumptionNote(v) }</p>
+		if !billedByApple(v) {
+			<div class="dash-plan-actions">
+				<a class="btn btn-secondary" href="/pricing">See pricing</a>
+			</div>
+		}
+	</article>
+	@settingsPacksCard(v)
+}
+
+// settingsPacksCard sells the task packs, one-time, to someone who may add
+// tasks, whoever bills the plan; and lists the members' requests for one,
+// to approve (buying the pack) or decline.
+templ settingsPacksCard(v DashboardView) {
+	if packs := storePacks(v); len(packs) > 0 {
+		<article class="dash-card" id="add-tasks">
+			<div class="dash-card-heading">
+				<div>
+					<h2>Add tasks</h2>
+					<p class="dash-note">A pack adds tasks once. Your plan's tasks are used first each period, then packs, oldest first.</p>
+				</div>
+			</div>
+			if reqs := openRequests(v); len(reqs) > 0 {
+				<h3>Requests</h3>
+				<ul class="st-requests">
+					for _, r := range reqs {
+						<li class="st-request">
+							<p><strong>{ requestPackLine(v, r) }</strong></p>
+							if r.Reason != "" {
+								<p class="dash-note">{ r.Reason }</p>
+							}
+							<div class="dash-plan-actions">
+								<a class="btn btn-primary" href={ templ.SafeURL(packCheckoutURL(r.Pack, r.ID)) }>Approve</a>
+								<form method="post" action={ templ.URL("/dashboard/pack-requests/" + r.ID + "/decline") } class="st-decline">
+									<label class="dash-note" for={ "note-" + r.ID }>Note</label>
+									<input id={ "note-" + r.ID } name="note" maxlength="500" placeholder="Optional"/>
+									<button type="submit" class="btn btn-secondary">Decline</button>
+								</form>
+							</div>
+						</li>
+					}
+				</ul>
+			}
+			<ul class="st-packs-sale">
+				for _, p := range packs {
+					<li>
+						<span>{ packOnSale(p) }</span>
+						<a class="btn btn-secondary" href={ templ.SafeURL(packCheckoutURL(p.ID, "")) }>Add { p.Name }</a>
+					</li>
+				}
+			</ul>
+		</article>
+	}
+}
+
+templ settingsDangerCard(v DashboardView) {
+	<article class="dash-card dash-danger-card">
+		<div class="dash-card-heading">
+			<div>
+				<h2>Danger zone</h2>
+				<p class="dash-note">Delete account after a 30-day grace window.</p>
+			</div>
+		</div>
+		<form method="post" action="/dashboard/account/delete" class="dash-delete-form">
+			<label for="confirm-slug-input" class="dash-note">
+				Type <code>{ v.Me.TenantSlug }</code> to confirm.
+			</label>
+			<input
+				id="confirm-slug-input"
+				name="confirm_slug"
+				type="text"
+				autocomplete="off"
+				placeholder={ v.Me.TenantSlug }
+				class="dash-input"
+			/>
+			<button type="submit" class="btn btn-danger">Delete account</button>
+		</form>
+	</article>
+}
+
+// settingsID shows one identifier on one line, in monospace, with a Copy
+// button (the layout's [data-copy-target] handler).
+templ settingsID(label, id, value string) {
+	<div>
+		<dt>{ label }</dt>
+		<dd class="st-id"><code id={ id }>{ value }</code><button type="button" class="btn btn-secondary btn-sm" data-copy-target={ id } aria-label={ "Copy " + label }>Copy</button></dd>
+	</div>
+}
+
+// settingsAccountName names the account: what invitations, the account
+// switcher and the app call it. Unnamed, KIFF shows the email of the
+// person it was made for.
+templ settingsAccountName(me *apiclient.Me) {
+	<section class="dash-card st-kind" aria-labelledby="account-name-h">
+		<h2 id="account-name-h">Account name</h2>
+		<p class="dash-note">What people see when you invite them, in the account switcher and in apps signed in to KIFF.</p>
+		if me.Can("account.settings") {
+			<form method="post" action="/dashboard/account-name" class="st-setting-form">
+				<label for="account-name">Name</label>
+				<input id="account-name" name="name" class="dash-input" required maxlength="80" autocomplete="organization" value={ me.DisplayName }/>
+				<button type="submit" class="btn btn-secondary">Save name</button>
+			</form>
+		} else {
+			<p>{ me.DisplayName } · Only an account owner or admin can change this.</p>
+		}
+	</section>
+}
+
+templ settingsTimeZone(me *apiclient.Me) {
+	<section class="dash-card st-kind" aria-labelledby="time-zone-h">
+		<h2 id="time-zone-h">Time zone</h2>
+		<p class="dash-note">New Cards reset their calendar-day limits at midnight here. Existing Cards keep their own time zone; hourly and rolling 24-hour limits use elapsed time.</p>
+		if me.Can("account.settings") {
+			<form method="post" action="/dashboard/time-zone" class="st-time-zone-form">
+				<label for="account-time-zone">Account time zone</label>
+				<select id="account-time-zone" name="time_zone" class="dash-input" required>
+					<option value="UTC" selected?={ accountTimeZone(me) == "UTC" }>UTC</option>
+					for _, g := range timeZoneGroups(accountTimeZone(me)) {
+						<optgroup label={ g.Region }>
+							for _, z := range g.Zones {
+								<option value={ z.Value } selected?={ z.Value == accountTimeZone(me) }>{ z.Label }</option>
+							}
+						</optgroup>
+					}
+				</select>
+				<button type="submit" class="btn btn-secondary">Save time zone</button>
+			</form>
+		} else {
+			<p>{ accountTimeZone(me) } · Only an account owner or admin can change this.</p>
+		}
+	</section>
+}

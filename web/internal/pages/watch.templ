@@ -1,0 +1,46 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsWatch is /tafs/watch in English: tafs on a watch, what it does, how to
+// get it, and what it keeps. It is no legal text (components.HasNoNotice).
+// Every fact is the watch app's own: keep it in step with what the watch
+// does, and change watchEN first, then each watch_words_<lang>.go.
+func TafsWatch() templ.Component { return Watch(watchEN) }
+
+// Watch is /tafs/watch in w's language (English when w is empty), in the
+// prose layout /support uses, with the sections numbered.
+templ Watch(w watchWords) {
+	@components.LayoutSiteWithMeta(w.words().Title, w.words().Description, "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">{ w.words().Badge }</p>
+				<h1>{ w.words().Head }</h1>
+				<p class="legal-disclaimer">{ w.words().Sub }</p>
+			</header>
+			@watchSectionOf(w, "what-it-does", w.words().Does, "")
+			@watchSectionOf(w, "get-it", w.words().Get, "")
+			@watchSectionOf(w, "refuse-and-halt", w.words().Act, "")
+			@watchSectionOf(w, "ask-coach", w.words().Coach, "")
+			@watchSectionOf(w, "locked", w.words().Locked, "")
+			@watchSectionOf(w, "keeps", w.words().Keeps, "/tafs/privacy#data")
+			@watchSectionOf(w, "help", w.words().Help, "/support")
+		</article>
+	}
+}
+
+// watchSectionOf is one section; link, when set, is where its last item
+// links, as an English path.
+templ watchSectionOf(w watchWords, id string, s watchSection, link string) {
+	<section id={ id }>
+		<h2>{ s.Head }</h2>
+		<ul>
+			for _, item := range s.Items {
+				<li>@watchRich(item)</li>
+			}
+			if link != "" {
+				<li>@watchRich(s.Link.Before)<a href={ w.href(link) }>{ s.Link.Text }</a>{ s.Link.After }</li>
+			}
+		</ul>
+	</section>
+}

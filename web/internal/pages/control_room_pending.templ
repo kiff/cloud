@@ -1,0 +1,134 @@
+package pages
+
+// Receipts / Verifiability / Alerts / Approvals sections. Each branches
+// on its wire status: "complete" renders data, "empty" is an honest
+// empty state, "unavailable" is "not yet recorded". The web never infers
+// status from an empty array.
+
+templ ControlRoomReceipts(e *ControlEvidence) {
+	if controlRoomSectionUnavailable(e.Receipts.Status) {
+		@controlRoomPendingSection("Receipts", "Receipts show here once they can be tied to this control.")
+	} else if controlRoomSectionComplete(e.Receipts.Status) {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Receipts</p>
+					<h2>{ controlRoomReceiptsHeadline(e) }</h2>
+				</div>
+				if e.Receipts.Truncated {
+					<span class="dash-pill dash-pill-muted">sample</span>
+				}
+			</div>
+			<p class="dash-note">{ controlRoomReceiptsScopeNote(e) }</p>
+			<ul class="cr-receipt-list">
+				for _, s := range e.Receipts.Samples {
+					<li class="cr-receipt">
+						<div class="cr-receipt-main">
+							<a href={ templ.SafeURL(controlRoomReceiptHref(s.TraceID)) }><code>{ controlFallback(s.EntityID, "entity") }</code></a>
+							<small>{ s.ActionName } · { controlRoomReceiptSampleTime(s) }</small>
+						</div>
+						<div class="cr-receipt-pills">
+							<span class={ "dash-pill", controlRoomReceiptKindClass(s) }>{ controlRoomReceiptKindLabel(s) }</span>
+							<span class={ "dash-pill", controlRoomReceiptSignedClass(s) }>{ controlRoomReceiptSignedLabel(s) }</span>
+							<span class={ "dash-pill", controlRoomReceiptAnchorClass(s) }>{ controlRoomReceiptAnchorLabel(s) }</span>
+						</div>
+					</li>
+				}
+			</ul>
+		</section>
+	} else {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Receipts</p>
+					<h2>No receipts in this window</h2>
+				</div>
+			</div>
+			<p class="dash-note">Every governed decision gets a signed receipt. None in this window yet.</p>
+		</section>
+	}
+}
+
+templ ControlRoomVerifiability(e *ControlEvidence) {
+	if controlRoomSectionUnavailable(e.Receipts.Status) {
+		@controlRoomPendingSection("Verifiability", "Signature and anchor labels show here once receipts are tied to this control.")
+	} else if controlRoomSectionComplete(e.Receipts.Status) && e.Receipts.Count > 0 {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Verifiability</p>
+					<h2>Signed receipts</h2>
+				</div>
+				<span class={ "dash-pill", controlRoomAnchoredTierClass(e.Receipts.Verifiability.Anchored) }>{ controlRoomAnchoredTierLabel(e.Receipts.Verifiability.Anchored) }</span>
+			</div>
+			<p class="dash-note">{ e.Receipts.Verifiability.Note }</p>
+			<p class="dash-note cr-scope-note">{ controlRoomVerifiabilityScopeNote(e) }</p>
+		</section>
+	} else {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Verifiability</p>
+					<h2>No signed receipts in this window</h2>
+				</div>
+			</div>
+			<p class="dash-note">Shows once a governed action runs and its receipt is signed.</p>
+		</section>
+	}
+}
+
+templ ControlRoomAlerts(e *ControlEvidence) {
+	if controlRoomSectionUnavailable(e.Alerts.Status) {
+		@controlRoomPendingSection("Alert deliveries", "Alert deliveries show here once alert routing is set up for this control.")
+	} else if controlRoomSectionComplete(e.Alerts.Status) {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Alert deliveries</p>
+					<h2>Deliveries by decision</h2>
+				</div>
+			</div>
+			<ul class="cr-delivery-list">
+				for _, d := range e.Alerts.Deliveries {
+					<li class="cr-delivery">
+						<div class="cr-delivery-main">
+							<code>{ controlFallback(d.TargetType, "target") }</code>
+							<small>{ controlFallback(d.TargetID, "—") }</small>
+						</div>
+						<span class={ "dash-pill", controlRoomDeliveryClass(d.Status) }>{ controlRoomDeliveryLabel(d.Status) }</span>
+					</li>
+				}
+			</ul>
+		</section>
+	} else {
+		<section class="dash-card cr-card">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Alert deliveries</p>
+					<h2>No alert deliveries in this window</h2>
+				</div>
+			</div>
+			<p class="dash-note">Each alert delivery shows here with the decision that triggered it.</p>
+		</section>
+	}
+}
+
+templ ControlRoomApprovals(e *ControlEvidence) {
+	if controlRoomSectionComplete(e.Approvals.Status) {
+		<section class="dash-card cr-card">
+			<p class="eyebrow">Approvals</p>
+			<h2>Approvals in this window</h2>
+			<p class="dash-note">Each with its reviewer and outcome.</p>
+		</section>
+	} else {
+		@controlRoomPendingSection("Approvals", "Approvals can't be tied to this control yet. They still wait on Needs you.")
+	}
+}
+
+templ controlRoomPendingSection(title, copy string) {
+	<section class="dash-card cr-card cr-pending">
+		<p class="eyebrow">{ title }</p>
+		<h2>Not recorded yet</h2>
+		<p class="dash-note">{ copy }</p>
+	</section>
+}

@@ -1,0 +1,124 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/spots"
+)
+
+// SpotIndex renders /spot — a gallery of enablement proofs. Where /proof shows
+// KIFF stopping the unsafe repeat, /spot shows the same mechanism as
+// the thing that lets you put an agent on a money flow at all. Standalone app
+// shell (no marketing chrome) so it reads as a shareable artifact like /proof
+// and the decks.
+templ SpotIndex(all []spots.Spot) {
+	@components.LayoutSite("KIFF — ship the agent on the flow", "spot", "css/spot.css") {
+		<main class="spot-index">
+			<a class="spot-back" href="/deck/sales">← sales deck</a>
+			<header class="spot-index-head">
+				<p class="spot-eyebrow">cookbook · ship with confidence</p>
+				<h1>Get your agents onto the work that moves money.</h1>
+				<p class="spot-index-lede">
+					Refunds, payouts, deals, collections — the flows you've kept agents
+					away from. Each one below is a real agent doing the work, with a
+					decision that holds the line. Pick one, watch it run, and see why
+					it's now safe to say yes.
+				</p>
+			</header>
+			<ul class="spot-grid">
+				for _, s := range all {
+					<li>
+						@spotCard(s)
+					</li>
+				}
+			</ul>
+			<footer class="spot-index-foot">
+				<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">Run them yourself — kiff-guard ↗</a>
+			</footer>
+		</main>
+	}
+}
+
+// spotCard is the clickable card on the index. Leads with the flow you can
+// ship, not a loss avoided.
+templ spotCard(s spots.Spot) {
+	<a class="spot-card" href={ templ.SafeURL("/spot/" + s.Slug) }>
+		<span class="spot-card-flow">{ s.Flow }</span>
+		<span class="spot-card-tagline">{ s.Tagline }</span>
+		<span class="spot-card-meta">
+			<span class="spot-chip">{ s.Framework }</span>
+			<span class="spot-chip spot-chip-model">{ s.Model }</span>
+		</span>
+		<span class="spot-card-ship">put an agent on it →</span>
+	</a>
+}
+
+// Spot renders one enablement infographic at /spot/{slug}: the cross-the-line
+// band (before → the line → after), the decision loop, and why the team can
+// ship it.
+templ Spot(s spots.Spot) {
+	@components.LayoutSite("KIFF — "+s.Flow, "spot", "css/spot.css") {
+		<main class="spot">
+			<a class="spot-back" href="/spot">← all flows</a>
+			<header class="spot-head">
+				<p class="spot-eyebrow">cookbook enablement · { s.Recipe }</p>
+				<h1>{ s.Flow }</h1>
+				<p class="spot-tagline">{ s.Tagline }</p>
+				<div class="spot-head-chips">
+					<span class="spot-chip">{ s.Framework }</span>
+					<span class="spot-chip spot-chip-model">{ s.Model }</span>
+					<span class="spot-chip spot-chip-action">{ s.Action }</span>
+				</div>
+			</header>
+
+			<section class="spot-cross" aria-label="Crossing the line">
+				<div class="spot-side spot-before">
+					<span class="spot-side-label">before</span>
+					<span class="spot-side-text">{ s.Before }</span>
+				</div>
+				<div class="spot-line">
+					<span class="spot-line-action">{ s.Action }</span>
+					<span class="spot-line-note">the line ↓</span>
+					<span class="spot-line-detail">{ s.Line }</span>
+				</div>
+				<div class="spot-side spot-after">
+					<span class="spot-side-label">now you ship</span>
+					<span class="spot-side-text">{ s.After }</span>
+				</div>
+			</section>
+
+			<section class="spot-loop" aria-label="The decision loop">
+				<div class="spot-loop-step">
+					<span class="spot-loop-num">1</span>
+					<span class="spot-loop-text">Agent proposes <code>{ s.Action }</code> on a { s.Entity }.</span>
+				</div>
+				<div class="spot-loop-step">
+					<span class="spot-loop-num">2</span>
+					<span class="spot-loop-text">KIFF reads the { s.Entity }'s current state — before anything runs.</span>
+				</div>
+				<div class="spot-loop-step">
+					<span class="spot-loop-num">3</span>
+					<span class="spot-loop-text">State is <code>{ s.OpenState }</code> → the agent's action <strong class="spot-allow">runs</strong>, receipt signed.</span>
+				</div>
+				<div class="spot-loop-step">
+					<span class="spot-loop-num">4</span>
+					<span class="spot-loop-text">State is now <code>{ s.DoneState }</code> → every repeat is a <strong class="spot-noop">no-op</strong>. You don't babysit it.</span>
+				</div>
+			</section>
+
+			<section class="spot-detail">
+				<div class="spot-detail-block">
+					<h2>The flow you ship</h2>
+					<p>{ s.HowItShips }</p>
+				</div>
+				<div class="spot-detail-block">
+					<h2>Why your team ships it</h2>
+					<p>{ s.WhyConfident }</p>
+				</div>
+			</section>
+
+			<footer class="spot-foot">
+				<a class="spot-foot-link" href="https://github.com/kiff/kiff-guard" target="_blank" rel="noopener">Run this proof — kiff-guard ↗</a>
+			</footer>
+		</main>
+	}
+}

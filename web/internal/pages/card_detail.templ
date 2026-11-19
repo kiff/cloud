@@ -1,0 +1,548 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"slices"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+type CardDetailView struct {
+ Approvers []apiclient.ApproverGrant
+ ApproverError string
+ ApproverScopes []ApproverScope
+ ApproverAdmin bool
+ WarningAdmin bool
+ WarningConfig *apiclient.WarningConfig
+ WarningError string
+	Email, Subject, DisplayName string
+	Flash *DashboardFlash
+	Me *apiclient.Me
+	Card *apiclient.Mandate
+	Statement *apiclient.MandateStatement
+	Balance CardBalance
+	Tab string
+	LoadError, StatementError string
+	// Held are the actions held for the owner because they fall outside
+	// this card, read on the Overview tab. HeldError: they could not be
+	// read, which is not the same as none waiting.
+	Held      []apiclient.CardException
+	HeldError string
+	// Decisions are the card holder's recent decisions on the actions
+	// the card covers, every outcome included. They are selected by
+	// holder and action, not by card: one may predate this card or
+	// fall under another card for the same action. The statement
+	// carries only draws, so without them a refused request — which
+	// draws nothing — would appear nowhere on the card. DecisionsError
+	// is set when they could not be read.
+	Decisions []apiclient.ProposalDecision
+	// DecisionsTruncated: the page of the holder's decisions read was
+	// full, so older ones exist that were not read.
+	DecisionsTruncated bool
+	DecisionsError string
+	// Connection is read on the Decisions tab only.
+	Connection CardConnection
+	// HolderKey is the key the card's agent already acts with, when it
+	// has one (HolderKeyFor), read on the Overview tab so the page can
+	// grant it the job's role rather than mint a second key.
+	// HolderKeyUnknown: the keys could not be read.
+	HolderKey        *apiclient.KeyListItem
+	HolderKeyUnknown bool
+	// Answers are the account's answered holds by id, read on the
+	// Approved once tab to say what came of each approval.
+	// AnswersUnreadable: they could not be read, and the tab says so.
+	Answers           map[string]apiclient.CardException
+	AnswersUnreadable bool
+}
+
+// HolderKeyFor picks the key a card's agent already acts with: the
+// newest active key bound to the card's holder and to the card's
+// environment (binds a card's key to it; a card with none takes a
+// key with none). Nil when there is no such key.
+func HolderKeyFor(m apiclient.Mandate, keys []apiclient.KeyListItem) *apiclient.KeyListItem {
+	for i := range keys {
+		k := keys[i]
+		if k.AgentID != "" && k.AgentID == m.Subject && k.Environment == m.Environment {
+			return &keys[i]
+		}
+	}
+	return nil
+}
+
+// keyHasRole reports whether a key already carries a role.
+func keyHasRole(k *apiclient.KeyListItem, role string) bool {
+	return k != nil && slices.Contains(k.Roles, role)
+}
+
+// keyUsedLabel renders a key's last-used timestamp (RFC 3339 on the
+// wire) relative to now, or the raw value when it does not parse.
+func keyUsedLabel(ts string) string {
+	t, err := time.Parse(time.RFC3339, ts)
+	if err != nil {
+		return ts
+	}
+	return timeAgo(t)
+}
+
+// decisionOutcomeLabel names an outcome for someone reading a card, not
+// an integrator reading the wire.
+func decisionOutcomeLabel(outcome string) string {
+	switch outcome {
+	case "allowed":
+		return "Allowed"
+	case "blocked":
+		return "Refused"
+	case "approval_required":
+		return "Held for approval"
+	case "invalid":
+		return "Invalid"
+	case "limit_exceeded":
+		return "Over plan limit"
+	case "owner_required":
+		return "Held for you"
+	case "approved_no_room":
+		return "Approved, waiting for room"
+	}
+	return outcome
+}
+
+func decisionTone(outcome string) string {
+	switch outcome {
+	case "allowed":
+		return "ok"
+	case "approval_required":
+		return "warn"
+	}
+	return "off"
+}
+
+// decisionReceiptLabel says why a decision row has no receipt link yet.
+// KIFF signs a receipt for every governance decision (allowed, refused,
+// held) shortly after it is made, so for those the receipt is on its
+// way. A request rejected before it was decided — malformed, over the
+// plan, or from a key that cannot act for this agent — gets none.
+func decisionReceiptLabel(d apiclient.ProposalDecision) string {
+	// A call held for its owner gets a receipt too.
+	if receiptComing(d) {
+		return "Receipt being signed"
+	}
+	return "No receipt: rejected before a decision"
+}
+
+func cardTitle(m apiclient.Mandate) string {
+	if len(m.Grants) == 0 { return "Agent authority" }
+	s := strings.ToLower(strings.ReplaceAll(m.Grants[0].Action, "_", " "))
+	return strings.ToUpper(s[:1]) + s[1:] + " authority"
+}
+
+func authorityValue(n int64, quantity string) string {
+	if strings.Contains(strings.ToLower(quantity), "cent") {
+		return fmt.Sprintf("€%s", commaNumber(n/100))
+	}
+	return commaNumber(n)
+}
+
+func commaNumber(n int64) string {
+	s := fmt.Sprintf("%d", n)
+	for i := len(s)-3; i > 0; i -= 3 { s = s[:i] + "," + s[i:] }
+	return s
+}
+
+func statementQuantity(st *apiclient.MandateStatement) string {
+	if st == nil || len(st.Limits) == 0 {
+		return ""
+	}
+	return st.Limits[0].Quantity
+}
+
+func revisionCeiling(r apiclient.MandateRevision) string {
+	if len(r.Aggregates) == 0 {
+		return "—"
+	}
+	a := r.Aggregates[0]
+	return authorityValue(a.Limit, a.Quantity) + " " + windowLabel(a.Window) + eachItem(a.Per)
+}
+
+
+templ CardDetail(v CardDetailView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Card", "cards", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<a class="ac-back" href="/cards">← Cards</a>
+				if v.Flash != nil {
+					@flashBanner(v.Flash)
+				}
+				if v.LoadError != "" {
+					<p class="dash-note dash-note-warn">{ v.LoadError }</p>
+				}
+			if v.Card != nil {
+				{{ status := cardStatus(*v.Card, v.Balance) }}
+				<header class="ac-detail-head">
+					<div><h1>{ cardTitle(*v.Card) }</h1><p>{ v.Card.ID }</p></div>
+					<span class={ "ac-status", "ac-status-" + statusTone(status) }>{ status }</span>
+				</header>
+				@cardNav(v)
+					if v.Tab == "decisions" {
+						@cardDecisionsPage(v)
+					} else if v.Tab == "statement" {
+						@cardStatementPage(v)
+					} else if v.Tab == "approved" {
+						@cardApprovedPage(v)
+					} else if v.Tab == "changes" {
+						@cardChangesPage(v)
+					} else if v.Tab == "settings" {
+						@cardSettingsPage(v)
+					} else if v.Tab == "approvers" {
+						@cardApproversPage(v)
+					} else {
+						@cardOverview(v)
+					}
+			}
+		</section>
+	}
+}
+
+// toolCardConnect is where a tool Card goes to work: the agent calls the
+// tool through KIFF with its own gateway key, and nothing in the
+// agent's code changes.
+templ toolCardConnect(v CardDetailView) {
+	<section class="ac-connect ac-connect-tool">
+		<h2>How { v.Card.Subject } uses it</h2>
+		<p><code>{ v.Card.Subject }</code> calls <code>{ toolCardTool(*v.Card) }</code> through KIFF, with its own key. If it is not connected yet, <a href={ templ.SafeURL(agentHref(v.Card.Subject) + "/tools#gateway") }>connect it from its Tools tab</a> and paste the configuration into Claude Code or Codex.</p>
+		<p class="dash-note">The Card binds only calls that go through KIFF. Remove the agent's direct access to the same tool.</p>
+	</section>
+}
+
+// cardDecisions lists what KIFF recently decided for this card's holder
+// on the actions the card covers, allowed and refused alike, each with
+// the signed receipt that attests it. The query cannot tell which card a
+// decision fell under, so the copy does not claim this one: a decision
+// may predate the card or fall under another card for the same action.
+// A test request's result is among them, whatever the answer; an
+// allowed one also draws on the statement, a refused one draws nothing.
+templ cardDecisionsPage(v CardDetailView) {
+	<div class="ac-tab-page">
+		@cardConnection(v)
+		@cardDecisions(v)
+	</div>
+}
+
+// cardConnection is the "is my agent connected?" status, in the order an
+// agent gets there: its kiff-guard runtime registered and heartbeating
+// under the holder's name, in a mode that asks KIFF; its requests
+// reaching this card's actions through an agent key; and the keys bound
+// to the holder.
+templ cardConnection(v CardDetailView) {
+	{{ c := v.Connection }}
+	{{ now := time.Now() }}
+	<section class="ac-connection" aria-label="Connection">
+		if v.DecisionsError != "" {
+			<p class="ac-connection-state ac-connection-unknown"><strong>Connection unknown.</strong> The agent's recent decisions could not be read.</p>
+		} else if c.Connected {
+			<p class="ac-connection-state ac-connection-on">
+				<strong>Connected.</strong>
+				Last request { timeAgo(c.LastAt) } via key <code>{ c.LastKeyName() }</code> ({ strings.ToLower(decisionOutcomeLabel(c.LastOutcome)) }); { c.TodayLabel() }.
+			</p>
+		} else if c.Live(now) {
+			<p class="ac-connection-state ac-connection-off">
+				<strong>Running, not using this Card yet.</strong>
+				The agent's guard is talking to KIFF, but no request from its own key has reached this Card's actions. Test requests from this page don't count; { c.TodayLabel() }.
+			</p>
+		} else if c.Truncated {
+			<p class="ac-connection-state ac-connection-unknown">
+				<strong>Not seen recently.</strong>
+				None of the agent's latest decisions came from its own key on this Card's actions; older ones were not read; { c.TodayLabel() }.
+			</p>
+		} else {
+			<p class="ac-connection-state ac-connection-off">
+				<strong>Not connected yet.</strong>
+				No request from the agent's own key has reached this Card's actions. Test requests and requests from keys not bound to the agent don't count; { c.TodayLabel() }.
+			</p>
+		}
+		<p class="ac-connection-line">
+			if c.RuntimesError {
+				The agent's kiff-guard runtimes could not be read.
+			} else if len(c.Runtimes) == 0 {
+				No kiff-guard runtime is registered as <code>{ v.Card.Subject }</code>.
+				if c.Connected {
+					{ " Its requests arrive without one, from a direct integration." }
+				} else {
+					{ " The guard registers under the agent id it sends as " }<code>actor_id</code>{ ", which must be this Card's holder." }
+				}
+			} else {
+				{ c.RuntimeSummary() }
+			}
+		</p>
+		if c.ObserveOnly() {
+			<p class="ac-connection-line ac-connection-warn">In observe mode the guard records tool calls but doesn't ask KIFF, so this Card isn't checked. Switch the guard to enforce.</p>
+		}
+		<p class="ac-connection-line">
+			if c.KeysError {
+				Keys for <code>{ v.Card.Subject }</code> could not be read.
+			} else if len(c.Keys) == 0 {
+				No key is bound to <code>{ v.Card.Subject }</code> yet. Create one from the Overview tab.
+			} else {
+				Keys bound to <code>{ v.Card.Subject }</code>:
+				for i, k := range c.Keys {
+					if i > 0 {
+						{ ", " }
+					}
+					<code>{ k.Label }</code>
+					if k.LastUsedAt != nil {
+						{ " (used " + keyUsedLabel(*k.LastUsedAt) + ")" }
+					} else {
+						{ " (never used)" }
+					}
+				}
+			}
+		</p>
+	</section>
+}
+
+templ cardDecisions(v CardDetailView) {
+	<section class="ac-decisions" id="decisions">
+		<header>
+			<h2>Recent decisions</h2>
+			<p>Recent decisions for <code>{ v.Card.Subject }</code> on the actions this Card covers, refusals included. Some may predate this Card or fall under another one; the statement lists what used this one.</p>
+		</header>
+		if v.DecisionsError != "" {
+			<p class="dash-note dash-note-warn">{ v.DecisionsError }</p>
+		} else if len(v.Decisions) == 0 {
+			<p class="dash-note">No recent decisions on this Card's actions.</p>
+		} else {
+			<div class="ac-mobile-ledger ac-decision-ledger">
+				for _, d := range v.Decisions {
+					<article>
+						<div>
+							<strong><a class="ac-decision-open" href={ templ.SafeURL(activityCallHref(d.ProposalID)) }><span class={ "ac-outcome", "ac-outcome-" + decisionTone(d.Outcome) }>{ decisionOutcomeLabel(d.Outcome) }</span> { d.ActionName } on { d.EntityID }</a></strong>
+							<span>{ d.CreatedAt.Format("2 Jan · 15:04") }</span>
+							if len(d.Reasons) > 0 {
+								<span class="ac-decision-reasons">{ strings.Join(d.Reasons, ", ") }</span>
+							}
+						</div>
+						if d.ReceiptTraceID != "" {
+							<a class="ac-receipt-link" href={ templ.SafeURL("/dashboard/receipts/" + url.PathEscape(d.ReceiptTraceID)) }>Receipt →</a>
+						} else {
+							<span class="ac-receipt-pending">{ decisionReceiptLabel(d) }</span>
+						}
+						<code>{ d.ProposalID }</code>
+					</article>
+				}
+			</div>
+		}
+		if v.Card.Domain != "" {
+			<p class="ac-decisions-more"><a href={ templ.SafeURL(cardActivityHref(*v.Card)) }>All of this agent's activity →</a></p>
+		}
+	</section>
+}
+
+// cardConnect is where a card goes to work. Connecting one is a change
+// to the customer's agent code, which is easy to get subtly wrong by
+// hand, so the page leads with doing it through a coding agent and
+// offers a KIFF engineer; the test request proves the card decides
+// before any of that is done.
+templ cardConnect(v CardDetailView) {
+	{{ task, hasTask := CardTaskFor(*v.Card) }}
+	<details class="ac-connect" open?={ cardConnectOpen(v) }>
+		<summary>
+			<span class="ac-connect-title">Connect this Card to your agent</span>
+			<span class="ac-connect-sub">Your agent has to ask KIFF before it acts. That needs a change to its code.</span>
+		</summary>
+		<div class="ac-connect-grid">
+			<section class="ac-connect-option ac-connect-primary">
+				<p class="eyebrow">Recommended</p>
+				<h3>With your coding agent</h3>
+				<p>Paste this into a coding agent in the repository where your agent runs. It includes this Card's agent name, domain and limit.</p>
+				<div class="ac-prompt-head">
+					<button type="button" class="btn btn-primary btn-sm" data-copy-target={ "card-prompt-" + v.Card.ID }>Copy instruction</button>
+				</div>
+				<pre class="ac-prompt" id={ "card-prompt-" + v.Card.ID }><code>{ CardConnectPrompt(*v.Card, task, hasTask) }</code></pre>
+				if hasTask {
+					<div class="ac-connect-key">
+						if keyHasRole(v.HolderKey, task.Role) {
+							<p><code>{ v.Card.Subject }</code> already has its key, <code>{ v.HolderKey.Label }</code>, with the <code>{ task.Role }</code> role. It acts only as <code>{ v.Card.Subject }</code>, so nothing else is needed here.</p>
+						} else if v.HolderKey != nil {
+							<p><code>{ v.Card.Subject }</code> already has a key, <code>{ v.HolderKey.Label }</code>, without the <code>{ task.Role }</code> role this job needs. Give it the role; the agent keeps the same key and configuration.</p>
+							<form method="post" action={ templ.SafeURL("/cards/" + url.PathEscape(v.Card.ID) + "/key/role") }>
+								<button class="btn btn-secondary btn-sm" type="submit">Give { v.HolderKey.Label } the { task.Role } role</button>
+							</form>
+						} else {
+							<p>Your agent also needs its own API key: one with the <code>{ task.Role }</code> role that can act only as <code>{ v.Card.Subject }</code>. A key from the API keys page is not tied to this agent and is refused.</p>
+							if v.HolderKeyUnknown {
+								<p class="dash-note">This agent's existing keys could not be read, so check the Agents page before creating another.</p>
+							}
+							<form method="post" action={ templ.SafeURL("/cards/" + url.PathEscape(v.Card.ID) + "/key") }>
+								<button class="btn btn-secondary btn-sm" type="submit">Create a key for this agent</button>
+							</form>
+						}
+					</div>
+				}
+			</section>
+			<section class="ac-connect-option">
+				<h3>With a KIFF engineer</h3>
+				<p>A KIFF engineer can set this up with you.</p>
+				<a class="btn btn-secondary" href={ templ.SafeURL(guidedSetupHref(*v.Card)) }>Ask for guided setup</a>
+			</section>
+			if hasTask {
+				<section class="ac-connect-option">
+					<h3>Try it now</h3>
+					<p>Send one real request as <code>{ v.Card.Subject }</code> on a new test { strings.ToLower(task.EntityType) }. It draws { task.TestDraw } from today's balance and shows up in this Card's statement.</p>
+					<form method="post" action={ templ.SafeURL("/cards/" + url.PathEscape(v.Card.ID) + "/test") }>
+						<button class="btn btn-secondary" type="submit">Send a test request</button>
+					</form>
+				</section>
+			}
+		</div>
+	</details>
+}
+
+templ cardStatementPage(v CardDetailView) {
+	<section class="ac-tab-page"><header><h2>Statement</h2><p>What used this Card, one row per action. A row records KIFF's decision, not that your system ran it.</p></header>
+		if zone := cardDayZone(*v.Card); zone != "" {
+			<p class="dash-note">Calendar days start and reset at midnight in { zone }. Changing the account time zone applies to new Cards only.</p>
+		}
+		if v.StatementError != "" {
+			<p class="dash-note dash-note-warn">{ v.StatementError }</p>
+		} else if v.Statement != nil {
+			@cardWarningHistory(v.Statement)
+			if v.Statement.ApprovedOutsideError != "" {
+				<p class="dash-note dash-note-warn">{ v.Statement.ApprovedOutsideError } This statement can't show whether anything was <a href={ templ.SafeURL("/cards/" + url.PathEscape(v.Card.ID) + "/approved") }>approved once outside this Card</a>.</p>
+			} else if n := historicalApprovedCount(v.Statement); n > 0 {
+				<p class="ac-aside"><a href={ templ.SafeURL("/cards/" + url.PathEscape(v.Card.ID) + "/approved") }>{ countOf(int64(n), "action", "actions") } approved once outside this Card</a> are listed under Approved once and don't draw on it.</p>
+			}
+			if len(v.Statement.Draws) == 0 {
+				<p class="dash-note">Nothing used in the current window.</p>
+			} else {
+				{{ rows := drawRows(v.Statement.Draws) }}
+				@ledgerTable(rows, ledgerQuantities(v.Statement.Limits, rows), "−", nil)
+			}
+			for _, l := range v.Statement.Limits {
+				<p class="dash-note">{ l.Quantity } · { l.Measure }: { roomValue(l,l.GrossAuthorized) } authorized, { roomValue(l,l.Released) } released, { roomValue(l,l.Used) } counted. Base { roomValue(l,roomBase(l)) }; active extra room { roomValue(l,l.ExtraRoom) }.</p>
+				for _, g := range l.RoomGrants {
+					// The revision id stays in the title, for tracing.
+					<p class="dash-note" title={ "Revision " + g.ID }>Extra room +{ roomValue(l,g.Amount) }, { roomDurationLabel(g.Duration) }, added by { g.By }
+						if !g.ConfirmedAt.IsZero() {
+							<span> on { components.LocalTime(ctx, g.ConfirmedAt) }</span>
+						} else if !g.At.IsZero() {
+							<span> on { components.LocalTime(ctx, g.At) }</span>
+						}
+						if !g.ExpiresAt.IsZero() {
+							<span> · ends { components.LocalTime(ctx, g.ExpiresAt) }</span>
+						}
+					</p>
+				}
+			}
+			if v.Statement.ReleasesError != "" {
+				<p class="dash-note dash-note-warn">{ v.Statement.ReleasesError }</p>
+			}
+			for _, r := range v.Statement.EffectReleases {
+				<p class="dash-note">Released { strconv.FormatInt(r.Amount,10) } of { r.QuantityKey } for { r.ProposalID }: { r.Reason } · evidence { r.EvidenceID } · source { r.Source } · { r.At.UTC().Format(time.RFC3339) }. Original authorization retained.</p>
+			}
+			if v.Statement.Note != "" {
+				<p class="dash-note ac-note">{ sentenceCase(v.Statement.Note) }</p>
+			}
+		}
+	</section>
+}
+
+// cardApprovedPage is what the owner approved once outside this card. It
+// did not draw on the balance, so it has its own tab rather than sitting
+// under the draws, where it was easy to miss or mistake for one.
+templ cardApprovedPage(v CardDetailView) {
+	<section class="ac-tab-page"><header><h2>Approved once</h2><p>Calls approved once count in full toward every total. Older approvals outside the Card keep their original accounting.</p></header>
+		if v.StatementError != "" {
+			<p class="dash-note dash-note-warn">{ v.StatementError }</p>
+		} else if v.Statement != nil {
+			if charged := v.Statement.ApprovedExceptions; charged != nil && len(charged.Entries) > 0 {
+				<p class="dash-note">These are included in the authorized total, not added on top.</p>
+				{{ rows:=approvedRows(charged.Entries) }}
+				@ledgerTable(rows,ledgerQuantities(v.Statement.Limits,rows),"−",&ledgerOutcomes{byID:v.Answers,unreadable:v.AnswersUnreadable})
+			}
+			<p class="dash-note">The older approvals below were recorded under the earlier accounting; their balances were not rewritten.</p>
+			if v.Statement.ApprovedOutsideError != "" {
+				<p class="dash-note dash-note-warn">{ v.Statement.ApprovedOutsideError }</p>
+			} else if historicalApprovedCount(v.Statement) == 0 {
+				<p class="dash-note">No older approvals outside this Card.</p>
+			} else {
+				<p class="ac-total"><strong>{ approvedTotals(v.Statement) }</strong> approved once, outside the Card.</p>
+				if v.AnswersUnreadable {
+					<p class="dash-note dash-note-warn">What happened to each action could not be read. Open an action to see it.</p>
+				}
+				{{ rows := approvedRows(v.Statement.ApprovedOutside.Entries) }}
+				@ledgerTable(rows, ledgerQuantities(v.Statement.Limits, rows), "", &ledgerOutcomes{byID: v.Answers, unreadable: v.AnswersUnreadable})
+			}
+		}
+	</section>
+}
+
+// ledgerTable is a card's movements, one action per row and one column
+// per quantity. outcomes is set for approvals: each row then links to
+// its held action and says what came of it.
+templ ledgerTable(rows []ledgerRow, quantities []string, sign string, outcomes *ledgerOutcomes) {
+	<div class="ac-ledger" role="table">
+		<div class={ "ac-ledger-row", "ac-ledger-head", ledgerColumns(len(quantities), outcomes != nil) } role="row">
+			<span role="columnheader">Action</span>
+			<span role="columnheader">When (UTC)</span>
+			for _, q := range quantities {
+				<span role="columnheader" class="ac-ledger-num">{ quantityLabel(q) }</span>
+			}
+			if outcomes != nil {
+				<span role="columnheader">What happened</span>
+			}
+		</div>
+		for _, r := range rows {
+			<div class={ "ac-ledger-row", ledgerColumns(len(quantities), outcomes != nil) } role="row">
+				<span role="cell" class="ac-ledger-what">
+					if r.ExceptionID != "" {
+						<a href={ templ.SafeURL(NeedsYouHref(r.ExceptionID)) }><code>{ ledgerAction(r) }</code></a>
+					} else {
+						<code>{ ledgerAction(r) }</code>
+					}
+					if r.EntityID != "" && r.EntityID != r.ProposalID {
+						<small title={ r.EntityID }>on { shortID(r.EntityID) }</small>
+					}
+					if r.ProposalID != "" {
+						<small title={ r.ProposalID }>{ shortID(r.ProposalID) }</small>
+					}
+				</span>
+				<span role="cell" class="ac-ledger-when">{ r.At.UTC().Format("2 Jan 15:04") }</span>
+				for _, q := range quantities {
+					<span role="cell" class="ac-ledger-num"><small class="ac-ledger-label">{ quantityLabel(q) }</small>{ ledgerCell(r, q, sign) }</span>
+				}
+				if outcomes != nil {
+					{{ label, warn := approvedOutcome(*outcomes, r.ExceptionID) }}
+					<span role="cell" class={ "ac-ledger-outcome", templ.KV("is-warn", warn) }>{ label }</span>
+				}
+			</div>
+		}
+	</div>
+}
+
+// heldForCard is the Overview's "needs you" block for this card.
+templ heldForCard(v CardDetailView) {
+	if v.HeldError != "" {
+		<p class="dash-note dash-note-warn">{ v.HeldError }</p>
+	} else if len(v.Held) > 0 {
+		<section class="ny-card-block">
+			<h2>Needs you</h2>
+			<p class="dash-note">Actions outside this Card, waiting for your answer.</p>
+			for _, e := range v.Held {
+				<p><a href={ templ.SafeURL(NeedsYouHref(e.ID)) }>{ ExceptionSummary(e) }</a></p>
+			}
+		</section>
+	}
+}
+
+templ cardChangesPage(v CardDetailView) {
+	<section class="ac-tab-page"><header><h2>Issued and changed</h2><p>Every version of this Card, who changed it, and when.</p></header>
+		if v.StatementError != "" {
+			<p class="dash-note dash-note-warn">{ v.StatementError }</p>
+		} else if v.Statement != nil {
+			@cardHistory(v.Statement)
+		}
+	</section>
+}

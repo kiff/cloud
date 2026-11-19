@@ -1,0 +1,84 @@
+package pages
+
+import (
+ "strconv"
+ "time"
+
+ "github.com/kiff/cloud/web/internal/apiclient"
+)
+
+func warningSettingsLabel(s apiclient.WarningSettings) string {
+ if !s.Runway && !s.Spent && !s.Unusual && !s.Burst { return "Off" }
+ return "On"
+}
+
+func activeBudgetNotice(st *apiclient.MandateStatement) string {
+ if st == nil { return "" }
+ for _,kind := range []string{"spent","unusual","burst","runway"} {
+  for _,w := range st.Warnings {
+   if w.ResolvedAt != nil || w.Kind != kind { continue }
+   switch kind {
+   case "spent": return "This total is spent"
+   case "unusual": return "Usage is above its usual rate"
+   case "burst": return "This new Card is being used quickly"
+   case "runway": return "This total is running low"
+   }
+  }
+ }
+ return ""
+}
+
+templ cardWarningSheet(v CardSheetView) {
+ if v.Flash != nil {
+  <p class={ "wk-msg", templ.KV("wk-msg-warn", v.Flash.Kind == "error") } role="status">{ v.Flash.Message }</p>
+ }
+ if v.WarningError != "" {
+  <div class="wk-empty"><h1>Budget warnings</h1><p>{ v.WarningError }</p><a class="wk-btn" href={ templ.SafeURL(cardHref(v.Card,"/warnings")) }>Try again</a></div>
+ } else if v.WarningConfig != nil {
+  <form class="wk-form" method="post" action={ templ.SafeURL(cardHref(v.Card,"/warnings")) }>
+   <input type="hidden" name="revision" value={ strconv.FormatInt(v.WarningConfig.Revision,10) }/>
+   <section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+    <div class="wk-head"><h1 id="wk-h1">Budget warnings</h1><p>Choose which heads-ups you receive. These never change Stop or Ask.</p></div>
+    <fieldset class="wk-choices">
+     <legend class="wk-sr">Warnings</legend>
+     <label class="wk-choice"><input type="checkbox" name="runway" checked?={ v.WarningConfig.Settings.Runway }/><span class="wk-check"></span><span class="wk-choice-body"><span class="wk-strong">Day total running low</span><span class="wk-sub">Hourly forecasts go to the agent, without runway emails.</span></span></label>
+     <label class="wk-choice"><input type="checkbox" name="spent" checked?={ v.WarningConfig.Settings.Spent }/><span class="wk-check"></span><span class="wk-choice-body"><span class="wk-strong">Total spent</span><span class="wk-sub">A total has no room left.</span></span></label>
+     <label class="wk-choice"><input type="checkbox" name="unusual" checked?={ v.WarningConfig.Settings.Unusual }/><span class="wk-check"></span><span class="wk-choice-body"><span class="wk-strong">Unusual usage</span><span class="wk-sub">Usage jumps above its equivalent seven-day average.</span></span></label>
+     <label class="wk-choice"><input type="checkbox" name="burst" checked?={ v.WarningConfig.Settings.Burst }/><span class="wk-check"></span><span class="wk-choice-body"><span class="wk-strong">Fast usage on a new Card</span><span class="wk-sub">A large share used at the start of a window during its first week.</span></span></label>
+    </fieldset>
+    <details><summary class="wk-label">Adjust thresholds</summary>
+     <div class="wk-step">
+      <label class="wk-field"><span class="wk-label">Runway horizon (% of the window)</span><input class="wk-input" type="number" name="runway_percent" min="1" max="100" required value={ strconv.Itoa(v.WarningConfig.Settings.RunwayPercent) }/></label>
+      <p class="wk-sub">25% means six hours for a rolling day.</p>
+      <label class="wk-field"><span class="wk-label">Times the usual rate</span><input class="wk-input" type="number" name="unusual_multiplier" min="2" max="100" required value={ strconv.Itoa(v.WarningConfig.Settings.UnusualMultiplier) }/></label>
+      <label class="wk-field"><span class="wk-label">New-Card burst threshold (% used)</span><input class="wk-input" type="number" name="burst_percent" min="1" max="100" required value={ strconv.Itoa(v.WarningConfig.Settings.BurstPercent) }/></label>
+      <p class="wk-sub">Usage above this share in the first 10% of a window.</p>
+     </div>
+    </details>
+    <p class="wk-sub">Emails go to the same people who receive held-call emails. Webhooks receive warnings only when explicitly configured for them.</p>
+    <a href={ templ.SafeURL(cardHref(v.Card,"/statement")) }>View warning history</a>
+   </section>
+   @wkBar("Save warnings")
+  </form>
+ }
+}
+
+templ cardWarningHistory(st *apiclient.MandateStatement) {
+	if st.WarningsError != "" {
+		<p class="dash-note dash-note-warn">{ st.WarningsError }</p>
+	}
+	if len(st.Warnings)>0 {
+		<details>
+			<summary>Recent budget warnings</summary>
+			for _, warning := range st.Warnings {
+				<article class="ac-approver">
+					<p>{ warning.Reason }</p>
+					if warning.ResolvedAt != nil {
+						<p class="dash-note">Resolved { warning.ResolvedAt.UTC().Format("2 Jan 15:04") } UTC. Retained as history.</p>
+					}
+					<p class="dash-note"><time datetime={ warning.At.Format(time.RFC3339) }>{ warning.At.UTC().Format("2 Jan 2006 15:04") } UTC</time></p>
+				</article>
+			}
+		</details>
+	}
+}
