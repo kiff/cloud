@@ -1,0 +1,186 @@
+# /etc/caddy/Caddyfile, installed by deploy.sh. Each service has two slots
+# (scripts/swap-slot.sh), and every site lists both: a deploy swaps a slot
+# without touching Caddy, which never reloads for a swap. deploy.sh reloads it
+# only when this file changed, and never restarts it.
+#
+#
+# Replaces the placeholder Caddyfile written by the box's user-data
+# once the real binaries are deployed.
+#
+# Vhost map (final shape, post-cutover):
+#   api.kiff.dev      → kiff-api    :8080
+#   kiff.dev          → kiff-web    :8081
+#   www.kiff.dev      → 301 to https://kiff.dev
+#   app.kiff.dev      → kiff-web    :8081  (dashboard surface)
+#   127.0.0.1:9080    → kiff-api    (loopback, for the other services)
+#   127.0.0.1:9282    → kiff-gateway (loopback, for the dashboard)
+#
+# The ports above are each service's base slot; a deploy moves each
+# between its base and alternate port (8090, 8091, 8292).
+#
+# The temporary subdomain that validated TLS and the wiring before the
+# cutover is gone: it served a second copy of the site.
+#
+# Cutover discipline: only enable a vhost block here AFTER its
+# Vercel DNS A record points at this box. Caddy attempts ACME
+# issuance for every vhost in the config at start/reload, and
+# Let's Encrypt counts failed HTTP-01 validations against a
+# per-hostname rate limit (5 fails / hostname / hour). Including
+# a vhost in the Caddyfile before its DNS resolves wastes the
+# rate-limit budget.
+#
+# Logs:
+#   Per-vhost JSON access logs land in /var/lib/caddy/logs/<vhost>.log;
+#   CloudWatch agent tails those into the /kiff/caddy log group.
+#   Caddy's own startup/error/cert events go to stderr → journald.
+{
+	email __KIFF_ACME_EMAIL__
+	storage file_system /var/lib/caddy
+	# The slots' active health checks (below) see the idle slot refuse every
+	# second; their log would fill the journal, so it's left out.
+	log default {
+		output stderr
+		exclude http.handlers.reverse_proxy.health_checker.active
+	}
+}
+
+# Each service runs in one of two slots on this box, and a deploy swaps them
+# (scripts/swap-slot.sh): the new process starts in the idle slot and answers
+# /healthz, then the old one stops, draining what it holds. Caddy lists both
+# slots and needs no reload for that: a reload reset connections in flight
+# (24 Oct 2026, two probes of 664 at the reload's instant, the same config).
+#
+# - lb_policy first: the first slot that's up takes the traffic.
+# - A refused dial (the idle slot, or the old one as it stops) sends no bytes,
+#   so it's safe to try again, a POST included: the other slot, 20ms later,
+#   for up to 30s, which also covers both slots being down for a moment.
+# - Active health (/healthz every second): a slot takes traffic only once its
+#   /healthz answers (one pass), never just because it accepts connections. Two
+#   failures in a row mark it down, so one slow answer (a GC pause) doesn't
+#   take the only live slot out; a slot that stops is skipped within 2s, and a
+#   refused dial covers that moment.
+#   Each binary also binds only after its own startup checks (the API pings
+#   Postgres and applies its schemas, the gateway applies its schema).
+# - Passive health (max_fails 1, fail_duration 2s): a slot that refused in
+#   between is skipped too. swap-slot.sh waits 3s after the new slot is
+#   healthy before stopping the old one, so Caddy has seen it healthy and any
+#   mark on it has expired when it's the only one up.
+(slots) {
+	lb_policy first
+	lb_try_duration 30s
+	lb_try_interval 20ms
+	health_uri /healthz
+	health_interval 1s
+	health_timeout 1s
+	health_passes 1
+	health_fails 2
+	fail_duration 2s
+	max_fails 1
+}
+
+# ─── api.kiff.dev → kiff-api :8080 ───────────────────────────
+api.kiff.dev {
+	encode zstd gzip
+
+	log {
+		output file /var/lib/caddy/logs/caddy-api.log {
+			roll_size 50mb
+			roll_keep 5
+			# 90 days (privacy#retention): Caddy's default, pinned.
+			roll_keep_for 2160h
+		}
+		format json
+	}
+
+	reverse_proxy 127.0.0.1:8080 127.0.0.1:8090 {
+		import slots
+	}
+}
+
+# ─── mcp.kiff.dev → kiff-gateway :8282 ─────────────
+# Agents' MCP endpoint (/mcp) and owners' /v1/connections. Added only
+# once the Vercel A record for mcp.kiff.dev points at this box (see the
+# cutover note above). Caddy redacts Authorization in access logs by
+# default, so agents' keys are not logged.
+mcp.kiff.dev {
+	log {
+		output file /var/lib/caddy/logs/caddy-mcp.log {
+			roll_size 50mb
+			roll_keep 5
+			# 90 days (privacy#retention): Caddy's default, pinned.
+			roll_keep_for 2160h
+		}
+		format json
+	}
+
+	reverse_proxy 127.0.0.1:8282 127.0.0.1:8292 {
+		import slots
+	}
+}
+
+# ─── loopback: the services' own calls to each other ─────────
+# The dashboard calls the API and the gateway, and the gateway calls the
+# API, here and never at a slot's port: a swap moves the slot, and these
+# follow it as the public sites do. Bound to loopback, plain
+# HTTP, no access log (the public vhosts above log the requests that
+# start them).
+http://:9080 {
+	bind 127.0.0.1
+	reverse_proxy 127.0.0.1:8080 127.0.0.1:8090 {
+		import slots
+	}
+}
+
+http://:9282 {
+	bind 127.0.0.1
+	reverse_proxy 127.0.0.1:8282 127.0.0.1:8292 {
+		import slots
+	}
+}
+
+# ─── DNS-pending vhosts (uncomment after each Vercel A record lands) ───
+#
+# app.kiff.dev — uncommented in step C; its DNS A record is live.
+app.kiff.dev {
+	encode zstd gzip
+
+	log {
+		output file /var/lib/caddy/logs/caddy-app.log {
+			roll_size 50mb
+			roll_keep 5
+			# 90 days (privacy#retention): Caddy's default, pinned.
+			roll_keep_for 2160h
+		}
+		format json
+	}
+
+	reverse_proxy 127.0.0.1:8081 127.0.0.1:8091 {
+		import slots
+	}
+}
+
+#
+# www.kiff.dev — uncommented in step D; its DNS A record is live.
+www.kiff.dev {
+	redir https://kiff.dev{uri} 301
+}
+
+#
+# kiff.dev (apex) — uncommented in step E; its DNS A record is live.
+kiff.dev {
+	encode zstd gzip
+
+	log {
+		output file /var/lib/caddy/logs/caddy-web.log {
+			roll_size 50mb
+			roll_keep 5
+			# 90 days (privacy#retention): Caddy's default, pinned.
+			roll_keep_for 2160h
+		}
+		format json
+	}
+
+	reverse_proxy 127.0.0.1:8081 127.0.0.1:8091 {
+		import slots
+	}
+}

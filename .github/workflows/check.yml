@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           out="$RUNNER_TEMP/published"
           mkdir "$out"
-          git archive HEAD api gateway web README.md SECURITY.md LICENSE.md SOURCE .gitleaks.toml PRICING.md | tar -x -C "$out"
+          git archive HEAD api gateway web scripts/deploy.sh scripts/check-deploy-secrets.sh scripts/swap-slot.sh scripts/healthz-probe.sh scripts/refresh-db-credentials.sh scripts/cloudwatch-agent.json scripts/logrotate-kiff scripts/caddy scripts/systemd scripts/rds README.md SECURITY.md LICENSE.md SOURCE .gitleaks.toml PRICING.md | tar -x -C "$out"
           echo "OUT=$out" >> "$GITHUB_ENV"
       - name: scripts/check.sh
         run: scripts/check.sh "$OUT"

@@ -1,0 +1,49 @@
+[Unit]
+Description=kiff-cloud MCP gateway (gateway), slot %i
+Documentation=https://github.com/kiff/cloud
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Read by systemd as root before privileges drop. The file is 0600 and
+# holds the credential encryption keys, which no other unit receives.
+EnvironmentFile=/etc/kiff/gateway.env
+ExecStart=/opt/kiff/bin/kiff-gateway -addr=127.0.0.1:%i
+Restart=on-failure
+RestartSec=5
+DynamicUser=yes
+# To a file the CloudWatch agent ships: the agent can't
+# read the journal. systemd opens it as root, before the sandbox below.
+StandardOutput=append:/var/log/kiff/kiff-gateway-%i.log
+StandardError=append:/var/log/kiff/kiff-gateway-%i.log
+SyslogIdentifier=kiff-gateway
+
+# Hardening: unprivileged, no writable filesystem, no capabilities.
+NoNewPrivileges=true
+# No instance metadata: the instance role can read every secret in
+# Secrets Manager, and this service needs none of them at runtime (its
+# secrets arrive in the EnvironmentFile). Only root-run units (deploy,
+# credential refresh, healthz, CloudWatch agent) use the role.
+IPAddressDeny=169.254.169.254/32 fd00:ec2::254/128
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+CapabilityBoundingSet=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

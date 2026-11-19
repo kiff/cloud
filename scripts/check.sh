@@ -49,8 +49,8 @@ deny=(
 	"private key block|BEGIN [A-Z ]*PRIVATE KEY"
 	"live API key|(sk|pk|rk|whsec)_live_[A-Za-z0-9]+"
 	"Stripe or Clerk object id|(price|prod|cus|sub|acct|org|user)_[A-Za-z0-9]{14,}"
-	"kiff hostname beyond the public ones|[a-z0-9.-]+\.kiff\.dev"
-	"email address|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"
+	"kiff hostname beyond the public ones|[a-z0-9][a-z0-9.-]*\.kiff\.dev"
+	"email address|[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[a-z]{2,}"
 	# Prices: KIFF publishes its own (PRICING.md, the pricing and terms
 	# pages). A price anywhere else is caught.
 	"price in dollars|\\\$[0-9][0-9,]*(\.[0-9]+)?([kKmM]\b|/mo|/yr|/month|/year)"
@@ -70,11 +70,10 @@ deny=(
 	# ruling's time stamp, and a reference cut short to "(review on)".
 	"coordination note|\bthe PM\b|\(PM[ ,]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) on\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
-	# demos, deploy and smoke scripts (deploy.sh by name too), AGENTS.md,
-	# the desktop doc by name. The API's server (cmd/api) and its HTTP layer
-	# (internal/handlers) are public since block 5. Exported paths read as they do in
-	# kiff/cloud (api/..., internal/...), never apps/...
-	"private path reference|(^|[^A-Za-z0-9_./-])(apps/(api|web|gateway)/|docs/|demos?/|spikes/|sdks/|infra/|skills/|scripts/(demo|stripe|smoke|deploy|caddy|systemd)|AGENTS\.md|desktop-client\.md|HANDOFF|BRIEF-|RECORD\.md|deploy\.sh)"
+	# demos, the smoke and Stripe scripts, AGENTS.md, the desktop doc by name.
+	# The API's server, its HTTP layer and the deploy are public. Exported paths
+	# read as they do here (api/..., internal/...), never apps/...
+	"private path reference|(^|[^A-Za-z0-9_./-])(apps/(api|web|gateway)/|docs/|demos?/|spikes/|sdks/|infra/|skills/|scripts/(demo|stripe|smoke)|AGENTS\.md|desktop-client\.md|HANDOFF|BRIEF-|RECORD\.md)"
 )
 # Public names and placeholder data that match the patterns above, as
 # whole matches.
@@ -87,7 +86,7 @@ deny=(
 # clerk.kiff.dev is the sign-in provider's own host, which every browser loads;
 # any .example domain is reserved for examples; pk_live_xyz is the sign-in
 # tests' made-up publishable key.
-allow='(api|app|mcp|www|planque|status|accounts|clerk)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support|legal|hello)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid|test)|[a-z0-9.-]+\.example|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)|pk_live_xyz'
+allow='(api|app|mcp|www|planque|status|accounts|clerk|cloud\.tafs)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support|legal|hello)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid|test)|[a-z0-9.-]+\.example|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)|pk_live_xyz'
 
 # Files whose hits under one rule are public already, as they are: text the
 # site serves today (its pages, posts, decks, docs and generated lists), a
@@ -126,6 +125,10 @@ allow_in=(
 	# and their tests, llms.txt, and the figures in the decks and proofs.
 	"price in euros|\./web/internal/(content/llmstxt/|pages/(pricing|terms)(\.templ|_templ\.go)|pages/tafs_words_[a-z]{2}\.go|pages/tafs_test\.go|handlers/(tafs|terms)_test\.go)"
 	"price in dollars|\./web/internal/content/(decks|proofs)/"
+	# The deploy's check that the box's role may read each secret matches
+	# secrets by the shape of their ARN (arn:aws:secretsmanager:*), not one ARN:
+	# a real ARN carries the account id, which its own rule still catches.
+	"AWS ARN or host|\./scripts/check-deploy-secrets\.sh"
 )
 
 # Backups an in-place edit can leave (BSD sed -i -e, .bak, .orig).

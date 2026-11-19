@@ -1,0 +1,194 @@
+name: deploy
+
+# Deploys KIFF (api, web, gateway) from main with scripts/deploy.sh, as a laptop
+# runs it: off until the switch. It deploys only on a push to main, with the
+# repository variable KIFF_DEPLOY=on, in the protected environment
+# `production`, with the secret AWS_DEPLOY_ROLE.
+#
+# This repository and its logs are public. Every value that names KIFF's
+# account, box or users (the instance, the bucket, the database host, the
+# secrets' ARNs, the operator, the test accounts, Caddy's contact address) is a
+# secret of `production`, so a log shows it masked. Never run
+# `deploy.sh --dry-run` here with real values: it prints the whole command.
+#
+# Every pull request runs the dry run instead, with placeholder values and
+# stand-ins for aws and go: deploy.sh must reach the command it would send, and
+# a missing value must stop it.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: deploy.sh --dry-run, with placeholders
+        run: |
+          set -euo pipefail
+          stub="$RUNNER_TEMP/stub"
+          mkdir -p "$stub"
+          # aws answers yes and reads no IAM (the role check warns); go reports
+          # each binary built with its module's toolchain.
+          printf '%s\n' '#!/usr/bin/env bash' '[[ "$*" == *"iam "* ]] && exit 1' 'exit 0' > "$stub/aws"
+          cat > "$stub/go" <<'GO'
+          #!/usr/bin/env bash
+          if [ "$1" = version ]; then
+            app=$(basename "$2" | sed 's/^kiff-//')
+            echo "$2: $(awk '$1 == "toolchain" { print $2 }' "$GITHUB_WORKSPACE/$app/go.mod")"
+          fi
+          exit 0
+          GO
+          chmod +x "$stub/aws" "$stub/go"
+          sha=000000000000
+          mkdir -p ".deploy-staging/$sha"
+          for b in kiff-api kiff-web kiff-gateway; do echo placeholder > ".deploy-staging/$sha/$b"; done
+          export PATH="$stub:$PATH" KIFF_AUTH_PROVIDER=clerk KIFF_CLERK_PUBLISHABLE_KEY=pk_test_placeholder
+          for v in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN \
+            ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN; do
+            export "$v=placeholder-$v"
+          done
+          for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+            export "$v=-"
+          done
+          bash scripts/deploy.sh --dry-run --git-sha=$sha > "$RUNNER_TEMP/command.txt"
+          grep -q 'placeholder-DB_HOST' "$RUNNER_TEMP/command.txt"
+          echo "the dry run reached its command: $(wc -l < "$RUNNER_TEMP/command.txt") lines"
+          # A missing value stops the deploy (exit 2) before anything is built.
+          set +e
+          ( unset DB_HOST; bash scripts/deploy.sh --dry-run --git-sha=$sha > /dev/null 2>&1 )
+          code=$?
+          set -e
+          [ "$code" = 2 ] || { echo "a missing DB_HOST answered $code, want 2"; exit 1; }
+
+  deploy:
+    needs: dry-run
+    if: github.event_name == 'push' && vars.KIFF_DEPLOY == 'on' && github.ref == 'refs/heads/main'
+    # One deploy at a time, in merge order: two overlapping would race the slot
+    # swap on the box.
+    concurrency:
+      group: kiff-deploy
+      cancel-in-progress: false
+    # The protected environment `production` (main only, admin-managed). Its environment variables
+    # override repository variables of the same name, so the values that decide who may approve and
+    # what counts can be changed only by an admin, never by anyone with write access to this repo.
+    # Note: with an environment, the job's OIDC subject is `repo:kiff/cloud:environment:production`
+    # (no longer `…:ref:refs/heads/main`), so AWS_DEPLOY_ROLE's trust policy must accept it.
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: ${{ vars.KIFF_AWS_REGION || 'eu-west-1' }}
+      KIFF_AUTH_PROVIDER: ${{ vars.KIFF_AUTH_PROVIDER }}
+      KIFF_CLERK_FRONTEND_API: ${{ vars.KIFF_CLERK_FRONTEND_API }}
+      KIFF_CLERK_PUBLISHABLE_KEY: ${{ vars.KIFF_CLERK_PUBLISHABLE_KEY }}
+      KIFF_PRICING_BUSINESS_INTAKE_URL: ${{ vars.KIFF_PRICING_BUSINESS_INTAKE_URL }}
+      KIFF_DEMO_TENANT_ID: ${{ vars.KIFF_DEMO_TENANT_ID }}
+      KIFF_STUB_SUBJECTS: ${{ vars.KIFF_STUB_SUBJECTS }}
+      KIFF_APPLE_SANDBOX_TENANTS: ${{ vars.KIFF_APPLE_SANDBOX_TENANTS }}
+      KIFF_GOOGLE_PACKAGE_NAME: ${{ vars.KIFF_GOOGLE_PACKAGE_NAME }}
+      KIFF_GOOGLE_PUSH_AUDIENCE: ${{ vars.KIFF_GOOGLE_PUSH_AUDIENCE }}
+      KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT: ${{ vars.KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT }}
+      KIFF_GOOGLE_TEST_TENANTS: ${{ vars.KIFF_GOOGLE_TEST_TENANTS }}
+      # kiff.dev's apps list from planque's proofs: the repository variable KIFF_APPS_PROVED=on turns it on.
+      KIFF_APPS_PROVED: ${{ vars.KIFF_APPS_PROVED }}
+      # kiff.dev's download page from the computers' published releases: KIFF_DESKTOP_RELEASES=on turns it on.
+      KIFF_DESKTOP_RELEASES: ${{ vars.KIFF_DESKTOP_RELEASES }}
+      KIFF_DESKTOP_NOT_AVAILABLE: ${{ vars.KIFF_DESKTOP_NOT_AVAILABLE }}
+      # Integration proofs. None of these is a secret, but all ten
+      # decide what KIFF trusts: the six OIDC values which workflow's token the ingest accepts, the
+      # other four who may approve and what counts. Set them ONLY as environment variables of
+      # `production` (admin-only), never as repository variables: an environment variable overrides a
+      # repository one of the same name, and the expression stays `vars.*` either way. All ten must
+      # ALWAYS be defined in `production`, with "-" meaning none, so a same-named repository variable
+      # can never take effect; the step "Check the proof values" below fails the deploy otherwise, and
+      # deploy.sh writes "-" as empty. With any OIDC value empty, the API doesn't mount the ingest.
+      KIFF_PROOF_OIDC_AUDIENCE: ${{ vars.KIFF_PROOF_OIDC_AUDIENCE }}
+      KIFF_PROOF_OIDC_REPOSITORY: ${{ vars.KIFF_PROOF_OIDC_REPOSITORY }}
+      KIFF_PROOF_OIDC_REPOSITORY_ID: ${{ vars.KIFF_PROOF_OIDC_REPOSITORY_ID }}
+      KIFF_PROOF_OIDC_OWNER_ID: ${{ vars.KIFF_PROOF_OIDC_OWNER_ID }}
+      KIFF_PROOF_OIDC_REF: ${{ vars.KIFF_PROOF_OIDC_REF }}
+      KIFF_PROOF_OIDC_WORKFLOW: ${{ vars.KIFF_PROOF_OIDC_WORKFLOW }}
+      KIFF_PROOF_TEST_TENANTS: ${{ vars.KIFF_PROOF_TEST_TENANTS }}
+      KIFF_PROOF_TEST_KEYS: ${{ vars.KIFF_PROOF_TEST_KEYS }}
+      KIFF_PROOF_RUNNER_VERSIONS: ${{ vars.KIFF_PROOF_RUNNER_VERSIONS }}
+      KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
+      # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of
+      # them. They are secrets of `production`, not variables, so a log shows each one masked. The last
+      # five take "-" for off.
+      INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
+      STAGING_BUCKET: ${{ secrets.STAGING_BUCKET }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      KIFF_ACME_EMAIL: ${{ secrets.KIFF_ACME_EMAIL }}
+      DB_SECRET_ARN: ${{ secrets.DB_SECRET_ARN }}
+      CLERK_SECRET_ARN: ${{ secrets.CLERK_SECRET_ARN }}
+      SESSION_SECRET_ARN: ${{ secrets.SESSION_SECRET_ARN }}
+      ANCHOR_WALLET_ARN: ${{ secrets.ANCHOR_WALLET_ARN }}
+      WEB_DEMO_KEY_ARN: ${{ secrets.WEB_DEMO_KEY_ARN }}
+      RESEND_SECRET_ARN: ${{ secrets.RESEND_SECRET_ARN }}
+      STRIPE_WEBHOOK_SECRET_ARN: ${{ secrets.STRIPE_WEBHOOK_SECRET_ARN }}
+      STRIPE_SECRET_KEY_ARN: ${{ secrets.STRIPE_SECRET_KEY_ARN }}
+      PLANQUE_EVENT_SECRET_ARN: ${{ secrets.PLANQUE_EVENT_SECRET_ARN }}
+      PROOF_STATE_TOKENS_ARN: ${{ secrets.PROOF_STATE_TOKENS_ARN }}
+      CLERK_WEBHOOK_SECRET_ARN: ${{ secrets.CLERK_WEBHOOK_SECRET_ARN }}
+      KIFF_OPS_SUBJECTS: ${{ secrets.KIFF_OPS_SUBJECTS }}
+      KIFF_PRUNE_TENANTS: ${{ secrets.KIFF_PRUNE_TENANTS }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: api/go.mod
+          cache-dependency-path: '*/go.sum'
+      # Before any credential: the ten proof values must come from `production` (see env above).
+      - name: Check the proof values
+        run: |
+          fail=0
+          for n in KIFF_PROOF_OIDC_AUDIENCE KIFF_PROOF_OIDC_REPOSITORY KIFF_PROOF_OIDC_REPOSITORY_ID \
+            KIFF_PROOF_OIDC_OWNER_ID KIFF_PROOF_OIDC_REF KIFF_PROOF_OIDC_WORKFLOW \
+            KIFF_PROOF_TEST_TENANTS KIFF_PROOF_TEST_KEYS KIFF_PROOF_RELEASE_ANYWAY KIFF_PROOF_RUNNER_VERSIONS; do
+            if [ -z "${!n:-}" ]; then
+              echo "::error::$n must be set in the production environment (\"-\" for none)"
+              fail=1
+            fi
+          done
+          exit "$fail"
+      # Before any credential: deploy.sh's 17 values, from `production`'s secrets.
+      - name: Check the deploy values
+        run: |
+          fail=0
+          for n in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+            if [ -z "${!n:-}" ]; then
+              echo "::error::$n must be set as a secret of the production environment (\"-\" for off where deploy.sh allows it)"
+              fail=1
+            fi
+          done
+          exit "$fail"
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      # deploy.sh builds the three binaries, stages them, swaps the slot on
+      # the box, and fails (exit 6 or 8) when /healthz doesn't answer 200.
+      - name: Deploy
+        run: bash scripts/deploy.sh
+
+  # Checks the live download page against the computers' releases right after
+  # each deploy, the same check download-check.yml runs on its schedule. It
+  # only reads kiff.dev and GitHub, and comments on the coordination issue
+  # when the state changes.

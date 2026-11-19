@@ -117,7 +117,7 @@ templ privacyRolesNL() {
 				actierecords, ontvangstbewijzen van beslissingen en
 				andere inhoud die namens onze klanten door de runtime
 				gaat, en voor wat tafs voor hen bewaart (de runs,
-				chats, rapporten en geheugennotities van elk taf).
+				chats, rapporten en geheugennotities van elk taf en de bestanden die het aflevert).
 				Klanten (de tenants) zijn verwerkingsverantwoordelijke
 				voor die gegevens; ze geven ons instructies via hun
 				accountinstellingen en domeinconfiguratie. De
@@ -238,22 +238,7 @@ templ privacyCategoriesNL() {
 				of een persoon kan tonen. Op een vergrendelde
 				Android-telefoon toont die alleen “Een taf wacht op
 				jou”, en op een vergrendelde iPhone ook, tenzij je de
-				voorvertoningen ervan op altijd tonen hebt gezet. Een
-				Apple Watch bewaart niets op schijf, bevat geen sessie of
-				sleutel, praat alleen met je gekoppelde iPhone, keurt
-				nooit goed, en toont de meldingen van de iPhone; het
-				horloge kan pas weigeren, stilzetten of naar Coach sturen
-				zodra het een toegangscode heeft. Een Wear OS-horloge bewaart alleen hoeveel er op
-				je wacht, gewist als de telefoon uitlogt of het horloge
-				wordt vergrendeld. Het bevat geen sessie of sleutel,
-				praat alleen met je gekoppelde telefoon, keurt nooit
-				goed, en kan alleen weigeren, stilzetten of naar Coach
-				sturen zolang het een schermvergrendeling heeft en
-				ontgrendeld is. Beide horloges sturen wat je tegen Coach
-				zegt alleen als tekst, via de telefoon, zodra je de AI
-				hebt toegestaan. De eigen spraakdienst van het horloge,
-				die van Apple of van Google, zet je woorden om in die
-				tekst. Op een
+				voorvertoningen ervan op altijd tonen hebt gezet. <strong>Je horloge:</strong> een horloge bevat geen wachtwoord of sleutel, praat alleen met je gekoppelde telefoon en keurt nooit goed. Het stuurt wat je tegen Coach zegt alleen als tekst, via de telefoon, zodra je de AI hebt toegestaan. De eigen spraakdienst van het horloge, die van Apple of van Google, zet je woorden om in die tekst. Het kan alleen weigeren, stilzetten of naar Coach sturen zolang het een schermvergrendeling of toegangscode heeft en ontgrendeld is. <strong>Apple Watch:</strong> het toont je tafs en hun pagina's zonder ze te bewaren. Het bewaart alleen je Inbox, in een bestand dat het niet kan lezen zolang het vergrendeld is: elke vastgehouden aanroep als de naam van zijn taf en wat die vraagt, nooit een bedrag, en de antwoorden van Coach op wat je vanaf het horloge stuurde, als tekst. Het bewaart niets als het horloge geen toegangscode heeft. De Inbox verdwijnt als je iPhone uitlogt, of de volgende keer dat de app opent of sluit zonder toegangscode. Het neemt niets op, en de enige meldingen die het toont zijn die van je iPhone. <strong>Wear OS:</strong> het toont het e-mailadres van je account, de agenda van vandaag en de pagina's van je tafs zonder ze te bewaren. Het bewaart je Inbox, waarin elke regel de naam van een taf is en wat het zegt, nooit een bedrag, en één bericht dat voor later is bewaard, als tekst. Uitloggen, op het horloge of op de telefoon, wist dat allemaal. Voor de tegel bewaart het ook hoeveel er op je wacht, alleen getoond zolang het horloge ontgrendeld is, en gewist als je uitlogt, of de volgende keer dat de tegel wordt getoond terwijl het horloge vergrendeld is of geen schermvergrendeling heeft. Nadat je op het horloge hebt uitgelogd, bewaart het een notitie daarvan, tot je weer inlogt. De Inbox verdwijnt ook de volgende keer dat de app opent of sluit terwijl het horloge vergrendeld is of geen schermvergrendeling heeft. Een bericht dat voor later is bewaard, blijft tot je het verstuurt of verwijdert, omdat je hebt gevraagd het te versturen. Het horloge bewaart geen opname. Het resultaat van een taf kan in de meldingen van het horloge blijven tot je het wegveegt of op het horloge uitlogt. Op een
 				Windows-pc, een Linux-computer of een Mac met de macOS
 				12-app maakt de app de meldingen zelf terwijl die draait,
 				zonder pushtoken en niet via een ander bedrijf. Op
@@ -525,7 +510,7 @@ templ privacyRetentionNL() {
 				berichten, gebruikt tot de chat een uur stil heeft
 				gelegen en hoogstens vier uur na het lezen, en daarna
 				automatisch verwijderd, binnen een paar dagen), en
-				zijn geheugennotities tot het taf wordt verwijderd; het token of de sleutel van een koppeling in planque, of de login van een beheerde koppeling bij Composio, tot je die ontkoppelt, en het logboek van de goedkeuringen ervan tot
+				zijn geheugennotities tot het taf wordt verwijderd; de bestanden die het aflevert 30 dagen vanaf de run die ze maakte, daarna binnen een dag automatisch verwijderd; het token of de sleutel van een koppeling in planque, of de login van een beheerde koppeling bij Composio, tot je die ontkoppelt, en het logboek van de goedkeuringen ervan tot
 				het account eindigt; zie
 				<a href="/nl/legal/dpa#annex-4">bijlage 4 van de Verwerkersovereenkomst</a>.
 			</li>
