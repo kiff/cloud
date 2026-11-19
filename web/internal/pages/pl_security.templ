@@ -1,0 +1,167 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SecurityPL is the public security posture page (/security) in Polish,
+// at /pl/security. It is a translation of Security: the same sections,
+// anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ SecurityPL() {
+	@components.LayoutSiteWithMeta("KIFF — bezpieczeństwo i stan zabezpieczeń", "Co KIFF Cloud podpisuje, przechowuje i za co ręczy: co egzekwuje, obecne praktyki operacyjne, podmioty podprzetwarzające, reagowanie na incydenty, przetwarzane dane i to, czego jeszcze nie ma.", "website", "", "css/security.css") {
+		@SecurityBodyPL()
+	}
+}
+
+// SecurityBodyPL is the page's content without the site layout, as
+// SecurityBody is for the English page.
+templ SecurityBodyPL() {
+	<article class="security">
+		<header class="security-head">
+			<h1>Co KIFF Cloud podpisuje, przechowuje i za co ręczy.</h1>
+			<p class="security-lede">Jeśli jakiegoś twierdzenia z tej strony nie może zweryfikować podmiot zewnętrzny, nazywamy je pozycją planu rozwoju, a nie gwarancją.</p>
+		</header>
+		<section class="security-section security-trust" id="trust">
+			<h2>Zaufanie w skrócie</h2>
+			<table class="security-table security-trust-table">
+				<thead>
+					<tr>
+						<th>Ramy / obszar</th>
+						<th>Status</th>
+						<th>Szczegóły</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Prawa osób, których dane dotyczą, według RODO</td>
+						<td><span class="security-pill security-pill-ok">wdrożone</span></td>
+						<td>Dostęp, eksport i usunięcie danych są obsługiwane (<a href="#deletion">usuwanie</a>); dostępna jest <a href="/pl/legal/dpa">DPA</a>.</td>
+					</tr>
+					<tr>
+						<td>PCI DSS</td>
+						<td><span class="security-pill security-pill-na">poza zakresem</span></td>
+						<td>KIFF nigdy nie przechowuje danych posiadaczy kart, płatności przechodzą przez hostowany Stripe, więc zakres PCI leży po stronie operatora płatności.</td>
+					</tr>
+					<tr>
+						<td>HIPAA</td>
+						<td><span class="security-pill security-pill-na">dziś poza zakresem</span></td>
+						<td>Domyślnie nie przetwarzamy PHI.</td>
+					</tr>
+					<tr>
+						<td>Izolacja tenantów</td>
+						<td><span class="security-pill security-pill-ok">wdrożone</span></td>
+						<td>Osobny schemat Postgres dla każdego tenanta; zapytania między tenantami są <a href="#artifacts">architektonicznie niemożliwe</a> ze ścieżki wykonawczej.</td>
+					</tr>
+					<tr>
+						<td>Szyfrowanie</td>
+						<td><span class="security-pill security-pill-ok">wdrożone</span></td>
+						<td>TLS 1.2+ w transmisji; dane w spoczynku są szyfrowane. Klucze klienta dla poszczególnych wierszy są w <a href="#roadmap">planie rozwoju</a>.</td>
+					</tr>
+					<tr>
+						<td>Dowody audytowe do Twoich przeglądów</td>
+						<td><span class="security-pill security-pill-ok">wdrożone</span></td>
+						<td>Każda decyzja to podpisane, tylko dopisywane potwierdzenie ujawniające każdą manipulację, zbudowane tak, by było artefaktem, o który prosi <em>Twój</em> audyt SOC 2 lub audyt branżowy.</td>
+					</tr>
+				</tbody>
+			</table>
+			<h3>Co możemy dziś przekazać osobie oceniającej bezpieczeństwo</h3>
+			<ul class="security-handover">
+				<li><a href="/pl/legal/dpa">Umowa powierzenia przetwarzania danych (DPA)</a>, podpisywana przed jakimkolwiek użyciem produkcyjnym.</li>
+				<li>Wypełniony kwestionariusz bezpieczeństwa i aktualny status SOC 2 na życzenie, <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			</ul>
+		</section>
+		<section class="security-section" id="posture">
+			<h2>Stan zabezpieczeń</h2>
+			<p>Piecza nad kluczem podpisującym osobno dla każdego tenanta, w której każdy tenant ma własny, dedykowany klucz, którym podpisuje chmura, z opcjonalną ścieżką migracji pozwalającą przekazać klucz samemu tenantowi, jest w planie rozwoju poniżej i nie jest dziś wdrożona. Do tego czasu chmura jest wskazaną z nazwy stroną trzecią stojącą za każdym podpisanym rekordem.</p>
+		</section>
+		<section class="security-section" id="enforcement">
+			<h2>Co egzekwuje KIFF</h2>
+			<p class="section-lede">Mówiąc wprost: KIFF zwraca <strong>decyzję</strong>; efekt uboczny wykonuje Twoja integracja. KIFF jest bramką, a nie wykonawcą.</p>
+			<p>Egzekwowanie to ustawienie, którym sterujesz Ty, osobno dla każdej przestrzeni roboczej, i domyślnie jest ono ścisłe. Tryb observe jest opcjonalny i ustawiamy go my na Twoją prośbę, nigdy agent i nigdy domyślnie, przestrzeń robocza nigdy nie działa wyłącznie w trybie observe przez przypadek.</p>
+			<h3>KIFF nie zatrzymuje</h3>
+			<ul class="security-levels">
+				<li>Efektu ubocznego osiągniętego <strong>niekontrolowaną ścieżką kodu</strong>: np. przez bezpośrednie wywołanie API płatności, z pominięciem bramki.</li>
+				<li>Integratora, który otrzymuje decyzję w trybie enforce i <strong>ją ignoruje</strong>, ani przestrzeni roboczej celowo ustawionej na <strong>observe</strong> (wyłącznie doradczo z wyboru, nadal zapisywane, nigdy przypadkowe), to egzekwowanie oparte na współpracy, jak w każdym silniku polityk.</li>
+				<li>Żądania, które w ogóle <strong>nie dociera</strong> do bramki.</li>
+			</ul>
+			<h3>Jak utrudnić obejście bramki</h3>
+			<ul class="security-levels">
+				<li>Observe — wyłącznie doradczo, wdrożone</li>
+				<li>Guard na styku, wdrożone</li>
+				<li>Proxy na ścieżce, planowane</li>
+				<li>Bramka narzędzi, planowane</li>
+			</ul>
+		</section>
+		<section class="security-section" id="artifacts">
+			<details class="security-more">
+			<summary><h2>Obecne praktyki operacyjne</h2></summary>
+			<dl class="security-grid">
+				<div class="security-row">
+					<dt>Piecza nad portfelem podpisującym</dt>
+					<dd>Portfel, który podpisuje potwierdzenia i wysyła skróty wiążące do publicznego łańcucha, jest przechowywany w naszej infrastrukturze, pod kontrolą dostępu oddzieloną od inżynierów aplikacji. Ścieżka kodu aplikacji podpisuje przez interfejs usługi; nie może wydobyć klucza.</dd>
+				</div>
+				<div class="security-row">
+					<dt>Lokalizacja danych</dt>
+					<dd><code>eu-west-1</code> (Irlandia): KIFF Cloud, usługa tafs i planque, wraz z ich bazami danych, kopiami zapasowymi, sekretami i logami.</dd>
+				</div>
+				<div class="security-row">
+					<dt>Logi</dt>
+					<dd>Jak długo przechowujemy logi: logi dostępu serwera WWW, zawierające adresy IP, 90 dni; dziennik usługi KIFF 30 dni; logi monitorowania KIFF 7 dni; logi usługi tafs i planque 30 dni.</dd>
+				</div>
+			</dl>
+			</details>
+		</section>
+		<section class="security-section" id="subprocessors">
+			<h2>Podmioty podprzetwarzające</h2>
+			<p class="section-lede">Dostawcy, którzy przetwarzają dane tenantów w naszym imieniu. Oficjalna lista, z danymi, z którymi każdy z nich ma styczność, znajduje się na stronie <a href="/pl/subprocessors">/subprocessors</a>. Aktualizujemy ją w ciągu 30 dni od każdej zmiany.</p>
+			<p>Amazon Web Services · Clerk · Anthropic · Apple · Resend · Composio · Stripe</p>
+		</section>
+		<section class="security-section" id="incident">
+			<h2>Reagowanie na incydenty</h2>
+			<p>Podejrzenie problemu z bezpieczeństwem zgłoś na adres <a href="mailto:security@kiff.dev">security@kiff.dev</a>. Staramy się potwierdzić odbiór w ciągu jednego dnia roboczego i przekazać wstępną ocenę w ciągu pięciu.</p>
+			<p>Incydenty, które dotyczą danych tenantów, skutkują pisemnym zawiadomieniem klientów, których dotyczą, w ciągu 72 godzin od potwierdzenia oraz publicznym raportem poincydentalnym po zakończeniu bezpośredniej reakcji.</p>
+			<h3 id="updates">Aktualizacje zabezpieczeń</h3>
+			<p>Dostarczamy aktualizacje zabezpieczeń tak długo, jak oferujemy Usługę.</p>
+		</section>
+		<section class="security-section" id="data-we-process">
+			<details class="security-more">
+			<summary><h2>Dane, które przetwarzamy</h2></summary>
+			<h3 id="identifiers">Identyfikatory, które przechowujemy dosłownie</h3>
+			<p>Identyfikator tenanta, identyfikator aktora, identyfikator encji, nazwa akcji, etykieta decyzji, znaczniki czasu żądania i odpowiedzi, skróty (hashe) potwierdzeń oraz skróty transakcji publicznego śladu, które te potwierdzenia utrwalają.</p>
+			<h3 id="parameters">Pola kontrolowane przez tenanta, które utrwalamy</h3>
+			<p>Z obiektu <code>parameters</code> propozycji przechowywane są tylko parametry liczbowe (kwoty, liczby), ponieważ liczą je limity. Pełne żądanie jest przechowywane jako skrót (hash), aby dało się odróżnić ponowienie od innego żądania. Przez bramę KIFF także wartość argumentu, na którym działa wywołanie (np. identyfikator płatności), aby rejestr właściciela i potwierdzenie mogły wskazać, o który chodzi, komuś, kto tę wartość ma.</p>
+			<h3 id="never-persisted">Identyfikatory, których nigdy nie utrwalamy</h3>
+			<p>Surowe prompty i odpowiedzi modelu. Chmura przekazuje ruch wnioskowania do skonfigurowanego dostawcy modelu i nie zachowuje kopii.</p>
+			<p>Dla każdego wywołania, które taf wykonuje przez KIFF, tafs przechowuje numer referencyjny KIFF dla tego wywołania i identyfikator tego, na czym wywołanie działało (na przykład identyfikator płatności, nigdy dane klienta), przez 30 dni, aby pokazać je w Rejestrze tafa; reszta danych wejściowych wywołania jest przechowywana tylko do końca uruchomienia. <a href="/pl/legal/dpa#annex-4">Załącznik 4 do DPA</a> wymienia, co tafs przechowuje i jak długo.</p>
+			<h3 id="public-trail">Dane, których nigdy nie publikujemy w weryfikowalnym śladzie</h3>
+			<p>Skrót kryptograficznie wiąże rekordy, na których się opiera, ale ich nie ujawnia; same rekordy nigdy nie opuszczają bazy danych chmury.</p>
+			<h3 id="deletion">Dane, które usuwamy przy usunięciu tenanta</h3>
+			<p>Żądanie usunięcia tenanta czyści jego schemat Postgres, rekordy audytowe, klucze API i odwołania do klucza podpisującego.</p>
+			<h3 id="people-data">Dane o osobach, które się logują</h3>
+			<p>Gdy użytkownik się loguje, chmura zapisuje identyfikator podmiotu z zewnętrznego systemu uwierzytelniania i adres e-mail użyty do logowania.</p>
+			<h3 id="terminology">Pseudonimizacja, nie anonimizacja</h3>
+			<p>KIFF Cloud <em>pseudonimizuje</em> identyfikatory tenantów: bezpośrednie identyfikatory są zastępowane stabilnymi tokenami bez jawnej treści, ale dane nadal dotyczą osoby i nadal obowiązują unijne przepisy o ochronie danych.</p>
+			<h3 id="not-today">Czego dziś nie robimy</h3>
+			<ul class="security-roadmap-list">
+				<li>Brak automatycznego maskowania pola <code>reasoning_summary</code> z dowolnym tekstem agenta: jest ono przechowywane tak, jak je zapisano, więc zatwierdzający i audyt widzą relację samego agenta. Nie umieszczaj w nim danych osobowych.</li>
+				<li>Brak automatycznego haszowania adresów e-mail w tabeli metadanych uwierzytelniania. Planowane.</li>
+			</ul>
+			</details>
+		</section>
+		<section class="security-section security-roadmap" id="roadmap">
+			<h2>Czego jeszcze nie mamy</h2>
+			<ul class="security-roadmap-list">
+				<li><strong>SOC 2 Type I</strong>: planowane, nie rozpoczęto.</li>
+				<li><strong>ISO 42001 (zarządzanie AI) lub ISO 27001</strong>: rozważane.</li>
+				<li><strong>Partnerstwo w zakresie cyberubezpieczeń</strong>: jeden konkretny ubezpieczyciel ocenia nasz format poświadczonych dowodów akcji.</li>
+				<li><strong>Piecza nad kluczem podpisującym osobno dla każdego tenanta</strong>: każdy tenant dostaje własny, dedykowany portfel, z określoną ścieżką migracji, by samodzielnie przejąć nad nim pieczę.</li>
+				<li><strong>Podpisywanie oparte na KMS</strong>: przeniesienie portfela podpisującego za AWS KMS, aby klucza prywatnego nie dało się wydobyć z warstwy aplikacji.</li>
+				<li><strong>Samoobsługowe usuwanie tenanta</strong>: CLI <code>kiff-tenant delete</code> oraz funkcja w panelu. Dziś usuwanie wykonuje operator po wiadomości e-mail na adres <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>, zgodnie z naszym wewnętrznym runbookiem, w miesięcznym terminie z art. 12 ust. 3 RODO.</li>
+				<li><strong>Egzekwowanie okresów przechowywania audytu</strong>: Dziś przechowywanie jest realizowane w miarę możliwości i nie różni się między planami.</li>
+				<li><strong>Szyfrowanie poszczególnych wierszy kluczami klienta (BYOK)</strong>: czeka na realną prośbę klienta.</li>
+			</ul>
+		</section>
+	</article>
+}

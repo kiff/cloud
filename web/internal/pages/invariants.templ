@@ -1,0 +1,82 @@
+package pages
+
+import (
+	"strconv"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/invariants"
+)
+
+// Invariants renders the guarantees this system claims, each with the
+// test that proves it.
+//
+// The list is generated from the test suite: api/cmd/invariants
+// reads annotated tests, and its own test fails the build when this
+// artifact stops matching them.
+//
+// Each guarantee shows its statement; the attack it refuses, the test
+// and the file:line sit in a <details> so the page scans. The repository
+// is private, so the file and line are an index, not evidence, and the
+// page says so.
+templ Invariants(groups []invariants.Group) {
+	@components.LayoutSiteWithMeta(
+		"KIFF — invariants",
+		"The guarantees this runtime makes, each one named and addressed to the test that proves it. Generated from the test suite, so the page cannot describe a guarantee the code stopped making.",
+		"website", "", "css/pricing.css", "css/claims.css") {
+		<section class="site-section cl-section cl-hero">
+			<div class="site-container">
+				<div class="site-eyebrow">{ strconv.Itoa(invariants.Count()) } guarantees · generated from the test suite</div>
+				<h1 class="pr-h1">Things we say <em>cannot happen.</em></h1>
+				<p class="cl-prose">
+					Each line is a guarantee, generated from the test that holds it. The build
+					fails if this page stops matching the tests. Open a line for the attack, what
+					KIFF does instead, and the test.
+				</p>
+			</div>
+		</section>
+		<section class="site-section cl-section">
+			<div class="site-container">
+				for _, g := range groups {
+					<div class="cl-group">
+						<h2 class="cl-group-h">{ g.Label() }</h2>
+						<ul class="cl-invariants">
+							for _, inv := range g.Invariants {
+								<li class="cl-inv">
+									<details>
+										<summary class="cl-inv-statement">{ inv.Statement }</summary>
+										if inv.HasExample() {
+											<dl class="cl-inv-example">
+												<dt>someone tries</dt>
+												<dd>{ inv.Attack }</dd>
+												<dt>what happens</dt>
+												<dd class="cl-inv-refused">{ inv.Refused }</dd>
+											</dl>
+										}
+										<div class="cl-inv-proof">
+											<span class="cl-inv-test">{ inv.Test }</span>
+											<span class="cl-inv-file">{ inv.Location() }</span>
+										</div>
+									</details>
+								</li>
+							}
+						</ul>
+					</div>
+				}
+			</div>
+		</section>
+		<section class="site-section cl-section">
+			<div class="site-container">
+				<h2 class="cl-group-h">What this page is not</h2>
+				<p class="cl-prose">
+					<strong>The file and line are an index, not evidence:</strong> the repository
+					is private, so name a line and we open that file in front of you on a call.
+				</p>
+				<p class="cl-prose">
+					A test proves only what it tests, and a system with no failing tests is not a
+					system with no flaws: three of four attacks on our approval boundary once worked
+					while the conformance tests passed the entire time. <a href="/pricing">We write the same attacks against your actions</a>.
+				</p>
+			</div>
+		</section>
+	}
+}

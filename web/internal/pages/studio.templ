@@ -1,0 +1,1226 @@
+package pages
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
+	studio "github.com/kiff/kiff-studio"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/studio_view"
+)
+
+// StudioView is the page input. The handler constructs it from
+// the api's draft GET response (plus /v1/me for the workspace
+// label) and calls Studio(view).
+//
+// One render per request — no client-side state, no JS. Every
+// edit POSTs to a /dashboard/build/* route, which
+// re-renders this page on the redirect-back.
+type StudioView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	// Workspace identity for the top bar; nil on degraded renders.
+	TenantSlug string
+	TenantID   string
+
+	// EditDomain is the existing domain this Build session is editing,
+	// when Build was entered scoped to a selected domain (?domain= or the
+	// remembered selection). Empty = the default draft / new-domain flow.
+	// When set, the sidebar scopes to it, the editor is pre-filled with
+	// that domain's YAML, and save targets that domain in place.
+	EditDomain string
+
+	// Draft is the current authoring shape. Always populated by
+	// the handler, even on first visit (placeholder default).
+	Draft studio_view.StudioDraft
+
+	// ObservedRuntime is populated when the current draft matches
+	// a live guard runtime's observed tool catalog. It lets Studio
+	// distinguish a payment-control draft from a blank template.
+	ObservedRuntime *StudioObservedRuntime
+
+	// ActiveControl is the tenant's active protected control for
+	// this draft's domain, if one exists (GET /v1/me/controls,
+	// Status: active). It is the truthful enforcement signal: a
+	// control exists ⇒ KIFF is governing this action before it
+	// runs. Nil ⇒ not enforcing yet. Drives the enforcement header
+	// (the proof pricing design-06-04) so Studio leads with "are
+	// we governing this?" rather than the YAML editor.
+	ActiveControl *apiclient.Control
+
+	NotConfiguredMsg string
+	ErrMsg           string
+
+	// NoticeMsg is the success/info banner slot (distinct from
+	// ErrMsg). Used for confirmations like a draft import that
+	// landed — rendered green rather than as a "heads up" error.
+	NoticeMsg string
+
+	// Preview is true when apps/api is not configured and the
+	// page renders a read-only walk-through of all four stages.
+	// PreviewStage is the 1..4 stage the strip tabs select.
+	Preview      bool
+	PreviewStage int
+
+	// Now is the wall-clock the auto-saved indicator branches on.
+	// Injected so tests can pin the clock.
+	Now time.Time
+
+	// ActionFirst is true on first run: no saved draft and no active
+	// domain. Studio then leads with the actions KIFF observed from a
+	// connected runtime — candidate-control cards or an empty state —
+	// instead of the cold authoring ladder.
+	ActionFirst bool
+
+	// Candidates are the runtime-grounded candidate controls for the
+	// action-first view, flattened across connected runtimes. Empty in
+	// ActionFirst mode means "connected nothing yet" → empty state.
+	Candidates []StudioCandidate
+}
+
+// StudioCandidate is one runtime-grounded candidate control rendered as a
+// card on the action-first first run. It carries its runtime coordinate so
+// the confirm form can re-fetch the exact candidate server-side. Thresholds
+// and the state machine are intentionally absent — KIFF derives the action
+// surface, never the policy or lifecycle.
+type StudioCandidate struct {
+	Tool              string
+	Action            string
+	EntityType        string
+	EntityArg         string
+	Fields            []StudioCandidateField
+	Risk              string
+	RiskReasons       []string
+	ObservedCallCount uint64
+	Adapter           string
+	Project           string
+	Environment       string
+	Workflow          string
+	AgentID           string
+	Mode              string
+	GroundingOK       bool
+}
+
+// StudioCandidateField is one observed parameter of a candidate control.
+type StudioCandidateField struct {
+	Name     string
+	Type     string
+	Required bool
+}
+
+// EffectiveStage returns the stage to render — the draft's actual
+// stage. (The legacy ?stage view-filter was removed with the bridge
+// relabel, the authenticated-surface design /: the stage strip
+// orients, it no longer filters block visibility.)
+func (v StudioView) EffectiveStage() studio_view.Stage {
+	return v.Draft.Stage()
+}
+
+// EnforcementState classifies what KIFF is actually doing with
+// this draft's domain, for the value-oriented header (the proof
+// pricing design-06-04). Three honest states, sourced from real
+// signals, never inferred from draft completeness alone:
+//
+//   - "enforcing" — an active protected control exists; KIFF
+//     decides this action before it runs and signs a receipt.
+//   - "observed"  — a guard runtime has been observed (or a
+//     derived draft exists) but no control is active yet;
+//     nothing is being blocked.
+//   - "drafting"  — neither yet; the user is authoring from
+//     scratch.
+//
+// Mirrors the dashboard Overview's governance card so the two
+// surfaces tell one story.
+func (v StudioView) EnforcementState() string {
+	if v.ActiveControl != nil && v.ActiveControl.Status == "active" {
+		return "enforcing"
+	}
+	if v.ObservedRuntime != nil {
+		return "observed"
+	}
+	return "drafting"
+}
+
+type StudioObservedRuntime struct {
+	Project            string
+	Environment        string
+	AgentID            string
+	Workflow           string
+	Adapter            string
+	ToolName           string
+	ActionName         string
+	EntityType         string
+	EntityArg          string
+	RequiredParameters []string
+	LastSeenLabel      string
+}
+
+// Studio renders /dashboard/build. The page mirrors the
+// kiff-studio-evolution mockup: a compact stage strip, a single
+// framed "app window" with a titlebar, a two-column body (block
+// builder + live YAML) inside that window, and a row of
+// primitive explainer cards underneath. See an earlier change
+// for the design-parity rebuild.
+templ Studio(v StudioView) {
+	@components.AppShellLayout(
+		"KIFF Cloud — Studio",
+		"studio",
+		chromeWithDomain(v.DisplayName, v.Email, v.TenantSlug, v.EditDomain),
+		"css/studio.css",
+	) {
+		<section class="studio studio-v3">
+			if v.NotConfiguredMsg != "" {
+				<div class="studio-banner"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="studio-banner"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+			if v.NoticeMsg != "" {
+				<div class="studio-banner studio-banner-ok"><strong>✓</strong> { v.NoticeMsg }</div>
+			}
+
+			<header class="dash-header dash-page-head studio-page-head">
+				<div class="dash-header-text">
+					if v.ActionFirst {
+						<p class="eyebrow">Studio · protect one action</p>
+						<h1>KIFF found actions your agent can take. Choose one to protect.</h1>
+						<p class="dash-note">
+							These are derived from what your connected runtime actually
+							did — the same seam KIFF decides at. Confirm one to start a
+							control. You set the policy; KIFF never invents thresholds.
+						</p>
+					} else {
+						<p class="eyebrow">Build · AI-assisted</p>
+						<h1>Hand your domain to your AI coding agent.</h1>
+						<p class="dash-note">
+							KIFF derived a starting point from what your agent already
+							does. Copy one instruction into your AI coding agent — it
+							authors the contract in your codebase using the kiff-domains
+							skill, verifies it, and hands it back to activate in observe.
+							Your codebase stays the record.
+						</p>
+					}
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn btn-secondary" href="/docs/quickstart">How authoring works</a>
+				</div>
+			</header>
+			if v.ActionFirst {
+				@studioActionFirst(v)
+			} else {
+				@studioStageStrip(v)
+				if !v.Preview && v.EnforcementState() != "enforcing" {
+					@studioSetupChecklist(v)
+				}
+				if v.ObservedRuntime != nil {
+					@studioObservedRuntime(v.ObservedRuntime)
+				}
+				if !v.Preview {
+					@studioCodebaseHandoff(v)
+					@studioGovernanceNote()
+				}
+				@studioWindow(v)
+				@studioExplainerRow(v)
+				if !v.Preview {
+				}
+			}
+		</section>
+	}
+}
+
+// studioCodebaseHandoff is the block-free completion path. A derived draft lands at
+// StageScratch (an observed action, no state machine) and cannot be activated
+// as-is; the codebase is where it's finished. This section is the
+// round trip: scaffold the descriptor to your repo, complete the state
+// machine + executor bodies with your AI agent, run `kiff verify`,
+// then bring the finished kiff.yaml back here to validate and activate
+// it in one shot (PUT /v1/me/domain) — no block editor. Rendered
+// at any stage so a freshly derived draft has a way
+// forward without the legacy ladder.
+templ studioCodebaseHandoff(v StudioView) {
+	<article class="studio-handoff" id="studio-codebase">
+		<div class="studio-handoff-copy">
+			<p class="studio-handoff-kicker">Finish with your AI coding agent</p>
+			<h2>Give one instruction to your agent.</h2>
+			<p>
+				Copy the instruction below and paste it into your AI coding agent
+				(Claude Code, Cursor, Codex, …). It installs the guard, follows the
+				<code>kiff-domains</code> skill to author <code>kiff.yaml</code> and the
+				executor bodies, runs <code>kiff verify</code>, and hands you the
+				finished contract to activate here — as one task. Your codebase stays
+				the record.
+			</p>
+		</div>
+		@studioJourneyCue(v)
+		@studioAssistantPromptBlock(v)
+		<details class="studio-handoff-manual">
+			<summary>Prefer to run the steps yourself?</summary>
+			<ol class="studio-handoff-steps">
+				<li>
+					give your agent the skill:
+					<code>mkdir -p ~/.claude/skills/kiff-domains &amp;&amp; curl -fsSL https://kiff.dev/skills/kiff-domains.md -o ~/.claude/skills/kiff-domains/SKILL.md</code>
+					<small>— or <a href="/skills/kiff-domains.md">read the skill</a> (Cursor / Codex / Gemini install in the docs)</small>
+				</li>
+				<li>install the CLI: <code>go install github.com/kiff/kiff/cmd/kiff@v0.7.0</code></li>
+				<li><a href="/dashboard/build/scaffold/descriptor.json">↓ descriptor.json</a> — your derived starting point</li>
+				<li><code>kiff scaffold -descriptor descriptor.json github.com/you/yourmodule</code></li>
+				<li>author / refine <code>kiff.yaml</code> and the executor bodies with your agent (it uses the skill)</li>
+				<li>confirm it's complete: <code>kiff verify</code></li>
+			</ol>
+		</details>
+		<form method="post" action="/dashboard/build/activate-yaml" class="studio-handoff-form">
+			if v.EditDomain != "" {
+				<input type="hidden" name="domain" value={ v.EditDomain }/>
+			}
+			<label class="studio-handoff-label" for="studio-handoff-yaml">
+				if v.EditDomain != "" {
+					Paste the updated <code>kiff.yaml</code> for <strong>{ v.EditDomain }</strong> to validate and save
+				} else {
+					Paste your finished <code>kiff.yaml</code> to validate and activate
+				}
+			</label>
+			<textarea
+				id="studio-handoff-yaml"
+				name="yaml"
+				class="studio-handoff-textarea"
+				rows="10"
+				spellcheck="false"
+				placeholder="# your completed kiff.yaml&#10;domain: …&#10;entity: …&#10;states: [ … ]&#10;actions: [ … ]"
+				required
+			></textarea>
+			<button type="submit" class="btn btn-primary btn-sm">Validate and activate from codebase</button>
+		</form>
+	</article>
+}
+
+// studioSetupChecklist is the draft domain's "Current state" — a
+// status mirror of where this in-progress domain is in its lifecycle.
+// It is deliberately NOT a set of buttons: the milestones are observed
+// facts (a runtime was seen, an action was derived, the first decision
+// arrived) and the two real actions (finish with your agent → activate)
+// live elsewhere on the page (the prompt and the activate form). Shown
+// only while the domain is not yet enforcing — its setup context.
+templ studioSetupChecklist(v StudioView) {
+	<article class="studio-setup" aria-label="Setup progress">
+		<div class="studio-setup-head">
+			<p class="studio-setup-kicker">Current state · setup</p>
+			<span class="studio-setup-badge">{ studioSetupStateLabel(v) }</span>
+		</div>
+		<ol class="studio-setup-steps">
+			for _, st := range studioSetupSteps(v) {
+				<li class={ "studio-setup-step", "studio-setup-" + st.State }>
+					<span class="studio-setup-mark" aria-hidden="true">{ studioSetupMark(st.State) }</span>
+					<span class="studio-setup-body">
+						<span class="studio-setup-label">{ st.Label }</span>
+						<span class="studio-setup-hint">{ st.Hint }</span>
+					</span>
+				</li>
+			}
+		</ol>
+		<p class="studio-setup-foot">
+			Milestones update themselves as your agent and runtime make progress —
+			the only actions here are finishing with your agent (below) and
+			activating the verified contract. Other domains keep operating.
+		</p>
+	</article>
+}
+
+// studioSetupStep is one lifecycle milestone. State is done | current |
+// pending — never a toggle; it mirrors observed progress.
+type studioSetupStep struct {
+	Label string
+	Hint  string
+	State string
+}
+
+// studioSetupSteps computes the draft's lifecycle milestones from real
+// signals: an observed runtime, a derived action, whether the contract
+// is complete enough to activate, and (post-activation) enforcement.
+// Nothing here is fabricated — a milestone is "done" only when its
+// signal is actually present.
+func studioSetupSteps(v StudioView) []studioSetupStep {
+	observed := v.ObservedRuntime != nil
+	hasAction := len(v.Draft.Blueprint.Actions) > 0
+	ready := v.Draft.ActivateEnabled()
+	active := v.ActiveControl != nil && v.ActiveControl.Status == "active"
+
+	finishState := "pending"
+	switch {
+	case ready || active:
+		finishState = "done"
+	case hasAction:
+		finishState = "current"
+	}
+	activateState := "pending"
+	switch {
+	case active:
+		activateState = "done"
+	case ready:
+		activateState = "current"
+	}
+	return []studioSetupStep{
+		{"Runtime observed", "a connected agent's traffic", studioStepDoneOr(observed, "pending")},
+		{"Action derived", "the action to govern", studioStepDoneOr(hasAction, "pending")},
+		{"Finish with your agent", "author & verify the contract", finishState},
+		{"Activate in observe", "import the finished kiff.yaml", activateState},
+		{"First decision recorded", "the governed loop is live", "pending"},
+	}
+}
+
+func studioStepDoneOr(done bool, otherwise string) string {
+	if done {
+		return "done"
+	}
+	return otherwise
+}
+
+// studioSetupMark is the glyph for a milestone state.
+func studioSetupMark(state string) string {
+	switch state {
+	case "done":
+		return "✓"
+	case "current":
+		return "→"
+	default:
+		return "○"
+	}
+}
+
+// studioSetupStateLabel names the draft's overall setup posture for the
+// card badge.
+func studioSetupStateLabel(v StudioView) string {
+	if v.Draft.ActivateEnabled() {
+		return "ready to activate"
+	}
+	return "setup in progress"
+}
+
+// studioJourneyCue is the compact three-step sequence that frames the
+// handoff as assistant-driven: pick the action → hand one instruction to
+// your agent → activate the verified contract. It's the connective cue
+// the journey was missing — the user sees there's a short sequence and
+// that the AI agent does the middle step. The current step is highlighted
+// from the bridge stage so the cue is state-aware, not decorative.
+templ studioJourneyCue(v StudioView) {
+	{{ cur := studioJourneyStep(v) }}
+	<ol class="studio-journey" aria-label="How this works">
+		@studioJourneyItem(1, cur, "Pick the action", "from what your agent does")
+		@studioJourneyItem(2, cur, "Hand it to your agent", "one instruction, below")
+		@studioJourneyItem(3, cur, "Activate", "the verified contract, in observe")
+	</ol>
+}
+
+templ studioJourneyItem(num, current int, name, hint string) {
+	{{ reached := num <= current }}
+	{{ active := num == current }}
+	<li class={ "studio-journey-item", studioStageClass(reached, active) }>
+		<span class="studio-journey-num">{ fmt.Sprintf("%d", num) }</span>
+		<span class="studio-journey-body">
+			<span class="studio-journey-name">{ name }</span>
+			<span class="studio-journey-hint">{ hint }</span>
+		</span>
+	</li>
+}
+
+// studioJourneyStep collapses the bridge stage into the three-step cue:
+// a fresh/derived draft is at step 2 (hand it to your agent), a
+// review-ready contract or an active control is at step 3 (activate /
+// activated), and the bare starting point is at step 1.
+func studioJourneyStep(v StudioView) int {
+	switch {
+	case v.ActiveControl != nil && v.ActiveControl.Status == "active":
+		return 3
+	case v.Draft.ActivateEnabled():
+		return 3
+	case v.Draft.Blueprint.Entity != "" && len(v.Draft.Blueprint.Actions) > 0:
+		return 2
+	default:
+		return 1
+	}
+}
+
+// studioAssistantPromptBlock renders the one-instruction prompt in a
+// copyable block with a Copy button (the web-stack design: a small
+// vanilla script in the shell does the clipboard write; the block
+// degrades to select-all text without JS). The prompt is generated from
+// the draft so it always reflects whatever the user picked.
+templ studioAssistantPromptBlock(v StudioView) {
+	<div class="studio-prompt">
+		<div class="studio-prompt-head">
+			<span class="studio-prompt-label">One instruction · paste into your AI coding agent</span>
+			<button
+				type="button"
+				class="btn btn-primary btn-sm studio-prompt-copy"
+				data-copy-target="studio-prompt-text"
+			>Copy instruction</button>
+		</div>
+		<pre class="studio-prompt-text" id="studio-prompt-text"><code>{ studioAssistantPrompt(v) }</code></pre>
+	</div>
+}
+
+
+// studioGovernanceNote is the Review-stage governance projection (the
+// authenticated-surface design; Govern↔Activity decision A — two distinct
+// lenses). Build's Review mirrors Govern's read-only contract projection:
+// the decidable knobs below (allowed states, approval, risk) are how KIFF
+// decides, shown read-only. The domain is executable software in the
+// codebase, which is the record — edit it there and re-activate (the
+// codebase handoff above), never by hand in the browser. Enforcement
+// posture (observe / enforce) is operator-controlled and lives in Activity.
+templ studioGovernanceNote() {
+	<aside class="studio-governance-note">
+		<strong>Review — how KIFF decides this domain.</strong>
+		The contract below is a read-only projection of your code. The knobs
+		(allowed states, approval, risk) are what the runtime evaluates before
+		an action runs; your codebase is the record. Enforcement posture lives
+		in Activity.
+	</aside>
+}
+
+templ studioObservedRuntime(o *StudioObservedRuntime) {
+	<article class="studio-observed">
+		<div class="studio-observed-copy">
+			<p class="studio-observed-kicker">Observed payment control</p>
+			<h2>Build derived this from a live guard runtime.</h2>
+			<p>
+				KIFF saw <code>{ o.ToolName }</code> in <strong>{ o.Adapter }</strong> and turned it into <code>{ o.ActionName }</code> before payment execution. This is the paid unit: control money-moving agent actions first, then keep the receipt.
+			</p>
+		</div>
+		<dl class="studio-observed-facts">
+			<div>
+				<dt>runtime</dt>
+				<dd><code>{ o.Project }/{ o.Environment }</code></dd>
+			</div>
+			<div>
+				<dt>agent</dt>
+				<dd><code>{ o.AgentID }</code></dd>
+			</div>
+			<div>
+				<dt>workflow</dt>
+				<dd><code>{ o.Workflow }</code></dd>
+			</div>
+			<div>
+				<dt>entity</dt>
+				<dd><code>{ studioObservedValue(o.EntityType) }</code></dd>
+			</div>
+			<div>
+				<dt>entity id</dt>
+				<dd><code>{ studioObservedValue(o.EntityArg) }</code></dd>
+			</div>
+			<div>
+				<dt>required</dt>
+				<dd><code>{ studioObservedRequired(o.RequiredParameters) }</code></dd>
+			</div>
+			if o.LastSeenLabel != "" {
+				<div>
+					<dt>last seen</dt>
+					<dd>{ o.LastSeenLabel }</dd>
+				</div>
+			}
+		</dl>
+	</article>
+}
+
+func studioObservedRequired(params []string) string {
+	if len(params) == 0 {
+		return "none observed"
+	}
+	return strings.Join(params, ", ")
+}
+
+func studioObservedValue(value string) string {
+	if value == "" {
+		return "not reported"
+	}
+	return value
+}
+
+// studioActionFirst is the first-run body: runtime-grounded candidate cards
+// when KIFF has observed actions, an action-first empty state when it
+// hasn't. There is no browser authoring ladder — the on-ramps are derive
+// (observe) and the codebase handoff.
+templ studioActionFirst(v StudioView) {
+	if len(v.Candidates) > 0 {
+		<p class="studio-af-intro">
+			Pick the action your agent should not execute blindly. Confirming
+			starts a control draft — you map the lifecycle and set the policy next.
+		</p>
+		<div class="studio-candidates">
+			for _, c := range v.Candidates {
+				@studioCandidateCard(c)
+			}
+		</div>
+		@studioReplayBox()
+	} else {
+		@studioCandidateEmptyState()
+	}
+}
+
+// studioCandidateCard renders one runtime-grounded candidate control. It
+// shows only what KIFF actually observed (action, entity, fields, call
+// count, runtime); the policy band is an explicit empty template, and the
+// lifecycle is left for the user — no fabricated thresholds or states.
+templ studioCandidateCard(c StudioCandidate) {
+	<article class="studio-candidate">
+		<div class="studio-candidate-head">
+			<div>
+				<p class="studio-candidate-kicker">Observed action · { studioRiskLabel(c.Risk) } risk</p>
+				<h2><code>{ c.Action }</code></h2>
+				<p class="studio-candidate-sub">
+					from tool <code>{ c.Tool }</code> in <strong>{ studioObservedValue(c.Adapter) }</strong>
+				</p>
+			</div>
+			if c.GroundingOK {
+				<span class="studio-candidate-grounded" title="Every field traces to the runtime observation">✓ grounded</span>
+			}
+		</div>
+		<dl class="studio-candidate-facts">
+			<div>
+				<dt>entity</dt>
+				<dd><code>{ studioObservedValue(c.EntityType) }</code></dd>
+			</div>
+			<div>
+				<dt>entity id</dt>
+				<dd><code>{ studioObservedValue(c.EntityArg) }</code></dd>
+			</div>
+			<div>
+				<dt>required fields</dt>
+				<dd><code>{ studioCandidateRequired(c.Fields) }</code></dd>
+			</div>
+			<div>
+				<dt>runtime</dt>
+				<dd><code>{ c.Project }/{ c.Environment }</code></dd>
+			</div>
+			<div>
+				<dt>workflow</dt>
+				<dd><code>{ studioObservedValue(c.Workflow) }</code></dd>
+			</div>
+			if c.ObservedCallCount > 0 {
+				<div>
+					<dt>observed calls</dt>
+					<dd>{ studioCallCount(c.ObservedCallCount) }</dd>
+				</div>
+			}
+		</dl>
+		if len(c.Fields) > 0 {
+			<div class="studio-candidate-fields">
+				<p class="studio-candidate-label">Observed fields</p>
+				<ul>
+					for _, f := range c.Fields {
+						<li>
+							<code>{ f.Name }</code>
+							<span class="studio-candidate-ftype">{ studioObservedValue(f.Type) }</span>
+							if f.Required {
+								<span class="studio-candidate-req">required</span>
+							}
+						</li>
+					}
+				</ul>
+			</div>
+		}
+		<div class="studio-candidate-policy">
+			<p class="studio-candidate-label">Policy template</p>
+			<p class="studio-candidate-policy-note">
+				You set the bands after confirming. KIFF did not infer any
+				thresholds, states, or approvals from one observation.
+			</p>
+		</div>
+		<form method="post" action="/dashboard/build/candidate/confirm" class="studio-candidate-confirm">
+			<input type="hidden" name="project" value={ c.Project }/>
+			<input type="hidden" name="environment" value={ c.Environment }/>
+			<input type="hidden" name="agent_id" value={ c.AgentID }/>
+			<input type="hidden" name="workflow" value={ c.Workflow }/>
+			<input type="hidden" name="tool" value={ c.Tool }/>
+			<button type="submit" class="btn btn-primary">Protect this action</button>
+		</form>
+	</article>
+}
+
+// studioCandidateEmptyState is shown on first run when KIFF has not yet
+// observed any action from a connected runtime. It guides the user to
+// connect a guard (the primary path) and offers the paste/replay fallback
+// and the manual ladder — neither as the default.
+templ studioCandidateEmptyState() {
+	<article class="studio-af-empty">
+		<p class="studio-candidate-kicker">No observed actions yet</p>
+		<h2>Connect your agent so KIFF can see the actions it takes.</h2>
+		<p>
+			Attach <code>kiff-guard</code> to your agent and run it once. The
+			guard reports the tool calls it makes; KIFF turns each into a
+			candidate control here — grounded in what the agent really ran,
+			not a manifest you have to write.
+		</p>
+		<p class="studio-af-empty-hint">
+			See <a href="/dashboard/runtimes">Runtimes</a> for the connect
+			snippet. This page refreshes once an action is observed.
+		</p>
+		@studioReplayBox()
+	</article>
+}
+
+// studioReplayBox is the secondary fallback: derive a candidate from a
+// single pasted/replayed tool-call JSON when there is no live runtime
+// candidate. Reuses the same derivation seam server-side.
+templ studioReplayBox() {
+	<details class="studio-af-replay">
+		<summary>No connected runtime? Paste one tool call</summary>
+		<form method="post" action="/dashboard/build/candidate/replay">
+			<p class="studio-af-replay-note">
+				Paste one tool-call JSON — <code>tool</code>, optional
+				<code>action</code> / <code>entity_type</code>, and the
+				<code>fields</code> it carried. KIFF derives the same candidate shape.
+			</p>
+			<textarea name="tool_call" rows="8" spellcheck="false" placeholder={ studioReplayPlaceholder() }></textarea>
+			<button type="submit" class="btn btn-secondary">Derive a control</button>
+		</form>
+	</details>
+}
+
+// studioManualFallback removed: the cold authoring ladder is retired, so
+// there is no "author manually" path. The on-ramps are derive (observe)
+// and the codebase handoff (scaffold → kiff verify → import the finished
+// kiff.yaml to activate).
+
+func studioCandidateRequired(fields []StudioCandidateField) string {
+	out := make([]string, 0, len(fields))
+	for _, f := range fields {
+		if f.Required {
+			out = append(out, f.Name)
+		}
+	}
+	if len(out) == 0 {
+		return "none observed"
+	}
+	return strings.Join(out, ", ")
+}
+
+func studioRiskLabel(risk string) string {
+	switch strings.ToLower(strings.TrimSpace(risk)) {
+	case "high":
+		return "high"
+	case "medium":
+		return "medium"
+	default:
+		return "low"
+	}
+}
+
+func studioCallCount(n uint64) string {
+	return strconv.FormatUint(n, 10)
+}
+
+func studioReplayPlaceholder() string {
+	return `{"tool":"issue_refund","action":"ISSUE_REFUND","entity_type":"refund","fields":{"amount":4900,"reason":"service outage credit"}}`
+}
+
+// studioStageStrip is the bridge orientation header. It names the four
+// stages of the codebase↔runtime bridge — Derive → Scaffold → Review →
+// Activate — and marks where this domain is. It is a progress header,
+// not a block-visibility filter: in the live path it emits no ?stage
+// links and does not gate what the page renders. The API-less preview
+// path keeps the interactive stage tabs so the design walk-through can
+// still step through the synthetic stages.
+templ studioStageStrip(v StudioView) {
+	<nav class="studio-strip" aria-label="Build bridge progression">
+		if v.Preview {
+			@studioStripItem(v, 1, "Derive", "from observed traffic")
+			@studioStripItem(v, 2, "Scaffold", "to your codebase")
+			@studioStripItem(v, 3, "Review", "the contract, read-only")
+			@studioStripItem(v, 4, "Activate", "in observe")
+		} else {
+			{{ cur := studioBridgeStage(v) }}
+			@studioBridgeItem(1, cur, "Derive", "from observed traffic")
+			@studioBridgeItem(2, cur, "Scaffold", "to your codebase")
+			@studioBridgeItem(3, cur, "Review", "the contract, read-only")
+			@studioBridgeItem(4, cur, "Activate", "in observe")
+		}
+	</nav>
+}
+
+// studioBridgeItem renders one stage of the live bridge header. Inert
+// (no link): the strip orients, it does not filter. Reached stages (at
+// or before the current one) read as done/current; later ones pending.
+templ studioBridgeItem(num, current int, name, hint string) {
+	{{ reached := num <= current }}
+	{{ active := num == current }}
+	<div class={ "studio-strip-item", studioStageClass(reached, active) }>
+		<span class="studio-strip-label">{ fmt.Sprintf("%d", num) }</span>
+		<span class="studio-strip-name">{ name }</span>
+		<span class="studio-strip-hint">{ hint }</span>
+	</div>
+}
+
+templ studioStripItem(v StudioView, num int, name, hint string) {
+	{{ draftStage := v.Draft.Stage() }}
+	{{ effectiveStage := studio_view.Stage(num) }}
+	{{ reached := studioStageReached(draftStage, effectiveStage) }}
+	{{ active := v.EffectiveStage() == effectiveStage }}
+	if reached {
+		<a class={ "studio-strip-item", "studio-strip-tab", studioStageClass(reached, active) } href={ templ.SafeURL(fmt.Sprintf("/dashboard/build?stage=%d", num)) }>
+			<span class="studio-strip-label">{ fmt.Sprintf("%d", num) }</span>
+			<span class="studio-strip-name">{ name }</span>
+			<span class="studio-strip-hint">{ hint }</span>
+		</a>
+	} else {
+		<div class={ "studio-strip-item", studioStageClass(false, false) }>
+			<span class="studio-strip-label">{ fmt.Sprintf("%d", num) }</span>
+			<span class="studio-strip-name">{ name }</span>
+			<span class="studio-strip-hint">{ hint }</span>
+		</div>
+	}
+}
+
+// studioWindow is the framed app surface: a titlebar (KIFF
+// Studio / domain · save state) over a two-column body
+// (builder + YAML).
+templ studioWindow(v StudioView) {
+	<div class="studio-window">
+		<header class="studio-titlebar">
+			<div class="studio-titlebar-id">
+				<span class="studio-titlebar-app">KIFF Studio</span>
+				<span class="studio-titlebar-sep" aria-hidden="true">/</span>
+				<code class="studio-titlebar-domain">{ v.Draft.Blueprint.Domain }</code>
+			</div>
+			<div class="studio-titlebar-actions">
+				if v.Preview {
+					<span class="studio-preview-badge">preview · read-only</span>
+					if v.Draft.ScaffoldEnabled() {
+						<a href="#studio-scaffold" class="studio-tab studio-tab-ghost">⬡ scaffold</a>
+					}
+				} else {
+					<span class={ "studio-save", studioSaveClass(v) }>
+						<span class="studio-save-dot" aria-hidden="true"></span>
+						<span class="studio-save-label">{ v.Draft.AutoSaveLabel(v.Now) }</span>
+					</span>
+					if v.Draft.ScaffoldEnabled() || v.EffectiveStage() == studio_view.StageFull {
+						<a href="#studio-scaffold" class="studio-tab studio-tab-ghost">⬡ scaffold</a>
+					}
+					<a href="/dashboard/build/scaffold/kiff.yaml" class="studio-tab studio-tab-yaml">↓ kiff.yaml</a>
+				}
+			</div>
+		</header>
+		if !v.Preview {
+			<p class="studio-source-note">
+				This is the <strong>running version</strong> of your domain, rendered read-only.
+				The source of truth is <code>kiff.yaml</code> in your repo — versioned like a
+				<code>docker-compose.yml</code>. Author and evolve it with your AI agent using the
+				kiff-domains skill, then bring it here to validate and activate.
+			</p>
+		}
+		<div class="studio-body">
+			<div class="studio-builder">
+				@studioBuilder(v)
+			</div>
+			<details class="studio-yaml-panel">
+				<summary class="studio-yaml-summary">
+					<span class="studio-yaml-summary-label">kiff.yaml</span>
+					<span class="studio-yaml-summary-hint">the versioned artifact — this lives in your repo</span>
+					<span class="studio-yaml-summary-chev" aria-hidden="true">›</span>
+				</summary>
+				<aside class="studio-yaml">
+					@studioYAML(v)
+				</aside>
+			</details>
+		</div>
+	</div>
+}
+
+// ---------- left column: builder ----------
+
+// studioBuilder renders the block builder column: uppercase
+// section labels with typed primitive cards beneath. Each
+// section is stage-conditional — filtered by EffectiveStage()
+// so stage navigation shows/hides blocks without touching data.
+templ studioBuilder(v StudioView) {
+	<p class="studio-section">entity + states</p>
+	@studioEntityCard(v)
+	if v.EffectiveStage() >= studio_view.StageShape {
+		@studioStateCard(v)
+	}
+
+	if v.EffectiveStage() >= studio_view.StageRules {
+		<p class="studio-section">action contracts</p>
+	} else {
+		<p class="studio-section">actions</p>
+	}
+	for i, a := range v.Draft.Blueprint.Actions {
+		@studioActionCard(v, i, a)
+	}
+
+	if v.EffectiveStage() >= studio_view.StageRules {
+		<p class="studio-section">policy &middot; roles</p>
+		@studioPolicyCard(v)
+	}
+
+	if v.EffectiveStage() >= studio_view.StageRules || v.Draft.HasAdapters() {
+		<p class="studio-section">audit &amp; adapter</p>
+		@studioAuditCard(v)
+		@studioAdaptersCard(v)
+	}
+}
+
+// studioReadField renders one labelled read-only value in the Build
+// projection. Build is a rendered mirror of the running domain, not a
+// form: the fields show the contract, they don't edit it — authoring
+// happens in the repo's kiff.yaml via the developer's agent.
+templ studioReadField(label, value string) {
+	<div class="studio-rofield">
+		<span class="studio-rofield-label">{ label }</span>
+		if value != "" {
+			<code class="studio-rofield-value">{ value }</code>
+		} else {
+			<span class="studio-rofield-empty">not set</span>
+		}
+	</div>
+}
+
+// studioCardHead is the dense typed-card header: glyph + name +
+// trailing tag/pill + chevron. summary content for the
+// <details> card.
+templ studioCardHead(glyph, kind, name string) {
+	<span class="studio-card-glyph" aria-hidden="true">{ glyph }</span>
+	<span class="studio-card-name">{ name }</span>
+	<span class={ "studio-tag", "tag-" + kind }>{ kind }</span>
+	<span class="studio-card-chev" aria-hidden="true">›</span>
+}
+
+templ studioEntityCard(v StudioView) {
+	<details class="studio-card" open>
+		<summary class="studio-card-head">
+			@studioCardHead("⬡", "entity", v.Draft.Blueprint.Entity)
+		</summary>
+		<div class="studio-card-body">
+			<div class="studio-rofields">
+				@studioReadField("name", v.Draft.Blueprint.Entity)
+				@studioReadField("workflow", v.Draft.Blueprint.Domain)
+			</div>
+		</div>
+	</details>
+}
+
+templ studioStateCard(v StudioView) {
+	<details class="studio-card" open>
+		<summary class="studio-card-head">
+			<span class="studio-card-glyph" aria-hidden="true">◈</span>
+			<span class="studio-card-name">State machine</span>
+			<span class="studio-tag tag-state">{ fmt.Sprintf("%d states · %d events", len(v.Draft.Blueprint.States), len(v.Draft.Blueprint.Events)) }</span>
+			<span class="studio-card-chev" aria-hidden="true">›</span>
+		</summary>
+		<div class="studio-card-body">
+			<div class="studio-chips">
+				<span class="studio-chip studio-chip-initial">∅ initial</span>
+				for _, s := range v.Draft.Blueprint.States {
+					<span class="studio-chip studio-chip-state">{ s }</span>
+				}
+			</div>
+			if len(v.Draft.Blueprint.Transitions) > 0 {
+				<div class="studio-transitions">
+					for _, t := range v.Draft.Blueprint.Transitions {
+						<div class="studio-transition">
+							<code class="studio-transition-event">{ t.On }</code>
+							<span class="studio-transition-arrow">{ transitionFromLabel(t.From) } → { t.To }</span>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	</details>
+}
+
+templ studioActionCard(v StudioView, idx int, a studio.Action) {
+	<details class="studio-card" open>
+		<summary class="studio-card-head">
+			<span class="studio-card-glyph" aria-hidden="true">⚡</span>
+			<span class="studio-card-name">{ a.Name }</span>
+			if a.Risk != "" {
+				<span class={ "studio-pill", riskPillClass(a.Risk) }>
+					if a.ApprovalRequired {
+						{ a.Risk + " · approval" }
+					} else {
+						{ a.Risk }
+					}
+				</span>
+			} else {
+				<span class="studio-tag tag-action">action</span>
+			}
+			<span class="studio-card-chev" aria-hidden="true">›</span>
+		</summary>
+		<div class="studio-card-body">
+			<div class="studio-rofields">
+				@studioReadField("allowed in", joinCSV(a.AllowedStates))
+				@studioReadField("parameters", joinCSV(a.RequiredParameters))
+				if v.EffectiveStage() >= studio_view.StageRules {
+					@studioReadField("risk", a.Risk)
+					@studioReadField("approval", approvalLabel(a.ApprovalRequired))
+					@studioReadField("permissions", joinCSV(a.RequiredPermissions))
+				}
+			</div>
+		</div>
+	</details>
+}
+
+func approvalLabel(required bool) string {
+	if required {
+		return "required"
+	}
+	return "never"
+}
+
+templ studioPolicyCard(v StudioView) {
+	<details class="studio-card" open>
+		<summary class="studio-card-head">
+			<span class="studio-card-glyph" aria-hidden="true">☷</span>
+			<span class="studio-card-name">Permissions</span>
+			<span class="studio-tag tag-role">{ fmt.Sprintf("%d %s", len(v.Draft.Blueprint.Roles), pluralizeRoles(len(v.Draft.Blueprint.Roles))) }</span>
+			<span class="studio-card-chev" aria-hidden="true">›</span>
+		</summary>
+		<div class="studio-card-body">
+			for name, perms := range v.Draft.Blueprint.Roles {
+				<div class="studio-role">
+					<strong class="studio-role-name">{ name }</strong>
+					<ul class="studio-role-perms">
+						for _, p := range perms {
+							<li><code>{ p }</code></li>
+						}
+					</ul>
+				</div>
+			}
+			@studioTrustBoundary(v.Draft.TrustBoundary())
+		</div>
+	</details>
+}
+
+templ studioTrustBoundary(tb studio_view.TrustBoundary) {
+	switch tb {
+		case studio_view.TrustBoundaryHolds:
+			<div class="studio-boundary studio-boundary-holds">
+				<span class="studio-boundary-glyph" aria-hidden="true">✓</span>
+				trust boundary: no role holds both proposing and approve permissions for the same action.
+			</div>
+		case studio_view.TrustBoundarySoloSignup:
+			<div class="studio-boundary studio-boundary-solo">
+				<span class="studio-boundary-glyph" aria-hidden="true">⚠</span>
+				solo-signup mode: one role holds both proposing and approve. Split into proposer / approver before inviting a second human.
+			</div>
+		case studio_view.TrustBoundaryUnknown:
+	}
+}
+
+templ studioAuditCard(v StudioView) {
+	<details class="studio-card" open>
+		<summary class="studio-card-head">
+			<span class="studio-card-glyph" aria-hidden="true">◎</span>
+			<span class="studio-card-name">Audit config</span>
+			<span class="studio-tag tag-audit">audit</span>
+			<span class="studio-card-chev" aria-hidden="true">›</span>
+		</summary>
+		<div class="studio-card-body">
+			<div class="studio-rofields">
+				@studioReadField("store", v.Draft.Audit.Store)
+				<p class="studio-card-note"><span class="muted">trace_id</span> propagated from event.Metadata</p>
+				<p class="studio-card-note"><span class="muted">records</span> event · state · action · approval · execution · failure</p>
+			</div>
+		</div>
+	</details>
+}
+
+templ studioAdaptersCard(v StudioView) {
+	for _, ad := range v.Draft.Adapters {
+		<details class="studio-card" open>
+			<summary class="studio-card-head">
+				<span class="studio-card-glyph" aria-hidden="true">⇄</span>
+				<span class="studio-card-name">{ ad.Name }</span>
+				<span class="studio-tag tag-adapter">adapter</span>
+				<span class="studio-card-chev" aria-hidden="true">›</span>
+			</summary>
+			<div class="studio-card-body">
+				<p class="studio-card-note"><span class="muted">{ ad.Kind }</span> · <code>{ ad.Source }</code></p>
+			</div>
+		</details>
+	}
+}
+
+// ---------- right column: YAML ----------
+
+// studioYAML renders the dark YAML pane: a header row
+// (kiff.yaml · live) and the live YAML body with a stage
+// comment baked in by the draft renderer.
+templ studioYAML(v StudioView) {
+	<div class="studio-yaml-head">
+		<span class="studio-yaml-name">kiff.yaml</span>
+		if v.Preview {
+			<span class="studio-yaml-live studio-yaml-example">example</span>
+		} else if v.Draft.UpdatedAt > 0 {
+			<span class="studio-yaml-live">live</span>
+		} else {
+			<span class="studio-yaml-live studio-yaml-draft">draft</span>
+		}
+	</div>
+	<pre class="studio-yaml-body"><code>{ studioStageComment(v.EffectiveStage()) + "\n\n" + v.Draft.YAMLPreview() }</code></pre>
+	if v.Draft.ScaffoldEnabled() {
+		<div class="studio-scaffold" id="studio-scaffold">
+			<p class="studio-scaffold-label">take it to your codebase</p>
+			<p class="studio-scaffold-note">
+				Your domain is executable software. Download the descriptor and
+				generate a framework-faithful domain package — state machine,
+				action contracts, TODO executor stubs, and passing tests — in your
+				repo, then fill in the executor bodies with your AI agent.
+			</p>
+			<ol class="studio-scaffold-steps">
+				<li>install the CLI: <code>go install github.com/kiff/kiff/cmd/kiff@v0.7.0</code></li>
+				<li><a href="/dashboard/build/scaffold/descriptor.json">↓ descriptor.json</a></li>
+				<li><code>kiff scaffold -descriptor descriptor.json github.com/you/yourmodule</code></li>
+				<li>finish the executor bodies in-repo</li>
+				<li>confirm it's complete: <code>kiff verify</code></li>
+			</ol>
+			<details class="studio-scaffold-files">
+				<summary>or grab the generated files directly</summary>
+				<ul>
+					<li><a href="/dashboard/build/scaffold/domain.go">↓ domain.go</a></li>
+					<li><a href="/dashboard/build/scaffold/actions.go">↓ actions.go</a></li>
+					<li><a href="/dashboard/build/scaffold/domain_test.go">↓ domain_test.go</a></li>
+				</ul>
+			</details>
+		</div>
+	}
+}
+
+// ---------- footer row: explainers ----------
+
+// studioExplainerRow renders the bottom row of primitive
+// explainer cards. Branches by effective stage so the vocabulary
+// swaps as the user advances or navigates.
+templ studioExplainerRow(v StudioView) {
+	<div class="studio-explainers">
+		for _, e := range studioExplainersFor(v.EffectiveStage()) {
+			<article class={ "studio-explainer", "studio-explainer-" + e.Kind }>
+				<header class="studio-explainer-head">
+					<span class="studio-explainer-kind">{ e.Kind }</span>
+					<span class="studio-explainer-sep" aria-hidden="true">·</span>
+					<span class="studio-explainer-name">{ e.Name }</span>
+				</header>
+				<h4 class="studio-explainer-title">{ e.Title }</h4>
+				<p class="studio-explainer-body">{ e.Body }</p>
+			</article>
+		}
+	</div>
+}
+
+// ---------- helpers (non-templ Go) ----------
+
+// studioStageReached reports whether a stage is available to
+// navigate to. Stage 4 is special: it's reachable whenever the
+// draft is at StageRules or above, even without a persisted
+// adapter, so users can inspect the audit/adapter/scaffold cards.
+func studioStageReached(draftStage, target studio_view.Stage) bool {
+	if target == studio_view.StageFull {
+		return draftStage >= studio_view.StageRules
+	}
+	return draftStage >= target
+}
+
+func studioStageClass(reached, active bool) string {
+	switch {
+	case active:
+		return "studio-stage-active"
+	case reached:
+		return "studio-stage-reached"
+	default:
+		return "studio-stage-pending"
+	}
+}
+
+// studioBridgeStage returns the 1.4 bridge stage this domain has
+// reached, for the live orientation header:
+//
+//   1 Derive   — a starting point (no derived draft content yet)
+//   2 Scaffold — a derived draft exists (entity + ≥1 action) to take
+//                to the codebase
+//   3 Review   — the contract is complete enough to activate
+//                (StageShape+), ready to review and bring up
+//   4 Activate — a domain is already active for this tenant
+//
+// It reflects bridge state, not the legacy block-ladder stage, and it
+// drives only the header highlight — never what the page renders.
+func studioBridgeStage(v StudioView) int {
+	switch {
+	case v.ActiveControl != nil && v.ActiveControl.Status == "active":
+		return 4
+	case v.Draft.ActivateEnabled():
+		return 3
+	case v.Draft.Blueprint.Entity != "" && len(v.Draft.Blueprint.Actions) > 0:
+		return 2
+	default:
+		return 1
+	}
+}
+
+func studioSaveClass(v StudioView) string {
+	if v.Draft.UpdatedAt == 0 {
+		return "studio-save-ready"
+	}
+	return "studio-save-saved"
+}
+
+// riskPillClass maps the risk label to its pill modifier so the
+// CSS renders low/medium muted, high in warm, critical in red.
+func riskPillClass(risk string) string {
+	switch risk {
+	case "critical":
+		return "studio-pill-risk-critical"
+	case "high":
+		return "studio-pill-risk-high"
+	case "medium":
+		return "studio-pill-risk-med"
+	default:
+		return "studio-pill-risk-low"
+	}
+}
+
+// studioStageComment is the YAML pane's stage banner — a
+// one-line `#` comment that names what the YAML reflects at
+// the user's current stage. Prepended to the <pre> body.
+func studioStageComment(s studio_view.Stage) string {
+	switch s {
+	case studio_view.StageScratch:
+		return "# Stage 1 — minimum viable domain"
+	case studio_view.StageShape:
+		return "# Stage 2 — state machine + transitions"
+	case studio_view.StageRules:
+		return "# Stage 3 — risk, approval, permissions"
+	case studio_view.StageFull:
+		return "# Stage 4 — audit + adapters · scaffold ready"
+	}
+	return ""
+}
+
+func transitionFromLabel(from string) string {
+	if from == "" {
+		return "∅"
+	}
+	return from
+}
+
+func joinCSV(items []string) string {
+	out := ""
+	for i, s := range items {
+		if i > 0 {
+			out += ", "
+		}
+		out += s
+	}
+	return out
+}
+
+func pluralizeRoles(n int) string {
+	if n == 1 {
+		return "role"
+	}
+	return "roles"
+}

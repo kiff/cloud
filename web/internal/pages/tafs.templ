@@ -1,0 +1,279 @@
+package pages
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/assets"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Tafs renders /tafs in English.
+templ Tafs(o OfferLinks) {
+	@tafsPage(tafsEN, o)
+}
+
+// tafsPage is /tafs in one language: nine screens, then the kiff footer,
+// which opens with a band on what tafs does with a Google account. It
+// reads top to bottom as written; on a large screen js/tafs.js turns the
+// screens sideways under the page's own scroll, and lets the stickers drift.
+templ tafsPage(w tafsWords, o OfferLinks) {
+	@components.LayoutBare(w.Title, w.Description, "css/fonts.css", "css/tafs.css") {
+		<script src={ assets.URL("js/tafs.js") }></script>
+		<a class="skip" href="#main">{ w.Skip }</a>
+		<header class="top">
+			<a class="brand" href="#top"><img src={ assets.URL("img/tafs/tafs-mascot-128.png") } alt="" width="40" height="40"/><span>tafs</span></a>
+			<nav class="nav" aria-label={ w.Menu }>
+				<a href="#pricing">{ w.Pricing }</a>
+				<a href="#download">{ w.Download }</a>
+			</nav>
+		</header>
+		<main id="main" class="hs" tabindex="-1">
+			<div class="stick">
+				<div class="track">
+					<section class="p hero" id="top">
+						<div class="wrap">
+							<h1>{ w.H1 } <em>{ w.H1Em }</em></h1>
+							<p class="small">{ w.Lede }</p>
+						</div>
+						<ul class="stickers">
+							<li class="st pill" style="--x:66%;--y:20%;--r0:-8deg;--c:var(--straw);--t:#fff" data-x=".5" data-r="-14">{ w.Jobs[0] }</li>
+							<li class="st pill" style="--x:72%;--y:36%;--r0:6deg;--c:var(--lemon)" data-x=".8" data-r="10">{ w.Jobs[1] }</li>
+							<li class="st pill" style="--x:62%;--y:52%;--r0:-4deg;--c:var(--mint)" data-x=".35" data-r="-6">{ w.Jobs[2] }</li>
+							<li class="st pill" style="--x:74%;--y:66%;--r0:9deg;--c:var(--blue);--t:#fff" data-x=".9" data-r="16">{ w.Jobs[3] }</li>
+						</ul>
+						@tafsBadge("c1", "var(--grape)", "#fff", w.HeroRing, w.YesNo, "--x:86%;--y:43%;--s:130px", "1.1", "40")
+						<nav class="lang-row" aria-label={ w.Languages }>
+							for i, a := range components.AlternatesOf("/tafs") {
+								<a class="st lng" href={ templ.SafeURL(a.Path) } hreflang={ a.Lang } lang={ a.Lang } { tafsLangSticker(i)... } { tafsCurrent(w, a.Lang)... }><b>{ strings.ToUpper(a.Lang) }</b>{ a.Name }</a>
+							}
+						</nav>
+						<span class="hint" aria-hidden="true">{ w.Scroll } →</span>
+					</section>
+					<section class="p taf">
+						@tafsCopy(w.Taf)
+						@tafsGiant(w.Taf)
+						@tafsBadge("c2", "var(--ink)", "var(--lemon)", w.Taf.Ring, "le taf", "--x:24%;--y:58%;--s:170px;--r0:-12deg", ".7", "30")
+						<p class="st tag" style="--x:70%;--y:14%;--r0:7deg;--c:var(--straw);--t:#fff" data-x="1" data-r="12">{ w.Taf.Stickers[0] }<br/>{ w.Taf.Stickers[1] }</p>
+						@tafsIdx(2, w.Taf)
+					</section>
+					<section class="p prob">
+						@tafsCopy(w.Problem)
+						@tafsGiant(w.Problem)
+						<p class="st tag" style="--x:64%;--y:16%;--r0:-9deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-16">{ w.Problem.Stickers[0] }</p>
+						<p class="st pill" style="--x:72%;--y:30%;--r0:8deg;--c:var(--lemon)" data-x="1.2" data-r="18">{ w.Problem.Stickers[1] }</p>
+						<svg class="st badge" viewBox="0 0 160 160" style="--x:80%;--y:46%;--s:160px" data-x=".6" data-r="-30" aria-hidden="true">
+							<polygon points="80,4 134,26 156,80 134,134 80,156 26,134 4,80 26,26" fill="var(--white)"></polygon>
+							<defs><path id="c3" d="M80 80 m-54 0 a54 54 0 1 1 108 0 a54 54 0 1 1 -108 0"></path></defs>
+							<g class="spin"><text fill="var(--red)"><textPath href="#c3" { tafsRing(w.Problem.Ring, 336)... }>{ w.Problem.Ring }</textPath></text></g>
+							<text class="mid" x="80" y="88" text-anchor="middle" fill="var(--ink)">{ w.Stop }</text>
+						</svg>
+						@tafsIdx(3, w.Problem)
+					</section>
+					<section class="p does">
+						<h2 class="lines3" { w.doesFit()... }>
+							<span>{ w.DoesLines[0][0] } <i class="mint">{ w.DoesLines[0][1] }</i></span>
+							<span>{ w.DoesLines[1][0] } <i class="lemon">{ w.DoesLines[1][1] }</i></span>
+							<span>{ w.DoesLines[2][0] } <i class="straw">{ w.DoesLines[2][1] }</i></span>
+						</h2>
+						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:78%;--y:12%;--s:150px", ".9", "36")
+						@tafsIdx(4, w.Does)
+					</section>
+					<section class="p diff">
+						<div class="copy">
+							<h2 class="big">{ w.Different.Big }</h2>
+							<p class="small">{ w.Different.Small }</p>
+							<p class="kcap"><b>{ w.Card.Label }</b> { w.CardLine }</p>
+						</div>
+						@tafsGiant(w.Different)
+						<div class="st" style="--x:52%;--y:12%;--r0:-5deg" data-x=".55" data-r="-8">
+							<div class="kcard" role="group" aria-label={ w.Card.Label }>
+								<div class="h"><b>{ w.Card.Title }</b><span>{ w.Card.Signed }</span></div>
+								<ul class="ls">
+									<li><i class="mint">{ w.Card.Rows[0][0] }</i><span>{ w.Card.Rows[0][1] }</span></li>
+									<li><i class="lemon">{ w.Card.Rows[1][0] }</i><span>{ w.Card.Rows[1][1] }</span></li>
+									<li><i class="straw">{ w.Card.Rows[2][0] }</i><span>{ w.Card.Rows[2][1] }</span></li>
+								</ul>
+							</div>
+						</div>
+						<div class="st ast" style="--x:68%;--y:47%;--r0:6deg" data-x="1" data-r="12">
+							<div class="ask" role="group" aria-label={ w.Card.AskLabel }>
+								<small>{ w.Card.Needs }</small><b>{ w.Card.Question }</b><span>{ w.Card.Why }</span>
+								<div class="yn" aria-hidden="true"><i>{ w.Card.No }</i><i>{ w.Card.Yes }</i></div>
+							</div>
+						</div>
+						@tafsBadge("c5", "var(--lemon)", "var(--ink)", w.Different.Ring, "kiff", "--x:86%;--y:12%;--s:150px", "1.2", "-40")
+						@tafsIdx(5, w.Different)
+					</section>
+					<section class="p names">
+						<div class="words">
+							<h2 class="kicker">{ w.Names.Big }</h2>
+							<dl>
+								<div><dt lang="fr">taf</dt><dd>{ w.Glosses[0] }</dd></div>
+								<div><dt lang="fr">planque</dt><dd>{ w.Glosses[1] }</dd></div>
+								<div><dt lang="fr">kiff</dt><dd>{ w.Glosses[2] }</dd></div>
+							</dl>
+						</div>
+						<p class="st pill" style="--x:66%;--y:70%;--r0:-6deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-10">{ w.Names.Stickers[0] }</p>
+						@tafsIdx(6, w.Names)
+					</section>
+					<section class="p why">
+						@tafsCopy(w.Why)
+						@tafsGiant(w.Why)
+						<ul class="stickers">
+							<li class="st pill" style="--x:62%;--y:14%;--r0:-7deg;--c:var(--mint)" data-x=".6" data-r="-12">{ w.Why.Stickers[0] }</li>
+							<li class="st pill" style="--x:72%;--y:28%;--r0:5deg;--c:var(--lemon)" data-x="1" data-r="10">{ w.Why.Stickers[1] }</li>
+							<li class="st pill" style="--x:60%;--y:42%;--r0:8deg;--c:var(--white)" data-x=".4" data-r="14">{ w.Why.Stickers[2] }</li>
+							<li class="st pill" style="--x:74%;--y:54%;--r0:-5deg;--c:var(--straw);--t:#fff" data-x="1.2" data-r="-14">{ w.Why.Stickers[3] }</li>
+						</ul>
+						@tafsIdx(7, w.Why)
+					</section>
+					<section class="p price" id="pricing">
+						<div class="copy">
+							<h2 class="big">{ w.Price.Big }</h2>
+							<p class="small">{ w.priceLine() }</p>
+						</div>
+						<div class="giant" { tafsFit(w.Cost.money(TafsSoloCents))... } data-x="-.25">{ w.Cost.money(TafsSoloCents) }</div>
+						<p class="st tag" style="--x:62%;--y:14%;--r0:-6deg;--c:var(--white)" data-x=".7" data-r="-10">{ w.Price.Stickers[0] }<br/>{ w.topUp() }</p>
+						<p class="st tag" style="--x:78%;--y:24%;--r0:8deg;--c:var(--ink);--t:#fff" data-x="1.1" data-r="14">{ w.Price.Stickers[2] }<br/>{ w.Price.Stickers[3] }</p>
+						@tafsBadge("c6", "var(--straw)", "#fff", w.Price.Ring, "€", "--x:66%;--y:44%;--s:150px", ".9", "30")
+						@tafsIdx(8, w.Price)
+					</section>
+					<section class="p dl" id="download">
+						<div class="copy">
+							if g := getComputers(); len(g) > 0 {
+								<h2 class="big">{ w.shared().Big }</h2>
+								<p class="small">{ w.shared().Small }</p>
+							} else {
+								<h2 class="big">{ w.Get.Big }</h2>
+								<p class="small">{ w.Get.Small }</p>
+							}
+							<div class="btns">
+								for _, a := range getComputers() {
+									<a class={ "pf", "pf-" + a.OS, templ.KV("hero", a.OS == "macos13") } href={ w.path("/tafs/download") }>
+										if a.OS == "linux" {
+											@tux()
+										}
+										<span>
+											if pre := w.downloadFor(0); pre != "" {
+												<small>{ pre }</small>
+											}
+											<b class="wm">{ a.Name }</b>
+											if post := w.downloadFor(1); post != "" {
+												<small>{ post }</small>
+											}
+										</span>
+										if a.OS == "macos13" {
+											<i class="go" aria-hidden="true">↓</i>
+										}
+									</a>
+								}
+								if o.PlayURL != "" {
+									<a class="gpb" href={ templ.SafeURL(o.PlayURL) } rel="noopener"><img src={ "/static/" + w.shared().PlayBadge } alt="Google Play" width="646" height="192"/></a>
+								}
+								<span class="soon">{ w.Get.Stickers[1] }</span>
+							</div>
+							// The rest of "Get it": stacked under the buttons, or the
+							// second column where the page runs sideways (tafs.css).
+							<div class="dl-side">
+								<div class="watches">
+									@watchTile("dl-os-wearos", "Wear OS", WatchesSub, w.shared().WearOS, WatchLive, o.PlayURL)
+									@watchTile("dl-os-applewatch", "Apple Watch", "", w.shared().AppleWatch, o.AppStoreLive, AppStoreURL)
+								</div>
+								if getOlderMac() {
+									<a class="older" href={ w.path("/tafs/download") }>{ w.shared().olderMac() }</a>
+								} else {
+									<a class="gh" href={ w.path("/tafs/download") }>
+										<span>{ w.Get.Stickers[3] }</span>
+									</a>
+								}
+								<a class="gh" href="https://github.com/kiff/tafs" rel="noopener">
+									<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+									<span>{ w.Get.Stickers[2] }</span>
+								</a>
+								<p class="tm">{ w.shared().Notice }</p>
+							</div>
+						</div>
+						@tafsGiant(w.Get)
+						<img class="st mascot" src={ assets.URL("img/tafs/tafs-mascot-512.png") } alt="" width="512" height="512" loading="lazy" style="--x:62%;--y:14%;--r0:-8deg" data-x=".8" data-r="-14"/>
+						@tafsIdx(9, w.Get)
+					</section>
+				</div>
+			</div>
+		</main>
+		<div class="bar" aria-hidden="true"><i></i></div>
+		<footer class="kf">
+			<section class="kg" id="google" aria-labelledby="google-h">
+				<h2 id="google-h">{ w.Google.Head }</h2>
+				<p>{ w.Google.Text } <a href={ w.legalPath(tafsGoogleURL) }>{ w.Google.Link } →</a>{ w.legalInEnglish(tafsGoogleURL) }</p>
+			</section>
+			<div class="row1">
+				<div><p class="mark">kiff</p><p>{ w.Tagline }</p></div>
+				<div>
+					<h2>tafs</h2>
+					<ul>
+						<li><a href={ w.path("/tafs/download") }>{ w.Download }</a></li>
+						<li><a href="#pricing">{ w.Pricing }</a></li>
+						<li><a href="https://github.com/kiff/tafs" rel="noopener">{ w.OpenCode }</a></li>
+					</ul>
+				</div>
+				<div>
+					<h2>kiff</h2>
+					<ul>
+						<li><a href={ w.path("/docs") }>{ w.Docs }</a>{ w.inEnglish() }</li>
+						<li><a href={ w.path("/security") }>{ w.Security }</a></li>
+						<li><a href={ w.path("/whitepaper") }>{ w.Whitepaper }</a>{ w.inEnglish() }</li>
+					</ul>
+				</div>
+				<div>
+					<h2>{ w.Legal }</h2>
+					<ul>
+						<li><a href={ w.path("/privacy") }>{ w.Privacy }</a></li>
+						<li><a href={ w.path("/terms") }>{ w.Terms }</a></li>
+						<li><a href={ w.legalPath("/tafs/privacy") }>{ w.TafsPrivacy }</a>{ w.legalInEnglish("/tafs/privacy") }</li>
+						<li><a href={ w.legalPath("/tafs/terms") }>{ w.TafsTerms }</a>{ w.legalInEnglish("/tafs/terms") }</li>
+						<li><a href="mailto:support@kiff.dev">support@kiff.dev</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="row2">
+				<p>© { tafsYear() } KIFF · <span lang="en">Part of Claude for Startups.</span> { w.Cost.NotAffiliated }</p>
+				<nav class="langs" aria-label={ w.Languages }>
+					for _, a := range components.AlternatesOf("/tafs") {
+						<a href={ templ.SafeURL(a.Path) } hreflang={ a.Lang } lang={ a.Lang } { tafsCurrent(w, a.Lang)... }>{ strings.ToUpper(a.Lang) }</a>
+					}
+				</nav>
+			</div>
+		</footer>
+	}
+}
+
+// tafsCopy is a screen's heading and its line.
+templ tafsCopy(s tafsScreen) {
+	<div class="copy">
+		<h2 class="big">{ s.Big }</h2>
+		if s.Small != "" {
+			<p class="small">{ s.Small }</p>
+		}
+	</div>
+}
+
+// tafsGiant is a screen's giant word, sized to fit the screen.
+templ tafsGiant(s tafsScreen) {
+	<div class="giant" { tafsFit(s.Giant)... } data-x="-.3">{ s.Giant }</div>
+}
+
+// tafsIdx numbers a screen in its corner.
+templ tafsIdx(n int, s tafsScreen) {
+	<span class="idx" aria-hidden="true">0{ fmt.Sprint(n) } · { s.Idx }</span>
+}
+
+// tafsBadge is a round sticker: its ring of words, spinning, and its word.
+templ tafsBadge(id, fill, ink, ring, mid, place, dx, dr string) {
+	<svg class="st badge" viewBox="0 0 160 160" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... } aria-hidden="true">
+		<circle cx="80" cy="80" r="78" fill={ fill }></circle>
+		<defs><path id={ id } d="M80 80 m-58 0 a58 58 0 1 1 116 0 a58 58 0 1 1 -116 0"></path></defs>
+		<g class="spin"><text fill={ ink }><textPath href={ "#" + id } { tafsRing(ring, 360)... }>{ ring }</textPath></text></g>
+		<text class="mid" x="80" y="88" text-anchor="middle" fill={ ink }>{ mid }</text>
+	</svg>
+}

@@ -1,0 +1,91 @@
+<h1 id="google-adk">Google ADK</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Google ADK agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the Google ADK hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was verified against the real <code>google-adk</code>
+package.</p>
+
+<p><strong>Shape: vote (inverted-control).</strong> ADK runs the tool itself; its
+<code>before_tool_callback</code> only votes — return <code>None</code> to allow, return a
+<code>dict</code> to block (the dict becomes the tool result). So the guard uses
+<code>observe()</code> / <code>decide_only()</code>, not a <code>run</code> callback. See
+<a href="/docs/archive/2026-10-10/concepts">how the guard works</a>.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus Google ADK, the framework you're guarding:
+pip install google-adk
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from google.adk.agents import LlmAgent
+from kiff_guard import Guard
+from kiff_guard.adapters.google_adk import kiff_before_tool_callback
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = LlmAgent(
+    model=...,
+    tools=[refund_order, send_email],
+    before_tool_callback=kiff_before_tool_callback(guard),
+)
+</code></pre>
+
+<p>Run the agent as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Only the guard changes:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from kiff_guard.adapters.google_adk import kiff_before_tool_callback
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+agent = LlmAgent(model=..., tools=[refund_order],
+                 before_tool_callback=kiff_before_tool_callback(guard))
+</code></pre>
+
+<p>In enforce mode a withheld decision returns a <code>dict</code> to ADK, so the tool
+is skipped and the reason is handed back to the model as the result. An
+allowed decision returns <code>None</code> and the tool runs. On a transport error
+the guard fails closed (blocks) by default.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>ADK calls <code>before_tool_callback(tool, args, tool_context)</code> before a
+tool&rsquo;s <code>run_async</code>. Returning <code>None</code> runs the tool; returning a <code>dict</code>
+skips it and uses that dict as the result — the block path.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/google_adk.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/google_adk.py</code></a></li>
+<li>Google ADK docs: <a href="https://google.github.io/adk-docs/" target="_blank" rel="noreferrer noopener">google.github.io/adk-docs</a> (Callbacks → Before Tool Callback)</li>
+</ul>

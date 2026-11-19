@@ -1,0 +1,47 @@
+package pages
+
+// tafsNL is /nl/tafs.
+var tafsNL = tafsWords{
+	Cost:        tafsCostNL,
+	Title:       "tafs: AI-agents die je routinewerk doen",
+	Description: "tafs is een app waarin AI-agents, tafs genoemd, het routinewerk van je bedrijf doen, zoals e-mail beantwoorden, binnen de limieten die jij op een Card zet. Alles daarboven wacht op jouw ja.",
+	Skip:        "Naar de inhoud", Menu: "Hoofdmenu", Languages: "Talen", Pricing: "Prijzen", Download: "Download", Scroll: "Scroll",
+
+	H1: "De assistent die het routinewerk", H1Em: "van je bedrijf doet.",
+	Lede:     "In de apps die je al gebruikt. Jij stelt de grenzen in, wat ertoe doet wacht op jouw ja, en de AI ziet nooit je wachtwoorden of sleutels.",
+	Jobs:     [4]string{"Elk ticket bevestigen", "Nieuwe leads opvolgen", "Vertraagde pakketten nagaan", "Een klant behouden die opzegt"},
+	HeroRing: "geen blinde toegang · getekend op je telefoon ·", YesNo: "ja/nee",
+
+	Taf: tafsScreen{Big: "Een taf is een taak die je aan een agent geeft.", Small: "tafs voert ze uit voor je bedrijf.", Giant: "taf", Idx: "Wat het is",
+		Ring: "le taf · de taak · het werk · le taf ·", Stickers: []string{"jij geeft het.", "hij doet het."}},
+	Problem: tafsScreen{Big: "De meeste AI vraagt om de sleutels van alles en hoopt er het beste van.",
+		Small: "Dus het werk dat ertoe doet, wordt nooit uit handen gegeven. Wij vinden dat de omgekeerde wereld.", Giant: "Blindelings?", Idx: "Het probleem",
+		Ring: "je klanten · je gegevens · je deadlines ·", Stickers: []string{"volledige toegang", "✕ nee, bedankt"}},
+	Stop:      "stop",
+	Does:      tafsScreen{Idx: "Wat het doet", Ring: "tickets · leads · pakketten · opzeggingen · opvolging ·"},
+	DoesLines: [3][2]string{{"Haalt de routine", "van je bord."}, {"Elke klant krijgt", "antwoord."}, {"Houdt je uit de", "problemen."}},
+	Different: tafsScreen{Big: "Geen antwoord betekent nee.",
+		Small: "Elke taf werkt onder een Card die jij tekent. De limieten liggen buiten de AI, dus die kan zich er niet langs praten.",
+		Giant: "Jouw regels.", Idx: "Wat het anders maakt", Ring: "gehost door kiff · in de EU · gecontroleerd buiten de AI ·"},
+	Card: tafsCard{Label: "Een voorbeeld van een Card", AskLabel: "Een goedkeuring op je telefoon", Title: "Klantantwoorden", Signed: "getekend op je telefoon",
+		Rows:  [3][2]string{{"Doet", "Beantwoordt supporttickets, tot 40 per dag"}, {"Vraagt", "Een antwoord dat een terugbetaling, korting of vervanging belooft, wacht op jou"}, {"Nooit", "Niets wat niet op deze Card staat"}},
+		Needs: "Wacht op jou", Question: "M. Dupont een antwoord sturen dat vervanging belooft?", Why: "Beloftes wachten op jouw ja op de Card Klantantwoorden.", No: "Weigeren", Yes: "Goedkeuren"},
+	CardLine: "Een Card zijn de grenzen die je een taf geeft: wat hij mag doen, in welke apps, hoe vaak, en welke acties op jouw ja wachten. Alles wat er niet op staat, wordt geweigerd.",
+	Names: tafsScreen{Big: "Drie Franse woorden", Idx: "Waarom deze namen",
+		Stickers: []string{"Geef de taf uit handen. Houd de sleutels in de planque. Kiff."}},
+	Glosses: [3]string{"het werk dat je uit handen geeft.", "de schuilplaats waar je sleutels blijven.", "het gevoel als het goed gedaan is."},
+	Why: tafsScreen{Big: "Automatisering moet een bedrijf sterker maken, niet kwetsbaar.", Giant: "Niet kwetsbaar.", Idx: "Waarom we bestaan",
+		Stickers: []string{"Jij houdt de controle", "Bewijs van alles", "Open code", "Privacy voorop"}},
+	Price: tafsScreen{Big: "Begin klein. Schaal op als het druk is.",
+		Small: "%s per maand om te beginnen, met %s credits, inclusief btw. Draait op %s en %s.", Idx: "Wat het kost",
+		Ring: "credits verlopen nooit · geen verrassingen op de rekening ·", Stickers: []string{"Bijkopen", "vanaf %s", "Veel gebruik", "~€ 160 / maand"}},
+	Get: tafsScreen{Big: "Nu op Google Play.", Small: "Android: op Google Play in 33 landen en regio's.", Giant: "haal 'm.", Idx: "Download",
+		Stickers: []string{"Ontdek het op", "App Store, binnenkort", "Wij geloven in open code. Lees hem op GitHub.", "Voor je computer: macOS, Windows en Linux →"}},
+
+	Tagline: "De regels onder tafs. Gehost in de EU.", Legal: "Juridisch",
+	OpenCode: "Open code", Docs: "Docs", Security: "Beveiliging", Whitepaper: "Whitepaper", Privacy: "Privacy", Terms: "Voorwaarden",
+	TafsPrivacy: "Privacy van tafs", TafsTerms: "Voorwaarden van tafs",
+	Google: tafsGoogle{Head: "Wat tafs met je Google-account doet",
+		Text: "Als je een Google-app koppelt, gebruikt een taf die alleen binnen zijn Card. tafs maakt en bewerkt geen afbeeldingen of video's: zijn AI schrijft tekst. Het gebruikt Google-API's of Google-gebruikersgegevens nooit om intieme beelden van iemand te maken, te bewerken of te delen (intieme beelden zonder toestemming, NCII), of welke andere afbeelding van een persoon ook.",
+		Link: "Hoe tafs met je Google-gegevens omgaat"},
+}

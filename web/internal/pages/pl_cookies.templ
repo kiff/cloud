@@ -1,0 +1,155 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CookiesPL is the Cookie Policy (/cookies) in Polish, at /pl/cookies.
+// It is a translation of Cookies: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ CookiesPL() {
+	@components.LayoutSite("KIFF — polityka plików cookie", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@cookiesHeadPL()
+			@cookiesSummaryPL()
+			@cookiesOursPL()
+			@cookiesSignInPL()
+			@cookiesStoragePL()
+			@cookiesControlPL()
+		</article>
+	}
+}
+
+templ cookiesHeadPL() {
+	<header class="legal-head">
+		<p class="legal-badge">Polityka plików cookie · v0.1</p>
+		<h1>Polityka plików cookie</h1>
+		<p class="legal-meta">
+			<strong>Ostatnia aktualizacja:</strong> 23 października 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Jakie pliki cookie ustawiają <code>kiff.dev</code> i
+			<code>app.kiff.dev</code>, do czego służy każdy z nich i jak
+			długo pozostaje. <a href="/pl/privacy">Polityka prywatności</a>
+			opisuje pozostałe dane osobowe, które przetwarzamy. Pytania:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ cookiesSummaryPL() {
+	<section id="summary">
+		<h2>1. W skrócie</h2>
+		<p>
+			Nie ustawiamy żadnych analitycznych plików cookie, żadnych
+			reklamowych plików cookie ani żadnych trackerów innych firm.
+			Poniższe pliki cookie istnieją tylko po to, żeby Cię
+			zalogować i żeby panel działał. Są niezbędne, więc nie
+			wymagają zgody, i nie ma banera cookie. Jeśli kiedykolwiek
+			dodamy plik cookie, który nie jest niezbędny, poprosimy Cię
+			o zgodę, zanim go ustawimy.
+		</p>
+		<p>
+			Czytanie publicznych stron <code>kiff.dev</code> bez
+			logowania nie ustawia żadnego pliku cookie.
+		</p>
+	</section>
+}
+
+templ cookiesOursPL() {
+	<section id="ours">
+		<h2>2. Nasze pliki cookie</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Plik cookie</th>
+						<th>Do czego służy</th>
+						<th>Jak długo pozostaje</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="kiff-session">
+						<td><code>kiff_session</code></td>
+						<td>Utrzymuje Twoje zalogowanie. Zawiera to, kim jesteś (Twój identyfikator logowania, adres e-mail oraz imię i nazwisko), i dane uwierzytelniające, których panel używa w Twoim imieniu. Podpisany, więc nie da się go zmienić, i nieczytelny dla skryptów</td>
+						<td>24 godziny lub do wylogowania</td>
+					</tr>
+					<tr id="kiff-flash">
+						<td><code>kiff_flash</code></td>
+						<td>Przenosi jednorazową wiadomość na następną stronę, na przykład „Twój klucz został utworzony”. Podpisany. Nowego klucza nigdy w nim nie ma</td>
+						<td>Usuwany, gdy odczyta go następna strona, a najpóźniej po 5 minutach</td>
+					</tr>
+					<tr id="kiff-cb-attempts">
+						<td><code>kiff_cb_attempts</code></td>
+						<td>Liczy, ile razy strona logowania została przeładowana, aby zatrzymać logowanie, które wpadło w pętlę. Wysyłany tylko do tej strony</td>
+						<td>5 minut; usuwany, gdy logowanie się zaczyna lub udaje</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Wszystkie trzy to własne pliki cookie, wysyłane tylko przez
+			HTTPS i nieczytelne dla skryptów na stronie.
+			<code>kiff_session</code> i <code>kiff_flash</code> są
+			ustawiane dla <code>.kiff.dev</code>, więc otrzymują je
+			zarówno <code>kiff.dev</code>, jak i
+			<code>app.kiff.dev</code>.
+		</p>
+	</section>
+}
+
+templ cookiesSignInPL() {
+	<section id="sign-in">
+		<h2>3. Pliki cookie naszego dostawcy logowania</h2>
+		<p>
+			Do logowania używamy Clerk (zobacz
+			<a href="/pl/subprocessors#clerk">podmioty podprzetwarzające</a>).
+			Gdy się logujesz, Clerk ustawia własne pliki cookie
+			logowania, w naszej witrynie i w domenie Clerk prowadzonej
+			dla nas, <code>clerk.kiff.dev</code>. Są niezbędne do
+			logowania i nie służą do analityki ani reklamy.
+			<a href="https://clerk.com/docs/guides/how-clerk-works/cookies" target="_blank" rel="noopener">Dokumentacja plików cookie</a>
+			Clerk opisuje każdy z nich i to, jak długo pozostaje.
+		</p>
+	</section>
+}
+
+templ cookiesStoragePL() {
+	<section id="storage">
+		<h2>4. Co zostaje w Twojej przeglądarce</h2>
+		<p>
+			Kilka stron zapamiętuje wybór w pamięci Twojej przeglądarki
+			zamiast w pliku cookie. Nigdy nie jest on do nas wysyłany.
+		</p>
+		<ul>
+			<li><code>kiff-theme</code>: jasny lub ciemny motyw wybrany przez Ciebie w panelu. Przechowywany, dopóki go nie wyczyścisz.</li>
+			<li><code>kiff.gatewayFormat</code>: ostatni format wybrany przez Ciebie przy łączeniu agenta. Przechowywany, dopóki go nie wyczyścisz.</li>
+			<li><code>kiff-demo-tour-step</code>, <code>kiff-demo-tour-active</code> i <code>kiff-demo-theme-touched</code>: miejsce, w którym jesteś w interaktywnym demo. Znikają, gdy zamkniesz kartę.</li>
+		</ul>
+	</section>
+}
+
+templ cookiesControlPL() {
+	<section id="control">
+		<h2>5. Twój wybór</h2>
+		<p>
+			Możesz blokować lub usuwać pliki cookie w ustawieniach
+			swojej przeglądarki. Jeśli zablokujesz nasze lub te od
+			Clerk, nadal możesz czytać publiczną witrynę, ale nie możesz
+			się zalogować. Wylogowanie usuwa
+			<code>kiff_session</code>.
+		</p>
+		<p>
+			Jeśli zmienimy pliki cookie, które ustawiamy, zaktualizujemy
+			tę stronę i jej datę.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Wersja dokumentu:</strong> v0.1.<br/>
+			<strong>Ostatnia aktualizacja:</strong> 23 października 2026.
+		</p>
+	</section>
+}

@@ -1,0 +1,128 @@
+<h1 id="connect-an-external-approver">Connect an external approver</h1>
+
+<p>A separately operated service answers requests held by an Ask Card. KIFF checks
+its bounded grant; the worker&rsquo;s normal MCP collection executes the approved
+call. This connector holds no worker key, tool credential or admin session.
+Python 3.9+ is sufficient; there are no dependencies. Docker is optional.</p>
+
+<p>The connector and configuration examples live in the <a href="https://github.com/kiff/kiff-guard/tree/main/cookbook/external-approver" target="_blank" rel="noreferrer noopener">kiff-guard cookbook</a>.</p>
+
+<h2 id="1-grant-access-in-kiff">1. Grant access in KIFF</h2>
+
+<p>Open <a href="https://app.kiff.dev/cards" target="_blank" rel="noreferrer noopener">Cards</a>, choose an active Card, open its
+<strong>Approvers</strong> tab and choose <strong>Connect an approver</strong>. The Card must use Ask and
+have a per-action amount limit. Three steps follow: the action (and agent) it
+answers, its maximum amount per call (filled in from the Card&rsquo;s own per-call
+limit), and its name and end (a week by default, any date up to 90 days). Only an active admin can grant access.
+Human-only separation of duties prevents external grants.</p>
+
+<p>Copy the <code>kiff_approver_…</code> credential shown once. Keep it in the separate service,
+never in the worker&rsquo;s prompt or environment. Lost it? Revoke that connection and
+create another. The grant cannot add budget, revise the Card or execute a tool.</p>
+
+<h2 id="2-run-the-example">2. Run the example</h2>
+
+<pre><code class="language-sh">git clone https://github.com/kiff/kiff-guard.git
+cd kiff-guard/cookbook/external-approver
+cp connector.example.json connector.json
+cp refund-policy.example.json refund-policy.json
+</code></pre>
+
+<p>Edit <code>connector.json</code> to set <code>context_file</code> to <code>refund-policy.json</code>. Adapt the
+policy to your connected action, amount parameter and target argument. Amounts
+in the policy file use the tool&rsquo;s <strong>stored integer units</strong>: 10000 means €100
+when the tool declares EUR with scale 2. The example&rsquo;s <code>amount_eur</code> uses whole
+euros (scale 0). Give the grant a ceiling above the Card&rsquo;s ordinary per-action
+threshold, while retaining its cumulative budget.</p>
+
+<p>The included synthetic facts let <code>synthetic-order-1</code> be refunded up to 100 stored
+units; <code>synthetic-order-2</code> is not refundable. Other targets defer. In real use,
+replace these fixtures with independently authenticated business facts. Never
+copy the worker&rsquo;s claims into this trusted file.</p>
+
+<p>Enter the credential without placing it in shell history:</p>
+
+<pre><code class="language-sh">read -r -s KIFF_APPROVER_KEY
+export KIFF_APPROVER_KEY
+python3 connector.py --config connector.json
+</code></pre>
+
+<p>It polls every 15 seconds. After the first successful poll, reload the Card:
+<strong>Awaiting connection</strong> becomes <strong>Connected</strong>. More than two minutes without a
+successful poll shows <strong>Not responding</strong>. This proves API contact, not model
+health or an execution guarantee. Ctrl-C stops the service. Use your usual
+process supervisor to keep it running; KIFF does not host it.</p>
+
+<p>To process one batch and exit:</p>
+
+<pre><code class="language-sh">python3 connector.py --config connector.json --once
+</code></pre>
+
+<p>Now have the worker make an MCP call above its Card&rsquo;s per-action threshold and
+inside the grant, using the synthetic target. The connector answers it. The
+worker/plugin collects the approved call using <code>kiff_pending</code> and the same
+arguments/operation id. KIFF rechecks all Card budgets; the tool runs once.</p>
+
+<p>On <strong>Needs you</strong>, open the request to see the service&rsquo;s name, decision, reason
+and the separately recorded tool outcome. Approval alone does not mean it ran.
+Stop the connector or call a target outside its policy: the request stays
+available for human review within the original deadline. An out-of-grant call
+is never listed for this connector. Revoke the connection from the Card to
+withdraw unused approvals; actions already executed remain historical.</p>
+
+<h2 id="optional-model-providers">Optional model providers</h2>
+
+<p>Set <code>provider</code> to <code>jev</code> and supply <code>TYPESAFE_API_KEY</code> through your secret manager,
+or set it to <code>strands</code> and add <code>strands_url</code> pointing to your separately running
+Decider&rsquo;s <code>/v1/systemone</code>. Keep <code>context_file</code>: the model needs trusted policy
+and facts separate from request content. Model errors or malformed answers
+defer to a person; confidence never widens authority.</p>
+
+<p><strong>Model integration is unverified.</strong> The mappings follow the published
+<a href="https://docs.typesafe.ai/api" target="_blank" rel="noreferrer noopener">Jev API</a> and
+<a href="https://github.com/strands-labs/strands-decider" target="_blank" rel="noreferrer noopener">Strands Decider contract</a>, but
+no credentialed model call has been validated. Deterministic connector and
+synthetic MCP validation are documented in the Cloud release PR. Do not treat
+these mappings as a tested model integration.</p>
+
+<h2 id="optional-docker">Optional Docker</h2>
+
+<pre><code class="language-sh">docker build -t kiff-external-approver .
+docker run --rm --read-only --cap-drop=ALL --security-opt=no-new-privileges \
+  --env KIFF_APPROVER_KEY \
+  --mount type=bind,src=&quot;$(pwd)&quot;,dst=/config,readonly \
+  kiff-external-approver
+</code></pre>
+
+<p>For Jev, pass <code>--env TYPESAFE_API_KEY</code> too. Mount only the intended config/facts
+in production. No Docker socket, inbound port or worker credentials are needed.
+The container example has not been validated unless the release evidence says
+otherwise; the plain Python command is the supported runnable path.</p>
+
+<h2 id="interoperability-contract">Interoperability contract</h2>
+
+<p>A signed-in admin creates <code>POST /v1/me/approver-grants</code> with <code>name</code>, <code>card_id</code>,
+<code>worker</code>, <code>action</code>, <code>parameter</code>, <code>max</code>, and RFC3339 <code>expires_at</code>. The principal is
+generated when omitted. List status with <code>GET /v1/me/approver-grants?card_id=…</code>;
+revoke with <code>POST /v1/me/approver-grants/{id}/revoke</code>.</p>
+
+<p>The dedicated credential only accesses:</p>
+
+<ul>
+<li><code>GET /v1/approver/holds</code> — matching requests; a successful read records contact.</li>
+<li><code>GET /v1/approver/holds/{id}</code> — current exact arguments, Card, grant and token.</li>
+<li><code>POST /v1/approver/holds/{id}/answer</code> — <code>review_token</code>, <code>decision</code> (<code>approve</code>,
+<code>reject</code>, <code>defer</code>), required <code>reason_code</code>, optional <code>reason</code> and <code>model</code>.</li>
+</ul>
+
+<p>The token binds the answer to the current held revision and Card. Duplicate
+matching answers are idempotent. 409 means stale/answered/expired; reread, never
+invent new authority. 403 means grant withdrawn, expired or no longer valid;
+stop and contact its admin. Uncovered holds return 404. Read failure returns
+503 and grants nothing. Original deadlines, cumulative ceilings, human review
+and tenant isolation continue to apply. Only one worker/action/amount parameter
+and one Card are supported per grant; overlapping uncovered authority requires
+a person. The connector never supplies its own execution outcome.</p>
+
+<pre><code class="language-sh">python3 -m unittest -v test_connector.py
+</code></pre>

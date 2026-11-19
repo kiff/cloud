@@ -1,0 +1,204 @@
+package pages
+
+import (
+	"net/url"
+	"strconv"
+	"time"
+)
+
+// cardNav is the Card page's four tabs.
+templ cardNav(v CardDetailView) {
+	<nav class="ac-detail-tabs" aria-label="Card sections">
+		@cardTab(v, "overview", "Overview", "", v.Tab == "overview")
+		@cardTab(v, "settings", "Settings", "/settings", v.Tab == "settings")
+		@cardTab(v, "approvers", "Approvers", "/approvers", v.Tab == "approvers")
+		@cardTab(v, "history", "History", "/decisions", cardInHistory(v.Tab))
+	</nav>
+	if cardInHistory(v.Tab) {
+		<nav class="ac-seg" aria-label="History">
+			for _, t := range cardHistoryTabs {
+				<a class={ templ.KV("is-current", v.Tab == t.ID) } href={ templ.SafeURL(cardHref(*v.Card, t.Suffix)) }
+					if v.Tab == t.ID {
+						aria-current="page"
+					}
+				>
+					{ t.Label }
+					if t.ID == "approved" {
+						if v.Statement != nil && v.Statement.ApprovedOutsideError != "" {
+							<span class="ac-tab-count" title="Could not be read">?</span>
+						} else if n := approvedCount(v.Statement); n > 0 {
+							<span class="ac-tab-count">{ strconv.Itoa(n) }</span>
+						}
+					}
+				</a>
+			}
+		</nav>
+	}
+}
+
+templ cardTab(v CardDetailView, id, label, suffix string, current bool) {
+	<a class={ templ.KV("is-current", current) } href={ templ.SafeURL(cardHref(*v.Card, suffix)) }
+		if current {
+			aria-current="page"
+		}
+	>{ label }</a>
+}
+
+// cardOverview fits one screen: the Card, what is left of it, four quick
+// actions, and anything waiting for an answer. The terms are under
+// Settings and the accounting under History › Statement.
+templ cardOverview(v CardDetailView) {
+	{{ live := v.Card.RevokedAt == nil }}
+	<div class="ac-overview">
+		<div class="ac-ov-card">@kCard(*v.Card, v.Balance, "")</div>
+		<div class="ac-ov-side">
+			if ls := v.Balance.Readable(); len(ls) == 0 {
+				<p class="dash-note">Balance unavailable.</p>
+			} else {
+				<div class="ac-balance">
+					<strong>{ balanceValue(ls[0], ls[0].Remaining) }</strong>
+					<span>{ cardBalanceLine(ls[0]) }</span>
+					<progress max="100" value={ strconv.Itoa(ls[0].PercentUsed()) } aria-label="Used"></progress>
+				</div>
+				for _, l := range ls[1:] {
+					<p class="ac-balance-more"><strong>{ balanceValue(l, l.Remaining) }</strong> { cardBalanceLine(l) }</p>
+				}
+				if notice := activeBudgetNotice(v.Statement); notice != "" {
+					<p class="ac-balance-more"><a href={ templ.SafeURL(cardHref(*v.Card, "/statement")) }>{ notice }</a></p>
+				}
+			}
+			if live {
+				<nav class="ac-quick" aria-label="Quick actions">
+					@quickAction(cardHref(*v.Card, "/settings"), "Limits", iconGauge)
+					@quickAction(cardHref(*v.Card, "/extra-room"), "Extra room", iconPlus)
+					@quickAction(cardHref(*v.Card, "/holder"), "Share", iconShare)
+					@quickAction(cardHref(*v.Card, "/revoke"), "Revoke", iconBan)
+				</nav>
+			}
+			@heldForCard(v)
+		</div>
+	</div>
+}
+
+templ quickAction(href, label, icon string) {
+	<a href={ templ.SafeURL(href) }><span>@rowIcon(icon)</span>{ label }</a>
+}
+
+templ rowIcon(d string) {
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ d }></path></svg>
+}
+
+templ chevron() {
+	<svg class="ac-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+}
+
+// cardSettingsPage is the Card's terms as rows; each opens the one step
+// that changes it. Connecting the agent sits below them.
+templ cardSettingsPage(v CardDetailView) {
+	<div class="ac-settings ac-settings-grid">
+		for _, g := range cardSettingsGroups(v) {
+			<section class="ac-sgroup">
+				<h2>{ g.Title }</h2>
+				<div class="ac-slist">
+					for _, r := range g.Rows {
+						if r.Href != "" {
+							<a class="ac-srow" href={ templ.SafeURL(r.Href) }>
+								<span class="ac-si">@rowIcon(r.Icon)</span>
+								<span class="ac-sl">{ r.Label }</span>
+								<span class={ "ac-sv", templ.KV("wk-mono", r.Mono) }>{ r.Value }</span>
+								@chevron()
+							</a>
+						} else {
+							<div class="ac-srow">
+								<span class="ac-si">@rowIcon(r.Icon)</span>
+								<span class="ac-sl">{ r.Label }</span>
+								<span class={ "ac-sv", templ.KV("wk-mono", r.Mono) }>{ r.Value }</span>
+							</div>
+						}
+					}
+				</div>
+			</section>
+		}
+		if v.Card.RevokedAt == nil {
+			<a class="ac-srow ac-s-danger" href={ templ.SafeURL(cardHref(*v.Card, "/revoke")) }>
+				<span class="ac-si">@rowIcon(iconBan)</span>
+				<span class="ac-sl">Revoke this Card</span>
+			</a>
+		} else if v.Card.ArchivedAt == nil {
+			<form method="post" action={ templ.SafeURL(cardHref(*v.Card, "/archive")) }>
+				<button class="ac-srow" type="submit">
+					<span class="ac-si">@rowIcon(iconList)</span>
+					<span class="ac-sl">Archive this Card</span>
+				</button>
+			</form>
+		}
+	</div>
+	if cardInForce(*v.Card, time.Now()) {
+		if IsToolCard(*v.Card) {
+			@toolCardConnect(v)
+		} else {
+			@cardConnect(v)
+		}
+	}
+}
+
+// cardApproversPage lists the services that may answer this Card's held
+// calls, each with its status as a badge, and opens the connect steps.
+templ cardApproversPage(v CardDetailView) {
+	<div class="ac-settings" id="external-approver">
+		<p class="ac-lede">A service you run that answers this Card’s held calls. It can approve once, reject, or leave a call for you. It can’t change the Card or add budget.</p>
+		if !v.ApproverAdmin {
+			<p class="ac-callout">Only an admin of this account can see and connect approvers.</p>
+		} else {
+			if v.ApproverError != "" {
+				<p class="dash-note dash-note-warn">{ v.ApproverError }</p>
+			}
+			if !v.Card.ComesHome() {
+				<div class="ac-callout">
+					<p>This Card refuses calls past its limit, so nothing is held for an approver to answer.</p>
+					if v.Card.RevokedAt == nil {
+						<a href={ templ.SafeURL(cardEditHref(*v.Card, "past")) }>Change it to Ask</a>
+					}
+				</div>
+			}
+			for _, g := range v.Approvers {
+				<article class="ac-approver">
+					<header>
+						<h3>{ g.Name }</h3>
+						<span class={ "ac-badge", "ac-badge-" + approverTone(g) }>{ approverStatus(g) }</span>
+					</header>
+					<dl>
+						<div><dt>Answers</dt><dd><code>{ g.Action }</code> for <code>{ g.Worker }</code></dd></div>
+						<div><dt>Up to</dt><dd>{ approverAmount(g, v.ApproverScopes) } a call</dd></div>
+						<div>
+							if approverLive(g) {
+								<dt>Ends</dt>
+							} else {
+								<dt>Ended</dt>
+							}
+							<dd>{ g.ExpiresAt.UTC().Format("2 Jan 2006, 15:04 UTC") }</dd>
+						</div>
+						if g.LastSeenAt != nil {
+							<div><dt>Last seen</dt><dd>{ timeAgo(*g.LastSeenAt) }</dd></div>
+						}
+					</dl>
+					if h := approverHint(g); h != "" {
+						<p class="ac-approver-hint">{ h }</p>
+					}
+					if approverLive(g) {
+						<a class="ac-pill" href={ templ.SafeURL(cardHref(*v.Card, "/approvers/"+url.PathEscape(g.ID)+"/revoke")) }>Revoke</a>
+					}
+				</article>
+			}
+			if len(v.Approvers) == 0 && v.ApproverError == "" {
+				<p class="ac-empty">No connected approvers. Held calls wait in Needs you for a signed-in person who may approve.</p>
+			}
+			if v.Card.ComesHome() && cardInForce(*v.Card, time.Now()) && len(v.ApproverScopes) > 0 && v.ApproverError == "" {
+				<a class="ac-cta" href={ templ.SafeURL(cardHref(*v.Card, "/approvers/new")) }>Connect an approver</a>
+			} else if v.Card.ComesHome() && len(v.ApproverScopes) == 0 {
+				<p class="dash-note">An approver answers held calls up to an amount, so it needs a Card with a per-call amount limit.</p>
+			}
+			<p class="dash-note">If an approver is down, or a call is above what it may answer, you can still answer in <a href="/needs-you">Needs you</a> before the call’s deadline. <a href="/docs/external-approvers">Connector guide</a></p>
+		}
+	</div>
+}

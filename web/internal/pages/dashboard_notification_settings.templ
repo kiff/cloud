@@ -1,0 +1,45 @@
+package pages
+
+
+// settingsNotificationsCard is Settings › Notifications, formerly
+// /dashboard/notifications/settings: the per-rule notification
+// preferences. Each rule is a no-JS form (RFC
+// 006) that POSTs the target state; the handler persists it to the
+// tenant's notification prefs, which actually gate the feed + bell.
+templ settingsNotificationsCard(v DashboardView) {
+	<article class="dash-card dash-rule-list">
+		<div class="dash-rule-head">
+			<span>Rule</span>
+			<span>Scope</span>
+			<span>Delivery</span>
+			<span>Cadence</span>
+			<span>Status</span>
+			<span></span>
+		</div>
+		for _, row := range notificationRuleRows(v.NotificationPrefs) {
+			@notificationRuleRow(row)
+		}
+	</article>
+	<p class="dash-note dash-rule-foot">
+		Turning a rule off only hides its notices in the bell; the work itself still waits on <a href="/needs-you">Needs you</a>:
+		calls a Card held and domain approvals in Waiting, blocked calls in Blocked.
+	</p>
+}
+
+templ notificationRuleRow(row NotificationRuleRow) {
+	<div class="dash-rule-row">
+		<span class="dash-rule-name">
+			<strong>{ row.Label }</strong>
+			<small>{ row.Desc }</small>
+		</span>
+		<span class="dash-rule-cell">{ row.Scope }</span>
+		<span class="dash-rule-cell">{ row.Delivery }</span>
+		<span class="dash-rule-cell">{ row.Cadence }</span>
+		<span class={ notificationRuleStatusClass(row.Enabled) }>{ notificationRuleStatusLabel(row.Enabled) }</span>
+		<form method="post" action="/dashboard/notifications/settings" class="dash-rule-form">
+			<input type="hidden" name="rule" value={ row.Key }/>
+			<input type="hidden" name="enabled" value={ notificationRuleTargetState(row.Enabled) }/>
+			<button type="submit" class="btn btn-secondary btn-sm">{ notificationRuleToggleLabel(row.Enabled) }</button>
+		</form>
+	</div>
+}

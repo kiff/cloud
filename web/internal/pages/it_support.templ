@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SupportIT is the support page (/support) in Italian, at /it/support.
+// It is a translation of Support: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ SupportIT() {
+	@components.LayoutSite("KIFF — assistenza", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@supportHeadIT()
+			@supportWriteIT()
+			@supportStatusIT()
+			@supportTafsIT()
+			@supportDataIT()
+			@supportSecurityIT()
+			if computerAppReleased() {
+				@supportComputerIT()
+			}
+		</article>
+	}
+}
+
+templ supportHeadIT() {
+	<header class="legal-head">
+		<p class="legal-badge">Assistenza</p>
+		<h1>Assistenza</h1>
+		<p class="legal-meta">
+			<strong>Ultimo aggiornamento:</strong> 13 novembre 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Per KIFF e per tafs, l'app di KIFF per iPhone, iPad e Android.
+			Entrambi sono gestiti da Kiff Agents OÜ, Tallinn, Estonia.
+		</p>
+	</header>
+}
+
+templ supportWriteIT() {
+	<section id="write">
+		<h2>1. Scrivici</h2>
+		<p>
+			Scrivi a <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>
+			dall'indirizzo email del tuo account e racconta cosa è
+			successo. Ti risponde una persona, entro i tempi di risposta
+			indicati nell'<a href="/legal/sla#support">accordo sul livello
+			di servizio</a> { components.InEnglish("it") } (§5).
+		</p>
+	</section>
+}
+
+templ supportStatusIT() {
+	<section id="status">
+		<h2>2. Qualcosa non funziona?</h2>
+		<p>
+			<a href="https://status.kiff.dev">status.kiff.dev</a> funziona
+			separatamente da KIFF, quindi risponde anche quando KIFF non
+			risponde.
+		</p>
+	</section>
+}
+
+templ supportTafsIT() {
+	<section id="tafs">
+		<h2>3. Elimina il tuo account</h2>
+		<p>
+			In tafs: Account → <em>Elimina account</em>. KIFF disattiva
+			subito le tue chiavi e cancella i suoi dati dopo un periodo di
+			tolleranza di 30 giorni, come indica
+			l'<a href="/it/privacy">informativa sulla privacy</a>. L'aiuto
+			sull'app è nella <a href="/docs/tafs">documentazione di tafs</a> { components.InEnglish("it") }.
+			if WatchLive {
+				<a href="/it/tafs/watch">tafs sul tuo orologio</a>: cosa fa e come averlo.
+			}
+		</p>
+	</section>
+}
+
+templ supportDataIT() {
+	<section id="data">
+		<h2>4. I tuoi dati</h2>
+		<p>
+			Per vedere, esportare o eliminare i tuoi dati, o un account creato
+			sul web, scrivi a <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportSecurityIT() {
+	<section id="security">
+		<h2>5. Sicurezza e note legali</h2>
+		<p>
+			Problemi di sicurezza: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+			Comunicazioni legali: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportComputerIT() {
+	<section id="computer">
+		<h2>6. Aggiungi un computer con il telefono</h2>
+		<ol>
+			<li>Sul computer, apri tafs e scegli <em>Aggiungi questo computer con il telefono</em>. Mostra un codice da scansionare.</li>
+			<li>Sul telefono che usi già con tafs, apri <em>Account</em> → <em>Dispositivi</em> → <em>Aggiungi un dispositivo</em> e scansiona quel codice.</li>
+			<li>Il telefono ti chiede se il tuo computer mostra un codice. Controlla che sia lo stesso e approva solo quel computer, quando ce l’hai davanti.</li>
+		</ol>
+		<p>Se il codice è scaduto o è già stato usato, scegli <em>Mostra un nuovo codice</em> sul computer e scansiona di nuovo. Su Linux, e su un Mac senza Secure Enclave, tafs mostra ciò che ti aspetta ma non approva; approvi sul telefono{ macSecurityKey("it") }.</p>
+	</section>
+}

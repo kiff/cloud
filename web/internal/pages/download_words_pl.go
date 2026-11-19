@@ -1,0 +1,37 @@
+package pages
+
+// downloadPL is /tafs/download's words in Polish, at /pl/tafs/download.
+var downloadPL = downloadWords{
+	Lang:             "pl",
+	Title:            "Pobierz tafs — KIFF",
+	Description:      "Pobierz tafs z Google Play na Androida. Wersje na iPhone i iPad pojawią się w App Store.",
+	DescAvailable:    "Pobierz tafs na %s.",
+	DescComingOne:    "Aplikacja na %s będzie wkrótce dostępna.",
+	DescComingMany:   "Aplikacje na %s będą wkrótce dostępne.",
+	And:              "i",
+	Head:             "Pobierz tafs",
+	Sub:              "Agenci AI do rutynowej pracy Twojej firmy, każdy w ramach Card, którą ustawiasz. Wszystko większe czeka na Twoje zatwierdzenie w telefonie.",
+	Phones:           "Telefon i tablet",
+	Computer:         "Komputer",
+	NotYet:           "Wkrótce dostępne",
+	NotAvailable:     "Niedostępne",
+	AvailableVersion: "Wersja %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Przed otwarciem sprawdź, czy SHA-256 pliku zgadza się z tym.",
+	DownloadFor:      "Pobierz na %s",
+	QRAlt:            "Kod QR, który otwiera kiff.dev/tafs/download",
+	QRCaption:        "Zeskanuj aparatem w telefonie, aby otworzyć tam tę stronę.",
+	Cost:             "Ile to kosztuje:",
+	Pricing:          "ceny",
+	ComingAppStore:   "Wkrótce w App Store",
+	IPhoneIPad:       "iPhone i iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 lub nowszy",
+		"ios":     "iOS i iPadOS 16 lub nowszy",
+		"macos13": "macOS 13 lub nowszy",
+		"macos":   "tylko macOS 12 (Monterey)",
+		"windows": "Windows 10 lub 11",
+		"linux":   "Ubuntu 24.04 lub nowszy",
+	},
+}

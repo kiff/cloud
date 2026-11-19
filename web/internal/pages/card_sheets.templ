@@ -1,0 +1,368 @@
+package pages
+
+import (
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CardSheetView is one change to a Card on its own full screen: who
+// holds it, revoking it, connecting an approver, revoking one. Each
+// posts to the route that already makes the change.
+type CardSheetView struct {
+	Kind   string
+	Card   apiclient.Mandate
+	Agents []string
+	Scopes []ApproverScope
+	Grant  apiclient.ApproverGrant
+	Now    time.Time
+	Flash *DashboardFlash
+	WarningConfig *apiclient.WarningConfig
+	WarningError string
+	// Only for: the tool the Card covers, the argument its connection
+	// names as what a call is on (empty when it names none), and the
+	// values the Card's grant is limited to now.
+	ScopeTool   string
+	ScopeParam  string
+	ScopeValues []string
+	// OldScope is a scope on an argument the tool no longer names. The
+	// Card still limits calls to it, so every call is outside the Card;
+	// the sheet shows it and asks for an explicit choice.
+	OldScopeParam  string
+	OldScopeValues []string
+}
+
+func (v CardSheetView) otherAgents() []string {
+	var out []string
+	for _, a := range v.Agents {
+		if !v.Card.HeldBy(a) {
+			out = append(out, a)
+		}
+	}
+	return out
+}
+
+func (v CardSheetView) back() string {
+	if strings.HasPrefix(v.Kind, "approver") {
+		return cardHref(v.Card, "/approvers")
+	}
+	return cardHref(v.Card, "/settings")
+}
+
+templ CardSheet(v CardSheetView) {
+	@components.LayoutAppThemedWithCSS("KIFF Cloud — Card", "css/fonts.css", "css/app-shell.css", "css/walkthrough.css") {
+		switch v.Kind {
+			case "warnings":
+				@wkFrame(v.back(), "Budget warnings", 1, "1", true) {
+					@cardWarningSheet(v)
+				}
+			case "only-for":
+				@wkFrame(v.back(), "Only for", 1, "1", false) {
+					@onlyForSheet(v)
+				}
+			case "holder":
+				@wkFrame(v.back(), "Who holds it", 1, "1", false) {
+					@holderSheet(v)
+				}
+			case "revoke":
+				@wkFrame(v.back(), "Revoke", 1, "1", false) {
+					@confirmSheet(cardHref(v.Card, "/revoke"), "Revoke this Card?", "This can’t be undone. You can issue a new Card later.",
+						[]string{strings.Join(v.Card.Holders(), ", ") + " can’t use it from now on. Its next call under it is refused.", "Its statement and history stay readable."}, v.back())
+				}
+			case "approver-new":
+				@wkFrame(v.back(), "Step 1 of 3", 3, "1", false) {
+					@approverNewSheet(v)
+				}
+			case "approver-revoke":
+				@wkFrame(v.back(), "Revoke", 1, "1", false) {
+					@confirmSheet(cardHref(v.Card, "/approvers/"+url.PathEscape(v.Grant.ID)+"/revoke"), "Revoke "+v.Grant.Name+"?", "This can’t be undone. You can connect a new approver later.",
+						[]string{"It can’t answer anything from now on.", "Approvals it gave that haven’t been used yet lose their authority.", "Calls it was holding stay in Needs you until their deadline."}, v.back())
+				}
+		}
+	}
+}
+
+// confirmSheet is a yes-or-no step for a change that cannot be undone.
+templ confirmSheet(action, title, sub string, lines []string, keep string) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(action) }>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">{ title }</h1>
+				<p>{ sub }</p>
+			</div>
+			<ul class="wk-list">
+				for _, l := range lines {
+					<li>{ l }</li>
+				}
+			</ul>
+		</section>
+		<footer class="wk-bar">
+			<div class="wk-bar-row">
+				<button type="button" hidden data-wk-back>Back</button>
+				<button type="button" hidden data-wk-next>Continue</button>
+				<a class="wk-btn wk-btn-quiet wk-btn-half" href={ templ.SafeURL(keep) }>Keep it</a>
+				<button type="submit" class="wk-btn wk-btn-danger" data-wk-submit>Revoke</button>
+			</div>
+		</footer>
+	</form>
+}
+
+// holderSheet shares the Card with another agent or moves it to one;
+// POST /cards/{id}/holders takes both.
+templ holderSheet(v CardSheetView) {
+	{{ others := v.otherAgents() }}
+	<form class="wk-form" method="post" action={ templ.SafeURL(cardHref(v.Card, "/holders")) }>
+		<section class="wk-step" data-wk-step="1"
+			if len(others) > 0 {
+				data-wk-check="choice:agent"
+			} else {
+				data-wk-check="text:agent"
+			}
+			data-wk-msg="Choose the agent." aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">Who holds it</h1>
+				<p><span class="wk-mono">{ strings.Join(v.Card.Holders(), ", ") }</span> { holdsVerb(v.Card) } this Card today.</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Share or move</legend>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="action" value="add" checked/>
+					<span class="wk-strong">Share it</span>
+					<span class="wk-body">Both agents draw on the same limits. Each action names the agent that took it.</span>
+				</label>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="action" value="move"/>
+					<span class="wk-strong">Move it</span>
+					<span class="wk-body">Same Card, terms and history. The agent you pick becomes its only holder.</span>
+				</label>
+			</fieldset>
+			if len(others) > 0 {
+				<fieldset class="wk-choices">
+					<legend class="wk-label">With</legend>
+					for _, a := range others {
+						<label class="wk-choice">
+							<input type="radio" name="agent" value={ a }/>
+							<span class="wk-choice-body"><span class="wk-mono">{ a }</span></span>
+							<span class="wk-radio" aria-hidden="true"></span>
+						</label>
+					}
+				</fieldset>
+			} else {
+				<label class="wk-field">
+					<span class="wk-label">Agent id</span>
+					<input class="wk-input wk-mono" name="agent" required maxlength="200" autocomplete="off" placeholder="e.g. support-bot"/>
+				</label>
+			}
+		</section>
+		@wkBar("Save")
+	</form>
+	if v.Card.Shared() {
+		<section class="wk-list-forms" aria-label="Stop sharing">
+			for _, holder := range v.Card.Holders() {
+				<form method="post" action={ templ.SafeURL(cardHref(v.Card, "/holders")) }>
+					<input type="hidden" name="action" value="remove"/>
+					<input type="hidden" name="agent" value={ holder }/>
+					<button class="wk-link" type="submit">Stop sharing with { holder }</button>
+				</form>
+			}
+		</section>
+	}
+}
+
+func holdsVerb(m apiclient.Mandate) string {
+	if m.Shared() {
+		return "hold"
+	}
+	return "holds"
+}
+
+// approverNewSheet connects an external approver in three steps: which
+// calls, up to how much, and its name and end. The amount starts at the
+// Card's own per-call threshold and the end at a week; both take any
+// value the API accepts.
+templ approverNewSheet(v CardSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(cardHref(v.Card, "/approvers")) } novalidate>
+		<section class="wk-step" data-wk-step="1" data-wk-check="choice:scope" data-wk-msg="Pick the calls it may answer." aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">Which calls may it answer?</h1>
+				<p>Pick one action. The approver only sees calls this Card holds for it.</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Action</legend>
+				for i, s := range v.Scopes {
+					<label class="wk-choice">
+						<input type="radio" name="scope" value={ s.Key() } checked?={ i == 0 } data-amount={ s.Input() } data-unit={ s.UnitLabel() } data-step={ s.Step() }/>
+						<span class="wk-choice-body">
+							<span class="wk-mono">{ s.Action }</span>
+							<span class="wk-sub">The Card asks you above { s.SuggestedLabel() } a call</span>
+						</span>
+						<span class="wk-radio" aria-hidden="true"></span>
+					</label>
+				}
+			</fieldset>
+			if hs := v.Card.Holders(); len(hs) > 1 {
+				<fieldset class="wk-choices">
+					<legend class="wk-label">For</legend>
+					for i, h := range hs {
+						<label class="wk-choice">
+							<input type="radio" name="worker" value={ h } checked?={ i == 0 }/>
+							<span class="wk-choice-body"><span class="wk-mono">{ h }</span></span>
+							<span class="wk-radio" aria-hidden="true"></span>
+						</label>
+					}
+				</fieldset>
+			} else {
+				<input type="hidden" name="worker" value={ v.Card.Subject }/>
+			}
+		</section>
+		<section class="wk-step" data-wk-step="2" data-wk-check="text:max" data-wk-msg="Enter an amount above zero." aria-labelledby="wk-h2">
+			<div class="wk-head">
+				<h1 id="wk-h2">Up to how much a call?</h1>
+				<p>A held call above this stays with you.</p>
+			</div>
+			<label class="wk-field">
+				<span class="wk-label">Most it may approve in one call</span>
+				<span class="wk-amount">
+					<input class="wk-input wk-big" name="max" inputmode="decimal" autocomplete="off" value={ firstSuggested(v.Scopes) } step={ firstStep(v.Scopes) } data-wk-scope-amount/>
+					<span data-wk-scope-unit>{ firstUnit(v.Scopes) }</span>
+				</span>
+			</label>
+			<aside class="wk-note">
+				@wkInfoIcon()
+				<span>Filled in from this Card’s per-call limit. What it approves still counts toward the Card’s limits.</span>
+			</aside>
+		</section>
+		<section class="wk-step" data-wk-step="3" data-wk-check="text:name" data-wk-msg="Give it a name." aria-labelledby="wk-h3">
+			<div class="wk-head">
+				<h1 id="wk-h3">Name it, and pick when it ends</h1>
+				<p>The name is what you’ll see in Needs you when it answers.</p>
+			</div>
+			<label class="wk-field">
+				<span class="wk-label">Name</span>
+				<input class="wk-input" name="name" maxlength="80" placeholder="Refund review service" autocomplete="off"/>
+			</label>
+			<fieldset class="wk-choices">
+				<legend class="wk-label">Ends</legend>
+				for _, e := range ApproverExpiries(v.Now) {
+					<label class="wk-choice">
+						<input type="radio" name="expires_at" value={ e.Value } checked?={ e.Checked }/>
+						<span class="wk-choice-body"><span>{ e.Label }</span><span class="wk-sub">{ e.Hint }</span></span>
+						<span class="wk-radio" aria-hidden="true"></span>
+					</label>
+				}
+				<label class="wk-choice">
+					<input type="radio" name="expires_at" value=""/>
+					<span class="wk-choice-body">
+						<span>On a date</span>
+						<input class="wk-input" type="date" name="expires_on" min={ v.Now.UTC().Add(24 * time.Hour).Format("2006-01-02") } max={ approverDateMax(v.Now) } aria-label="End date"/>
+					</span>
+					<span class="wk-radio" aria-hidden="true"></span>
+				</label>
+			</fieldset>
+			<aside class="wk-note">
+				@wkInfoIcon()
+				<span>It can approve once, reject, or leave a call for you. KIFF shows its credential once, next.</span>
+			</aside>
+		</section>
+		@wkBar("Grant and show credential")
+	</form>
+}
+
+func firstSuggested(s []ApproverScope) string {
+	if len(s) == 0 {
+		return ""
+	}
+	return s[0].Input()
+}
+
+func firstUnit(s []ApproverScope) string {
+	if len(s) == 0 {
+		return ""
+	}
+	return s[0].UnitLabel()
+}
+
+func firstStep(s []ApproverScope) string {
+	if len(s) == 0 {
+		return "1"
+	}
+	return s[0].Step()
+}
+
+// onlyForSheet limits a tool Card to named values of the argument its
+// tool says each call is on: any order, or only these orders. POST
+// /cards/{id}/only-for reissues the Card with that scope and
+// everything else as it is.
+templ onlyForSheet(v CardSheetView) {
+	if v.ScopeParam == "" {
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">Only for</h1>
+				<p><span class="wk-mono">{ v.ScopeTool }</span> doesn’t say what each call is on yet, so this Card can’t name what it covers.</p>
+			</div>
+			if v.OldScopeParam != "" {
+				@oldScopeNote(v)
+			} else {
+				<p class="wk-sub">Set it once in the tool’s Settings, under <strong>Each call is on</strong>. This Card keeps working meanwhile.</p>
+			}
+		</section>
+		<footer class="wk-bar">
+			<div class="wk-bar-row">
+				<a class="wk-btn wk-btn-quiet wk-btn-half" href={ templ.SafeURL(v.back()) }>Not now</a>
+				<a class="wk-btn wk-btn-primary" href={ templ.SafeURL(toolHref(v.ScopeTool) + "/settings/resource") }>Open the tool’s Settings</a>
+			</div>
+		</footer>
+	} else {
+		<form class="wk-form" method="post" action={ templ.SafeURL(cardHref(v.Card, "/only-for")) }>
+			<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+				@agentSheetMsg(v.Flash)
+				<div class="wk-head">
+					<h1 id="wk-h1">Only for</h1>
+					<p>Calls to <span class="wk-mono">{ v.ScopeTool }</span> under this Card, by <span class="wk-mono">{ v.ScopeParam }</span>.</p>
+				</div>
+				if v.OldScopeParam != "" {
+					@oldScopeNote(v)
+				}
+				<fieldset class="wk-choices">
+					<legend class="wk-sr">What this Card covers</legend>
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="scope" value="any" checked?={ len(v.ScopeValues) == 0 && v.OldScopeParam == "" }/>
+						<span class="wk-strong">{ "Any " + v.ScopeParam }</span>
+						<span class="wk-body">As today: calls under this Card can be on any value.</span>
+					</label>
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="scope" value="only" checked?={ len(v.ScopeValues) > 0 }/>
+						<span class="wk-strong">Only these</span>
+						<span class="wk-body">{ onlyForConsequence(v.Card) }</span>
+					</label>
+				</fieldset>
+				if len(v.ScopeValues) > 0 {
+					<fieldset class="wk-choices">
+						<legend class="wk-label">Covered now (untick to remove)</legend>
+						for _, val := range v.ScopeValues {
+							<label class="wk-choice"><input type="checkbox" name="keep" value={ val } checked/><span class="wk-check"></span><span class="wk-choice-body"><span class="wk-mono">{ val }</span></span></label>
+						}
+					</fieldset>
+				}
+				<div class="wk-field">
+					<label class="wk-label" for="wk-add">Add</label>
+					<input class="wk-input wk-mono" id="wk-add" type="text" name="add" autocomplete="off" placeholder="1043, 1044"/>
+					<p class="wk-sub">Separate several with commas. Exact match, up to 100. Approve once on a held call covers only that call and never adds it here.</p>
+				</div>
+			</section>
+			@agentSheetBar(v.back(), "Cancel", "Save", false)
+		</form>
+	}
+}
+
+// oldScopeNote shows a scope the tool's calls no longer carry.
+templ oldScopeNote(v CardSheetView) {
+	{{ next := "Every call under it is outside the Card until you choose below." }}
+	if v.ScopeParam == "" {
+		{{ next = "Every call under it is outside the Card until the tool names what each call is on and you choose here." }}
+	}
+	<p class="wk-msg wk-msg-warn" role="status">{ "This Card is limited to " + v.OldScopeParam + " " + strings.Join(v.OldScopeValues, ", ") + ", which calls to " + v.ScopeTool + " no longer carry. " + next }</p>
+}

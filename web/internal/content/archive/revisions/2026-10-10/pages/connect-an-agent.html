@@ -1,0 +1,260 @@
+<h1 id="connect-an-agent">Connect an agent</h1>
+
+<p>An agent gets a <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> the same way however it is
+built. What differs is how its actions reach KIFF. Pick the path that
+matches the agent:</p>
+
+<table>
+<thead>
+<tr>
+<th>Your agent</th>
+<th>Path</th>
+<th>What changes in the agent</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Calls tools over MCP (Claude Code, Codex, other MCP clients)</td>
+<td><a href="/docs/archive/2026-10-10/mcp-gateway">The KIFF MCP gateway</a></td>
+<td>Its MCP server URL and key. No code.</td>
+</tr>
+
+<tr>
+<td>Runs in your own code, on a framework</td>
+<td><strong>kiff-guard</strong>, below</td>
+<td>One hook in the agent&rsquo;s code.</td>
+</tr>
+
+<tr>
+<td>Any code that can make an HTTP call</td>
+<td><strong>The decision API</strong>, <a href="#call-the-decision-api-directly">below</a></td>
+<td>One call before the action.</td>
+</tr>
+</tbody>
+</table>
+<p>In every path KIFF decides before the action runs, and only actions that
+go through KIFF are checked. Give each agent its own key, from its page in
+KIFF Cloud: that is how KIFF knows which agent is asking, and whose Card to
+draw on.</p>
+
+<blockquote>
+<p><strong>Using Claude Code or Codex?</strong> Install the
+<a href="/docs/archive/2026-10-10/agent-skill">KIFF skill</a> and ask it to connect your agent. It
+walks you through the right path below, drafts the Card, and knows what
+to do when a call is held.</p>
+</blockquote>
+
+<h2 id="connect-with-kiff-guard">Connect with kiff-guard</h2>
+
+<p>kiff-guard is an open-source (MIT) library that sits in the agent&rsquo;s own
+tool-calling loop. Attach it in observe mode, watch what the agent
+actually does, then switch to enforce so each tool call is checked against
+the agent&rsquo;s Card first. The agent keeps doing the work; no rewrite.</p>
+
+<h3 id="1-install-the-guard">1. Install the guard</h3>
+
+<p>The guard is an open-source (MIT) package,
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff/kiff-guard</code></a>, published on PyPI
+and npm. Install the core plus the adapter for your framework — here, Agno:</p>
+
+<pre><code class="language-bash">pip install &quot;kiff-guard[agno]&quot;
+</code></pre>
+
+<p>The core has zero required dependencies; each framework adapter pulls its
+own framework in as an optional extra. For TypeScript (the OpenClaw
+adapter), <code>npm install @kiff/kiff-guard</code>.</p>
+
+<h3 id="2-attach-it-in-observe-mode">2. Attach it in observe mode</h3>
+
+<p>One guard, one hook. <code>observe</code> runs every tool, records a receipt, and
+learns your action catalog. It needs no client, no tenant, no API key —
+it never calls KIFF and never blocks a tool.</p>
+
+<pre><code class="language-python">from kiff_guard import Guard
+from kiff_guard.adapters.agno import agno_hook
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = Agent(
+    model=...,
+    tools=[refund_order, send_email],
+    tool_hooks=[agno_hook(guard)],
+)
+</code></pre>
+
+<p>On a different stack? The hook is the only line that changes. Every
+<a href="/docs/archive/2026-10-10/agno">framework page</a> shows the same attach with that framework&rsquo;s
+one-liner, and <a href="/docs/archive/2026-10-10/concepts">How the guard works</a> explains the model
+behind all of them.</p>
+
+<h3 id="3-run-as-usual-and-see-what-it-did">3. Run as usual, and see what it did</h3>
+
+<p>Nothing about your agent changes — run it the way you already do. The
+guard rides along on each tool call and turns each into a receipt.</p>
+
+<pre><code class="language-python">agent.run(&quot;Refund order ord_4821 and email the customer&quot;)
+
+for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+# observed refund_order observed
+# observed send_email   observed
+</code></pre>
+
+<h3 id="4-derive-a-domain-from-real-traffic">4. Derive a domain from real traffic</h3>
+
+<p>Because the guard learned the catalog while it watched, it hands you a
+starter KIFF domain drafted from what the agent actually does — so you
+never face a blank <code>kiff.yaml</code>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<pre><code class="language-yaml"># KIFF domain draft for 'my-domain'
+# Auto-derived from observed agent traffic (instrument-first).
+domain: my-domain
+actions:
+  - name: refund_order
+    parameters: [amount_cents, order_id]
+    risk: low            # TODO(human): low | medium | high
+    requires_approval: false   # TODO(human)
+  - name: send_email
+    parameters: [body, to]
+    risk: low            # TODO(human): low | medium | high
+    requires_approval: false   # TODO(human)
+</code></pre>
+
+<p>The draft is a starting point — you set the risk, thresholds, and
+approval rules. KIFF derives the <em>observed action surface</em>; it never
+invents authority you didn&rsquo;t declare.</p>
+
+<h3 id="5-give-the-agent-a-key-and-a-card-then-enforce">5. Give the agent a key and a Card, then enforce</h3>
+
+<ol>
+<li>In KIFF Cloud, open the agent on <strong>My agents</strong> (or <strong>Agents</strong>), go to
+its <strong>Keys</strong> tab and choose <strong>Create a kiff-guard key</strong>. The key is
+bound to this agent and shown once. Put it in the agent process&rsquo;s
+environment:</li>
+</ol>
+
+<pre><code class="language-bash">   export KIFF_CLOUD_URL=https://api.kiff.dev
+   export KIFF_CLOUD_API_KEY='kiff_live_...'
+</code></pre>
+
+<ol>
+<li>Give the agent a Card for the actions it should take, from its
+<strong>Cards</strong> tab or <strong>Issue a card</strong>.</li>
+<li>Switch the guard to <code>enforce</code> and give it the client that carries the
+key. KIFF now decides <strong>before</strong> each tool runs: <code>allowed</code> proceeds,
+<code>approval_required</code> waits for the owner (see
+<a href="/docs/archive/2026-10-10/approvals">Held calls and approvals</a>), <code>blocked</code> refuses. If
+KIFF can&rsquo;t be reached, the guard fails closed.</li>
+</ol>
+
+<pre><code class="language-python">guard = Guard(mode=&quot;enforce&quot;, client=client)   # client carries the key
+</code></pre>
+
+<p>Keep two kinds of credential apart:</p>
+
+<ul>
+<li>the <strong>agent&rsquo;s KIFF key</strong> only asks KIFF for decisions. It cannot grant
+itself authority or change its own Card;</li>
+<li>your <strong>provider credentials</strong> (the model API, your payments API) stay
+where they already live. kiff-guard never sends them to KIFF.</li>
+</ul>
+
+<p>To cut the agent off, revoke its key on its <strong>Keys</strong> tab. Its next call
+with that key is refused; other agents are untouched.</p>
+
+<h2 id="call-the-decision-api-directly">Call the decision API directly</h2>
+
+<p>No framework, or code you&rsquo;d rather not hook? Immediately before a
+consequential call, send the proposed action to KIFF and branch on the
+answer. KIFF returns the decision; your code still runs the action.</p>
+
+<pre><code class="language-python">import os
+import requests
+
+def ask_kiff(*, entity_id, entity_type, action, parameters, actor_id):
+    response = requests.post(
+        f&quot;{os.environ['KIFF_CLOUD_URL']}/v1/proposals/decide&quot;,
+        headers={&quot;Authorization&quot;: f&quot;Bearer {os.environ['KIFF_CLOUD_API_KEY']}&quot;},
+        json={
+            &quot;entity_id&quot;: entity_id,
+            &quot;entity_type&quot;: entity_type,
+            &quot;action_name&quot;: action,
+            &quot;actor_id&quot;: actor_id,
+            &quot;parameters&quot;: parameters,
+        },
+        timeout=5,
+    )
+    return response.json()
+
+decision = ask_kiff(entity_id=order_id, entity_type=&quot;Order&quot;, action=&quot;ISSUE_REFUND&quot;,
+                    parameters={&quot;amount&quot;: amount}, actor_id=&quot;refund-agent&quot;)
+if decision[&quot;outcome&quot;] == &quot;allowed&quot;:
+    process_refund(order_id, amount)
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Outcome</th>
+<th>Meaning</th>
+<th>What your code does</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>allowed</code></td>
+<td>State, contract and Card permit it.</td>
+<td>Run the action.</td>
+</tr>
+
+<tr>
+<td><code>approval_required</code></td>
+<td>The owner must decide first.</td>
+<td>Hold the action.</td>
+</tr>
+
+<tr>
+<td><code>blocked</code></td>
+<td>State, permissions, parameters or the Card forbid it.</td>
+<td>Do not run it.</td>
+</tr>
+
+<tr>
+<td><code>invalid</code></td>
+<td>The request or domain configuration is incomplete.</td>
+<td>Fix the request or domain.</td>
+</tr>
+
+<tr>
+<td><code>limit_exceeded</code></td>
+<td>The account&rsquo;s Cloud allowance is used up.</td>
+<td>Do not run; check billing.</td>
+</tr>
+</tbody>
+</table>
+<p>Branch on <code>outcome</code>, not only the HTTP status. Where the action draws on a
+Card, <code>actor_id</code> must be the agent the Card was issued to, and the key must
+be that agent&rsquo;s own key: a key issued for another agent is refused, so one
+agent cannot spend another&rsquo;s Card.</p>
+
+<p>This governs only the calls you route through it. It proves what KIFF
+authorized before the call, not that your function completed.</p>
+
+<h2 id="where-to-go-next">Where to go next</h2>
+
+<ul>
+<li><strong>Agents that call MCP tools</strong> → <a href="/docs/archive/2026-10-10/mcp-gateway">Use the KIFF MCP gateway</a>.</li>
+<li><strong>The model behind observe and enforce</strong> → <a href="/docs/archive/2026-10-10/concepts">How kiff-guard works</a>.</li>
+<li><strong>Your framework&rsquo;s hook</strong> → pick it from the sidebar; each adapter ships
+in kiff-guard and passes its conformance suite.</li>
+<li><strong>What a Card can say</strong> → <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Cards</a>.</li>
+</ul>
+
+<p>The guard, every adapter, and the conformance suite live in the public
+MIT repo <a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff/kiff-guard</code></a>.</p>

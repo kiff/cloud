@@ -1,0 +1,290 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// ToolDetail is a connected tool's page: the same header, tabs, rows
+// and sheets as a Card's or an agent's.
+templ ToolDetail(v ToolDetailView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Tool", "tools", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<a class="ac-back" href="/tools">← Tools</a>
+			if v.Flash != nil {
+				@flashBanner(v.Flash)
+			}
+			<header class="ac-detail-head">
+				<div><p>Tool</p><h1><code>{ v.Tool.Name }</code></h1></div>
+				<span class="ac-status ac-status-ok">Connected</span>
+			</header>
+			<nav class="ac-detail-tabs" aria-label="Tool sections">
+				for _, t := range toolTabs {
+					<a class={ templ.KV("is-current", v.Tab == t.ID) } href={ templ.SafeURL(toolHref(v.Tool.Name) + t.Suffix) }
+						if v.Tab == t.ID {
+							aria-current="page"
+						}
+					>{ t.Label }</a>
+				}
+			</nav>
+			if v.Tab == "settings" {
+				@toolSettingsPage(v)
+			} else {
+				@toolOverview(v)
+			}
+		</section>
+	}
+}
+
+templ toolOverview(v ToolDetailView) {
+	<div class="ac-tab-page ag-rows">
+		if v.Tool.Description != "" {
+			<p class="dash-note">{ v.Tool.Description }</p>
+		}
+		<section class="ac-sgroup" aria-labelledby="tl-cards-h">
+			<h2 id="tl-cards-h">Cards on it</h2>
+			if v.CardsError != "" {
+				<p class="dash-note dash-note-warn">{ v.CardsError }</p>
+			}
+			<div class="ac-slist">
+				for _, m := range v.Cards {
+					<a class="ac-srow" href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+						<span class="ac-si">@rowIcon(iconTool)</span>
+						<span class="ac-sl ag-card-text"><span>{ cardTitle(m) }</span><small>{ cardLimitLine(m, CardBalance{}) }</small></span>
+						<span class={ "k-route-tag", templ.KV("k-route-ask", m.ComesHome()) } title={ cardRouteConsequence(m) }>{ cardRouteTag(m) }<span class="sr-only">{ ": " + cardRouteConsequence(m) }</span></span>
+						@chevron()
+					</a>
+				}
+				<a class="ac-srow" href={ templ.SafeURL(toolHref(v.Tool.Name) + "/card") }>
+					<span class="ac-si">@rowIcon(iconPlus)</span>
+					<span class="ac-sl ag-card-text"><span>Give an agent a Card</span>
+						if len(v.Cards) == 0 {
+							<small>No Card covers it yet, so every call to it is refused.</small>
+						}
+					</span>
+					@chevron()
+				</a>
+			</div>
+		</section>
+		<form method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/test") }>
+			<input type="hidden" name="back" value={ toolHref(v.Tool.Name) }/>
+			<div class="ac-slist">
+				<button class="ac-srow" type="submit">
+					<span class="ac-si">@rowIcon(iconPulse)</span>
+					<span class="ac-sl ag-card-text"><span>Test the connection</span><small>{ "KIFF lists the tools at " + v.Tool.Host() + ". Nothing is called." }</small></span>
+					@chevron()
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+templ toolSettingsPage(v ToolDetailView) {
+	<div class="ac-settings ac-settings-grid">
+		for _, g := range toolSettingsGroups(v.Tool) {
+			<section class="ac-sgroup">
+				<h2>{ g.Title }</h2>
+				<div class="ac-slist">
+					for _, r := range g.Rows {
+						if r.Href != "" {
+							<a class="ac-srow" href={ templ.SafeURL(r.Href) }>
+								<span class="ac-si">@rowIcon(r.Icon)</span>
+								<span class="ac-sl">{ r.Label }</span>
+								<span class={ "ac-sv", templ.KV("wk-mono", r.Mono) }>{ r.Value }</span>
+								@chevron()
+							</a>
+						} else {
+							<div class="ac-srow">
+								<span class="ac-si">@rowIcon(r.Icon)</span>
+								<span class="ac-sl">{ r.Label }</span>
+								<span class={ "ac-sv", templ.KV("wk-mono", r.Mono) }>{ r.Value }</span>
+							</div>
+						}
+					}
+				</div>
+			</section>
+		}
+		<a class="ac-srow ac-s-danger" href={ templ.SafeURL(toolHref(v.Tool.Name) + "/settings/remove") }>
+			<span class="ac-si">@rowIcon(iconBan)</span>
+			<span class="ac-sl">Remove this tool</span>
+			@chevron()
+		</a>
+	</div>
+}
+
+// ToolSheet is one change to a connected tool on its own full screen.
+// Each posts to the route that makes the change and returns to Settings.
+templ ToolSheet(v ToolSheetView) {
+	@components.LayoutAppThemedWithCSS("KIFF Cloud — Tool", "css/fonts.css", "css/app-shell.css", "css/walkthrough.css") {
+		switch v.Kind {
+			case "resource":
+				@wkFrame(v.back(), "Each call is on", 1, "1", false) {
+					@toolResourceSheet(v)
+				}
+			case "release":
+				@wkFrame(v.back(), "Room back", 1, "1", false) {
+					@toolReleaseSheet(v)
+				}
+			case "key":
+				@wkFrame(v.back(), "Who holds the key", 1, "1", false) {
+					@toolKeySheet(v)
+				}
+			case "credential":
+				@wkFrame(v.back(), "Credential", 1, "1", false) {
+					@toolCredentialSheet(v)
+				}
+			case "remove":
+				@wkFrame(v.back(), "Remove", 1, "1", false) {
+					@toolRemoveSheet(v)
+				}
+		}
+	}
+}
+
+templ toolSheetHidden(v ToolSheetView) {
+	<input type="hidden" name="back" value={ v.back() }/>
+}
+
+templ toolResourceSheet(v ToolSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/settings") }>
+		@toolSheetHidden(v)
+		<input type="hidden" name="setting" value="resource"/>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">Each call is on</h1>
+				<p>Which argument of <span class="wk-mono">{ v.Tool.Name }</span> names what a call acts on. Its Cards can then name which ones the agent may act on.</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Each call is on</legend>
+				for _, a := range v.Tool.ResourceChoices() {
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="resource_argument" value={ a } checked?={ v.Tool.ResourceArg == a }/>
+						<span class="wk-strong wk-mono">{ a }</span>
+						<span class="wk-body">A text argument of the tool.</span>
+					</label>
+				}
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="resource_argument" value="" checked?={ v.Tool.ResourceArg == "" }/>
+					<span class="wk-strong">Nothing in particular</span>
+					<span class="wk-body">Cards cover any call, as today.</span>
+				</label>
+			</fieldset>
+			if len(v.Scoped) > 0 {
+				<p class="wk-msg wk-msg-warn" role="status">{ scopedCardNames(v.Scoped) + " name " + v.Tool.ResourceArg + " values. Choosing something else leaves them naming values no call carries, so every call under them is outside the Card until you change them." }</p>
+			}
+			<p class="wk-sub">Saving keeps the connection and every Card on it.</p>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Save", false)
+	</form>
+}
+
+templ toolReleaseSheet(v ToolSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/settings") }>
+		@toolSheetHidden(v)
+		<input type="hidden" name="setting" value="release"/>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">When a call did nothing</h1>
+				<p>If <span class="wk-mono">{ v.Tool.Name }</span> reports that a call certainly had no effect, should its Cards get that amount back?</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">If a call did nothing</legend>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="outcome_contract" value="terminal_no_effect_v1" checked?={ v.Tool.OutcomeContract != "" }/>
+					<span class="wk-strong">Give the room back</span>
+					<span class="wk-body">Only for the tool’s final, signed “no effect” result. A call whose outcome is unknown keeps its room. Turn this on only for a tool that can never run that call later.</span>
+				</label>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="outcome_contract" value="" checked?={ v.Tool.OutcomeContract == "" }/>
+					<span class="wk-strong">Keep it counted</span>
+					<span class="wk-body">Every allowed call counts toward its Card, whatever happened.</span>
+				</label>
+			</fieldset>
+			<p class="wk-sub">Applies to calls from now on. Limits on the number of calls always count every call.</p>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Save", false)
+	</form>
+}
+
+templ toolKeySheet(v ToolSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/mode") }>
+		@toolSheetHidden(v)
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">Who holds the key</h1>
+				<p>KIFF reaches the tool the new way before anything changes.</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Who holds the key</legend>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="mode" value="verify" checked?={ v.Tool.Mode == "verify" }/>
+					<span class="wk-strong">Nobody at KIFF</span>
+					<span class="wk-body">The tool checks KIFF’s permit on each call. Moving here deletes the credential KIFF holds.</span>
+				</label>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="mode" value="relay" checked?={ v.Tool.Mode == "relay" }/>
+					<span class="wk-strong">Your relay</span>
+					<span class="wk-body">Your relay checks the permit and adds the tool’s key from your vault.</span>
+				</label>
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="mode" value="sealed" checked?={ v.Tool.Mode == "sealed" || v.Tool.Mode == "" }/>
+					<span class="wk-strong">KIFF, stored encrypted</span>
+					<span class="wk-body">KIFF keeps the tool’s credential and adds it to each allowed call.</span>
+				</label>
+			</fieldset>
+			<div class="wk-field">
+				<label class="wk-label" for="wk-aud">Permit audience</label>
+				<input class="wk-input wk-mono" id="wk-aud" name="audience" value={ v.Tool.Audience } maxlength="512" placeholder="https://refunds.example.com/mcp"/>
+				<p class="wk-sub">For Nobody at KIFF and Your relay: what the tool or relay expects in the permit.</p>
+			</div>
+			<div class="wk-field">
+				<label class="wk-label" for="wk-url">{ "Address (empty keeps " + v.Tool.Host() + ")" }</label>
+				<input class="wk-input wk-mono" id="wk-url" name="url" type="url" maxlength="2048"/>
+			</div>
+			<div class="wk-field">
+				<label class="wk-label" for="wk-cred">Credential</label>
+				<input class="wk-input" id="wk-cred" name="credential" type="password" autocomplete="off" maxlength="8192"/>
+				<p class="wk-sub">KIFF, stored encrypted: the tool’s key. Your relay: the relay’s transport credential.</p>
+			</div>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Change", false)
+	</form>
+}
+
+templ toolCredentialSheet(v ToolSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/credential") }>
+		@toolSheetHidden(v)
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">Replace the credential</h1>
+				<p>KIFF keeps the old one unless the new one reaches the tool.</p>
+			</div>
+			<div class="wk-field">
+				<label class="wk-label" for="wk-newcred">New credential</label>
+				<input class="wk-input" id="wk-newcred" name="credential" type="password" autocomplete="off" required maxlength="8192"/>
+			</div>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Replace", false)
+	</form>
+}
+
+templ toolRemoveSheet(v ToolSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(toolHref(v.Tool.Name) + "/remove") }>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">{ "Remove " + v.Tool.Name + "?" }</h1>
+				<p>You can connect it again later.</p>
+			</div>
+			<ul class="wk-list">
+				<li>Agents can no longer call it through KIFF.</li>
+				<li>Its Cards stay as they are, and their history stays readable.</li>
+			</ul>
+		</section>
+		@agentSheetBar(v.back(), "Keep it", "Remove", true)
+	</form>
+}

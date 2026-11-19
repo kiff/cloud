@@ -1,0 +1,305 @@
+<h1 id="kiff-cards">KIFF Cards</h1>
+
+<p>Every other check in KIFF asks whether <strong>one action</strong> is allowed: is the
+entity in the right state, does this actor have the permission, are the
+parameters valid, does this need an approval. A card carries the answer
+to the one question no single action can answer — <strong>what has this agent
+already done, and is that enough?</strong></p>
+
+<p>An action can be correct in every way and still be the one that should
+not run, because of the twenty that came before it. That is what a card
+catches.</p>
+
+<h2 id="why-cards-exist">Why cards exist</h2>
+
+<p>As agents make consequential work cheap, approving each action by hand
+becomes the limit on how much of it they can do. A card is how an owner
+delegates instead of supervising: defined actions, the conditions the
+domain already enforces, and a bounded total, which the owner can widen
+as the record earns it or withdraw at once.</p>
+
+<p>It is closer to a licence than to a payment card or an access badge. It
+counts any consequence you can count, not only money, and a limit bounds
+exposure without making an invalid action valid. That stays the domain&rsquo;s
+job.</p>
+
+<h2 id="what-a-card-is">What a card is</h2>
+
+<p>A KIFF Card — a <strong>mandate</strong> in the API, the package and the schema — is
+a bounded, revocable instrument issued to one named agent:</p>
+
+<blockquote>
+<p><code>refund-agent</code> may run <code>REFUND_ORDER</code>, only while the order is <code>PAID</code>,
+up to a total of <code>500000</code> summed over the <code>amount_cents</code> parameter,
+each calendar day, until it is revoked.</p>
+</blockquote>
+
+<p>What it says:</p>
+
+<ul>
+<li><strong>Who holds it</strong> — one agent by default. It must match the <code>actor_id</code>
+the agent already sends when it proposes an action. Two agents doing
+the same work usually hold two cards, each with its own balance. A card
+can also be <strong>shared</strong> with up to 20 agents: every holder draws on the
+same totals, and each decision still names the agent that asked. One
+agent may hold several cards — see below, where the tightest binds.</li>
+<li><strong>What it may do</strong> — the actions it covers. An action you leave out is
+still governed by the contract; it just does not draw on this card.</li>
+<li><strong>Under what conditions</strong> — the entity states the grant is confined
+to. Leave them unset and the action&rsquo;s own states apply, which is every
+state the domain already allows it in. A card narrows; it never
+widens.</li>
+<li><strong>How much, over what period</strong> — a quantity, either <code>count</code> (how many
+times those actions are <em>authorized</em>) or <code>sum(&lt;parameter&gt;)</code> (the total
+of one numeric parameter the actions declare), with a ceiling and a
+window:
+each calendar day, any rolling 24 hours, or any rolling hour.</li>
+<li><strong>When it stops</strong> — an optional expiry, or the moment an owner revokes
+it.</li>
+</ul>
+
+<h2 id="when-a-card-is-required">When a card is required</h2>
+
+<p>By default a card <strong>constrains without conferring</strong>: an agent with no
+card covering an action is unaffected, and the check is a no-op. That is
+what lets you adopt cards one agent at a time without the first one
+breaking something already running.</p>
+
+<p>An action opts out of that by declaring <code>requires_authority</code> in the
+domain:</p>
+
+<pre><code class="language-yaml">actions:
+  - name: REFUND_ORDER
+    allowed_states: [PAID, PARTIALLY_REFUNDED]
+    requires_authority: true
+</code></pre>
+
+<p>For that action, no card is a refusal rather than a no-op:</p>
+
+<pre><code class="language-json">{
+  &quot;outcome&quot;: &quot;blocked&quot;,
+  &quot;reasons&quot;: [&quot;no_mandate_issued&quot;]
+}
+</code></pre>
+
+<p>That reason is its own, deliberately. The first integrator to meet it
+has wired everything correctly, and a generic <code>blocked</code> would send them
+to audit their domain, their permissions and their state machine before
+discovering that nothing has been issued yet.</p>
+
+<p>It is declared per action, not per tenant: the author of the domain
+knows which consequences are worth an instrument, and a tenant-wide
+switch would make that judgement for every action at once.</p>
+
+<h2 id="which-key-can-use-a-card">Which key can use a card</h2>
+
+<p>A card names its holder, and the proposal names its actor in
+<code>actor_id</code>. So that one agent cannot name another and spend its card,
+the API key has to be issued for the holder:</p>
+
+<ul>
+<li><strong>A key issued for an agent acts only as that agent.</strong> A proposal from
+it naming anyone else is refused with <code>actor_not_key_holder</code>, on every
+action.</li>
+<li><strong>Drawing on a card needs such a key.</strong> A key not issued for any agent
+is refused with <code>key_not_bound_to_agent</code> on an action that requires a
+card, and on any action where the named agent holds a card that covers
+it, even if the card is optional there. It keeps working for actions no
+card covers.</li>
+</ul>
+
+<p>&ldquo;Create a key for this agent&rdquo; on a card&rsquo;s page issues the right key: the
+role the job needs, bound to the card&rsquo;s holder. For a card scoped to an
+environment, the key is also bound to that environment. Its requests are
+decided there whether or not they name it, and a request naming another
+environment is refused, so the key cannot draw on a card for a different
+environment by asking for it.</p>
+
+<p>If the agent already has its own key, for example the one issued when it was
+added to watch in observe, the card&rsquo;s page offers to give that key the job&rsquo;s
+role instead of issuing a second one. The agent keeps the key it has. Roles are
+only ever added to a key: to take one away, revoke the key and issue another.
+Through the API this is <code>PATCH /v1/keys/{id}</code> with <code>{&quot;add_roles&quot;: [...]}</code>,
+under the same rules as creating a key: only an owner or admin may do it, and
+never a role the caller does not hold.</p>
+
+<p>A test request sent from the card&rsquo;s page while you are signed in is not held
+to any of this; it is you, the owner, exercising the card you issued.</p>
+
+<h2 id="what-happens-at-the-ceiling">What happens at the ceiling</h2>
+
+<p><strong>The action is refused.</strong> It is not sent for approval.</p>
+
+<p>&ldquo;At the ceiling&rdquo; means the proposed action <em>would exceed</em> what the card
+has left for the window, not that the card is empty. A €2,000 refund
+against €1,000 of remaining authority is refused, and a €500 one right
+after it is allowed — same card, same window, same reason code for the
+first.</p>
+
+<p>This is deliberate. A cap that produces an approval request someone
+clicks through at the end of a long day is not a cap; it is a
+notification with extra steps, and it re-creates exactly the
+rubber-stamping that let the decision drift to the machine in the first
+place.</p>
+
+<p>A proposal the card cannot cover comes back as:</p>
+
+<pre><code class="language-json">{
+  &quot;outcome&quot;: &quot;blocked&quot;,
+  &quot;reasons&quot;: [&quot;mandate_limit_reached&quot;],
+  &quot;message&quot;: &quot;this action exceeds the remaining authority under mandate refund-agent-card: sum(amount_cents) limit 500000 per calendar_day reached: 300000 used, this action draws 250000&quot;
+}
+</code></pre>
+
+<p>The engine&rsquo;s own words in that <code>message</code> are the precise rule: 300000
+used of 500000, and an action drawing 250000 does not fit — €2,000 of
+authority is still on the card for something smaller.</p>
+
+<p>If an agent needs more room, you <strong>raise the ceiling</strong> — one deliberate
+act, recorded with who made it — rather than approving past it one
+action at a time. That is the same decision, made visible and attributable instead
+of ambient.</p>
+
+<h2 id="some-properties-worth-knowing">Some properties worth knowing</h2>
+
+<p><strong>A card narrows; it never confers.</strong> It selects from what the domain
+and its permissions already allow and caps how much of it happens. It
+cannot grant an action the domain does not have, or legalise one in a
+state it forbids. This is the opposite of a capability system.</p>
+
+<p><strong>Several cards can cover one action, and the tightest binds.</strong> Each is
+checked; the first that refuses decides. There is no precedence rule to
+reason about, and no way to widen an agent&rsquo;s authority by adding another
+card.</p>
+
+<p><strong>A card that cannot be read refuses.</strong> If the ledger is unreachable,
+the action is blocked rather than allowed, because allowing means acting
+on authority nobody could confirm. Cards marks such a balance <em>unknown</em>
+rather than showing a comforting zero — an unused card and an unreadable
+one are very different facts.</p>
+
+<p><strong>A revoked card refuses; it does not disappear.</strong> Revoking does not
+return the agent to &ldquo;unbounded&rdquo; for an action that requires one, and
+re-issuing the same name does not quietly bring it back: a proposal
+under a revoked card is blocked with <code>mandate_expired</code>, and its
+statement stays readable.</p>
+
+<p><strong>Draws are recorded when an action is authorized, not when it
+executes.</strong> KIFF decides; your system executes, and reports no outcome
+back. An authorization your code chose not to run still counts against
+the window. A retry of the same proposal does not draw twice.</p>
+
+<p><strong>A limit binds the approved path too.</strong> When an operator grants an
+approval, the re-decision runs the same check. Approval does not buy
+authority.</p>
+
+<h2 id="the-domain-s-observe-posture">The domain&rsquo;s observe posture</h2>
+
+<p>A card is checked even when the domain is in <code>observe</code>. In that posture
+the decision is advisory and the caller continues its existing flow; the
+authorization still draws on the card, whether or not the caller
+ultimately executes it. KIFF never learns which — so what the statement
+shows is authorized authority, never confirmed spend.</p>
+
+<p>Counting it anyway is exactly what lets you see <strong>what your agent would
+have drawn</strong> before you enforce anything. That is the recommended
+on-ramp: issue a card deliberately high, run for a week, read the
+statement, and set the real ceiling from your own traffic instead of
+from a guess.</p>
+
+<p>(This is the <em>domain&rsquo;s</em> observe posture, which still calls the decide
+API. Guard&rsquo;s own observe mode is a different thing: it watches an
+agent&rsquo;s tool calls without asking KIFF at all, so nothing is decided and
+no card is drawn.)</p>
+
+<h2 id="the-statement">The statement</h2>
+
+<p><strong>Cards</strong> in the dashboard shows, for each card: the ceiling, how much
+has been drawn in the current window, what remains, and every movement
+that got it there.</p>
+
+<p>A movement names what it was for — <code>REFUND_ORDER on ord_8812</code> — carries
+how much it drew, and says how much of that limit&rsquo;s window had been
+consumed once it landed. Where a card caps the same quantity over more
+than one window, each subtotal names its own: five an hour and twenty a
+day are both true of the same movement.</p>
+
+<p>Two things the statement deliberately does not do:</p>
+
+<ul>
+<li><strong>It never claims execution.</strong> Every movement is an authorization.
+KIFF decided; your system ran the action afterwards and does not
+report back, so an action you authorized and never ran still drew.</li>
+<li><strong>It never lists refusals.</strong> A refusal moved no balance, so it is not
+a movement. Refusals live in the domain&rsquo;s activity, which the card
+links to, filtered to its holder.</li>
+</ul>
+
+<p>Below the movements, <strong>Issued and changed</strong> is the card&rsquo;s history: what
+its ceiling was at each issuance, and who changed it. Re-issuing a card
+overwrites the row it lives in, so this is the only record of what the
+authority used to be.</p>
+
+<h2 id="changing-the-ceiling">Changing the ceiling</h2>
+
+<p><strong>Change ceiling</strong> on the card opens the issuance form with its current
+terms, because a change <em>is</em> a re-issue under the same name. Draws
+already recorded still count, so raising a ceiling adds only the
+difference rather than opening a fresh window, and the revision records
+who made the change.</p>
+
+<h2 id="setting-one">Setting one</h2>
+
+<p><strong>Cards → Issue a card</strong> in the dashboard. The form offers the actions
+your domain declares, the entity states each of them allows, and only
+the parameters it types as a number, so a quantity that cannot be summed
+is not offered in the first place.</p>
+
+<p>Or over HTTP, with a management credential:</p>
+
+<pre><code class="language-bash">curl -sS -X POST https://api.kiff.dev/v1/me/mandates \
+  -H &quot;Authorization: Bearer $TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+        &quot;id&quot;: &quot;refund-agent-card&quot;,
+        &quot;subject&quot;: &quot;refund-agent&quot;,
+        &quot;domain&quot;: &quot;card-refund&quot;,
+        &quot;grants&quot;: [{&quot;action&quot;: &quot;REFUND_ORDER&quot;, &quot;entity_states&quot;: [&quot;PAID&quot;]}],
+        &quot;aggregates&quot;: [
+          {&quot;quantity&quot;: &quot;sum(amount_cents)&quot;, &quot;limit&quot;: 500000, &quot;window&quot;: &quot;calendar_day&quot;}
+        ],
+        &quot;valid_until&quot;: &quot;2027-01-01T00:00:00Z&quot;
+      }'
+</code></pre>
+
+<p>Issuing and revoking require a <strong>management</strong> identity — the signed-in
+account owner or an admin. An agent&rsquo;s own runtime key is refused. A
+credential that could grant itself authority would make every card
+advisory.</p>
+
+<h2 id="what-this-is-not">What this is not</h2>
+
+<ul>
+<li><strong>Not a payment card.</strong> No money moves through KIFF. A payment card
+knows a merchant and an amount; a KIFF Card knows that this order is
+refundable, and counts whatever the consequence is — three
+<code>DELETE_CUSTOMER</code> an hour is the same instrument as €5,000 a day.</li>
+<li><strong>Not a rate limit.</strong> A rate limit protects your infrastructure from
+volume. A card bounds consequence: what an agent is permitted to <em>do</em>,
+in the units the action is measured in.</li>
+<li><strong>Not a spend tracker.</strong> Nothing here reads your ledger or your bank.
+It counts what KIFF authorized, and says so on the statement.</li>
+<li><strong>Not portable.</strong> A card is enforced by your KIFF tenant. Signing one
+so a third party could verify it independently is a later question.</li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+
+<ul>
+<li><a href="/docs/archive/2026-10-09/decisions">Decisions</a> — the proposal flow a limit is checked in,
+and the outcomes it can produce.</li>
+<li><a href="/docs/archive/2026-10-09/govern">Govern</a> — the evidence view per action, and the
+observe/enforce posture a limit is checked under either way.</li>
+<li><a href="/docs/archive/2026-10-09/approvals">Held calls and approvals</a> — what happens to a call
+outside the card, and how the owner answers.</li>
+</ul>

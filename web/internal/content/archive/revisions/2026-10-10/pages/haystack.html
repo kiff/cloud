@@ -1,0 +1,96 @@
+<h1 id="haystack-agents">Haystack Agents</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Haystack agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the Haystack hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was verified against the real <code>haystack-ai</code>
+package.</p>
+
+<p><strong>Shape: vote (inverted-control).</strong> Haystack runs the tool itself; a
+<code>ConfirmationStrategy</code> only votes — return a decision with
+<code>execute=True</code> to allow, <code>execute=False</code> to block. So the guard uses
+<code>observe()</code> / <code>decide_only()</code>, not a <code>run</code> callback. See
+<a href="/docs/archive/2026-10-10/concepts">how the guard works</a>.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus Haystack, the framework you're guarding:
+pip install haystack-ai
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from haystack.components.agents import Agent
+from kiff_guard import Guard
+from kiff_guard.adapters.haystack import kiff_confirmation_strategy
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = Agent(
+    chat_generator=...,
+    tools=[refund_order, send_email],
+    confirmation_strategies={
+        &quot;refund_order&quot;: kiff_confirmation_strategy(guard),
+        &quot;send_email&quot;: kiff_confirmation_strategy(guard),
+    },
+)
+</code></pre>
+
+<p>Run the agent as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Only the guard changes:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from haystack.components.agents import Agent
+from kiff_guard.adapters.haystack import kiff_confirmation_strategy
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+agent = Agent(chat_generator=..., tools=[refund_order],
+              confirmation_strategies={&quot;refund_order&quot;: kiff_confirmation_strategy(guard)})
+</code></pre>
+
+<p>In enforce mode a withheld decision returns <code>execute=False</code> with the
+reason as feedback, so the tool never runs. An allowed decision returns
+<code>execute=True</code> and the tool runs. On a transport error the guard fails
+closed (blocks) by default.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>Haystack calls a <code>ConfirmationStrategy.run(*, tool_name,
+tool_description, tool_params, tool_call_id, ...)</code> before executing a
+tool; it returns a <code>ToolExecutionDecision(execute=bool, feedback=...)</code>.
+The guard&rsquo;s strategy is passed via <code>Agent(confirmation_strategies=...)</code>.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/haystack.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/haystack.py</code></a></li>
+<li>Haystack docs: <a href="https://docs.haystack.deepset.ai/docs/human-in-the-loop" target="_blank" rel="noreferrer noopener">docs.haystack.deepset.ai</a> (Agent → human-in-the-loop)</li>
+</ul>

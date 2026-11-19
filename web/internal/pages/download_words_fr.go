@@ -1,0 +1,37 @@
+package pages
+
+// downloadFR is /tafs/download's words in French, at /fr/tafs/download.
+var downloadFR = downloadWords{
+	Lang:             "fr",
+	Title:            "Obtenir tafs — KIFF",
+	Description:      "Obtenez tafs sur Google Play pour Android. iPhone et iPad arrivent bientôt sur l'App Store.",
+	DescAvailable:    "Obtenez tafs pour %s.",
+	DescComingOne:    "L'app pour %s sera bientôt disponible.",
+	DescComingMany:   "Les apps pour %s seront bientôt disponibles.",
+	And:              "et",
+	Head:             "Obtenir tafs",
+	Sub:              "Des agents IA pour le travail de routine de votre entreprise, chacun dans une Card que vous fixez. Tout ce qui va au-delà attend votre validation sur votre téléphone.",
+	Phones:           "Téléphone et tablette",
+	Computer:         "Ordinateur",
+	NotYet:           "Bientôt disponible",
+	NotAvailable:     "Non disponible",
+	AvailableVersion: "Version %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256 :",
+	CheckHow:         "Avant de l'ouvrir, vérifiez que le SHA-256 du fichier correspond à celui-ci.",
+	DownloadFor:      "Télécharger pour %s",
+	QRAlt:            "Code QR qui ouvre kiff.dev/tafs/download",
+	QRCaption:        "Scannez-le avec l'appareil photo de votre téléphone pour y ouvrir cette page.",
+	Cost:             "Ce que ça coûte :",
+	Pricing:          "tarifs",
+	ComingAppStore:   "Bientôt sur l'App Store",
+	IPhoneIPad:       "iPhone et iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 ou version ultérieure",
+		"ios":     "iOS et iPadOS 16 ou version ultérieure",
+		"macos13": "macOS 13 ou version ultérieure",
+		"macos":   "macOS 12 (Monterey) uniquement",
+		"windows": "Windows 10 ou 11",
+		"linux":   "Ubuntu 24.04 ou version ultérieure",
+	},
+}

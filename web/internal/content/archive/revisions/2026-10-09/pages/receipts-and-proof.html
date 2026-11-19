@@ -1,0 +1,93 @@
+<h1 id="receipts-proof-packs">Receipts &amp; proof packs</h1>
+
+<p>Every decision KIFF makes leaves a <strong>receipt</strong>: a signed record of what
+was authorized, on what basis, before the action ran. A <strong>proof pack</strong>
+is the exportable bundle of that evidence for one control over a window.
+This page is precise about what a receipt proves — and, just as
+important, what it does not.</p>
+
+<h2 id="what-this-does">What this does</h2>
+
+<p>When KIFF decides on a proposed action, it records one receipt
+capturing the decision: the action, the entity and its state at that
+moment, the outcome, and the policy that was checked. The receipt is
+signed and tamper-evident, so the record of the decision can&rsquo;t be
+quietly altered after the fact.</p>
+
+<h2 id="what-a-receipt-proves">What a receipt proves</h2>
+
+<p>A decision receipt proves <strong>pre-execution authorization</strong>: that, at a
+specific moment, this action on this entity was evaluated against the
+recorded state and your declared policy, and a specific decision —
+<code>allowed</code>, <code>blocked</code>, <code>approval_required</code>, or <code>invalid</code> — was reached
+<em>before</em> the action ran. It is verifiable and tamper-evident.</p>
+
+<p>In plain terms: the receipt is proof of <em>what was authorized and on what
+basis</em>, made at the gate.</p>
+
+<h2 id="what-a-receipt-does-not-prove">What a receipt does not prove</h2>
+
+<p>This limit matters, and overstating it would be dishonest:</p>
+
+<ul>
+<li>A receipt does <strong>not</strong> prove the action executed. KIFF is the decision
+point, not the runner — your system executes <code>allowed</code> actions, and
+what happened downstream is outside the receipt.</li>
+<li>A receipt does <strong>not</strong> prove the outcome of the action (that the money
+actually moved, that the email was delivered).</li>
+<li>A receipt does <strong>not</strong> assert reviewer attribution beyond what the
+product records; approval-to-control linkage is limited today (see
+<a href="/docs/archive/2026-10-09/whats-real-today">What&rsquo;s real today</a>).</li>
+</ul>
+
+<p>So a receipt answers &ldquo;was this authorized, before it ran, against what
+state and policy?&rdquo; — not &ldquo;what did the system do after?&rdquo; Those are
+different questions, and conflating them is exactly the trap honest
+evidence avoids.</p>
+
+<h2 id="why-before-is-the-whole-point">Why &ldquo;before&rdquo; is the whole point</h2>
+
+<p>Most systems log what happened after the fact, in a store the acting
+system controls. That&rsquo;s an account, not proof — the actor wrote it, and
+it can be edited. A decision receipt is different on all three counts:
+it&rsquo;s made <strong>before</strong> the action, by KIFF rather than
+the actor, in a <strong>tamper-evident</strong> form. That&rsquo;s what makes it hold up
+when someone later asks you to show what was authorized.</p>
+
+<h2 id="proof-packs">Proof packs</h2>
+
+<p>A proof pack is the exportable form of this evidence for one Protected
+Control over a time window. The on-screen <a href="/docs/archive/2026-10-09/govern">Govern</a> view
+and the exported proof pack are built
+from the <strong>same evidence object</strong>, so what you see and what you hand
+someone else cannot diverge.</p>
+
+<p>A proof pack covers what the evidence object can truthfully show for the
+window: the control&rsquo;s identity, the decisions by outcome, the signed
+receipts and their verifiability, and the posture (observe vs enforce).
+It carries an honesty disclaimer about scope — a sampled &ldquo;all verified&rdquo;
+never reads as a complete-window guarantee.</p>
+
+<h2 id="verifiability-and-tamper-evidence">Verifiability and tamper-evidence</h2>
+
+<p>Receipts are signed, which is what makes them tamper-evident: a change
+to the recorded decision breaks the signature. Receipts can optionally
+be anchored to an external trail for independent verifiability; the
+production form of that anchoring is not shipped, so the honest claim
+today is <strong>signed, tamper-evident, verifiable</strong> — not more. See
+<a href="/docs/archive/2026-10-09/whats-real-today">What&rsquo;s real today</a> for the exact line.</p>
+
+<p><img src="/docs/archive/2026-10-09/assets/receipt-detail.png" alt="A receipt detail in the dashboard: the decision it records and its signature status, shown as Signed." /></p>
+
+<p><em>A receipt detail from a clean demo tenant — the decision it records and its signature status (Signed.).</em></p>
+
+<p><img src="/docs/archive/2026-10-09/assets/proof-pack-export.png" alt="A proof-pack export: the signed evidence bundle for one control over a window, with the scope/honesty disclaimer." /></p>
+
+<p><em>The proof-pack export for one control — the signed decisions and receipts in scope, led by the honesty disclaimer about what it does and does not assert.</em></p>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>See receipts in context → <a href="/docs/archive/2026-10-09/govern">Govern</a>.</li>
+<li>Understand what produced them → <a href="/docs/archive/2026-10-09/decisions">Decisions</a>.</li>
+</ul>

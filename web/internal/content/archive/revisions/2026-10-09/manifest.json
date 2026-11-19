@@ -1,0 +1,250 @@
+{
+  "revision": "2026-10-09",
+  "captured_at": "2026-10-09T11:47:06Z",
+  "source_commit": "ece3830db42d2a8520781df26e77098332cc932b",
+  "pages": [
+    {
+      "slug": "quickstart",
+      "title": "Quickstart: give an agent a Card",
+      "kind": "docs",
+      "file": "pages/quickstart.html",
+      "sha256": "479265c18c2c7fe975855be1739a1c68fa2304f8e5451a8b55ee6c80e6573550",
+      "current": "/docs/quickstart"
+    },
+    {
+      "slug": "what-kiff-is",
+      "title": "What KIFF is",
+      "kind": "docs",
+      "file": "pages/what-kiff-is.html",
+      "sha256": "837e7f7e01327a95d95d5a0215d2dc8cab0f9bf8ec8c8891df7c026f126b7ed6",
+      "current": "/docs/what-kiff-is"
+    },
+    {
+      "slug": "kiff-cards",
+      "title": "KIFF Cards",
+      "kind": "docs",
+      "file": "pages/kiff-cards.html",
+      "sha256": "d7247128035aac92cd16d3cacb8515efdb7e593df3dc4343c9d24fa07e781529",
+      "current": "/docs/kiff-cards"
+    },
+    {
+      "slug": "connect-an-agent",
+      "title": "Connect an agent",
+      "kind": "docs",
+      "file": "pages/connect-an-agent.html",
+      "sha256": "31d5e75e5502f4081a2ea54def2aa6cc7b3893311dced7b36f7625b42c25f462",
+      "current": "/docs/connect-an-agent"
+    },
+    {
+      "slug": "mcp-gateway",
+      "title": "Use the KIFF MCP gateway",
+      "kind": "docs",
+      "file": "pages/mcp-gateway.html",
+      "sha256": "1f3f316c74c8288c51e7d366492c864c42d49807e5242eda79c68280b566a019",
+      "current": "/docs/mcp-gateway"
+    },
+    {
+      "slug": "agent-skill",
+      "title": "The KIFF skill for coding agents",
+      "kind": "docs",
+      "file": "pages/agent-skill.html",
+      "sha256": "011460989c43841d90eafd3a653635699d0384d22c2efcf445b96adf335658e2",
+      "current": "/docs/agent-skill"
+    },
+    {
+      "slug": "approvals",
+      "title": "Held calls and approvals",
+      "kind": "docs",
+      "file": "pages/approvals.html",
+      "sha256": "cb0a74157d729c50e455ae880a79189dfec822288e38a06ce65d85a498e9a4d8",
+      "current": "/docs/approvals"
+    },
+    {
+      "slug": "domains",
+      "title": "Reusable operational domains",
+      "kind": "docs",
+      "file": "pages/domains.html",
+      "sha256": "8c30c4aaf065de6730550e78ea0ee9b7585f77747c8fb2aae8d37ec06d7675a0",
+      "current": "/docs/domains"
+    },
+    {
+      "slug": "framework-quickstart",
+      "title": "Build a domain with the framework",
+      "kind": "docs",
+      "file": "pages/framework-quickstart.html",
+      "sha256": "fcb947d3bf7359be90aadde4903d3e2bf19eea9ffaea4c4b05e0fcf0e5b3161c",
+      "current": "/docs/framework-quickstart"
+    },
+    {
+      "slug": "decisions",
+      "title": "Decisions",
+      "kind": "docs",
+      "file": "pages/decisions.html",
+      "sha256": "e98f1e03c61585d429e17e81bca4d5bbfb9e1f3a7164b743bea0d60af6d4d141",
+      "current": "/docs/decisions"
+    },
+    {
+      "slug": "receipts-and-proof",
+      "title": "Receipts \u0026 proof packs",
+      "kind": "docs",
+      "file": "pages/receipts-and-proof.html",
+      "sha256": "8ff244f8f3d2e9548e45c145ad63868322b249ed7b0082b697a261ef7878d9c9",
+      "current": "/docs/receipts-and-proof"
+    },
+    {
+      "slug": "govern",
+      "title": "Govern",
+      "kind": "docs",
+      "file": "pages/govern.html",
+      "sha256": "642e4d51c389ba2b361bdd077a90998661f4efb16723c7a4796778b40731387e",
+      "current": "/docs/govern"
+    },
+    {
+      "slug": "tool-permits",
+      "title": "Tools that check KIFF: no key at KIFF",
+      "kind": "docs",
+      "file": "pages/tool-permits.html",
+      "sha256": "1a84d1b6b57888a7184cd03dd78c856c23c0d071d62117c4bfe077831bb5e897",
+      "current": "/docs/tool-permits"
+    },
+    {
+      "slug": "whats-real-today",
+      "title": "What's real today vs planned",
+      "kind": "docs",
+      "file": "pages/whats-real-today.html",
+      "sha256": "cf55f0fcab0c25f87807689618d85b73dbef2ed9e145b33da3f8ad1fbe2b8dc0",
+      "current": "/docs/whats-real-today"
+    },
+    {
+      "slug": "concepts",
+      "title": "How kiff-guard works",
+      "kind": "docs",
+      "file": "pages/concepts.html",
+      "sha256": "b14b7ab7a349440f3639619c961647445ed63d9cf122c2ee6077aafbeb6d6277",
+      "current": "/docs/concepts"
+    },
+    {
+      "slug": "agno",
+      "title": "Agno",
+      "kind": "docs",
+      "file": "pages/agno.html",
+      "sha256": "50055383aabca5d4cdbd5c6b3bf63f124e379bd45c2157808d7006b70ddef727",
+      "current": "/docs/agno"
+    },
+    {
+      "slug": "langgraph",
+      "title": "LangGraph / LangChain",
+      "kind": "docs",
+      "file": "pages/langgraph.html",
+      "sha256": "c6c574cbcca7ded3b77dbd508c40fd5ae404d497003334532659867997492ca6",
+      "current": "/docs/langgraph"
+    },
+    {
+      "slug": "hermes",
+      "title": "Hermes Agent (Nous)",
+      "kind": "docs",
+      "file": "pages/hermes.html",
+      "sha256": "b16c8a9964accae05143464b20e7ef482b0f1bbb5a3c8c764e6dfe0e10d5103f",
+      "current": "/docs/hermes"
+    },
+    {
+      "slug": "openai-agents",
+      "title": "OpenAI Agents SDK",
+      "kind": "docs",
+      "file": "pages/openai-agents.html",
+      "sha256": "39c826963315ccc90c1e7e7add637f901bfd66608cd075641d58816871f093e6",
+      "current": "/docs/openai-agents"
+    },
+    {
+      "slug": "google-adk",
+      "title": "Google ADK",
+      "kind": "docs",
+      "file": "pages/google-adk.html",
+      "sha256": "9bf8818626f4fbff8e7eb402410e4799a9b130a19bb929125f9c5d586dc68bba",
+      "current": "/docs/google-adk"
+    },
+    {
+      "slug": "pydantic-ai",
+      "title": "Pydantic AI",
+      "kind": "docs",
+      "file": "pages/pydantic-ai.html",
+      "sha256": "6001416cf7fecbf109150c822b367dd79e71eb4c42b146ef1c133a711f247660",
+      "current": "/docs/pydantic-ai"
+    },
+    {
+      "slug": "strands",
+      "title": "Strands Agents",
+      "kind": "docs",
+      "file": "pages/strands.html",
+      "sha256": "c9087f17f6134fc1bf83570ae110f1562f5860a05d7b0c0f665a97299138bae3",
+      "current": "/docs/strands"
+    },
+    {
+      "slug": "haystack",
+      "title": "Haystack Agents",
+      "kind": "docs",
+      "file": "pages/haystack.html",
+      "sha256": "11190257971951d86b64fdfbc5f86dc4f9e61cfad491fb996a87ca9bb53c1268",
+      "current": "/docs/haystack"
+    },
+    {
+      "slug": "microsoft-agent-framework",
+      "title": "Microsoft Agent Framework",
+      "kind": "docs",
+      "file": "pages/microsoft-agent-framework.html",
+      "sha256": "71aebdd9af20aa0a1f0a1ca22eb566cd240c648485faffa651ecb9713c16eefd",
+      "current": "/docs/microsoft-agent-framework"
+    },
+    {
+      "slug": "llamaindex",
+      "title": "LlamaIndex Agents",
+      "kind": "docs",
+      "file": "pages/llamaindex.html",
+      "sha256": "926f06d7843fbff35f5503c50b3668a519703dde1dd81eb9120238f67446d8b2",
+      "current": "/docs/llamaindex"
+    },
+    {
+      "slug": "openclaw",
+      "title": "OpenClaw",
+      "kind": "docs",
+      "file": "pages/openclaw.html",
+      "sha256": "933d7d71faa0ab8456ac9a169936eff1948073b085ee20a61e10c9ada52305dd",
+      "current": "/docs/openclaw"
+    },
+    {
+      "slug": "security",
+      "title": "Security \u0026 posture",
+      "kind": "security",
+      "file": "pages/security.html",
+      "sha256": "ec9595e05a9e37a9323f9a211b37c4c099854a6ddef241424c93643716150d12",
+      "current": "/security"
+    }
+  ],
+  "assets": [
+    {
+      "file": "assets/agent-tools-tab.jpg",
+      "sha256": "f858078b2d0a3201d903040802c08b4fb59cdd7e53a2ea0b5dced8df1b5d36f8",
+      "content_type": "image/jpeg"
+    },
+    {
+      "file": "assets/card-issued.jpg",
+      "sha256": "ed4af08367b6521e5133944845b46e7f773aec924858cd3779daf5b38de9a91b",
+      "content_type": "image/jpeg"
+    },
+    {
+      "file": "assets/connected-tools.jpg",
+      "sha256": "175920322da9b604edebf70d9dacb8463a1e2d14b080464b467ab47a4501073d",
+      "content_type": "image/jpeg"
+    },
+    {
+      "file": "assets/proof-pack-export.png",
+      "sha256": "b93a6470e7823f61cc6bd41cf3480081208906e9b6a650abaa8ad3e230280c12",
+      "content_type": "image/png"
+    },
+    {
+      "file": "assets/receipt-detail.png",
+      "sha256": "77fb9dc949d0dfac8f5f3fa203677529fd77e14d6ba51278de3f02aef03fc130",
+      "content_type": "image/png"
+    }
+  ]
+}

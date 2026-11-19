@@ -1,0 +1,273 @@
+package pages
+
+import (
+	"net/url"
+	"strconv"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// ActivityView backs /activity.
+type ActivityView struct {
+	Email, Subject, DisplayName string
+	Me                          *apiclient.Me
+	Filter                      ActivityFilter
+	Rows                        []ActivityRow
+	Counts                      apiclient.ActivityCounts
+	// Shown is how many calls the filter selects in all.
+	Shown  int
+	Agents []string
+	// LoadError: the calls could not be read. AnswersError: the held
+	// calls could not, so owners' answers are missing from the rows.
+	LoadError, AnswersError string
+	Now                     time.Time
+}
+
+// ActivityCallView backs /activity/{id}: a call that was not held.
+type ActivityCallView struct {
+	Email, Subject, DisplayName string
+	Me                          *apiclient.Me
+	Call                        *apiclient.ActivityCall
+	LoadError                   string
+	// AnswersError: the held calls could not be read, so a held call's
+	// answer is not known here.
+	AnswersError string
+}
+
+templ Activity(v ActivityView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Activity", "activity", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<h1>Activity</h1>
+					<p class="dash-note">Every call your agents made through their Cards.</p>
+				</div>
+			</header>
+			if v.LoadError != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.LoadError }</div>
+			} else {
+				<div class="tl-find act-find">
+					<nav class="tl-chips" aria-label="Show">
+						for _, c := range activityChips(v.Filter, v.Counts) {
+							<a class={ "tl-chip", templ.KV("is-current", c.Current) } href={ templ.SafeURL(c.Href) }
+								if c.Current {
+									aria-current="page"
+								}
+							>
+								{ c.Label }
+								<span class="tl-chip-count">{ strconv.Itoa(c.Count) }</span>
+							</a>
+						}
+					</nav>
+					if len(v.Agents) > 0 {
+						<form class="act-agent-form" method="get" action="/activity">
+							if v.Filter.Show != "" {
+								<input type="hidden" name="show" value={ v.Filter.Show }/>
+							}
+							<label for="act-agent">Agent</label>
+							<select id="act-agent" name="agent" class="dash-input">
+								<option value="">All agents</option>
+								for _, a := range v.Agents {
+									<option value={ a } selected?={ a == v.Filter.Agent }>{ a }</option>
+								}
+							</select>
+							<button type="submit" class="btn btn-secondary">Show</button>
+						</form>
+					}
+				</div>
+				if v.AnswersError != "" {
+					<p class="dash-note dash-note-warn">{ v.AnswersError }</p>
+				}
+				if len(v.Rows) == 0 {
+					<div class="ny-empty">
+						<span class="ny-empty-dot" aria-hidden="true"></span>
+						<div>
+							if v.Counts.All == 0 && v.Filter.Show == "" {
+								<strong>No calls yet.</strong>
+								<p class="dash-note">Calls your agents make through their Cards show here.</p>
+							} else {
+								<strong>Nothing matches.</strong>
+								<p class="dash-note"><a href="/activity">Show every call</a></p>
+							}
+						</div>
+					</div>
+				}
+				for _, d := range activityDays(v.Rows, components.TimeZone(ctx), v.Now) {
+					<section class="act-day">
+						<h2>{ d.Label }</h2>
+						<div class="ac-slist tl-list">
+							<div class="act-head" aria-hidden="true"><span>Time</span><span>Agent</span><span>Call</span><span>Amount</span><span>KIFF and you</span><span>The tool</span><span>Receipt</span><span></span></div>
+							for _, r := range d.Rows {
+								@activityRow(r)
+							}
+						</div>
+					</section>
+				}
+				if v.Filter.Page > 0 || (v.Filter.Page+1)*ActivityPerPage < v.Shown {
+					<nav class="ny-pager act-pager" aria-label="Activity pages">
+						if len(v.Rows) > 0 {
+							<span class="dash-note">{ activityRange(v.Filter, v.Shown, len(v.Rows)) }</span>
+						}
+						if v.Filter.Page > 0 {
+							<a class="btn btn-secondary" href={ templ.SafeURL(activityHref(v.Filter.Show, v.Filter.Agent, v.Filter.Page-1)) }>Newer</a>
+						}
+						if (v.Filter.Page+1)*ActivityPerPage < v.Shown {
+							<a class="btn btn-secondary" href={ templ.SafeURL(activityHref(v.Filter.Show, v.Filter.Agent, v.Filter.Page+1)) }>Older</a>
+						}
+					</nav>
+				}
+				<p class="dash-note act-foot">Times in your time zone. A receipt is signed shortly after KIFF decides. A domain’s evidence is under Setup › Domain.</p>
+			}
+		</section>
+	}
+}
+
+// activityRow is one call. On a phone it stacks; on a wide screen it is
+// a row of columns.
+templ activityRow(r ActivityRow) {
+	{{ label, tone := r.decided() }}
+	<a class="act-row" href={ templ.SafeURL(r.href()) }>
+		<span class="act-when">{ r.Call.CreatedAt.In(components.TimeZone(ctx)).Format("15:04") }</span>
+		<span class="act-agent">{ r.Call.ActorID }</span>
+		<span class="act-call">{ r.Call.ActionName }</span>
+		<span class="act-amount">{ r.amount() }</span>
+		<span class="act-answer">
+			<span class={ "act-chip", "is-" + tone }>{ label }</span>
+			if a := r.answer(); a != "" {
+				<span>{ a }</span>
+			}
+		</span>
+		<span class={ "act-tool", templ.KV("is-warn", r.toolWarns()) }>{ r.toolLine() }</span>
+		<span class={ "act-receipt", "is-" + receiptTone(r.Call.ProposalDecision) }>{ receiptLabel(r.Call.ProposalDecision) }</span>
+		<span class="act-meta">
+			{ r.Call.ActorID } · { r.Call.CreatedAt.In(components.TimeZone(ctx)).Format("15:04") }
+			if r.Call.ToolOutcome != nil {
+				· { r.toolLine() }
+			}
+			· Receipt: { receiptLabel(r.Call.ProposalDecision) }
+		</span>
+		<span class="tl-chev">@chevron()</span>
+	</a>
+}
+
+func receiptTone(d apiclient.ProposalDecision) string {
+	switch receiptLabel(d) {
+	case "Signed", "Signed and anchored":
+		return "ok"
+	case "Being signed":
+		return "wait"
+	}
+	return "off"
+}
+
+// ActivityCall is one call that was not held for anyone: what was
+// asked, what KIFF decided, what the tool reported, and its receipt.
+templ ActivityCall(v ActivityCallView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Activity", "activity", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash">
+			if v.LoadError != "" || v.Call == nil {
+				<p class="ny-back"><a href="/activity">← Activity</a></p>
+				<div class="dash-warn"><strong>Heads up:</strong> { v.LoadError }</div>
+			} else {
+				@activityCallBody(*v.Call, v.AnswersError)
+			}
+		</section>
+	}
+}
+
+templ activityCallBody(c apiclient.ActivityCall, answersError string) {
+	{{ r := ActivityRow{Call: c} }}
+	{{ label, tone := r.decided() }}
+	<p class="ny-back"><a href="/activity">← Activity</a></p>
+	<article class="ny-story" id={ "call-" + c.ProposalID }>
+		<div class="ny-item-head">
+			<span class={ "act-chip", "is-" + tone }>{ label }</span>
+			<span class="ny-agent"><code>{ c.ActorID }</code></span>
+			<span class="ny-when">{ components.LocalTime(ctx, c.CreatedAt) }</span>
+		</div>
+		<h1 class="ny-headline"><code>{ c.ActionName }</code></h1>
+		<section class="ny-story-lead">
+			<p>{ activityCallLead(c) }</p>
+			if l := toolOutcomeLine(c.ToolOutcome); l != "" {
+				<p class="dash-note">{ l }</p>
+			}
+			if href, text := activityWaitHref(c); href != "" {
+				if answersError != "" && c.Outcome != "approval_required" {
+					<p class="dash-note dash-note-warn">{ answersError }</p>
+				}
+				<p><a class="btn" href={ templ.SafeURL(href) }>{ text }</a></p>
+			}
+		</section>
+		if reasons := activityReasons(c); len(reasons) > 0 && !pendingOutcome(c.Outcome) {
+			<section class="ny-story-block">
+				<h4>Why</h4>
+				<ul class="ny-story-rows">
+					for _, reason := range reasons {
+						<li><strong>{ reason }</strong></li>
+					}
+				</ul>
+			</section>
+		}
+		<section class="ny-story-block">
+			<h4>Receipt</h4>
+			<p><strong>{ receiptHeading(c.ProposalDecision) }</strong></p>
+			<p class="dash-note">A signed record of who asked, for what, and what KIFF decided. Anyone you give it to can check it hasn't been changed.</p>
+			if c.ReceiptTraceID != "" {
+				<p><a class="btn" href={ templ.SafeURL("/dashboard/receipts/" + url.PathEscape(c.ReceiptTraceID)) }>Open the receipt</a></p>
+			}
+		</section>
+		<section class="ny-story-block">
+			<h4>What happened</h4>
+			<ol class="ny-timeline">
+				<li class="is-asked"><strong>{ c.ActorID } asked</strong><span class="ny-when">{ components.LocalTime(ctx, c.CreatedAt) }</span></li>
+				<li class={ "is-" + timelineKind(c.Outcome) }><strong>{ activityDecisionStep(c, label) }</strong><span class="ny-when">{ components.LocalTime(ctx, c.CreatedAt) }</span></li>
+				if o := c.ToolOutcome; o != nil {
+					<li class={ "is-" + storyOutcomeKind(o.Status) }>
+						<strong>{ sentenceCase(toolOutcomeLabel(o)) }</strong>
+						<span class="ny-when">{ components.LocalTime(ctx, o.At) }</span>
+						if d := toolOutcomeDetail(o); d != "" {
+							<p class="dash-note">{ d }</p>
+						}
+					</li>
+				}
+			</ol>
+		</section>
+		<details class="ny-trace">
+			<summary>Details for tracing</summary>
+			<dl class="ny-args">
+				<div><dt>Call</dt><dd><code>{ c.ProposalID }</code></dd></div>
+				if c.EntityID != "" {
+					<div><dt>On</dt><dd><code>{ c.EntityID }</code></dd></div>
+				}
+				if c.ReceiptTraceID != "" {
+					<div><dt>Receipt</dt><dd><code>{ c.ReceiptTraceID }</code></dd></div>
+				}
+				<div><dt>Decisions</dt><dd>{ strconv.Itoa(c.Decisions) }</dd></div>
+			</dl>
+		</details>
+	</article>
+}
+
+func timelineKind(outcome string) string {
+	switch {
+	case outcome == "allowed":
+		return "yes"
+	case pendingOutcome(outcome):
+		return "asked"
+	}
+	return "no"
+}
+
+func receiptHeading(d apiclient.ProposalDecision) string {
+	switch receiptLabel(d) {
+	case "Signed and anchored":
+		return "Receipt signed and anchored"
+	case "Signed":
+		return "Receipt signed"
+	case "Being signed":
+		return "Receipt being signed"
+	}
+	return "No receipt: rejected before a decision"
+}

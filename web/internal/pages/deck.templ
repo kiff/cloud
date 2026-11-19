@@ -1,0 +1,151 @@
+package pages
+
+import (
+	"html/template"
+	"strconv"
+
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/decks"
+)
+
+// DeckIndexView is the data the /deck index needs: the ordered list
+// of decks to link to.
+type DeckIndexView struct {
+	Decks []decks.Deck
+}
+
+// DeckSlideView is the data one slide needs: the deck metadata, the
+// rendered slide body, and the position so the template can render
+// the counter and the prev/next links. Number is 1-based.
+type DeckSlideView struct {
+	Deck   decks.Deck
+	Body   template.HTML
+	Number int
+	Total  int
+}
+
+// HasPrev / HasNext drive the nav arrows.
+func (v DeckSlideView) HasPrev() bool { return v.Number > 1 }
+func (v DeckSlideView) HasNext() bool { return v.Number < v.Total }
+
+// PrevHref / NextHref build the ?slide=N links for the deck.
+func (v DeckSlideView) PrevHref() string {
+	return "/deck/" + v.Deck.Slug + "?slide=" + strconv.Itoa(v.Number-1)
+}
+
+func (v DeckSlideView) NextHref() string {
+	return "/deck/" + v.Deck.Slug + "?slide=" + strconv.Itoa(v.Number+1)
+}
+
+// PrintHref points at the print-all view. The PDF affordance is a
+// plain link to that view; the browser's own print (⌘P) produces the
+// file. No JS island is needed to trigger it.
+func (v DeckSlideView) PrintHref() string {
+	return "/deck/" + v.Deck.Slug + "?print=1"
+}
+
+// DeckPrintView is the data the print-all view needs: the deck
+// metadata and every rendered slide, in order. It renders all slides
+// stacked on one page so the browser's print dialog exports the whole
+// deck to PDF in one pass.
+type DeckPrintView struct {
+	Deck   decks.Deck
+	Slides []template.HTML
+}
+
+// DeckIndex renders /deck, a plain list of the available decks.
+// Uses the standalone app shell (no marketing nav/footer): a deck is
+// a shareable artifact, not a site page.
+templ DeckIndex(view DeckIndexView) {
+	@components.LayoutAppWithCSS("KIFF, decks", "css/fonts.css", "css/deck.css") {
+		<main class="deck-index">
+			<h1>KIFF decks</h1>
+			<p class="deck-index-lede">Pick a deck. Each one is shaped for a different reader.</p>
+			<ul class="deck-index-list">
+				for _, d := range view.Decks {
+					<li>
+						<a class="deck-index-card" href={ templ.SafeURL("/deck/" + d.Slug) }>
+							<span class="deck-index-audience">{ d.Audience }</span>
+							<span class="deck-index-title">{ d.Title }</span>
+							<span class="deck-index-blurb">{ d.Blurb }</span>
+							<span class="deck-index-stamp">{ d.Version } · updated { d.Updated }</span>
+						</a>
+					</li>
+				}
+			</ul>
+		</main>
+	}
+}
+
+// DeckSlide renders one slide of a deck: a full-viewport slide stage
+// with the rendered markdown centered, a top presenter rail, a footer
+// carrying the deck stamp + slide counter, and prev/next links. The
+// URL contract is server-rendered (?slide=N) and the deck is fully
+// no-JS: navigation is plain links and the wide left/right click
+// zones are real <a> elements; the PDF affordance links to the
+// print-all view where the browser's own print exports the deck.
+templ DeckSlide(view DeckSlideView) {
+	@components.LayoutAppWithCSS(view.Deck.Title+", "+view.Deck.Audience+" deck", "css/fonts.css", "css/deck.css") {
+		<div
+			class="deck"
+			data-deck={ view.Deck.Slug }
+			data-slide={ strconv.Itoa(view.Number) }
+			data-has-prev={ strconv.FormatBool(view.HasPrev()) }
+			data-has-next={ strconv.FormatBool(view.HasNext()) }
+		>
+			<header class="deck-topbar">
+				<a class="deck-brand" href="/deck">KIFF</a>
+				<progress class="deck-progress" max={ strconv.Itoa(view.Total) } value={ strconv.Itoa(view.Number) } aria-hidden="true"></progress>
+				<a class="deck-download" href={ templ.SafeURL(view.PrintHref()) } target="_blank" rel="noopener">PDF</a>
+			</header>
+			<article class="deck-slide prose">
+				<div class="deck-slide-inner">
+					@templ.Raw(string(view.Body))
+				</div>
+			</article>
+			if view.HasPrev() {
+				<a class="deck-hit deck-hit-prev" href={ templ.SafeURL(view.PrevHref()) } rel="prev" aria-label="Previous slide" tabindex="-1"></a>
+			}
+			if view.HasNext() {
+				<a class="deck-hit deck-hit-next" href={ templ.SafeURL(view.NextHref()) } rel="next" aria-label="Next slide" tabindex="-1"></a>
+			}
+			<footer class="deck-footer">
+				<span class="deck-footer-meta">
+					{ view.Deck.Audience } · { view.Deck.Version } · updated { view.Deck.Updated }
+				</span>
+				<nav class="deck-nav" aria-label="Slides">
+					if view.HasPrev() {
+						<a class="deck-nav-link" href={ templ.SafeURL(view.PrevHref()) } rel="prev" aria-label="Previous slide">←</a>
+					} else {
+						<span class="deck-nav-link deck-nav-disabled" aria-hidden="true">←</span>
+					}
+					<span class="deck-nav-count">{ strconv.Itoa(view.Number) } / { strconv.Itoa(view.Total) }</span>
+					if view.HasNext() {
+						<a class="deck-nav-link" href={ templ.SafeURL(view.NextHref()) } rel="next" aria-label="Next slide">→</a>
+					} else {
+						<span class="deck-nav-link deck-nav-disabled" aria-hidden="true">→</span>
+					}
+				</nav>
+			</footer>
+		</div>
+	}
+}
+
+// DeckPrint renders the whole deck as one stacked page for export.
+// Reached at /deck/{slug}?print=1 and linked from the PDF affordance
+// on each slide. No chrome, no nav, no JS, every slide laid out in
+// order so the browser's print dialog (⌘P) produces the full PDF.
+templ DeckPrint(view DeckPrintView) {
+	@components.LayoutAppWithCSS(view.Deck.Title+", "+view.Deck.Audience+" deck (print)", "css/fonts.css", "css/deck.css") {
+		<main class="deck-print" data-deck={ view.Deck.Slug }>
+			<p class="deck-print-hint">{ view.Deck.Audience } deck · { view.Deck.Version } · updated { view.Deck.Updated }, press ⌘P / Ctrl+P to save as PDF.</p>
+			for _, body := range view.Slides {
+				<section class="deck-print-slide prose">
+					<div class="deck-slide-inner">
+						@templ.Raw(string(body))
+					</div>
+				</section>
+			}
+		</main>
+	}
+}

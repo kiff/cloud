@@ -1,0 +1,67 @@
+package pages
+
+// The homepage, at most four phone screens (owner, 13 Nov 2026): what KIFF
+// is, how it works in three steps, one line of proof, one call to action.
+// The detail lives on the pages it links: /delegate, /tafs, /pricing, the docs.
+// Mobile-first; styles in css/home.css (prefix k-).
+
+// kWindow is the console chrome every product artifact sits in.
+templ kWindow(title string) {
+	<div class="k-win">
+		<div class="k-win-bar"><span>{ title }</span><i></i></div>
+		<div class="k-win-body">
+			{ children... }
+		</div>
+	</div>
+}
+
+// homeHero says what KIFF is, and where to use it.
+templ homeHero() {
+	<section class="k-hero k-mission" aria-labelledby="mission-title">
+		<h1 id="mission-title" class="k-display">Limits for AI agents, <span>set by people.</span></h1>
+		<p class="k-sub k-sub-wide">Give an agent a Card: what it may do, and how much. Inside the Card it works. Past it, the work waits for your approval.</p>
+		<p class="k-small">Use it through <a href="/tafs">tafs</a>, our app for a business's routine jobs, or from <a href="/docs/quickstart">your own agents</a>.</p>
+	</section>
+}
+
+// homeSteps is how it works, in three steps.
+templ homeSteps() {
+	<section class="k-why k-points" aria-labelledby="points-title">
+		<h2 id="points-title" class="k-h2">How it works</h2>
+		<ol class="k-steps">
+			<li><span><b>Set the limits.</b> A Card says which actions, how much each, and a total.</span></li>
+			<li><span><b>It works inside them.</b> KIFF checks every call outside the AI, before it reaches your tools.</span></li>
+			<li><span><b>You answer the rest.</b> Anything past the Card waits for you. No answer means no.</span></li>
+		</ol>
+	</section>
+}
+
+// homeWhy is why a Card (the founder's /why, in two lines; owner, 13 Nov
+// 2026).
+templ homeWhy() {
+	<section id="why" class="k-why k-points" aria-labelledby="why-title">
+		<h2 id="why-title" class="k-h2">Why a Card</h2>
+		<p class="k-sub">Everyone understands a company card: a limit, every charge on record, cancelled the same day. Today an agent's limits sit in its prompt or its code, behind a key that can do anything; a Card puts them outside the agent, where its owner can read and change them.</p>
+		<p class="k-small">The framework that decides is MIT-licensed, so you can read every line. <a href="/whitepaper">The longer case: the whitepaper →</a></p>
+	</section>
+}
+
+// homeProof is one line of proof, and where to check it.
+templ homeProof() {
+	<section class="k-proof-line" aria-label="Proof">
+		<p class="k-sub">Each guarantee is tied to the test that checks it. <a href="/invariants">See the invariants →</a></p>
+	</section>
+}
+
+// homeAction is the call to action: the app (/tafs/download), and the sample
+// walkthrough, before any sign-in, beside it.
+templ homeAction() {
+	<section class="k-offer" aria-labelledby="plan-title">
+		<h2 id="plan-title" class="k-h2">Get tafs.</h2>
+		<div class="k-actions">
+			<a href="/tafs/download" class="k-btn k-btn-primary">Download</a>
+			<a href="/delegate" class="k-link">Or see how a Card works, with sample agents →</a>
+		</div>
+		<p class="k-small">Prices: <a href="/pricing">pricing</a>. Questions: <a href="mailto:gabriel@kiff.dev">gabriel@kiff.dev</a>.</p>
+	</section>
+}

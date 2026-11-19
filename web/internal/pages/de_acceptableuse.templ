@@ -1,0 +1,140 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// AcceptableUseDE is the Acceptable Use Policy (/acceptable-use) in
+// German, at /de/acceptable-use. It is a translation of AcceptableUse:
+// the same sections, anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change
+// the English page first, then this one.
+templ AcceptableUseDE() {
+	@components.LayoutSite("KIFF — Richtlinie zur zulässigen Nutzung", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@aupHeadDE()
+			@aupScopeDE()
+			@aupRulesDE()
+			@aupEnforcementDE()
+			@aupReportingDE()
+			@aupChangesDE()
+		</article>
+	}
+}
+
+templ aupHeadDE() {
+	<header class="legal-head">
+		<p class="legal-badge">Richtlinie zur zulässigen Nutzung · v0.1</p>
+		<h1>Richtlinie zur zulässigen Nutzung</h1>
+		<p class="legal-meta">
+			<strong>Zuletzt aktualisiert:</strong> 23. Oktober 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Diese Richtlinie ist Teil der
+			<a href="/de/terms">Nutzungsbedingungen</a> (§ 5) zwischen
+			Kiff Agents OÜ und ihren Kunden. Begriffe, die in den
+			Nutzungsbedingungen definiert sind, bedeuten hier dasselbe.
+			Fragen:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ aupScopeDE() {
+	<section id="scope">
+		<h2>1. Für wen sie gilt</h2>
+		<p>
+			Sie gilt für jede Nutzung des Dienstes: die Website, das
+			Dashboard, die API, das Gateway und tafs. Sie gilt für
+			dich, für die Personen, denen du Zugang zu deinem Konto
+			gibst, und für jeden Agenten, der darüber handelt, ob du
+			den Agenten gebaut hast oder er ein taf ist.
+		</p>
+		<p>
+			Was ein Agent tut, tust du. Eine Card, ein zurückgehaltener
+			Aufruf, den jemand von deinen Leuten genehmigt hat, oder ein
+			taf, den du gestartet hast, verlagert die Verantwortung
+			nicht auf uns. Tut ein Agent etwas, das diese Richtlinie
+			verbietet, hast du gegen die Richtlinie verstoßen.
+		</p>
+	</section>
+}
+
+templ aupRulesDE() {
+	<section id="rules">
+		<h2>2. Was du nicht tun darfst</h2>
+		<p>Du und deine Agenten dürft den Dienst nicht dazu nutzen:</p>
+		<ul>
+			<li id="unlawful"><strong>Gegen das Gesetz oder die Rechte anderer zu verstoßen.</strong> Etwas zu tun, das dort rechtswidrig ist, wo du, die betroffenen Personen oder wir tätig sind, oder jemand anderem dabei zu helfen. Die Rechte anderer zu verletzen, einschließlich ihres geistigen Eigentums.</li>
+			<li id="unauthorized"><strong>Ohne Berechtigung zu handeln.</strong> In einem System, einem Konto oder einer App zu handeln, zu deren Nutzung du nicht berechtigt bist, oder eine App mit einer Anmeldung zu verbinden, die du nicht weitergeben darfst.</li>
+			<li id="fraud"><strong>Zu betrügen oder Geld zu bewegen, das du nicht bewegen darfst.</strong> Jemanden zu täuschen, um einen Vorteil zu erlangen, dich als eine Person oder ein Unternehmen auszugeben oder Gelder zu zahlen, zu erstatten, zu überweisen oder gutzuschreiben, über die du nicht verfügen darfst.</li>
+			<li id="third-party"><strong>Gegen die Bedingungen einer App zu verstoßen.</strong> Eine mit KIFF verbundene App eines Dritten so zu nutzen, wie es die Bedingungen ihres Anbieters verbieten. Dazu gehört auch, ihre Ratenlimits zu überschreiten oder Zugang weiterzuverkaufen, den du nicht weiterverkaufen darfst.</li>
+			<li id="bypass"><strong>KIFFs Entscheidungen zu umgehen.</strong> Zu versuchen, eine Entscheidung, eine Card, ein Limit oder ein Zurückhalten zu umgehen, auszuschalten oder auszutricksen. Dazu gehört, eine Aktion in viele aufzuteilen, um unter einem Limit zu bleiben, eine App direkt aufzurufen, nachdem KIFF den Aufruf abgelehnt oder zurückgehalten hat, den zurückgehaltenen Aufruf deines eigenen Agenten über eine zweite Identität zu genehmigen oder einen Beleg zu fälschen.</li>
+			<li id="security-testing"><strong>Die Sicherheit ohne Erlaubnis zu testen.</strong> Den Dienst, einen anderen Kunden oder ein System, das dir nicht gehört, zu scannen, auszuforschen, einem Lasttest zu unterziehen oder anzugreifen, es sei denn, der Eigentümer hat schriftlich zugestimmt. Um KIFF selbst zu testen, schreib zuerst an <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			<li id="spam"><strong>Spam zu senden oder jemanden zu belästigen.</strong> Unverlangte Massennachrichten zu senden oder eine Person zu bedrohen, ihr nachzustellen, sie zu mobben oder zu beschimpfen.</li>
+			<li id="illegal-content"><strong>Mit illegalen Inhalten umzugehen.</strong> Inhalte zu erstellen, zu speichern oder zu senden, die illegal sind, einschließlich Darstellungen des sexuellen Missbrauchs von Kindern.</li>
+			<li id="malware"><strong>Schadsoftware zu verbreiten.</strong> Schadsoftware oder Exploit-Code zu erstellen, zu speichern oder zu senden.</li>
+			<li id="other-tenants"><strong>Daten zu nehmen, die nicht deine sind.</strong> Daten über dein eigenes Konto hinaus automatisiert auszulesen, massenhaft zu exportieren oder auf andere Weise zu entnehmen oder zu versuchen, die Daten eines anderen Kunden zu ermitteln.</li>
+			<li id="competing"><strong>Den Dienst zu kopieren.</strong> Den gehosteten Dienst zurückzuentwickeln, um ein Konkurrenzprodukt zu bauen, oder den Dienst zu nutzen, um Produkte oder Dienste zu entwickeln, die mit ihm konkurrieren. Das gilt nicht für das Open-Source-Framework, für das seine MIT-Lizenz gilt.</li>
+		</ul>
+	</section>
+}
+
+templ aupEnforcementDE() {
+	<section id="enforcement">
+		<h2>3. Was wir tun dürfen</h2>
+		<p>
+			Wir überwachen nicht, was du sendest, aber wir handeln,
+			wenn wir etwas feststellen oder glaubwürdige Meldungen
+			erhalten. Glauben wir, dass gegen die Richtlinie verstoßen
+			wurde, dürfen wir, je nachdem, wie schwer der Verstoß ist:
+		</p>
+		<ul>
+			<li>einen Aufruf, eine Anfrage oder eine Verbindung <strong>ablehnen</strong>;</li>
+			<li>einen Agenten, einen Schlüssel, den Zugang einer Person oder das ganze Konto <strong>sperren</strong>, und zwar sofort, wenn der Schaden schwer ist oder andauert;</li>
+			<li>das Konto nach § 9 der <a href="/de/terms#term">Nutzungsbedingungen</a> <strong>beenden</strong>.</li>
+		</ul>
+		<p>
+			Wir sagen dir, was wir getan haben und warum. Wo wir können,
+			geben wir dir zuerst Gelegenheit, das Problem zu beheben.
+			Wir kündigen es nicht vorher an, wenn die Nutzung illegal
+			ist oder wenn Menschen oder Geld unmittelbar gefährdet sind.
+			Wir dürfen rechtswidrige Aktivitäten auch den Behörden
+			melden.
+		</p>
+	</section>
+}
+
+templ aupReportingDE() {
+	<section id="reporting">
+		<h2>4. Missbrauch melden</h2>
+		<p>
+			Wenn du glaubst, dass jemand KIFF entgegen dieser Richtlinie
+			nutzt, sag es uns. Sag, was passiert ist, wann, und alles,
+			was uns hilft, es zu finden, etwa einen Beleg oder die
+			Referenz eines Aufrufs.
+		</p>
+		<ul>
+			<li>Ein Sicherheitsproblem oder ein Angriff: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			<li>Jeder andere Missbrauch: <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.</li>
+		</ul>
+	</section>
+}
+
+templ aupChangesDE() {
+	<section id="changes">
+		<h2>5. Änderungen</h2>
+		<p>
+			Wir können diese Richtlinie aktualisieren. Wesentliche
+			Änderungen kündigen wir auf dieselbe Weise an wie bei den
+			Nutzungsbedingungen (§ 16).
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Dokumentversion:</strong> v0.1.<br/>
+			<strong>Zuletzt aktualisiert:</strong> 23. Oktober 2026.
+		</p>
+	</section>
+}

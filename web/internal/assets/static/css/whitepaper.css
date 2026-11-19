@@ -1,0 +1,120 @@
+/* /whitepaper and /why. A light publication inside the dark KIFF shell. */
+
+.whitepaper {
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: clamp(3.5rem, 8vw, 7rem) clamp(1.5rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+}
+
+.whitepaper-head {
+  max-width: 52rem;
+  margin: 0 0 clamp(2rem, 5vw, 3.5rem);
+  padding: 0;
+  border: 0;
+}
+
+.whitepaper-head .eyebrow {
+  margin: 0 0 1rem;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.whitepaper-source {
+  margin: 0;
+  max-width: 58ch;
+  color: #aaa8a2;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.whitepaper-source a {
+  color: #f6f1e7;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 154, 26, 0.5);
+  text-underline-offset: 3px;
+}
+
+.whitepaper-body {
+  --fg: #11141b;
+  --fg-soft: #3b424f;
+  --fg-muted: #73716d;
+  --bg: #f7f8fa;
+  --bg-elev: #ffffff;
+  --rule: rgba(17, 20, 27, 0.22);
+  --rule-soft: rgba(17, 20, 27, 0.10);
+  max-width: none;
+  padding: clamp(2.25rem, 6vw, 5rem) clamp(1.5rem, 7vw, 7rem);
+  color: var(--fg-soft);
+  background: #f7f8fa;
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+}
+
+.whitepaper-body.prose h1,
+.whitepaper-body.prose h2,
+.whitepaper-body.prose h3,
+.whitepaper-body.prose strong,
+.whitepaper-body.prose em {
+  color: var(--fg);
+}
+
+.whitepaper-body.prose h1:first-child {
+  margin-top: 0;
+  font-size: clamp(2.5rem, 5vw, 4.4rem);
+}
+
+.whitepaper-body.prose > * { max-width: 68ch; }
+.whitepaper-body.prose pre,
+.whitepaper-body.prose table,
+.whitepaper-body.prose hr { max-width: none; }
+
+/* The Cards paper's execution path remains readable without JavaScript. */
+.whitepaper-body .card-flow {
+  margin: 2.5rem 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--rule);
+  background: var(--bg-elev);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.card-flow-owner {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.whitepaper-body.prose .card-flow-steps {
+  margin: 1.25rem 0;
+  padding-left: 1.5rem;
+}
+
+.card-flow-steps li { padding: 0.35rem 0 0.35rem 0.25rem; }
+.card-flow span { display: block; margin-top: 0.25rem; }
+
+.card-flow-outcomes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.card-flow-outcomes > div {
+  padding: 0.85rem;
+  border: 1px solid var(--rule-soft);
+  border-top: 3px solid #cf741c;
+}
+
+.card-flow figcaption {
+  margin-top: 1.25rem;
+  color: var(--fg-soft);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .whitepaper { padding-inline: 0; }
+  .whitepaper-head { padding-inline: 1.5rem; }
+  .whitepaper-body { border-left: 0; border-right: 0; box-shadow: none; }
+  .card-flow-outcomes { grid-template-columns: 1fr; }
+}

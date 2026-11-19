@@ -1,0 +1,60 @@
+name: download check
+
+# Every 30 minutes, checks that the live kiff.dev/tafs/download shows what the
+# computers' published releases say: each computer's row (available with its
+# version, size and SHA-256, coming soon, or not available) and the page's
+# meta, og and twitter description, in English and French. It reads the
+# releases with the site's own code (web/cmd/downloadcheck), under the site's
+# own settings, so there's no second source of truth.
+#
+# A mismatch, or a check that couldn't be made, fails the run, and the run's
+# failure is the signal: the job prints what doesn't match. A release
+# published in the last 15 minutes is "pending", not a mismatch: the site
+# reads the releases every 10 minutes.
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    concurrency:
+      group: download-check
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: web/go.mod
+          cache-dependency-path: web/go.sum
+
+      - name: Check the live page against the releases
+        id: check
+        env:
+          # The site's own settings, as repository variables.
+          KIFF_DESKTOP_RELEASES: ${{ vars.KIFF_DESKTOP_RELEASES }}
+          KIFF_DESKTOP_NOT_AVAILABLE: ${{ vars.KIFF_DESKTOP_NOT_AVAILABLE }}
+          # Only for GitHub's higher rate limit; the desktop repositories are
+          # public, and the site reads them without a token.
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          go run ./cmd/downloadcheck -site https://kiff.dev -langs en,fr -report "$RUNNER_TEMP/report.txt"
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Fail on a mismatch
+        if: steps.check.outputs.code != '0'
+        run: |
+          cat "$RUNNER_TEMP/report.txt"
+          exit 1

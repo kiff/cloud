@@ -1,0 +1,337 @@
+/* docs.css, /docs site chrome (loaded with prose.css). */
+
+/* ── Docs site (/docs, /docs/{slug}), an earlier change ─────────────────
+ *
+ * A small multi-page docs site rendered from vendored markdown
+ * (internal/content/docs) through the same hermetic templ + embed.FS
+ * pattern as /whitepaper. Two columns: a sticky sidebar nav on the
+ * left, the rendered markdown in a .prose reading column on the
+ * right. The rendered body reuses .prose verbatim, these rules only
+ * add the page frame, the sidebar, and the verified/preview badges. */
+
+.docs {
+  --fg: #11141b;
+  --fg-soft: #3b424f;
+  --fg-muted: #73716d;
+  --bg: #f7f8fa;
+  --bg-elev: #ffffff;
+  --rule: rgba(17, 20, 27, 0.22);
+  --rule-soft: rgba(17, 20, 27, 0.10);
+  max-width: var(--max-page);
+  margin: clamp(2rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: var(--size-7);
+  align-items: start;
+  color: var(--fg-soft);
+  background: #f7f8fa;
+  border: 1px solid rgba(246, 241, 231, 0.16);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+}
+
+/* Sidebar nav, sticky under the topbar on desktop. */
+/* Sidebar wrapper, sticky under the topbar on desktop. On mobile it
+ * collapses into a checkbox-driven disclosure; see the mobile media
+ * query and .docs-nav-toggle below. The collapse uses a checkbox (not
+ * <details>) so the open/closed state is controlled purely by our own
+ * CSS and never depends on browser <details> collapse internals. */
+.docs-nav-wrap {
+  position: sticky;
+  top: 5rem;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+
+.docs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  font-size: 0.85rem;
+}
+
+/* Desktop: the toggle control is hidden and the nav is always shown.
+ * The checkbox is visually hidden but kept in the DOM (focusable) for
+ * the mobile disclosure. */
+.docs-nav-toggle { display: none; }
+.docs-nav-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.docs-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.docs-nav-group-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.docs-nav-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docs-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-1) var(--size-3);
+  border-radius: var(--radius);
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.docs-nav-link:hover {
+  color: var(--fg);
+  background: color-mix(in oklab, var(--bg-elev) 50%, transparent);
+}
+
+.docs-nav-link-active {
+  color: var(--fg);
+  background: color-mix(in oklab, var(--accent) 6%, var(--bg-elev) 60%);
+  border-left-color: var(--accent);
+}
+
+/* verified / preview badges in the nav. Reuse the .badge palette
+ * idea (currentColor border) but smaller for the dense sidebar. */
+.docs-badge {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.1em 0.5em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.docs-badge-verified {
+  color: var(--ok);
+  background: color-mix(in oklab, var(--ok) 10%, transparent);
+}
+
+.docs-badge-preview {
+  color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 10%, transparent);
+}
+
+/* Main reading column. */
+.docs-main {
+  min-width: 0;
+  padding-left: clamp(0rem, 3vw, 2.5rem);
+  border-left: 1px solid var(--rule-soft);
+}
+
+.docs-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0 0 var(--size-4);
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+}
+
+.docs-eyebrow a { color: var(--fg-muted); text-decoration: none; }
+.docs-eyebrow a:hover { color: var(--accent); }
+
+.docs-body {
+  max-width: 46rem;
+}
+
+.docs-body.prose h1,
+.docs-body.prose h2,
+.docs-body.prose h3,
+.docs-body.prose strong,
+.docs-body.prose em { color: var(--fg); }
+
+/* ── Compact docs typography (#) ──────────────────────────────────
+ *
+ * The /docs site reads denser than the whitepaper/legal pages that
+ * share .prose: shorter lines of shipped-product reference, lots of
+ * headings and code. These overrides are scoped to .docs-body so the
+ * shared .prose scale (whitepaper, legal) is untouched, only the
+ * docs reading column gets the tighter, smaller scale. */
+.docs-body.prose {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.docs-body.prose h1 {
+  font-size: clamp(1.5rem, 2.4vw, 1.85rem);
+  margin: var(--size-6) 0 var(--size-3);
+}
+
+.docs-body.prose h2 {
+  font-size: 1.3rem;
+  margin: var(--size-5) 0 var(--size-2);
+}
+
+.docs-body.prose h3 {
+  font-size: 1.1rem;
+  margin: var(--size-4) 0 var(--size-2);
+}
+
+.docs-body.prose h4,
+.docs-body.prose h5,
+.docs-body.prose h6 {
+  font-size: 0.95rem;
+  margin: var(--size-4) 0 var(--size-1);
+}
+
+.docs-body.prose p { margin: 0 0 var(--size-3); }
+
+.docs-body.prose li { margin-bottom: 0.25rem; }
+
+.docs-body.prose pre {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: var(--size-3);
+}
+
+.docs-body.prose code { font-size: 0.85em; }
+
+.docs-body.prose table { font-size: 0.85rem; }
+
+/* The first rendered heading carries the page title; tighten its
+ * top margin so it sits right under the breadcrumb. */
+.docs-body.prose h1:first-child { margin-top: 0; }
+
+.docs-footnav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--size-3);
+  margin-top: var(--size-8);
+  padding-top: var(--size-4);
+  border-top: 1px solid var(--rule-soft);
+  max-width: 46rem;
+}
+
+.docs-footnav a {
+  font-family: var(--font-display);
+  font-size: var(--font-size-1);
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+
+.docs-footnav a:hover { color: var(--accent); }
+
+/* Pending-screenshot callout. Marks a spot where a real screenshot
+ * (from a clean demo tenant) will be added later. Styled as an
+ * intentional, low-key placeholder, never a broken/missing image. */
+.docs-shot-pending {
+  margin: var(--size-5) 0;
+  padding: var(--size-3) var(--size-4);
+  border: 1px dashed var(--rule-soft);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--bg-elev) 40%, transparent);
+  color: var(--fg-muted);
+  font-size: var(--font-size-0);
+  line-height: 1.5;
+}
+
+.docs-shot-pending strong {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--fg-soft);
+}
+
+/* Mobile: the nav collapses into a tappable disclosure so the full
+ * link list no longer dumps at the top of every page. Only the toggle
+ * (showing the current page) is visible until the reader expands it. */
+@media (max-width: 860px) {
+  .docs {
+    grid-template-columns: 1fr;
+    gap: var(--size-5);
+    margin-top: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+  }
+  .docs-main { padding-left: 0; border-left: 0; }
+  .docs-nav-wrap {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius);
+    background: color-mix(in oklab, var(--bg-elev) 40%, transparent);
+  }
+  /* Collapsed by default; the checkbox reveals the nav when checked. */
+  .docs-nav { display: none; padding: var(--size-3); }
+  .docs-nav-checkbox:checked ~ .docs-nav { display: flex; }
+  .docs-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--size-3);
+    padding: var(--size-2) var(--size-3);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--fg);
+    cursor: pointer;
+    user-select: none;
+  }
+  .docs-nav-checkbox:checked ~ .docs-nav-toggle {
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  /* Keyboard focus ring on the toggle when the (hidden) checkbox is focused. */
+  .docs-nav-checkbox:focus-visible ~ .docs-nav-toggle {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .docs-nav-toggle-caret { transition: transform 120ms; }
+  .docs-nav-checkbox:checked ~ .docs-nav-toggle .docs-nav-toggle-caret {
+    transform: rotate(180deg);
+  }
+}
+
+/* Dated documentation archive: one reading column, no sidebar,
+ * and a note at the top of every archived page. */
+.docs.archive { grid-template-columns: minmax(0, 1fr); }
+.docs.archive .docs-main { padding-left: 0; border-left: 0; }
+.archive-banner {
+  margin: 0 0 var(--size-5);
+  padding: var(--size-3) var(--size-4);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--fg);
+  background: var(--bg-elev);
+  font-size: var(--font-size-1);
+  color: var(--fg);
+}
+/* Prose links underline in the faint rule colour; the banner's two
+ * links are its point, so they underline in the text colour. */
+.prose .archive-banner a {
+  color: inherit;
+  text-decoration: underline currentColor;
+  text-underline-offset: 3px;
+}
+.prose .archive-banner a:hover { color: var(--accent); }
+/* The archived security page sits in the same column as the banner,
+ * without the live page's own top padding. */
+.docs.archive .security { margin: 0; padding: 0 0 var(--size-9); }
+.archive-meta { margin-left: var(--size-2); color: var(--fg-muted); font-size: var(--font-size-0); }
+.archive-unlinked { text-decoration: none; }

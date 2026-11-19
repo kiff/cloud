@@ -1,0 +1,430 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// PeopleView backs /dashboard/people: the people on the account
+// and their roles, invitations, the separation-of-duties policy,
+// and the trail of changes. Each is its own tab.
+type PeopleView struct {
+	DisplayName, Email string
+	Me                 *apiclient.Me
+	Tab                string
+	IsAdmin            bool
+	Members            []apiclient.Member
+	Invites            []apiclient.Invite
+	Governance         apiclient.Governance
+	Events             []apiclient.MembershipEvent
+	ActiveAdmins       int
+	ActiveApprovers    int
+	Notice             string
+	ErrMsg             string
+	// ReauthURL is where to sign in again when a change needs a recent
+	// sign-in.
+	ReauthURL string
+	// NewInvite is the invitation just created; its link is shown once.
+	NewInvite *apiclient.Invite
+	// SeesUsage: the billing admin, who reads usage by person and
+	// group. Usage is that read, on the Usage tab.
+	SeesUsage bool
+	Usage     *apiclient.UsagePeople
+}
+
+type peopleTab struct{ ID, Label string }
+
+func peopleTabsFor(admin, usage bool) []peopleTab {
+	tabs := []peopleTab{{"people", "People"}}
+	if admin {
+		tabs = append(tabs, peopleTab{"invite", "Invite"})
+	}
+	tabs = append(tabs, peopleTab{"policy", "Separation of duties"})
+	if usage {
+		tabs = append(tabs, peopleTab{"usage", "Usage"})
+	}
+	if admin {
+		tabs = append(tabs, peopleTab{"trail", "Changes"})
+	}
+	return tabs
+}
+
+// usageName is a person's name in the usage read: their email when the
+// account has them, else who they are to KIFF.
+func usageName(v PeopleView, subject string) string {
+	for _, m := range v.Members {
+		if m.Subject == subject {
+			return memberName(m)
+		}
+	}
+	return subject
+}
+
+var roleSummaries = []struct{ Role, What string }{
+	{"admin", "Runs the account: people, API keys, billing and policy, and everything an editor does."},
+	{"editor", "Sets what agents may do: Cards, domains and tools."},
+	{"approver", "Answers held actions. Cannot change what a Card allows."},
+	{"viewer", "Uses what is shared with them. Changes nothing."},
+}
+
+func memberName(m apiclient.Member) string {
+	if m.Email != "" {
+		return m.Email
+	}
+	return m.Subject
+}
+
+// memberInitial is the letter on a person's avatar.
+func memberInitial(m apiclient.Member) string {
+	for _, r := range memberName(m) {
+		return string(r)
+	}
+	return "?"
+}
+
+func memberPath(m apiclient.Member, action string) templ.SafeURL {
+	return templ.SafeURL("/dashboard/people/members/" + url.PathEscape(m.Subject) + "/" + action)
+}
+
+func statusPill(status string) string {
+	if status == "active" {
+		return "dash-pill dash-pill-ok"
+	}
+	return "dash-pill dash-pill-warn"
+}
+
+var auditLabels = map[string]string{
+	"member.invited":         "invited someone",
+	"member.invite_revoked":  "withdrew an invitation",
+	"member.invite_accepted": "accepted an invitation",
+	"member.role_changed":    "changed a role",
+	"member.suspended":       "suspended access",
+	"member.reactivated":     "restored access",
+	"member.removed":         "removed someone",
+	"member.keys_revoked":    "revoked a removed member's credentials",
+	"governance.sod_enabled":  "turned separation of duties on",
+	"governance.sod_disabled": "turned separation of duties off",
+	"member.backfilled":      "became the account's admin (from before roles existed)",
+	"member.founded":         "created the account",
+}
+
+func auditLabel(action string) string {
+	if l, ok := auditLabels[action]; ok {
+		return l
+	}
+	return action
+}
+
+templ People(v PeopleView) {
+	@components.DashboardLayout("KIFF Cloud — People", "people", chromeFrom(v.DisplayName, v.Email, v.Me)) {
+		<section class="dash st-page">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Account</p>
+					<h1>People</h1>
+					<p class="dash-note">Who can act on this account, and with which role.</p>
+				</div>
+			</header>
+			if v.Notice != "" {
+				<div class="dash-flash dash-flash-success" role="status">{ v.Notice }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-flash dash-flash-error" role="alert">
+					{ v.ErrMsg }
+					if v.ReauthURL != "" {
+						<a href={ templ.SafeURL(v.ReauthURL) }>Sign in again</a>
+					}
+				</div>
+			}
+			<nav class="ac-detail-tabs" aria-label="People sections">
+				for _, t := range peopleTabsFor(v.IsAdmin, v.SeesUsage) {
+					<a class={ templ.KV("is-current", v.Tab == t.ID) } href={ templ.SafeURL("/dashboard/people?tab=" + t.ID) }
+						if v.Tab == t.ID {
+							aria-current="page"
+						}
+					>{ t.Label }</a>
+				}
+			</nav>
+			<div class="st-panel">
+				switch v.Tab {
+					case "invite":
+						@peopleInvite(v)
+					case "policy":
+						@peoplePolicy(v)
+					case "trail":
+						@peopleTrail(v)
+					case "usage":
+						@peopleUsage(v)
+					default:
+						@peopleMembers(v)
+				}
+			</div>
+		</section>
+	}
+}
+
+templ peopleMembers(v PeopleView) {
+	<article class="dash-card pp-card">
+		<div class="pp-members-head" aria-hidden="true">
+			<span>Person</span>
+			<span>Role</span>
+			<span>Access</span>
+			if v.IsAdmin {
+				<span>Actions</span>
+			}
+		</div>
+		<ul class="pp-members" role="list">
+			for _, m := range v.Members {
+				<li class="pp-member">
+					<div class="pp-member-who">
+						<span class="pp-avatar" aria-hidden="true">{ memberInitial(m) }</span>
+						<span class="pp-member-name">
+							<strong>{ memberName(m) }</strong>
+							if m.You {
+								<span class="dash-pill dash-pill-muted">you</span>
+							}
+						</span>
+					</div>
+					<div class="pp-member-role">
+						if v.IsAdmin && !m.You {
+							<form method="post" action={ memberPath(m, "role") } class="pp-role-form">
+								<label class="sr-only" for={ "role-" + m.Subject }>Role for { memberName(m) }</label>
+								<select id={ "role-" + m.Subject } name="role">
+									for _, r := range roleSummaries {
+										<option value={ r.Role } selected?={ r.Role == m.Role }>{ components.RoleLabel(r.Role) }</option>
+									}
+								</select>
+								<button type="submit" class="btn btn-secondary btn-sm">Save</button>
+							</form>
+						} else {
+							<span class="pp-role-label">Role </span>{ components.RoleLabel(m.Role) }
+						}
+					</div>
+					<div class="pp-member-access"><span class={ statusPill(m.Status) }>{ m.Status }</span></div>
+					if v.IsAdmin {
+						<div class="pp-member-actions">
+							if !m.You {
+								if m.Status == "active" {
+									<form method="post" action={ memberPath(m, "suspend") }>
+										<button type="submit" class="btn btn-secondary btn-sm">Suspend</button>
+									</form>
+								} else {
+									<form method="post" action={ memberPath(m, "reactivate") }>
+										<button type="submit" class="btn btn-secondary btn-sm">Restore</button>
+									</form>
+								}
+								<details class="dash-disclosure dash-autoclose">
+									<summary class="btn btn-danger btn-sm">Remove…</summary>
+									<form method="post" action={ memberPath(m, "remove") } class="dash-disclosure-panel">
+										<p class="dash-hint">Removal is permanent. Their account API keys and CLI sessions are revoked; agent keys they created keep working and are flagged for rotation. To take access away for now, suspend instead.</p>
+										<button type="submit" class="btn btn-danger btn-sm">Remove { memberName(m) }</button>
+									</form>
+								</details>
+							}
+						</div>
+					}
+				</li>
+			}
+		</ul>
+		if v.IsAdmin {
+			<p class="dash-hint">Changing someone to admin, demoting or suspending an admin, and removing anyone need a sign-in from the last ten minutes. Adding an approver or admin is emailed to the account's other admins and approvers.</p>
+		}
+	</article>
+	<article class="dash-card pp-card">
+		<h2>Roles</h2>
+		<dl class="pp-roles">
+			for _, r := range roleSummaries {
+				<div><dt>{ components.RoleLabel(r.Role) }</dt><dd>{ r.What }</dd></div>
+			}
+		</dl>
+	</article>
+	if !(v.IsAdmin && v.ActiveAdmins <= 1) {
+		<article class="dash-card st-row">
+			<div class="st-row-text">
+				<h2>Leave this account</h2>
+				<p class="dash-note">You lose access to this account. Your other accounts are not affected.</p>
+			</div>
+			<details class="dash-disclosure dash-autoclose">
+				<summary class="btn btn-secondary btn-sm">Leave…</summary>
+				<form method="post" action="/dashboard/people/leave" class="dash-disclosure-panel">
+					<p class="dash-hint">An admin of the account has to invite you again to come back.</p>
+					<button type="submit" class="btn btn-danger btn-sm">Leave this account</button>
+				</form>
+			</details>
+		</article>
+	}
+}
+
+templ peopleInvite(v PeopleView) {
+	if !v.IsAdmin {
+		<p class="dash-note">Only an admin of the account invites people.</p>
+	} else {
+		if v.NewInvite != nil && v.NewInvite.AcceptURL != "" {
+			<article class="dash-card">
+				<h2>Invitation link</h2>
+				<p class="dash-note">The invitation was emailed to { v.NewInvite.Email }. If it doesn't arrive, send this link another way. It works once, for whoever signs in and accepts it, and is not shown again.</p>
+				<code class="dash-keyreveal-key" id="invite-link">{ v.NewInvite.AcceptURL }</code>
+				<button type="button" class="btn btn-secondary btn-sm" data-copy-target="invite-link">Copy link</button>
+			</article>
+		}
+		<article class="dash-card st-row">
+			<div class="st-row-text">
+				<h2>Invite someone</h2>
+				<p class="dash-note">Choose their role and how long the link works. KIFF emails them the link.</p>
+			</div>
+			<a class="btn btn-primary" href="/dashboard/people/invite">Invite someone</a>
+		</article>
+		<article class="dash-card pp-card">
+			<h2>Pending invitations</h2>
+			if len(v.Invites) == 0 {
+				<p class="dash-note">None.</p>
+			} else {
+				<div class="dash-table-wrap">
+					<table class="dash-table pp-table pp-invites">
+						<thead>
+							<tr><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Expires</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+						</thead>
+						<tbody>
+							for _, i := range v.Invites {
+								<tr>
+									<td>{ i.Email }</td>
+									<td>{ components.RoleLabel(i.Role) }</td>
+									<td>{ i.ExpiresAt.UTC().Format("2 Jan 2006 15:04 UTC") }</td>
+									<td>
+										<form method="post" action={ templ.SafeURL("/dashboard/people/invites/" + url.PathEscape(i.ID) + "/revoke") } class="dash-table-action-form">
+											<button type="submit" class="btn btn-secondary btn-sm">Withdraw</button>
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</article>
+	}
+}
+
+templ peoplePolicy(v PeopleView) {
+	<article class="dash-card st-row">
+		<div class="st-row-text">
+			<h2>Separation of duties</h2>
+			if v.Governance.SeparationOfDuties {
+				<p><span class="dash-pill dash-pill-ok">On</span></p>
+				<p class="dash-note">Only approvers answer held actions, and only from a dashboard session, never with an API key. Nobody answers an action they proposed, and nobody answers holds on a Card they issued or changed.</p>
+			} else {
+				<p><span class="dash-pill dash-pill-muted">Off</span></p>
+				<p class="dash-note">Admins and editors can also answer held actions. Each answer records who gave it and their role. Nobody answers an action they proposed.</p>
+				if v.ActiveApprovers > 0 {
+					<p class="dash-note">This account has an approver, so it can turn separation of duties on.</p>
+				}
+			}
+			<p class="dash-hint">KIFF tells sign-ins apart, not people: one person with two sign-ins can hold two memberships. Every new approver or admin is emailed to the others, and every change is in Changes.</p>
+		</div>
+		if v.IsAdmin {
+			<form method="post" action="/dashboard/people/policy">
+				if v.Governance.SeparationOfDuties {
+					<input type="hidden" name="separation_of_duties" value="off"/>
+					<button type="submit" class="btn btn-secondary">Turn off</button>
+					<p class="dash-hint">Needs a sign-in from the last ten minutes. Every approver is emailed.</p>
+				} else {
+					<input type="hidden" name="separation_of_duties" value="on"/>
+					<button type="submit" class="btn btn-primary" disabled?={ v.ActiveApprovers == 0 }>Turn on</button>
+					if v.ActiveApprovers == 0 {
+						<p class="dash-hint">Invite an approver first: with it on, only approvers answer.</p>
+					}
+				}
+			</form>
+		}
+	</article>
+}
+
+templ peopleTrail(v PeopleView) {
+	<article class="dash-card">
+		if len(v.Events) == 0 {
+			<p class="dash-note">No changes yet.</p>
+		} else {
+			<div class="dash-table-wrap">
+				<table class="dash-table">
+					<thead>
+						<tr><th scope="col">When</th><th scope="col">Who</th><th scope="col">What</th><th scope="col">Detail</th></tr>
+					</thead>
+					<tbody>
+						for _, e := range v.Events {
+							<tr>
+								<td>{ e.At.UTC().Format("2 Jan 2006 15:04 UTC") }</td>
+								<td><code>{ e.Actor }</code></td>
+								<td>{ auditLabel(e.Action) }</td>
+								<td>
+									if e.Target != "" {
+										<code>{ e.Target }</code>
+									}
+									if e.OldValue != "" || e.NewValue != "" {
+										{ " " + e.OldValue + " → " + e.NewValue }
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</article>
+}
+
+// peopleUsage is what each person's and each group's runs counted this
+// period: a cost and fair-use figure, for the billing admin, never a
+// view of how people work.
+templ peopleUsage(v PeopleView) {
+	<article class="dash-card pp-card">
+		<h2>By person</h2>
+		<p class="dash-note">What each person's tafs got done this period, on the two meters. It counts what got done, not how people work.</p>
+		if v.Usage == nil {
+			<p class="dash-note">Only the account's billing admin sees usage by person.</p>
+		} else {
+			<div class="dash-table-wrap">
+				<table class="dash-table pp-table pp-table-num">
+					<thead>
+						<tr><th scope="col">Person</th><th scope="col">Tasks</th><th scope="col">Actions</th></tr>
+					</thead>
+					<tbody>
+						for _, p := range v.Usage.People {
+							<tr><td>{ usageName(v, p.Subject) }</td><td>{ commaInt(p.Tasks) }</td><td>{ commaInt(p.Actions) }</td></tr>
+						}
+						if v.Usage.NoPerson != nil {
+							<tr class="pp-row-muted"><td>Not tied to a person</td><td>{ commaInt(v.Usage.NoPerson.Tasks) }</td><td>{ commaInt(v.Usage.NoPerson.Actions) }</td></tr>
+						}
+					</tbody>
+				</table>
+			</div>
+			if v.Usage.NoPerson != nil {
+				<p class="dash-hint">
+					Schedules, doors and your own agents aren't tied to a person.
+					if v.Usage.PeopleSince != nil {
+						Neither is what was counted before { v.Usage.PeopleSince.Format("2 January") }, when KIFF began recording who asked.
+					}
+				</p>
+			}
+		}
+	</article>
+	if v.Usage != nil && len(v.Usage.Groups) > 0 {
+		<article class="dash-card pp-card">
+			<h2>By group</h2>
+			<p class="dash-hint">A person in two groups counts in both.</p>
+			<div class="dash-table-wrap">
+				<table class="dash-table pp-table pp-table-num">
+					<thead>
+						<tr><th scope="col">Group</th><th scope="col">People</th><th scope="col">Tasks</th><th scope="col">Actions</th></tr>
+					</thead>
+					<tbody>
+						for _, g := range v.Usage.Groups {
+							<tr><td>{ g.Name }</td><td>{ commaInt(g.People) }</td><td>{ commaInt(g.Tasks) }</td><td>{ commaInt(g.Actions) }</td></tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</article>
+	}
+}

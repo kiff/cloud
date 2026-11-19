@@ -1,0 +1,431 @@
+package pages
+
+// wkFrame is the full-viewport walkthrough frame every Card form
+// shares: cancel, where you are, progress, then the steps. One frame,
+// one stylesheet and one script, so the three ways to issue a Card look
+// and behave the same.
+//
+// single opens one step on its own to change a Card that already exists:
+// no progress, no Back or Continue, only that step and Save, with what
+// changes written above it (steps are for issuing, not editing).
+templ wkFrame(cancelHref, label string, steps int, start string, single bool) {
+	<div class={ "wk-shell", "wk", templ.KV("wk-single", single) } data-step={ start }
+		if single {
+			data-wk-single
+		}
+	>
+		<header class="wk-top">
+			<div class="wk-top-row">
+				<a class="wk-cancel" href={ templ.SafeURL(cancelHref) }>@wkCloseIcon() Cancel</a>
+				<span class="wk-count" data-wk-count aria-live="polite">{ label }</span>
+			</div>
+			<div class="wk-progress" aria-hidden="true">
+				for i := 0; i < steps; i++ {
+					<span></span>
+				}
+			</div>
+		</header>
+		<main class="wk-main">
+			<div class="wk-col">
+				{ children... }
+			</div>
+		</main>
+	</div>
+	@cardWalkScript()
+}
+
+// wkBar is the bottom bar: Back, Continue, and the submit on the last step.
+templ wkBar(submit string) {
+	<footer class="wk-bar">
+		<p class="wk-change" data-wk-change hidden></p>
+		<div class="wk-bar-row">
+			<button type="button" class="wk-btn wk-btn-quiet" data-wk-back>Back</button>
+			<button type="button" class="wk-btn wk-btn-primary" data-wk-next>Continue</button>
+			<button type="submit" class="wk-btn wk-btn-primary" data-wk-submit>{ submit }</button>
+		</div>
+	</footer>
+}
+
+// wkReviewCard is the Card as it will look, filled in by the script.
+// actionsText is fixed text for the Card's middle line (a tool's name);
+// actionsVal reads it from an answer instead; with neither, the issue
+// form's summary fills it.
+templ wkReviewCard(route bool, actionsText, actionsVal, limitVal string) {
+	<div class="wk-card" aria-hidden="true">
+		<svg class="wk-seam" viewBox="0 0 340 214" preserveAspectRatio="none"><path d="M262 0 L292 44 Q306 68 290 94 L272 124 Q264 138 264 156 L264 214"></path></svg>
+		if route {
+			<span class="wk-tag wk-card-tag" data-wk-card-route>ASK</span>
+		}
+		<span class="wk-card-lines">
+			<span class="wk-mono wk-card-agent" data-wk-card-agent></span>
+			if actionsText != "" {
+				<span class="wk-card-actions wk-mono">{ actionsText }</span>
+			} else if actionsVal != "" {
+				<span class="wk-card-actions" data-wk-val={ actionsVal }></span>
+			} else {
+				<span class="wk-card-actions" data-wk-card-actions></span>
+			}
+			if limitVal != "" {
+				<span class="wk-mono wk-card-limit" data-wk-val={ limitVal }></span>
+			} else {
+				<span class="wk-mono wk-card-limit" data-wk-card-limit></span>
+			}
+		</span>
+	</div>
+}
+
+// wkRouteStep is what happens past the Card: Ask (held for an approver,
+// with how long it waits) or Stop (refused). The same on every form.
+templ wkRouteStep(n string, ask bool, holds []WalkOption, offerSteps bool, steps string) {
+	<section class="wk-step" data-wk-step={ n } data-wk-sum="route" aria-labelledby={ "wk-h" + n }>
+		<div class="wk-head">
+			<h1 id={ "wk-h" + n }>And past that?</h1>
+			<p>Actions inside the Card run either way. This only decides what happens to one that goes past it.</p>
+		</div>
+		<fieldset class="wk-choices">
+			<legend class="wk-sr">Past the Card</legend>
+			<label class="wk-choice wk-choice-tall">
+				<input type="radio" name="on_exceed" value="owner" checked?={ ask }/>
+				<span class="wk-route-head">
+					<span class="wk-tag wk-tag-ask">ASK</span>
+					<span class="wk-strong">Hold it for an approver</span>
+				</span>
+				<span class="wk-body">Held for an authorized approver. If nobody answers before the hold expires, it is refused.</span>
+			</label>
+			<fieldset class="wk-field wk-if-ask">
+				<legend class="wk-label">Wait for an answer</legend>
+				<div class="wk-seg">
+					for _, o := range holds {
+						<label>
+							<input type="radio" name="hold" value={ o.Value } checked?={ o.Checked }/>
+							<span>{ o.Label }</span>
+						</label>
+					}
+				</div>
+			</fieldset>
+			if offerSteps {
+				<div class="wk-field wk-if-ask">
+					<label class="wk-label" for="wk-next-steps">Other answers (optional)</label>
+					<input class="wk-input" id="wk-next-steps" type="text" name="next_steps" value={ steps } placeholder="return_first, proof_first" autocomplete="off"/>
+					<p class="wk-sub">Besides Approve once and Reject. Each shows as a button on a held call, and the agent is told which one you chose. Separate them with commas.</p>
+				</div>
+			}
+			<label class="wk-choice wk-choice-tall">
+				<input type="radio" name="on_exceed" value="refuse" checked?={ !ask }/>
+				<span class="wk-route-head">
+					<span class="wk-tag">STOP</span>
+					<span class="wk-strong">Refuse it</span>
+				</span>
+				<span class="wk-body">Refused. Nothing is sent to the tool, and the agent is told why.</span>
+			</label>
+		</fieldset>
+	</section>
+}
+
+// wkWindowField is the period a limit is counted over.
+templ wkWindowField(choices []WalkOption) {
+	<fieldset class="wk-field">
+		<legend class="wk-label">Counted over</legend>
+		<div class="wk-seg">
+			for _, o := range choices {
+				<label>
+					<input type="radio" name="window" value={ o.Value } checked?={ o.Checked } data-note={ o.Note }/>
+					<span>{ o.Label }</span>
+				</label>
+			}
+		</div>
+		<p class="wk-sub" data-wk-window-note></p>
+	</fieldset>
+}
+
+templ wkCloseIcon() {
+	<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+}
+
+templ wkInfoIcon() {
+	<svg class="wk-note-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+}
+
+// cardWalkScript turns the stacked steps into a walkthrough: one step at
+// a time, Back and Continue, the progress bar, and a review written from
+// the answers. Vanilla and dependency-free. Without it every step shows
+// at once and the form still posts; with it, a step is checked before
+// moving on, and the server still decides.
+//
+// Each step names its check (data-wk-check: "agent", "choice:<name>",
+// "text:<name>", "positive:<name>", "anypositive:<a>,<b>") and the
+// review reads answers through data-wk-val="<name>". The issue form adds
+// its own summary (data-wk-issue).
+templ cardWalkScript() {
+	<script>
+	(function () {
+		var root = document.querySelector(".wk");
+		var form = root && root.querySelector("form");
+		if (!form) return;
+		root.classList.add("is-js");
+
+		function one(s) { return form.querySelector(s); }
+		function all(s) { return Array.prototype.slice.call(form.querySelectorAll(s)); }
+		function picked(name) { return form.querySelector("[name=" + name + "]:checked"); }
+		function labelOf(input) {
+			if (!input) return "";
+			if (input.getAttribute("data-label")) return input.getAttribute("data-label");
+			return input.nextElementSibling ? input.nextElementSibling.textContent.trim() : "";
+		}
+		function field(name) { return one("[name=" + name + "]"); }
+		function text(name) { var f = field(name); return f ? f.value.trim() : ""; }
+
+		// Numbers are read the way the server reads that field, so the
+		// review never states a different amount than the one issued:
+		// "int" is strconv.ParseInt (the issue form), "sep" also drops
+		// separators (the tool form's optionalPositive), "eur" and "times"
+		// are parseTaskLimit for a money or a count job (the quick form,
+		// whose field says "quick"). A euro amount comes back in cents.
+		// Grouping is fixed, never the browser's locale.
+		function mode(name) {
+			var f = field(name), m = f ? f.getAttribute("data-wk-num") || "int" : "int";
+			if (m !== "quick") return m;
+			var task = picked("task");
+			return task && task.hasAttribute("data-count") ? "times" : "eur";
+		}
+		function parseNum(raw, m) {
+			var s = String(raw || "").trim();
+			if (m === "eur" || m === "times") s = s.replace(/[€ \u00a0_]/g, "");
+			if (m === "sep" || m === "times") s = s.replace(/[, \u00a0_]/g, "");
+			if (m === "eur") {
+				var i = s.lastIndexOf(",");
+				if (i >= 0 && s.indexOf(".") < 0 && s.split(",").length === 2 && s.length - i - 1 <= 2) s = s.slice(0, i) + "." + s.slice(i + 1);
+				s = s.replace(/,/g, "");
+				var dot = s.indexOf("."), whole = dot < 0 ? s : s.slice(0, dot), frac = dot < 0 ? "" : s.slice(dot + 1);
+				if (!whole || frac.length > 2 || whole.length > 12 || !/^[0-9]*$/.test(whole + frac)) return null;
+				while (frac.length < 2) frac += "0";
+				var cents = parseInt(whole + frac, 10);
+				return cents > 0 ? cents : null;
+			}
+			if (!/^\+?[0-9]{1,18}$/.test(s)) return null;
+			var n = parseInt(s, 10);
+			return n > 0 ? n : null;
+		}
+		function group(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+		function amount(name) {
+			var m = mode(name), n = parseNum(text(name), m);
+			if (n === null) return "";
+			if (m !== "eur") return group(n);
+			var c = n % 100;
+			return "€" + group(Math.floor(n / 100)) + (c ? "." + (c < 10 ? "0" : "") + c : "");
+		}
+		function valid(name) { return parseNum(text(name), mode(name)) !== null; }
+
+		var steps = all("[data-wk-step]");
+		var segs = root.querySelectorAll(".wk-progress span");
+		var count = root.querySelector("[data-wk-count]");
+		var main = root.querySelector(".wk-main");
+		var back = one("[data-wk-back]"), next = one("[data-wk-next]"), submit = one("[data-wk-submit]");
+		var total = steps.length;
+		var current = Math.min(parseInt(root.getAttribute("data-step"), 10) || 1, total);
+		var choiceName = form.getAttribute("data-wk-agent-choice") || "subject_choice";
+		var textName = form.getAttribute("data-wk-agent-text") || "subject";
+
+		function agent() {
+			var c = picked(choiceName);
+			if (c && c.value !== "other") return c.value;
+			return text(textName);
+		}
+		function asks() { var r = picked("on_exceed"); return !r || r.value !== "refuse"; }
+		function routeText() { return asks() ? "Ask · wait " + labelOf(picked("hold")) : "Stop · refuse"; }
+		function valueOf(name, fmt) {
+			if (name === "agent") return agent();
+			if (name === "route") return routeText();
+			if (name === "quick-limit") {
+				var q = amount("limit");
+				return q ? q + " a day" : "";
+			}
+			if (name === "tool-limit") {
+				var w = labelOf(picked("window")).toLowerCase(), parts = [];
+				var uEl = one("[data-wk-amount-unit]"), u = uEl ? uEl.getAttribute("data-wk-amount-unit") : "";
+				u = u ? " " + u : "";
+				if (amount("total")) parts.push(amount("total") + u + " in total");
+				if (amount("per_call")) parts.push("up to " + amount("per_call") + u + " a call");
+				if (amount("calls")) parts.push(amount("calls") + " calls");
+				return parts.length ? parts.join(" · ") + " · " + w : "";
+			}
+			var f = field(name);
+			if (!f) return "";
+			if (f.type === "radio" || f.type === "checkbox") {
+				return all("[name=" + name + "]:checked").map(labelOf).join(", ");
+			}
+			return fmt === "number" ? amount(name) : f.value.trim();
+		}
+		function set(s, t) { var e = one(s); if (e) e.textContent = t; }
+
+		// The issue form's own summary: a total or a count, its unit, the
+		// window, and what happens past it.
+		function issueLimit() {
+			var limit = amount("limit");
+			if (!limit) return "—";
+			var w = labelOf(picked("window")).toLowerCase();
+			var k = picked("quantity_kind") || field("quantity_kind");
+			if (!k || k.value !== "sum") return limit + " actions · " + w;
+			var t = limit + " " + text("parameter") + " · " + w;
+			if (amount("per_action_max")) t += " · up to " + amount("per_action_max") + " each";
+			return t;
+		}
+		function syncIssue() {
+			var k = picked("quantity_kind") || field("quantity_kind");
+			var per = field("per_action_max");
+			if (per) per.disabled = !k || k.value !== "sum";
+			var chosen = all("[name=actions]:checked").map(function (e) { return e.value; });
+			all("[data-wk-states-for]").forEach(function (fs) {
+				var on = chosen.indexOf(fs.getAttribute("data-wk-states-for")) >= 0;
+				fs.hidden = !on;
+				fs.disabled = !on;
+			});
+			var kept = !!field("preserved_grants");
+			var who = agent() || "—";
+			set("[data-wk-row=actions]", kept ? "kept as they are" : (chosen.join(", ") || "—"));
+			set("[data-wk-row=limit]", issueLimit());
+			set("[data-wk-card-actions]", kept ? "Kept actions" : chosen.length > 1 ? chosen[0] + " +" + (chosen.length - 1) : (chosen[0] || "No actions yet"));
+			set("[data-wk-card-limit]", issueLimit());
+			set("[data-wk-summary]", who + " may " + (kept ? "take its kept actions" : (chosen.join(", ") || "…")) + ", up to " + issueLimit() + ". " +
+				(asks() ? "Past that, an action waits for an approver for " + labelOf(picked("hold")) + "." : "Past that, an action is refused."));
+		}
+
+		function sync() {
+			all("[data-wk-val]").forEach(function (e) {
+				e.textContent = valueOf(e.getAttribute("data-wk-val"), e.getAttribute("data-wk-fmt")) || e.getAttribute("data-wk-empty") || "—";
+			});
+			var note = one("[data-wk-window-note]"), w = picked("window");
+			if (note && w) note.textContent = w.getAttribute("data-note");
+			var other = one(".wk-other");
+			if (other) {
+				var c = picked(choiceName);
+				other.hidden = !(c && c.value === "other");
+			}
+			var tag = one("[data-wk-card-route]");
+			if (tag) {
+				tag.textContent = asks() ? "ASK" : "STOP";
+				tag.classList.toggle("wk-tag-ask", asks());
+			}
+			set("[data-wk-card-agent]", agent() || "—");
+			set("[data-wk-row=agent]", agent() || "—");
+			set("[data-wk-row=route]", routeText());
+			if (form.hasAttribute("data-wk-issue")) syncIssue();
+		}
+
+		function clearError() { all(".wk-err").forEach(function (e) { e.remove(); }); }
+		function fail(n, msg) {
+			clearError();
+			var p = document.createElement("p");
+			p.className = "wk-err";
+			p.setAttribute("role", "alert");
+			p.textContent = msg;
+			steps[n - 1].querySelector(".wk-head").appendChild(p);
+			return false;
+		}
+		function passes(rule) {
+			var kind = rule.split(":")[0], arg = rule.slice(kind.length + 1);
+			if (kind === "agent") return !!agent();
+			if (kind === "choice") return !!picked(arg);
+			if (kind === "text") return !!text(arg);
+			if (kind === "positive") return valid(arg);
+			if (kind === "anypositive") return arg.split(",").some(valid);
+			return true;
+		}
+		function check(n) {
+			clearError();
+			var s = steps[n - 1], rule = s.getAttribute("data-wk-check");
+			if (!rule || passes(rule)) return true;
+			return fail(n, s.getAttribute("data-wk-msg") || "Answer this step to go on.");
+		}
+
+		function show(n, focus) {
+			current = n;
+			steps.forEach(function (s, i) { s.hidden = i + 1 !== n; });
+			for (var i = 0; i < segs.length; i++) segs[i].classList.toggle("is-on", i < n);
+			if (total > 1 && !root.hasAttribute("data-wk-single")) count.textContent = "Step " + n + " of " + total;
+			back.hidden = n === 1;
+			next.hidden = n === total;
+			submit.hidden = n !== total;
+			sync();
+			if (main) main.scrollTop = 0;
+			if (focus) {
+				var h = steps[n - 1].querySelector("h1");
+				h.setAttribute("tabindex", "-1");
+				h.focus({ preventScroll: true });
+			}
+		}
+
+		// One step on its own, to change an existing Card: Save stays off
+		// until something changes, and the bar says what changes.
+		var single = root.hasAttribute("data-wk-single");
+		// The baseline is taken after the first sync, which
+		// can disable fields (a count Card's per-action amount); a
+		// disabled field is not in FormData, so a snapshot
+		// before it would read as an edit.
+		var startForm = "";
+		var changeLine = root.querySelector("[data-wk-change]");
+		function stepSummary() {
+			var s = steps[current - 1], key = s.getAttribute("data-wk-sum");
+			if (key === "limit") return form.hasAttribute("data-wk-issue") ? issueLimit() : valueOf("tool-limit");
+			if (key === "actions") return all("[name=actions]:checked").map(function (e) { return e.value; }).join(", ") || "—";
+			if (key === "route") return routeText();
+			return "";
+		}
+		var before = "";
+		function syncSingle() {
+			if (!single) return;
+			var changed = new URLSearchParams(new FormData(form)).toString() !== startForm;
+			submit.disabled = !changed;
+			var after = stepSummary();
+			if (changeLine) {
+				changeLine.hidden = !changed;
+				changeLine.textContent = before && after && before !== after ? "Now " + before + " → " + after : "Unsaved change";
+			}
+		}
+		next.addEventListener("click", function () { if (check(current)) show(current + 1, true); });
+		back.addEventListener("click", function () { clearError(); show(current - 1, true); });
+		all("[data-wk-goto]").forEach(function (b) {
+			b.addEventListener("click", function () { show(parseInt(b.getAttribute("data-wk-goto"), 10), true); });
+		});
+		form.addEventListener("change", sync);
+		// Connecting an approver: the amount step follows the chosen
+		// action. Each action carries its own threshold, unit and
+		// precision, and choosing one starts the amount again from its
+		// threshold, so the unit shown is the unit granted.
+		form.addEventListener("change", function (e) {
+			if (e.target.name !== "scope") return;
+			var f = one("[data-wk-scope-amount]"), u = one("[data-wk-scope-unit]"), s = e.target;
+			if (!f) return;
+			f.value = s.getAttribute("data-amount");
+			f.setAttribute("step", s.getAttribute("data-step"));
+			if (u) u.textContent = s.getAttribute("data-unit");
+		});
+		form.addEventListener("input", sync);
+		form.addEventListener("submit", function (e) {
+			if (single) {
+				if (!check(current)) e.preventDefault();
+				return;
+			}
+			if (current < total) {
+				e.preventDefault();
+				if (check(current)) show(current + 1, true);
+				return;
+			}
+			for (var n = 1; n < total; n++) {
+				if (!check(n)) { e.preventDefault(); show(n, true); return; }
+			}
+		});
+		show(current, false);
+		if (single) {
+			back.hidden = true; next.hidden = true; submit.hidden = false;
+			startForm = new URLSearchParams(new FormData(form)).toString();
+			before = stepSummary();
+			syncSingle();
+			// Registered last, so each check runs after sync has normalized
+			// the form for that event.
+			form.addEventListener("input", syncSingle);
+			form.addEventListener("change", syncSingle);
+		}
+	})();
+	</script>
+}

@@ -1,0 +1,77 @@
+package components
+
+// OpsShell is the internal operator console shell. It reuses the
+// dashboard's light app frame end-to-end — the same app-shell.css +
+// dashboard.css the tenant dashboard uses (topbar, sidebar grid,
+// dash-card / dash-table / dash-metrics primitives) — so the
+// console looks and feels like the rest of kiff.dev rather than a
+// separate tool.
+//
+// The only differences from the tenant dashboard shell are the
+// sidebar nav (operator sections, not tenant sections), an
+// "Internal" marker in the topbar, and a link back to the tenant
+// dashboard. It is never linked FROM the public site or the tenant
+// dashboard nav.
+//
+// active highlights the current section: "overview", "tenants",
+// "activity".
+templ OpsShell(title, active string, chrome DashboardChrome) {
+	@LayoutAppWithCSS("KIFF ops — "+title, "css/fonts.css", "css/app-shell.css", "css/dashboard.css", "css/ops.css") {
+		<div class="dash-shell">
+			<header class="dash-topbar" role="banner">
+				<a class="dash-topbar-logo" href="/ops" aria-label="KIFF operator console">
+					<img class="dash-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+					<span class="dash-brand-word">kiff.dev</span>
+					<span class="dash-pill dash-pill-warn" style="margin-left:.5rem">Internal</span>
+				</a>
+				<span class="dash-topbar-account">
+					if chrome.Email != "" {
+						<span class="dash-topbar-email">{ chrome.Email }</span>
+					}
+					<span class="dash-avatar" aria-hidden="true">{ chrome.Initials }</span>
+				</span>
+			</header>
+			<nav class="dash-sidebar" aria-label="Operator sections">
+				<p class="dash-nav-label">Operator</p>
+				@opsNav("overview", active, "/ops", "Overview", "⊞", "")
+				@opsNav("tenants", active, "/ops/tenants", "Tenants", "≣", "")
+				@opsNav("activity", active, "/ops/activity", "Activity", "◎", "live")
+				@opsNav("consumption", active, "/ops/consumption", "Consumption", "∑", "")
+				@opsNav("alerts", active, "/ops/alerts", "Alerts", "!", "")
+				@opsNav("proofs", active, "/ops/proofs", "Proofs", "✔", "")
+				@opsNav("support", active, "/ops/support", "Support", "?", "")
+				@opsNav("audit", active, "/ops/audit", "Audit log", "✓", "")
+				<div class="dash-sidebar-spacer"></div>
+				<a class="dash-sidebar-footer" href="/dashboard" aria-label="Back to the tenant dashboard">
+					<span class="dash-sidebar-plan">← Dashboard</span>
+					<span class="dash-sidebar-user">Leave the operator console</span>
+				</a>
+			</nav>
+			<main class={ "dash-main", "dash-main-" + active }>
+				{ children... }
+			</main>
+		</div>
+	}
+}
+
+// opsNav renders one sidebar item, mirroring dashNav so it picks up
+// the same .dash-nav-item styling.
+templ opsNav(key, active, href, label, icon, meta string) {
+	if key == active {
+		<a class="dash-nav-item dash-nav-active" href={ templ.SafeURL(href) } aria-current="page">
+			<span class="dash-nav-icon" aria-hidden="true">{ icon }</span>
+			<span class="dash-nav-text">{ label }</span>
+			if meta != "" {
+				<small class="dash-nav-meta">{ meta }</small>
+			}
+		</a>
+	} else {
+		<a class="dash-nav-item" href={ templ.SafeURL(href) }>
+			<span class="dash-nav-icon" aria-hidden="true">{ icon }</span>
+			<span class="dash-nav-text">{ label }</span>
+			if meta != "" {
+				<small class="dash-nav-meta">{ meta }</small>
+			}
+		</a>
+	}
+}

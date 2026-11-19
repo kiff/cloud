@@ -1,0 +1,30 @@
+package pages
+
+import (
+	"html/template"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Why renders the founder manifesto ("Why I'm building KIFF") as a
+// long-form document page — the human, conviction-led front door to
+// the whitepaper's rigor. Same paper-shaped Layout, reading width, and
+// .prose typography as /whitepaper; the markdown is original cloud-side
+// content rendered server-side (memoized in the why package).
+templ Why(rendered template.HTML) {
+	@components.LayoutSiteWithMeta("Why I'm building KIFF", "Everyone understands a corporate card. KIFF gives each AI agent one: limits the owner sets, held outside the agent, on an open-source core. Why it matters now, and where it is going.", "article", "", "css/prose.css", "css/whitepaper.css") {
+		<article class="whitepaper">
+			<header class="whitepaper-head">
+				<p class="eyebrow">Why · the founder's view</p>
+				<p class="whitepaper-source">
+					The conviction behind KIFF, in plain language. For the
+					technical rigor, read the
+					<a href="/whitepaper">whitepaper</a>.
+				</p>
+			</header>
+			<div class="whitepaper-body prose">
+				@templ.Raw(string(rendered))
+			</div>
+		</article>
+	}
+}

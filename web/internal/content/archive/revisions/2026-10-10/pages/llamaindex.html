@@ -1,0 +1,97 @@
+<h1 id="llamaindex-agents">LlamaIndex Agents</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this LlamaIndex agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the LlamaIndex hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a>
+(<code>kiff_guard.adapters.llama_index</code>) and was source-verified against
+llama-index-core and passes the conformance suite.</p>
+
+<p><strong>Shape: middleware.</strong> LlamaIndex&rsquo;s <code>AgentWorkflow</code> runs each tool in
+its <code>call_tool</code> step. The guard sits <em>inside</em> that step — you subclass
+<code>AgentWorkflow</code> as <code>GuardedAgentWorkflow</code> and the guard runs the tool
+via its continuation, the same middleware shape as Agno. See
+<a href="/docs/archive/2026-10-10/concepts">how the guard works</a> for what that means.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus LlamaIndex itself, the framework you're guarding:
+pip install &quot;kiff-guard[llama-index]&quot;
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from llama_index.core.agent.workflow import FunctionAgent
+from llama_index.llms.openai import OpenAI
+from kiff_guard import Guard
+from kiff_guard.adapters.llama_index import GuardedAgentWorkflow
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+workflow = GuardedAgentWorkflow(
+    agents=[FunctionAgent(tools=[refund_order], llm=OpenAI(model=&quot;gpt-4o-mini&quot;))],
+    guard=guard,
+)
+</code></pre>
+
+<p>Run the workflow as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Nothing about the workflow wiring changes — only
+the guard:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from kiff_guard.adapters.llama_index import GuardedAgentWorkflow
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+workflow = GuardedAgentWorkflow(
+    agents=[FunctionAgent(tools=[refund_order], llm=OpenAI(model=&quot;gpt-4o-mini&quot;))],
+    guard=guard,
+)
+</code></pre>
+
+<p>In enforce mode a withheld decision raises <code>kiff_guard.Hold</code> from inside
+the <code>call_tool</code> step; the tool body never runs and the exception
+propagates up through the workflow handler (the fail-safe path — an
+unknown outcome withholds rather than proceeds).</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>LlamaIndex&rsquo;s <code>AgentWorkflow</code> exposes a <code>call_tool</code> workflow step that
+resolves and runs each tool. <code>GuardedAgentWorkflow</code> overrides that step
+and runs the tool body through the guard&rsquo;s continuation — block by
+raising <code>Hold</code>, proceed by calling through. The adapter is fully async
+to match the workflow, and lazily imports LlamaIndex so
+<code>import kiff_guard</code> works without <code>llama-index-core</code> installed.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/llama_index.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/llama_index.py</code></a></li>
+<li>LlamaIndex docs: <a href="https://developers.llamaindex.ai/python/framework/use_cases/agents/" target="_blank" rel="noreferrer noopener">developers.llamaindex.ai</a></li>
+</ul>

@@ -31,7 +31,7 @@ step() { # label, dir, command...
 }
 unformatted() { local f; f="$(gofmt -l .)"; [[ -z "$f" ]] || { echo "$f"; return 1; }; }
 
-for mod in gateway api; do
+for mod in gateway api web; do
 	step "$mod: gofmt" "$out/$mod" unformatted
 	step "$mod: go vet" "$out/$mod" go vet ./...
 	step "$mod: go build" "$out/$mod" go build ./...
@@ -51,7 +51,9 @@ deny=(
 	"Stripe or Clerk object id|(price|prod|cus|sub|acct|org|user)_[A-Za-z0-9]{14,}"
 	"kiff hostname beyond the public ones|[a-z0-9.-]+\.kiff\.dev"
 	"email address|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"
-	"price (KIFF publishes none)|\\\$[0-9][0-9,]*(\.[0-9]+)?([kKmM]\b|/mo|/yr|/month|/year)"
+	# Prices: KIFF publishes its own (PRICING.md, the pricing and terms
+	# pages). A price anywhere else is caught.
+	"price in dollars|\\\$[0-9][0-9,]*(\.[0-9]+)?([kKmM]\b|/mo|/yr|/month|/year)"
 	# A euro price, either way round (€8.99/mo, 8,99 € a month). A bare
 	# amount is a Card's limit in a test (€5), not a price.
 	"price in euros|(€|EUR) ?[0-9][0-9.,]*( ?(/ ?(mo|yr|month|year|seat)|a (month|year|seat)|per (month|year|seat|person)))|[0-9][0-9.,]* ?(€|EUR)( ?(/ ?(mo|yr|month|year|seat)|a (month|year|seat)|per (month|year|seat|person)))"
@@ -61,6 +63,8 @@ deny=(
 	"private RFC reference|\bRFC[ -]?[0-9]{1,3}\b"
 	# A tenant id shaped like a real one (made-up ids in tests read tnt_test,
 	# tnt_other, tnt_example9).
+	# A link to KIFF's private source repository: its issues, files and pages.
+	"private repository link|github\.com/kiff/kiff-cloud\b"
 	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
 	# Who decided something, never the requirement itself: "the PM", a
 	# ruling's time stamp, and a reference cut short to "(review on)".
@@ -79,7 +83,50 @@ deny=(
 # accounts.kiff.dev is the sign-in provider's account page, ops@ the sender of
 # KIFF's emails and support@ their reply-to, all three seen by every customer;
 # #666 and #666666 are an email's grey text colour, not issues.
-allow='(api|app|mcp|www|planque|status|accounts)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid|test)|web\.example|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)'
+# legal@ and hello@ are the addresses the site's legal and contact pages give;
+# clerk.kiff.dev is the sign-in provider's own host, which every browser loads;
+# any .example domain is reserved for examples; pk_live_xyz is the sign-in
+# tests' made-up publishable key.
+allow='(api|app|mcp|www|planque|status|accounts|clerk)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support|legal|hello)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid|test)|[a-z0-9.-]+\.example|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)|pk_live_xyz'
+
+# Files whose hits under one rule are public already, as they are: text the
+# site serves today (its pages, posts, decks, docs and generated lists), a
+# vendored library, or a guard test's own list of banned words. Each line: the
+# rule's label, "|", and an extended regex for the path as grep prints it
+# (./web/...).
+allow_in=(
+	# Served text: the blog, the archive of earlier pages, the decks, the docs
+	# pages, the whitepaper, llms.txt, the proofs and spots pages, and the
+	# generated lists the site shows (apps, invariants), with their sample
+	# order numbers, design names, source paths and contact addresses.
+	"private issue reference|\./web/internal/content/(blog|archive|apps)/"
+	"private RFC reference|\./web/internal/content/(blog|archive|whitepaper|invariants)/"
+	"private path reference|\./web/internal/content/(archive|blog|decks|docs|invariants|proofs|quickstart|spots|videos|whitepaper)/"
+	"email address|\./web/internal/content/(blog|docs|llmstxt)/"
+	"kiff hostname beyond the public ones|\./web/internal/content/(archive|blog|decks|docs)/"
+	# A vendored library (open-props), minified: its colours read like numbers.
+	"private issue reference|\./web/internal/assets/static/open-props\.min\.css"
+	# The demo's sample orders ("Refund order #8812"), shown on the site.
+	"private issue reference|\./web/internal/delegate/catalog\.go"
+	# The archive of earlier pages, as kiff.dev serves it: links a visitor
+	# can't open, kept as served.
+	"private repository link|\./web/internal/content/archive/"
+	# Page-voice guards: the words a served page must never contain.
+	"private repository link|\./web/internal/handlers/(landing|pricing)_test\.go"
+	"private path reference|\./web/internal/handlers/(dpa|legal_pages|privacy|sla|support|terms)_test\.go"
+	# The invite form's placeholder address: visible text, kept as served.
+	"email address|\./web/internal/pages/people_invite_sheet(\.templ|_templ\.go)"
+	# The quickstart's commands append to the user's own AGENTS.md.
+	"private path reference|\./web/internal/content/quickstart/quickstart\.go"
+	# The media bucket's URL, as kiff.dev serves it in a post and the videos
+	# list: an account id, not a secret.
+	"AWS account id|\./web/internal/content/(blog/posts/from-a-refund-tool-to-a-governed-mcp-agent\.md|videos/videos\.go)"
+	"AWS ARN or host|\./web/internal/content/(blog/posts/from-a-refund-tool-to-a-governed-mcp-agent\.md|videos/videos\.go)"
+	# Published prices: the pricing and terms pages, the words that quote them
+	# and their tests, llms.txt, and the figures in the decks and proofs.
+	"price in euros|\./web/internal/(content/llmstxt/|pages/(pricing|terms)(\.templ|_templ\.go)|pages/tafs_words_[a-z]{2}\.go|pages/tafs_test\.go|handlers/(tafs|terms)_test\.go)"
+	"price in dollars|\./web/internal/content/(decks|proofs)/"
+)
 
 # Backups an in-place edit can leave (BSD sed -i -e, .bak, .orig).
 printf '==> no editor backups\n'
@@ -95,6 +142,10 @@ for rule in "${deny[@]}"; do
 	label="${rule%%|*}"
 	re="${rule#*|}"
 	hits="$(cd "$out" && grep -rnoIE "$re" . | grep -vE "^[^:]+:[0-9]+:($allow)$" || true)"
+	for one in "${allow_in[@]}"; do
+		[[ "${one%%|*}" == "$label" ]] || continue
+		hits="$(grep -vE "^(${one#*|})[^:]*:[0-9]+:" <<<"$hits" || true)"
+	done
 	if [[ -n "$hits" ]]; then
 		echo "-- $label"
 		echo "$hits"

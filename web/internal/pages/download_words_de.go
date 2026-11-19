@@ -1,0 +1,37 @@
+package pages
+
+// downloadDE is /tafs/download's words in German, at /de/tafs/download.
+var downloadDE = downloadWords{
+	Lang:             "de",
+	Title:            "Hol dir tafs — KIFF",
+	Description:      "Hol dir tafs bei Google Play für Android. iPhone und iPad kommen bald in den App Store.",
+	DescAvailable:    "Hol dir tafs für %s.",
+	DescComingOne:    "Die App für %s ist bald verfügbar.",
+	DescComingMany:   "Die Apps für %s sind bald verfügbar.",
+	And:              "und",
+	Head:             "Hol dir tafs",
+	Sub:              "KI-Agenten für die Routinearbeit deines Unternehmens, jeder innerhalb einer Card, die du setzt. Alles Größere wartet auf deine Freigabe auf deinem Handy.",
+	Phones:           "Handy und Tablet",
+	Computer:         "Computer",
+	NotYet:           "Bald verfügbar",
+	NotAvailable:     "Nicht verfügbar",
+	AvailableVersion: "Version %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Prüfe vor dem Öffnen, dass der SHA-256 der Datei mit diesem übereinstimmt.",
+	DownloadFor:      "Für %s herunterladen",
+	QRAlt:            "QR-Code, der kiff.dev/tafs/download öffnet",
+	QRCaption:        "Scanne ihn mit der Kamera deines Handys, um diese Seite dort zu öffnen.",
+	Cost:             "Was es kostet:",
+	Pricing:          "Preise",
+	ComingAppStore:   "Bald im App Store",
+	IPhoneIPad:       "iPhone und iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 oder neuer",
+		"ios":     "iOS und iPadOS 16 oder neuer",
+		"macos13": "macOS 13 oder neuer",
+		"macos":   "nur macOS 12 (Monterey)",
+		"windows": "Windows 10 oder 11",
+		"linux":   "Ubuntu 24.04 oder neuer",
+	},
+}

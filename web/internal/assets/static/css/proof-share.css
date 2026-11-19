@@ -1,0 +1,52 @@
+/* Per-video share actions and contextual watch pages. Native links only. */
+.k-video-share {
+  display: flex;
+  max-width: 980px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+  font-family: var(--sans);
+  font-size: 12px;
+}
+.k-video-share > span { color: var(--k-dim); margin-inline-end: 0.15rem; }
+.k-home .k-video-share a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.45rem 0.65rem;
+  color: var(--k-ink);
+  text-decoration: none;
+  border: 1px solid var(--k-line);
+  border-radius: 0.3rem;
+  background: var(--k-bg-2);
+}
+.k-home .k-video-share a:hover { border-color: var(--k-amber); color: var(--k-amber); }
+.k-home .k-video-share a:focus-visible { outline: 2px solid var(--k-amber); outline-offset: 3px; }
+.k-video-share svg { flex-shrink: 0; }
+.k-vgrid .k-video-share { margin: 0.8rem 1rem 1rem; }
+.k-video-watch { padding-top: clamp(1.5rem, 4vw, 3rem); }
+body.site .k-video-watch .k-display { max-width: 1000px; font-size: clamp(1.8rem, 4vw, 3rem); }
+.k-video-watch .k-small { max-width: 980px; }
+.k-capsules { padding: 3rem 0; scroll-margin-top: 5rem; }
+.k-capsule-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; max-width: 980px; }
+.k-capsule { padding: 1.5rem; border: 1px solid var(--k-line); border-radius: 0.5rem; background: var(--k-bg-2); min-width: 0; }
+.k-capsule h3 { font-family: var(--sans); font-size: 1.25rem; line-height: 1.35; margin: 1.25rem 0 0.75rem; }
+.k-capsule h3 a { color: var(--k-ink); text-decoration: none; }
+.k-capsule h3 a:hover { color: var(--k-amber); }
+.k-capsule .k-video-share { justify-content: start; margin: 0.75rem 0; }
+.k-capsule .k-small { font-size: 0.875rem; line-height: 1.65; }
+.k-capsule details { font-family: var(--sans); font-size: 0.875rem; line-height: 1.6; color: var(--k-dim); }
+.k-capsule summary { min-height: 44px; padding-block: 0.75rem; cursor: pointer; }
+.k-capsule-player { width: 100%; max-width: 405px; margin-inline: auto; }
+.k-capsule-player video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: contain; background: #0d1218; border-radius: 0.35rem; }
+.k-video-watch > .k-capsule-player { margin-block: 1.5rem; }
+.k-landscape-player { width: 100%; margin-block: 1.5rem; }
+.k-landscape-player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0d1015; border-radius: 0.35rem; }
+@media (max-width: 680px) {
+  .k-capsule-grid { grid-template-columns: 1fr; }
+  .k-capsule { padding: 1rem; }
+}

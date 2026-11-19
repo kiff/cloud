@@ -1,0 +1,93 @@
+<h1 id="microsoft-agent-framework">Microsoft Agent Framework</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Microsoft Agent Framework agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-09/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-09/connect-an-agent">Connect an agent</a>); this page is the Microsoft Agent Framework hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-09/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-09/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a> and passes the
+conformance suite. The seam was verified against the real
+<code>agent-framework-core</code> package.</p>
+
+<p><strong>Shape: middleware (async).</strong> A <code>FunctionMiddleware</code> wraps the tool
+call: <code>await call_next()</code> runs the tool, or set <code>context.result</code> and
+skip <code>call_next</code> to block. The guard decides first and only runs the
+tool when allowed. See <a href="/docs/archive/2026-10-09/concepts">how the guard works</a>.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus Microsoft Agent Framework, the framework you're guarding:
+pip install agent-framework-core
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from agent_framework import Agent
+from kiff_guard import Guard
+from kiff_guard.adapters.microsoft_agent_framework import kiff_guard_middleware
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = Agent(
+    client=...,
+    name=&quot;assistant&quot;,
+    tools=[refund_order, send_email],
+    middleware=[kiff_guard_middleware(guard)],
+)
+</code></pre>
+
+<p>Run the agent as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Only the guard changes:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from agent_framework import Agent
+from kiff_guard.adapters.microsoft_agent_framework import kiff_guard_middleware
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+agent = Agent(client=..., name=&quot;assistant&quot;, tools=[refund_order],
+              middleware=[kiff_guard_middleware(guard)])
+</code></pre>
+
+<p>In enforce mode a withheld decision sets <code>context.result</code> to the reason
+and skips <code>call_next</code>, so the tool never runs. An allowed decision
+awaits <code>call_next</code> and the tool runs. On a transport error the guard
+fails closed (blocks) by default.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>A <code>FunctionMiddleware.process(self, context, call_next)</code> fires before a
+tool runs; <code>context.function.name</code> + <code>context.arguments</code> carry the call.
+Awaiting <code>call_next()</code> runs the tool; setting <code>context.result</code> and
+skipping <code>call_next</code> blocks it. Attached via <code>Agent(middleware=[...])</code>.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/microsoft_agent_framework.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/microsoft_agent_framework.py</code></a></li>
+<li>Microsoft Agent Framework docs: <a href="https://learn.microsoft.com/en-us/agent-framework/" target="_blank" rel="noreferrer noopener">learn.microsoft.com/agent-framework</a> (Middleware → Function middleware)</li>
+</ul>

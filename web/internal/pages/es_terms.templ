@@ -1,0 +1,807 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsES is the Terms of Service (/terms) in Spanish, at /es/terms. It
+// is a translation of Terms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ TermsES() {
+	@components.LayoutSite("KIFF — condiciones del servicio", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadES()
+			@termsDefinitionsES()
+			@termsAgreementES()
+			@termsServiceES()
+			@termsTafsES()
+			@termsAccountES()
+			@termsAcceptableUseES()
+			@termsCustomerDataES()
+			@termsConfidentialityES()
+			@termsFeesES()
+			@termsTermES()
+			@termsWarrantiesES()
+			@termsDisclaimerES()
+			@termsLiabilityES()
+			@termsIndemnityES()
+			@termsSLAES()
+			@termsServiceModsES()
+			@termsTermsModsES()
+			@termsForceMajeureES()
+			@termsGoverningLawES()
+			@termsGeneralES()
+			@termsContactES()
+		</article>
+	}
+}
+
+templ termsHeadES() {
+	<header class="legal-head">
+		<p class="legal-badge">Condiciones del servicio · v0.1</p>
+		<h1>Condiciones del servicio</h1>
+		<p class="legal-meta">
+			<strong>Última actualización:</strong> 9 de noviembre de 2026.
+			<strong>Fecha de entrada en vigor:</strong> 24 de mayo de 2026.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Qué ha cambiado:</strong> la app de tafs en Android, y
+			Solo comprado a través de Google Play (§1, §8). Antes: los
+			planes de pago (§3A, §8), el
+			<a href="/legal/sla">acuerdo de nivel de servicio</a> (en inglés, §14) y
+			la lista de usos prohibidos, que ahora está en la
+			<a href="/es/acceptable-use">Política de uso aceptable</a> (§5).
+		</p>
+		<p class="legal-disclaimer">
+			Estas condiciones regulan el uso de KIFF Cloud, incluido tafs.
+			Preguntas contractuales:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsES() {
+	<section id="definitions">
+		<h2>1. Definiciones</h2>
+		<ul>
+			<li><strong>«Kiff Agents OÜ»</strong>, <strong>«nosotros»</strong>, <strong>«nos»</strong>, <strong>«nuestro»</strong>: la sociedad de responsabilidad limitada estonia que presta el Servicio. Código de registro 17372313.</li>
+			<li><strong>«Cliente»</strong>, <strong>«tú»</strong>, <strong>«tu»</strong>: la persona física o jurídica que acepta estas condiciones.</li>
+			<li><strong>«Usuario»</strong>: toda persona a la que el Cliente autoriza a acceder al Servicio a través de la cuenta del Cliente.</li>
+			<li><strong>«Servicio»</strong>: el producto KIFF Cloud, incluidos <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs, y la documentación, los paneles y las API que publicamos allí.</li>
+			<li><strong>«tafs»</strong>: la app de tafs para iPhone, iPad, Android y ordenadores (Mac, Windows y Linux) y el servicio que hay detrás, incluidos Setup y planque (§3A), en la que un Cliente encarga una tarea a un agente de IA que trabaja dentro de Cards de KIFF. Un <strong>«taf»</strong> es uno de esos agentes.</li>
+			<li><strong>«Inquilino»</strong> (tenant): un espacio de trabajo aislado lógicamente dentro del Servicio que pertenece a un único Cliente.</li>
+			<li><strong>«Datos de Auditoría»</strong>: los eventos, las decisiones, las acciones, las aprobaciones y los recibos que el Servicio guarda en nombre del Cliente a través del entorno de ejecución.</li>
+			<li><strong>«Datos de tafs»</strong>: lo que tafs guarda en nombre del Cliente: las ejecuciones y los chats de cada taf (incluido lo que le devuelven las apps conectadas del Cliente), sus informes, sus notas de memoria y los teléfonos registrados para recibir sus alertas.</li>
+			<li><strong>«Recibo»</strong>: un registro de decisión firmado y versionado que el Servicio emite por cada acción gobernada.</li>
+			<li><strong>«Documentación»</strong>: la documentación técnica del Servicio y las medidas de seguridad en la revisión fechada enlazada desde estas Condiciones (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). No incluye el whitepaper estratégico, los materiales de marketing ni la documentación del framework de código abierto, que se licencia por separado.</li>
+			<li><strong>«DPA»</strong>: el acuerdo de tratamiento de datos de <a href="/es/legal/dpa">/es/legal/dpa</a>, que regula nuestra relación como encargado del tratamiento.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementES() {
+	<section id="agreement">
+		<h2>2. El acuerdo</h2>
+		<p>
+			Estas condiciones regulan tu uso del Servicio. Al crear una
+			cuenta, generar una clave de API o usar el Servicio de
+			cualquier otro modo, aceptas estas condiciones. Si aceptas
+			en nombre de una empresa u otra persona jurídica, declaras
+			que tienes autoridad para obligar a esa entidad, y «tú» y
+			«tu» se refieren a esa entidad.
+		</p>
+		<p>
+			Podemos publicar condiciones complementarias para funciones
+			concretas (funciones en beta, integraciones de terceros).
+			Cuando entren en conflicto con estas condiciones, las
+			condiciones complementarias prevalecen para esa función
+			concreta.
+		</p>
+	</section>
+}
+
+templ termsServiceES() {
+	<section id="service">
+		<h2>3. El Servicio</h2>
+		<p>
+			KIFF Cloud es un servicio alojado para gobernar acciones
+			delegadas. Evalúa las solicitudes según los permisos y las
+			Cards que el Cliente ha configurado, puede exigir la
+			aprobación de una persona y registra las decisiones de
+			gobernanza. Según la integración configurada, KIFF reenvía
+			una solicitud autorizada o proporciona una autorización que
+			el sistema protegido verifica. El sistema conectado realiza
+			la acción subyacente.
+		</p>
+		<p>
+			El comportamiento técnico, las pruebas, los requisitos de
+			integración y los límites de ejecución aplicables se
+			especifican en la Documentación fechada enlazada desde
+			estas Condiciones. El
+			<a href="/whitepaper">whitepaper estratégico</a> (en inglés) explica
+			los principios y el modelo de KIFF; no se incorpora como
+			Documentación técnica conforme a estas Condiciones.
+		</p>
+		<p>
+			El servicio de gobernanza de KIFF Cloud <em>no</em> es un
+			framework de agentes, ni un motor de flujos de trabajo, ni
+			una pasarela de modelos, ni una plataforma de agentes
+			gestionada. Se combina con lo que ya uses. Consulta
+			<a href="/#not">«Lo que KIFF no es»</a> en la página de
+			inicio para ver la lista explícita. tafs es la única parte
+			del Servicio que ejecuta agentes para ti, dentro de las
+			Cards que emites; el §3A lo describe.
+		</p>
+		<p>
+			El framework de código abierto <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			se rige por su propia licencia MIT y queda fuera de estas
+			condiciones. Cuando ejecutas el framework en tu propia
+			infraestructura, no se crea ningún contrato con Kiff Agents
+			OÜ.
+		</p>
+	</section>
+}
+
+templ termsTafsES() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			En tafs encargas una tarea (por ejemplo, reembolsos, pago
+			de facturas o disputas de tarjeta) a un taf: un agente de
+			IA que trabaja según una programación con las apps que
+			conectas, dentro de las Cards de KIFF que emites para
+			él. Cada taf se ejecuta en nuestro entorno de ejecución de
+			agentes, y Anthropic proporciona el modelo de IA que usa.
+			Tú respondes a sus llamadas retenidas en la app de tafs.
+		</p>
+		<p>
+			<strong>Conectar tus apps.</strong> Setup, un agente
+			de IA de tafs que funciona como un taf, te ayuda a conectar
+			una app y a configurar un taf para una
+			tarea. No conecta nada por sí solo. Inicias sesión en el
+			propio proveedor de la app (por ejemplo, Stripe), y
+			apruebas en tu dispositivo cada conexión, las herramientas
+			que un taf puede usar y sus Cards. El token de ese inicio
+			de sesión lo guarda planque, nuestro servicio de conexión.
+			Está cifrado, se usa solo para hacer una llamada que KIFF
+			ha decidido, y nunca se da a un taf. Al desconectar una
+			app, el token se revoca en el proveedor y se borra.
+		</p>
+		<p>
+			<strong>Tus Cards son tus instrucciones.</strong> Un taf
+			llega a tus apps solo a través de KIFF, que
+			comprueba cada llamada contra las Cards del taf antes de
+			enviarla. Una llamada dentro de una Card que tú emitiste se
+			hace por instrucción tuya. Una llamada fuera de una Card
+			queda retenida o se rechaza, según diga la Card. Una
+			llamada retenida se hace solo después de que la apruebe
+			alguien a quien tu cuenta permite responder a las llamadas
+			retenidas. En la app de tafs, la respuesta lleva una firma
+			de su dispositivo que KIFF verifica, y el recibo guarda esa
+			prueba. Tu cuenta también puede responder en el propio KIFF
+			(el panel, su herramienta de línea de comandos o un
+			aprobador que autorices allí); el recibo registra entonces
+			quién respondió y cómo.
+		</p>
+		<p>
+			<strong>Lo que sigue siendo cosa tuya.</strong> Tú eliges
+			la tarea y las Cards de cada taf, respondes a sus llamadas
+			retenidas y te aseguras de que puedes usar las apps y las
+			cuentas que conectas. Los informes, los mensajes y
+			las notas de memoria de un taf los escribe un modelo de IA
+			y pueden ser incorrectos; comprueba lo importante antes de
+			basarte en ello.
+		</p>
+		<p>
+			<strong>Detener un taf.</strong> Puedes bloquear un taf o
+			todos, pausar un taf, revocar cualquiera de sus Cards o
+			eliminarlo. Desde el momento en que bloqueas un taf o
+			revocas una Card, KIFF no permite ninguna llamada nueva de
+			ese taf ni con esa Card. La app de tafs muestra un taf como
+			bloqueado solo cuando tanto KIFF como planque han
+			confirmado el bloqueo; a partir de entonces planque no
+			envía ninguna de sus llamadas, ni siquiera una que KIFF
+			permitió justo antes. Una solicitud ya enviada al proveedor
+			de una app puede completarse igualmente: detenemos
+			las llamadas nuevas, y no podemos deshacer lo que un
+			proveedor ha hecho. Una app que comprueba ella misma las autorizaciones de KIFF, sin planque, puede aceptar
+			todavía una autorización que KIFF emitió justo antes, durante
+			90 segundos como máximo. Reanudar un taf bloqueado requiere
+			tu aprobación en tu dispositivo, y nada de lo que estaba
+			retenido o en cola antes del bloqueo se ejecuta después.
+		</p>
+		<p>
+			<strong>Eliminar un taf</strong> detiene su programación y
+			borra sus ejecuciones, sus chats, su memoria y la clave que
+			usaba. Incluso antes de eso, lo que tus apps devuelven a un taf se guarda solo hasta que termina su
+			ejecución (lo que un chat solo leyó, cifrado, para sus
+			siguientes mensajes: se usa durante cuatro horas como
+			máximo y después se borra), y sus ejecuciones y chats,
+			durante 30 días. KIFF conserva los recibos de lo que hizo.
+		</p>
+		<p>
+			<strong>El Reglamento de IA de la UE.</strong> Para tafs,
+			Kiff Agents OÜ es el proveedor del sistema de IA y tú eres
+			su responsable del despliegue. Nos aseguramos de que todo
+			lo que un taf escribe a alguien de fuera de tu empresa diga
+			que lo escribió un agente de IA. Tú usas tafs solo para las
+			tareas que ofrece, y no para ningún uso que el Reglamento
+			de IA prohíba o clasifique como de alto riesgo, como las
+			decisiones sobre el empleo, el crédito o el acceso a
+			servicios esenciales de una persona. Mantienes las
+			aprobaciones humanas que exigen tus Cards, y te aseguras de
+			que las personas que usan tafs en tu nombre entienden qué
+			hace y cuáles son sus límites.
+		</p>
+		<p>
+			<strong>Costes.</strong> tafs forma parte de tu plan de
+			KIFF (§8): cada ejecución de un taf usa créditos por la IA
+			que utilizó. Coach y la configuración de tafs están
+			incluidos dentro del uso razonable de Coach.
+		</p>
+	</section>
+}
+
+templ termsAccountES() {
+	<section id="account">
+		<h2>4. Cuentas y acceso</h2>
+		<p>
+			Para usar el Servicio debes crear una cuenta. Te
+			comprometes a facilitar información de registro exacta, a
+			mantener tus credenciales en secreto y a responder de toda
+			la actividad de tu cuenta.
+		</p>
+		<p>
+			Debes tener al menos 16 años, o la edad de consentimiento
+			digital de tu jurisdicción, la que sea mayor. El Servicio
+			no está dirigido a menores.
+		</p>
+		<p>
+			Eres responsable de las acciones de cada Usuario al que
+			autorizas en tu cuenta. Podemos suspender una cuenta o
+			revocar el acceso con un preaviso razonable si detectamos
+			un incumplimiento creíble de estas condiciones. En caso de
+			infracciones del uso aceptable (ver §5), la suspensión
+			puede ser inmediata.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseES() {
+	<section id="acceptable-use">
+		<h2>5. Uso aceptable</h2>
+		<p>
+			Tienes que cumplir la
+			<a href="/es/acceptable-use">Política de uso aceptable</a>,
+			y también tienen que cumplirla tus usuarios y tus agentes.
+			Forma parte de estas condiciones y enumera aquello para lo
+			que no se puede usar el Servicio.
+		</p>
+		<p>
+			Podemos suspender de inmediato ante una infracción creíble
+			de la Política de uso aceptable. No estamos obligados a
+			supervisar el contenido del Cliente, pero podemos actuar
+			ante denuncias creíbles.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataES() {
+	<section id="customer-data">
+		<h2>6. Datos y contenido del Cliente</h2>
+		<p>
+			Tus Datos de Auditoría son tuyos. Concedes a Kiff Agents OÜ
+			una licencia limitada, no exclusiva, libre de regalías y
+			mundial para alojar, copiar, transmitir, mostrar y tratar
+			de cualquier otro modo tus Datos de Auditoría únicamente en
+			la medida necesaria para operar, mantener y mejorar el
+			Servicio para ti.
+		</p>
+		<p>
+			Actuamos como <strong>encargado del tratamiento</strong> de
+			tus Datos de Auditoría y tus Datos de tafs conforme al
+			artículo 28 del RGPD; el
+			<a href="/es/legal/dpa">DPA</a> regula esa relación en
+			detalle. Actuamos como <strong>responsable del
+			tratamiento</strong> de los metadatos de tu cuenta; la
+			<a href="/es/privacy">política de privacidad</a> regula esa
+			relación.
+		</p>
+		<p>
+			Declaras que tienes todos los derechos necesarios para
+			enviar los datos que envías, y que su envío cumple las
+			leyes aplicables (incluidas las leyes de protección de
+			datos y, cuando proceda, el Reglamento de IA de la UE).
+		</p>
+	</section>
+}
+
+templ termsConfidentialityES() {
+	<section id="confidentiality">
+		<h2>7. Confidencialidad</h2>
+		<p>
+			Cada parte puede recibir de la otra información no pública
+			(«Información Confidencial»). La parte receptora usará la
+			Información Confidencial solo en la medida necesaria para
+			cumplir sus obligaciones y ejercer sus derechos conforme a
+			estas condiciones, y la protegerá al menos con el mismo
+			grado de cuidado que aplica a su propia información
+			confidencial.
+		</p>
+		<p>
+			La Información Confidencial no incluye la información que
+			(a) es o pasa a ser de dominio público sin que medie
+			incumplimiento, (b) la parte receptora ya conocía antes de
+			su revelación, (c) se desarrolla de forma independiente sin
+			usar la Información Confidencial, o (d) debe revelarse por
+			ley (avisando a la otra parte cuando esté permitido).
+		</p>
+	</section>
+}
+
+templ termsFeesES() {
+	<section id="fees">
+		<h2>8. Tarifas y pago</h2>
+		<p>
+			<strong>Planes.</strong> Cada cuenta tiene un plan. Los
+			precios vigentes están en la <a href="/pricing">página de
+			precios</a> (en inglés); en el momento de esta actualización:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> una persona, para tafs, vendido en la app de tafs a través del App Store o de Google Play por 12,50 € al mes, IVA incluido, con 500 créditos al mes incluidos.</li>
+			<li><strong>Company:</strong> 10,50 € al mes por cada puesto, con 500 créditos al mes por cada puesto, en un fondo común, y, para las llamadas de tus propios agentes a través de KIFF Cloud, 500 acciones al mes por cada puesto, en un fondo común.</li>
+			<li><strong>Un acuerdo:</strong> las tarifas y las condiciones de su formulario de pedido.</li>
+		</ul>
+		<p>
+			Los puestos son los administradores y los editores de una
+			cuenta. Los aprobadores y los lectores son gratis en todos
+			los planes. En Company, más allá de lo incluido, un crédito
+			cuesta 0,01 € y una acción 0,02 €. Los créditos que superan
+			los incluidos se facturan hasta el límite de gasto mensual
+			que fija la cuenta (50 € al empezar): al llegar al límite,
+			KIFF no inicia ninguna ejecución nueva de los tafs de la
+			cuenta hasta que empieza el siguiente periodo, o hasta que
+			alguien que gestiona la facturación lo sube.
+		</p>
+		<p>
+			<strong>Paquetes de créditos.</strong> En Solo, los
+			créditos que superan los incluidos en el mes salen de
+			paquetes de créditos, que se compran en la app de tafs. Un
+			paquete se compra una vez, no caduca y no es una
+			suscripción; sus créditos se usan después de los incluidos
+			en el mes, empezando por el paquete más antiguo. Un paquete
+			cuyo pago se reembolsa íntegramente se retira, con los
+			créditos que le queden. Cuando se han usado los créditos
+			del mes y los paquetes, KIFF no inicia ninguna ejecución
+			nueva de los tafs de la cuenta hasta que empieza el
+			siguiente periodo o se añade un paquete.
+			Los créditos de bonificación que KIFF añade a una cuenta
+			tampoco caducan, igual que los paquetes.
+		</p>
+		<p>
+			<strong>Qué se cuenta.</strong> Un <em>crédito</em> paga la
+			IA que usó la ejecución de un taf, en créditos enteros,
+			redondeados hacia arriba una vez por ejecución y contados
+			una vez, cuando la ejecución termina. Una ejecución cuya
+			llamada rechazó KIFF también usó su IA. Nunca se cuentan:
+			Coach y la configuración de tafs, dentro del uso razonable
+			de Coach; una prueba de una nueva versión, que no envía
+			nada; y una ejecución que falló por nuestra parte. Una
+			<em>acción</em> es una llamada de tu propio agente a través
+			de KIFF Cloud que consiguió hacer algo: KIFF la permitió,
+			se envió y la app informó de que tuvo éxito. Nunca
+			se cuenta como acción: una llamada rechazada, retenida y
+			después rechazada, detenida por un bloqueo, no válida, que
+			falló en la app o cuyo resultado se desconoce, ni
+			una llamada que solo lee.
+		</p>
+		<p>
+			<strong>Sin periodo de prueba.</strong> Una cuenta paga
+			desde su primer día. Antes de que empiece un plan, KIFF no
+			inicia ninguna ejecución de sus tafs, salvo la
+			configuración que hace Coach; no se borra nada.
+		</p>
+		<p>
+			<strong>Pago y facturas.</strong> Un plan se factura en un
+			solo lugar. Un plan comprado en kiff.dev se compra, se
+			cambia y se cancela allí y en el portal de facturación al
+			que enlaza, y sus pagos los procesa Stripe. Solo comprado
+			en la app de tafs se vende a través del App Store en iPhone
+			y iPad, o de Google Play en Android, y se gestiona en tus
+			suscripciones de Apple o en tus suscripciones de Google
+			Play, conforme a las condiciones de esa tienda sobre pago,
+			renovación y reembolsos. Los paquetes de créditos se
+			compran en la app de tafs. Company se compra en kiff.dev. Las
+			tarifas se facturan mensualmente por adelantado; el uso que
+			supera lo incluido se factura con la siguiente factura. Un
+			cambio en el número de personas se aplica a partir de la
+			siguiente factura. Si un pago falla y no se regulariza, el
+			plan termina y KIFF rechaza las llamadas de la cuenta hasta
+			que se elige un plan.
+		</p>
+		<p>
+			<strong>Cancelación.</strong> Puedes cancelar en cualquier
+			momento en el portal de facturación o, para Solo comprado
+			en la app de tafs, en tus suscripciones de Apple o en tus
+			suscripciones de Google Play. El plan sigue hasta el final
+			del periodo que pagaste, y no se renueva. Salvo que la ley
+			lo exija, las tarifas ya pagadas no se reembolsan. Si eres
+			un consumidor en la UE, puedes desistir en un plazo de 14
+			días desde la compra sin dar ningún motivo, y te
+			reembolsamos lo que pagaste menos la parte correspondiente
+			a los días en que el plan ya estuvo en marcha.
+			Las compras de Solo se reembolsan a través del App Store o de Google Play, conforme a sus condiciones.
+		</p>
+		<p>
+			<strong>IVA.</strong> Los precios de Company no incluyen el
+			IVA; Solo y los paquetes de créditos los venden el App
+			Store o Google Play con el IVA incluido. Kiff Agents OÜ
+			(número de IVA EE102924327) añade el IVA estonio cuando
+			corresponde. Las ventas entre empresas dentro de la UE a un
+			Cliente de fuera de Estonia con un número de identificación
+			a efectos del IVA válido se facturan con el mecanismo de
+			inversión del sujeto pasivo de la UE.
+		</p>
+		<p>
+			<strong>Cambios.</strong> Avisamos por escrito a las cuentas
+			activas de una subida de precio con al menos treinta días
+			de antelación (§16). Una bajada de precio se aplica a
+			partir de la siguiente factura.
+		</p>
+	</section>
+}
+
+templ termsTermES() {
+	<section id="term">
+		<h2>9. Vigencia y terminación</h2>
+		<p>
+			Estas condiciones entran en vigor cuando usas el Servicio
+			por primera vez y siguen vigentes hasta que se les ponga
+			fin.
+		</p>
+		<p>
+			Puedes ponerles fin en cualquier momento eliminando tu
+			cuenta. Nosotros podemos ponerles fin (a) por un
+			incumplimiento sustancial que no se subsane en un plazo de
+			treinta días desde el aviso por escrito, o (b) de inmediato
+			por infracciones del uso aceptable o por situaciones de
+			insolvencia.
+		</p>
+		<p id="leaving">
+			<strong>Irte y llevarte tus datos.</strong>
+			Puedes exportar tus datos en cualquier momento, en un
+			formato estructurado y legible por máquina: en KIFF,
+			Settings → Data (el panel está en inglés) da un archivo JSON con tu cuenta, tus Cards
+			con todas sus versiones, las decisiones de tu Registro (las
+			últimas 10.000; pídenos más si las necesitas), el recibo
+			firmado de cada una que KIFF permitió, y los datos de tus
+			claves de API (nunca las claves en sí). En la app de tafs,
+			cada persona exporta sus propios chats, archivos y notas
+			desde Cuenta →  Exportar mis chats; los chats se
+			guardan durante treinta días en cualquier caso, como dice
+			la política de privacidad. Eliminar tu cuenta pone fin al
+			Servicio de inmediato, así que exporta antes.
+		</p>
+		<p>
+			También puedes irte con preaviso, para cambiar a otro
+			proveedor o a tus propios sistemas, escribiendo a
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a>.
+			Nunca exigimos más de dos meses de preaviso: tu preaviso
+			surte efecto en la fecha que elijas, como máximo dos meses
+			después de enviarlo. A partir de esa fecha sigue un periodo
+			de transición de treinta días, en el que el Servicio sigue
+			funcionando, tú exportas tus datos y trasladas tu trabajo,
+			y nosotros ayudamos con las peticiones razonables para
+			hacerlo. Puedes prorrogar el periodo de transición una vez,
+			durante el tiempo que necesites. Si técnicamente no podemos
+			completarlo en treinta días, te lo decimos en un plazo de
+			catorce días hábiles desde tu preaviso, con los motivos y
+			un nuevo plazo de no más de siete meses.
+			Tras el periodo de transición, tus datos siguen disponibles
+			para exportarlos durante al menos treinta días más. Las
+			tarifas del plan siguen como de costumbre hasta que termina
+			el periodo de transición. Solo comprado en el App Store o
+			en Google Play se cancela en la tienda; los periodos de
+			transición y de exportación se aplican del mismo modo.
+		</p>
+		<p>
+			No cobramos por irte, por cambiar de proveedor ni por
+			exportar tus datos. Esta sección da a todos los clientes
+			los derechos de cambio de proveedor del capítulo VI del
+			Reglamento de Datos de la UE (Reglamento (UE) 2023/2854).
+		</p>
+		<p>
+			Al terminar, y después de cualquier periodo de transición y
+			de exportación, borramos tus Datos de Auditoría, tus Datos
+			de tafs y los metadatos de la cuenta conforme a las reglas
+			de conservación de la
+			<a href="/es/privacy#retention">política de privacidad</a>.
+		</p>
+		<p>
+			Las secciones que por su naturaleza deban seguir vigentes
+			tras la terminación siguen vigentes, incluidas las de
+			confidencialidad, propiedad intelectual, indemnización,
+			limitación de responsabilidad, exenciones de garantía, ley
+			aplicable y cualquier tarifa devengada.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesES() {
+	<section id="warranties">
+		<h2>10. Garantías</h2>
+		<p>
+			Cada parte declara que tiene el derecho y la autoridad para
+			aceptar y cumplir estas condiciones.
+		</p>
+		<p>
+			Garantizamos que prestaremos el Servicio de manera
+			profesional y de conformidad sustancial con la
+			Documentación. Tu único recurso ante el incumplimiento de
+			esta garantía es, a nuestra elección, que volvamos a
+			prestar el servicio o un reembolso prorrateado de las
+			tarifas atribuibles al Servicio afectado durante el periodo
+			de incumplimiento.
+		</p>
+		<p>
+			Garantizas que tu uso del Servicio cumple la ley aplicable
+			y estas condiciones.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerES() {
+	<section id="disclaimer">
+		<h2>11. Exención de garantías</h2>
+		<p>
+			Salvo las garantías expresas del §10, el Servicio se presta
+			<strong>«tal cual» y «según disponibilidad»</strong>. En la
+			máxima medida que permita la ley, renunciamos a cualquier
+			otra garantía, sea expresa, implícita o legal, incluidas
+			las garantías de comerciabilidad, idoneidad para un fin
+			determinado y no infracción, y cualquier garantía derivada
+			del curso de las negociaciones o de los usos del comercio.
+		</p>
+		<p>
+			No garantizamos que el Servicio sea ininterrumpido, esté
+			libre de errores o de componentes dañinos, ni que no se
+			pierdan o se corrompan datos. Eres responsable de hacer
+			copias de seguridad de tus datos.
+		</p>
+	</section>
+}
+
+templ termsLiabilityES() {
+	<section id="liability">
+		<h2>12. Limitación de responsabilidad</h2>
+		<p>
+			En la máxima medida que permita la ley, ninguna de las
+			partes responderá ante la otra por daños indirectos,
+			incidentales, consecuentes, especiales, ejemplares o
+			punitivos, incluidos el lucro cesante, la pérdida de
+			ingresos, la pérdida de datos o la interrupción de la
+			actividad, que deriven de estas condiciones o del Servicio
+			o estén relacionados con ellos, aunque se le haya advertido
+			de la posibilidad de tales daños.
+		</p>
+		<p>
+			La responsabilidad total de cada parte que derive de estas
+			condiciones o esté relacionada con ellas no superará la
+			mayor de estas cantidades: (a) las tarifas pagadas o
+			pagaderas por el Cliente a Kiff Agents OÜ en los doce meses
+			anteriores al hecho que dio lugar a la responsabilidad, o
+			(b) cien mil euros (100.000 €).
+		</p>
+		<p>
+			Nada de lo dispuesto en estas condiciones limita ni excluye
+			la responsabilidad que no pueda limitarse ni excluirse
+			conforme a la ley aplicable, incluida la responsabilidad
+			por muerte, por lesiones personales causadas por
+			negligencia, por fraude o por dolo, y la responsabilidad
+			por un producto defectuoso conforme a las leyes que
+			transponen la Directiva (UE) 2024/2853 sobre
+			responsabilidad por productos defectuosos.
+		</p>
+	</section>
+}
+
+templ termsIndemnityES() {
+	<section id="indemnification">
+		<h2>13. Indemnización</h2>
+		<p>
+			Te defenderemos frente a las reclamaciones de terceros que
+			aleguen que el Servicio, tal como lo prestamos y lo usas
+			conforme a estas condiciones, infringe los derechos de
+			propiedad intelectual de ese tercero, y pagaremos los daños
+			y perjuicios a los que se te condene en firme (o el importe
+			del acuerdo pactado) por tales reclamaciones.
+		</p>
+		<p>
+			Nos defenderás frente a las reclamaciones de terceros que
+			deriven de (a) tus datos o tu contenido como Cliente; (b)
+			tu uso del Servicio incumpliendo estas condiciones
+			(incluida la Política de uso aceptable); o (c) tu
+			negligencia grave o tu dolo, y pagarás los daños y
+			perjuicios a los que se nos condene en firme (o el importe
+			del acuerdo pactado) por tales reclamaciones.
+		</p>
+		<p>
+			La indemnización está condicionada a que se avise sin
+			demora de la reclamación, a que quien indemniza tenga el
+			control exclusivo de la defensa y del acuerdo, y a la
+			cooperación razonable de la parte indemnizada. Quien
+			indemniza no puede cerrar un acuerdo que imponga
+			obligaciones a la parte indemnizada sin su consentimiento.
+		</p>
+	</section>
+}
+
+templ termsSLAES() {
+	<section id="sla">
+		<h2>14. Compromiso de nivel de servicio</h2>
+		<p>
+			En un plan de pago, el <a href="/legal/sla">acuerdo de
+			nivel de servicio</a> (en inglés) fija la disponibilidad a la que
+			nos comprometemos, cómo cuenta una solicitud lenta o
+			fallida, nuestros tiempos de respuesta de soporte y los
+			créditos de servicio cuando no cumplimos. Forma parte de
+			estas condiciones.
+		</p>
+		<p>
+			Las prácticas operativas, la respuesta a incidentes y los
+			compromisos de notificación de violaciones de la seguridad están documentados
+			en la revisión fechada enlazada desde estas Condiciones
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			<a href="/es/security">/es/security</a> muestra las
+			prácticas actuales.
+		</p>
+	</section>
+}
+
+templ termsServiceModsES() {
+	<section id="service-mods">
+		<h2>15. Modificaciones del Servicio</h2>
+		<p>
+			Podemos añadir, cambiar o retirar funciones en cualquier
+			momento. Las reducciones sustanciales de funcionalidad o la
+			retirada de una superficie de la API que rompa un
+			comportamiento documentado se notifican a los clientes
+			activos con al menos treinta días de antelación, con un
+			calendario de retirada publicado. Los cambios motivados por
+			la seguridad pueden hacerse sin aviso cuando el propio
+			aviso crearía un riesgo.
+		</p>
+	</section>
+}
+
+templ termsTermsModsES() {
+	<section id="terms-mods">
+		<h2>16. Modificaciones de estas condiciones</h2>
+		<p>
+			Podemos modificar estas condiciones de vez en cuando. Los
+			cambios sustanciales se notifican por correo electrónico y
+			con un aviso
+			destacado en esta página con al menos treinta días de
+			antelación. Los cambios no sustanciales (aclaraciones,
+			referencias) se publican con una nueva fecha de «última
+			actualización». Si sigues usando el Servicio después de la
+			fecha de entrada en vigor de una actualización, eso
+			constituye tu aceptación.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureES() {
+	<section id="force-majeure">
+		<h2>17. Fuerza mayor</h2>
+		<p>
+			Ninguna de las partes responde de un incumplimiento o un
+			retraso en el cumplimiento en la medida en que se deba a
+			circunstancias fuera de su control razonable, incluidos los
+			casos fortuitos, la guerra, el terrorismo, los disturbios
+			civiles, los conflictos laborales, los incendios, las
+			catástrofes naturales, las medidas gubernamentales
+			relacionadas con una pandemia, los cortes de internet o de
+			electricidad, o las acciones de proveedores de
+			telecomunicaciones o de infraestructura de alojamiento de
+			terceros.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawES() {
+	<section id="governing-law">
+		<h2>18. Ley aplicable y jurisdicción</h2>
+		<p>
+			Estas condiciones se rigen por las leyes de la República de
+			Estonia, sin tener en cuenta sus normas de conflicto de
+			leyes. El foro exclusivo para las disputas es el Tribunal
+			del Condado de Harju (Harju Maakohus), en Tallin.
+		</p>
+		<p>
+			Si eres un consumidor residente en otro Estado miembro de
+			la UE, las normas imperativas de protección de los
+			consumidores de tu jurisdicción de residencia siguen
+			aplicándose en la medida en que te concedan derechos a los
+			que no puedes renunciar por contrato; esta cláusula no te
+			priva de la protección de esas normas.
+		</p>
+	</section>
+}
+
+templ termsGeneralES() {
+	<section id="general">
+		<h2>19. Disposiciones generales</h2>
+		<p>
+			<strong>Acuerdo completo.</strong> Estas condiciones, junto
+			con la política de privacidad, el DPA, los formularios de
+			pedido y las condiciones complementarias que se incorporen
+			expresamente, son el acuerdo completo entre nosotros sobre
+			su objeto y sustituyen a cualquier entendimiento anterior o
+			simultáneo.
+		</p>
+		<p>
+			<strong>Divisibilidad.</strong> Si una disposición se
+			declara inaplicable, el resto sigue en vigor.
+		</p>
+		<p>
+			<strong>Cesión.</strong> No puedes ceder estas condiciones
+			sin nuestro consentimiento por escrito. Nosotros podemos
+			cederlas sin consentimiento en relación con una fusión, una
+			adquisición o la venta de todos o prácticamente todos
+			nuestros activos, avisándote.
+		</p>
+		<p>
+			<strong>No renuncia.</strong> No exigir el cumplimiento de
+			una disposición no supone renunciar al derecho a exigirlo
+			más adelante.
+		</p>
+		<p>
+			<strong>Notificaciones.</strong> Las notificaciones a Kiff
+			Agents OÜ se envían a
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			o, por correo postal, a Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Estonia. Las notificaciones para
+			ti se envían al correo electrónico asociado a tu cuenta o, si has
+			facilitado una, a tu dirección designada para
+			notificaciones legales.
+		</p>
+		<p>
+			<strong>Contratistas independientes.</strong> Nada de lo
+			dispuesto en estas condiciones crea una sociedad, una
+			relación de agencia, una empresa conjunta ni una relación
+			laboral.
+		</p>
+		<p>
+			<strong>Terceros beneficiarios.</strong> No hay ninguno,
+			salvo en la medida en que se identifique expresamente a las
+			filiales indemnizadas.
+		</p>
+	</section>
+}
+
+templ termsContactES() {
+	<section id="contact">
+		<h2>20. Contacto</h2>
+		<p>
+			Preguntas comerciales y contractuales:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Preguntas generales sobre el producto:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Preguntas sobre privacidad:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Avisos de seguridad:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versión del documento:</strong> v0.1.<br/>
+			<strong>Última actualización:</strong> 9 de noviembre de 2026.
+		</p>
+	</section>
+}

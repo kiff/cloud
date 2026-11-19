@@ -1,0 +1,88 @@
+/* /download: one screen, in two groups: computers and phones. Each group's
+   apps sit side by side on a computer and stack on a phone. The visitor's own
+   device comes first and bigger. */
+.k-download .dl-group { font-family: inherit; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--k-dim); margin: 1.75rem 0 0; }
+.k-download .dl-group + .dl-stores { margin-top: 0.75rem; }
+.k-download .dl-name { margin: 0; font-weight: 600; color: var(--k-ink); }
+.k-download .dl-first .dl-name { font-size: 1.25rem; }
+.k-download .dl-stores { display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; align-items: flex-start; margin: 1.5rem 0 1rem; }
+.k-download .dl-store { display: flex; flex-direction: column; gap: 0.35rem; }
+.k-download .dl-store .k-small { margin: 0; }
+/* Both badges are cut to their visible edges (Google's PNGs with their
+   transparent margin removed, nothing else), so each is drawn at its own
+   height, scaled only proportionally (height, width auto). Google's badge
+   rules: clear space of at least 1/4 of the badge's height on every side,
+   with nothing inside it, given back here as the badge's own padding: 12px
+   at 48px, 16px at 64px. */
+.k-download .dl-badge { display: inline-block; line-height: 0; padding: 12px; }
+.k-download .dl-first .dl-badge { padding: 16px; }
+.k-download .dl-apple img, .k-download .dl-play img { height: 48px; width: auto; }
+.k-download .dl-first .dl-apple img, .k-download .dl-first .dl-play img { height: 64px; }
+.k-download .dl-soon { margin: 0; font-weight: 600; color: var(--k-ink); padding: 0.6rem 0; }
+.k-download .dl-first .dl-soon { font-size: 1.25rem; }
+.k-download .dl-qr { margin: 1rem 0; display: flex; gap: 1rem; align-items: center; }
+.k-download .dl-qr img { border-radius: 8px; background: #fff; }
+.k-download .dl-qr figcaption { color: var(--k-dim); max-width: 16rem; }
+/* The trademark notice: within the page's gutter, small and tight. */
+.k-download .dl-legal { margin-top: 1.5rem; max-width: 46rem; font-family: var(--sans); font-size: 0.78rem; line-height: 1.45; opacity: 0.7; }
+
+/* The computers: one row each, the name as a word
+   mark in its platform's colour (no Apple or Windows logo), its download as a
+   white button on that colour's shadow, and the version, size and SHA-256
+   folded away. The first row is the big one; macOS 12 comes last, quieter. */
+.k-download { --dl-grape: #9b4dff; --dl-blue: #3f6bff; --dl-lemon: #ffd23f; --dl-straw: #ff4f7b; --dl-mint: #3ddc97; }
+.k-download .dl-os-macos13 { --c: var(--dl-grape); }
+.k-download .dl-os-windows { --c: var(--dl-blue); }
+.k-download .dl-os-linux { --c: var(--dl-lemon); }
+.k-download .dl-os-macos { --c: rgba(255, 255, 255, 0.18); }
+.k-download .dl-os-wearos { --c: var(--dl-mint); }
+.k-download .dl-os-applewatch { --c: var(--dl-straw); }
+.k-download .dl-rows { flex-direction: column; align-items: stretch; gap: 1.1rem; max-width: 58rem; }
+.k-download .dl-rows .dl-store { display: block; padding: 1.1rem 1.25rem; border-radius: 22px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--k-line); }
+.k-download .dlr { display: flex; align-items: center; gap: 1.1rem; }
+.k-download .dlr-t { flex: 1; min-width: 0; }
+.k-download .dl-rows .dl-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; color: var(--c); }
+.k-download .dl-rows .dl-os-macos .dl-name { color: var(--k-ink); }
+.k-download .dl-tux { display: inline-block; width: 1.4rem; height: 1.4rem; margin-left: 0.55rem; vertical-align: -0.2rem; color: var(--dl-lemon); }
+.k-download .dl-rows .dlr-needs { margin: 0.25rem 0 0; color: var(--k-dim); font-family: var(--sans); font-size: 0.95rem; }
+.k-download .dlr-ver { display: inline-block; margin-top: 0.5rem; font: 500 0.75rem/1 ui-monospace, Menlo, monospace; color: var(--k-dim); border: 1px solid var(--k-line); border-radius: 999px; padding: 0.3rem 0.6rem; }
+.k-download .dl-get { margin-left: auto; display: inline-flex; align-items: center; gap: 0.6rem; height: 56px; padding: 0 1.4rem; border-radius: 16px; background: #fff; color: #141318; font-weight: 800; font-size: 1.02rem; letter-spacing: -0.01em; white-space: nowrap; text-decoration: none; box-shadow: 6px 6px 0 var(--c); transition: transform 0.15s, box-shadow 0.15s; }
+.k-download .dl-get:hover, .k-download .dl-get:focus-visible { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--c); }
+.k-download .dl-get i { font-style: normal; font-size: 1.2rem; }
+.k-download .dlr-more { margin: 0.75rem 0 0; color: var(--k-dim); font-size: 0.85rem; }
+.k-download .dlr-more summary { cursor: pointer; }
+.k-download .dlr-more .k-small { margin-top: 0.5rem; overflow-wrap: anywhere; }
+/* A computer whose file isn't out yet: its row, dimmer, with no button and
+   no "coming soon". */
+.k-download .dl-rows .dl-pending { opacity: 0.55; }
+/* The big row. */
+.k-download .dl-rows .dl-first { padding: 1.75rem 1.9rem; border: 0; background: linear-gradient(135deg, color-mix(in srgb, var(--c) 28%, transparent), color-mix(in srgb, var(--c) 6%, transparent) 60%), rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 45%, transparent); }
+.k-download .dl-rows .dl-first .dl-name { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.035em; }
+.k-download .dl-rows .dl-first .dl-get { height: 70px; padding: 0 1.75rem; font-size: 1.2rem; border-radius: 20px; box-shadow: 8px 8px 0 var(--c); }
+/* macOS 12: last and quieter. */
+.k-download .dl-rows .dl-os-macos { padding: 0.75rem 1.1rem; background: transparent; border-style: dashed; }
+.k-download .dl-rows .dl-os-macos .dl-name { font-size: 1.02rem; font-weight: 700; }
+.k-download .dl-rows .dl-os-macos .dl-get { height: 42px; padding: 0 1rem; font-size: 0.88rem; box-shadow: 4px 4px 0 var(--c); }
+/* The watches, before they ship: dashed, quieter, linking nowhere. */
+.k-download .dl-watches { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; max-width: 58rem; margin: 1.1rem 0 0.5rem; }
+.k-download .dl-watch { display: flex; flex-direction: column; gap: 0.25rem; padding: 1rem 1.25rem; border-radius: 22px; border: 2px dashed var(--k-line); color: var(--k-dim); text-decoration: none; }
+.k-download .dl-watch-name { font-size: 1.35rem; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--c); opacity: 0.75; }
+.k-download .dl-watch-sub { font-size: 0.8rem; font-weight: 600; }
+.k-download .dl-watch-state { font-size: 0.92rem; font-weight: 700; }
+.k-download .dl-watch-live { border-style: solid; }
+.k-download .dl-watch-live .dl-watch-name { opacity: 1; }
+@media (max-width: 720px) {
+  .k-download .dl-stores { flex-direction: column; }
+  .k-download .dlr { flex-wrap: wrap; }
+  /* On a phone each download button is its row's width, never more: the
+     label wraps when it's longer than the row, so no button or shadow runs
+     past the screen in any language. */
+  .k-download .dl-get, .k-download .dl-rows .dl-first .dl-get, .k-download .dl-rows .dl-os-macos .dl-get {
+    box-sizing: border-box; width: 100%; height: auto; min-height: 56px; padding-top: 0.6rem; padding-bottom: 0.6rem;
+    justify-content: center; margin-top: 0.4rem; white-space: normal; text-align: center; }
+  .k-download .dl-rows .dl-first .dl-get { min-height: 64px; }
+  .k-download .dl-rows .dl-os-macos .dl-get { min-height: 42px; }
+  .k-download .dl-rows .dl-first { padding: 1.4rem 1.25rem; }
+  .k-download .dl-rows .dl-first .dl-name { font-size: 1.8rem; }
+  .k-download .dl-watches { grid-template-columns: 1fr; }
+}

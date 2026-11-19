@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsOverview renders the operator command center: the risk-ranked
+// attention list and anchor-backlog health first, then supporting
+// platform stats. Built on the dashboard's light primitives so it
+// matches the rest of kiff.dev.
+templ OpsOverview(v apiclient.OpsOverview, chrome components.DashboardChrome) {
+	@components.OpsShell("command center", "overview", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · command center</p>
+					<h1>What needs attention.</h1>
+					<p class="dash-note">Read-only, cross-tenant. Risk is computed live from real counters.</p>
+				</div>
+			</header>
+
+			<article class="dash-card">
+				<div class="dash-metrics">
+					<div class="dash-metric"><span>Tenants</span><strong>{ opsInt(v.Tenants.Total) }</strong><small>total</small></div>
+					<div class="dash-metric"><span>Needs attention</span><strong>{ opsInt(len(v.Attention)) }</strong><small>flagged now</small></div>
+					<div class="dash-metric"><span>Anchor backlog</span><strong>{ opsInt(v.Backlog.Pending) }</strong><small>unanchored receipts</small></div>
+					<div class="dash-metric"><span>Oldest pending</span><strong>{ opsAge(v.Backlog.OldestAgeSeconds) }</strong><small>anchor age</small></div>
+				</div>
+			</article>
+
+			<article class="dash-card">
+				<h2>Attention list</h2>
+				if len(v.Attention) == 0 {
+					<p class="dash-note">Nothing flagged — all tenants within thresholds.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Tenant</th><th>Level</th><th>Plan</th><th>Why</th></tr></thead>
+							<tbody>
+								for _, t := range v.Attention {
+									<tr>
+										<td><a href={ templ.SafeURL("/ops/tenants/" + t.ID) }>{ t.Slug }</a></td>
+										<td><span class={ opsRiskClass(t.Level) }>{ t.Level }</span></td>
+										<td>{ t.Plan }</td>
+										<td>@opsSignalList(t.Signals)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Tenants by status</h2>
+				@opsCountTable(opsSortedInts(v.Tenants.ByStatus), "Status")
+			</article>
+
+			<article class="dash-card">
+				<h2>Governed activity · last { opsInt(v.Activity.WindowDays) } days</h2>
+				if len(v.Activity.Counters) == 0 {
+					<p class="dash-note">No governed activity in the window.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Counter</th><th>Total</th></tr></thead>
+							<tbody>
+								for _, c := range opsSortedCounters(v.Activity.Counters) {
+									<tr>
+										<td>{ c.Label }</td>
+										<td>{ opsU64(c.Val) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}
+
+templ opsSignalList(signals []apiclient.OpsRiskSignal) {
+	for i, s := range signals {
+		if i > 0 {
+			{ " · " }
+		}
+		<span class={ opsRiskClass(s.Level) }>{ s.Detail }</span>
+	}
+}
+
+templ opsCountTable(rows []opsKV, keyHeader string) {
+	if len(rows) == 0 {
+		<p class="dash-note">None.</p>
+	} else {
+		<div class="dash-table-wrap">
+			<table class="dash-table">
+				<thead><tr><th>{ keyHeader }</th><th>Count</th></tr></thead>
+				<tbody>
+					for _, kv := range rows {
+						<tr>
+							<td>{ kv.Key }</td>
+							<td>{ opsInt(kv.Val) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}

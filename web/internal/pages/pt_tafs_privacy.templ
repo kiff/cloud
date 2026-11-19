@@ -1,0 +1,218 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsPrivacyPT is tafs's privacy policy (/tafs/privacy) in Portuguese
+// (pt-PT), at /pt/tafs/privacy. It is a translation of TafsPrivacy: the
+// same sections, anchors, links and figures, held to it by
+// TestTranslationsKeepTheEnglishPage. The English page governs. Change the
+// English page first, then this one.
+templ TafsPrivacyPT() {
+	@components.LayoutSiteWithMeta("política de privacidade do tafs", "Como o tafs, a app do KIFF, trata dados pessoais, incluindo os dados que recebe da Google quando liga a sua conta Google.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · política de privacidade</p>
+				<h1>Política de Privacidade do tafs</h1>
+				<p class="legal-meta"><strong>Última atualização:</strong> 18 de novembro de 2026.</p>
+				<p class="legal-disclaimer">Esta política explica como o tafs, a app do KIFF para iPhone, iPad, Android e computadores, trata dados pessoais. O tafs faz parte do KIFF Cloud, pelo que a <a href="/pt/privacy">Política de Privacidade do KIFF</a> também se lhe aplica, bem como a tudo o que esta página não abrange. Perguntas: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.</p>
+			</header>
+			<section id="who-we-are">
+				<h2>1. Quem somos</h2>
+				<p>O tafs é fornecido pela <strong>Kiff Agents OÜ</strong>, uma sociedade de responsabilidade limitada constituída na Estónia (número de registo 17372313, número de IVA EE102924327), com sede em Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estónia. O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) aplica-se ao nosso tratamento.</p>
+			</section>
+			<section id="scope">
+				<h2>2. O que esta política abrange</h2>
+				<p>A app tafs para iPhone, iPad, Android e computadores (Mac, Windows e Linux), e o serviço por trás dela, incluindo o Setup, que liga as ferramentas de uma empresa, e o planque, que guarda essas ligações. No tafs, uma empresa entrega um trabalho a um agente de IA, um taf, que trabalha dentro de Cards do KIFF.</p>
+			</section>
+			<section id="roles">
+				<h2>3. Os nossos papéis</h2>
+				<p>Somos o <strong>responsável pelo tratamento</strong> dos dados da sua conta e de início de sessão, e dos dados operacionais do nosso próprio serviço. Atuamos como <strong>subcontratante</strong>, por conta da sua empresa, do que o tafs guarda para ela: as execuções, os chats, os relatórios e as notas de memória de cada taf. A sua empresa é a responsável pelo tratamento desses dados, e o <a href="/pt/legal/dpa">DPA</a> rege essa relação.</p>
+			</section>
+			<section id="data">
+				<h2>4. O que o tafs recolhe</h2>
+				<ul>
+					<li><strong>A sua conta:</strong> inicia sessão no tafs com a sua conta KIFF. Num telemóvel ou tablet, a app guarda a sua sessão no Keychain do dispositivo (no Android, no seu armazenamento encriptado). Num computador, guarda-a selada para a sua conta de utilizador: num PC Windows, com a proteção de dados do próprio Windows; no Linux, no seu porta-chaves; num Mac, no seu Keychain. A sessão de um computador dura até 90 dias.</li>
+					<li><strong>O seu dispositivo:</strong> a app cria uma chave de assinatura que nunca sai do dispositivo: no Secure Enclave de um iPhone, iPad ou Mac, no Keystore de um dispositivo Android ou no TPM de um PC Windows. No Linux, e num Mac sem Secure Enclave, a chave é uma chave de software guardada no seu porta-chaves ou Keychain, e esse computador pode mostrar o que espera por si, mas não aprová-lo; aprova no seu telemóvel{ macSecurityKey("pt") }. Um PC Windows sem TPM não pode iniciar sessão no tafs. O KIFF guarda a metade pública da chave, o nome e a plataforma do dispositivo, e quando foi adicionado e usado pela última vez, para poder verificar as suas respostas a chamadas retidas e as suas aprovações de ligações.</li>
+					<li><strong>O seu relógio:</strong> um Apple Watch não guarda nada no disco, não tem sessão nem chave, comunica apenas com o iPhone emparelhado, nunca aprova e mostra os alertas do iPhone; só pode recusar, bloquear ou enviar ao Coach depois de ter um código de acesso. Um relógio Wear OS guarda apenas o número do que espera por si, apagado quando o telemóvel termina a sessão ou o relógio é bloqueado. Não tem sessão nem chave, comunica apenas com o telemóvel emparelhado, nunca aprova e só pode recusar, bloquear ou enviar ao Coach enquanto tiver um bloqueio de ecrã e estiver desbloqueado. Qualquer um dos relógios envia o que diz ao Coach apenas como texto, através do telemóvel, depois de ter autorizado a IA. O próprio serviço de voz do relógio, da Apple ou da Google, converte as suas palavras nesse texto.</li>
+					<li><strong>Chaves de acesso:</strong> quando aprova com uma chave de acesso no seu computador, como o Windows Hello ou uma chave de segurança, o seu rosto, impressão digital ou PIN fica no próprio sistema do computador. O KIFF guarda a chave pública da chave de acesso, o seu ID, um contador e um nome, nunca nada secreto, e recusa uma chave de acesso que se sincronize com outros dispositivos.</li>
+					<li><strong>Alertas:</strong> num telemóvel, num tablet ou num Mac que execute a app para iPad, se os ativar, guardamos o token push do dispositivo com o seu ID de pessoa no KIFF, e a língua que a app mostrou. Um alerta passa pela Apple ou pela Google apenas com qual o taf e o que pretende e, no alerta de uma porta, o nome ou o endereço de email de quem escreveu: nunca um montante nem os detalhes de um pedido. A app acrescenta-os no próprio dispositivo, a partir do KIFF, pelo que o alerta de um telemóvel desbloqueado pode mostrar um montante, um comerciante ou uma pessoa. Num telemóvel Android bloqueado, mostra apenas «Um taf precisa de si», e num iPhone bloqueado também, a menos que tenha definido as pré-visualizações para serem mostradas sempre. Num PC Windows, num computador Linux ou num Mac com a app para macOS 12, os alertas são criados pela própria app enquanto está em execução, sem token push e sem passar por nenhuma outra empresa. No Windows e no Linux, mostram qual o taf, o que pretende fazer, o montante, o motivo e o prazo; na app para macOS 12, mostram as palavras do KIFF para a chamada, depois de os ativar, e um ecrã bloqueado mostra o que a definição de pré-visualização do Mac permitir. No Windows, estão desativados até os ativar e, com o ecrã bloqueado, mostram apenas «Um taf precisa de si». Um alerta mostrado antes de o ecrã ser bloqueado mantém os seus detalhes na lista de notificações do Windows. No Linux, estão ativados até os desativar, e o que um ecrã bloqueado mostra depende do seu ambiente de trabalho.</li>
+					<li><strong>Língua:</strong> o serviço tafs guarda a língua da conta, a de quem falou por último com o Coach, durante três meses, no máximo, para que os relatórios de um taf cheguem nessa língua.</li>
+					<li><strong>As suas ferramentas:</strong> quando liga uma ferramenta, inicia sessão no próprio fornecedor da ferramenta. Numa app em que o planque inicia sessão por si próprio, como o Stripe, ou com uma chave que você dá, o planque guarda esse token ou essa chave para a sua empresa, encriptados. Numa ligação gerida, a Composio, o serviço de ligações com que o planque trabalha, guarda o início de sessão, e o planque guarda apenas o registo da ligação e as ferramentas que aprovou (ver <a href="#google">Dados de utilizador do Google</a>). O KIFF usa ligações geridas apenas para as apps indicadas em <a href="/pt/subprocessors#composio">/subprocessors</a>.</li>
+					<li><strong>O trabalho dos seus tafs:</strong> as execuções, os chats, os relatórios e as notas de memória de cada taf, guardados como subcontratante.</li>
+					<li><strong>Compras:</strong> o Solo e os pacotes de créditos são vendidos pela Apple através da App Store, ou pela Google através da faturação do Google Play. Dizem-nos o que foi comprado, para que conta KIFF (um ID aleatório), quando, e as respetivas referências de transação ou de encomenda. Não nos dão o seu ID Apple ou a sua conta Google, nome, endereço de email nem cartão.</li>
+				</ul>
+				<p>A app não tem rastreadores de análise nem de publicidade.</p>
+			</section>
+			<section id="ai">
+				<h2>5. A IA no tafs</h2>
+				<p>O tafs usa a IA Claude da Anthropic para o Coach e os seus tafs. A app pede-lhe autorização antes de qualquer coisa seguir para ela.</p>
+				<ul>
+					<li>O que lhe é enviado: o que escreve ao Coach e aos seus tafs, os ficheiros que anexa, o que as suas apps ligadas devolvem a um taf enquanto trabalha e o que está no seu ecrã enquanto o Coach o ajuda na app.</li>
+					<li>O que nunca é enviado: as palavras-passe e chaves que as suas apps ligadas usam, nem a sua impressão digital.</li>
+					<li>A Anthropic usa-o para responder e guarda-o até 30 dias.</li>
+					<li>Nada é enviado até que o permita. Pode retirar a autorização em Conta.</li>
+				</ul>
+				<p>Quando retira a autorização, o Coach e os seus tafs deixam de lhe responder, e um taf cujas execuções dependem do seu consentimento fica em pausa. A <a href="/pt/privacy#ai-in-tafs">Política de Privacidade do KIFF</a> tem os detalhes.</p>
+			</section>
+			@tafsPrivacyGooglePT()
+			<section id="sharing">
+				<h2>7. Quem mais recebe dados</h2>
+				<p>Para o tafs, recorremos a estas empresas: Amazon Web Services (alojamento, incluindo o armazenamento do tafs e as ligações do planque), Clerk (início de sessão nas contas KIFF), Anthropic (o modelo de IA), Composio (os inícios de sessão das ligações geridas, e as chamadas que o planque lhe pede para fazer), Apple (alertas push), Google (alertas push no Android, e a faturação do Google Play) e Resend (a porta de email de um taf). A lista oficial e atual, com o que cada uma trata e onde, está em <a href="/pt/subprocessors">/pt/subprocessors</a>.</p>
+				<p>Algumas delas estão fora do Espaço Económico Europeu, sobretudo nos Estados Unidos. A <a href="/pt/privacy#transfers">Política de Privacidade do KIFF</a> diz como essas transferências são salvaguardadas.</p>
+			</section>
+			<section id="retention">
+				<h2>8. Durante quanto tempo os guardamos</h2>
+				<ul>
+					<li>O que as suas ferramentas devolvem a um taf: só até a execução terminar. Num chat, o que ele apenas leu é guardado, encriptado, para as mensagens seguintes, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias.</li>
+					<li>As execuções e os chats de um taf, com o resumo de cada chat: 30 dias. As suas notas de memória: até o taf ser removido.</li>
+					<li>As notas curtas do Coach para a sua próxima resposta, por exemplo porque não foi possível fazer uma ligação num chat, ou que um Card foi aprovado: até essa resposta as recolher, no máximo 7 dias; depois, como parte desse chat, enquanto o chat for guardado. Uma cópia fica 24 horas para que uma mensagem reenviada receba a mesma nota. A nota de um chat só é usada nesse chat.</li>
+					<li>Os ficheiros que anexa num chat: com a mensagem a que estão anexados, 30 dias, ou menos se o chat for removido, e em qualquer caso no prazo de 38 dias. Um ficheiro que nenhuma mensagem usa é removido cerca de uma hora depois de o carregar. Eliminar a sua conta elimina-os.</li>
+					<li>O que uma ferramenta devolveu, no registo do planque de cada chamada: 24 horas. Depois disso, o registo guarda apenas se a chamada foi enviada, para que nunca seja enviada duas vezes.</li>
+					<li>O token ou a chave de uma ligação no planque, ou o início de sessão de uma ligação gerida na Composio: até você a desligar. O registo das suas aprovações: até a conta terminar.</li>
+					<li>O token push de um dispositivo: até terminar a sessão na app, remover o dispositivo ou a Apple ou a Google comunicarem que o token deixou de existir. A chave pública, o nome, a plataforma e as datas de um dispositivo: enquanto o usa; depois de terminar a sessão desse dispositivo, é marcado como removido e guardado até a conta ser eliminada, para que o KIFF possa recusar uma resposta tardia dele e mostrar que dispositivo assinou uma resposta anterior. A chave pública, o ID e o nome de uma chave de acesso: tal como os do seu dispositivo. A sessão de um computador: até 90 dias, ou até terminar a sessão.</li>
+					<li>A sua conta: até ser eliminada. Registos dos serviços: 30 dias. Os armazenamentos do tafs e do planque guardam durante 35 dias cópias encriptadas de recuperação para um ponto no tempo, usadas apenas para restaurar um armazenamento após uma falha.</li>
+				</ul>
+				<p>Tudo o resto está na <a href="/pt/privacy#retention">secção de Conservação do KIFF</a>.</p>
+			</section>
+			<section id="lawful-bases">
+				<h2>9. Fundamentos de licitude</h2>
+				<p>Execução de um contrato, para operar a sua conta e os seus tafs. Interesses legítimos, para a segurança, a prevenção de fraude e a deteção de abusos. Consentimento, para a IA no tafs (<a href="#ai">secção 5</a>). Obrigação jurídica, para os registos fiscais. A <a href="/pt/privacy#lawful-bases">Política de Privacidade do KIFF</a> tem os detalhes.</p>
+			</section>
+			<section id="rights">
+				<h2>10. Os seus direitos</h2>
+				<p>Ao abrigo do RGPD, pode pedir o acesso aos seus dados, a sua retificação, o seu apagamento, a limitação do tratamento ou uma cópia portável, opor-se ao tratamento baseado em interesses legítimos e retirar o consentimento. Envie um email para <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>; respondemos no prazo de um mês. Na app, Conta → Exportar os meus chats transfere os seus próprios chats e notas.</p>
+				<p>Para eliminar a sua conta tafs, abra a app, vá a Conta e toque em <em>Eliminar conta</em>, e depois confirme. Não pode ser desfeito. A <a href="/pt/privacy#delete-account">Política de Privacidade do KIFF</a> diz o que é eliminado e quando, e como o pedir por email.</p>
+				<p>Pode apresentar uma reclamação à <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Inspeção de Proteção de Dados da Estónia (Andmekaitse Inspektsioon)</a>, ou à autoridade de controlo do local onde vive.</p>
+			</section>
+			<section id="more">
+				<h2>11. Segurança, crianças e alterações</h2>
+				<p>As nossas medidas de segurança estão em <a href="/pt/security">/pt/security</a>. O tafs não se dirige a crianças, e não recolhemos conscientemente dados pessoais de crianças com menos de 16 anos. Alteramos esta política da forma que a <a href="/pt/privacy#changes">Política de Privacidade do KIFF</a> prevê para a sua própria.</p>
+			</section>
+			<section id="contact">
+				<h2>12. Contacto</h2>
+				<p>Perguntas e pedidos sobre privacidade: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. Notificações legais formais: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Os termos da própria app estão em <a href="/pt/tafs/terms">/pt/tafs/terms</a>.</p>
+			</section>
+		</article>
+	}
+}
+
+// tafsPrivacyGooglePT is tafsPrivacyGoogle in Portuguese, with the Limited
+// Use statement kept in Google's own English words.
+templ tafsPrivacyGooglePT() {
+	<section id="google">
+		<h2>6. Dados de utilizador do Google</h2>
+		if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
+			<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo às Google Sheets ou ao Google Calendar que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>
+		} else {
+			<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo ao seu Gmail, ou ao Google Calendar ou às Google Sheets que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>
+		}
+		<ul>
+			if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
+				<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa: as folhas de cálculo que mantém atualizadas, ou os eventos dos calendários de que trata. Só os altera quando o Card do taf o permite, e o que passar dos limites do Card espera pela sua aprovação.</li>
+			} else {
+				<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa. No seu Gmail, lê as suas mensagens e conversas para encontrar as que precisam de resposta, e escreve rascunhos; só envia emails quando o Card do taf o permite. No Google Calendar e nas Google Sheets, lê os eventos dos calendários de que trata, ou as folhas de cálculo que mantém atualizadas, e só os altera quando o Card do taf o permite.
+					if googleListed("Google Tasks") {
+						No Google Tasks, lê as listas de tarefas de que trata, e só adiciona, conclui, move ou apaga tarefas quando o Card do taf o permite.
+					}
+					O que passar dos limites do Card espera pela sua aprovação.</li>
+			}
+			<li><strong>Porquê:</strong> apenas para fazer o trabalho que configurou para esse taf.</li>
+			if len(googleManaged()) > 0 || len(googleInHouse("pt")) > 0 {
+				<li>
+					<strong>Como se liga cada app Google:</strong>
+					<ul>
+						if len(googleManaged()) > 0 {
+							<li>Através do nosso parceiro de início de sessão, que consta de <a href="/pt/subprocessors">/pt/subprocessors</a>: { appList(googleManaged()) }.</li>
+						}
+						if len(googleInHouse("pt")) > 0 {
+							<li>Através do próprio início de sessão Google do tafs, sem nenhuma outra empresa pelo meio: { appList(googleInHouseNames()) }.</li>
+						}
+					</ul>
+					if googleBoth() {
+						Uma app que conste de ambos liga-se de uma forma ou de outra, consoante a sua conta. A própria página de início de sessão da Google mostra a qual dá permissão.
+					}
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir.
+					<ul>
+						<li><strong>Através do nosso parceiro de início de sessão:</strong> o tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li>
+						<li><strong>Através do próprio início de sessão Google do tafs:</strong> o início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("pt")) > 0 {
+				<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li>
+			} else {
+				<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li>
+			}
+			<li><strong>Como um taf os usa:</strong> um taf usa apenas as ferramentas aprovadas no seu Card. Cada chamada é verificada face a uma autorização para essa ferramenta exata e esses argumentos antes de qualquer coisa ser enviada, e uma chamada fora do acesso que deu é recusada. As ações que pedem a sua aprovação de cada vez são definidas no Card.</li>
+			if len(googleInHouse("pt")) > 0 {
+				<li>
+					if googleBoth() {
+						<strong>O acesso que o próprio início de sessão Google do tafs pede:</strong>
+					} else {
+						<strong>O acesso que o tafs pede:</strong>
+					}
+					<ul>
+						for _, a := range googleInHouse("pt") {
+							<li>
+								{ a.Name }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
+					</ul>
+					Por muito que um início de sessão permita, o taf só usa as ferramentas do seu Card.
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Quem guarda o seu início de sessão:</strong>
+					<ul>
+						<li><strong>Através do nosso parceiro de início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href="/pt/subprocessors">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>
+						<li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("pt")) > 0 {
+				<li><strong>Quem guarda o seu início de sessão:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>
+			} else {
+				<li><strong>Quem guarda o seu início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href="/pt/subprocessors">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href="#ai">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor.
+					<ul>
+						<li><strong>Através do nosso parceiro de início de sessão:</strong> passa também pelo nosso parceiro de início de sessão, que faz cada chamada.</li>
+						<li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão.</li>
+					</ul>
+					Ambos constam de <a href="/pt/subprocessors">/pt/subprocessors</a>.
+				</li>
+			} else if len(googleInHouse("pt")) > 0 {
+				<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href="#ai">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. O planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão. O fornecedor do modelo de IA consta de <a href="/pt/subprocessors">/pt/subprocessors</a>.</li>
+			} else {
+				<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href="#ai">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. Passa também pelo nosso parceiro de início de sessão, que faz cada chamada. Ambos constam de <a href="/pt/subprocessors">/pt/subprocessors</a>.</li>
+			}
+			<li><strong>Treino de IA:</strong> os dados de utilizador do Google não são usados para treinar modelos de IA.</li>
+			<li><strong>Imagens:</strong> o tafs não cria nem edita imagens ou vídeos: a sua IA escreve texto. Nunca usa as APIs do Google nem os dados de utilizador do Google para criar, editar ou partilhar imagens íntimas de alguém (imagens íntimas não consentidas, NCII), nem qualquer outra imagem de uma pessoa.</li>
+			if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
+				<li><strong>Durante quanto tempo, e onde:</strong> as suas folhas de cálculo e os seus eventos ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href="#retention">Durante quanto tempo os guardamos</a>).</li>
+			} else {
+				<li><strong>Durante quanto tempo, e onde:</strong> os seus rascunhos, eventos e folhas de cálculo ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href="#retention">Durante quanto tempo os guardamos</a>).</li>
+			}
+			<li>
+				<strong>Pôr-lhe fim:</strong>
+				<ul>
+					<li>Desligue a Google na app, em Ligar apps ou no separador Card do taf. As suas ferramentas Google param de imediato, e o tafs pede de imediato à Google que revogue o início de sessão; isso pode concluir-se um pouco mais tarde.</li>
+					<li>Remova um taf, e as suas ligações terminam com ele. Um início de sessão Google que outro dos seus tafs ainda usa mantém-se até o último deles ser removido.</li>
+					<li>Retire o acesso do tafs em qualquer altura na sua Conta Google, em <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Os seus tafs deixam de chegar à Google, e a app indica-lhe que a sessão da ligação à Google foi terminada.</li>
+					<li>Elimine a sua conta: os seus tafs, chats, notas, ficheiros e ligações são apagados de imediato, e das suas cópias de recuperação para um ponto no tempo no prazo de 35 dias, e os seus tokens Google são revogados quando a Google o permite.</li>
+				</ul>
+			</li>
+		</ul>
+		<p lang="en">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+	</section>
+}

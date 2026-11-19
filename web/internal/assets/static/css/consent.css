@@ -1,0 +1,574 @@
+/* consent.css — /oauth/consent: an app asks to connect an agent.
+ *
+ * Loaded after auth.css, which gives the centered card. The device page's
+ * form styles (centered, letter-spaced code input) do not suit a choice
+ * list, so the consent form uses its own classes. Same Open Props tokens. */
+
+.consent-card {
+  max-width: 34rem;
+  margin: 8vh auto;
+}
+
+.consent-card h1 {
+  font-size: var(--font-size-4, 1.4rem);
+  line-height: 1.3;
+}
+
+/* Where the browser goes back to, and whether KIFF knows the app. */
+.consent-return {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1, 0.25rem);
+  margin: 0 0 var(--size-5, 1.5rem);
+  padding: var(--size-3, 0.75rem) var(--size-4, 1rem);
+  border: 1px solid var(--rule-soft, #e5e7eb);
+  border-radius: var(--radius-2, 8px);
+  font-size: var(--font-size-0, 0.85rem);
+  color: var(--fg-soft, #4b5563);
+}
+
+.consent-return code {
+  font-family: var(--font-mono, monospace);
+  color: var(--fg, #111827);
+}
+
+.consent-return .consent-warn {
+  color: var(--warn, #b45309);
+}
+
+.consent-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4, 1rem);
+}
+
+.consent-form fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2, 0.5rem);
+}
+
+.consent-form legend {
+  font-size: var(--font-size-0, 0.85rem);
+  font-weight: 600;
+  color: var(--fg, #111827);
+  margin-bottom: var(--size-2, 0.5rem);
+}
+
+/* One row per agent: the whole row is the click target. */
+.consent-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-3, 0.75rem);
+  padding: var(--size-3, 0.75rem) var(--size-3, 0.75rem);
+  border: 1px solid var(--rule-soft, #e5e7eb);
+  border-radius: var(--radius-2, 8px);
+  cursor: pointer;
+}
+
+.consent-option:hover {
+  border-color: var(--accent, #4f46e5);
+  background: color-mix(in oklab, var(--accent, #4f46e5) 5%, transparent);
+}
+
+.consent-option:has(input[type="radio"]:focus-visible) {
+  outline: 2px solid var(--accent, #4f46e5);
+  outline-offset: 2px;
+}
+
+.consent-option:has(input[type="radio"]:checked) {
+  border-color: var(--accent, #4f46e5);
+  background: color-mix(in oklab, var(--accent, #4f46e5) 8%, transparent);
+}
+
+.consent-option input[type="radio"] {
+  accent-color: var(--accent, #4f46e5);
+  margin: 0.35em 0 0;
+  flex: none;
+}
+
+.consent-agent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.consent-agent strong {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-1, 0.95rem);
+  font-weight: 500;
+  color: var(--fg, #111827);
+  overflow-wrap: anywhere;
+}
+
+.consent-meta {
+  font-size: 0.8rem;
+  color: var(--fg-muted, #6b7280);
+}
+
+.consent-meta.is-warn {
+  color: var(--warn, #b45309);
+}
+
+.consent-new-name {
+  margin-top: var(--size-1, 0.25rem);
+  width: 100%;
+  padding: var(--size-2, 0.5rem) var(--size-3, 0.75rem);
+  border: 1px solid var(--rule, #d1d5db);
+  border-radius: var(--radius-2, 8px);
+  background: var(--bg, #fff);
+  color: var(--fg, #111827);
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-1, 0.95rem);
+}
+
+.consent-new-name:focus {
+  outline: none;
+  border-color: var(--accent, #4f46e5);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #4f46e5) 25%, transparent);
+}
+
+.consent-actions {
+  display: flex;
+  gap: var(--size-3, 0.75rem);
+  margin-top: var(--size-2, 0.5rem);
+}
+
+.consent-actions button {
+  flex: 1;
+  padding: var(--size-3, 0.75rem);
+  border-radius: var(--radius-2, 8px);
+  font-size: var(--font-size-1, 1rem);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.consent-actions .is-primary {
+  border: none;
+  background: var(--accent, #4f46e5);
+  color: var(--accent-ink, #fff);
+}
+
+.consent-actions .is-primary:hover {
+  background: color-mix(in oklab, var(--accent, #4f46e5) 85%, #000000);
+}
+
+/* Decline is a real choice, not the main action. It comes after Connect in
+ * the markup (Enter submits with the first button) and is shown first. */
+.consent-actions .is-secondary {
+  order: -1;
+  border: 1px solid var(--rule, #d1d5db);
+  background: transparent;
+  color: var(--fg, #111827);
+}
+
+.consent-actions .is-secondary:hover {
+  border-color: var(--fg-muted, #6b7280);
+}
+
+@media (max-width: 30rem) {
+  .consent-actions {
+    flex-direction: column;
+  }
+  .consent-actions .is-secondary {
+    order: 1;
+  }
+}
+
+.consent-card h1 .consent-agent-name {
+  font-family: var(--font-mono, monospace);
+  color: var(--accent, #4f46e5);
+  overflow-wrap: anywhere;
+}
+
+/* The device code, to compare with the terminal. */
+.consent-code {
+  font-size: var(--font-size-2, 1.1rem);
+  letter-spacing: 0.12em;
+}
+
+.consent-code-input {
+  text-align: center;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: var(--font-size-3, 1.15rem);
+}
+
+/* The Cards an agent holds, shown before the person allows.
+   A section of its own, outside the options: it informs the choice and is
+   not itself clickable. */
+.consent-cards-panel {
+  display: grid;
+  gap: var(--size-2, 0.5rem);
+  padding: var(--size-3, 0.75rem);
+  border: 1px solid var(--rule-soft, #e5e7eb);
+  border-radius: var(--radius-2, 8px);
+  background: var(--bg-elev, color-mix(in oklab, var(--fg, #111827) 3%, transparent));
+  cursor: default;
+}
+
+.consent-icon {
+  flex: none;
+  vertical-align: -2px;
+}
+
+.consent-cards-title {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2, 0.5rem);
+  margin: 0;
+  font-size: var(--font-size-1, 0.95rem);
+  font-weight: 600;
+  color: var(--fg, #111827);
+}
+
+.consent-cards-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--fg-muted, #6b7280);
+}
+
+.consent-cards {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--size-2, 0.5rem);
+}
+
+.consent-agent-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-2, 0.5rem);
+  margin: 0;
+  color: var(--fg, #111827);
+}
+
+.consent-agent-label {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-0, 0.85rem);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.consent-badge {
+  padding: 0 var(--size-2, 0.5rem);
+  border-radius: 999px;
+  background: var(--accent, #4f46e5);
+  color: var(--accent-ink, #fff);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.consent-card-item {
+  display: grid;
+  gap: var(--size-1, 0.25rem);
+  padding-left: var(--size-3, 0.75rem);
+  border-left: 2px solid var(--rule, #d1d5db);
+}
+
+.consent-card-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-2, 0.5rem);
+  font-size: 0.8rem;
+  color: var(--fg-soft, #4b5563);
+}
+
+.consent-card-name {
+  font-family: var(--font-mono, monospace);
+  color: var(--fg, #111827);
+}
+
+.consent-card-env {
+  padding: 0 var(--size-1, 0.25rem);
+  border: 1px solid var(--rule, #d1d5db);
+  border-radius: var(--radius-1, 4px);
+  font-size: 0.7rem;
+}
+
+/* Actions are tools, not agents: chips in the accent colour. */
+.consent-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-1, 0.25rem);
+}
+
+.consent-chip {
+  padding: 1px var(--size-2, 0.5rem);
+  border: 1px solid color-mix(in oklab, var(--accent, #4f46e5) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent, #4f46e5) 14%, transparent);
+  color: var(--fg, #111827);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.consent-chip.is-empty {
+  border-style: dashed;
+  background: none;
+  color: var(--fg-muted, #6b7280);
+}
+
+.consent-card-outside {
+  display: flex;
+  align-items: center;
+  gap: var(--size-1, 0.25rem);
+  font-size: 0.75rem;
+  color: var(--warn, #b45309);
+}
+
+.consent-card-outside.is-refused {
+  color: var(--danger, #b91c1c);
+}
+
+.consent-nocard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-2, 0.5rem);
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--warn, #b45309);
+}
+
+.consent-nocard .consent-icon {
+  margin-top: 2px;
+}
+
+.consent-more summary {
+  width: fit-content;
+  padding: var(--size-1, 0.25rem) var(--size-2, 0.5rem);
+  border-radius: var(--radius-1, 4px);
+  cursor: pointer;
+  font-size: var(--font-size-0, 0.85rem);
+  font-weight: 500;
+  color: var(--accent, #4f46e5);
+}
+
+.consent-more summary:hover,
+.consent-more summary:focus-visible {
+  background: color-mix(in oklab, var(--accent, #4f46e5) 12%, transparent);
+  text-decoration: underline;
+}
+
+.consent-more[open] summary {
+  margin-bottom: var(--size-2, 0.5rem);
+}
+
+/* Existing agents are choices: radio cards like "a new agent", each with
+   the Cards that agent holds. */
+.consent-group-label {
+  display: grid;
+  gap: 2px;
+  margin: var(--size-2, 0.5rem) 0 0;
+  font-size: var(--font-size-0, 0.85rem);
+  font-weight: 600;
+  color: var(--fg, #111827);
+}
+
+.consent-group-label .consent-cards-hint {
+  font-weight: 400;
+}
+
+.consent-pick .consent-agent {
+  gap: var(--size-2, 0.5rem);
+}
+
+.consent-pick .consent-agent-label {
+  font-size: var(--font-size-1, 0.95rem);
+}
+
+.consent-more-picks {
+  display: grid;
+  gap: var(--size-2, 0.5rem);
+}
+
+/* KIFF Cloud chrome: the dashboard's fonts and colours (tokens shared with
+   .dash-shell in app-shell.css) and its logo, so this page reads as KIFF's
+   own and not as a third party's. */
+.consent-shell {
+  /* flow-root keeps the card's margin inside the shell's background. */
+  display: flow-root;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+.consent-shell .auth-card h1 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.consent-shell .consent-agent > strong {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.consent-topbar {
+  display: flex;
+  align-items: center;
+  height: var(--dash-topbar-h, 56px);
+  padding: 0 var(--size-5, 1.5rem);
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--bg-elev);
+}
+
+.consent-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.consent-brand-img {
+  display: block;
+  width: auto;
+  height: 24px;
+}
+
+.consent-brand-word span {
+  color: var(--accent);
+}
+
+.consent-shell .auth-card {
+  margin: 6vh auto;
+}
+
+/* The generic URL lists agents in columns, so its card is wider. */
+.consent-card.is-wide {
+  max-width: 56rem;
+}
+
+.consent-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Section separators: a label centred on a rule. */
+.consent-sep {
+  display: flex;
+  align-items: center;
+  gap: var(--size-3, 0.75rem);
+  margin: var(--size-3, 0.75rem) 0 var(--size-1, 0.25rem);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.consent-sep::before,
+.consent-sep::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.consent-sep-hint {
+  margin: 0 0 var(--size-2, 0.5rem);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+
+/* Agents in columns: two or three across, one on a narrow screen. */
+.consent-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--size-2, 0.5rem);
+  align-items: stretch;
+}
+
+.consent-pick-grid .consent-pick {
+  height: 100%;
+}
+
+.consent-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-2, 0.5rem);
+  margin-bottom: var(--size-2, 0.5rem);
+}
+
+.consent-search-input {
+  flex: 1 1 14rem;
+  padding: var(--size-2, 0.5rem) var(--size-3, 0.75rem);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-2, 8px);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+}
+
+.consent-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.consent-search-btn {
+  padding: var(--size-2, 0.5rem) var(--size-3, 0.75rem);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-2, 8px);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.consent-search-btn:hover {
+  border-color: var(--accent);
+}
+
+.consent-search-clear {
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+
+.consent-pager {
+  display: flex;
+  justify-content: center;
+  gap: var(--size-1, 0.25rem);
+  margin-top: var(--size-2, 0.5rem);
+}
+
+.consent-page {
+  min-width: 2rem;
+  padding: var(--size-1, 0.25rem) var(--size-2, 0.5rem);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-2, 8px);
+  color: var(--fg);
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+a.consent-page:hover {
+  border-color: var(--accent);
+}
+
+.consent-page.is-current {
+  border-color: var(--fg);
+  font-weight: 600;
+}

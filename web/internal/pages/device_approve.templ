@@ -1,0 +1,222 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/words"
+)
+
+// DeviceApproveView drives the /auth/device approval page. It is the
+// browser half of `kiff auth login`: a signed-in human confirms the
+// user_code their CLI printed, and approving binds their
+// subject+tenant to the pending device flow.
+type DeviceApproveView struct {
+	// UserCode is prefilled from the ?code= query (the
+	// verification_uri_complete the CLI opened), or typed by hand; once
+	// reviewed it is shown, not editable.
+	UserCode string
+	// Approved is true after a successful approval; the page then tells
+	// the human to return to their terminal.
+	Approved bool
+	// ErrMsg carries a human-readable failure (unknown/expired code,
+	// API error). Empty on the initial render.
+	ErrMsg string
+	// ReauthURL is where to sign in again when approving needs a recent
+	// sign-in; it comes back to the same code.
+	ReauthURL string
+	// NotConfiguredMsg is set when the API client is absent.
+	NotConfiguredMsg string
+	// Reviewed is true once the code was looked up: the page shows what
+	// it signs in, the code can no longer be edited, and approving posts
+	// the reviewed code with the fingerprint shown.
+	Reviewed bool
+	// DeviceName and KeyFingerprint describe what the code signs in: a
+	// phone that sent its signing key has a fingerprint.
+	DeviceName, KeyFingerprint string
+	// Notice asks the person to check the review before approving.
+	Notice string
+	// Accounts are the accounts the person may sign the device in to, by
+	// name and role; with more than one, they choose. Tenant is the one
+	// chosen, or the one in use.
+	Accounts []components.AccountOption
+	Tenant   string
+	// Relink: a phone already signed in asks to approve again with a new
+	// key; ApprovalKeyFingerprint is that key's.
+	Relink                 bool
+	ApprovalKeyFingerprint string
+	// RecentSignIn: approving now passes the recent sign-in check. SignedIn:
+	// the person just signed in again for it, so approve doesn't send them
+	// to sign in a second time.
+	RecentSignIn, SignedIn bool
+	// Lang is the screen's language (components.RequestLanguage) and W its
+	// lines. FromTafs: the device is the tafs app (it sends a signing key),
+	// so the page wears "tafs by KIFF" with both logos.
+	Lang     string
+	W        words.Device
+	FromTafs bool
+}
+
+// back is this screen's own path in its language, for its links and forms.
+func (v DeviceApproveView) back(path string) string { return components.KeepLang(path, v.Lang) }
+
+// phone is the device's name, or "This phone".
+func (v DeviceApproveView) phone() string {
+	if v.DeviceName != "" {
+		return v.DeviceName
+	}
+	return v.W.ThisPhone
+}
+
+// chosen reports whether o is the account the device signs in to.
+func (v DeviceApproveView) chosen(o components.AccountOption) bool {
+	if v.Tenant != "" {
+		return o.TenantID == v.Tenant
+	}
+	return o.Current
+}
+
+// DeviceApprove renders the device-authorization approval page.
+templ DeviceApprove(v DeviceApproveView) {
+	@components.LayoutAppThemedWithCSS(v.W.Title, "css/fonts.css", "css/app-shell.css", "css/auth.css", "css/consent.css") {
+		<div class="consent-shell">
+			<header class="consent-topbar">
+				if v.FromTafs {
+					<a class="consent-brand" href="/tafs" aria-label={ words.TafsByKIFF }>
+						<img class="consent-brand-img" src="/static/img/tafs/tafs-icon-512.png" alt="" aria-hidden="true"/>
+						<img class="consent-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+						<span class="consent-brand-word">{ words.TafsByKIFF }</span>
+					</a>
+				} else {
+					<a class="consent-brand" href="/" aria-label="KIFF">
+						<img class="consent-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+						<span class="consent-brand-word">kiff<span>.</span>dev</span>
+					</a>
+				}
+			</header>
+		<section class="auth-card consent-card">
+			<p class="eyebrow">{ v.W.Eyebrow }</p>
+			if v.Approved && v.Relink {
+				<h1>{ v.W.RelinkDoneTitle }</h1>
+				<p class="auth-note">{ v.W.RelinkDone(v.phone()) }</p>
+			} else if v.Reviewed && v.Relink {
+				<h1>{ v.W.RelinkTitle(v.phone()) }</h1>
+				<p class="auth-note">
+					<strong>{ v.W.RelinkOnly(v.phone()) }</strong>
+					{ v.W.RelinkWhy }
+				</p>
+				if v.Notice != "" {
+					<p class="auth-note"><strong>{ v.Notice }</strong></p>
+				}
+				<dl class="auth-device">
+					<div><dt>{ v.W.Code }</dt><dd><code>{ v.UserCode }</code></dd></div>
+					<div><dt>{ v.W.Device }</dt><dd>{ v.phone() }</dd></div>
+					if v.ApprovalKeyFingerprint != "" {
+						<div><dt>{ v.W.NewKey }</dt><dd><code>{ v.ApprovalKeyFingerprint }</code></dd></div>
+					}
+				</dl>
+				<p class="auth-note">{ v.W.CheckCodeMatches }</p>
+				if v.ErrMsg != "" {
+					<div class="auth-error">
+						<strong>{ v.W.CouldntApprove }</strong> { v.ErrMsg }
+						if v.ReauthURL != "" {
+							<a href={ templ.SafeURL(v.ReauthURL) }>{ v.W.SignInAgain }</a>
+						}
+					</div>
+				}
+				<form method="post" action={ templ.SafeURL(v.back("/auth/device")) } class="auth-form">
+					<input type="hidden" name="user_code" value={ v.UserCode }/>
+					<input type="hidden" name="key_fingerprint" value={ v.KeyFingerprint }/>
+					<input type="hidden" name="tenant" value={ v.Tenant }/>
+					<input type="hidden" name="reviewed" value="1"/>
+					if v.SignedIn {
+						<input type="hidden" name="signed_in" value="1"/>
+					}
+					<button type="submit">{ v.W.ApproveAgain }</button>
+				</form>
+				<p class="auth-note"><a href={ templ.SafeURL(v.back("/auth/device")) }>{ v.W.OtherCode }</a></p>
+			} else if v.Approved {
+				<h1>{ v.W.ApprovedTitle }</h1>
+				<p class="auth-note">
+					if v.DeviceName != "" {
+						{ v.W.ApprovedNamed(v.DeviceName) }
+					} else {
+						{ v.W.Approved }
+					}
+				</p>
+			} else if v.Reviewed {
+				<h1>{ v.W.ReviewTitle }</h1>
+				<p class="auth-note">{ v.W.ReviewNote }</p>
+				if v.Notice != "" {
+					<p class="auth-note"><strong>{ v.Notice }</strong></p>
+				}
+				<dl class="auth-device">
+					<div><dt>{ v.W.Code }</dt><dd><code>{ v.UserCode }</code></dd></div>
+					if v.DeviceName != "" {
+						<div><dt>{ v.W.Device }</dt><dd>{ v.DeviceName }</dd></div>
+					}
+					if v.KeyFingerprint != "" {
+						<div><dt>{ v.W.Key }</dt><dd><code>{ v.KeyFingerprint }</code></dd></div>
+					}
+				</dl>
+				if v.KeyFingerprint != "" {
+					<p class="auth-note">{ v.W.KeyNote }</p>
+				}
+				if v.ErrMsg != "" {
+					<div class="auth-error">
+						<strong>{ v.W.CouldntApprove }</strong> { v.ErrMsg }
+						if v.ReauthURL != "" {
+							<a href={ templ.SafeURL(v.ReauthURL) }>{ v.W.SignInAgain }</a>
+						}
+					</div>
+				}
+				<form method="post" action={ templ.SafeURL(v.back("/auth/device")) } class="auth-form">
+					<input type="hidden" name="user_code" value={ v.UserCode }/>
+					<input type="hidden" name="key_fingerprint" value={ v.KeyFingerprint }/>
+					<input type="hidden" name="reviewed" value="1"/>
+					if v.SignedIn {
+						<input type="hidden" name="signed_in" value="1"/>
+					}
+					if len(v.Accounts) > 1 {
+						<fieldset class="consent-form">
+							<legend class="consent-group-label">{ v.W.SignInTo }</legend>
+							for _, o := range v.Accounts {
+								<label class="consent-option">
+									<input type="radio" name="tenant" value={ o.TenantID } checked?={ v.chosen(o) } required/>
+									<span class="consent-agent">{ o.Label } · { v.W.Role(o.Role) }</span>
+								</label>
+							}
+						</fieldset>
+					}
+					<button type="submit">{ v.W.ApproveDevice }</button>
+				</form>
+				<p class="auth-note"><a href={ templ.SafeURL(v.back("/auth/device")) }>{ v.W.OtherCode }</a></p>
+			} else {
+				<h1>{ v.W.ReviewTitle }</h1>
+				<p class="auth-note">{ v.W.EnterNote }</p>
+				if v.NotConfiguredMsg != "" {
+					<div class="auth-error"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+				}
+				if v.ErrMsg != "" {
+					<div class="auth-error"><strong>{ v.W.CouldntContinue }</strong> { v.ErrMsg }</div>
+				}
+				<form method="get" action="/auth/device" class="auth-form">
+					if v.Lang != "en" {
+						<input type="hidden" name="lang" value={ v.Lang }/>
+					}
+					<label for="user_code">{ v.W.DeviceCode }</label>
+					<input
+						id="user_code"
+						name="code"
+						value={ v.UserCode }
+						placeholder="XXXX-XXXX"
+						autocomplete="off"
+						autocapitalize="characters"
+						spellcheck="false"
+						required
+					/>
+					<button type="submit">{ v.W.Continue }</button>
+				</form>
+			}
+		</section>
+		</div>
+	}
+}

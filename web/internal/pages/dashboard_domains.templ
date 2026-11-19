@@ -1,0 +1,966 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DashboardDomainsView renders the domain-apex surface: after sign-in
+// the primary object is the reusable operational domain. A one-domain
+// tenant still gets a domain-shaped surface (Selected set), not a bare
+// control.
+type DashboardDomainsView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	// Domains is the tenant's domain list (0 or 1 today, shaped as a
+	// list so the surface leads with domains).
+	Domains []apiclient.DomainListItem
+	// Selected is the in-focus domain's detail, set when exactly one
+	// domain resolves or a specific domain was requested.
+	Selected *apiclient.DomainDetail
+
+	// NextAction is the contextual "what to do next" card folded onto
+	// the domain home from the retired Overview. Computed server-side
+	// by the handler; nil renders nothing.
+	NextAction *NextAction
+	// Usage is the current-period counter snapshot from /v1/me/usage,
+	// feeding the domain home's activity glance. nil renders the glance
+	// with zeroed counters.
+	Usage *apiclient.Usage
+	// LastReceivedAt is the timestamp of the most recent proposal,
+	// shown as the activity glance's connection signal. nil ⇒ no
+	// proposals yet.
+	LastReceivedAt *time.Time
+
+	// Tab is the domain page section in view: overview | contract |
+	// integration | settings.
+	Tab string
+	// DomainCards are the in-force cards on the domain in focus, with
+	// their balances; loaded for the Overview only.
+	DomainCards []apiclient.Mandate
+	CardUsage   map[string]CardBalance
+
+	// Verify is the verify-the-loop reconciliation: per declared action,
+	// its executor backing kind and whether the runtime has observed it
+	// being exercised. Zero value renders the section's honest
+	// unavailable/empty state.
+	Verify DomainVerify
+
+	// Portfolio is the per-domain operational rollup rendered on the
+	// multi-domain "All domains" view: each domain's state (posture),
+	// governed-action count, recent activity, and the next action.
+	// Populated only when the tenant has more than one domain.
+	Portfolio []DomainPortfolioRow
+	// PendingApprovals is the workspace-wide count of decisions waiting
+	// on a human, shown as a callout above the portfolio.
+	PendingApprovals int
+	// ApprovalsHref is where the workspace approvals callout points: the
+	// approvals tab of the domain that holds the most pending approvals
+	// (so "Review" lands on an actionable queue, not the portfolio it was
+	// clicked from). Empty when there are no pending approvals.
+	ApprovalsHref string
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// DomainPortfolioRow is one domain's line in the All-domains portfolio.
+// It is an operational rollup, not the full detail: enough for a
+// multi-domain operator to see each domain's posture, how much it has
+// decided recently, and the one next thing to do — with a link into it.
+type DomainPortfolioRow struct {
+	Name string
+	// State is the operational posture label: "Enforcing" | "Observe" |
+	// "Active" (posture unset) | "Draft" (in-progress, not yet active).
+	State      string
+	StateClass string
+	// Runtime is the freshness of the guard runtime backing this domain:
+	// "Live" (called within the hour) | "Connected" (within the day) |
+	// "Idle" (older) | "" (no runtime observed). RuntimeClass is its
+	// styling hook.
+	Runtime      string
+	RuntimeClass string
+	// Decisions is the recent governed-operation count for the period
+	// (the submitted counter, matching the account consumption unit).
+	Decisions   int
+	HasActivity bool
+	// Approvals is the count of this domain's pending approvals,
+	// attributed by entity. Drives a "Review N" next action.
+	Approvals int
+	// NextAction is the derived "one next thing" for this domain and the
+	// href it points at.
+	NextActionLabel string
+	NextActionHref  string
+	// Href is where the row links: an active domain's home, or Build for
+	// an in-progress draft (which has no home yet). Draft flags the row
+	// as an in-progress domain for styling and the "—" cells.
+	Href  string
+	Draft bool
+}
+
+// DashboardNewDomainView renders /dashboard/domains/new: the
+// authoring form for an additional domain. YAML repopulates the
+// textarea on a validation/clash error so the user does not lose
+// their work; Issues carries the cloud's per-line validation feedback
+// when the YAML failed to build.
+type DashboardNewDomainView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	// YAML is the posted body, echoed back into the textarea on error.
+	YAML string
+	// Issues is the cloud's validation feedback on a 422.
+	Issues []apiclient.DomainValidationIssue
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+templ DashboardDomains(v DashboardDomainsView) {
+	@components.DashboardLayoutWithCSS(
+		"KIFF Cloud — Domains",
+		"domains",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, selectedDomainSlug(v)),
+		"css/cards.css",
+	) {
+		<section class="dash">
+			if v.Selected != nil {
+				<header class="dash-header dash-domain-head">
+					<div class="dash-header-text">
+						<p class="eyebrow">Domain</p>
+						<h1>{ v.Selected.Name }</h1>
+						<p class="dash-domain-status">
+							<span class={ "dash-posture-state", postureStatePillClass(v.Selected.Posture) }>{ postureStateLabel(v.Selected.Posture) }</span>
+							<span class="dash-note">{ v.Selected.Entity } · { domainLastDecision(v) }</span>
+						</p>
+					</div>
+					<div class="dash-header-actions">
+						<a class="btn btn-primary" href={ templ.SafeURL(domainIssueCardHref(v.Selected.Name)) }>Issue a card</a>
+					</div>
+				</header>
+				@domainSwitcher(v)
+				<nav class="dash-domain-tabs" aria-label="Domain sections">
+					for _, t := range DomainTabs {
+						<a class={ templ.KV("is-current", v.Tab == t.Key) } href={ templ.SafeURL(domainTabHref(v.Selected.Name, t.Key)) }>{ t.Label }</a>
+					}
+				</nav>
+			} else {
+				<header class="dash-header">
+					<div class="dash-header-text">
+						<p class="eyebrow">Workspace</p>
+						<h1>Domains</h1>
+						<p class="dash-note">A domain is the contract your agents act under: its actions, its states and the evidence it keeps.</p>
+					</div>
+					if len(v.Domains) > 0 {
+						@newDomainAction(v)
+					}
+				</header>
+			}
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Me != nil {
+				if v.Selected != nil {
+					switch v.Tab {
+						case "contract":
+							@domainContractTab(v.Selected)
+						case "integration":
+							@domainIntegrationTab(v)
+						case "settings":
+							@domainSettingsTab(v)
+						default:
+							@domainOverviewTab(v)
+					}
+				} else if len(v.Domains) == 0 {
+					@domainsEmptyState()
+				} else {
+					@domainPortfolio(v)
+				}
+			}
+		</section>
+	}
+}
+
+// DashboardNewDomain renders the authoring form for an additional
+// domain. The form posts the domain YAML to /dashboard/domains; on
+// a clash or validation failure the page re-renders with the
+// posted YAML preserved and the issues listed. A tenant builds its
+// first/default domain through Build; this is the on-ramp to its
+// second and beyond.
+templ DashboardNewDomain(v DashboardNewDomainView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — New domain",
+		"domains",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Domains</p>
+					<h1>New domain</h1>
+					<p class="dash-note">Paste the domain YAML below. The contract lives in your codebase; this registers it with KIFF so calls can be decided against it.</p>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Couldn't create the domain:</strong> { v.ErrMsg }</div>
+			}
+			if len(v.Issues) > 0 {
+				<div class="dash-card">
+					<h3>Validation issues</h3>
+					<ul class="dash-list">
+						for _, issue := range v.Issues {
+							<li class="dash-note">{ newDomainIssueLine(issue) }</li>
+						}
+					</ul>
+				</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			<div class="dash-card">
+				<form method="post" action="/dashboard/domains">
+					<label class="dash-field-label" for="yaml">Domain YAML</label>
+					<textarea
+						id="yaml"
+						name="yaml"
+						class="dash-textarea dash-textarea--code"
+						rows="20"
+						spellcheck="false"
+						autocomplete="off"
+						aria-describedby="yaml-editor-hint"
+						placeholder="domain: payments&#10;entity: Invoice&#10;states: [...]&#10;actions: [...]"
+					>{ v.YAML }</textarea>
+					<div class="dash-header-actions">
+						<button class="btn btn-primary" type="submit">Create domain</button>
+						<a class="btn" href="/dashboard/domains">Cancel</a>
+					</div>
+				</form>
+				@yamlEditorScript()
+			</div>
+		</section>
+	}
+}
+
+// newDomainIssueLine renders one validation issue, prefixing the
+// path when the cloud reported one.
+func newDomainIssueLine(issue apiclient.DomainValidationIssue) string {
+	if issue.Path != "" {
+		return issue.Path + ": " + issue.Message
+	}
+	return issue.Message
+}
+
+// DashboardEditDomainView renders /dashboard/domains/{domain}/edit:
+// the per-domain authoring surface. YAML is pre-filled with the
+// domain's current contract and re-echoed on a validation/rename
+// error so edits aren't lost. Slug is the domain being edited (the
+// form action + heading).
+type DashboardEditDomainView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	Slug   string
+	YAML   string
+	Issues []apiclient.DomainValidationIssue
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// DashboardEditDomain renders the in-place YAML editor for
+// one domain. Posts to /dashboard/domains/{slug}/edit, which PUTs
+// the change; identity-preserving (the name can't change
+// here — rename is separate), so a
+// name change re-renders with a precise message.
+templ DashboardEditDomain(v DashboardEditDomainView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — Edit "+v.Slug,
+		"domains",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.Slug),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Edit domain</p>
+					<h1>{ v.Slug }</h1>
+					<p class="dash-note">Edit this domain's actions, states and executors. The name stays the same. Saving activates the new contract; keep your codebase's copy in step.</p>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Couldn't save the domain:</strong> { v.ErrMsg }</div>
+			}
+			if len(v.Issues) > 0 {
+				<div class="dash-card">
+					<h3>Validation issues</h3>
+					<ul class="dash-list">
+						for _, issue := range v.Issues {
+							<li class="dash-note">{ newDomainIssueLine(issue) }</li>
+						}
+					</ul>
+				</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			<div class="dash-card">
+				<form method="post" action={ templ.SafeURL("/dashboard/domains/" + v.Slug + "/edit") }>
+					<label class="dash-field-label" for="yaml">Domain YAML</label>
+					<textarea
+						id="yaml"
+						name="yaml"
+						class="dash-textarea dash-textarea--code"
+						rows="22"
+						spellcheck="false"
+						autocomplete="off"
+						aria-describedby="yaml-editor-hint"
+					>{ v.YAML }</textarea>
+					<div class="dash-header-actions">
+						<button class="btn btn-primary" type="submit">Save changes</button>
+						<a class="btn" href={ templ.SafeURL("/dashboard/domains/" + v.Slug) }>Cancel</a>
+					</div>
+				</form>
+				@yamlEditorScript()
+			</div>
+		</section>
+	}
+}
+
+// yamlEditorScript makes the plain #yaml textarea behave for YAML input:
+// Tab inserts two spaces (YAML forbids tab indentation), and any tab
+// characters that arrive by paste are converted to two spaces so the
+// contract parses. Vanilla JS, no framework or bundle. Full syntax
+// highlighting + live lint is the CodeMirror follow-up.
+templ yamlEditorScript() {
+	<p id="yaml-editor-hint" class="dash-note dash-note-hint">Tab inserts two spaces (YAML uses spaces, not tabs). Press Esc to move focus out of the editor.</p>
+	<script>
+    (function () {
+      var ta = document.getElementById("yaml");
+      if (!ta) return;
+      var INDENT = "  ";
+      ta.addEventListener("keydown", function (e) {
+        // Accessibility: Esc releases the editor so a keyboard-only user
+        // can Tab on to the next control instead of being trapped by the
+        // Tab-inserts-spaces behavior below.
+        if (e.key === "Escape") { ta.blur(); return; }
+        if (e.key === "Tab") {
+          e.preventDefault();
+          var s = ta.selectionStart, end = ta.selectionEnd;
+          ta.value = ta.value.slice(0, s) + INDENT + ta.value.slice(end);
+          ta.selectionStart = ta.selectionEnd = s + INDENT.length;
+        }
+      });
+      // Pasted tab characters become two spaces so the contract parses.
+      // Each tab expands to two chars, so shift the caret by one per tab
+      // that was before it to keep the cursor where the user expects.
+      ta.addEventListener("input", function () {
+        if (ta.value.indexOf("\t") === -1) return;
+        var pos = ta.selectionStart;
+        var tabsBefore = (ta.value.slice(0, pos).match(/\t/g) || []).length;
+        ta.value = ta.value.replace(/\t/g, INDENT);
+        ta.selectionStart = ta.selectionEnd = pos + tabsBefore;
+      });
+    })();
+	</script>
+}
+
+// newDomainAction renders the "New domain" affordance with the plan
+// count: "N of M domains" when the plan publishes a cap, plain count
+// otherwise. At the cap the button is replaced by a note — the create
+// would 403 — pointing at delete/upgrade.
+templ newDomainAction(v DashboardDomainsView) {
+	<div class="dash-header-actions dash-domain-count">
+		<span class="dash-nav-meta">{ domainCountLabel(v) }</span>
+		if domainAtCap(v) {
+			<span class="dash-note">Domain limit reached — delete one or upgrade.</span>
+		} else {
+			<a class="btn btn-secondary" href="/dashboard/domains/new">New domain</a>
+		}
+	</div>
+}
+
+// domainCountLabel is "N of M domains" when the plan publishes a cap
+// (Me.MaxDomains > 0), else a plain pluralized count.
+func domainCountLabel(v DashboardDomainsView) string {
+	if v.Me != nil && v.Me.MaxDomains > 0 {
+		return fmt.Sprintf("%d of %d domains", len(v.Domains), v.Me.MaxDomains)
+	}
+	return fmt.Sprintf("%d %s", len(v.Domains), pluralize(len(v.Domains), "domain", "domains"))
+}
+
+// domainAtCap reports whether the tenant has hit its plan's domain cap
+// (a positive Me.MaxDomains reached by the current count).
+func domainAtCap(v DashboardDomainsView) bool {
+	return v.Me != nil && v.Me.MaxDomains > 0 && len(v.Domains) >= v.Me.MaxDomains
+}
+
+// selectedDomainSlug is the in-focus domain's slug for nav
+// scoping, or "" when the apex is showing the list / empty state.
+// Uses the domain name, matching the URL token the detail route
+// and switcher already use.
+func selectedDomainSlug(v DashboardDomainsView) string {
+	if v.Selected != nil {
+		return v.Selected.Name
+	}
+	return ""
+}
+
+// domainDangerZone renders the guarded delete for an additional domain.
+// Shown only when the tenant has more than one
+// domain — a single-domain tenant's only domain is its
+// default and undeletable, so the action would always be
+// refused. Deleting requires typing the domain name to confirm
+// (server-side validated). The default among several still 409s server-side
+// with a clear message, since the read projection doesn't
+// expose which is default.
+templ domainDangerZone(v DashboardDomainsView) {
+	if v.Selected != nil && len(v.Domains) > 1 {
+		<article class="dash-card dash-danger-card">
+			<div class="dash-card-heading">
+				<div>
+					<h3>Delete this domain</h3>
+					<p class="dash-note">Removes <code>{ v.Selected.Name }</code> and its configuration. Its decisions and receipts are kept. This can't be undone.</p>
+				</div>
+			</div>
+			<form method="post" action={ templ.SafeURL("/dashboard/domains/" + v.Selected.Name + "/delete") } class="dash-delete-form">
+				<label for="confirm-domain-input" class="dash-note">
+					Type <code>{ v.Selected.Name }</code> to confirm.
+				</label>
+				<input
+					id="confirm-domain-input"
+					name="confirm_name"
+					type="text"
+					autocomplete="off"
+					placeholder={ v.Selected.Name }
+					class="dash-input"
+				/>
+				<button type="submit" class="btn btn-danger">Delete domain</button>
+			</form>
+		</article>
+	}
+}
+
+// domainFirstValue is the value-led module shown on the domain home when
+// the domain has never produced a decision (the first-decision design,
+// as amended for the card-first journey): lead with what KIFF does and
+// the path to see it work, instead of an empty 0/0/0 glance. Seeing it
+// work means issuing a card and sending it a real test request from the
+// card page; its decision, allowed or refused, is listed among the card
+// page's recent decisions with its signed receipt.
+templ domainFirstValue() {
+	<article class="dash-card dash-firstrun">
+		<div class="dash-firstrun-copy">
+			<p class="eyebrow">See it work</p>
+			<h2>Give an agent a Card, then test it</h2>
+			<p class="dash-note">Before each action runs, KIFF decides <strong>allow</strong>, <strong>block</strong> or <strong>needs approval</strong> against this domain and signs a receipt. Send a Card a test request to see one.</p>
+		</div>
+		<div class="dash-header-actions">
+			<a class="btn btn-primary" href="/cards/new">Issue a card</a>
+			<a class="btn btn-secondary" href="/cards">See your cards</a>
+		</div>
+	</article>
+}
+
+// domainHomeGlance is the compact activity summary folded onto the
+// domain home from the retired Overview: governed-operation counts for
+// the current period plus the live connection signal. A summary, not the
+// raw decisions table — that lives in Activity.
+templ domainHomeGlance(v DashboardDomainsView) {
+	<article class="dash-card dash-overview-summary">
+		<div class="dash-metrics">
+			<div class="dash-metric"><span>Submitted</span><strong>{ fmt.Sprintf("%d", domainCounter(v, "kiff.cloud.proposals.submitted")) }</strong><small>before executor ran</small></div>
+			<div class="dash-metric"><span>Allowed</span><strong>{ fmt.Sprintf("%d", domainCounter(v, "kiff.cloud.proposals.allowed")) }</strong><small>authorized</small></div>
+			<div class="dash-metric"><span>Blocked</span><strong>{ fmt.Sprintf("%d", domainCounter(v, "kiff.cloud.proposals.blocked")) }</strong><small>withheld</small></div>
+			<div class="dash-metric"><span>Status</span><strong>{ domainStatusWord(v) }</strong><small>{ domainConnectionLabel(v) }</small></div>
+		</div>
+	</article>
+}
+
+// domainNextAction renders the contextual "what to do next" card on the
+// domain home. nil renders nothing (the tenant is fully operating with
+// no outstanding nudge).
+templ domainNextAction(na *NextAction) {
+	if na != nil {
+		<aside class="dash-next-stack" aria-label="Next action">
+			<div class={ "dash-next-row", "dash-next-row-now", "dash-next-" + na.Kind }>
+				<span class="dash-next-num">→</span>
+				<span><strong>{ na.Title }</strong><small>{ na.Body }</small></span>
+				<a class="dash-pill dash-pill-ok" href={ templ.SafeURL(na.CTAHref) }>{ na.CTAText }</a>
+			</div>
+		</aside>
+	}
+}
+
+// domainsEmptyState is the no-domain surface: explain the apex object
+// and point at the observe→activate on-ramp.
+templ domainsEmptyState() {
+	<div class="dash-card">
+		<h2>No domain yet</h2>
+		<p class="dash-note">Attach the guard to an agent in observe mode. KIFF derives a starter domain from its traffic; review it, then activate it.</p>
+		<div class="dash-header-actions">
+			<a class="btn btn-primary" href="/docs/quickstart">Open the quickstart</a>
+			<a class="btn" href="/dashboard/build">Open Build</a>
+		</div>
+	</div>
+}
+
+// domainSwitcher renders a compact strip to move between the tenant's
+// domains when there is more than one. Shown on a domain's
+// detail/home so a multi-domain tenant can switch without going back
+// to the apex; the current domain is marked, the rest link to their
+// detail. Renders nothing for a single-domain tenant.
+templ domainSwitcher(v DashboardDomainsView) {
+	if v.Selected != nil && len(v.Domains) > 1 {
+		<nav class="dash-domain-switcher" aria-label="Switch domain">
+			<span class="dash-domain-switcher-label">Domains</span>
+			for _, d := range v.Domains {
+				if d.Name == v.Selected.Name {
+					<span class="dash-domain-chip dash-domain-chip-current" aria-current="true">{ d.Name }</span>
+				} else {
+					<a class="dash-domain-chip" href={ templ.SafeURL("/dashboard/domains/" + d.Name) }>{ d.Name }</a>
+				}
+			}
+			<a class="dash-domain-chip dash-domain-chip-all" href="/dashboard/domains">All domains →</a>
+		</nav>
+	}
+}
+
+// domainPortfolio is the multi-domain "All domains" view: an operational
+// rollup table (state · governed actions · recent activity · next action)
+// with a link into each domain, plus a workspace-wide approvals callout.
+// It gives a multi-domain operator a portfolio overview and a clear path
+// into each domain's operating or setup view, while the workspace shell
+// stays stable — adding or drafting a domain never returns the whole app
+// to setup.
+templ domainPortfolio(v DashboardDomainsView) {
+	if v.PendingApprovals > 0 && v.ApprovalsHref != "" {
+		<a class="dash-portfolio-approvals" href={ templ.SafeURL(v.ApprovalsHref) }>
+			<span class="dash-portfolio-approvals-dot" aria-hidden="true"></span>
+			<strong>{ fmt.Sprintf("%d", v.PendingApprovals) } { pluralize(v.PendingApprovals, "decision", "decisions") } waiting for a person</strong>
+			<span class="dash-portfolio-approvals-cta">Review →</span>
+		</a>
+	}
+	<div class="dash-portfolio">
+		<div class="dash-portfolio-head" aria-hidden="true">
+			<span>Domain</span>
+			<span>State</span>
+			<span>Runtime</span>
+			<span>Recent activity</span>
+			<span>Next action</span>
+		</div>
+		for _, row := range v.Portfolio {
+			<a class="dash-portfolio-row" href={ templ.SafeURL(row.Href) }>
+				<span class="dash-portfolio-name">{ row.Name }</span>
+				<span class={ "dash-portfolio-state", row.StateClass }>{ row.State }</span>
+				if row.Runtime != "" {
+					<span class={ "dash-portfolio-runtime", row.RuntimeClass }>
+						<span class="dash-portfolio-runtime-dot" aria-hidden="true"></span>{ row.Runtime }
+					</span>
+				} else {
+					<span class="dash-portfolio-runtime dash-portfolio-muted">—</span>
+				}
+				<span class="dash-portfolio-activity">
+					if row.HasActivity {
+						{ fmt.Sprintf("%d", row.Decisions) } { pluralize(row.Decisions, "decision", "decisions") }
+					} else {
+						<span class="dash-portfolio-muted">—</span>
+					}
+				</span>
+				<span class="dash-portfolio-next">{ row.NextActionLabel }</span>
+			</a>
+		}
+	</div>
+}
+
+// domainDetailCard is the single-domain apex view: identity, governed actions, lifecycle,
+// observed agents, and the evidence entry point. Each authored section
+// carries an action into the Build lens (Studio, the authenticated-surface
+// design) so the domain is editable from its apex, not
+// read-only. The sections are grouped in.dash-domain-detail so they read as
+// one object with consistent spacing. domainGovernanceNote frames the action +
+// lifecycle sections below as a projection of the code contract,
+// not an authoring surface (the authenticated-surface design / Amendment A1,
+// slice 3 — govern the contract as a projection). The
+// decidable knobs (allowed states, approval, risk) are how KIFF decides;
+// the domain itself is executable software in the developer's codebase,
+// which is the record — edit the contract there, then
+// re-activate. Enforcement posture (observe / enforce) is operator-controlled and shown
+// in Activity, never flipped here (a workspace is never observe-only
+// by accident). domainPostureCard is the per-domain governance posture control: the
+// mode the decide path actually honors for this domain (observe
+// = advisory, decisions recorded but not enforced; enforce = binding,
+// blocks/holds take effect). The active mode is shown as a
+// pill; the other mode is a one-click flip (a management-gated
+// POST). An unset posture (a control from before per-domain posture)
+// inherits the workspace default until explicitly set — shown honestly,
+// with both modes offered.
+//
+templ domainPostureCard(d *apiclient.DomainDetail) {
+	<article class="dash-card dash-posture-card">
+		<div class="dash-card-heading">
+			<div>
+				<h3>Governance posture</h3>
+				<p class="dash-note"><strong>Observe</strong> records decisions; nothing is blocked or held. <strong>Enforce</strong> makes blocks and holds binding. A change applies from the next decision.</p>
+			</div>
+			<span class={ "dash-posture-state", postureStatePillClass(d.Posture) }>{ postureStateLabel(d.Posture) }</span>
+		</div>
+		<div class="dash-posture-controls" role="group" aria-label="Governance posture">
+			@posturedFlipButton(d.Name, "observe", d.Posture)
+			@posturedFlipButton(d.Name, "enforce", d.Posture)
+		</div>
+		if d.Posture == "" {
+			<p class="dash-note dash-posture-foot">This domain has no explicit posture yet, so it follows the workspace default. Set one above to pin it.</p>
+		}
+	</article>
+}
+
+// posturedFlipButton renders one posture option. When it is the active
+// mode it renders as a static, current-state chip (no self-submit);
+// otherwise it is a POST form that flips to that mode.
+templ posturedFlipButton(domainName, mode, current string) {
+	if mode == current {
+		<span class={ "btn", "dash-posture-btn", "dash-posture-btn-current", "dash-posture-" + mode } aria-current="true">
+			{ posturedButtonLabel(mode, true) }
+		</span>
+	} else {
+		<form method="post" action={ templ.SafeURL("/dashboard/domains/" + domainName + "/mode") } class="dash-posture-form">
+			<input type="hidden" name="mode" value={ mode }/>
+			<button class="btn dash-posture-btn" type="submit">
+				{ posturedButtonLabel(mode, false) }
+			</button>
+		</form>
+	}
+}
+
+templ domainGovernanceNote() {
+	<article class="dash-card dash-governance-note">
+		<div class="dash-card-heading">
+			<div>
+				<h3>Governance</h3>
+				<p class="dash-note">How KIFF decides this domain, read from your contract: the allowed states, approval and risk checked before an action runs. To change them, edit the contract in your codebase and activate it again. Observe or enforce is set in this domain's Settings.</p>
+			</div>
+		</div>
+	</article>
+}
+
+// domainVerifySection answers "is what I'm governing real?": per
+// declared action, where its executor runs (cloud runtime vs the
+// customer's code via cloud.proxy) and whether the gate has been
+// exercised. It reconciles the active contract's declarations against
+// observed runtime decisions — both cloud-side facts. The honesty note
+// is load-bearing: the cloud attests the gate, never the customer's
+// in-code side effect, which lives in their codebase (the record).
+templ domainVerifySection(v DomainVerify) {
+	<div class="dash-card dash-verify">
+		<div class="dash-card-heading">
+			<div>
+				<h3>Actions against real traffic</h3>
+				<p class="dash-note">Where each action's side effect runs, and whether KIFF has decided it yet.</p>
+			</div>
+		</div>
+		if len(v.Rows) == 0 {
+			<p class="dash-note">No actions to check yet.</p>
+		} else if !v.Available {
+			<p class="dash-note">Observed activity couldn't be read. Reload to try again.</p>
+		} else {
+			<ul class="dash-list dash-verify-list">
+				for _, row := range v.Rows {
+					<li class="dash-verify-row">
+						<div class="dash-verify-head">
+							<strong>{ row.ActionName }</strong>
+							<span class={ row.VerdictPillClass() }>{ row.VerdictLabel() }</span>
+						</div>
+						<span class="dash-note">{ row.BackingLabel() + " · " + row.ObservedDetail() }</span>
+					</li>
+				}
+			</ul>
+			<p class="dash-note dash-verify-foot">Receipts show that KIFF was asked and what it decided, not that the side effect happened. For actions that run in your code, check that side with <code>kiff verify</code> in your repo.</p>
+		}
+	</div>
+}
+
+// domainOverviewTab answers "what can agents do in this domain, and is
+// it working?": anything that needs a person, the cards that grant each
+// governed action, and recent activity. The contract and configuration
+// are one tab away.
+templ domainOverviewTab(v DashboardDomainsView) {
+	if v.Selected.Posture == "observe" {
+		<div class="dash-warn">
+			<strong>This domain is in observe mode.</strong>
+			Decisions are recorded but not enforced: nothing is blocked, not even by a Card's limit.
+			<a href={ templ.SafeURL(domainTabHref(v.Selected.Name, "settings")) }>Change in Settings</a>
+		</div>
+	}
+	if items := domainAttention(v); len(items) > 0 {
+		<section class="dash-card dash-attention" aria-label="Needs attention">
+			<h2>Needs attention</h2>
+			<ul class="dash-attention-list">
+				for _, it := range items {
+					<li><span>{ it.Text }</span><a href={ templ.SafeURL(it.Href) }>{ it.CTA }</a></li>
+				}
+			</ul>
+		</section>
+	}
+	@domainNextAction(v.NextAction)
+	<section class="dash-card dash-domain-cards">
+		<div class="dash-card-heading">
+			<div>
+				<h2>What agents can do here</h2>
+				<p class="dash-note">Each action, and the Cards in force for it.</p>
+			</div>
+			<a class="btn btn-secondary" href="/cards">All cards</a>
+		</div>
+		if len(v.Selected.Actions) == 0 {
+			<p class="dash-note">This domain declares no actions yet.</p>
+		}
+		for _, row := range domainCardsByAction(v) {
+			<div class="dash-domain-action">
+				<div class="dash-domain-action-head">
+					<strong>{ row.Action.Name }</strong>
+					if row.Action.RequiresAuthority {
+						<small>requires a card</small>
+					} else {
+						<small>no card needed</small>
+					}
+				</div>
+				if len(row.Cards) == 0 && row.Action.RequiresAuthority {
+					<p class="dash-note">
+						No agent holds a Card for this, so it's refused for every agent.
+						<a href={ templ.SafeURL(domainIssueCardHref(v.Selected.Name)) }>Issue a card</a>
+					</p>
+				} else if len(row.Cards) == 0 {
+					<p class="dash-note">
+						Any agent with the right permission may do this within the domain's rules. No Card caps it.
+						<a href={ templ.SafeURL(domainIssueCardHref(v.Selected.Name)) }>Issue a card to cap it</a>
+					</p>
+				} else {
+					<ul class="dash-domain-card-list">
+						for _, m := range row.Cards {
+							{{ status := cardStatus(m, v.CardUsage[m.ID]) }}
+							<li>
+								<a href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+									<code>{ m.Subject }</code>
+									<span>{ domainCardRemaining(v, m) }</span>
+									<span class={ "ac-status", "ac-status-" + statusTone(status) }>{ status }</span>
+								</a>
+							</li>
+						}
+					</ul>
+				}
+			</div>
+		}
+	</section>
+	<section class="dash-domain-activity" aria-label="Recent activity">
+		<div class="dash-card-heading">
+			<h2>Recent activity</h2>
+			if v.Selected.Evidence.ControlID != "" {
+				<a class="btn btn-secondary" href={ templ.SafeURL("/dashboard/domains/" + v.Selected.Name + "/evidence") }>Full activity</a>
+			}
+		</div>
+		if domainExercised(v) {
+			@domainHomeGlance(v)
+		} else {
+			@domainFirstValue()
+		}
+	</section>
+}
+
+// domainContractTab is the contract a card narrows: the governed
+// actions and the lifecycle their states come from.
+templ domainContractTab(d *apiclient.DomainDetail) {
+	<div class="dash-domain-detail">
+		@domainGovernanceNote()
+		<div class="dash-card">
+			<div class="dash-card-heading">
+				<div><h3>Governed actions</h3></div>
+			</div>
+			if len(d.Actions) == 0 {
+				<p class="dash-note">No actions on this domain yet. Derive one from an agent or add it in your codebase, then activate.</p>
+			} else {
+				<ul class="dash-list">
+					for _, a := range d.Actions {
+						<li>
+							<strong>{ a.Name }</strong>
+							if a.Risk != "" {
+								<small class="dash-nav-meta">{ a.Risk }</small>
+							}
+							<span class="dash-note">{ "allowed in: " + joinOrNone(a.AllowedStates) }</span>
+							if a.Approval != "" {
+								<span class="dash-note">{ "approval: " + a.Approval }</span>
+							}
+							if a.RequiresAuthority {
+								<span class="dash-note">requires a card</span>
+							}
+						</li>
+					}
+				</ul>
+			}
+		</div>
+		<div class="dash-card">
+			<div class="dash-card-heading">
+				<div><h3>Lifecycle</h3></div>
+			</div>
+			<p class="dash-note">{ "States: " + joinOrNone(d.Lifecycle.States) }</p>
+			if len(d.Lifecycle.Transitions) == 0 {
+				<p class="dash-note">No transitions defined.</p>
+			} else {
+				<ul class="dash-list">
+					for _, t := range d.Lifecycle.Transitions {
+						<li class="dash-note">{ transitionLabel(t.From, t.On, t.To) }</li>
+					}
+				</ul>
+			}
+		</div>
+	</div>
+}
+
+// domainIntegrationTab is how agents reach this domain: whether each
+// action has actually been called, and which identities have proposed.
+templ domainIntegrationTab(v DashboardDomainsView) {
+	{{ d := v.Selected }}
+	<div class="dash-domain-detail">
+		@domainVerifySection(v.Verify)
+		<div class="dash-card">
+			<div class="dash-card-heading">
+				<div>
+					<h3>Agents</h3>
+					<p class="dash-note">Agents that called this domain, and the keys they used.</p>
+				</div>
+				<a class="btn btn-secondary" href="/agents">All agents</a>
+			</div>
+			if !d.Agents.Observed() {
+				<p class="dash-note">Agent activity couldn't be read right now.</p>
+			} else if len(d.Agents.Agents) == 0 {
+				<p class="dash-note">No agents have called this domain in this window.</p>
+			} else {
+				<p class="dash-note">{ domainAgentsBasis(d.Agents) }</p>
+				<ul class="dash-list">
+					for _, ag := range d.Agents.Agents {
+						<li>
+							if ag.Kind == "agent" {
+								<a href={ templ.SafeURL(agentHref(ag.ID)) }><strong>{ ag.ID }</strong></a>
+							} else {
+								<strong>{ ag.ID }</strong>
+								<small class="dash-nav-meta">{ domainAgentKindLabel(ag.Kind) }</small>
+							}
+							<span class="dash-note">{ strconv.Itoa(ag.Operations) + " observed " + pluralize(ag.Operations, "operation", "operations") }</span>
+							if len(ag.ViaKeys) > 0 {
+								<small class="dash-nav-meta">via { pluralize(len(ag.ViaKeys), "key", "keys") } { strings.Join(ag.ViaKeys, ", ") }</small>
+							}
+						</li>
+					}
+				</ul>
+			}
+		</div>
+	</div>
+}
+
+// domainSettingsTab holds what changes how the domain decides or
+// whether it exists: its enforcement posture, its YAML, and deletion.
+templ domainSettingsTab(v DashboardDomainsView) {
+	{{ d := v.Selected }}
+	<div class="dash-domain-detail">
+		@domainPostureCard(d)
+		<div class="dash-card">
+			<div class="dash-card-heading">
+				<div>
+					<h3>Configuration</h3>
+					<p class="dash-note">Entity: { d.Entity } · { domainStatusLabel(d.Status) }{ domainContinuitySuffix(d) }</p>
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn btn-secondary" href={ templ.SafeURL("/dashboard/domains/" + d.Name + "/edit") }>Edit YAML</a>
+					<a class="btn btn-secondary" href="/dashboard/build">Open Build</a>
+				</div>
+			</div>
+		</div>
+		@domainDangerZone(v)
+	</div>
+}
+
+// domainCounter reads a governed-operation counter from the usage
+// snapshot for the domain home's activity glance. Returns zero when
+// the snapshot is missing or the key is absent — the glance shows a
+// clean zero rather than blocking the page.
+func domainCounter(v DashboardDomainsView, name string) uint64 {
+	if v.Usage == nil {
+		return 0
+	}
+	return v.Usage.Counters[name]
+}
+
+// domainConnectionLabel is the live-signal sub-label on the domain
+// home's activity glance: the last time a proposal was received, or
+// the honest "waiting for traffic" before the first one.
+func domainConnectionLabel(v DashboardDomainsView) string {
+	if v.LastReceivedAt == nil {
+		return "waiting for traffic"
+	}
+	return "last seen " + timeAgo(*v.LastReceivedAt)
+}
+
+// domainExercised reports whether this domain has ever produced a
+// governed decision — any counted operation this period, or a proposal
+// seen at all. Until it has, the home leads with the value event
+// (domainFirstValue) rather than an empty 0/0/0 glance.
+func domainExercised(v DashboardDomainsView) bool {
+	if v.LastReceivedAt != nil {
+		return true
+	}
+	if v.Usage != nil {
+		for _, k := range []string{
+			"kiff.cloud.proposals.submitted",
+			"kiff.cloud.proposals.allowed",
+			"kiff.cloud.proposals.blocked",
+		} {
+			if v.Usage.Counters[k] > 0 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// domainStatusWord is the honest status word in the activity glance,
+// replacing a hardcoded "live": a domain whose last decision is recent
+// reads "live"; one that has gone quiet reads "idle". The glance only
+// renders for an exercised domain, so the never-exercised case is
+// handled upstream by domainFirstValue.
+func domainStatusWord(v DashboardDomainsView) string {
+	if v.LastReceivedAt != nil && time.Since(*v.LastReceivedAt) > 7*24*time.Hour {
+		return "idle"
+	}
+	return "live"
+}

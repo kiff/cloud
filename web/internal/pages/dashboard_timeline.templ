@@ -1,0 +1,225 @@
+package pages
+
+import (
+	"fmt"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DashboardEntityTimelineView is the input to the per-entity
+// timeline page. Reuses the dashboard shell's identity fields
+// so the top bar renders consistently alongside the other
+// tabs.
+type DashboardEntityTimelineView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	// Me is the active session's tenant + identity. Drives the
+	// dashboard shell's workspace label. nil on a degraded
+	// render (the api lookup failed, but the timeline still
+	// loaded).
+	Me *apiclient.Me
+
+	// EntityID is the path-component the page targets. Always
+	// non-empty after the handler's validation pass.
+	EntityID string
+
+	// Timeline is the list of audit records for EntityID, in
+	// chronological order (oldest first — same as the
+	// framework's runtime.Timeline). nil or empty renders the
+	// "no activity yet" empty state.
+	Timeline []apiclient.TimelineEntry
+
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// DashboardEntityTimeline renders one entity's full audit chain.
+// Each row shows when, kind, actor, message, and the trace id.
+// Trace ids that match across rows visibly group via a small
+// "trace cluster" column treatment so a reader can follow a
+// single proposal's chain top-to-bottom.
+templ DashboardEntityTimeline(v DashboardEntityTimelineView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — entity timeline",
+		"activity",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Audit timeline</p>
+					<h1>Entity <code>{ v.EntityID }</code></h1>
+					<p class="dash-note">Everything recorded for this entity, oldest first. Rows with the same trace id belong to the same call.</p>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@entityTimelineBody(v)
+		</section>
+	}
+}
+
+// entityTimelineBody renders the timeline table or the
+// empty-state copy. Pulled out so the parent template stays
+// declarative.
+templ entityTimelineBody(v DashboardEntityTimelineView) {
+	if len(v.Timeline) == 0 && v.ErrMsg == "" && v.NotConfiguredMsg == "" {
+		<article class="dash-card dash-empty">
+			<h2>No activity yet</h2>
+			<p class="dash-note">Nothing is recorded for this entity on your account, or the id belongs to another account.</p>
+			<p class="dash-note">
+				Author your domain in
+				<a href="/dashboard/build">Build</a>,
+				or POST an event to <code>/v1/events/raw</code> with your API key.
+			</p>
+		</article>
+	} else if len(v.Timeline) > 0 {
+		<article class="dash-card">
+			<h2>Audit chain</h2>
+			<p class="dash-note">
+				{ fmt.Sprintf("%d %s.", len(v.Timeline), pluralize(len(v.Timeline), "record", "records")) }
+			</p>
+			<table class="dash-table dash-timeline">
+				<thead>
+					<tr>
+						<th scope="col">When</th>
+						<th scope="col">Kind</th>
+						<th scope="col">Actor</th>
+						<th scope="col">Message</th>
+						<th scope="col">Trace</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, entry := range v.Timeline {
+						@entityTimelineRow(entry)
+					}
+				</tbody>
+			</table>
+
+		</article>
+	}
+}
+
+// entityTimelineRow renders one audit record. The kind cell uses
+// a pill matching the audit kind's character (success / pending /
+// error / neutral) so a reader can scan a long timeline by color
+// and confirm where execution stalled.
+//
+// Per the timestamp note: the apiclient's
+// TimelineEntry.OccurredAt is unmarshalled from the framework's
+// `created_at` JSON field; today the JSON-tag mismatch leaves it
+// at the zero time, so the When cell renders "—" rather than a
+// misleading "Jan 1, 0001". The mismatch is tracked in and will
+// populate the timestamps without touching this template.
+templ entityTimelineRow(e apiclient.TimelineEntry) {
+	<tr>
+		<td>
+			if e.OccurredAt.IsZero() {
+				<span class="dash-note">—</span>
+			} else {
+				<time datetime={ e.OccurredAt.Format("2006-01-02T15:04:05Z") }>
+					{ e.OccurredAt.Format("Jan 2, 15:04:05") }
+				</time>
+			}
+		</td>
+		<td>
+			<span class={ "dash-pill", auditKindPillClass(e.Kind) }>{ e.Kind }</span>
+		</td>
+		<td>
+			if actorID := timelineActorID(e); actorID != "" {
+				<code>{ actorID }</code>
+			} else {
+				<span class="dash-note">—</span>
+			}
+		</td>
+		<td>
+			if e.Message != "" {
+				{ e.Message }
+			} else {
+				<span class="dash-note">—</span>
+			}
+		</td>
+		<td>
+			if e.TraceID != "" {
+				<details class="dash-trace">
+					<summary><code>{ truncateTrace(e.TraceID) }</code></summary>
+					<small><code>{ e.TraceID }</code></small>
+				</details>
+			} else {
+				<span class="dash-note">—</span>
+			}
+		</td>
+	</tr>
+}
+
+// auditKindPillClass picks the visual treatment per audit kind.
+// The framework declares 13 kinds (audit.Kind constants). Each
+// belongs to one of four character buckets:
+//
+//   - success: action_executed, approval_granted
+//   - pending: approval_required, approval_requested
+//   - error:   action_failed, action_validation_failed,
+//             approval_denied
+//   - neutral: event_ingested, state_changed, state_rebuilt,
+//             decision_proposed, action_validated,
+//             approval_recorded
+//
+// Unknown kinds fall to neutral — defence against the framework
+// adding a new kind before this dashboard knows about it.
+func auditKindPillClass(kind string) string {
+	switch kind {
+	case "action_executed", "approval_granted":
+		return "dash-pill-ok"
+	case "approval_required", "approval_requested":
+		return "dash-pill-warn"
+	case "action_failed", "action_validation_failed", "approval_denied":
+		return "dash-pill-error"
+	default:
+		return "dash-pill-info"
+	}
+}
+
+// timelineActorID pulls the actor id off the audit record's Data
+// map when present. The framework's audit.Record carries ActorID
+// as a top-level field, but the apiclient's TimelineEntry only
+// surfaces Kind / OccurredAt / TraceID / Message / Data today.
+// Until that surface widens (or a follow-up), the actor id lives
+// under Data["actor_id"] when the framework populates it;
+// otherwise it returns "".
+func timelineActorID(e apiclient.TimelineEntry) string {
+	if e.Data == nil {
+		return ""
+	}
+	if v, ok := e.Data["actor_id"].(string); ok {
+		return v
+	}
+	return ""
+}
+
+// truncateTrace shortens a trace id to its first 8 characters
+// for the collapsed display. The full id is still in the
+// expanded <details> body.
+func truncateTrace(s string) string {
+	if len(s) <= 8 {
+		return s
+	}
+	return s[:8] + "…"
+}
+
+// pluralize returns the singular form when n == 1, the plural
+// form otherwise. Used by the row count copy.
+func pluralize(n int, singular, plural string) string {
+	if n == 1 {
+		return singular
+	}
+	return plural
+}

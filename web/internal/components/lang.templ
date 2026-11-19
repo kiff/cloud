@@ -1,0 +1,44 @@
+package components
+
+// hreflangLinks tells a search engine which URL holds each language of
+// this page, and that English is the one to fall back to.
+templ hreflangLinks() {
+	for _, a := range PageAlternates(ctx) {
+		<link rel="alternate" hreflang={ a.Lang } href={ a.URL }/>
+		if a.Lang == "en" {
+			<link rel="alternate" hreflang="x-default" href={ a.URL }/>
+		}
+	}
+}
+
+// languageRow is the row of languages on every page that has
+// translations: the browser's language never redirects, so this is how a
+// reader on the wrong one changes it. Each name is in its own language.
+templ languageRow() {
+	if alts := PageAlternates(ctx); len(alts) > 0 {
+		<nav class="lang-row" aria-label="Languages">
+			for _, a := range alts {
+				if a.Lang == PageLanguage(ctx) {
+					<span class="lang-row-current" lang={ a.Lang } aria-current="page">{ a.Name }</span>
+				} else {
+					<a href={ templ.SafeURL(a.Path) } lang={ a.Lang } hreflang={ a.Lang }>{ a.Name }</a>
+				}
+			}
+		</nav>
+	}
+}
+
+// translationNotice opens a translated legal page: in the page's own
+// language, it says this is a translation and that the English version
+// governs, and links to it. English pages render nothing, and neither
+// do the pages that are no legal text (HasNoNotice).
+templ translationNotice() {
+	if lang := PageLanguage(ctx); lang != "en" {
+		if _, page, ok := SplitLangPath(CanonicalPath(ctx)); ok && !HasNoNotice(page) {
+			<p class="translation-notice">
+				{ TranslationNoticeText(lang) }
+				<a href={ templ.SafeURL(page) } lang="en" hreflang="en">{ "kiff.dev" + page }</a>
+			</p>
+		}
+	}
+}

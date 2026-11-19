@@ -1,0 +1,479 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DashboardDomainEvidenceView renders the Control Room as a domain's
+// evidence view: the live decision + evidence stream scoped to one
+// domain and reached *from* the domain, rather than the old top-level
+// "your one control" page. The evidence payload is the same
+// control-scoped object the Control Room already renders (the api
+// resolves the domain's active control), so this reuses the existing
+// ControlRoom* partials verbatim — only the framing is domain-first.
+type DashboardDomainEvidenceView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	// DomainName is the slug this evidence view is scoped to.
+	DomainName string
+	// Tab is the active evidence sub-view: decisions (default) | receipts |
+	// approvals | alerts | about. The handler validates it; the template
+	// renders one panel at a time so the page reads as a focused dashboard.
+	Tab string
+	// Decisions-tab paging + filter (slice 2). Page is 1-based; Outcome is
+	// the active outcome filter ("" = all); PageSize is the rows-per-page
+	// the handler requested. Page count is derived from the evidence's
+	// window-complete counts + the active filter.
+	Page     int
+	Outcome  string
+	PageSize int
+	// Actor narrows the whole view to one proposing identity, set when
+	// this page was reached from a card. The page has to say so: rows
+	// filtered to one agent and rows for the whole domain look
+	// identical, and a reader who does not know which they are looking
+	// at will read an empty timeline as "nothing happened".
+	Actor string
+	// Card is the card the filter came from, carried so the banner can
+	// lead back to it. The actor alone cannot answer that: an agent may
+	// hold more than one card, and guessing which one would send
+	// someone to the wrong statement.
+	Card string
+	// Evidence is the resolved domain evidence (nil when the domain has
+	// no active control / no evidence yet).
+	Evidence *ControlEvidence
+
+	// Ratio is the share of proposed actions that needed nobody. Nil
+	// when it could not be read, which renders as nothing rather than
+	// as a zero: this is the figure the engagement is sold on, and a
+	// confident 0% from a failed call is the worst output on the page.
+	Ratio *apiclient.ReviewRatio
+
+	// Series is the requests-over-time data for the Activity chart,
+	// bucketed by the API over the selected window (nil when unavailable
+	// or the domain has no control). Rendered as a native inline SVG on
+	// the Decisions tab (the web-stack design, no JS lib).
+	Series *apiclient.ActivitySeriesResponse
+
+	// WindowOptions is the evidence window selector (7 / 30 / 90 days),
+	// built server-side so it stays no-JS. Empty renders no selector.
+	WindowOptions []WindowOption
+	// Window is the active preset key ("7d"/"30d"/"90d"), threaded into the
+	// tab/outcome/pager links so switching them keeps the selected window.
+	Window string
+
+	// PendingApprovals is the actionable approval queue folded onto the
+	// domain Activity view: decisions awaiting a reviewer, each with
+	// grant/deny forms. Tenant-scoped today (a tenant has 0-or-1
+	// domain), so it is exactly this domain's queue. Empty slice
+	// renders nothing; the read-only approval *evidence* section
+	// (ControlRoomApprovals) still renders below it.
+	//
+	// Filtered to Actor when one is applied: an approval names the
+	// actor that requested it, so "showing only what A proposed" with
+	// B's pending work underneath is a contradiction on one screen.
+	PendingApprovals []apiclient.PendingApproval
+
+	// PendingElsewhere counts the pending approvals the actor filter
+	// removed. Reported rather than dropped silently: work waiting on a
+	// reviewer must not disappear because of a filter they may not have
+	// set themselves.
+	PendingElsewhere int
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+templ DashboardDomainEvidence(v DashboardDomainEvidenceView) {
+	@components.DashboardLayoutWithCSS(
+		evidenceTitle(ctx, v.DomainName),
+		"activity",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.DomainName),
+		"css/control-room.css",
+	) {
+		<section class="dash cr cr-v3">
+			<header class="dash-header dash-page-head cr-header">
+				<div class="dash-header-text">
+					if components.IsPersonal(ctx) {
+						<p class="eyebrow">Activity</p>
+						if v.Evidence == nil {
+							<h1>Nothing decided yet.</h1>
+						} else {
+							<h1>{ domainEvidenceHeading(v) }</h1>
+						}
+						<p class="dash-note">What KIFF decided for your agents.</p>
+					} else {
+						<p class="eyebrow">{ v.DomainName } · Evidence</p>
+						<h1>{ domainEvidenceHeading(v) }</h1>
+						<p class="dash-note">Decisions and evidence for this domain.</p>
+					}
+				</div>
+				<div class="dash-header-actions cr-header-actions">
+					if v.Evidence != nil {
+						<a class="btn btn-primary" href={ templ.SafeURL(controlRoomProofPackHref(v.Evidence)) }>Export proof pack</a>
+					}
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Actor != "" {
+				// What a reader is looking at. Rows for one agent and rows
+				// for the whole domain render identically, so an unmarked
+				// filter turns "this card has done nothing" into "nothing
+				// has happened here".
+				<div class="cr-actor-filter">
+					<span>
+						Showing only what <strong>{ v.Actor }</strong> asked for. Everything on this page is filtered to it.
+						if v.Card != "" {
+							// Honest about what this is and is not. The filter is by
+							// holder, and a holder may carry several cards, so these
+							// rows are not the uses of one card — the decision record
+							// keeps the actor and the reason, not which card was
+							// checked. What one card was actually spent on is its
+							// statement, and that is where it stays.
+							<br/>
+							<span class="cr-actor-filter-caveat">
+								This includes calls under its other Cards. What used
+								{ " " }<code>{ v.Card }</code> is on its statement.
+							</span>
+						}
+					</span>
+					<span class="cr-actor-filter-links">
+						if v.Card != "" {
+							<a href={ templ.SafeURL("/cards?id=" + url.QueryEscape(v.Card)) }>Its statement</a>
+						}
+						<a href={ templ.SafeURL(domainEvidenceHref(v.DomainName)) }>Show every agent</a>
+					</span>
+				</div>
+			}
+
+			if v.Me != nil {
+				if v.Evidence != nil {
+					// The ratio panel reads first — it is the one number a
+					// customer repeats to someone else — but it scrolls with
+					// the page rather than staying pinned: at its natural
+					// height it would cover most of a laptop viewport if it
+					// rode along with the sticky summary below.
+					if v.Ratio != nil {
+						@reviewRatioPanel(v.Ratio)
+					}
+					// Always-visible at-a-glance strip: the decision counts +
+					// status stay pinned so the domain's live posture never
+					// scrolls away. The outcome tiles ARE the decisions filter —
+					// tap "Blocked" to see the blocked decisions.
+					@domainOutcomeSummary(v)
+					@domainEvidenceTabs(v)
+					<div class="cr-main cr-tabpanel">
+						switch v.Tab {
+							case "receipts":
+								@ControlRoomVerifiability(v.Evidence)
+								@ControlRoomReceipts(v.Evidence)
+							case "approvals":
+								@domainPendingApprovals(v)
+								@ControlRoomApprovals(v.Evidence)
+							case "alerts":
+								@ControlRoomAlerts(v.Evidence)
+							case "about":
+								@domainEvidenceGuaranteePanel()
+								@ControlRoomIdentity(v.Evidence)
+							default:
+								@activityChartPanel(v)
+								@domainDecisionsPanel(v)
+						}
+					</div>
+				} else {
+					// No evidence yet: the guarantee is a property statement, so
+					// it still renders here — a buyer evaluating an empty domain
+					// sees what KIFF guarantees before any decisions exist.
+					@domainEvidenceGuaranteePanel()
+					@domainEvidenceEmptyState(v.DomainName)
+				}
+			}
+		</section>
+	}
+}
+
+// domainEvidenceTabs renders the Activity sub-view navigation: server-side ?tab= links (no JS, the
+// web-stack design) so the evidence page reads as a focused dashboard —
+// one panel at a time — instead of one long scroll. The
+// Approvals tab carries a count badge when a reviewer has work waiting.
+templ domainEvidenceTabs(v DashboardDomainEvidenceView) {
+	<nav class="cr-tabs" aria-label="Evidence sections">
+		@evidenceTab(v, "decisions", "Decisions", 0)
+		@evidenceTab(v, "receipts", "Receipts", 0)
+		@evidenceTab(v, "approvals", "Approvals", len(v.PendingApprovals))
+		@evidenceTab(v, "alerts", "Alerts", 0)
+		@evidenceTab(v, "about", "Guarantee & identity", 0)
+	</nav>
+}
+
+templ evidenceTab(v DashboardDomainEvidenceView, tab, label string, badge int) {
+	<a
+		class={ "cr-tab", templ.KV("cr-tab-active", evidenceTabActive(v.Tab, tab)) }
+		href={ templ.SafeURL(evidenceTabHref(v, tab)) }
+		if evidenceTabActive(v.Tab, tab) {
+			aria-current="page"
+		}
+	>
+		<span>{ label }</span>
+		if badge > 0 {
+			<span class="cr-tab-badge" aria-label={ fmt.Sprintf("%d pending", badge) }>{ fmt.Sprintf("%d", badge) }</span>
+		}
+	</a>
+}
+
+// activityChartPanel is the requests-over-time chart on the Decisions
+// tab: a native inline SVG (the web-stack design, no JS lib) of
+// per-outcome decision counts bucketed across the selected window, with
+// a legend. The window selector above (5m … 90d) drives both the bucket
+// resolution and this chart's span. Renders an honest empty state when
+// no decisions fall in the window.
+templ activityChartPanel(v DashboardDomainEvidenceView) {
+	<section class="dash-card cr-card ac-panel">
+		<div class="cr-card-head">
+			<div>
+				<p class="eyebrow">Requests over time</p>
+			</div>
+			<span class="dash-pill dash-pill-muted">{ activityChartRangeLabel(v) }</span>
+		</div>
+		if activityChartHasData(v.Series) {
+			@templ.Raw(activityChartSVG(v.Series))
+			<div class="ac-legend" aria-hidden="true">
+				for _, oc := range activityChartLegend(v.Series) {
+					<span class="ac-legend-item">
+						<span class={ "ac-swatch", "ac-bar-" + oc.Key }></span>
+						{ oc.Label }
+					</span>
+				}
+			</div>
+		} else {
+			<p class="dash-note ac-empty">No decisions in this window. Widen the range.</p>
+		}
+	</section>
+}
+
+// domainDecisionsPanel is the Decisions tab: an outcome filter bar, the
+// (paged) decisions table, and prev/next page controls. The filter and
+// paging are server-side links (?tab=decisions&outcome=&page=, no JS) so
+// the panel reads as a focused, filterable list instead of one long dump.
+// Decisions are newest-first, so "Newer" pages back and "Older" pages on.
+templ domainDecisionsPanel(v DashboardDomainEvidenceView) {
+	<section class="dash-card cr-card">
+		<div class="cr-card-head">
+			<div>
+				<p class="eyebrow">{ decisionsPanelEyebrow(v) }</p>
+			</div>
+			<span class="dash-pill dash-pill-muted">{ controlRoomWindowLabel(v.Evidence) }</span>
+		</div>
+		@controlRoomDecisionsTable(v.Evidence)
+		if evidenceHasPrev(v) || evidenceHasNext(v) {
+			<nav class="cr-pager" aria-label="Decision pages">
+				if evidenceHasPrev(v) {
+					<a class="cr-pager-btn" href={ templ.SafeURL(evidenceDecisionsHref(v, v.Outcome, v.Page-1)) } rel="prev">← Newer</a>
+				} else {
+					<span class="cr-pager-btn cr-pager-disabled" aria-hidden="true">← Newer</span>
+				}
+				<span class="cr-pager-label">{ evidencePageLabel(v) }</span>
+				if evidenceHasNext(v) {
+					<a class="cr-pager-btn" href={ templ.SafeURL(evidenceDecisionsHref(v, v.Outcome, v.Page+1)) } rel="next">Older →</a>
+				} else {
+					<span class="cr-pager-btn cr-pager-disabled" aria-hidden="true">Older →</span>
+				}
+			</nav>
+		}
+	</section>
+}
+
+// domainOutcomeSummary is the always-visible glance AND the decisions
+// filter in one control: the outcome tiles are links that scope the
+// Decisions list (?tab=decisions&outcome=), the active filter is marked,
+// and Receipts + Status ride alongside as read-only context. This is the
+// single home for the counts — the old duplicate strip + chip bar +
+// per-panel count row collapse into this.
+//
+// Deliberately excludes the ratio panel (reviewRatioPanel), which the
+// caller renders just above, outside this sticky block: at its natural
+// height the ratio panel's explanation would ride along and cover most
+// of a laptop viewport while scrolling. Only the compact tiles stay
+// pinned.
+templ domainOutcomeSummary(v DashboardDomainEvidenceView) {
+	<div class="cr-summary">
+		if len(v.WindowOptions) > 0 {
+			<div class="cr-metrics-head">
+				<p class="eyebrow">Decisions in this window</p>
+				@evidenceWindowSelector(v.WindowOptions)
+			</div>
+		}
+		<div class="cr-tiles" role="group" aria-label="Decisions by outcome — select to filter">
+			@outcomeTile(v, "", "All", v.Evidence.Decisions.Total)
+			@outcomeTile(v, "allowed", "Allowed", controlRoomDecisionCount(v.Evidence, "allowed"))
+			@outcomeTile(v, "blocked", "Blocked", controlRoomDecisionCount(v.Evidence, "blocked"))
+			@outcomeTile(v, "approval_required", "Held", controlRoomDecisionCount(v.Evidence, "approval_required"))
+			if controlRoomDecisionCount(v.Evidence, "limit_exceeded") > 0 || v.Outcome == "limit_exceeded" {
+				@outcomeTile(v, "limit_exceeded", "Rate-limited", controlRoomDecisionCount(v.Evidence, "limit_exceeded"))
+			}
+			if controlRoomDecisionCount(v.Evidence, "invalid") > 0 || v.Outcome == "invalid" {
+				@outcomeTile(v, "invalid", "Invalid", controlRoomDecisionCount(v.Evidence, "invalid"))
+			}
+		</div>
+		<div class="cr-tiles cr-tiles-info">
+			<div class="cr-tile cr-tile-info"><span class="cr-tile-label">Receipts</span><strong class="cr-tile-count">{ fmt.Sprintf("%d", v.Evidence.Receipts.Count) }</strong><small>signed</small></div>
+			<div class="cr-tile cr-tile-info"><span class="cr-tile-label">Status</span><strong class="cr-tile-count">{ controlRoomModeLabel(v.Evidence.Control.Mode) }</strong><small>{ controlRoomWindowLabel(v.Evidence) }</small></div>
+		</div>
+	</div>
+}
+
+// outcomeTile is one clickable count in the summary: a filter link into
+// the Decisions tab for that outcome (empty outcome = All). Active only
+// while the Decisions tab is showing, so it reads as the live filter.
+templ outcomeTile(v DashboardDomainEvidenceView, outcome, label string, count int) {
+	<a
+		class={ "cr-tile", templ.KV("cr-tile-active", outcomeTileActive(v, outcome)) }
+		href={ templ.SafeURL(evidenceDecisionsHref(v, outcome, 1)) }
+		if outcomeTileActive(v, outcome) {
+			aria-current="true"
+		}
+	>
+		<span class="cr-tile-label">{ label }</span>
+		<strong class="cr-tile-count">{ fmt.Sprintf("%d", count) }</strong>
+		<small class="cr-tile-sub">{ outcomeTileSub(outcome) }</small>
+	</a>
+}
+
+// domainPendingApprovals folds the actionable approval queue onto the domain
+// Activity view: the pending decisions a reviewer must grant or deny before
+// the runtime executes. Reuses the dashboardApprovalRow partial — grant/deny
+// still post to /dashboard/approvals/{id}/grant|deny. Renders nothing when
+// the queue is empty; the read-only approval *evidence* section
+// (ControlRoomApprovals) below carries the honest "no approvals recorded"
+// state.
+templ domainPendingApprovals(v DashboardDomainEvidenceView) {
+	{{ approvals := v.PendingApprovals }}
+	if len(approvals) > 0 {
+		<article class="dash-card">
+			<h2>{ fmt.Sprintf("%d pending %s", len(approvals), pluralizeApprovals(len(approvals))) }</h2>
+			<p class="dash-note">
+				if v.Actor != "" {
+					Decisions <strong>{ v.Actor }</strong> asked for that are waiting for a reviewer.
+				} else {
+					Decisions { evidenceScope(ctx) } waiting for a reviewer.
+				}
+				Nothing runs until you decide.
+			</p>
+			<div class="dash-approval-list">
+				for _, a := range approvals {
+					@dashboardApprovalCard(a)
+				}
+			</div>
+		</article>
+	}
+	if v.PendingElsewhere > 0 {
+		// Never silently hidden. Someone reviewing a queue has to know
+		// the filter is keeping work off their screen, and the filter
+		// may have been applied by the link they followed rather than
+		// by them.
+		<p class="dash-note cr-pending-elsewhere">
+			{ fmt.Sprintf("%d more pending %s", v.PendingElsewhere, pluralizeApprovals(v.PendingElsewhere)) }
+			&nbsp;{ evidenceScope(ctx) } were proposed by other agents and are not shown.
+			<a href={ templ.SafeURL(domainEvidenceHref(v.DomainName) + "?tab=approvals") }>Show every agent</a>
+		</p>
+	}
+}
+
+// domainEvidenceEmptyState is shown when the domain has no active
+// control / no evidence yet (or an unknown slug).
+
+// domainEvidenceGuaranteePanel makes the two load-bearing kernel
+// guarantees legible where a buyer evaluates
+// the evidence. The wording is held
+// to the / kiff/kiff#26 honesty constraint:
+//   - Decisions are made against KIFF-reconstructed lifecycle state, not
+//     a caller-supplied snapshot (guarantee #1, stated generally; the
+//     explicit per-decision state-at-decision field is a deferred
+//     cloud-api enrichment, tracked separately).
+//   - Authority is **server-enforced** non-self-assertion: the runtime
+//     refuses self-granted authority for any client in any language. The
+//     framework kernel's compile-time proof is named as the upstream
+//     basis, NOT transferred to the SDK user's process. No
+//     global-unbypassability claim.
+templ domainEvidenceGuaranteePanel() {
+	<article class="dash-card cr-guarantee">
+		<h2>How this is guaranteed</h2>
+		<ul class="dash-list">
+			<li>
+				<strong>Decided against KIFF's own state.</strong>
+				Each decision uses the entity's state as KIFF rebuilt it from its
+				event history, not a snapshot the caller sent. A retry on a settled
+				entity is refused because KIFF knows it is settled.
+			</li>
+			<li>
+				<strong>Authority is enforced on the server.</strong>
+				A caller can't approve its own request. KIFF refuses it server-side,
+				for any client in any language, without relying on your own process.
+			</li>
+		</ul>
+	</article>
+}
+
+templ domainEvidenceEmptyState(domainName string) {
+	<div class="dash-card">
+		<h2>No evidence yet</h2>
+		if components.IsPersonal(ctx) {
+			<p class="dash-note">Decisions show here once an agent calls a connected tool.</p>
+		} else {
+			<p class="dash-note">Decisions show here once an agent calls a governed action on this domain.</p>
+		}
+	</div>
+}
+
+// reviewRatioPanel is the one number the engagement is sold on: the
+// share of proposed actions that needed nobody.
+//
+// The counts below it are what happened. This is what they cost, and
+// it is the only figure on this page a customer will read out to
+// someone else — so it has to be able to say no. A window too thin to
+// mean anything says so instead of showing a confident percentage, and
+// the tense comes from the api rather than from a guess here, because
+// in observe mode nothing was actually withheld.
+templ reviewRatioPanel(r *apiclient.ReviewRatio) {
+	<div class="cr-ratio">
+		if r.Answerable() {
+			<div class="cr-ratio-figure">
+				<strong>{ fmt.Sprintf("%d%%", r.Percent) }</strong>
+				<span>of { fmt.Sprintf("%d", r.Total) } proposed actions { r.Tense() }</span>
+			</div>
+			<div class="cr-ratio-split">
+				<span><b>{ fmt.Sprintf("%d", r.WouldRun) }</b> needed nobody</span>
+				<span><b>{ fmt.Sprintf("%d", r.WouldReachAPerson) }</b> reached a person</span>
+				<span><b>{ fmt.Sprintf("%d", r.WouldBeRefused) }</b> refused before anyone looked</span>
+			</div>
+		}
+		if !r.Answerable() {
+			<div class="cr-ratio-figure cr-ratio-thin">
+				<strong>—</strong>
+				<span>
+					{ fmt.Sprintf("%d decisions in this window; this figure needs %d", r.Total, r.MinimumSample) }
+				</span>
+			</div>
+		}
+		if r.Note != "" {
+			<p class="cr-ratio-note">{ r.Note }</p>
+		}
+	</div>
+}

@@ -1,0 +1,298 @@
+/* tafs — the product page at /tafs. Nine full-colour screens, each one giant
+   word and its stickers, then the kiff footer. As written it reads top to
+   bottom; on a large screen js/tafs.js adds .tf-js and the screens run
+   sideways under the page's own scroll. One typeface. */
+
+:root {
+  --ink: #141318; --paper: #fff6ea; --white: #fff;
+  --straw: #ff4f7b; --lemon: #ffd23f; --mint: #2fd8a0; --blue: #3f6bff; --grape: #9b4dff; --orange: #ff8a2a; --red: #ff4d3d;
+  --tf-font: "Schibsted Grotesk", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body.site { background: var(--ink); color: var(--white); font-family: var(--tf-font); font-size: 17px; line-height: 1.5; }
+body.site p, body.site h1, body.site h2, body.site dl, body.site dd, body.site ul { margin: 0; padding: 0; }
+body.site h1, body.site h2 { font-family: inherit; }
+body.site a { color: inherit; text-decoration: none; }
+body.site :focus-visible { outline: 3px solid var(--lemon); outline-offset: 3px; border-radius: 6px; }
+.mint { --c: var(--mint); } .lemon { --c: var(--lemon); } .straw { --c: var(--straw); }
+
+.skip { position: absolute; left: 1rem; top: -100px; z-index: 30; padding: .6rem 1rem; border-radius: 10px; background: var(--lemon); color: var(--ink) !important; font-weight: 700; }
+.skip:focus { top: .75rem; }
+main:focus { outline: none; }
+
+/* header: readable on any colour; it sits at the top of the page, and on
+   the sideways stage it stays fixed until the stage ends */
+.top { position: absolute; inset: 0 0 auto; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 18px max(18px, 4vw) 0; pointer-events: none; }
+.top a { pointer-events: auto; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { width: 40px; height: 40px; display: block; }
+.brand span { font-weight: 800; letter-spacing: -.03em; color: var(--white); mix-blend-mode: difference; }
+/* the links sit on a dark pill, so they read on the yellow and mint screens too */
+.nav { color: var(--white); }
+.nav a { text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgb(20 19 24 / .72); }
+.nav a:hover { background: rgb(20 19 24 / .9); }
+.brand span { font-size: 1.35rem; }
+.nav { display: flex; gap: 10px; font-weight: 600; font-size: .95rem; letter-spacing: 0; }
+
+/* a screen */
+.p { position: relative; overflow: hidden; overflow: clip; background: var(--bg); color: var(--fg); min-height: 100svh;
+  padding: 110px max(18px, 6vw) 70px; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start; gap: 24px 14px; }
+.p > .copy, .p > .wrap, .p > .giant, .p > .lines3, .p > .words, .p > .lang-row, .p > .stickers { flex: 0 0 100%; }
+.giant { order: -1; font-weight: 900; text-transform: uppercase; letter-spacing: -.055em; line-height: .82; color: var(--g, currentColor);
+  font-size: min(24vw, 34vh, calc((100vw - 2 * max(18px, 6vw)) / var(--nw, 4))); overflow-wrap: normal; }
+.copy { position: relative; z-index: 3; max-width: 34ch; }
+.big { font-weight: 800; font-size: clamp(1.8rem, 3.6vw, 3.2rem); line-height: 1.02; letter-spacing: -.035em; text-wrap: balance; }
+.small { margin-top: 16px !important; font-size: 1.08rem; font-weight: 500; max-width: 36ch; opacity: .86; }
+.idx, .hint, .bar { display: none; }
+
+/* stickers */
+.stickers, .lang-row { list-style: none; display: flex; flex-wrap: wrap; gap: 20px 12px; }
+.st { position: relative; z-index: 4; transform: rotate(calc(var(--r0, 0deg) / 2)); }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 800; font-size: 1.05rem; line-height: 1.2;
+  background: var(--c); color: var(--t, var(--ink)); box-shadow: 0 0 0 3px var(--ink); }
+.tag { display: inline-block; padding: 14px 18px; border-radius: 16px; font-weight: 900; text-transform: uppercase; font-size: 1.25rem; line-height: 1;
+  letter-spacing: -.01em; background: var(--c); color: var(--t, var(--ink)); box-shadow: 0 0 0 3px var(--ink); }
+.badge { width: var(--s, 150px); height: var(--s, 150px); }
+.badge text { font-family: var(--tf-font); font-weight: 700; font-size: 11.5px; letter-spacing: 2.2px; text-transform: uppercase; }
+.badge .mid { font-weight: 900; font-size: 24px; letter-spacing: -.5px; }
+.spin { animation: tf-spin 18s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
+@keyframes tf-spin { to { transform: rotate(360deg); } }
+.lng { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px 7px 8px; border-radius: 999px; background: var(--c); color: var(--t, var(--ink)) !important;
+  font-weight: 700; font-size: .82rem; box-shadow: 0 0 0 2.5px var(--ink); }
+.lng b { font-weight: 900; font-size: .7rem; letter-spacing: .06em; padding: 2px 6px; border-radius: 999px; background: var(--ink); color: #fff; }
+.lng:hover { filter: brightness(1.08); }
+.lng[aria-current] { box-shadow: 0 0 0 2.5px var(--ink), 0 0 0 5px var(--c); }
+
+/* 1 hero */
+.hero { --bg: var(--ink); --fg: var(--white); }
+.hero h1 { position: relative; z-index: 3; font-weight: 800; font-size: clamp(2.4rem, min(6vw, 9.6vh), 6rem); line-height: 1.06; letter-spacing: -.045em; max-width: 13ch; text-wrap: balance; }
+.hero h1 em { font-style: normal; background: linear-gradient(transparent .1em, var(--lemon) .1em); color: var(--ink); padding: 0 .12em; border-radius: .14em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hero .small { margin-top: 22px !important; max-width: none; font-size: 1.2rem; opacity: .8; }
+.hero .badge { --s: 120px; }
+/* screen 1's band: what tafs does with a Google account, in plain words */
+
+/* 2 to 9 */
+.taf { --bg: var(--lemon); --fg: var(--ink); --gs: 46vh; --gx: 34vw; --gy: -2vh; --cy: 22vh; }
+.prob { --bg: var(--red); --fg: var(--white); --g: #fff; --gs: 30vh; --gx: 4vw; --gy: 9vh; --cy: 16vh; }
+.does { --bg: var(--ink); --fg: var(--white); }
+.lines3 { position: relative; z-index: 3; display: grid; gap: 1.2vh; font-weight: 900; text-transform: uppercase; letter-spacing: -.05em; line-height: .9;
+  font-size: min(11vw, calc((100vw - 2 * max(18px, 6vw)) / var(--nw, 6))); }
+.lines3 span { display: block; }
+.lines3 i { font-style: normal; color: var(--c); }
+.diff { --bg: var(--blue); --fg: var(--white); --g: #fff; --gs: 24vh; --gx: 5vw; --gy: 9vh; --cy: 15vh; }
+/* Screen 5's caption for the example Card: what a Card is. */
+.kcap { margin-top: 18px !important; padding-left: 12px !important; border-left: 3px solid var(--lemon); font-size: .9rem; font-weight: 600; line-height: 1.45; color: var(--fg); }
+.kcap b { display: block; margin-bottom: 3px; font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--lemon); }
+.kcard { width: 380px; max-width: 86vw; aspect-ratio: 85.6 / 54; border-radius: 18px; background: var(--white); color: var(--ink); padding: 18px 20px;
+  display: grid; grid-template-rows: auto 1fr; gap: 8px; box-shadow: 0 0 0 3px var(--ink), 10px 10px 0 var(--ink); }
+.kcard .h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.kcard .h b { font-weight: 900; font-size: 1.3rem; letter-spacing: -.02em; }
+.kcard .h span { font-size: .72rem; font-weight: 700; opacity: .55; text-align: right; }
+.kcard .ls { list-style: none; display: grid; align-content: end; gap: 7px; font-size: .9rem; font-weight: 600; line-height: 1.3; }
+.kcard li { display: grid; grid-template-columns: 72px 1fr; gap: 8px; align-items: baseline; }
+/* A narrow phone: the Card grows with its rows, and a long word breaks inside its column, so a
+   German or Dutch row stays on the card. */
+.kcard li { grid-template-columns: 72px minmax(0, 1fr); }
+.kcard li span, .kcard .h span { overflow-wrap: anywhere; min-width: 0; }
+@media (max-width: 440px) { .kcard { aspect-ratio: auto; } .kcard .h { flex-wrap: wrap; } }
+.kcard li i { font-style: normal; font-size: .68rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; background: var(--c); justify-self: start; }
+.ask { width: 290px; max-width: 80vw; border-radius: 18px; background: var(--ink); color: var(--white); padding: 15px 16px; display: grid; gap: 3px; box-shadow: 0 0 0 3px var(--white); }
+.ask small { font-size: .66rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--lemon); }
+.ask b { font-size: 1rem; }
+.ask span { font-size: .82rem; opacity: .7; }
+.ask .yn { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.ask .yn i { font-style: normal; text-align: center; font-weight: 700; font-size: .86rem; padding: 7px 0; border-radius: 10px; border: 1.5px solid #4a4752; }
+.ask .yn i + i { background: var(--mint); color: var(--ink); border-color: var(--mint); }
+.names { --bg: var(--mint); --fg: var(--ink); }
+.words { position: relative; z-index: 3; }
+.words dl { display: grid; gap: 2.2vh; }
+.words dl div { display: grid; gap: 6px; }
+.words dt { font-weight: 900; font-size: clamp(3rem, min(13vh, calc((100vw - 2 * max(18px, 6vw)) / 4)), 9.5rem); line-height: .82; letter-spacing: -.055em; }
+.words dd { font-weight: 700; font-size: clamp(1rem, 2.6vh, 1.4rem); max-width: 22ch; line-height: 1.2; }
+.kicker { font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; margin-bottom: 10px !important; }
+.why { --bg: var(--grape); --fg: var(--white); --g: #fff; --gs: 26vh; --gx: 3vw; --gy: 9vh; --cy: 18vh; }
+.price { --bg: var(--orange); --fg: var(--ink); --gs: 40vh; --gx: 6vw; --gy: 8vh; --cy: 16vh; }
+.price .giant { letter-spacing: -.07em; }
+.dl { --bg: var(--ink); --fg: var(--white); --g: #26242d; --gs: 36vh; --gx: 20vw; --gy: -3vh; --cy: 20vh; }
+.mascot { width: min(300px, 70vw); height: auto; }
+.btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+.gp { display: inline-flex; align-items: center; gap: 12px; height: 62px; padding: 0 24px 0 18px; border-radius: 16px; background: var(--white); color: var(--ink) !important;
+  font-weight: 800; font-size: 1.08rem; box-shadow: 5px 5px 0 var(--straw); transition: transform .15s, box-shadow .15s; }
+.gp:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--straw); }
+.gp svg { width: 28px; height: 28px; }
+.gp small { display: block; font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .6; line-height: 1; }
+.soon { display: inline-flex; align-items: center; height: 62px; padding: 0 22px; border-radius: 16px; border: 2px dashed #55525e; color: #a19daf; font-weight: 700; }
+/* Get it: the computers as white buttons with the
+   platform's name as a word mark in its colour (no Apple or Windows logo),
+   macOS 13+ the big one; Google's own Play badge at the buttons' height; the
+   App Store and the watches dashed until they ship. */
+.dl .copy { max-width: 640px; }
+.dl .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 600px; margin-top: 30px; }
+.pf { display: flex; align-items: center; gap: 14px; height: 66px; padding: 0 22px 0 18px; border-radius: 18px; background: var(--white); color: var(--ink) !important;
+  font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; box-shadow: 6px 6px 0 var(--c); transition: transform .15s, box-shadow .15s; box-sizing: border-box; }
+.pf:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--c); }
+.pf-macos13 { --c: var(--grape); } .pf-windows { --c: var(--blue); } .pf-linux { --c: var(--lemon); }
+.pf small { display: block; font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .6; line-height: 1; margin-bottom: 4px; }
+.pf span { line-height: 1.05; }
+.pf .wm { font-weight: 900; letter-spacing: -.035em; color: var(--c); }
+.pf-linux .wm { color: var(--ink); }
+.pf .dl-tux { width: 28px; height: 28px; flex: none; color: var(--ink); }
+.pf.hero { grid-column: 1 / -1; height: 96px; padding: 0 28px 0 30px; gap: 20px; border-radius: 22px; box-shadow: 9px 9px 0 var(--c); }
+.pf.hero:hover { box-shadow: 13px 13px 0 var(--c); }
+.pf.hero small { font-size: .74rem; }
+.pf.hero .wm { font-size: 2.6rem; }
+.pf.hero .go { margin-left: auto; width: 46px; height: 46px; border-radius: 50%; background: var(--ink); color: var(--white); display: grid; place-items: center; font-size: 1.4rem; font-style: normal; }
+/* Google's badge, unmodified, at the buttons' height (its PNG is cut to its
+   edges), scaled only proportionally. Google's badge rules: clear space of at
+   least 1/4 of its height on every side, with nothing inside it (no button's
+   shadow), given back as its own padding: 17px at 66px. Its row is centred
+   so the dashed App Store tile beside it stays level with the badge. */
+.gpb { display: flex; align-items: center; justify-self: start; padding: 17px; }
+.gpb img { height: 66px; width: auto; }
+.dl .soon { height: 66px; border-radius: 18px; box-sizing: border-box; align-self: center; }
+.watches { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 6px; }
+/* The rest of "Get it" (the watches, the older-Mac link, GitHub, the notice)
+   follows the buttons; where the page runs sideways it is the second column. */
+.dl-side .watches { max-width: 600px; margin-top: 22px; }
+.dl-watch { display: flex; flex-direction: column; justify-content: center; gap: 3px; min-height: 66px; padding: 10px 20px; border-radius: 18px; border: 2px dashed #55525e; color: #a19daf; box-sizing: border-box; }
+.dl-os-wearos { --c: var(--mint); } .dl-os-applewatch { --c: var(--straw); }
+.dl-watch-name { font-size: 1.15rem; font-weight: 900; letter-spacing: -.035em; color: var(--c); opacity: .75; }
+.dl-watch-sub { font-size: .72rem; font-weight: 700; opacity: .7; }
+.dl-watch-state { font-size: .82rem; font-weight: 700; }
+.dl-watch-live { border-style: solid; color: var(--white) !important; }
+.dl-watch-live .dl-watch-name { opacity: 1; }
+.older { display: inline-block; margin-top: 22px; font-weight: 700; color: #cfcbd9 !important; border-bottom: 2px solid var(--grape); padding-bottom: 2px; }
+.older:hover { color: var(--white) !important; }
+.dl .tm { margin-top: 26px !important; max-width: 560px; font-size: .72rem; line-height: 1.45; opacity: .5; }
+@media (max-width: 600px) {
+  .dl .btns, .watches { grid-template-columns: 1fr; }
+  .pf.hero { height: 84px; } .pf.hero .wm { font-size: 2rem; }
+}
+.gh { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; font-weight: 700; }
+.gh svg { width: 30px; height: 30px; flex: none; }
+.gh span { border-bottom: 2px solid var(--mint); }
+
+/* the kiff footer */
+.kf { position: relative; z-index: 5; background: var(--paper); color: var(--ink); padding: 80px max(18px, 6vw) 40px; }
+/* The footer's Google band: what tafs does with a connected Google account,
+   open on every language's page for Google's review of the sign-in. */
+.kf .kg { max-width: 72ch; margin: 0 0 56px; padding: 16px 20px; border-left: 4px solid var(--ink); border-radius: 0 12px 12px 0; background: rgba(17, 20, 27, .05); }
+.kf .kg h2 { margin-bottom: 6px; opacity: .7; }
+.kf .kg p { font-size: .92rem; font-weight: 500; line-height: 1.55; }
+.kf .kg a { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.kf .row1 { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 40px; }
+.kf .mark { font-weight: 900; font-size: clamp(3.5rem, 9vw, 7rem); letter-spacing: -.06em; line-height: .8; }
+.kf .mark + p { margin-top: 16px; font-weight: 600; max-width: 26ch; }
+.kf h2 { margin: 0 0 12px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
+.kf ul { list-style: none; display: grid; gap: 8px; font-weight: 600; }
+.kf li { font-size: .84rem; }
+.kf li a { font-size: 1.06rem; }
+.kf ul a:hover { text-decoration: underline; }
+.kf .row2 { margin-top: 56px; padding-top: 20px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: .84rem; font-weight: 500; }
+.kf .langs { display: flex; gap: 10px; flex-wrap: wrap; }
+.kf .langs a { opacity: .65; }
+.kf .langs a[aria-current] { font-weight: 800; opacity: 1; }
+/* On a phone, two columns that may shrink below their longest link, which then breaks inside its
+   column ("Prywatność tafs", support@kiff.dev at 320), so the footer never runs past the screen. */
+@media (max-width: 760px) { .kf .row1 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; } .kf li a { overflow-wrap: anywhere; } }
+
+/* a large screen, with the script: pin the stage and run sideways */
+@media (min-width: 900px) and (min-height: 560px) {
+  .tf-js .top { position: fixed; transition: opacity .2s, visibility .2s; }
+  .tf-past .top { opacity: 0; visibility: hidden; }
+  .tf-past .top a { pointer-events: none; }
+  .tf-js .hs { --n: 9; height: calc(var(--n) * 100vh); }
+  .tf-js .stick { position: sticky; top: 0; height: 100vh; overflow: hidden; overflow: clip; }
+  .tf-js .track { display: flex; height: 100%; width: calc(var(--n) * 100%); will-change: transform; }
+  .tf-js .p { display: block; width: calc(100% / var(--n)); height: 100%; min-height: 0; flex: none; padding: 0; }
+  .tf-js .st { position: absolute; left: var(--x); top: var(--y); transform: translateX(var(--tx, 0px)) rotate(calc(var(--r0, 0deg) + var(--tr, 0deg))); will-change: transform; }
+  .tf-js .stickers, .tf-js .lang-row { display: contents; }
+  .tf-js .copy { position: absolute; left: 7vw; top: var(--cy, 24vh); }
+  /* Screen 5's approval keeps its whole width on a 900px-wide screen. */
+  .tf-js .diff .ast { left: min(var(--x), calc(100% - 330px)); }
+  .tf-js .giant { position: absolute; left: var(--gx, 5vw); bottom: var(--gy, 4vh); white-space: nowrap; transform: translateX(var(--tx, 0px));
+    font-size: min(var(--gs, 30vh), calc((97vw - var(--gx, 5vw)) / var(--n, 6))); }
+  .tf-js .hero .wrap { position: absolute; left: 7vw; top: calc(50% + 30px); transform: translateY(-50%); }
+  .tf-js .hero .badge { --s: 130px; }
+  .tf-js .hero .wrap { top: calc(50% + 24px); }
+  .tf-js .hero h1 { font-size: clamp(2rem, min(4.6vw, 6.4vh), 5rem); }
+  .tf-js .hero .small { margin-top: 14px !important; font-size: clamp(1rem, 2.2vh, 1.2rem); }
+  .tf-js .hero .small { max-width: 34vw; }
+  .tf-js .pill { max-width: 30vw; }
+  .tf-js .lines3, .tf-js .words { position: absolute; left: 7vw; top: 50%; transform: translateY(-50%); }
+  .tf-js .lines3 { font-size: min(9vh, 7rem, calc(82vw / var(--n, 6))); }
+  .tf-js .lines3 span { white-space: nowrap; }
+  .tf-js .words dl div { grid-template-columns: auto 1fr; align-items: baseline; gap: 22px; }
+  .tf-js .mascot { width: min(380px, 40vh); }
+  /* "Get it" in one screen (it's clipped to it): the buttons on the left, the
+     rest on the right from the heading's line down, the heading sized by the
+     screen's height too, no sticker over the watches, and the GET IT. word
+     small enough to stay under the buttons, not behind them. */
+  .tf-js .dl .copy { display: grid; grid-template-columns: minmax(0, min(600px, 46vw)) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr;
+    column-gap: 5vw; align-items: start; width: 86vw; max-width: none; top: min(var(--cy), 16vh); }
+  .tf-js .dl .copy > * { grid-column: 1; }
+  .tf-js .dl .dl-side { grid-column: 2; grid-row: 1 / -1; max-width: 520px; }
+  .tf-js .dl .dl-side .watches { margin-top: 0; }
+  .tf-js .dl .big { font-size: clamp(1.8rem, min(3.6vw, 6vh), 3.2rem); }
+  .tf-js .dl .mascot { display: none; }
+  .tf-js .dl .giant { font-size: min(18vh, calc((97vw - var(--gx, 5vw)) / var(--n, 6))); }
+  .tf-js .idx { position: absolute; z-index: 5; left: max(18px, 6vw); bottom: 28px; display: flex; gap: 10px; align-items: center; padding: 4px 10px 4px 8px; border-radius: 6px;
+    background: var(--bg); font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .tf-js .idx::before { content: ""; width: 10px; height: 10px; background: currentColor; }
+  .tf-js .hint { display: block; position: absolute; right: max(18px, 6vw); bottom: 28px; font-weight: 700; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+  .tf-js .bar { display: block; position: fixed; left: max(18px, 4vw); right: max(18px, 4vw); bottom: 14px; height: 3px; z-index: 20; mix-blend-mode: difference;
+    background: rgba(255, 255, 255, .25); border-radius: 3px; transition: opacity .2s; }
+  .tf-js .bar i { display: block; height: 100%; width: 0; background: #fff; border-radius: 3px; }
+}
+
+/* "Get it" on a large screen keeps the mascot, under
+   the right column and above the GET IT. word, touching neither. */
+@media (min-width: 1600px) and (min-height: 1000px) {
+  .tf-js .dl .mascot { display: block; left: calc(7vw + min(600px, 46vw) + 5vw); top: 56%; width: min(300px, 28vh); }
+}
+
+/* The first panel on a short screen: the heading smaller and on fewer,
+   wider lines, the line and the Google-data block denser, so the whole of it
+   shows between the top bar and the progress bar in every language, clear of
+   the stickers. */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 720px) {
+  .tf-js .hero h1 { font-size: clamp(1.6rem, min(4vw, 5vh), 5rem); max-width: min(20ch, 44vw); }
+  .tf-js .hero .small { margin-top: 8px !important; font-size: .95rem; }
+}
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 600px) {
+  .tf-js .hero .small { font-size: .9rem; }
+}
+
+/* "Get it" on a short screen: smaller buttons and badge (its clear space still
+   a quarter of its height: 14px at 56px), a smaller notice and no GET IT.
+   word, so it still fits one screen with nothing behind it. */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 700px) {
+  .tf-js .dl .btns { margin-top: 18px; gap: 12px; }
+  .tf-js .dl .pf { height: 54px; }
+  .tf-js .dl .pf.hero { height: 72px; }
+  .tf-js .dl .pf.hero .wm { font-size: 2rem; }
+  .tf-js .dl .pf.hero .go { width: 38px; height: 38px; }
+  .tf-js .dl .gpb { padding: 14px; }
+  .tf-js .dl .gpb img { height: 56px; }
+  .tf-js .dl .soon { height: 54px; }
+  .tf-js .dl .small { font-size: .95rem; }
+  .tf-js .dl .dl-watch { min-height: 54px; padding: 8px 16px; }
+  .tf-js .dl .older, .tf-js .dl .gh { margin-top: 16px; }
+  .tf-js .dl .tm { margin-top: 16px !important; font-size: .68rem; line-height: 1.4; }
+  .tf-js .dl .giant { display: none; }
+}
+/* The shortest sideways screens (to 620px high): the copy starts higher and
+   the right column is tighter, so the notice ends clear of the progress bar
+   in every language. */
+@media (min-width: 900px) and (min-height: 560px) and (max-height: 620px) {
+  .tf-js .dl .copy { top: 13vh; }
+  .tf-js .dl .dl-watch { min-height: 48px; padding: 6px 14px; }
+  .tf-js .dl .older, .tf-js .dl .gh { margin-top: 12px; }
+  .tf-js .dl .gh svg { width: 24px; height: 24px; }
+  .tf-js .dl .tm { margin-top: 12px !important; font-size: .64rem; line-height: 1.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
+  .gp, .pf { transition: none; }
+}

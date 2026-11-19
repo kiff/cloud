@@ -1,0 +1,98 @@
+/* claims.css — /invariants.
+ *
+ * A list of generated guarantees: each statement is a <summary>, and its
+ * attack, refusal, test and file:line sit inside the <details>, so the
+ * page scans. Everything uses the site tokens, so both themes follow. */
+
+/* ── Sections ─────────────────────────────────────────────────── */
+
+.cl-section.cl-hero { padding: 3rem 0 1.5rem; }
+.cl-section { padding: 1.5rem 0 2.5rem; }
+
+/* ── Prose ────────────────────────────────────────────────────── */
+
+.cl-prose {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 62ch;
+}
+
+.cl-prose + .cl-prose { margin-top: 0.75rem; }
+.cl-prose strong { color: var(--fg); font-weight: 500; }
+
+/* ── Invariants ───────────────────────────────────────────────── */
+
+.cl-group { margin-top: 1.5rem; }
+.cl-group:first-of-type { margin-top: 0; }
+
+.cl-group-h {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--fg);
+  margin: 0 0 0.5rem;
+}
+
+.cl-invariants { list-style: none; margin: 0; padding: 0; }
+
+.cl-inv { border-top: 0.5px solid var(--border); }
+.cl-inv:last-child { border-bottom: 0.5px solid var(--border); }
+
+/* The statement is the content; the rest is behind it. */
+.cl-inv-statement {
+  display: block;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.4rem 0 0.4rem 1.1rem;
+  position: relative;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--fg);
+  max-width: 68ch;
+}
+
+.cl-inv-statement::-webkit-details-marker { display: none; }
+
+.cl-inv-statement::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  color: var(--muted-2);
+  font-family: var(--mono);
+}
+
+details[open] > .cl-inv-statement::before { content: "−"; }
+
+.cl-inv-example {
+  margin: 0 0 0.6rem 1.1rem;
+  max-width: 68ch;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.cl-inv-example dt {
+  font-size: 9.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-top: 0.4rem;
+}
+
+.cl-inv-example dd { margin: 0.15rem 0 0; color: var(--fg); }
+.cl-inv-example dd.cl-inv-refused { color: var(--accent); }
+
+.cl-inv-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0 0 0.8rem 1.1rem;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.cl-inv-test { color: var(--accent-light); word-break: break-word; }
+.cl-inv-file { color: var(--muted-2); word-break: break-all; }

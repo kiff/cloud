@@ -1,0 +1,129 @@
+<h1 id="what-s-real-today-vs-planned">What&rsquo;s real today vs planned</h1>
+
+<p>These docs describe what KIFF does, not what it might do. This page is
+the explicit line between the two, so you never build on a claim the
+product can&rsquo;t back yet. If something isn&rsquo;t here as shipped, treat it as
+not shipped.</p>
+
+<h2 id="real-today">Real today</h2>
+
+<ul>
+<li><strong>The decision.</strong> KIFF evaluates a proposed action against an
+entity&rsquo;s state and your policy and returns <code>allowed</code>, <code>blocked</code>, or
+<code>approval_required</code> — before the action runs. A malformed or
+misconfigured request is <code>invalid</code> (a client error to fix, not a
+governance decision, and not a governed operation). See
+<a href="/docs/archive/2026-10-10/decisions">Decisions</a>.</li>
+<li><strong>Read an entity&rsquo;s lifecycle.</strong> The recorded proposals, approvals, and
+executions for an entity can be read back as one chronological,
+tenant-scoped, read-only view. See <a href="/docs/archive/2026-10-10/decisions">Decisions</a>.</li>
+<li><strong>Observe mode, zero config.</strong> Attach the guard to an agent you
+already run, with no account and no config, and get a real audit trail
+plus a derived starter policy. See
+<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>.</li>
+<li><strong>Enforce mode through the guard.</strong> Switch the guard to enforce, point
+it at a tenant, and KIFF&rsquo;s decision is acted on before each tool runs,
+failing closed on error. See <a href="/docs/archive/2026-10-10/concepts">How the guard works</a>.</li>
+<li><strong>Shipped framework adapters.</strong> Eleven kiff-guard adapters are verified
+against the real framework and pass the conformance suite. The sidebar
+badges say so per framework.</li>
+<li><strong>KIFF Cards, with three honest limits.</strong> You can issue a card to a
+named agent, read its statement, change its ceiling and revoke it. The
+three things to know before building on it:
+
+<ul>
+<li><strong>A card constrains; it never confers.</strong> It narrows what the domain
+and its permissions already allow and caps how much of it happens.
+It cannot grant an action the domain does not have, or legalise one
+in a state it forbids.</li>
+<li><strong>It is only required where the action says so.</strong> An action that
+declares <code>requires_authority</code> is refused with <code>no_mandate_issued</code>
+when nothing has been issued to the proposing actor. Every other
+action is decided without a card, exactly as before.</li>
+<li><strong>The key has to be issued for the holder.</strong> Wherever a proposal
+would draw on a card, an API key not issued for the proposing agent
+is refused, so one agent cannot name another and spend its card.</li>
+<li><strong>A draw is recorded when the action is authorized, not when it
+executes.</strong> KIFF decides; your system runs the action afterwards and
+reports nothing back, so an authorization you chose not to run still
+counts against the window.</li>
+</ul></li>
+</ul>
+
+<p>See <a href="/docs/archive/2026-10-10/kiff-cards">KIFF Cards</a>.
+- <strong>MCP gateway for remote tools.</strong> An agent can connect to <code>mcp.kiff.dev</code>; the account owner connects a remote MCP server to KIFF, and the gateway checks the agent&rsquo;s Card before forwarding each tool call. Claude Code and Codex passed production smoke tests with a temporary tool: allowed calls reached it, held calls waited for owner approval, and retries of an approved call reached it once. This tested the gateway path, not a customer transaction or every MCP client. See <a href="/docs/archive/2026-10-10/mcp-gateway">Use the KIFF MCP gateway</a>.
+- <strong>Held calls and approvals.</strong> A call outside its Card can be held for
+  the owner: listed on Needs you, emailed once to the owner, and, for
+  Claude Code 2.1.287 or later, offered as a link in the agent&rsquo;s chat.
+  Only the owner&rsquo;s signed-in session answers. Each Card sets how long a
+  hold waits (10 minutes by default); an unanswered hold is refused. See
+  <a href="/docs/archive/2026-10-10/approvals">Held calls and approvals</a>.
+- <strong>Personal and company accounts.</strong> An account is &ldquo;for me&rdquo; (Cards,
+  agents, tools, Needs you, Activity) or &ldquo;for a company&rdquo; (the full
+  workspace with domains, contracts and API keys). It changes what is
+  shown, not what KIFF decides.
+- <strong>Signed, tamper-evident receipts.</strong> Every decision records one signed
+  receipt of what was authorized, before execution. See <a href="/docs/archive/2026-10-10/receipts-and-proof">Receipts &amp;
+  proof packs</a>.
+- <strong>Govern + proof packs.</strong> For company accounts, an evidence view per
+  action in a domain on your real traffic, exportable as a proof pack from the same evidence
+  object, with honest empty / not-yet-recorded states. See
+  <a href="/docs/archive/2026-10-10/govern">Govern</a>.
+- <strong>Per-domain observe → enforce posture.</strong> Each domain carries its own
+  governance posture, flippable from its home page — one domain can
+  enforce while another observes — and the moment of the flip is
+  recorded. Changing enforcement is a management action. See
+  <a href="/docs/archive/2026-10-10/govern">Govern</a>.
+- <strong>Many domains in one workspace.</strong> Run more than one operational
+  domain side by side. The all-domains view shows each domain&rsquo;s posture,
+  runtime freshness, recent activity, and its one next action; an
+  in-progress domain appears as a draft while the others keep operating.
+  See <a href="/docs/archive/2026-10-10/domains">Domains</a>.</p>
+
+<h2 id="not-shipped-do-not-assume">Not shipped — do not assume</h2>
+
+<ul>
+<li><strong>Production anchoring.</strong> Receipts are signed and
+tamper-evident, and can be anchored to an external trail, but the
+production form of public anchoring is not shipped. The honest claim
+is <em>signed, tamper-evident, verifiable</em> — nothing stronger.</li>
+<li><strong>Reviewer attribution as a guarantee.</strong> The full linkage between an
+approval and the specific control decision is limited; where it isn&rsquo;t
+recorded, the evidence says &ldquo;not yet recorded&rdquo; rather than inventing
+it. Don&rsquo;t rely on reviewer-attribution claims.</li>
+<li><strong>Compliance certification.</strong> KIFF produces evidence that&rsquo;s useful in
+a compliance conversation, but it is not a certification and does not
+assert legal sufficiency for any regime.</li>
+<li><strong>KIFF as the agent or business operator.</strong> KIFF does not run your
+agent or perform the connected tool&rsquo;s business operation. In direct API
+integrations, your runtime executes after an <code>allowed</code> decision. Through
+the MCP gateway, KIFF stores connected remote MCP bearer credentials
+encrypted and forwards calls after an <code>allowed</code> decision; the remote tool
+performs the operation. A connection in <code>verify</code> or <code>relay</code> mode gives
+KIFF no key: the tool, or a relay you run, checks a permit KIFF signs for
+each allowed call (<a href="/docs/archive/2026-10-10/tool-permits">Tools that check KIFF</a>). OAuth and arbitrary HTTP APIs are not supported
+by the gateway yet.</li>
+</ul>
+
+<h2 id="how-we-keep-these-docs-honest">How we keep these docs honest</h2>
+
+<p>Two rules govern this page and the rest of the docs:</p>
+
+<ol>
+<li><strong>Copy never outruns the artifact.</strong> A capability is described as
+real only if it&rsquo;s shipped and verifiable. If it isn&rsquo;t, it lives in
+the &ldquo;not shipped&rdquo; list above until it is.</li>
+<li><strong>No demo data presented as real.</strong> Screenshots and examples in these
+docs are either clearly labelled as examples or drawn from a clean,
+safe tenant — never synthetic data dressed up as production evidence.</li>
+</ol>
+
+<p>If you find a claim in these docs that contradicts this page, this page
+wins, and it&rsquo;s a bug in the other page. Tell us.</p>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>Start using it → <a href="/docs/archive/2026-10-10/quickstart">Quickstart</a>.</li>
+<li>Understand the model → <a href="/docs/archive/2026-10-10/what-kiff-is">What KIFF is</a>.</li>
+</ul>

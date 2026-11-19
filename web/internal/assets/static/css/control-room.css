@@ -1,0 +1,1112 @@
+/* control-room.css — /dashboard/controls evidence surface. */
+
+.cr {
+  max-width: min(1240px, calc(100vw - var(--size-8)));
+}
+
+.cr-header {
+  align-items: center;
+}
+
+.cr-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: var(--size-4);
+  align-items: start;
+}
+
+.cr-main,
+.cr-empty-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+  min-width: 0;
+}
+
+.cr-control-nav {
+  position: sticky;
+  top: var(--size-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  background: color-mix(in oklab, var(--bg-elev) 55%, transparent);
+}
+
+.cr-control-link {
+  display: grid;
+  gap: 2px;
+  padding: var(--size-2);
+  border-radius: var(--radius);
+  color: var(--fg-soft);
+  text-decoration: none;
+}
+
+.cr-control-link:hover,
+.cr-control-link-active {
+  background: color-mix(in oklab, var(--accent) 9%, transparent);
+  color: var(--fg);
+}
+
+.cr-control-link span,
+.cr-control-link small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cr-control-link small {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+}
+
+.cr-card {
+  display: grid;
+  gap: var(--size-3);
+}
+
+.cr-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-3);
+  align-items: flex-start;
+}
+
+.cr-card-head h2 {
+  margin-bottom: 0;
+}
+
+.cr-facts,
+.cr-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--size-3);
+  margin: 0;
+}
+
+.cr-facts div,
+.cr-count {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  background: color-mix(in oklab, black 10%, transparent);
+}
+
+.cr-facts dt,
+.cr-count dt {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+}
+
+.cr-facts dd,
+.cr-count dd {
+  margin: var(--size-1) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.cr-count dd {
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-size: var(--font-size-5);
+  line-height: 1;
+}
+
+.cr-not-recorded,
+.cr-pending {
+  border-style: dashed;
+}
+
+.cr-not-recorded {
+  border: 1px dashed var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  color: var(--fg-soft);
+}
+
+.cr-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cr-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: var(--font-size-1);
+}
+
+.cr-table th,
+.cr-table td {
+  border-bottom: 1px solid var(--rule-soft);
+  padding: var(--size-2);
+  text-align: left;
+  vertical-align: top;
+}
+
+.cr-table th {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+}
+
+.cr-pending-list {
+  margin: 0;
+  padding-left: var(--size-5);
+  color: var(--fg-soft);
+}
+
+@media (max-width: 900px) {
+  .cr {
+    max-width: 100%;
+  }
+
+  .cr-layout,
+  .cr-facts,
+  .cr-counts {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-control-nav {
+    position: static;
+  }
+}
+
+/* cr-preview: the first-class empty-state illustration of what live
+   traffic will fill (the evidence-timeline design launch journey). Dashed, muted, clearly
+   not real data — never a synthetic proof-run. */
+.cr-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--size-2);
+  margin: var(--size-3) 0;
+}
+
+.cr-preview-step {
+  border: 1px dashed var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-3);
+  background: color-mix(in oklab, black 10%, transparent);
+}
+
+.cr-preview-step b {
+  display: block;
+  margin-bottom: var(--size-1);
+  color: var(--fg);
+}
+
+.cr-preview-step span {
+  color: var(--fg-muted);
+  font-size: var(--font-size-0);
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .cr-preview {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Receipts + alert-deliveries lists (evidence sections). */
+.cr-receipt-list,
+.cr-delivery-list {
+  list-style: none;
+  margin: var(--size-2) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--size-2);
+}
+
+.cr-receipt,
+.cr-delivery {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  padding: var(--size-2) var(--size-3);
+  background: color-mix(in oklab, black 10%, transparent);
+}
+
+.cr-receipt-main,
+.cr-delivery-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cr-receipt-main small,
+.cr-delivery-main small {
+  color: var(--fg-muted);
+  font-size: var(--font-size-0);
+}
+
+.cr-receipt-pills {
+  display: flex;
+  gap: var(--size-1);
+  flex-shrink: 0;
+}
+
+.cr-scope-note {
+  color: var(--fg-soft);
+  font-size: var(--font-size-0);
+}
+
+/* ── v3 Control Room state surface ─────────────────────────────── */
+.cr-v3 {
+  max-width: min(100%, 1164px);
+}
+
+.cr-header {
+  align-items: flex-start;
+}
+
+.cr-header-actions {
+  align-items: center;
+}
+
+.cr-state-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--bg-elev, #f7f8fa);
+  cursor: default;
+}
+
+.cr-state-caption {
+  padding: 0 10px 0 6px;
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cr-state-option {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.cr-state-option-active {
+  background: var(--accent);
+  color: var(--accent-ink, #fff);
+}
+
+.cr-control-nav {
+  position: static;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.cr-control-nav > .eyebrow {
+  flex-basis: 100%;
+  margin-bottom: -2px;
+}
+
+.cr-control-link {
+  min-width: min(100%, 260px);
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  padding: 13px 15px;
+  background: color-mix(in oklab, var(--bg-elev) 86%, transparent);
+  box-shadow: 0 10px 22px rgba(18, 22, 30, 0.04);
+}
+
+.cr-control-link:hover,
+.cr-control-link-active {
+  border-color: var(--rule);
+  background: color-mix(in oklab, var(--fg) 6%, var(--bg-elev));
+}
+
+.cr-main {
+  gap: 26px;
+}
+
+.cr-empty {
+  display: grid;
+  gap: 14px;
+  min-height: 230px;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(184, 241, 63, 0.18), transparent 16rem),
+    var(--bg-elev);
+}
+
+.cr-empty h2 {
+  font-size: clamp(1.45rem, 2.7vw, 2.15rem);
+}
+
+.cr-preview {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 10px 0 0;
+}
+
+.cr-preview-step {
+  min-height: 104px;
+  border-color: #d9dfe8;
+  background: color-mix(in oklab, var(--bg-elev) 74%, transparent);
+}
+
+.cr-preview-step b {
+  color: var(--fg);
+  font-size: 14px;
+}
+
+.cr-preview-step span {
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.cr-identity .cr-card-head h2 {
+  font-size: 20px;
+}
+
+.cr-facts,
+.cr-counts {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+}
+
+.cr-facts div,
+.cr-count {
+  border: 0;
+  border-right: 1px solid var(--rule-soft);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 20px;
+}
+
+.cr-facts div:first-child,
+.cr-count:first-child {
+  padding-left: 0;
+}
+
+.cr-facts div:last-child,
+.cr-count:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.cr-facts dt,
+.cr-count dt {
+  color: var(--fg-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.cr-facts dd,
+.cr-count dd {
+  color: var(--fg);
+  font-size: 14px;
+}
+
+.cr-count dd {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 750;
+}
+
+/* There are exactly five decision outcomes (allowed, blocked,
+   approval_required, limit_exceeded, invalid). Give the counts their own
+   five-column track so the fifth tile doesn't orphan onto a second row
+   under the four-wide facts grid. The label is tightened so the longer
+   outcomes (APPROVAL_REQUIRED, LIMIT_EXCEEDED) stay on one line. Narrow
+   breakpoints below still collapse this to a single column. */
+.cr-counts {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.cr-count dt {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.cr-metrics {
+  padding: 22px;
+}
+
+/* The metric strip is the single, complete count home on Govern
+ * (Allowed/Blocked/Held/Receipts/Status = 5). The base .dash-metrics is
+ * a fixed 4-col grid (the Domain home uses 4), so widen this one to fit
+ * without touching the Domain page. */
+.cr-metrics .dash-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.cr-evidence-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  gap: 18px;
+}
+
+.cr-evidence-grid > .cr-card:first-child,
+.cr-evidence-grid > .cr-card:nth-child(3),
+.cr-evidence-grid > .cr-card:nth-child(4) {
+  grid-column: span 1;
+}
+
+.cr-evidence-grid > .cr-card:nth-child(3),
+.cr-evidence-grid > .cr-card:nth-child(4) {
+  grid-column: 1 / -1;
+}
+
+.cr-card {
+  gap: 14px;
+  padding: 22px;
+}
+
+.cr-card-head {
+  align-items: center;
+}
+
+.cr-card-head h2 {
+  font-size: 18px;
+}
+
+.cr-not-recorded,
+.cr-pending {
+  border-style: dashed;
+  background: color-mix(in oklab, var(--bg-elev) 62%, transparent);
+}
+
+.cr-table {
+  min-width: 680px;
+}
+
+.cr-receipt,
+.cr-delivery {
+  border-color: var(--rule-soft);
+  background: var(--bg-elev);
+}
+
+@media (max-width: 980px) {
+  .cr-evidence-grid,
+  .cr-preview,
+  .cr-facts,
+  .cr-counts {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-facts div,
+  .cr-count {
+    padding: 14px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .cr-facts div:first-child,
+  .cr-count:first-child {
+    padding-top: 0;
+  }
+
+  .cr-facts div:last-child,
+  .cr-count:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .cr-state-switch {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .cr-state-option {
+    flex: 1 0 auto;
+    justify-content: center;
+  }
+
+  .cr-empty,
+  .cr-card {
+    padding: 20px;
+  }
+}
+
+/* Decision → receipt linkage: the receipt cell is a real link to
+   the proof, the state cell surfaces the reconstructed state KIFF
+   decided against. */
+.cr-receipt-link {
+  color: var(--link, #8ab4ff);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cr-receipt-link:hover {
+  text-decoration: underline;
+}
+
+.cr-receipt-link code {
+  color: inherit;
+}
+
+.cr-receipt-none,
+.cr-state-none,
+.cr-tool-none {
+  color: var(--fg-muted);
+}
+
+/* What the tool reported for an allowed call. A refusal, an
+   unknown result or a call never sent reads as a warning, not as done. */
+.cr-tool {
+  white-space: nowrap;
+}
+
+.cr-tool-warn {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.cr-state-allowed {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+/* ── Activity sub-view tabs (viewport-first, no-JS) ──────────────────
+ * The evidence page was one long vertical stack of every section (metrics,
+ * decisions, verifiability, alerts, receipts, approvals, identity). It now
+ * pins an at-a-glance summary and splits the rest into server-side ?tab=
+ * panels, so the page reads as a focused dashboard (Linear/Atlassian
+ * density) rather than a wall. Main scrolls under a separate topbar grid
+ * row, so the summary sticks to the top of the scroll region. */
+.cr-summary {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--size-3);
+  margin-bottom: var(--size-3);
+  padding: var(--size-2) 0;
+  background: color-mix(in oklab, var(--bg) 90%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+/* Outcome tiles: the at-a-glance counts AND the decisions filter in one.
+ * The filter tiles are links (?tab=decisions&outcome=); the info tiles
+ * (Receipts / Status) are static context. */
+.cr-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2);
+}
+
+.cr-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 104px;
+  padding: var(--size-2) var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--bg-elev) 60%, transparent);
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+a.cr-tile:hover {
+  border-color: var(--accent);
+}
+
+.cr-tile-active {
+  border-color: color-mix(in oklab, var(--accent) 55%, transparent);
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+}
+
+.cr-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cr-tile-label {
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cr-tile-active .cr-tile-label {
+  color: var(--accent);
+}
+
+.cr-tile-count {
+  font-size: var(--font-size-4, 1.75rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.cr-tile small {
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.cr-tile-info {
+  cursor: default;
+}
+
+.cr-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-1);
+  border-bottom: 1px solid var(--rule-soft);
+  margin-bottom: var(--size-4);
+}
+
+.cr-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-2);
+  padding: var(--size-2) var(--size-3);
+  margin-bottom: -1px; /* the active underline sits on the rule */
+  border-bottom: 2px solid transparent;
+  color: var(--fg-muted);
+  font-size: var(--font-size-1);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cr-tab:hover {
+  color: var(--fg);
+}
+
+.cr-tab-active {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+}
+
+.cr-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-1, 4px);
+}
+
+.cr-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  padding: 0 0.4em;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--warn, #d9a441) 20%, transparent);
+  color: var(--warn, #d9a441);
+  font-size: var(--font-size-0);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cr-tabpanel {
+  min-height: 42vh;
+}
+
+/* ── Decisions pager ─────────────────────────────────────────────────
+ * The Decisions tab pages the window (server-side ?page= links); the
+ * outcome filter lives in the summary tiles above. */
+.cr-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--size-3);
+  margin-top: var(--size-3);
+}
+
+.cr-pager-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--size-1) var(--size-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-size: var(--font-size-0);
+  text-decoration: none;
+}
+
+.cr-pager-btn:hover {
+  border-color: var(--accent);
+}
+
+.cr-pager-disabled {
+  color: var(--fg-muted);
+  opacity: 0.5;
+}
+
+.cr-pager-label {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Govern: visible/clearable domain scope chip (PR: show all governed
+   actions). The ?domain= filter narrows the governed-actions list; without
+   a visible chip a Runtimes→Govern hop silently drops the list from all
+   domains to one, which reads as "things disappeared". */
+.cr-scope-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: var(--size-2) 0 0;
+  padding: 5px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent) 7%, transparent);
+  font-size: 13px;
+  color: var(--fg-soft);
+  width: fit-content;
+}
+
+.cr-scope-chip strong {
+  color: var(--fg);
+}
+
+.cr-scope-clear {
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cr-scope-clear:hover {
+  text-decoration: underline;
+}
+
+/* Nav card: every governed action the control covers, not just the first. */
+.cr-control-count {
+  color: var(--fg) !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 650;
+}
+
+.cr-control-actions {
+  color: var(--fg-muted);
+  line-height: 1.4;
+}
+
+/* Identity card: the full set of governed actions as chips. */
+.cr-identity-actions {
+  margin-top: var(--size-1);
+}
+
+.cr-action-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-1);
+  margin: var(--size-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cr-action-chip {
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  padding: 3px 9px;
+  background: color-mix(in oklab, black 8%, transparent);
+}
+
+.cr-action-chip code {
+  font-size: 12px;
+  color: var(--fg);
+}
+
+/* ── Evidence window selector (7 / 30 / 90 days). No-JS: each preset is a
+   server-side link that swaps ?window= and keeps every other param. Mirrors
+   the posture switch's segmented look, but these ARE interactive links. */
+.cr-window {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: var(--bg-elev, #f7f8fa);
+}
+
+.cr-window-caption {
+  padding: 0 10px 0 6px;
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cr-window-option {
+  padding: 4px 12px;
+  border-radius: 10px;
+  color: var(--fg-soft);
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.cr-window-option:hover {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--fg);
+}
+
+.cr-window-option-active {
+  background: var(--accent);
+  color: var(--accent-ink, #fff);
+}
+
+.cr-window-option-active:hover {
+  background: var(--accent);
+  color: var(--accent-ink, #fff);
+}
+
+/* Per-governed-action breakdown table (by_action) on Govern. */
+.cr-by-action .cr-table {
+  min-width: 0;
+  width: 100%;
+}
+
+.cr-by-action .cr-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Metric-strip / summary header: label on the left, window selector on the
+   right — co-locating the window control with the numbers it scopes (and
+   with the "from–to" label in the Status tile) instead of floating up in
+   the page header. */
+.cr-metrics-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--size-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--size-2);
+}
+
+.cr-metrics-head .eyebrow {
+  margin: 0;
+}
+
+/* ── Requests-over-time chart (Activity → Decisions tab) ─────────────
+ * A native inline SVG stacked-column chart (the web-stack design: no charting lib, no
+ * JS). Colours are driven by ac-bar-<outcome> classes so the palette
+ * matches the outcome tiles and respects the dark theme. The SVG scales
+ * to the card width via viewBox + width:100%. */
+.ac-panel {
+  padding-bottom: var(--size-3);
+}
+
+.ac-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: var(--size-2);
+}
+
+.ac-grid {
+  stroke: var(--rule-soft);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.ac-axis {
+  fill: var(--fg-muted);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ac-axis-y {
+  text-anchor: end;
+}
+
+.ac-bar {
+  transition: opacity 120ms ease;
+}
+
+.ac-chart:hover .ac-bar {
+  opacity: 0.85;
+}
+
+.ac-chart .ac-bar:hover {
+  opacity: 1;
+}
+
+/* Segment + swatch colours, one per outcome. Fallbacks keep the chart
+ * legible if the Open Props colour tokens are ever unavailable. */
+.ac-bar-allowed {
+  fill: var(--green-6, #16a34a);
+}
+
+.ac-bar-blocked {
+  fill: var(--red-6, #dc2626);
+}
+
+.ac-bar-approval_required {
+  fill: var(--yellow-6, #ca8a04);
+}
+
+.ac-bar-limit_exceeded {
+  fill: var(--orange-6, #ea580c);
+}
+
+.ac-bar-invalid {
+  fill: var(--gray-6, #6b7280);
+}
+
+.ac-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-3);
+  margin-top: var(--size-2);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.ac-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ac-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+/* The swatch reuses the ac-bar-<outcome> fill via background; SVG fill
+ * doesn't apply to a span, so restate as background-color. */
+.ac-swatch.ac-bar-allowed {
+  background: var(--green-6, #16a34a);
+}
+
+.ac-swatch.ac-bar-blocked {
+  background: var(--red-6, #dc2626);
+}
+
+.ac-swatch.ac-bar-approval_required {
+  background: var(--yellow-6, #ca8a04);
+}
+
+.ac-swatch.ac-bar-limit_exceeded {
+  background: var(--orange-6, #ea580c);
+}
+
+.ac-swatch.ac-bar-invalid {
+  background: var(--gray-6, #6b7280);
+}
+
+.ac-empty {
+  margin-top: var(--size-2);
+}
+
+/* ── The review ratio ───────────────────────────────────────────────
+   The counts beneath this are what happened; this is what they cost.
+   It reads first because it is the only figure on the page anyone
+   repeats to someone else. */
+.cr-ratio {
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.12));
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.cr-ratio-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cr-ratio-figure strong {
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* An unanswerable window must not look like a measured zero. */
+.cr-ratio-thin strong { opacity: 0.45; }
+
+.cr-ratio-split {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  font-size: 13px;
+}
+
+.cr-ratio-note {
+  margin: 0.75rem 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.75;
+  max-width: 72ch;
+}
+
+/* The actor filter banner. It has to be impossible to miss: rows for
+   one agent and rows for the whole domain render identically, and a
+   reader who does not notice the filter reads an empty timeline as
+   "nothing happened here". */
+.cr-actor-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--dash-line, #e7e2d9);
+  border-left: 3px solid var(--accent, #9a5b3d);
+  border-radius: 6px;
+  font-size: 0.87rem;
+}
+.cr-actor-filter-links {
+  display: flex;
+  gap: 1rem;
+  white-space: nowrap;
+}
+
+/* Where a mandate refusal leads. Set on its own line under the reason
+   so it reads as a next step rather than as part of the reason text. */
+.cr-reason-link {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* What the actor filter is keeping off a reviewer's screen. */
+.cr-pending-elsewhere a {
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Why the filtered rows are not the card's uses. Smaller than the line
+   above it, but present on every view that could be misread as one. */
+.cr-actor-filter-caveat {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: var(--dash-muted, #8a8378);
+}

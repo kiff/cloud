@@ -1,0 +1,90 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// CardQuick is the task-first way to issue a card: pick a job, name the
+// agent, set how much per day. The contract underneath (domain, action,
+// allowed states, units) comes from the cloud's template for that job,
+// so the customer states intent and never translates it into KIFF's
+// model first. The full form stays one link away.
+//
+// It is the same walkthrough as the full form: one decision per step,
+// then a review. It posts the same fields to POST /cards/quick.
+templ CardQuick(v CardQuickView) {
+	@components.LayoutAppThemedWithCSS("KIFF Cloud — Issue a Card", "css/fonts.css", "css/app-shell.css", "css/walkthrough.css") {
+		@wkFrame("/cards", "Give an agent a Card", 4, v.StartStep(), false) {
+			if v.Flash != nil && v.Flash.Message != "" {
+				<p class="wk-msg">{ v.Flash.Message }</p>
+			}
+			if v.Rejected != "" {
+				<div class="wk-msg wk-msg-warn" role="alert">
+					<strong>This Card was not issued.</strong>
+					<span>{ v.Rejected }</span>
+				</div>
+			}
+			<form class="wk-form" method="post" action="/cards/quick" novalidate>
+				<section class="wk-step" data-wk-step="1" data-wk-check="choice:task" data-wk-msg="Pick the job." aria-labelledby="wk-h1">
+					<div class="wk-head">
+						<h1 id="wk-h1">What job is this Card for?</h1>
+						<p>KIFF sets up the job’s rules from its standard template.</p>
+					</div>
+					<fieldset class="wk-choices">
+						<legend class="wk-sr">Job</legend>
+						for _, t := range CardTasks {
+							<label class="wk-choice">
+								<input type="radio" name="task" value={ t.Slug } checked?={ v.TaskChecked(t.Slug) } data-count?={ !t.Money } data-label={ t.Label }/>
+								<span class="wk-choice-body">
+									<span class="wk-strong">{ t.Label }</span>
+									<span class="wk-sub">{ t.Blurb }</span>
+								</span>
+								<span class="wk-radio" aria-hidden="true"></span>
+							</label>
+						}
+					</fieldset>
+				</section>
+				<section class="wk-step" data-wk-step="2" data-wk-check="text:subject" data-wk-msg="Type the agent’s name." aria-labelledby="wk-h2">
+					<div class="wk-head">
+						<h1 id="wk-h2">Which agent?</h1>
+						<p>Use the same name your agent sends when it asks KIFF to act.</p>
+					</div>
+					<label class="wk-field">
+						<span class="wk-label">Agent name</span>
+						<input class="wk-input wk-mono" name="subject" value={ v.Form.Subject } maxlength="200" autocomplete="off" spellcheck="false" placeholder="e.g. refund-agent"/>
+					</label>
+				</section>
+				<section class="wk-step" data-wk-step="3" data-wk-check="positive:limit" data-wk-msg="Enter an amount above zero." aria-labelledby="wk-h3">
+					<div class="wk-head">
+						<h1 id="wk-h3">How much per day?</h1>
+						<p class="wk-if-money">The total of everything this agent does with the Card in a day, in euros.</p>
+						<p class="wk-if-times">How many times this agent may do it in a day.</p>
+					</div>
+					<label class="wk-field">
+						<span class="wk-label"><span class="wk-if-money">Euros per day</span><span class="wk-if-times">Times per day</span></span>
+						<input class="wk-input wk-big" name="limit" data-wk-num="quick" value={ v.Form.Limit } inputmode="decimal" autocomplete="off" placeholder="e.g. 1,000"/>
+					</label>
+					<aside class="wk-note">
+						@wkInfoIcon()
+						<span>Resets at midnight UTC. You can change the limit or revoke the Card at any time.</span>
+					</aside>
+				</section>
+				<section class="wk-step" data-wk-step="4" aria-labelledby="wk-h4">
+					<div class="wk-head">
+						<h1 id="wk-h4">Check the Card</h1>
+						<p>Review the answers, then issue it.</p>
+					</div>
+					@wkReviewCard(false, "", "task", "quick-limit")
+					<dl class="wk-rows">
+						<div><dt>Job</dt><dd data-wk-val="task"></dd><dd><button type="button" class="wk-link" data-wk-goto="1">Edit</button></dd></div>
+						<div><dt>Agent</dt><dd data-wk-row="agent"></dd><dd><button type="button" class="wk-link" data-wk-goto="2">Edit</button></dd></div>
+						<div><dt>Per day</dt><dd data-wk-val="quick-limit"></dd><dd><button type="button" class="wk-link" data-wk-goto="3">Edit</button></dd></div>
+					</dl>
+					<aside class="wk-note">
+						@wkInfoIcon()
+						<span>Need exact actions, states or another window? <a href={ templ.SafeURL(v.AdvancedHref()) }>Use the full form</a>.</span>
+					</aside>
+				</section>
+				@wkBar("Issue this Card")
+			</form>
+		}
+	}
+}

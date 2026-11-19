@@ -1,0 +1,530 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+func agentHref(id string) string { return "/agents/" + url.PathEscape(id) }
+
+// AgentConnectPrompt is what a customer pastes into their coding agent
+// to connect this agent: kiff-guard in observe, under the agent's one
+// name, with the key issued for it.
+func AgentConnectPrompt(id string) string {
+	var b strings.Builder
+	w := func(parts ...string) {
+		for _, p := range parts {
+			b.WriteString(p)
+		}
+		b.WriteString("\n")
+	}
+	w("Connect my agent to KIFF with kiff-guard, so KIFF sees its tool calls now and can decide them later.")
+	w()
+	w("Its KIFF key: read it from the environment variable KIFF_CLOUD_API_KEY and never hard-code it. Ask me for it; it was issued for ", id, ".")
+	w()
+	w("Steps:")
+	w("1. Find where this codebase builds the agent and the tools it calls. Show me before changing anything.")
+	w("2. Install kiff-guard and attach its adapter for this framework in observe mode, following https://kiff.dev/docs/connect-an-agent. Observe runs every tool as before and only records.")
+	w("3. Register the guard with KIFF using that bound key. Omit the agent name in the guard configuration and connect request; KIFF gets it from the key and returns it on connect.")
+	w("4. Stop there. When I give ", id, " a card in KIFF, we switch the guard to enforce and bind the card's action to its tool.")
+	w()
+	w("Reference: https://kiff.dev/docs/connect-an-agent and https://kiff.dev/llms.txt")
+	return strings.TrimRight(b.String(), "\n")
+}
+
+func agentCardCount(n int) string {
+	if n == 1 {
+		return "1 card"
+	}
+	return fmt.Sprintf("%d cards", n)
+}
+
+templ Agents(v AgentsView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Agents", "agents", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header dash-page-head">
+				<div class="dash-header-text">
+					<h1>Agents</h1>
+					<p class="dash-note">Each agent, with its connection, Cards, keys and last activity.</p>
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn btn-primary" href="/agents/new">Add an agent</a>
+				</div>
+			</header>
+			if v.Flash != nil {
+				@flashBanner(v.Flash)
+			}
+			if v.LoadError != "" {
+				<p class="dash-note dash-note-warn">{ v.LoadError }</p>
+			} else {
+				if len(v.Partial) > 0 {
+					<p class="dash-note dash-note-warn">Some details could not be read ({ strings.Join(v.Partial, ", ") }); they may be missing below.</p>
+				}
+				if len(v.Agents) == 0 {
+					<div class="ag-empty">
+						<h2>No agents yet</h2>
+						<p>Name an agent and KIFF issues its key. Then connect it and give it a Card.</p>
+						<a class="btn btn-primary" href="/agents/new">Add an agent</a>
+					</div>
+				} else {
+					<div class="ag-list">
+						<div class="ag-list-head"><span>Agent</span><span>Connection</span><span>Cards</span><span>Keys</span><span>Last verified activity</span></div>
+						{{ now := time.Now() }}
+						for _, a := range v.Agents {
+							{{ label, tone := a.Status(now) }}
+							<a class="ag-row" href={ templ.SafeURL(agentHref(a.ID)) }>
+								<span class="ag-name"><span class="ag-cell-label">Agent</span><code>{ a.ID }</code></span>
+								<span class="ag-connection"><span class="ag-cell-label">Connection</span><span class={ "ag-status", "ag-status-" + tone }>{ label }</span></span>
+								<span class="ag-count"><span class="ag-cell-label">Cards</span>{ agentCardCount(a.ActiveCards(now)) } in force</span>
+								<span class="ag-count"><span class="ag-cell-label">Keys</span>{ fmt.Sprintf("%d", len(a.Keys)) } { plural(len(a.Keys), "key", "keys") }</span>
+								<span class="ag-last"><span class="ag-cell-label">Last verified activity</span>
+									if a.Last != nil {
+										{ decisionOutcomeLabel(a.Last.Outcome) } { a.Last.ActionName } · { timeAgo(a.Last.CreatedAt) }
+									} else if a.DecisionsFailed {
+										Recent decisions could not be read
+									} else if a.DecisionsUnknown {
+										Not in the latest 100 decisions
+									} else {
+										No recent decisions
+									}
+								</span>
+							</a>
+						}
+					</div>
+				}
+			}
+		</section>
+	}
+}
+
+templ AgentDetail(v AgentDetailView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Agent", "agents", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<a class="ac-back" href="/agents">← Agents</a>
+			if v.Flash != nil {
+				@flashBanner(v.Flash)
+			}
+			if v.LoadError != "" {
+				<p class="dash-note dash-note-warn">{ v.LoadError }</p>
+			} else {
+				{{ label, tone := v.Agent.Status(time.Now()) }}
+				<header class="ac-detail-head">
+					<div><p>Agent</p><h1><code>{ v.Agent.ID }</code></h1></div>
+					<span class={ "ac-status", "ac-status-" + tone }>{ label }</span>
+				</header>
+				<nav class="ac-detail-tabs" aria-label="Agent sections">
+					for _, t := range agentTabs {
+						<a class={ templ.KV("is-current", v.Tab == t.ID) } href={ templ.SafeURL(agentHref(v.Agent.ID) + t.Suffix) }
+							if v.Tab == t.ID {
+								aria-current="page"
+							}
+						>
+							{ t.Label }
+							if t.ID == "keys" && len(v.Agent.Keys) > 0 {
+								<span class="ag-tab-count">{ fmt.Sprint(len(v.Agent.Keys)) }</span>
+							}
+							if t.ID == "cards" && len(v.Agent.Cards) > 0 {
+								<span class="ag-tab-count">{ fmt.Sprint(len(v.Agent.Cards)) }</span>
+							}
+						</a>
+					}
+				</nav>
+				if len(v.Partial) > 0 {
+					<p class="dash-note dash-note-warn">Some details could not be read ({ strings.Join(v.Partial, ", ") }).</p>
+				}
+				switch v.Tab {
+					case "keys":
+						@agentKeys(v)
+					case "tools":
+						@agentTools(v)
+					case "cards":
+						@agentCards(v)
+					default:
+						@agentOverview(v)
+				}
+			}
+		</section>
+	}
+}
+
+// agentOverview is whether the agent works: its connection, the three
+// steps to get it working, and — once it does — what to do next.
+templ agentOverview(v AgentDetailView) {
+	{{ now := time.Now() }}
+	{{ c := v.Agent.Connection(v.Decisions, now) }}
+	{{ revoked := c.Connected && v.Agent.LastKeyRevoked() }}
+	{{ connected := v.Agent.ConnectedNow(now) }}
+	{{ live := c.Live(now) }}
+	{{ steps := agentSteps(ctx, v, v.Agent.HasActiveKeyRequest(), v.Agent.ActiveCards(now)) }}
+	<div class="ac-tab-page">
+		<section class="ac-connection" aria-label="Connection">
+			<h2>Connection</h2>
+			if connected || (live && v.Agent.HasActiveKeyRequest()) {
+				<p class="ac-connection-state ac-connection-on"><strong>Connected.</strong> Its key has made a verified request.</p>
+			} else if live && revoked {
+				<p class="ac-connection-state ac-connection-off"><strong>Running.</strong> Its guard is talking to KIFF. Its last verified request came from a key that has since been revoked; none yet from an active key.</p>
+			} else if live {
+				<p class="ac-connection-state ac-connection-off"><strong>Running.</strong> Its guard is talking to KIFF; no decision from its key yet.</p>
+			} else if revoked && v.Agent.ActiveUnknown {
+				<p class="ac-connection-state ac-connection-unknown"><strong>Not seen recently.</strong> The latest decisions read include a request from a key since revoked, but none from its active key; older ones were not read.</p>
+			} else if revoked && !v.Agent.HasActiveKeyRequest() {
+				<p class="ac-connection-state ac-connection-off"><strong>Not connected.</strong> Its last verified request came from a key that has since been revoked. Give it a new key to connect it again.</p>
+			} else if c.Connected {
+				<p class="ac-connection-state ac-connection-off"><strong>Quiet.</strong> Its key has made a verified request, but none in the last 24 hours.</p>
+			} else if v.Agent.DecisionsFailed {
+				<p class="ac-connection-state ac-connection-unknown"><strong>Activity unknown.</strong> Its recent decisions could not be read, so whether its key has reached KIFF is not known.</p>
+			} else if c.Truncated && len(c.Runtimes) == 0 {
+				<p class="ac-connection-state ac-connection-unknown"><strong>Not seen recently.</strong> Nothing from its own key among the latest decisions read; older ones were not read.</p>
+			} else if len(c.Runtimes) > 0 {
+				<p class="ac-connection-state ac-connection-off"><strong>Gone quiet.</strong> Its guard was last seen { timeAgo(c.Runtimes[0].LastSeenAt) }, and nothing has come from its key since.</p>
+			} else {
+				<p class="ac-connection-state ac-connection-off"><strong>Not connected yet.</strong> No guard runtime or request from its key.</p>
+			}
+			if c.Connected {
+				<dl class="ag-fact-list">
+					<div><dt>Last verified request</dt><dd>{ timeAgo(c.LastAt) }</dd></div>
+					<div>
+						<dt>Via key</dt>
+						<dd>
+							<code>{ c.LastKeyName() }</code>
+							if revoked {
+								{ " (revoked)" }
+							}
+						</dd>
+					</div>
+					<div><dt>Outcome</dt><dd>{ decisionOutcomeLabel(c.LastOutcome) }</dd></div>
+				</dl>
+			}
+			<div class="ag-runtime">
+				<h3>Guard runtime</h3>
+				if len(c.Runtimes) == 0 {
+					<p>No kiff-guard runtime is registered as <code>{ v.Agent.ID }</code>.</p>
+				} else {
+					<p>{ c.RuntimeSummary() }</p>
+					<a class="ag-link-action" href="/dashboard/runtimes">Runtime details →</a>
+				}
+			</div>
+			if c.ObserveOnly() {
+				<p class="ac-connection-line ac-connection-warn">In observe mode the guard records tool calls but doesn't ask KIFF, so this agent's Cards aren't checked. Switch to enforce once it holds a Card.</p>
+			}
+		</section>
+		<section class="ag-panel" aria-labelledby="ag-steps-h">
+			<h2 id="ag-steps-h">Getting it working</h2>
+			<ol class="ag-steps">
+				for i, s := range steps {
+					<li class={ templ.KV("is-done", s.Done) }>
+						<span class="ag-step-mark" aria-hidden="true">
+							if s.Done {
+								✓
+							} else {
+								{ fmt.Sprint(i + 1) }
+							}
+						</span>
+						<div>
+							<strong>{ s.Title }</strong>
+							if s.Done {
+								<span class="ag-step-done">Done</span>
+							}
+							<p>{ s.Detail }</p>
+						</div>
+						<a class="btn btn-secondary btn-sm" href={ templ.SafeURL(s.Href) }>{ s.Action }</a>
+					</li>
+				}
+			</ol>
+		</section>
+		if c.Connected {
+			<section class="ag-panel" aria-labelledby="ag-next-h">
+				<h2 id="ag-next-h">What you can do now</h2>
+				<nav class="ac-quick" aria-label="What you can do now">
+					@quickAction("/cards/new?subject="+url.QueryEscape(v.Agent.ID), "Give a Card", iconPlus)
+					@quickAction(agentHref(v.Agent.ID)+"/tools", "Add a tool", iconTool)
+					@quickAction(agentHref(v.Agent.ID)+"/keys", "Keys", iconKey)
+					@quickAction("/dashboard/activity", "Activity", iconPulse)
+				</nav>
+			</section>
+		} else if gatewayFirst(ctx, v) {
+			// An agent that holds a tool Card, or any agent of a personal
+			// account, connects through the gateway: no code changes. The
+			// kiff-guard path stays one click away (onboarding test,
+			// 2026-10-08: the tool Card sent people here and they met
+			// code instructions first).
+			<section class="ag-panel">
+				<h2>Connect it to the KIFF gateway</h2>
+				<p>Point Claude Code or Codex at KIFF and <code>{ v.Agent.ID }</code> reaches your connected tools through it. KIFF creates the key and a config to paste. The agent's code doesn't change.</p>
+				<a class="btn btn-primary btn-sm" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/tools#gateway") }>Connect to the KIFF gateway</a>
+				<details class="ag-alt">
+					<summary>Or connect it in code, with kiff-guard</summary>
+					@agentGuardPrompt(v)
+				</details>
+			</section>
+		} else {
+			<section class="ag-panel">
+				<h2>Connect it with kiff-guard</h2>
+				@agentGuardPrompt(v)
+			</section>
+		}
+	</div>
+}
+
+// agentGuardPrompt is the instruction that connects the agent in code,
+// with kiff-guard.
+templ agentGuardPrompt(v AgentDetailView) {
+	<p>Paste this into a coding agent in the repository where the agent runs. It connects the agent in observe mode under this name. For MCP tools, use <a href={ templ.SafeURL(agentHref(v.Agent.ID) + "/tools") }>Tools</a>.</p>
+	<div class="ac-prompt-head">
+		<button type="button" class="btn btn-primary btn-sm" data-copy-target="agent-prompt">Copy instruction</button>
+	</div>
+	<pre class="ac-prompt" id="agent-prompt"><code>{ AgentConnectPrompt(v.Agent.ID) }</code></pre>
+}
+
+// agentKeys is the agent's keys as rows (C, the approved mockup): each
+// opens its own sheet, with what tells it apart and a Revoke that asks
+// first. A new key starts from one sheet that asks where it is used.
+templ agentKeys(v AgentDetailView) {
+	<div class="ac-tab-page ag-rows">
+		if len(v.Agent.Keys) == 0 {
+			<div class="ag-help">
+				<div class="ag-flow" aria-hidden="true"><span>agent</span><i>key</i><span>KIFF</span></div>
+				<div>
+					<h3>No key yet</h3>
+					<p>KIFF tells the agent's calls apart by its key. Each key is shown once, when it is created.</p>
+				</div>
+			</div>
+		} else {
+			<div class="ac-slist">
+				for _, k := range keysByUse(v.Agent.Keys) {
+					<a class="ac-srow" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/keys/" + url.PathEscape(k.ID)) }>
+						<span class="ac-si">@rowIcon(iconKey)</span>
+						<span class="ac-sl ag-card-text">
+							<span class="wk-mono">{ k.Label }</span>
+							<small>{ keyKindLabel(k) + " · last used " + keyLastUsed(k) }</small>
+						</span>
+						@chevron()
+					</a>
+				}
+			</div>
+		}
+		<a class="ac-cta ag-new-key" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/keys/new") }>New key</a>
+		<p class="dash-note">Revoke a key to cut the agent off. Its next call with that key is refused; its Cards and records stay.</p>
+	</div>
+}
+
+// agentTools is how the agent reaches tools through KIFF, as rows: the
+// two ways to connect it, the tools it can reach and whether a Card
+// covers each, and how it works. Each row opens one sheet.
+templ agentTools(v AgentDetailView) {
+	<div class="ac-tab-page ag-rows">
+		if v.GatewayURL == "" {
+			<p class="dash-note">This deployment has no KIFF gateway, so agents cannot reach tools through KIFF here.</p>
+		} else {
+			if gatewayKeyFlash(v.Flash) != "" {
+				@agentGateway(v)
+			}
+			<section class="ac-sgroup" aria-labelledby="ag-connect-h">
+				<h2 id="ag-connect-h">How does it connect?</h2>
+				<div class="ac-slist">
+					<a class="ac-srow" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/tools/gateway") }>
+						<span class="ac-si">@rowIcon(iconTerminal)</span>
+						<span class="ac-sl ag-card-text"><span>Claude Code or Codex</span><small>A config to paste, with its own key. No code changes.</small></span>
+						if n := gatewayKeyCount(v.Agent); n > 0 {
+							<span class="ac-sv">{ keyCountLabel(n) }</span>
+						}
+						@chevron()
+					</a>
+					<a class="ac-srow" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/tools/link") }>
+						<span class="ac-si">@rowIcon(iconLink)</span>
+						<span class="ac-sl ag-card-text"><span>An app with sign-in</span><small>A link that names the agent. Someone here signs in once to allow it.</small></span>
+						if n := activeLinkCount(v.ConnectLinks); n > 0 {
+							<span class="ac-sv">{ linkCountLabel(n) }</span>
+						}
+						@chevron()
+					</a>
+				</div>
+			</section>
+			<section class="ac-sgroup" aria-labelledby="ag-tools-h">
+				<h2 id="ag-tools-h">Tools it can reach</h2>
+				if v.ToolsError != "" {
+					<p class="dash-note dash-note-warn">{ v.ToolsError }</p>
+				} else if len(v.Tools) == 0 {
+					<div class="ag-help">
+						<div class="ag-flow" aria-hidden="true"><span>agent</span><i>→</i><span>mcp.kiff.dev</span><i>→</i><span>tool</span></div>
+						<div>
+							<h3>No tool connected yet</h3>
+							<p>A connected tool can be called through KIFF by any agent with a gateway key, as its Card allows.</p>
+							<a class="btn btn-primary btn-sm" href="/tools/new">Connect a tool</a>
+						</div>
+					</div>
+				} else {
+					<div class="ac-slist">
+						for _, t := range v.Tools {
+							if m, ok := toolCoverage(v.Agent, t.Name); ok {
+								<a class="ac-srow" href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+									<span class="ac-si">@rowIcon(iconTool)</span>
+									<span class="ac-sl ag-card-text"><span class="wk-mono">{ t.Name }</span><small>{ "Covered by " + cardTitle(m) }</small></span>
+									<span class={ "k-route-tag", templ.KV("k-route-ask", m.ComesHome()) } title={ cardRouteConsequence(m) }>{ cardRouteTag(m) }<span class="sr-only">{ ": " + cardRouteConsequence(m) }</span></span>
+									@chevron()
+								</a>
+							} else {
+								<a class="ac-srow" href={ templ.SafeURL("/tools/" + url.PathEscape(t.Name) + "/card?agent=" + url.QueryEscape(v.Agent.ID)) }>
+									<span class="ac-si">@rowIcon(iconTool)</span>
+									<span class="ac-sl ag-card-text"><span class="wk-mono">{ t.Name }</span><small>No Card covers it, so its calls are refused. Give one.</small></span>
+									<span class="ac-sv">No Card</span>
+									@chevron()
+								</a>
+							}
+						}
+					</div>
+				}
+			</section>
+			<div class="ac-slist">
+				<a class="ac-srow" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/tools/how") }>
+					<span class="ac-si">@rowIcon(iconShield)</span>
+					<span class="ac-sl">How this works, and how to stop it</span>
+					@chevron()
+				</a>
+			</div>
+		}
+	</div>
+}
+
+// agentGateway connects the agent to remote MCP tools through the KIFF
+// gateway: one key for the agent, holding only gateway_agent, shown
+// once inside the agent's MCP configuration.
+templ agentGateway(v AgentDetailView) {
+	if key := gatewayKeyFlash(v.Flash); key != "" {
+		<section class="ag-panel" id="gateway" aria-label="Gateway key created">
+			<div class="dash-keyreveal">
+				<div class="dash-keyreveal-head">
+					<strong>Gateway key created</strong>
+					<span class="dash-keyreveal-note">Shown once. Copy it now.</span>
+				</div>
+				<div class="gw-key">
+					<code class="dash-keyreveal-key gw-key-value" id="gateway-key">{ key }</code>
+					<button type="button" class="btn btn-primary btn-sm" data-copy-target="gateway-key">Copy key</button>
+				</div>
+				<div class="gw-formats">
+					<p class="gw-use">Use it with…</p>
+					for i, f := range gatewayFormats {
+						<input type="radio" name="gw-format" value={ f.ID } id={ "gw-f-" + f.ID } class={ "gw-radio", "gw-radio-" + f.ID } checked?={ i == 0 }/>
+					}
+					<div class="gw-tabs" role="group" aria-label="Format">
+						for _, f := range gatewayFormats {
+							<label for={ "gw-f-" + f.ID } class={ "gw-tab", "gw-tab-" + f.ID }>{ f.Label }</label>
+						}
+					</div>
+					<div class="gw-panel gw-panel-claude">
+						<p>Add this MCP server to the project's <code>.mcp.json</code> (keep that file out of the repository) or your user settings.</p>
+						<div class="gw-block">
+							<button type="button" class="btn btn-secondary btn-sm gw-copy" data-copy-target="gateway-claude">Copy .mcp.json</button>
+							<pre class="ac-prompt" id="gateway-claude"><code>{ GatewayClaudeConfig(v.GatewayURL, key) }</code></pre>
+						</div>
+					</div>
+					<div class="gw-panel gw-panel-codex">
+						<p>Add the server to <code>config.toml</code>. Codex asks before each MCP tool call unless <code>default_tools_approval_mode = "approve"</code> is set for the server.</p>
+						<div class="gw-block">
+							<button type="button" class="btn btn-secondary btn-sm gw-copy" data-copy-target="gateway-codex">Copy config.toml</button>
+							<pre class="ac-prompt" id="gateway-codex"><code>{ GatewayCodexConfig(v.GatewayURL) }</code></pre>
+						</div>
+						<p>Then put the key in the agent's environment, not in the config file:</p>
+						<div class="gw-block">
+							<button type="button" class="btn btn-secondary btn-sm gw-copy" data-copy-target="gateway-codex-env">Copy env line</button>
+							<pre class="ac-prompt" id="gateway-codex-env"><code>{ GatewayEnvLine(key) }</code></pre>
+						</div>
+					</div>
+					<div class="gw-panel gw-panel-env">
+						<p>For any client that reads the key from the environment.</p>
+						<div class="gw-block">
+							<button type="button" class="btn btn-secondary btn-sm gw-copy" data-copy-target="gateway-env">Copy export line</button>
+							<pre class="ac-prompt" id="gateway-env"><code>{ GatewayEnvLine(key) }</code></pre>
+						</div>
+					</div>
+					<div class="gw-panel gw-panel-curl">
+						<p>Check the key works: the gateway answers with its name.</p>
+						<div class="gw-block">
+							<button type="button" class="btn btn-secondary btn-sm gw-copy" data-copy-target="gateway-curl">Copy curl</button>
+							<pre class="ac-prompt" id="gateway-curl"><code>{ GatewayCurl(v.GatewayURL, key) }</code></pre>
+						</div>
+					</div>
+				</div>
+				@gatewayFormatMemory()
+			</div>
+		</section>
+	}
+}
+
+// gatewayFormatMemory remembers the last format picked on this browser.
+// The tabs switch without it; it only restores the choice.
+templ gatewayFormatMemory() {
+	<script>
+	(function () {
+		var k = "kiff.gatewayFormat";
+		try {
+			var saved = localStorage.getItem(k);
+			var el = saved && document.getElementById("gw-f-" + saved);
+			if (el) el.checked = true;
+		} catch (e) {}
+		document.addEventListener("change", function (e) {
+			if (e.target && e.target.name === "gw-format") {
+				try { localStorage.setItem(k, e.target.value); } catch (err) {}
+			}
+		});
+	})();
+	</script>
+}
+
+templ agentCards(v AgentDetailView) {
+	{{ now := time.Now() }}
+	<div class="ac-tab-page">
+		<header class="ag-section-head"><div><h2>Cards</h2><p>What this agent may do, and how much.</p></div><a class="ac-cta" href={ templ.SafeURL("/cards/new?subject=" + url.QueryEscape(v.Agent.ID)) }>Give this agent a Card</a></header>
+		if len(v.Agent.Cards) == 0 {
+			<p class="dash-note">No Cards yet. Until it holds one, actions that need a Card are refused.</p>
+		} else {
+			<div class="ac-slist ag-card-rows">
+				for _, m := range v.Agent.Cards {
+					<a class="ac-srow" href={ templ.SafeURL("/cards/" + url.PathEscape(m.ID)) }>
+						<span class={ "ag-card-glyph", templ.KV("is-off", !cardInForce(m, now)) } aria-hidden="true"></span>
+						<span class="ac-sl ag-card-text">
+							<span>{ cardTitle(m) }</span>
+							<small>{ cardActions(m) }
+								if agg := cardAggregates(m); agg != "" {
+									{ " · " + agg }
+								}
+							</small>
+						</span>
+						if cardInForce(m, now) {
+							<span class={ "k-route-tag", templ.KV("k-route-ask", m.ComesHome()) } title={ cardRouteConsequence(m) }>{ cardRouteTag(m) }<span class="sr-only">{ ": " + cardRouteConsequence(m) }</span></span>
+						} else {
+							<span class="ac-badge">Not in force</span>
+						}
+						@chevron()
+					</a>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ AgentNew(v AgentNewView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Add an agent", "agents", chromeFrom(v.DisplayName, v.Email, v.Me), "css/cards.css") {
+		<section class="dash ac-detail-page">
+			<a class="ac-back" href="/agents">← Agents</a>
+			<header class="dash-header dash-page-head">
+				<div class="dash-header-text">
+					<h1>Add an agent</h1>
+					<p class="dash-note">The name this agent goes by everywhere in KIFF. Its key is issued now and shown once.</p>
+				</div>
+			</header>
+			if v.Error != "" {
+				<p class="dash-note dash-note-warn">{ v.Error }</p>
+			}
+			<form class="ag-new" method="post" action="/agents">
+				<label for="agent-name">Agent name</label>
+				<input id="agent-name" class="dash-input" name="name" type="text" required maxlength="200" placeholder="e.g. refund-agent" value={ v.Name }/>
+				<button class="btn btn-primary" type="submit">Add agent</button>
+			</form>
+		</section>
+	}
+}

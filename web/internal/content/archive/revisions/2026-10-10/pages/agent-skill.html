@@ -1,0 +1,239 @@
+<h1 id="the-kiff-skill-for-coding-agents">The KIFF skill for coding agents</h1>
+
+<p><strong>Beta.</strong> The skills, plugins and their install steps may change between versions.</p>
+
+<p>The KIFF skill is a <code>SKILL.md</code> file that teaches Claude Code, Codex and
+similar agents how to work with KIFF. With it installed, an agent can:</p>
+
+<ul>
+<li><strong>connect</strong> an agent or a remote MCP tool to KIFF, step by step, through
+the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, <a href="/docs/archive/2026-10-10/connect-an-agent">kiff-guard</a>
+or the decision API;</li>
+<li><strong>propose a Card</strong>: draft the terms an agent needs (which tool, the most
+per call, totals per day, hold or refuse, how long a hold waits) and
+explain each line, for the owner to issue;</li>
+<li><strong>handle a held call</strong> correctly: tell the person it is waiting, retry the
+identical call with the same <code>kiff_operation_id</code>, and never make the same
+change another way;</li>
+<li><strong>find the right place</strong>: the KIFF repositories, SDKs, endpoints and doc
+pages.</li>
+</ul>
+
+<p>It is a plain markdown file, served at
+<a href="https://kiff.dev/skills/kiff.md" target="_blank" rel="noreferrer noopener">kiff.dev/skills/kiff.md</a>. Read it before
+you install it.</p>
+
+<h2 id="what-enforces-the-card">What enforces the Card</h2>
+
+<p><strong>The skill is not the security boundary.</strong> It is instructions to the
+agent. The <a href="/docs/archive/2026-10-10/mcp-gateway">KIFF MCP gateway</a> (<code>mcp.kiff.dev</code>) enforces
+each agent&rsquo;s Card on KIFF&rsquo;s servers, for every call that goes through it,
+whatever the instructions say.</p>
+
+<p>Installing the skill alone does not enforce anything. A Card applies only
+to calls that go through KIFF; a call the agent makes some other way is
+outside it.</p>
+
+<h2 id="install-it">Install it</h2>
+
+<p>Claude Code, as a plugin. It adds this skill, the
+<a href="https://kiff.dev/skills/kiff-domains.md" target="_blank" rel="noreferrer noopener">domain skill</a> and the KIFF MCP
+gateway as a server named <code>kiff</code>:</p>
+
+<pre><code class="language-text">/plugin marketplace add kiff/kiff-plugins
+/plugin install kiff-cards@kiff
+</code></pre>
+
+<p>Claude Code asks for this agent&rsquo;s <strong>gateway key</strong> when you enable the
+plugin and keeps it in its secure storage (from the agent&rsquo;s <strong>Tools</strong> tab,
+<strong>Connect to the KIFF gateway</strong>). Leave it empty and the skills still work;
+the server just does not connect. The skill itself never reads or handles a
+key. Source:
+<a href="https://github.com/kiff/kiff-plugins" target="_blank" rel="noreferrer noopener">github.com/kiff/kiff-plugins</a>.</p>
+
+<h3 id="optional-card-status-notices-and-recovery-in-claude-code">Optional: Card status, notices and recovery in Claude Code</h3>
+
+<p>The marketplace contains two plugins. <strong><code>kiff-cards</code></strong> adds the gateway
+connection and skills described above. <strong><code>kiff</code></strong> adds the interface:
+Card status, notices for held calls, and the <code>/kiff</code> pane. It needs a
+gateway connection and a Claude Code version that runs plugin hooks
+modules. Install it after connecting <code>kiff-cards</code>:</p>
+
+<pre><code class="language-text">/plugin install kiff@kiff
+</code></pre>
+
+<p>If you installed the former <code>kiff-cards-ui</code> plugin, uninstall it; <code>kiff</code>
+replaces it. The interface can also use a gateway connected through a
+KIFF connect link or the claude.ai KIFF connector.</p>
+
+<p>For an existing installation, update the marketplace and plugin from
+your terminal, then restart Claude Code to apply the update:</p>
+
+<pre><code class="language-bash">claude plugin marketplace update kiff
+claude plugin update kiff@kiff
+</code></pre>
+
+<ul>
+<li><strong>Status line:</strong> shows what is left on the agent&rsquo;s Card. While a call
+is held, it shows that the call is waiting for approval instead.
+Plugin 0.2.2 also distinguishes <strong>Approved, waiting for room</strong> from an
+unavailable read. Waiting for room does not start a collection turn.</li>
+<li><strong>Held-call notice:</strong> explains that nothing was sent and links to the
+call in KIFF Cloud, where the owner or an admin answers.</li>
+<li><strong>Owner-answer notice:</strong> while this session has an unanswered held
+call, the plugin reads <code>kiff_pending</code> every 15 seconds. When it finds
+an approval, refusal or ended hold, it shows one notice and submits
+one turn telling the agent. Claude Code runs the turn when idle. The
+agent decides whether to collect an approved call by calling the same
+tool again with the original arguments and operation id.</li>
+<li><strong><code>/kiff</code>:</strong> opens this session&rsquo;s KIFF calls and refreshes the Card and
+pending answers. It also provides a way to resume reads after a
+permission refusal.</li>
+</ul>
+
+<p>The plugin reads <code>kiff_card</code> for the Card and <code>kiff_pending</code> for owner
+answers. Both are read-only: these reads send nothing to a connected
+business tool, use no approval and draw nothing from the Card. The
+plugin never approves a call or invokes the held business tool itself.</p>
+
+<h3 id="allow-the-two-read-only-tools">Allow the two read-only tools</h3>
+
+<p>Claude Code&rsquo;s permissions apply to these reads. Type <code>/kiff</code>; if a read
+was refused, Claude Code asks whether to allow the tool. Choose to allow
+it for future reads. In auto mode, Claude Code decides without asking;
+you can instead add the rules below through <strong><code>/permissions</code> → Allow</strong>.</p>
+
+<p>Use the names matching your gateway connection. Each rule is just the
+tool name, with no <code>allow</code> prefix. Save under <strong>User settings</strong> to apply
+across folders, or under project settings for that project only.</p>
+
+<table>
+<thead>
+<tr>
+<th>Gateway connection</th>
+<th>Card read</th>
+<th>Pending-call read</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>kiff-cards</code> plugin</td>
+<td><code>mcp__plugin_kiff-cards_kiff__kiff_card</code></td>
+<td><code>mcp__plugin_kiff-cards_kiff__kiff_pending</code></td>
+</tr>
+
+<tr>
+<td>Connect link added as <code>kiff</code></td>
+<td><code>mcp__kiff__kiff_card</code></td>
+<td><code>mcp__kiff__kiff_pending</code></td>
+</tr>
+
+<tr>
+<td>claude.ai KIFF connector</td>
+<td><code>mcp__claude_ai_KIFF__kiff_card</code></td>
+<td><code>mcp__claude_ai_KIFF__kiff_pending</code></td>
+</tr>
+</tbody>
+</table>
+<p>After a permission refusal, the plugin explains it once and stops
+background reads of that tool. Once you grant permission, run <code>/kiff</code>
+to read again and resume background checks. The plugin cannot grant
+itself permission.</p>
+
+<h3 id="recovery-after-a-delayed-answer-or-outage">Recovery after a delayed answer or outage</h3>
+
+<p>Pending reads are paginated. Each check reads a bounded number of
+pages and keeps its cursor for the next check, including checks started
+with <code>/kiff</code>. A hold behind more than 500 newer pending calls can still
+be found; recovery does not keep restarting at page one.</p>
+
+<p>Two minutes after the hold&rsquo;s expiry, the plugin finishes one last read
+before stopping automatic checks for that hold. A partial scan, failed
+read or <code>unavailable</code> answer does not finish that check. Recovery
+continues until the answer can be read, or a complete scan establishes
+that the hold is absent. An authoritative <code>waiting</code> answer counts as a
+completed read; <code>unavailable</code> does not. If the answer stays unavailable,
+checks can continue every 15 seconds for the rest of the session.</p>
+
+<p><code>approved_no_room</code> also completes the read without treating the hold as
+collectible. Background checks remain bounded as above; after they
+stop, <code>/kiff</code> reads again. Once KIFF reports a collectible approval, the
+plugin sends its usual single notice and turn. It never grants extra
+room itself.</p>
+
+<p>An approval given before the hold expired still counts when read late.
+The plugin announces an answer once, however late it reads it. This
+does not extend the time the owner has to approve: a new approval after
+expiry is refused. After automatic checks have ended, <code>/kiff</code> checks
+again. See <a href="/docs/archive/2026-10-10/approvals">Held calls and approvals</a>.</p>
+
+<h3 id="install-only-the-skill-in-another-agent">Install only the skill in another agent</h3>
+
+<p>Claude Code, the skill only:</p>
+
+<pre><code class="language-bash">mkdir -p ~/.claude/skills/kiff &amp;&amp; curl -fsSL https://kiff.dev/skills/kiff.md \
+  -o ~/.claude/skills/kiff/SKILL.md
+</code></pre>
+
+<p>Codex:</p>
+
+<pre><code class="language-bash">mkdir -p &quot;${CODEX_HOME:-$HOME/.codex}/skills/kiff&quot; &amp;&amp; curl -fsSL https://kiff.dev/skills/kiff.md \
+  -o &quot;${CODEX_HOME:-$HOME/.codex}/skills/kiff/SKILL.md&quot;
+</code></pre>
+
+<p>Any other agent that reads an instructions file (Cursor, Gemini CLI,
+Aider, Amp, OpenCode, Windsurf): save the skill as its own file, then
+point your instructions file at it once.</p>
+
+<pre><code class="language-bash">curl -fsSL https://kiff.dev/skills/kiff.md -o KIFF.md
+echo &quot;Read KIFF.md before working with KIFF.&quot; &gt;&gt; AGENTS.md
+</code></pre>
+
+<p>Use your agent&rsquo;s own instructions file in place of <code>AGENTS.md</code> if it has
+one (for example <code>GEMINI.md</code>). Start a new session so the agent picks it
+up. To update, run the <code>curl</code> line again: it overwrites <code>KIFF.md</code>, and
+the line in <code>AGENTS.md</code> stays as it is.</p>
+
+<h2 id="what-to-ask">What to ask</h2>
+
+<pre><code class="language-text">Connect my refund tool to KIFF and give this agent a Card.
+What should this agent's Card be? It issues refunds of about 30 euros, about ten a day.
+KIFF held my last call. What do I do?
+</code></pre>
+
+<h2 id="what-it-will-not-do">What it will not do</h2>
+
+<p>The skill tells the agent to stay on its side of the Card. Where KIFF also
+enforces the rule on its servers, the line says so:</p>
+
+<ul>
+<li>It never issues or changes a Card itself. It drafts the terms; the owner
+issues them in KIFF Cloud. An agent&rsquo;s key is refused if it tries.</li>
+<li>It never answers a held call. Only a person on the account who may
+approve, signed in at <code>app.kiff.dev</code>, can; an agent&rsquo;s key is refused. A
+&ldquo;yes&rdquo; in the chat is not an approval.</li>
+<li>It never asks for an owner or admin credential, and keeps keys out of
+files you commit.</li>
+<li>When KIFF holds or refuses a call, it does not make the same change
+another way (a direct API call, a shell, a browser). It reports what
+happened and stops.</li>
+</ul>
+
+<p>It also says plainly that KIFF governs only the calls that go through it,
+and suggests removing any direct route the agent still has to the same
+tool.</p>
+
+<h2 id="related">Related</h2>
+
+<ul>
+<li>The owner&rsquo;s answer and the tool&rsquo;s outcome →
+<a href="/docs/archive/2026-10-10/approvals">Held calls and approvals</a>.</li>
+<li>Pending calls and collection arguments →
+<a href="/docs/archive/2026-10-10/mcp-gateway">Use the KIFF MCP gateway</a>.</li>
+<li>Authoring a <code>kiff.yaml</code> domain instead? Use the
+<a href="https://kiff.dev/skills/kiff-domains.md" target="_blank" rel="noreferrer noopener">domain skill</a>.</li>
+<li>The whole site as text for an agent:
+<a href="https://kiff.dev/llms.txt" target="_blank" rel="noreferrer noopener">llms.txt</a> and
+<a href="https://kiff.dev/llms-full.txt" target="_blank" rel="noreferrer noopener">llms-full.txt</a>.</li>
+</ul>

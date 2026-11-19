@@ -1,0 +1,158 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CookiesES is the Cookie Policy (/cookies) in Spanish, at /es/cookies.
+// It is a translation of Cookies: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ CookiesES() {
+	@components.LayoutSite("KIFF — política de cookies", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@cookiesHeadES()
+			@cookiesSummaryES()
+			@cookiesOursES()
+			@cookiesSignInES()
+			@cookiesStorageES()
+			@cookiesControlES()
+		</article>
+	}
+}
+
+templ cookiesHeadES() {
+	<header class="legal-head">
+		<p class="legal-badge">Política de cookies · v0.1</p>
+		<h1>Política de cookies</h1>
+		<p class="legal-meta">
+			<strong>Última actualización:</strong> 23 de octubre de 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Qué cookies instalan <code>kiff.dev</code> y
+			<code>app.kiff.dev</code>, para qué sirve cada una y cuánto
+			dura. La <a href="/es/privacy">política de privacidad</a>
+			cubre el resto de los datos personales que tratamos.
+			Preguntas:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ cookiesSummaryES() {
+	<section id="summary">
+		<h2>1. En resumen</h2>
+		<p>
+			No instalamos cookies de analítica, ni cookies de
+			publicidad, ni rastreadores de terceros. Las cookies de
+			abajo existen solo para iniciar tu sesión y para que el
+			panel funcione. Son estrictamente necesarias, así que no
+			requieren consentimiento, y no hay banner de cookies. Si
+			alguna vez añadimos una cookie que no sea estrictamente
+			necesaria, te pediremos tu consentimiento antes de
+			instalarla.
+		</p>
+		<p>
+			Leer las páginas públicas de <code>kiff.dev</code> sin
+			iniciar sesión no instala ninguna cookie.
+		</p>
+	</section>
+}
+
+templ cookiesOursES() {
+	<section id="ours">
+		<h2>2. Nuestras cookies</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Cookie</th>
+						<th>Para qué sirve</th>
+						<th>Cuánto dura</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="kiff-session">
+						<td><code>kiff_session</code></td>
+						<td>Mantiene tu sesión iniciada. Lleva quién eres (tu identificador de inicio de sesión, tu correo y tu nombre) y la credencial que el panel usa en tu nombre. Está firmada, así que no se puede modificar, y los scripts no pueden leerla</td>
+						<td>24 horas, o hasta que cierres sesión</td>
+					</tr>
+					<tr id="kiff-flash">
+						<td><code>kiff_flash</code></td>
+						<td>Lleva un mensaje de un solo uso a la página siguiente, como «tu clave se ha creado». Está firmada. Nunca contiene una clave nueva</td>
+						<td>Se borra cuando la página siguiente la lee, y dura como máximo 5 minutos</td>
+					</tr>
+					<tr id="kiff-cb-attempts">
+						<td><code>kiff_cb_attempts</code></td>
+						<td>Cuenta cuántas veces se ha recargado la página de inicio de sesión, para detener un inicio de sesión que entra en bucle. Se envía solo a esa página</td>
+						<td>5 minutos, y se borra cuando un inicio de sesión empieza o se completa</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Las tres son propias, se envían solo por HTTPS y los
+			scripts de la página no pueden leerlas.
+			<code>kiff_session</code> y <code>kiff_flash</code> se
+			instalan para <code>.kiff.dev</code>, así que tanto <code>kiff.dev</code> como
+			<code>app.kiff.dev</code> las reciben.
+		</p>
+	</section>
+}
+
+templ cookiesSignInES() {
+	<section id="sign-in">
+		<h2>3. Las cookies de nuestro proveedor de inicio de sesión</h2>
+		<p>
+			Usamos Clerk para el inicio de sesión (consulta los
+			<a href="/es/subprocessors#clerk">subencargados del tratamiento</a>). Cuando
+			inicias sesión, Clerk instala sus propias cookies de inicio
+			de sesión, en nuestro sitio y en el dominio que Clerk tiene
+			para nosotros, <code>clerk.kiff.dev</code>. Son
+			estrictamente necesarias para iniciar sesión y no se usan
+			para analítica ni publicidad. La
+			<a href="https://clerk.com/docs/guides/how-clerk-works/cookies" target="_blank" rel="noopener">documentación de Clerk sobre cookies</a>
+			describe cada una y cuánto dura.
+		</p>
+	</section>
+}
+
+templ cookiesStorageES() {
+	<section id="storage">
+		<h2>4. Lo que se queda en tu navegador</h2>
+		<p>
+			Algunas páginas recuerdan una elección en el almacenamiento
+			de tu navegador en lugar de en una cookie. Nunca se nos
+			envía.
+		</p>
+		<ul>
+			<li><code>kiff-theme</code>: el tema claro u oscuro que elegiste en el panel. Se conserva hasta que lo borres.</li>
+			<li><code>kiff.gatewayFormat</code>: el último formato que elegiste al conectar un agente. Se conserva hasta que lo borres.</li>
+			<li><code>kiff-demo-tour-step</code>, <code>kiff-demo-tour-active</code> y <code>kiff-demo-theme-touched</code>: por dónde vas en la demo interactiva. Desaparece cuando cierras la pestaña.</li>
+		</ul>
+	</section>
+}
+
+templ cookiesControlES() {
+	<section id="control">
+		<h2>5. Tus opciones</h2>
+		<p>
+			Puedes bloquear o borrar las cookies en los ajustes de tu
+			navegador. Si bloqueas las nuestras o las de Clerk, puedes
+			seguir leyendo el sitio público, pero no puedes iniciar
+			sesión. Al cerrar sesión se borra
+			<code>kiff_session</code>.
+		</p>
+		<p>
+			Si cambiamos las cookies que instalamos, actualizamos esta
+			página y su fecha.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versión del documento:</strong> v0.1.<br/>
+			<strong>Última actualización:</strong> 23 de octubre de 2026.
+		</p>
+	</section>
+}

@@ -1,0 +1,93 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// ConnectionRow is one way an agent reaches the KIFF gateway: an
+// OAuth connection (sign-in or code) or a gateway key.
+type ConnectionRow struct {
+	Agent     string
+	Client    string
+	How       string // "Sign-in", "Code", "Key"
+	GrantedBy string
+	Created   string
+	LastUsed  string
+	Status    string // "Live", "Idle", "Ended"
+	// RevokeURL is where Revoke posts; "" when there is nothing to revoke.
+	RevokeURL string
+	// KeyRevoke: RevokeURL is the key revoke route, which takes a next.
+	KeyRevoke bool
+}
+
+// ConnectionsView drives /connections.
+type ConnectionsView struct {
+	Email, Subject, DisplayName string
+	Flash                       *DashboardFlash
+	Rows                        []ConnectionRow
+	LoadError                   string
+}
+
+templ Connections(v ConnectionsView) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — Connections", "connections", chromeFrom(v.DisplayName, v.Email, nil), "css/cards.css") {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Gateway</p>
+					<h1>Connections</h1>
+					<p class="dash-note">Every way an agent reaches the KIFF gateway: sign-in connections, code connections and gateway keys. Revoking one closes that way in; the agent, its Cards and its history stay.</p>
+				</div>
+				<a class="btn btn-primary" href="/agents">Connect an agent</a>
+			</header>
+			@flashBanner(v.Flash)
+			if v.LoadError != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.LoadError }</div>
+			}
+			if len(v.Rows) == 0 && v.LoadError == "" {
+				<div class="ny-empty">
+					<h2>No agent is connected yet</h2>
+					<p>Open an agent and use its Tools tab: create a connect link for an app that signs in, or a gateway key.</p>
+				</div>
+			} else {
+				<div class="dash-table-wrap">
+					<table class="dash-table">
+						<thead>
+							<tr>
+								<th scope="col">Agent</th>
+								<th scope="col">Client</th>
+								<th scope="col">How it connects</th>
+								<th scope="col">Granted by</th>
+								<th scope="col">Created</th>
+								<th scope="col">Last used</th>
+								<th scope="col">Status</th>
+								<th scope="col"><span class="sr-only">Actions</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, row := range v.Rows {
+								<tr>
+									<td><a href={ templ.SafeURL(agentHref(row.Agent) + "/tools") }><code>{ row.Agent }</code></a></td>
+									<td>{ row.Client }</td>
+									<td>{ row.How }</td>
+									<td><code>{ row.GrantedBy }</code></td>
+									<td>{ row.Created }</td>
+									<td>{ row.LastUsed }</td>
+									<td>{ row.Status }</td>
+									<td>
+										if row.RevokeURL != "" {
+											<form method="post" action={ templ.SafeURL(row.RevokeURL) }>
+												if row.KeyRevoke {
+													<input type="hidden" name="next" value="/connections"/>
+												}
+												<button class="btn btn-secondary btn-sm" type="submit">Revoke</button>
+											</form>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+				<p class="dash-note">"Client" is the name an app registered with when it signed in, or the key's label. Only admins and editors can revoke.</p>
+			}
+		</section>
+	}
+}

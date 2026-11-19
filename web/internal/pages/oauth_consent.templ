@@ -1,0 +1,441 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+	"net/url"
+	"strconv"
+)
+
+// OAuthConsentView drives /oauth/consent: an app asks to act as an agent
+// through the KIFF gateway.
+type OAuthConsentView struct {
+	RequestID    string
+	ClientName   string
+	RedirectHost string
+	// RedirectLocal: the app listens on this computer (loopback), as
+	// Claude Code and other CLI clients do.
+	RedirectLocal bool
+	Verified      bool
+	CanConsent    bool
+	// LinkAgent is the agent named by the connect link the request came
+	// through (Amendment 1): the page only asks whether to allow it.
+	LinkAgent string
+	// WrongAccount: the link belongs to another account.
+	WrongAccount bool
+	// On the generic URL: the account's agents, to search; the agent the
+	// app connected as before; the default name for a new agent.
+	// Agents are the agents on this page of the choice, after AgentQuery;
+	// AgentCount is how many agents the account has, AgentMatches how many
+	// match the query, and AgentPage/AgentPages the page shown.
+	Agents       []string
+	AgentQuery   string
+	AgentCount   int
+	AgentMatches int
+	AgentPage    int
+	AgentPages   int
+	Previous     string
+	NewName      string
+	// AgentCards are the Cards in force each agent holds, shown read-only
+	// before the person allows. An agent missing from the map holds none.
+	// CardsUnknown: they could not be read, so the page says so instead of
+	// claiming there are none.
+	AgentCards   map[string][]ConsentCard
+	CardsUnknown bool
+	ErrMsg       string
+	// Gone is set when the request cannot be answered here.
+	Gone string
+
+	// The device flow reuses this page at /oauth/device. UserCode is the
+	// code the terminal shows, to check before allowing; AskCode asks
+	// for it first; Done is the closing message.
+	UserCode string
+	AskCode  bool
+	Done     string
+}
+
+// ConsentCard is one Card as the consent page summarises it.
+type ConsentCard struct {
+	ID      string
+	Actions []string
+	// Environment, when set, is the only environment the Card applies in.
+	Environment string
+	ComesHome   bool
+}
+
+// consentPreviousListed reports whether the agent the app connected as
+// before is one of the choices shown; if not, "a new agent" is
+// preselected so the form always has a choice.
+func consentPreviousListed(v OAuthConsentView) bool {
+	for _, a := range v.Agents {
+		if v.Previous != "" && a == v.Previous {
+			return true
+		}
+	}
+	return false
+}
+
+// ConsentAgentsPerPage is how many agents the consent choice shows per
+// page; search appears once an account has more.
+const ConsentAgentsPerPage = 6
+
+// consentWide: the generic URL with agents to choose from gets a wider
+// card, so the agent choices can sit in columns.
+func consentWide(v OAuthConsentView) bool {
+	return v.LinkAgent == "" && !v.WrongAccount && v.CanConsent && v.AgentCount > 0 && v.Done == "" && !v.AskCode && v.Gone == ""
+}
+
+// consentShowSearch: search only once there is more than one page of agents.
+func consentShowSearch(v OAuthConsentView) bool {
+	return v.AgentCount > ConsentAgentsPerPage || v.AgentQuery != ""
+}
+
+// agentsURL is this page with another search or page of agents: the
+// consent page keeps its request, the device page its code.
+func (v OAuthConsentView) agentsURL(q string, page int) templ.SafeURL {
+	vals := url.Values{}
+	base := "/oauth/consent"
+	if v.UserCode != "" {
+		base = "/oauth/device"
+		vals.Set("code", v.UserCode)
+	} else {
+		vals.Set("request", v.RequestID)
+	}
+	if q != "" {
+		vals.Set("q", q)
+	}
+	if page > 1 {
+		vals.Set("page", strconv.Itoa(page))
+	}
+	return templ.SafeURL(base + "?" + vals.Encode())
+}
+
+func consentPages(n int) []int {
+	out := make([]int, n)
+	for i := range out {
+		out[i] = i + 1
+	}
+	return out
+}
+
+// formAction is where the page posts: the consent or the device page.
+func (v OAuthConsentView) formAction() templ.SafeURL {
+	if v.UserCode != "" || v.AskCode {
+		return "/oauth/device"
+	}
+	return "/oauth/consent"
+}
+
+templ consentReturn(v OAuthConsentView) {
+	if v.RedirectHost != "" {
+		@consentReturnBox(v)
+	}
+}
+
+templ consentReturnBox(v OAuthConsentView) {
+	<div class="consent-return">
+		if v.RedirectLocal {
+			<span>After you answer, you go back to the app on this computer (<code>{ v.RedirectHost }</code>).</span>
+		} else {
+			<span>After you answer, you go back to <code>{ v.RedirectHost }</code>.</span>
+		}
+		if !v.Verified {
+			<span class="consent-warn">KIFF has not verified this app. Continue only if you started this connection yourself.</span>
+		}
+	</div>
+}
+
+templ consentHidden(v OAuthConsentView) {
+	if v.UserCode != "" {
+		<input type="hidden" name="user_code" value={ v.UserCode }/>
+	} else {
+		<input type="hidden" name="request" value={ v.RequestID }/>
+	}
+}
+
+// consentCode shows the device code to compare with the terminal: the
+// defence against someone sending you their code.
+templ consentCode(v OAuthConsentView) {
+	if v.UserCode != "" {
+		<div class="consent-return">
+			<span>Code: <code class="consent-code">{ v.UserCode }</code></span>
+			<span class="consent-warn">Allow only if this is the code your own terminal shows.</span>
+		</div>
+	}
+}
+
+// Icons for the Cards panel: 14px strokes in the text colour, decorative.
+templ consentIcon(name string) {
+	<svg class="consent-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+		switch name {
+			case "agent":
+				<circle cx="12" cy="8" r="4"></circle>
+				<path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path>
+			case "card":
+				<rect x="2" y="5" width="20" height="14" rx="2"></rect>
+				<path d="M2 10h20"></path>
+			case "held":
+				<circle cx="12" cy="12" r="9"></circle>
+				<path d="M12 7v5l3 2"></path>
+			case "refused":
+				<circle cx="12" cy="12" r="9"></circle>
+				<path d="M5.6 5.6l12.8 12.8"></path>
+			default:
+				<path d="M12 3l10 18H2z"></path>
+				<path d="M12 10v4"></path>
+				<path d="M12 18h.01"></path>
+		}
+	</svg>
+}
+
+// consentCards shows the Cards agent holds, or that it holds none. In an
+// agent's box the agent is already the heading, so named is false and the
+// messages leave its name out.
+templ consentCards(v OAuthConsentView, agent string, named bool) {
+	if v.CardsUnknown {
+		<p class="consent-meta">KIFF could not load the Cards just now. They are on the Cards page.</p>
+	} else if cards := v.AgentCards[agent]; len(cards) == 0 {
+		<p class="consent-nocard">
+			@consentIcon("warn")
+			if named {
+				<span>{ agent } holds no Card for tool calls: its calls are refused until one is issued.</span>
+			} else {
+				<span>No Card for tool calls: its calls are refused until one is issued.</span>
+			}
+		</p>
+	} else {
+		<ul class="consent-cards">
+			for _, c := range cards {
+				<li class="consent-card-item">
+					<span class="consent-card-head">
+						@consentIcon("card")
+						<span class="consent-card-name">{ c.ID }</span>
+						if c.Environment != "" {
+							<span class="consent-card-env">only in { c.Environment }</span>
+						}
+					</span>
+					<span class="consent-card-actions" aria-label="Actions">
+						if len(c.Actions) == 0 {
+							<span class="consent-chip is-empty">no actions</span>
+						}
+						for _, a := range c.Actions {
+							<span class="consent-chip">{ a }</span>
+						}
+					</span>
+					if c.ComesHome {
+						<span class="consent-card-outside">
+							@consentIcon("held")
+							<span>Over the Card: held for an approver</span>
+						</span>
+					} else {
+						<span class="consent-card-outside is-refused">
+							@consentIcon("refused")
+							<span>Over the Card: refused</span>
+						</span>
+					}
+				</li>
+			}
+		</ul>
+	}
+}
+
+// consentAgentPicks are the account's agents as choices: one radio card
+// per agent, with the Cards it holds, so the person sees what an agent may
+// do as they pick it.
+templ consentAgentPicks(v OAuthConsentView, agents []string) {
+	for _, a := range agents {
+		<label class="consent-option consent-pick">
+			<input type="radio" name="choice" value={ "agent:" + a } checked?={ a == v.Previous }/>
+			<span class="consent-agent">
+				<span class="consent-agent-head">
+					@consentIcon("agent")
+					<span class="consent-agent-label">{ a }</span>
+					if a == v.Previous {
+						<span class="consent-badge">connected before</span>
+					}
+				</span>
+				@consentCards(v, a, false)
+			</span>
+		</label>
+	}
+}
+
+// consentAgentSearch searches the account's agents by name. It is its own
+// GET form, outside the consent form, so its inputs point at it by id.
+templ consentAgentSearch(v OAuthConsentView) {
+	<div class="consent-search" role="search">
+		if v.UserCode != "" {
+			<input type="hidden" name="code" value={ v.UserCode } form="consent-agent-search"/>
+		} else {
+			<input type="hidden" name="request" value={ v.RequestID } form="consent-agent-search"/>
+		}
+		<input class="consent-search-input" type="search" name="q" value={ v.AgentQuery } maxlength="100" placeholder="Search agents by name" aria-label="Search agents" form="consent-agent-search"/>
+		<button class="consent-search-btn" type="submit" form="consent-agent-search">Search</button>
+		if v.AgentQuery != "" {
+			<a class="consent-search-clear" href={ v.agentsURL("", 1) }>Clear</a>
+		}
+	</div>
+}
+
+// consentPager moves between pages of agents, keeping the search.
+templ consentPager(v OAuthConsentView) {
+	<nav class="consent-pager" aria-label="Pages of agents">
+		if v.AgentPage > 1 {
+			<a class="consent-page" href={ v.agentsURL(v.AgentQuery, v.AgentPage-1) } aria-label="Previous page">‹</a>
+		}
+		for _, n := range consentPages(v.AgentPages) {
+			if n == v.AgentPage {
+				<span class="consent-page is-current" aria-current="page">{ strconv.Itoa(n) }</span>
+			} else {
+				<a class="consent-page" href={ v.agentsURL(v.AgentQuery, n) }>{ strconv.Itoa(n) }</a>
+			}
+		}
+		if v.AgentPage < v.AgentPages {
+			<a class="consent-page" href={ v.agentsURL(v.AgentQuery, v.AgentPage+1) } aria-label="Next page">›</a>
+		}
+	</nav>
+}
+
+templ consentDeclineOnly(v OAuthConsentView) {
+	<form method="post" action={ v.formAction() } class="consent-form">
+		@consentHidden(v)
+		<div class="consent-actions">
+			<button type="submit" name="action" value="deny" class="is-secondary" formnovalidate>Decline</button>
+		</div>
+	</form>
+}
+
+// OAuthConsent renders the consent page.
+templ OAuthConsent(v OAuthConsentView) {
+	@components.LayoutAppThemedWithCSS("KIFF — connect an agent", "css/fonts.css", "css/app-shell.css", "css/auth.css", "css/consent.css") {
+		<div class="consent-shell">
+			<header class="consent-topbar">
+				<a class="consent-brand" href="/" aria-label="KIFF">
+					<img class="consent-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+					<span class="consent-brand-word">kiff<span>.</span>dev</span>
+				</a>
+			</header>
+			<section class={ "auth-card", "consent-card", templ.KV("is-wide", consentWide(v)) }>
+				<p class="eyebrow">Connect an agent</p>
+				if v.Done != "" {
+					<h1>{ v.Done }</h1>
+					<p class="auth-note">You can close this tab and return to your terminal.</p>
+				} else if v.AskCode {
+					<h1>Connect an agent that can only ask</h1>
+					<p class="auth-note">Enter the code your terminal shows. Only enter a code you started yourself.</p>
+					if v.ErrMsg != "" {
+						<div class="auth-error">{ v.ErrMsg }</div>
+					}
+					<form method="get" action="/oauth/device" class="consent-form">
+						<input class="consent-new-name consent-code-input" name="code" placeholder="XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" required aria-label="Code"/>
+						<div class="consent-actions">
+							<button type="submit" class="is-primary">Continue</button>
+						</div>
+					</form>
+				} else if v.Gone != "" {
+					<h1>Nothing to connect</h1>
+					<p class="auth-note">{ v.Gone }</p>
+				} else if v.WrongAccount {
+					<h1>This link belongs to another account</h1>
+					<p class="auth-note">
+						The connect link { v.ClientName } used names an agent on a different KIFF account than the one
+						you are signed in to. Sign in with that account, or ask its admin for a link.
+					</p>
+					@consentDeclineOnly(v)
+				} else if v.LinkAgent != "" {
+					<h1>{ v.ClientName } wants to act as <span class="consent-agent-name">{ v.LinkAgent }</span></h1>
+					<p class="auth-note">
+						This agent can only ask. Its Card decides what goes through; calls over it wait for an
+						approver. It can never approve, issue a Card or manage this account.
+					</p>
+					<section class="consent-cards-panel" aria-labelledby="consent-cards-title">
+						<h2 class="consent-cards-title" id="consent-cards-title">
+							@consentIcon("card")
+							{ v.LinkAgent }'s Card
+						</h2>
+						<p class="consent-cards-hint">{ v.ClientName } will act as this agent, and only within this Card.</p>
+						@consentCards(v, v.LinkAgent, true)
+					</section>
+					@consentReturn(v)
+					@consentCode(v)
+					if v.ErrMsg != "" {
+						<div class="auth-error">{ v.ErrMsg }</div>
+					}
+					if v.CanConsent {
+						<form method="post" action={ v.formAction() } class="consent-form">
+							@consentHidden(v)
+							<div class="consent-actions">
+								<!-- Allow first: Enter submits with the first button. -->
+								<button type="submit" name="action" value="approve" class="is-primary">Allow</button>
+								<button type="submit" name="action" value="deny" class="is-secondary" formnovalidate>Decline</button>
+							</div>
+						</form>
+					} else {
+						<p class="auth-note">Only an admin or editor of this account can allow this. Ask one of them.</p>
+						@consentDeclineOnly(v)
+					}
+				} else {
+					<h1>{ v.ClientName } wants to connect to KIFF</h1>
+					<p class="auth-note">
+						It will act as an agent, and that agent can only ask. Its Card decides what goes through;
+						calls over it wait for an approver. It can never approve, issue a Card or manage this account.
+					</p>
+					@consentReturn(v)
+					@consentCode(v)
+					if v.ErrMsg != "" {
+						<div class="auth-error">{ v.ErrMsg }</div>
+					}
+					if v.CanConsent {
+						if consentShowSearch(v) {
+							<form id="consent-agent-search" method="get" action={ templ.SafeURL(v.formAction()) }></form>
+						}
+						<form method="post" action={ v.formAction() } class="consent-form">
+							@consentHidden(v)
+							<input type="hidden" name="choosing" value="1"/>
+							<fieldset>
+								<legend class="consent-sr">Connect as</legend>
+								<p class="consent-sep" aria-hidden="true"><span>Connect as</span></p>
+								<label class="consent-option">
+									<input type="radio" name="choice" value="new" checked?={ !consentPreviousListed(v) }/>
+									<span class="consent-agent">
+										<strong>A new agent for this app</strong>
+										<input class="consent-new-name" name="new_name" value={ v.NewName } maxlength="200" autocomplete="off" aria-label="New agent name"/>
+										<span class="consent-meta is-warn">It has no Card yet: its calls are refused until one is issued.</span>
+									</span>
+								</label>
+								if v.AgentCount > 0 {
+									<p class="consent-sep"><span>Or one of your agents</span></p>
+									<p class="consent-sep-hint">{ v.ClientName } will act as the agent you pick, and only within its Card.</p>
+									if consentShowSearch(v) {
+										@consentAgentSearch(v)
+									}
+									if len(v.Agents) == 0 {
+										<p class="consent-meta">No agent matches “{ v.AgentQuery }”.</p>
+									} else {
+										<div class="consent-pick-grid">
+											@consentAgentPicks(v, v.Agents)
+										</div>
+									}
+									if v.AgentPages > 1 {
+										@consentPager(v)
+									}
+								}
+							</fieldset>
+							<p class="consent-meta">To connect a specific agent without choosing here, use the connect link on that agent's Tools tab in KIFF Cloud.</p>
+							<div class="consent-actions">
+								<!-- Connect first: Enter in a field submits with it. -->
+								<button type="submit" name="action" value="approve" class="is-primary">Connect</button>
+								<button type="submit" name="action" value="deny" class="is-secondary" formnovalidate>Decline</button>
+							</div>
+						</form>
+					} else {
+						<p class="auth-note">
+							Only an admin or editor of this account can connect an agent. Ask one of them to
+							connect { v.ClientName }.
+						</p>
+						@consentDeclineOnly(v)
+					}
+				}
+			</section>
+		</div>
+	}
+}

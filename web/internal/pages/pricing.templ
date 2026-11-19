@@ -1,0 +1,113 @@
+package pages
+
+import (
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OfferLinks are the v1 offer's two ways in, set by the
+// operator. AppURL is the app: the public TestFlight link until the
+// App Store listing is live, then the listing. Empty, the app
+// button is left out. Solo and the packs can also be
+// bought in the app, through the App Store. PlayURL is the
+// Android app's Google Play listing; empty, its button is left out.
+type OfferLinks struct {
+	AppURL  string
+	PlayURL string
+	// AppStoreLive says tafs's App Store listing is live, so
+	// /tafs/download links it (KIFF_APP_STORE_LIVE).
+	AppStoreLive bool
+}
+
+// playLabel names the Google Play link.
+const playLabel = "Get it on Google Play"
+
+// appLabel names the app link for where it goes.
+func (l OfferLinks) appLabel() string {
+	if strings.Contains(l.AppURL, "testflight.apple.com") {
+		return "Try the app on TestFlight"
+	}
+	return "Download on the App Store"
+}
+
+// PricingView carries operator-configured links. BusinessIntakeURL, when
+// set, becomes the Company plan's "Book a 30-minute review" link; the two
+// checkout URLs are kept for the handler contract and aren't rendered.
+type PricingView struct {
+	Offer                  OfferLinks
+	LaunchPilotCheckoutURL string
+	TeamCheckoutURL        string
+	BusinessIntakeURL      string
+}
+
+// Pricing is the offer in credits (pricing phase 2): one KIFF account covering
+// the tafs app and KIFF Cloud for the account's own agents. A taf's run uses
+// credits for the AI it used. Solo is sold in the stores, and its extra
+// credits come only in packs bought in the app (Google Play today); Company is
+// billed by seat on kiff.dev, and its credits past the plan are €0.01 each up
+// to a spend limit; committed volume is a conversation. No trial: an account
+// pays from its first day. The page is the plans in a few lines; the detail is
+// in the docs (tafs-credits#pricing-details). Nothing links to a checkout that
+// isn't live.
+templ Pricing(v PricingView) {
+	@components.LayoutSiteWithMeta("KIFF — pricing", "One KIFF account for the tafs app and your own agents. Solo €12.50 a month in the app, VAT included, with 500 credits; Company €10.50 a seat a month, plus VAT, with 500 credits a seat, pooled. No free plan, no trial.", "website", "pricing", "css/home.css") {
+		<div class="k-home">
+			@pricingPlans(v)
+		</div>
+	}
+}
+
+// pricingPlans is the whole page: the plans, what a credit pays for, and a
+// link to the details in the docs. At most two phone screens (owner, 13 Nov
+// 2026).
+templ pricingPlans(v PricingView) {
+	<section id="plans" class="k-hero k-price-page">
+		<h1 class="k-display">Pricing</h1>
+		<p class="k-sub">One account covers the tafs app and your own agents. A credit pays for the AI a run uses. No free plan, no trial.</p>
+		<dl class="k-plans">
+			<div>
+				<dt>Solo</dt>
+				<dd><b>€12.50</b> a month, VAT included. 500 credits a month, then packs. In the tafs app.</dd>
+			</div>
+			<div>
+				<dt>Company</dt>
+				<dd><b>€10.50</b> a seat a month, plus VAT. 500 credits a seat, pooled, then €0.01 a credit up to a limit you set. On kiff.dev.</dd>
+			</div>
+			<div>
+				<dt>Larger</dt>
+				<dd>
+					Committed volume on an order form. We can also get your first agent action live with you: we observe it on your real traffic, then you issue its Card.
+					@pricingTalkButton(v)
+				</dd>
+			</div>
+		</dl>
+		<p class="k-small">Coach for about 4 new jobs a month, runs that fail on our side and tries that send nothing are free. Your tafs stop at what you have. The framework and kiff-guard are MIT. <a href="/docs/tafs-credits#pricing-details">Pricing details</a>.</p>
+		@offerActions(v.Offer)
+	</section>
+}
+
+// pricingTalkButton is the way to a person: the booking link when one is
+// configured, otherwise a mail to Gabriel.
+templ pricingTalkButton(v PricingView) {
+	if v.BusinessIntakeURL != "" {
+		<a href={ templ.SafeURL(v.BusinessIntakeURL) }>Book a 30-minute review</a>
+	} else {
+		<a href="mailto:gabriel@kiff.dev?subject=KIFF%20Company">Talk to Gabriel</a>
+	}
+}
+
+// offerActions is each app once there's a link to it. No checkout: credits
+// have none live yet.
+templ offerActions(o OfferLinks) {
+	if o.AppURL != "" || o.PlayURL != "" {
+		<div class="k-actions">
+			if o.AppURL != "" {
+				<a href={ templ.SafeURL(o.AppURL) } class="k-btn">{ o.appLabel() }</a>
+			}
+			if o.PlayURL != "" {
+				<a href={ templ.SafeURL(o.PlayURL) } class="k-btn k-btn-primary">{ playLabel }</a>
+			}
+		</div>
+	}
+}

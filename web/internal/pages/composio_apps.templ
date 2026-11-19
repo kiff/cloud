@@ -1,0 +1,26 @@
+package pages
+
+// composioUse is the managed-apps line on Composio's row: the names inline
+// while the list is short, else the count and a link to composioApps. It
+// starts with the space that follows the row's sentence before it.
+templ composioUse(lang string) {
+	if managedAppsListed() {
+		{{ before, after := managedManyParts(lang) }}
+		{ " " + before }<a href="#composio-apps">{ managedWords(lang).Apps }</a>{ after }
+	} else {
+		{ " " + managedUse(lang) }
+	}
+}
+
+// composioApps lists the managed apps under the table once Composio's row
+// links to them, alphabetically, in columns.
+templ composioApps(lang string) {
+	if managedAppsListed() {
+		<h3 id="composio-apps">{ managedWords(lang).Apps }</h3>
+		<ul class="app-columns">
+			for _, a := range managedAppsSorted() {
+				<li>{ a }</li>
+			}
+		</ul>
+	}
+}

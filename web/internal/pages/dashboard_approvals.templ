@@ -1,0 +1,147 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+)
+
+// dashboard_approvals.templ holds the reusable approval-queue partials.
+// The standalone /dashboard/approvals page was retired in the
+// authenticated-surface design: the actionable queue now renders inside
+// the domain's Activity view (dashboard_domain_evidence.templ →
+// domainPendingApprovals), and the old route redirects there. These
+// partials are shared by that surface; the grant/deny forms still POST
+// to /dashboard/approvals/{id}/grant|deny.
+
+// dashboardApprovalRow renders one row in the queue plus a
+// collapsed "Full context" detail row beneath it. Two forms per
+// row — grant + deny — both POST to
+// /dashboard/approvals/{id}/grant or /deny. The detail row is a
+// native <details> disclosure (no JS) that surfaces the fields the
+// columns omit: the approval id the integrator re-decides with,
+// the full timestamp, and the un-truncated reason. The reviewer's
+// reason is optional but encouraged.
+// dashboardApprovalCard renders one pending approval as a stacked card
+// (not a wide table row): the header identifies the held action, a facts
+// line gives entity/requester/reason, and the review action — an
+// optional reviewer note plus Grant/Deny — spans the full card width so
+// the reviewer has room to write and the buttons are always visible (no
+// horizontal scroll). The card carries id="ap-<id>" so a notification
+// deep-links straight to it. Grant/Deny still POST to
+// /dashboard/approvals/{id}/grant|deny.
+templ dashboardApprovalCard(a apiclient.PendingApproval) {
+	<div class="dash-approval-card" id={ "ap-" + a.ID }>
+		<div class="dash-approval-top">
+			<span class="dash-pill dash-pill-warn">approval</span>
+			<code class="dash-approval-action">{ a.ActionName }</code>
+			if !a.CreatedAt.IsZero() {
+				<time class="dash-approval-when" datetime={ a.CreatedAt.Format("2006-01-02T15:04:05Z") }>
+					{ a.CreatedAt.Format("Jan 2, 15:04") }
+				</time>
+			}
+		</div>
+		<div class="dash-approval-facts">
+			<span>
+				Entity
+				<a href={ templ.SafeURL("/dashboard/entities/" + url.PathEscape(a.EntityID) + "/timeline") }><code>{ a.EntityID }</code></a>
+				<small class="dash-note">({ a.EntityType })</small>
+			</span>
+			<span>
+				Requester
+				if a.RequestedBy != "" {
+					<code>{ a.RequestedBy }</code>
+				} else {
+					<span class="dash-note">—</span>
+				}
+			</span>
+			if a.Reason != "" {
+				<span>Reason { a.Reason }</span>
+			}
+		</div>
+		<form method="post"
+			action={ templ.SafeURL("/dashboard/approvals/" + url.PathEscape(a.ID) + "/grant") }
+			class="dash-approval-review">
+			<textarea name="reason" placeholder="reviewer reason (optional)" rows="2"></textarea>
+			<div class="dash-approval-buttons">
+				<button type="submit" class="btn btn-primary btn-sm">Grant</button>
+				<button type="submit"
+					formaction={ "/dashboard/approvals/" + url.PathEscape(a.ID) + "/deny" }
+					class="btn btn-secondary btn-sm">Deny</button>
+			</div>
+		</form>
+		<details class="dash-approval-detail">
+			<summary>Full context</summary>
+			<dl class="dash-dl">
+					<div>
+						<dt>Approval ID</dt>
+						<dd><code>{ a.ID }</code> <span class="dash-note">— re-decide with this id once granted</span></dd>
+					</div>
+					<div>
+						<dt>Status</dt>
+						<dd>@approvalStatusLabel(a.Status)</dd>
+					</div>
+					<div>
+						<dt>Action</dt>
+						<dd><code>{ a.ActionName }</code></dd>
+					</div>
+					<div>
+						<dt>Entity</dt>
+						<dd><code>{ a.EntityID }</code> <span class="dash-note">({ a.EntityType })</span></dd>
+					</div>
+					<div>
+						<dt>Requested by</dt>
+						<dd>
+							if a.RequestedBy != "" {
+								<code>{ a.RequestedBy }</code>
+							} else {
+								<span class="dash-note">—</span>
+							}
+						</dd>
+					</div>
+					<div>
+						<dt>Requested at</dt>
+						<dd>
+							if a.CreatedAt.IsZero() {
+								<span class="dash-note">—</span>
+							} else {
+								<time datetime={ a.CreatedAt.Format("2006-01-02T15:04:05Z") }>
+									{ a.CreatedAt.Format("2006-01-02 15:04:05 MST") }
+								</time>
+							}
+						</dd>
+					</div>
+					if a.Reason != "" {
+						<div>
+							<dt>Requester reason</dt>
+							<dd>{ a.Reason }</dd>
+						</div>
+					}
+				</dl>
+			</details>
+	</div>
+}
+
+// approvalStatusLabel renders the approval status with a small
+// status pill, defaulting to the raw value for forward-compat
+// with statuses the dashboard hasn't special-cased.
+templ approvalStatusLabel(status string) {
+	switch status {
+		case "pending":
+			<span class="dash-pill dash-pill-warn">pending</span>
+		case "granted":
+			<span class="dash-pill dash-pill-ok">granted</span>
+		case "denied":
+			<span class="dash-pill dash-pill-error">denied</span>
+		default:
+			<code>{ status }</code>
+	}
+}
+
+// pluralizeApprovals returns "approval" or "approvals" per count.
+func pluralizeApprovals(n int) string {
+	if n == 1 {
+		return "approval"
+	}
+	return "approvals"
+}

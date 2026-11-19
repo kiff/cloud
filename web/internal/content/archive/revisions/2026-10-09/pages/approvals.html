@@ -1,0 +1,140 @@
+<h1 id="held-calls-and-approvals">Held calls and approvals</h1>
+
+<p>When an agent asks for something outside its <a href="/docs/archive/2026-10-09/kiff-cards">Card</a>,
+and the Card says to hold such calls, KIFF holds the call and asks the
+owner. Nothing runs until the owner answers. If nobody answers in time,
+the call is refused.</p>
+
+<h2 id="where-the-owner-hears-about-it">Where the owner hears about it</h2>
+
+<p>A held call reaches the owner in three places. All three lead to the same
+page, and the answer is given there.</p>
+
+<ol>
+<li><strong>Needs you</strong>, in KIFF Cloud, and the bell. Every held call is listed
+with the agent, the action, the Card and how far over it is.</li>
+<li><strong>Email.</strong> One email per held call, to the account owner, with what
+the agent wanted, which Card, how far over, and when the hold expires.
+Each button opens the call&rsquo;s Needs you page.</li>
+<li><strong>The agent&rsquo;s chat</strong>, for clients KIFF has verified (Claude Code
+2.1.287 or later). The chat shows a prompt to open the Needs you link.
+This is on by default for a personal account and off for a company&rsquo;s,
+where the person running the agent is usually not the owner. Change it
+in <strong>Settings → Account → Held calls</strong>.</li>
+</ol>
+
+<h2 id="who-can-answer">Who can answer</h2>
+
+<p>Only the owner, or an admin, signed in to KIFF Cloud.</p>
+
+<ul>
+<li>The email and the chat only carry a link to the Needs you page. Neither
+can approve anything, so a forwarded email or a copied link answers
+nothing without the owner&rsquo;s session.</li>
+<li>The agent&rsquo;s key cannot answer, and a &ldquo;yes&rdquo; typed in the chat is not an
+approval.</li>
+<li>KIFF approval links always go to <code>app.kiff.dev</code>. A link to answer from
+anywhere else is not from KIFF.</li>
+</ul>
+
+<h2 id="the-three-answers">The three answers</h2>
+
+<ul>
+<li><strong>Approve once</strong>: this call only. The Card stays as it is, and its
+balance does not move.</li>
+<li><strong>Change the card to allow it</strong>: raises the Card&rsquo;s limits just enough
+for this call, and for everything after it. The change is recorded on
+the Card&rsquo;s statement.</li>
+<li><strong>Reject</strong>: the call is refused, and the agent is told not to retry it.</li>
+</ul>
+
+<h2 id="what-the-agent-does">What the agent does</h2>
+
+<p>The agent gets a result that says the call is waiting for the owner,
+with the link and when the hold expires. Nothing has been sent to the
+tool.</p>
+
+<p>To get the answer, the agent retries <strong>the same call</strong>: the same tool,
+the same arguments, and the same <code>kiff_operation_id</code> if it used one.
+Through the <a href="/docs/archive/2026-10-09/mcp-gateway">MCP gateway</a>, an approved call is then
+forwarded once; a rejected or expired one is refused. A program can read
+the same facts in the result&rsquo;s <code>_meta</code> (<code>state</code>, <code>retry</code>,
+<code>retry_after_s</code>, <code>hold_expires_at</code>).</p>
+
+<h3 id="read-the-answer-without-executing-the-call">Read the answer without executing the call</h3>
+
+<p>The gateway&rsquo;s read-only <code>kiff_pending</code> tool lists this credential&rsquo;s held,
+sending and unknown calls. A held entry includes the owner&rsquo;s answer,
+the original tool arguments, and the <code>kiff_operation_id</code> used to collect
+it. Reading the list sends nothing to the business tool and uses no
+approval. Follow <code>next_cursor</code> as <code>cursor</code> to read older pages.</p>
+
+<p>Collect an approved call with the same tool and original arguments. Use
+its original operation id, or KIFF&rsquo;s listed id if the original call had
+none. The latter lets the agent collect that held call after the usual
+10-minute identical-call window. An unknown outcome is for
+reconciliation: the gateway does not automatically resend it.</p>
+
+<h3 id="bring-the-answer-back-into-claude-code">Bring the answer back into Claude Code</h3>
+
+<p>The optional <strong><code>kiff</code> plugin</strong> reads <code>kiff_pending</code> while this session has
+a held call. It shows the owner&rsquo;s answer once and submits a turn telling
+the agent; the agent decides whether to collect an approved call. The
+plugin does not approve or execute the call itself.</p>
+
+<p>If permissions stopped the reads, allow <code>kiff_card</code> and <code>kiff_pending</code>
+and run <code>/kiff</code> again. Checks continue through older pages and preserve
+recovery when KIFF cannot read the owner&rsquo;s answer. An answer given in
+time still counts when read after an outage. Install steps and exact
+permission rules are in the
+<a href="/docs/archive/2026-10-09/agent-skill#optional-card-status-notices-and-recovery-in-claude-code">plugin guide</a>.</p>
+
+<h2 id="approval-and-the-tool-s-outcome">Approval and the tool&rsquo;s outcome</h2>
+
+<p>Approval records who authorized the request. It does not establish that
+the tool performed it. KIFF records the tool&rsquo;s reported outcome beside
+the authorization decision:</p>
+
+<ul>
+<li><strong>Tool reports success:</strong> the delivered call has a successful response.
+This is what the tool reported, rather than independent verification
+of the external action.</li>
+<li><strong>Tool reports an error:</strong> the call was authorized and delivered, but
+the tool returned an error. Do not describe it as done or assume that
+the error proves there were no partial effects.</li>
+<li><strong>Outcome unknown:</strong> the call was sent but its response was lost or
+timed out. Reconcile with the tool before deciding what to do next.</li>
+<li><strong>Outcome not recorded:</strong> an older call has no explicit outcome
+record. While its stored tool response is retained, KIFF uses that
+response; after it is purged, an approved call is shown with an
+outcome-not-recorded warning. Missing evidence does not establish
+success.</li>
+</ul>
+
+<p>For example, a person can approve a €25 refund and the provider can
+refuse it because only €20 remains refundable. The approval and the
+refusal both belong in the record. Recording the outcome does not
+itself restore the Card&rsquo;s budget.</p>
+
+<h2 id="how-long-a-call-waits">How long a call waits</h2>
+
+<p>Each Card sets how long a held call waits: <strong>10 minutes</strong> by default,
+from 1 minute to 7 days. A held call never runs on silence:</p>
+
+<ul>
+<li>if nobody answers in time, the call is refused and nothing is sent;</li>
+<li>a late answer is not accepted;</li>
+<li>the agent has to ask again, as a new call.</li>
+</ul>
+
+<p>The prompt in the chat does not extend this. An approval given before
+expiry remains valid when the agent collects it later; a late read is
+different from a late approval.</p>
+
+<h2 id="next">Next</h2>
+
+<ul>
+<li>Set what is held and for how long → <a href="/docs/archive/2026-10-09/kiff-cards">KIFF Cards</a>.</li>
+<li>What the agent sees, field by field → <a href="/docs/archive/2026-10-09/mcp-gateway">Use the KIFF MCP gateway</a>.</li>
+<li>Install notices and recovery in Claude Code → <a href="/docs/archive/2026-10-09/agent-skill">The KIFF skill for coding agents</a>.</li>
+</ul>

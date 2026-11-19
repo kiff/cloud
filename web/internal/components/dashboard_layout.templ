@@ -1,0 +1,479 @@
+package components
+
+import "github.com/kiff/cloud/web/internal/notify"
+
+// DashboardLayout wraps the authenticated dashboard surfaces in the
+// redesigned app shell (#4): a fixed topbar (KIFF logo + workspace
+// label + email + avatar, the whole right side a link to account
+// settings) and a left sidebar with the section nav and the
+// signed-in user at the foot. Server-rendered, no JS — the active
+// nav item is decided per request from activeTab; each item is a
+// plain link to its route. Sign-out lives on the Settings/Account
+// card, reached via the topbar account link.
+//
+// Sections (each its own route on the dashboardMux), grouped as the
+// spine + account shape:
+//
+//   Your domain (the spine):
+//   - Domain       — /dashboard/domains (the spine; the home)
+//   - Build        — /dashboard/build
+//   - Govern       — /dashboard/govern
+//   - Runtimes     — /dashboard/runtimes (the agents acting under this
+//                    domain; moved into the spine from Account per D6)
+//   - Activity     — /activity: every call across every domain, one
+//                    row a call, each with its receipt. A
+//                    domain's own evidence view (decisions, receipts,
+//                    approvals) is under Setup › Domain;
+//                    /dashboard/activity still resolves to it.
+//
+//   Account:
+//   - Settings     — /dashboard/settings (account-wide: profile, plan,
+//                    API keys, billing, consumption rollup live here /
+//                    on Settings today; distinct Consumption/Billing nav
+//                    items are the multi-domain trigger, not built)
+//
+// Reconciliation note (D6 vs the first-decision design): the D6 sketch
+// in predates the first-decision design and omits Govern, which is
+// retained because the Control Room is a live surface not
+// slated for removal. The executed D6 change is the spine+account
+// regrouping with Runtimes relocated into the spine. Examples (the sandbox
+// gallery) is no longer navigated: the card-first journey replaced it
+// (the first-decision design amendment), and /dashboard/examples redirects to /cards.
+//
+// The retired tenant-wide /dashboard/proposals, /dashboard/receipts,
+// and /dashboard/approvals routes redirect into the domain Activity
+// view the same way.
+//
+// chrome carries the topbar/sidebar identity (tenant label, user
+// name, avatar initials).
+//
+// Three-way split: DashboardLayout (frame + dashboard content
+// styles), DashboardLayoutWithCSS (same, plus one extra sheet),
+// and AppShellLayout (frame only, no dashboard content layer — for
+// surfaces that style themselves end-to-end, e.g. Studio).
+templ DashboardLayout(title, activeTab string, chrome DashboardChrome) {
+	@LayoutAppThemedWithCSS(title, "css/fonts.css", "css/app-shell.css", "css/dashboard.css") {
+		@dashShell(activeTab, chrome) {
+			{ children... }
+		}
+	}
+}
+
+// DashboardLayoutWithCSS is like DashboardLayout but loads an extra
+// stylesheet alongside the dashboard content layer. Used by surfaces
+// that extend the standard dashboard page primitives (.dash-header,
+// .dash-card, …) with their own additions — e.g. Playground.
+templ DashboardLayoutWithCSS(title, activeTab string, chrome DashboardChrome, extraCSS string) {
+	@LayoutAppThemedWithCSS(title, "css/fonts.css", "css/app-shell.css", "css/dashboard.css", extraCSS) {
+		@dashShell(activeTab, chrome) {
+			{ children... }
+		}
+	}
+}
+
+// AppShellLayout wraps a standalone signed-in surface in the app
+// frame (topbar + sidebar + fonts) WITHOUT the dashboard content
+// stylesheet. For surfaces that are products in their own right and
+// style themselves end-to-end — Studio — so they don't carry the
+// whole dashboard content layer just for the chrome.
+templ AppShellLayout(title, activeTab string, chrome DashboardChrome, surfaceCSS string) {
+	@LayoutAppThemedWithCSS(title, "css/fonts.css", "css/app-shell.css", surfaceCSS) {
+		@dashShell(activeTab, chrome) {
+			{ children... }
+		}
+	}
+}
+
+// dashShell renders the topbar + sidebar grid and slots the page
+// content into the scrolling main column.
+templ dashShell(activeTab string, chrome DashboardChrome) {
+	<div class="dash-shell">
+		<header class="dash-topbar" role="banner">
+			<a class="dash-topbar-logo" href="/dashboard" aria-label="KIFF dashboard">
+				<img class="dash-brand-img" src="/static/img/logo/kiff-logo-transparent-512.png" alt="" aria-hidden="true"/>
+				<span class="dash-brand-word">kiff.dev</span>
+			</a>
+			<div class="dash-topbar-right">
+				@accountSwitcher(AccountSwitchFrom(ctx))
+				@notificationBell(notify.SummaryFrom(ctx).Uncleared())
+				<a class="dash-topbar-account" href="/dashboard/settings" aria-label="Account settings">
+					if chrome.TenantLabel != "" {
+						<span class="dash-topbar-tenant">{ chrome.TenantLabel }</span>
+					}
+					if chrome.Email != "" {
+						<span class="dash-topbar-email">{ chrome.Email }</span>
+					}
+					<span class="dash-avatar" aria-hidden="true">{ chrome.Initials }</span>
+				</a>
+			</div>
+		</header>
+		<nav class="dash-sidebar" aria-label="Dashboard sections">
+			// What someone opens daily comes first: their agents' cards and
+			// what those cards decided. The machinery a card runs on — the
+			// domain and its contract, runtimes, keys — is setup, visited
+			// when configuring or investigating.
+			if IsPersonal(ctx) {
+				// A personal account: its own Cards, agents and tools, what
+				// waits for it, and what happened. No domain or contract;
+				// those exist behind the scenes.
+				@dashNav("cards", activeTab, "/cards", "My Cards", "◑", "home")
+				@dashNav("agents", activeTab, "/agents", "My agents", "⎈", "")
+				@dashNav("tools", activeTab, "/tools", "Connected tools", "⧉", "")
+				@dashNav("connections", activeTab, "/connections", "Connections", "⇄", "")
+				@dashNav("needs-you", activeTab, "/needs-you", "Needs you", "!", "")
+				@dashNav("activity", activeTab, chrome.ActivityHref(), "Activity", "◷", "")
+			} else {
+				@dashNav("cards", activeTab, "/cards", "Cards", "◑", "home")
+				@dashNav("agents", activeTab, "/agents", "Agents", "⎈", "")
+				@dashNav("tools", activeTab, "/tools", "Tools", "⧉", "")
+				@dashNav("connections", activeTab, "/connections", "Connections", "⇄", "")
+				@dashNav("activity", activeTab, chrome.ActivityHref(), "Activity", "◷", "")
+				<p class="dash-nav-label">Setup</p>
+				@domainSelector(DomainNavFrom(ctx))
+				@dashNav("domains", activeTab, chrome.DomainHomeHref(), "Domain", "◈", "")
+				@dashNav("studio", activeTab, "/dashboard/build", "Build", "≡", "")
+				@dashNav("controls", activeTab, chrome.GovernHref(), "Govern", "◇", "")
+				@dashNav("keys", activeTab, "/dashboard/keys", "API keys", "⌁", "")
+			}
+			<p class="dash-nav-label">Account</p>
+			@dashNav("people", activeTab, "/dashboard/people", "People", "☺", "")
+			if IsPersonal(ctx) {
+				// A personal account has no Setup section, so its keys sit
+				// here rather than only behind a button in Settings.
+				@dashNav("keys", activeTab, "/dashboard/keys", "API keys", "⌁", "")
+			}
+			@dashNav("settings", activeTab, "/dashboard/settings", "Settings", "⚙", "")
+			@dashNav("support", activeTab, "/dashboard/support", "Support", "?", "")
+			@themeSwitch()
+			<div class="dash-sidebar-spacer"></div>
+			<a class="dash-sidebar-footer" href="https://kiff.dev/docs" target="_blank" rel="noopener noreferrer" aria-label="Documentation: guides, API reference, quickstart (opens in new tab)">
+				<span class="dash-sidebar-plan">Documentation ↗</span>
+				<span class="dash-sidebar-user">Guides, API reference, quickstart</span>
+			</a>
+		</nav>
+		<main class={ "dash-main", "dash-main-" + activeTab }>
+			{ children... }
+		</main>
+		@shellInteractions()
+		@liveRegions()
+		if activeTab == "controls" || activeTab == "activity" {
+			@liveUpdates()
+		}
+	</div>
+}
+
+// themeSwitch is the three-way theme control in the topbar: light, dark,
+// and system (match OS). Each is a circular button that sets the
+// persisted preference via the boot script's window.__kiffSetTheme (wired
+// by [data-set-theme]); the active one is marked purely in CSS from <html
+// data-theme-pref>, so it reflects the saved choice with no server
+// round-trip and no flash. the web-stack design: no framework.
+templ themeSwitch() {
+	<div class="dash-theme-row">
+		<span class="dash-theme-label">Theme</span>
+		<div class="dash-theme" role="group" aria-label="Theme">
+			<button type="button" class="dash-theme-btn dash-theme-light" data-set-theme="light" aria-label="Light theme" title="Light">
+				<span aria-hidden="true">☀</span>
+			</button>
+			<button type="button" class="dash-theme-btn dash-theme-dark" data-set-theme="dark" aria-label="Dark theme" title="Dark">
+				<span aria-hidden="true">☾</span>
+			</button>
+			<button type="button" class="dash-theme-btn dash-theme-system" data-set-theme="system" aria-label="Match system" title="Match system">
+				<span aria-hidden="true">◐</span>
+			</button>
+		</div>
+	</div>
+}
+
+// shellInteractions closes open dropdowns (the notification bell, its
+// overflow menu, and header disclosures) when the user clicks outside
+// them or presses Escape — the behavior every native menu has and the
+// one thing a bare <details> lacks. Vanilla, dependency-free; the
+// popovers still open/close on click without it, so a JS failure only
+// loses the click-away nicety.
+templ shellInteractions() {
+	<script>
+    (function () {
+      var sel = "details.dash-autoclose[open]";
+      document.addEventListener("click", function (e) {
+        document.querySelectorAll(sel).forEach(function (d) {
+          if (!d.contains(e.target)) d.removeAttribute("open");
+        });
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        document.querySelectorAll(sel).forEach(function (d) { d.removeAttribute("open"); });
+      });
+      // Copy buttons: [data-copy-target] copies the named element's text
+      // and briefly confirms. One handler for every page (card and agent
+      // connect instructions, Studio); without JS the text stays
+      // selectable.
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-copy-target]");
+        if (!btn) return;
+        var el = document.getElementById(btn.getAttribute("data-copy-target"));
+        if (!el) return;
+        var text = el.innerText;
+        var done = function () {
+          if (btn.dataset.copying) return;
+          btn.dataset.copying = "1";
+          var was = btn.textContent;
+          btn.textContent = "Copied ✓";
+          btn.classList.add("is-copied", "studio-prompt-copied");
+          setTimeout(function () {
+            btn.textContent = was;
+            btn.classList.remove("is-copied", "studio-prompt-copied");
+            delete btn.dataset.copying;
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var r = document.createRange(); r.selectNodeContents(el);
+          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+          try { document.execCommand("copy"); } catch (err) {}
+          done();
+        }
+      });
+    })();
+	</script>
+}
+
+// liveRegions re-checks the parts of a page that change while it is
+// open: the bell on every page, and on Needs you the count and the list.
+// Each element with an id and data-live-src is fetched again every 15
+// seconds from that URL and replaced by the element with the same id,
+// only while the tab is visible, and never while the person is using it
+// (focus inside, or a menu open). Vanilla, no bundle; without JS a
+// reload still shows the same.
+templ liveRegions() {
+	<script>
+    (function () {
+      var EVERY = 15000, running = false;
+      function busy(el) {
+        var a = document.activeElement;
+        return (a && a !== document.body && el.contains(a)) || el.matches("details[open]") || el.querySelector("details[open]");
+      }
+      function tick() {
+        if (document.hidden || running) return;
+        var bySrc = {};
+        document.querySelectorAll("[data-live-src][id]").forEach(function (el) {
+          (bySrc[el.dataset.liveSrc] = bySrc[el.dataset.liveSrc] || []).push(el.id);
+        });
+        var srcs = Object.keys(bySrc);
+        if (!srcs.length) return;
+        running = true;
+        Promise.all(srcs.map(function (src) {
+          return fetch(src, { credentials: "same-origin", cache: "no-store" }).then(function (res) {
+            // A redirect is the session ending: leave the page as it is.
+            if (!res.ok || res.redirected) return;
+            return res.text().then(function (html) {
+              var doc = new DOMParser().parseFromString(html, "text/html");
+              bySrc[src].forEach(function (id) {
+                var cur = document.getElementById(id), next = doc.getElementById(id);
+                if (!cur || !next || busy(cur) || cur.outerHTML === next.outerHTML) return;
+                cur.replaceWith(document.importNode(next, true));
+              });
+            });
+          }).catch(function () { /* best effort: the next tick tries again */ });
+        })).then(function () { running = false; });
+      }
+      setInterval(tick, EVERY);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) tick(); });
+    })();
+	</script>
+}
+
+// liveUpdates opens the tenant's Server-Sent Events stream and refreshes
+// the current view when a decision or approval lands, so the Control Room
+// and Activity reflect new evidence without a manual reload. Vanilla
+// EventSource — no framework, no bundle. The refresh is debounced so a
+// burst of decisions coalesces into one reload, and the browser's built-in
+// EventSource reconnection covers brief drops.
+templ liveUpdates() {
+	<script>
+    (function () {
+      try {
+        var es = new EventSource("/dashboard/stream");
+        var t = null;
+        function refresh() { clearTimeout(t); t = setTimeout(function () { location.reload(); }, 600); }
+        es.addEventListener("decision", refresh);
+        es.addEventListener("approval", refresh);
+        es.addEventListener("receipt", refresh);
+      } catch (e) { /* live updates are best-effort */ }
+    })();
+	</script>
+}
+
+// domainSelector is the persistent "Current domain" control that heads
+// the domain-scoped nav section. It replaces the old static "Your
+// domain" label: a no-JS <details> showing the in-focus domain + its
+// status, opening to the tenant's domains (each links to its home, which
+// remembers it as the selection), plus "All domains" and "Add another
+// domain". A fresh tenant with no domains shows a setup prompt. The
+// model is read from the request context (chrome middleware).
+templ domainSelector(nav DomainNav) {
+	<details class="dash-domain-select dash-autoclose">
+		<summary class="dash-domain-summary">
+			<span class="dash-domain-copy">
+				<small>Current domain</small>
+				if cur, ok := nav.CurrentItem(); ok {
+					<strong>{ cur.Name }</strong>
+					if cur.Draft {
+						<small class="dash-domain-posture dash-posture-draft">draft</small>
+					} else if cur.Posture != "" {
+						<small class={ "dash-domain-posture", "dash-posture-" + cur.Posture }>{ cur.Posture }</small>
+					}
+				} else if len(nav.Items) > 0 {
+					<strong>All domains</strong>
+				} else {
+					<strong>No domain yet</strong>
+				}
+			</span>
+			<span class="dash-domain-caret" aria-hidden="true">⌄</span>
+		</summary>
+		<div class="dash-domain-menu">
+			if len(nav.Items) == 0 {
+				<a class="dash-domain-opt dash-domain-opt-action" href="/dashboard/build">＋ Set up first domain</a>
+			} else {
+				for _, it := range nav.Items {
+					<a
+						class={ "dash-domain-opt", templ.KV("dash-domain-opt-current", it.Slug == nav.Current) }
+						href={ templ.SafeURL(domainNavItemHref(it)) }
+					>
+						<span class="dash-domain-opt-name">{ it.Name }</span>
+						if it.Draft {
+							<small class="dash-domain-opt-posture dash-posture-draft">draft</small>
+						} else if it.Posture != "" {
+							<small class={ "dash-domain-opt-posture", "dash-posture-" + it.Posture }>{ it.Posture }</small>
+						} else if it.Status != "" {
+							<small class="dash-domain-opt-status">{ it.Status }</small>
+						}
+					</a>
+				}
+				<a class="dash-domain-opt dash-domain-opt-all" href="/dashboard/domains">All domains</a>
+				<a class="dash-domain-opt dash-domain-opt-action" href="/dashboard/domains/new">＋ Add another domain</a>
+			}
+		</div>
+	</details>
+}
+
+// dashNav renders one sidebar item. Active when its key matches
+// activeTab; otherwise a plain link.
+templ dashNav(key, activeTab, href, label, icon, meta string) {
+	if key == activeTab {
+		<a class="dash-nav-item dash-nav-active" href={ templ.SafeURL(href) } aria-current="page">
+			<span class="dash-nav-icon" aria-hidden="true">{ icon }</span>
+			<span class="dash-nav-text">{ label }</span>
+			if meta != "" {
+				<small class="dash-nav-meta">{ meta }</small>
+			}
+		</a>
+	} else {
+		<a class="dash-nav-item" href={ templ.SafeURL(href) }>
+			<span class="dash-nav-icon" aria-hidden="true">{ icon }</span>
+			<span class="dash-nav-text">{ label }</span>
+			if meta != "" {
+				<small class="dash-nav-meta">{ meta }</small>
+			}
+		</a>
+	}
+}
+
+// notificationBell renders the topbar bell: a no-JS <details> popover
+// showing the most recent items plus a link to the full feed. The badge
+// appears only when there are actionable items (approvals);
+// informational items (idle runtimes) show in the list but never inflate
+// the badge, so the count always means "needs a decision". Summary is
+// read from the request context (populated by the notifications
+// middleware); an empty summary renders a quiet bell. NotificationBell
+// is the bell alone, for the dashboard's re-check (GET /dashboard/bell);
+// WithChrome has read its feed.
+templ NotificationBell() {
+	@notificationBell(notify.SummaryFrom(ctx).Uncleared())
+}
+
+templ notificationBell(sum notify.Summary) {
+	<details class="dash-bell dash-autoclose" id="dash-bell" data-live-src="/dashboard/bell">
+		<summary class="dash-bell-button" aria-label="Notifications">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></svg>
+			if sum.Count > 0 {
+				<span class="dash-bell-badge" aria-label={ notificationBadgeLabel(sum.Count) }>{ notificationBadgeText(sum.Count) }</span>
+			}
+		</summary>
+		<div class="dash-bell-popover" role="menu">
+			<div class="dash-bell-head">
+				<strong>Notifications</strong>
+				<details class="dash-bell-menu dash-autoclose">
+					<summary class="dash-bell-more" aria-label="Notification options">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle></svg>
+					</summary>
+					<div class="dash-bell-menu-panel" role="menu">
+						<a href="/dashboard/notifications" role="menuitem">View all notifications</a>
+						<a href="/dashboard/settings?tab=notifications" role="menuitem">Notification settings</a>
+					</div>
+				</details>
+			</div>
+			if len(sum.Items) == 0 {
+				<p class="dash-bell-empty">No notifications.</p>
+			} else {
+				for _, it := range notificationBellItems(sum) {
+					<a class={ "dash-bell-item", templ.KV("dash-bell-item-action", it.Actionable) } href={ templ.SafeURL(it.Href) } role="menuitem">
+						<span class={ "dash-bell-dot", "dash-bell-dot-" + string(it.Severity) } aria-hidden="true"></span>
+						<span class="dash-bell-item-body">
+							<strong>{ it.Title }</strong>
+							if it.Subtitle != "" {
+								<small>{ it.Subtitle }</small>
+							}
+						</span>
+						<time>{ it.TimeLabel }</time>
+					</a>
+				}
+			}
+			<div class="dash-bell-foot">
+				if sum.Durable {
+					<a href="/needs-you">Needs you</a>
+				} else {
+					<a href="/dashboard/notifications">View all notifications</a>
+				}
+				if len(sum.Items) > 0 {
+					<form method="post" action="/dashboard/notifications/clear">
+						for _, item := range sum.Items {
+							if item.Persistent {
+								<input type="hidden" name={ "seen:" + item.ID } value={ notificationRevision(item.Revision) }/>
+							}
+						}
+						<button type="submit" class="dash-bell-clear">Clear all</button>
+					</form>
+				}
+			</div>
+		</div>
+	</details>
+}
+
+// accountSwitcher lets a person on more than one account choose which
+// one they work in. One account: nothing renders. Plain forms, no JS;
+// the API checks the membership either way.
+templ accountSwitcher(a AccountSwitch) {
+	if len(a.Accounts) > 1 {
+		<details class="dash-disclosure dash-autoclose dash-account-switch">
+			<summary class="btn btn-secondary btn-sm" aria-label="Switch account">
+				{ a.Current().Label } · { RoleLabel(a.Current().Role) }
+			</summary>
+			<div class="dash-disclosure-panel">
+				<p class="dash-hint">Your accounts</p>
+				for _, o := range a.Accounts {
+					<form method="post" action="/dashboard/account">
+						<input type="hidden" name="tenant" value={ o.TenantID }/>
+						<button type="submit" class="btn btn-secondary btn-sm" disabled?={ o.Current }>
+							{ o.Label } · { RoleLabel(o.Role) }
+							if o.Current {
+								(current)
+							}
+						</button>
+					</form>
+				}
+			</div>
+		</details>
+	}
+}

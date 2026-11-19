@@ -1,0 +1,266 @@
+package pages
+
+import (
+	"net/url"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// AgentSheetView is one thing to do on an agent, on its own full screen
+// (C, the approved mockup): connect Claude Code or Codex, create a
+// connect link, read how it works, make a key, look at a key, revoke one.
+// Each posts to the route that already does it.
+type AgentSheetView struct {
+	Kind              string
+	Agent             AgentSummary
+	GatewayURL        string
+	ConnectLinks      []apiclient.ConnectLink
+	ConnectLinksError string
+	Key               apiclient.KeyListItem
+	Flash             *DashboardFlash
+}
+
+func (v AgentSheetView) back() string {
+	switch v.Kind {
+	case "key", "key-new":
+		return agentHref(v.Agent.ID) + "/keys"
+	case "key-revoke":
+		return agentHref(v.Agent.ID) + "/keys/" + url.PathEscape(v.Key.ID)
+	}
+	return agentHref(v.Agent.ID) + "/tools"
+}
+
+templ AgentSheet(v AgentSheetView) {
+	@components.LayoutAppThemedWithCSS("KIFF Cloud — Agent", "css/fonts.css", "css/app-shell.css", "css/walkthrough.css") {
+		switch v.Kind {
+			case "gateway":
+				@wkFrame(v.back(), "Claude Code or Codex", 1, "1", false) {
+					@agentGatewaySheet(v)
+				}
+			case "link":
+				@wkFrame(v.back(), "An app with sign-in", 1, "1", false) {
+					@agentLinkSheet(v)
+				}
+			case "how":
+				@wkFrame(v.back(), "How this works", 1, "1", false) {
+					@agentHowSheet(v)
+				}
+			case "key-new":
+				@wkFrame(v.back(), "New key", 1, "1", false) {
+					@agentKeyNewSheet(v)
+				}
+			case "key":
+				@wkFrame(v.back(), "Key", 1, "1", false) {
+					@agentKeySheet(v)
+				}
+			case "key-revoke":
+				@wkFrame(v.back(), "Revoke", 1, "1", false) {
+					@agentKeyRevokeSheet(v)
+				}
+		}
+		@sheetCopyScript()
+	}
+}
+
+// sheetCopyScript makes [data-copy-target] buttons copy the named
+// element's text; without it the text stays selectable.
+templ sheetCopyScript() {
+	<script>
+	document.addEventListener("click", function (e) {
+		var b = e.target.closest("[data-copy-target]");
+		if (!b) return;
+		var el = document.getElementById(b.getAttribute("data-copy-target"));
+		if (!el || !navigator.clipboard) return;
+		navigator.clipboard.writeText(el.innerText).then(function () {
+			var was = b.textContent; b.textContent = "Copied ✓";
+			setTimeout(function () { b.textContent = was; }, 1600);
+		});
+	});
+	</script>
+}
+
+// agentSheetMsg is the flash an action left, shown on the sheet it
+// returned to.
+templ agentSheetMsg(f *DashboardFlash) {
+	if f != nil && f.Message != "" {
+		<p class={ "wk-msg", templ.KV("wk-msg-warn", f.Kind == "error") } role="status">{ f.Message }</p>
+	}
+}
+
+// agentSheetBar is a one-step sheet's bar: a quiet way back and the one
+// thing the sheet does. The hidden Back and Continue keep the shared
+// script's contract.
+templ agentSheetBar(back, quiet, submit string, danger bool) {
+	<footer class="wk-bar">
+		<div class="wk-bar-row">
+			<button type="button" hidden data-wk-back>Back</button>
+			<button type="button" hidden data-wk-next>Continue</button>
+			<a class="wk-btn wk-btn-quiet wk-btn-half" href={ templ.SafeURL(back) }>{ quiet }</a>
+			if submit != "" {
+				<button type="submit" class={ "wk-btn", templ.KV("wk-btn-danger", danger), templ.KV("wk-btn-primary", !danger) } data-wk-submit>{ submit }</button>
+			}
+		</div>
+	</footer>
+}
+
+// agentGatewaySheet makes the agent a gateway key; the configuration to
+// paste is shown once on the Tools tab it returns to.
+templ agentGatewaySheet(v AgentSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(agentHref(v.Agent.ID) + "/gateway-key") }>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">Connect Claude Code or Codex</h1>
+				<p>KIFF makes <span class="wk-mono">{ v.Agent.ID }</span> a key that can only ask for decisions, inside a config to paste. The agent’s code doesn’t change.</p>
+			</div>
+			<ul class="wk-list">
+				<li>Its calls go to <span class="wk-mono">{ v.GatewayURL }</span>, and KIFF checks each one against the agent’s Cards first.</li>
+				<li>The key is shown once, inside the configuration for Claude Code and for Codex.</li>
+				<li>Only an admin of this account can create it.</li>
+				if hasGatewayKey(v.Agent) {
+					<li>It already has a gateway key. This makes another one; revoke the old one on Keys when it is no longer used.</li>
+				}
+			</ul>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Create the key and config", false)
+	</form>
+}
+
+// agentLinkSheet creates a connect link and lists the agent's links, each
+// with its command and a revoke.
+templ agentLinkSheet(v AgentSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(agentHref(v.Agent.ID) + "/connect-links") }>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">Connect an app with sign-in</h1>
+				<p>A URL that names <span class="wk-mono">{ v.Agent.ID }</span>. No key is pasted anywhere.</p>
+			</div>
+			<ol class="wk-list">
+				<li>Add the URL to the app as a remote MCP server.</li>
+				<li>The first time, an admin or editor of this account signs in to KIFF and allows it.</li>
+				<li>Revoke the link here, and every app connected through it stops.</li>
+			</ol>
+			if v.ConnectLinksError != "" {
+				<p class="wk-msg wk-msg-warn">{ v.ConnectLinksError }</p>
+			}
+			for _, l := range v.ConnectLinks {
+				if l.RevokedAt == nil {
+					<div class="wk-field">
+						<span class="wk-label">Claude Code</span>
+						<pre class="wk-code" id={ "link-" + l.ID }><code>{ "claude mcp add --transport http kiff " + l.URL }</code></pre>
+						<p class="wk-sub">Other MCP clients: add <span class="wk-mono">{ l.URL }</span> as a remote server and sign in when it asks.</p>
+						<div class="wk-list-forms">
+							<button type="button" class="wk-link" data-copy-target={ "link-" + l.ID }>Copy</button>
+							<button type="submit" class="wk-link" formaction={ agentHref(v.Agent.ID) + "/connect-links/" + url.PathEscape(l.ID) + "/revoke" }>Revoke this link</button>
+						</div>
+					</div>
+				}
+			}
+			<p class="wk-sub">The URL is not a secret. Using it still needs an admin or editor of this account to sign in and allow it.</p>
+		</section>
+		@agentSheetBar(v.back(), "Done", "Create a connect link", false)
+	</form>
+}
+
+// agentHowSheet says what KIFF checks for this agent, and the three ways
+// to stop it.
+templ agentHowSheet(v AgentSheetView) {
+	<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+		<div class="wk-head">
+			<h1 id="wk-h1">How this works</h1>
+			<p>Tool calls <span class="wk-mono">{ v.Agent.ID }</span> makes through KIFF are checked first.</p>
+		</div>
+		<ol class="wk-list">
+			<li>KIFF checks the call against the agent’s Cards.</li>
+			<li>Inside a Card, the call goes on to the tool.</li>
+			<li>Past a Card, it is held for an authorized approver or refused, as that Card says. A tool no Card covers is refused.</li>
+			<li>If the agent can also reach the tool directly, or through a shell or browser, its Card doesn’t bind that path. Remove that access.</li>
+		</ol>
+		<div class="wk-head"><p><strong>Stopping it</strong></p></div>
+		<ul class="wk-list">
+			<li><strong>This agent only:</strong> revoke its key on <a href={ templ.SafeURL(agentHref(v.Agent.ID) + "/keys") }>Keys</a>. Other agents keep their access.</li>
+			<li><strong>One thing it does:</strong> revoke or change the Card that allows it on <a href={ templ.SafeURL(agentHref(v.Agent.ID) + "/cards") }>Cards</a>.</li>
+			<li><strong>A tool, for everyone:</strong> Remove it on <a href="/tools">Tools</a>. No agent can call it through KIFF after that.</li>
+		</ul>
+	</section>
+	<footer class="wk-bar">
+		<div class="wk-bar-row">
+			<a class="wk-btn wk-btn-primary" href={ templ.SafeURL(v.back()) }>Got it</a>
+		</div>
+	</footer>
+}
+
+// agentKeyNewSheet asks where the new key is used: a gateway key for
+// Claude Code or Codex, or a kiff-guard key for the agent's own code.
+templ agentKeyNewSheet(v AgentSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL(agentHref(v.Agent.ID) + "/keys/new") }>
+		<section class="wk-step" data-wk-step="1" data-wk-check="choice:kind" data-wk-msg="Choose where the key is used." aria-labelledby="wk-h1">
+			@agentSheetMsg(v.Flash)
+			<div class="wk-head">
+				<h1 id="wk-h1">New key</h1>
+				<p>Where will <span class="wk-mono">{ v.Agent.ID }</span> use it?</p>
+			</div>
+			<fieldset class="wk-choices">
+				<legend class="wk-sr">Where the key is used</legend>
+				if v.GatewayURL != "" {
+					<label class="wk-choice wk-choice-tall">
+						<input type="radio" name="kind" value="gateway" checked/>
+						<span class="wk-strong">Claude Code or Codex</span>
+						<span class="wk-body">A gateway key. Its calls go through { v.GatewayURL }. Only an admin can create it.</span>
+					</label>
+				}
+				<label class="wk-choice wk-choice-tall">
+					<input type="radio" name="kind" value="guard" checked?={ v.GatewayURL == "" }/>
+					<span class="wk-strong">Code that runs kiff-guard</span>
+					<span class="wk-body">A key for the kiff-guard SDK in your own service. It asks KIFF before each action.</span>
+				</label>
+			</fieldset>
+			<p class="wk-sub">The key is shown once, when it is created.</p>
+		</section>
+		@agentSheetBar(v.back(), "Cancel", "Create the key", false)
+	</form>
+}
+
+// agentKeySheet is one key: what tells it apart, and a way to revoke it.
+templ agentKeySheet(v AgentSheetView) {
+	<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+		<div class="wk-head">
+			<h1 id="wk-h1" class="wk-mono">{ v.Key.Label }</h1>
+			<p>{ keyKindLabel(v.Key) }. Active.</p>
+		</div>
+		<dl class="wk-rows">
+			<div><dt>Last use</dt><dd>{ keyLastUsed(v.Key) }</dd></div>
+			<div><dt>Created</dt><dd>{ formatKeyCreated(v.Key.CreatedAt) }</dd></div>
+			<div><dt>Key ID</dt><dd class="wk-mono" title={ v.Key.ID }>{ shortKeyID(v.Key.ID) }</dd></div>
+		</dl>
+		<p class="wk-sub">Keys with the same name are told apart by last use and key ID.</p>
+	</section>
+	<footer class="wk-bar">
+		<div class="wk-bar-row">
+			<a class="wk-btn wk-btn-quiet wk-btn-half" href={ templ.SafeURL(v.back()) }>Close</a>
+			<a class="wk-btn wk-btn-danger" href={ templ.SafeURL(agentHref(v.Agent.ID) + "/keys/" + url.PathEscape(v.Key.ID) + "/revoke") }>Revoke this key</a>
+		</div>
+	</footer>
+}
+
+// agentKeyRevokeSheet asks before a key is revoked; the account's revoke
+// route does it and returns to the agent's Keys.
+templ agentKeyRevokeSheet(v AgentSheetView) {
+	<form class="wk-form" method="post" action={ templ.SafeURL("/dashboard/keys/" + url.PathEscape(v.Key.ID) + "/revoke") }>
+		<input type="hidden" name="next" value={ agentHref(v.Agent.ID) + "/keys" }/>
+		<section class="wk-step" data-wk-step="1" aria-labelledby="wk-h1">
+			<div class="wk-head">
+				<h1 id="wk-h1">Revoke this key?</h1>
+				<p>This can’t be undone. You can create a new key later.</p>
+			</div>
+			<ul class="wk-list">
+				<li>Calls signed with <span class="wk-mono">{ v.Key.Label }</span> are refused from now on.</li>
+				<li>If <span class="wk-mono">{ v.Agent.ID }</span> still uses it, it stops working until it gets a new key.</li>
+				<li>Its Cards and records stay.</li>
+			</ul>
+		</section>
+		@agentSheetBar(v.back(), "Keep it", "Revoke", true)
+	</form>
+}

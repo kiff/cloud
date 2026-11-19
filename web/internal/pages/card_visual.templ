@@ -1,0 +1,42 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/apiclient"
+
+// kCard is the Card as people see it everywhere (the approved mockup):
+// a flat card with the seam, its route as a tag, and three lines — who
+// holds it, what it may do, its limit. Usage sits under it, not inside
+// it.
+templ kCard(m apiclient.Mandate, b CardBalance, status string) {
+	<div class="k-card">
+		<svg class="k-seam" viewBox="0 0 340 214" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M262 0 L292 44 Q306 68 290 94 L272 124 Q264 138 264 156 L264 214"></path></svg>
+		<span class={ "k-tag", templ.KV("k-tag-ask", m.ComesHome()) } title={ cardPastLabel(m) }><span class="sr-only">Past its limit: </span>{ cardRouteTag(m) }</span>
+		if status != "" {
+			<span class={ "k-status", "k-status-" + statusTone(status) }>{ status }</span>
+		}
+		<span class="k-lines">
+			<span class="k-agent">{ cardHolderLabel(m) }</span>
+			<span class="k-actions">{ cardActionsShort(m) }</span>
+			<span class="k-limit">{ cardLimitLine(m, b) }</span>
+		</span>
+	</div>
+}
+
+// kUsage is what is left of the Card's first limit, under the card.
+templ kUsage(b CardBalance) {
+	for i, l := range b.Readable() {
+		<div class={ "k-usage", templ.KV("k-usage-more", i > 0) }>
+			<progress max="100" value={ itoa(l.PercentUsed()) } aria-label="Used"></progress>
+			<span><strong>{ balanceValue(l, l.Remaining) }</strong> { cardBalanceLine(l) }</span>
+		</div>
+	}
+}
+
+// cardRouteBadge is the Card's route beside its name in lists: the Stop or
+// Ask tag, then what that means. The words stand on their own; the colour
+// only repeats them.
+templ cardRouteBadge(m apiclient.Mandate) {
+	<span class="k-route">
+		<span class={ "k-route-tag", templ.KV("k-route-ask", m.ComesHome()) }>{ cardRouteTag(m) }</span>
+		<span class="k-route-text">{ cardRouteConsequence(m) }</span>
+	</span>
+}

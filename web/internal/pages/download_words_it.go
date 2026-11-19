@@ -1,0 +1,37 @@
+package pages
+
+// downloadIT is /tafs/download's words in Italian, at /it/tafs/download.
+var downloadIT = downloadWords{
+	Lang:             "it",
+	Title:            "Scarica tafs — KIFF",
+	Description:      "Scarica tafs su Google Play per Android. iPhone e iPad arriveranno sull'App Store.",
+	DescAvailable:    "Scarica tafs per %s.",
+	DescComingOne:    "L'app per %s è in arrivo.",
+	DescComingMany:   "Le app per %s sono in arrivo.",
+	And:              "e",
+	Head:             "Scarica tafs",
+	Sub:              "Agenti IA per il lavoro di routine della tua azienda, ciascuno entro una Card che fissi tu. Tutto ciò che va oltre aspetta la tua approvazione sul tuo telefono.",
+	Phones:           "Telefono e tablet",
+	Computer:         "Computer",
+	NotYet:           "In arrivo",
+	NotAvailable:     "Non disponibile",
+	AvailableVersion: "Versione %s",
+	AvailableSize:    "%s",
+	AvailableSHA:     "SHA-256:",
+	CheckHow:         "Prima di aprirlo, verifica che lo SHA-256 del file corrisponda a questo.",
+	DownloadFor:      "Scarica per %s",
+	QRAlt:            "Codice QR che apre kiff.dev/tafs/download",
+	QRCaption:        "Inquadralo con la fotocamera del tuo telefono per aprire lì questa pagina.",
+	Cost:             "Quanto costa:",
+	Pricing:          "prezzi",
+	ComingAppStore:   "In arrivo sull'App Store",
+	IPhoneIPad:       "iPhone e iPad, %s",
+	Needs: map[string]string{
+		"android": "Android 11 o versioni successive",
+		"ios":     "iOS e iPadOS 16 o versioni successive",
+		"macos13": "macOS 13 o versioni successive",
+		"macos":   "solo macOS 12 (Monterey)",
+		"windows": "Windows 10 o 11",
+		"linux":   "Ubuntu 24.04 o versioni successive",
+	},
+}

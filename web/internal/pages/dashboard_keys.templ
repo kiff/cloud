@@ -1,0 +1,79 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// DashboardKeys is the API keys tab. The existing keyPanel
+// renders the active-key list, the mint form, and (since the
+// change) the per-row revoke action. The KeyRevealed flash
+// banner (the one-time plaintext after a fresh mint) renders
+// inline via flashBanner.
+//
+// All POST routes (mint at /dashboard/keys, revoke at
+// /dashboard/keys/{id}/revoke) redirect back here on success
+// so the user lands on the matching tab after the action.
+templ DashboardKeys(v DashboardView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — API keys",
+		"keys",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.CurrentDomain),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Workspace · API keys</p>
+					<h1>API keys</h1>
+					<p class="dash-note">Create and revoke keys. To connect an agent, see Runtimes.</p>
+				</div>
+				if v.Me != nil {
+					<div class="dash-header-actions">
+						<details class="dash-disclosure dash-autoclose">
+							<summary class="btn btn-primary">Create API key</summary>
+							<form method="post" action="/dashboard/keys" class="dash-disclosure-panel">
+								<label class="dash-disclosure-label">
+									Label
+									<input name="label" placeholder="e.g. production" maxlength="200"/>
+								</label>
+								<fieldset class="dash-disclosure-label dash-key-kind">
+									<legend>Kind</legend>
+									<label>
+										<input type="radio" name="kind" value="agent" checked/>
+										Agent or service key: an agent or service calls KIFF with it
+									</label>
+									<label>
+										<input type="radio" name="kind" value="read-only"/>
+										Read-only account key: reads activity, held work and Cards; changes nothing. Needs a sign-in in the last ten minutes.
+									</label>
+								</fieldset>
+								<label class="dash-disclosure-label">
+									Expires
+									<select name="expires">
+										<option value="" selected>Default</option>
+										<option value="30">In 30 days</option>
+										<option value="90">In 90 days</option>
+										<option value="365">In a year</option>
+									</select>
+								</label>
+								<p class="dash-hint">Default: a read-only key expires in 90 days; an agent or service key never does.</p>
+								<button type="submit" class="btn btn-secondary">Create</button>
+								<p class="dash-hint">The key is shown once and never stored.</p>
+							</form>
+						</details>
+					</div>
+				}
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Me != nil {
+				@keyPanel(v)
+			}
+		</section>
+	}
+}

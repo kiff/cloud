@@ -1,0 +1,175 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Security renders the public security posture page at /security.
+//
+// The page is a v0 of the trust-posture design's "transparent disclosure" pillar:
+// a concrete artifact sales can point at, and a place a curious
+// prospect can ask harder questions. The honest "Roadmap" section names what the
+// cloud does not yet have (SOC2 Type II, ISO 42001, the insurance
+// partnership) so no claim on the page is uncheckable.
+//
+// Page voice follows the rest of the site: factual, paper-shaped,
+// property-led. Avoid crypto vocabulary in user-facing copy
+// (Merkle, Base, Sepolia, anchor) — implementation detail belongs
+// in the anchoring design and the cloud's docs.
+templ Security() {
+	@components.LayoutSiteWithMeta("KIFF — security & posture", "What KIFF Cloud signs, stores and stands behind: what it enforces, current operational practices, sub-processors, incident response, the data it processes, and what it doesn't have yet.", "website", "", "css/security.css") {
+		@SecurityBody()
+	}
+}
+
+// SecurityBody is the page's content without the site layout. The dated
+// documentation archive captures exactly this markup. One fact per
+// line; the detail lives in the docs, /subprocessors and the DPA.
+templ SecurityBody() {
+	<article class="security">
+		<header class="security-head">
+			<h1>What KIFF Cloud signs, stores, and stands behind.</h1>
+			<p class="security-lede">If a claim here cannot be verified by an external party, we name it as a roadmap item rather than a guarantee.</p>
+		</header>
+		<section class="security-section security-trust" id="trust">
+			<h2>Trust at a glance</h2>
+			<table class="security-table security-trust-table">
+				<thead>
+					<tr>
+						<th>Framework / area</th>
+						<th>Status</th>
+						<th>Detail</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>GDPR data-subject rights</td>
+						<td><span class="security-pill security-pill-ok">in place</span></td>
+						<td>Access, export, and erasure supported (<a href="#deletion">deletion</a>); <a href="/legal/dpa">DPA</a> available.</td>
+					</tr>
+					<tr>
+						<td>PCI DSS</td>
+						<td><span class="security-pill security-pill-na">out of scope</span></td>
+						<td>KIFF never holds cardholder data, payment runs through hosted Stripe, so PCI scope sits with the processor.</td>
+					</tr>
+					<tr>
+						<td>HIPAA</td>
+						<td><span class="security-pill security-pill-na">not in scope today</span></td>
+						<td>No PHI processed by default.</td>
+					</tr>
+					<tr>
+						<td>Tenant isolation</td>
+						<td><span class="security-pill security-pill-ok">in place</span></td>
+						<td>Per-tenant Postgres schema; cross-tenant queries are <a href="#artifacts">architecturally impossible</a> from the runtime path.</td>
+					</tr>
+					<tr>
+						<td>Encryption</td>
+						<td><span class="security-pill security-pill-ok">in place</span></td>
+						<td>TLS 1.2+ in transit; encrypted at rest. Per-row customer keys are <a href="#roadmap">roadmap</a>.</td>
+					</tr>
+					<tr>
+						<td>Audit evidence for your reviews</td>
+						<td><span class="security-pill security-pill-ok">in place</span></td>
+						<td>Every decision is a signed, append-only, tamper-evident receipt, built to be the artifact <em>your</em> SOC 2 / sector audit asks for.</td>
+					</tr>
+				</tbody>
+			</table>
+			<h3>What we can hand a security reviewer today</h3>
+			<ul class="security-handover">
+				<li><a href="/legal/dpa">Data Processing Agreement</a>, signed before any production use.</li>
+				<li>A completed security questionnaire and current SOC 2 status on request, <a href="mailto:security@kiff.dev">security@kiff.dev</a>.</li>
+			</ul>
+		</section>
+		<section class="security-section" id="posture">
+			<h2>Posture</h2>
+			<p>Per-tenant signing-key custody, where each tenant has their own dedicated key the cloud signs under, with an optional migration path to hand a tenant the key themselves, is on the roadmap below, not in place today. Until then, the cloud is the named third party behind every signed record.</p>
+		</section>
+		<section class="security-section" id="enforcement">
+			<h2>What KIFF enforces</h2>
+			<p class="section-lede">Plainly: KIFF returns a <strong>decision</strong>; your integration runs the side effect. KIFF is the gate, not the runner.</p>
+			<p>Enforcement is a setting you control, per workspace, and it is strict by default. Observe is opt-in and set by us at your request, never by the agent and never the default, a workspace is never observe-only by accident.</p>
+			<h3>KIFF does not stop</h3>
+			<ul class="security-levels">
+				<li>A side effect reached by a <strong>non-governed code path</strong>: e.g. calling the payment API directly, around the gate.</li>
+				<li>An integrator who receives an enforce-mode decision and <strong>ignores it</strong>, or a workspace deliberately set to <strong>observe</strong> (advisory-only by choice, still recorded, never accidental), cooperative enforcement, like any policy engine.</li>
+				<li>A request that <strong>never reaches</strong> the gate at all.</li>
+			</ul>
+			<h3>Making the gate harder to bypass</h3>
+			<ul class="security-levels">
+				<li>Observe — advisory-only, in place</li>
+				<li>Guard at the seam, in place</li>
+				<li>Inline proxy, planned</li>
+				<li>Tool gate, planned</li>
+			</ul>
+		</section>
+		<section class="security-section" id="artifacts">
+			<details class="security-more">
+			<summary><h2>Current operational practices</h2></summary>
+			<dl class="security-grid">
+				<div class="security-row">
+					<dt>Signing-wallet custody</dt>
+					<dd>The wallet that signs receipts and submits the public-chain commitments is held in our infrastructure under access controls separate from application engineers. The application code path signs through a service interface; it cannot extract the key.</dd>
+				</div>
+				<div class="security-row">
+					<dt>Data location</dt>
+					<dd><code>eu-west-1</code> (Ireland): KIFF Cloud, the tafs service and planque, with their databases, backups, secrets and logs.</dd>
+				</div>
+				<div class="security-row">
+					<dt>Logs</dt>
+					<dd>How long logs are kept: the web server's access logs, which include IP addresses, 90 days; KIFF's service journal, 30 days; KIFF's monitoring logs, 7 days; the tafs service's and planque's logs, 30 days.</dd>
+				</div>
+			</dl>
+			</details>
+		</section>
+		<section class="security-section" id="subprocessors">
+			<h2>Sub-processors</h2>
+			<p class="section-lede">Vendors that process tenant data on our behalf. The official list, with the data each one touches, is at <a href="/subprocessors">/subprocessors</a>. We update it within 30 days of any change.</p>
+			<p>Amazon Web Services · Clerk · Anthropic · Apple · Resend · Composio · Stripe</p>
+		</section>
+		<section class="security-section" id="incident">
+			<h2>Incident response</h2>
+			<p>Report a suspected security issue to <a href="mailto:security@kiff.dev">security@kiff.dev</a>. We aim to acknowledge within one business day and follow up with an initial assessment within five.</p>
+			<p>Incidents that affect tenant data trigger a written notification to affected customers within 72 hours of confirmation, with a public post-incident report once the immediate response is closed.</p>
+			<h3 id="updates">Security updates</h3>
+			<p>We provide security updates for as long as we offer the Service.</p>
+		</section>
+		<section class="security-section" id="data-we-process">
+			<details class="security-more">
+			<summary><h2>Data we process</h2></summary>
+			<h3 id="identifiers">Identifiers we keep verbatim</h3>
+			<p>Tenant id, actor id, entity id, action name, decision label, request and response timestamps, receipt hashes, and the public-trail transaction hashes that pin those receipts.</p>
+			<h3 id="parameters">Tenant-controlled fields we persist</h3>
+			<p>From the <code>parameters</code> object on a proposal, only numeric parameters (amounts, counts) are kept, because limits count them. The full request is kept as a hash, so a retry can be told apart from a different request. Through the KIFF gateway, also the value of the argument a call acts on (such as a payment id), so the owner's record and the receipt can show which one to someone who holds it.</p>
+			<h3 id="never-persisted">Identifiers we never persist</h3>
+			<p>Raw model prompts and completions. The cloud forwards inference traffic to the configured model provider and keeps no copy.</p>
+			<p>For each call a taf makes through KIFF, tafs keeps KIFF's reference for the call and the identifier of what it acted on (for example a payment id, never the customer's details) for 30 days, to show it in the taf's Record; the rest of a call's input is kept only until the run ends. The <a href="/legal/dpa#annex-4">DPA's Annex 4</a> lists what tafs keeps and for how long.</p>
+			<h3 id="public-trail">Data we never publish to the verifiable trail</h3>
+			<p>The summary commits to the underlying records without revealing them; the records themselves never leave the cloud's database.</p>
+			<h3 id="deletion">Data we delete on tenant deletion</h3>
+			<p>A tenant deletion request scrubs the tenant's Postgres schema, audit records, API keys, and signing-key references.</p>
+			<h3 id="people-data">Data about the people who sign in</h3>
+			<p>When a user signs in, the cloud stores the upstream authentication subject and the email address used to sign in.</p>
+			<h3 id="terminology">Pseudonymized, not anonymized</h3>
+			<p>KIFF Cloud <em>pseudonymizes</em> tenant identifiers: direct identifiers are replaced with stable opaque tokens, but the data is still about a person and EU data-protection rules continue to apply.</p>
+			<h3 id="not-today">What we do not do today</h3>
+			<ul class="security-roadmap-list">
+				<li>No automatic redaction of the agent's free-text <code>reasoning_summary</code>: it is kept as written, so the approver and the audit see the agent's own account. Do not put personal data in it.</li>
+				<li>No automatic email hashing in the auth metadata table. Planned.</li>
+			</ul>
+			</details>
+		</section>
+		<section class="security-section security-roadmap" id="roadmap">
+			<h2>What we don't yet have</h2>
+			<ul class="security-roadmap-list">
+				<li><strong>SOC 2 Type I</strong>: planned, not started.</li>
+				<li><strong>ISO 42001 (AI management) or ISO 27001</strong>: under consideration.</li>
+				<li><strong>Cyber-insurance partnership</strong>: one named insurer evaluating our attested action evidence format.</li>
+				<li><strong>Per-tenant signing-key custody</strong>: each tenant gets their own dedicated wallet, with a defined migration path to take custody of it themselves.</li>
+				<li><strong>KMS-backed signing</strong>: move the signing wallet behind AWS KMS so the private key cannot be extracted from the application plane.</li>
+				<li><strong>Self-serve tenant deletion</strong>: a <code>kiff-tenant delete</code> CLI plus a dashboard surface. Today, deletion is operator-driven by emailing <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> and runs through our internal runbook within the GDPR Article 12(3) one-month window.</li>
+				<li><strong>Audit retention enforcement</strong>: Today, retention is best-effort and not differentiated per tier.</li>
+				<li><strong>Per-row encryption with customer keys (BYOK)</strong>: pending real customer ask.</li>
+			</ul>
+		</section>
+	</article>
+}

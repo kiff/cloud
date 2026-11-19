@@ -1,0 +1,95 @@
+<h1 id="agno">Agno</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this Agno agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the Agno hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> Agno was the first adapter, and its seam was
+exercised live against the cloud decide endpoint
+(<a href="https://github.com/kiff/kiff-cloud/issues/242" target="_blank" rel="noreferrer noopener">kiff-cloud#242</a>).</p>
+
+<p><strong>Shape: middleware.</strong> Agno&rsquo;s <code>tool_hooks</code> hand the guard a continuation
+that runs the tool, so the guard runs it via <code>Guard.evaluate(run=...)</code>.
+See <a href="/docs/archive/2026-10-10/concepts">how the guard works</a> for what that means.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+# plus Agno itself, the framework you're guarding:
+pip install agno
+</code></pre>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<pre><code class="language-python">from agno.agent import Agent
+from kiff_guard import Guard
+from kiff_guard.adapters.agno import agno_hook
+
+guard = Guard(mode=&quot;observe&quot;)     # no client, no tenant needed
+
+agent = Agent(
+    model=...,
+    tools=[refund_order, send_email],
+    tool_hooks=[agno_hook(guard)],
+)
+</code></pre>
+
+<p>Run the agent as usual, then read the trail:</p>
+
+<pre><code class="language-python">for r in guard.receipts:
+    print(r.state, r.tool, r.outcome)
+</code></pre>
+
+<p><code>agno_hook</code> is one line of real logic — it matches Agno&rsquo;s hook signature
+and calls the guard:</p>
+
+<pre><code class="language-python">def hook(function_name, func, args):
+    return guard.evaluate(function_name, args, run=lambda: func(**args))
+</code></pre>
+
+<h2 id="activate">Activate</h2>
+
+<p>Derive a starter domain from what you observed, review it, and activate
+it in the <span class="archive-unlinked">dashboard</span>:</p>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Once you have a tenant and an active domain, point the guard at KIFF and
+switch to <code>enforce</code>. Nothing about the agent wiring changes — only the
+guard:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+from kiff_guard.adapters.agno import agno_hook
+
+client = HTTPClient(
+    api_key=&quot;kiff_live_...&quot;,                       # mint in the dashboard
+    tool_map=ToolMap().bind(
+        &quot;refund_order&quot;, action=&quot;REFUND_ORDER&quot;,
+        entity_type=&quot;Order&quot;, entity_arg=&quot;order_id&quot;),
+)
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+
+agent = Agent(model=..., tools=[refund_order], tool_hooks=[agno_hook(guard)])
+</code></pre>
+
+<p>In enforce mode a withheld decision raises <code>kiff_guard.Hold</code>; the tool
+never runs. The host app maps <code>Hold</code> onto Agno&rsquo;s human-in-the-loop /
+approval flow if it wants the agent to see why.</p>
+
+<h2 id="the-seam-verified">The seam (verified)</h2>
+
+<p>Agno invokes each tool hook as middleware: <code>hook(function_name, func,
+args)</code>. The hook calls <code>func(**args)</code> to let the tool proceed, or skips
+it to block. That maps directly onto the guard&rsquo;s <code>run</code> continuation.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/agno.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/agno.py</code></a></li>
+<li>Seam research: <a href="https://github.com/kiff/kiff-cloud/blob/main/docs/integration/frameworks/agno.md" target="_blank" rel="noreferrer noopener">agno.md</a></li>
+<li>Agno docs: <a href="https://docs.agno.com/" target="_blank" rel="noreferrer noopener">docs.agno.com</a> (Hooks → Tool Hooks)</li>
+</ul>

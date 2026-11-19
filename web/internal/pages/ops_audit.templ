@@ -1,0 +1,53 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsAudit renders the operator audit trail — every mutating operator
+// action, newest first. Read-only.
+templ OpsAudit(entries []apiclient.OpsAuditEntry, chrome components.DashboardChrome) {
+	@components.OpsShell("audit", "audit", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Operator · audit</p>
+					<h1>Operator action log.</h1>
+					<p class="dash-note">Append-only record of every operator mutation. Newest first.</p>
+				</div>
+			</header>
+			<article class="dash-card">
+				if len(entries) == 0 {
+					<p class="dash-note">No operator actions recorded yet.</p>
+				} else {
+					<div class="ops-table-wrap">
+						<table class="dash-table ops-wide">
+							<thead>
+								<tr><th>When</th><th>Operator</th><th>Action</th><th>Tenant</th><th>Change</th><th>Reason</th></tr>
+							</thead>
+							<tbody>
+								for _, e := range entries {
+									<tr>
+										<td class="ops-nowrap">{ opsTime(e.CreatedAt) }</td>
+										<td>{ e.OperatorSubject }</td>
+										<td><span class="dash-pill dash-pill-info">{ e.Action }</span></td>
+										<td class="ops-nowrap">
+											if e.TargetTenantID != "" {
+												<a href={ templ.SafeURL("/ops/tenants/" + e.TargetTenantID) }>{ e.TargetTenantID }</a>
+											} else {
+												—
+											}
+										</td>
+										<td class="ops-code">{ opsAuditDetail(e) }</td>
+										<td>{ e.Reason }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}

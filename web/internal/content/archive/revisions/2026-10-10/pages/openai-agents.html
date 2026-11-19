@@ -1,0 +1,100 @@
+<h1 id="openai-agents-sdk">OpenAI Agents SDK</h1>
+
+<blockquote>
+<p><strong>How this fits.</strong> kiff-guard checks each tool call this OpenAI Agents SDK agent makes against the agent&rsquo;s <a href="/docs/archive/2026-10-10/kiff-cards">Card</a> before the tool runs. Give the agent its own key and a Card in KIFF Cloud (<a href="/docs/archive/2026-10-10/connect-an-agent">Connect an agent</a>); this page is the OpenAI Agents SDK hook. If the agent calls MCP tools instead, use the <a href="/docs/archive/2026-10-10/mcp-gateway">MCP gateway</a>, with no code. The model behind it: <a href="/docs/archive/2026-10-10/concepts">how kiff-guard works</a>.</p>
+</blockquote>
+
+<p><strong>Status: verified.</strong> The adapter ships in
+<a href="https://github.com/kiff/kiff-guard" target="_blank" rel="noreferrer noopener"><code>kiff-guard</code></a>, passes the
+conformance suite, and was checked against the real <code>openai-agents</code>
+v0.17.4 SDK plus a live model call — confirming the guardrail is
+accepted and <code>reject_content</code> genuinely skips the tool.</p>
+
+<p><strong>Shape: inverted-control.</strong> The SDK runs the tool after the guardrail
+returns a verdict, so the adapter uses <code>Guard.observe()</code> /
+<code>Guard.decide_only()</code>, not a <code>run</code> callback. See
+<a href="/docs/archive/2026-10-10/concepts">how the guard works</a>.</p>
+
+<h2 id="install">Install</h2>
+
+<pre><code class="language-bash">pip install &quot;git+https://github.com/kiff/kiff-guard.git#subdirectory=packages/python/kiff-guard&quot;
+pip install openai-agents          # the framework you're guarding
+</code></pre>
+
+<p>(The <code>openai</code> extra maps to the <code>openai-agents</code> package.)</p>
+
+<h2 id="observe-audit-with-zero-config">Observe — audit with zero config</h2>
+
+<p>Attach the guard as a <strong>tool input guardrail</strong> on a <code>function_tool</code>:</p>
+
+<pre><code class="language-python">from agents import Agent, function_tool
+from kiff_guard import Guard
+from kiff_guard.adapters.openai_agents import kiff_tool_input_guardrail
+
+guard = Guard(mode=&quot;observe&quot;)     # zero-config audit; no KIFF account
+kiff_gd = kiff_tool_input_guardrail(guard)
+
+@function_tool(tool_input_guardrails=[kiff_gd])
+def refund_order(order_id: str, amount_cents: int) -&gt; str:
+    ...
+
+agent = Agent(name=&quot;support&quot;, tools=[refund_order])
+</code></pre>
+
+<p>In observe mode the guardrail records + learns and always allows the
+tool to run. Read the trail from <code>guard.receipts</code>.</p>
+
+<h2 id="activate">Activate</h2>
+
+<pre><code class="language-python">from kiff_guard import export_yaml
+print(export_yaml(&quot;my-domain&quot;, guard.catalog))
+</code></pre>
+
+<p>Review and activate in the <span class="archive-unlinked">dashboard</span>.</p>
+
+<h2 id="enforce-govern-at-runtime">Enforce — govern at runtime</h2>
+
+<p>Build the guard with a client and <code>mode=&quot;enforce&quot;</code>; the
+<code>@function_tool</code> wiring is unchanged:</p>
+
+<pre><code class="language-python">from kiff_guard import Guard, HTTPClient, ToolMap
+
+client = HTTPClient(api_key=&quot;kiff_live_...&quot;, tool_map=ToolMap().bind(...))
+guard = Guard(client=client, tenant=&quot;&lt;tenant&gt;&quot;, agent=&quot;support&quot;, mode=&quot;enforce&quot;)
+kiff_gd = kiff_tool_input_guardrail(guard)
+</code></pre>
+
+<p>On a withheld decision the guardrail returns
+<code>ToolGuardrailFunctionOutput.reject_content(reason)</code> — the SDK skips the
+tool and hands the reason to the model instead of the tool result.
+Enforce <strong>fails closed</strong> on a guard error by default.</p>
+
+<h2 id="the-seam-verified-v0-17-4">The seam (verified, v0.17.4)</h2>
+
+<p><code>@tool_input_guardrail</code> runs before the tool executes. The callback gets
+<code>data.context.tool_name</code>, <code>.tool_arguments</code> (raw JSON <strong>string</strong> — the
+adapter parses it to a dict), and <code>.tool_call_id</code>. It returns
+<code>allow()</code> to run or <code>reject_content(message)</code> to skip.</p>
+
+<blockquote>
+<p><strong>Not <code>needs_approval</code>.</strong> <code>needs_approval</code> is the heavyweight <em>human</em>
+pause: it pauses the run, surfaces <code>interruptions</code>, and resumes via
+<code>RunState</code>. KIFF&rsquo;s gate is a machine decision, so it belongs in the
+synchronous tool input guardrail. A withheld <code>approval_required</code> can
+still be bridged into the SDK&rsquo;s native <code>needs_approval</code> flow on top of
+the gate.</p>
+
+<p><strong>Boundary:</strong> tool input guardrails apply to <code>function_tool</code>s only.
+Hosted/built-in tools (web search, code interpreter, computer, shell,
+apply-patch) and handoffs bypass this pipeline; governing those needs
+a different seam.</p>
+</blockquote>
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Adapter code: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/src/kiff_guard/adapters/openai_agents.py" target="_blank" rel="noreferrer noopener"><code>kiff_guard/adapters/openai_agents.py</code></a></li>
+<li>Live check: <a href="https://github.com/kiff/kiff-guard/blob/main/packages/python/kiff-guard/live_openai_check.py" target="_blank" rel="noreferrer noopener"><code>live_openai_check.py</code></a></li>
+<li>Seam research: <a href="https://github.com/kiff/kiff-cloud/blob/main/docs/integration/frameworks/openai-agents.md" target="_blank" rel="noreferrer noopener">openai-agents.md</a></li>
+<li>SDK guardrails: <a href="https://openai.github.io/openai-agents-python/guardrails/" target="_blank" rel="noreferrer noopener">openai.github.io/openai-agents-python</a></li>
+</ul>

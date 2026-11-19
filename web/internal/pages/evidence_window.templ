@@ -1,0 +1,31 @@
+package pages
+
+// WindowOption is one preset in the evidence window selector. Href keeps
+// every other query param and only swaps window=; Active marks the
+// resolved preset. Built server-side (handlers.evidenceWindowOptions) so
+// the selector is pure server-side links — no JS.
+type WindowOption struct {
+	Label  string
+	Href   string
+	Active bool
+}
+
+// evidenceWindowSelector renders the window presets as a small segmented
+// control of links. Rendered on both Govern and Activity so the fixed
+// 30-day window becomes selectable (7 / 30 / 90 days).
+templ evidenceWindowSelector(opts []WindowOption) {
+	if len(opts) > 0 {
+		<div class="cr-window" role="group" aria-label="Evidence window">
+			<span class="cr-window-caption">Window</span>
+			for _, o := range opts {
+				<a
+					class={ "cr-window-option", templ.KV("cr-window-option-active", o.Active) }
+					href={ templ.SafeURL(o.Href) }
+					if o.Active {
+						aria-current="true"
+					}
+				>{ o.Label }</a>
+			}
+		</div>
+	}
+}

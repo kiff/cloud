@@ -41,12 +41,13 @@ jobs:
           cache-dependency-path: |
             api/go.sum
             gateway/go.sum
+            web/go.sum
       - name: Copy the published paths
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/published"
           mkdir "$out"
-          git archive HEAD api gateway README.md SECURITY.md LICENSE.md SOURCE .gitleaks.toml PRICING.md | tar -x -C "$out"
+          git archive HEAD api gateway web README.md SECURITY.md LICENSE.md SOURCE .gitleaks.toml PRICING.md | tar -x -C "$out"
           echo "OUT=$out" >> "$GITHUB_ENV"
       - name: scripts/check.sh
         run: scripts/check.sh "$OUT"

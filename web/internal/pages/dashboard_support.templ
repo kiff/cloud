@@ -1,0 +1,247 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+import "github.com/kiff/cloud/web/internal/apiclient"
+
+// Support section: a signed-in tenant files private support tickets,
+// reads the operator's replies, and continues the thread. Tickets are
+// visible only to the submitting tenant and to operators; this is the
+// tenant's side. Everything is server-rendered (templ + plain form
+// POSTs + redirects) — no JS.
+
+// DashboardSupportView renders the ticket list at /dashboard/support.
+type DashboardSupportView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	Tickets []apiclient.SupportTicket
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// DashboardSupportDetailView renders one ticket + its thread at
+// /dashboard/support/{id}.
+type DashboardSupportDetailView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	Ticket *apiclient.SupportTicketDetail
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+// DashboardNewSupportView renders the file-a-ticket form at
+// /dashboard/support/new. Title/Category/Body echo back on a
+// validation error so the tenant does not lose their draft.
+type DashboardNewSupportView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me *apiclient.Me
+
+	Title    string
+	Category string
+	Body     string
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+templ DashboardSupport(v DashboardSupportView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — Support",
+		"support",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">Account</p>
+					<h1>Support</h1>
+					<p class="dash-note">Only you and the KIFF team can see your tickets. We reply here and email you when we do.</p>
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn btn-primary" href="/dashboard/support/new">New ticket</a>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Me != nil {
+				if len(v.Tickets) == 0 {
+					@supportEmptyState()
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead>
+								<tr><th>Ticket</th><th>Category</th><th>Status</th><th>Last update</th></tr>
+							</thead>
+							<tbody>
+								for _, t := range v.Tickets {
+									<tr>
+										<td><a href={ templ.SafeURL("/dashboard/support/" + t.ID) }>{ t.Title }</a></td>
+										<td>{ t.Category }</td>
+										<td><span class={ "dash-pill", supportStatusClass(t.Status) }>{ supportStatusLabel(t.Status) }</span></td>
+										<td>{ fmtSupportTime(t.UpdatedAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			}
+		</section>
+	}
+}
+
+templ supportEmptyState() {
+	<div class="dash-card">
+		<h3>No tickets yet</h3>
+		<p class="dash-note">Something broken or unclear? Open a ticket.</p>
+		<div class="dash-header-actions">
+			<a class="btn btn-primary" href="/dashboard/support/new">New ticket</a>
+		</div>
+	</div>
+}
+
+templ DashboardSupportDetail(v DashboardSupportDetailView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — Support ticket",
+		"support",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow"><a href="/dashboard/support">Support</a></p>
+					if v.Ticket != nil {
+						<h1>{ v.Ticket.Ticket.Title }</h1>
+						<p class="dash-note">
+							<span class={ "dash-pill", supportStatusClass(v.Ticket.Ticket.Status) }>{ supportStatusLabel(v.Ticket.Ticket.Status) }</span>
+							<span> · { v.Ticket.Ticket.Category } · opened { fmtSupportTime(v.Ticket.Ticket.CreatedAt) }</span>
+						</p>
+					} else {
+						<h1>Ticket</h1>
+					}
+				</div>
+				<div class="dash-header-actions">
+					<a class="btn" href="/dashboard/support">All tickets</a>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Ticket != nil {
+				<div class="dash-card">
+					<div class="dash-thread-msg">
+						<p class="dash-thread-meta"><strong>You</strong> · { fmtSupportTime(v.Ticket.Ticket.CreatedAt) }</p>
+						<p class="dash-thread-body">{ v.Ticket.Ticket.Body }</p>
+					</div>
+					for _, m := range v.Ticket.Messages {
+						<div class="dash-thread-msg">
+							<p class="dash-thread-meta"><strong>{ supportAuthorLabel(m.AuthorKind) }</strong> · { fmtSupportTime(m.CreatedAt) }</p>
+							<p class="dash-thread-body">{ m.Body }</p>
+						</div>
+					}
+				</div>
+
+				if supportReplyOpen(v.Ticket.Ticket.Status) {
+					<div class="dash-card">
+						<h3>Reply</h3>
+						<form method="post" action={ templ.SafeURL("/dashboard/support/" + v.Ticket.Ticket.ID + "/reply") }>
+							<label class="dash-field-label" for="body">Add to the conversation</label>
+							<textarea id="body" name="body" class="dash-textarea" rows="5" required placeholder="Type your reply…"></textarea>
+							<div class="dash-header-actions">
+								<button class="btn btn-primary" type="submit">Send reply</button>
+							</div>
+						</form>
+					</div>
+				}
+			}
+		</section>
+	}
+}
+
+templ DashboardNewSupportTicket(v DashboardNewSupportView) {
+	@components.DashboardLayout(
+		"KIFF Cloud — New support ticket",
+		"support",
+		chromeFrom(v.DisplayName, v.Email, v.Me),
+	) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow"><a href="/dashboard/support">Support</a></p>
+					<h1>New ticket</h1>
+					<p class="dash-note">What you expected, and what happened. Only you and the KIFF team can see this.</p>
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Couldn't file the ticket:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			<div class="dash-card">
+				<form method="post" action="/dashboard/support">
+					<label class="dash-field-label" for="title">Subject</label>
+					<input id="title" name="title" class="dash-input" maxlength="200" required value={ v.Title } placeholder="Short summary"/>
+
+					<label class="dash-field-label" for="category">Category</label>
+					<select id="category" name="category" class="dash-input">
+						@supportCategoryOption("question", "Question", v.Category)
+						@supportCategoryOption("bug", "Something's broken", v.Category)
+						@supportCategoryOption("billing", "Billing", v.Category)
+						@supportCategoryOption("feedback", "Feedback", v.Category)
+					</select>
+
+					<label class="dash-field-label" for="body">Details</label>
+					<textarea id="body" name="body" class="dash-textarea" rows="10" required placeholder="What did you expect, and what happened?">{ v.Body }</textarea>
+
+					<div class="dash-header-actions">
+						<button class="btn btn-primary" type="submit">File ticket</button>
+						<a class="btn" href="/dashboard/support">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</section>
+	}
+}
+
+templ supportCategoryOption(value, label, selected string) {
+	if value == selected {
+		<option value={ value } selected>{ label }</option>
+	} else {
+		<option value={ value }>{ label }</option>
+	}
+}

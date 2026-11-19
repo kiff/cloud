@@ -1,0 +1,415 @@
+package pages
+
+import (
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// Receipt renders one receipt in the public layout: the
+// unauthenticated operator path, for a deploy with no sign-in wired.
+// Signed-in users get DashboardReceipt. Same body.
+templ Receipt(v ReceiptView) {
+	@components.LayoutSite("KIFF Cloud — receipt", "", "css/cards.css") {
+		<section class="dash">
+			@receiptBody(v)
+		</section>
+	}
+}
+
+// DashboardReceipt renders a receipt in the signed-in shell.
+templ DashboardReceipt(v ReceiptView, chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — receipt", "activity", chrome, "css/cards.css") {
+		<section class="dash">
+			@receiptBody(v)
+		</section>
+	}
+}
+
+// receiptBody tells the call in words, then the proof and how to check
+// it. Technical details fold away.
+templ receiptBody(v ReceiptView) {
+	{{ r := v.R }}
+	{{ chip, tone := receiptChip(r) }}
+	<article class="ny-story rc-receipt" id={ "receipt-" + r.TraceID }>
+		<p class="eyebrow">Receipt</p>
+		<div class="ny-item-head">
+			<span class={ "act-chip", "is-" + tone }>{ chip }</span>
+			if a := receiptAgent(r); a != "" {
+				<span class="ny-agent"><code>{ a }</code></span>
+			}
+			<span class="ny-when">{ components.LocalTime(ctx, r.IssuedAt) }</span>
+		</div>
+		<h1 class="ny-headline">
+			<code>{ r.ActionName }</code>
+			if receiptEntityShown(r) {
+				<span class="ny-agent">on <code>{ r.EntityID }</code></span>
+			}
+		</h1>
+		<section class="ny-story-lead">
+			<p>{ receiptLead(r) }</p>
+			<p class="dash-note">This receipt is KIFF’s signed record of that. It says what KIFF decided and what people answered; it is not the tool’s own record of what it did.</p>
+		</section>
+		<div class="rc-grid">
+			<div class="rc-main">
+				<section class="ny-story-block">
+					<h4>What happened</h4>
+					<ol class="ny-timeline">
+						for _, st := range receiptSteps(r) {
+							<li class={ "is-" + st.Kind }>
+								<strong>{ st.Title }</strong>
+								if !st.At.IsZero() {
+									<span class="ny-when">{ components.LocalTime(ctx, st.At) }</span>
+								}
+								if st.Detail != "" {
+									<p class="dash-note">{ st.Detail }</p>
+								}
+							</li>
+						}
+					</ol>
+				</section>
+				<section class="ny-story-block">
+					<h4>What it covers</h4>
+					<dl class="ny-args">
+						for _, c := range receiptCovers(r) {
+							<div><dt>{ c[0] }</dt><dd><code>{ c[1] }</code></dd></div>
+						}
+					</dl>
+				</section>
+			</div>
+			<aside class="rc-side">
+				@receiptProofCard(v)
+				if v.Related != "" {
+					<p class="dash-note">{ receiptRelatedLabel(v) } <a href={ templ.SafeURL("/dashboard/receipts/" + url.PathEscape(v.Related)) }>{ receiptRelatedLink(v) }</a></p>
+				}
+			</aside>
+		</div>
+	</article>
+}
+
+// receiptProofCard is the proof: signed, or signed and anchored, a link
+// to the signed JSON, how to check it, and the technical details. The two
+// folds are rows with a chevron so they read as things to open.
+templ receiptProofCard(v ReceiptView) {
+	{{ r := v.R }}
+	{{ title, text := receiptProof(r) }}
+	<section class="rc-proof">
+		<strong>{ title }</strong>
+		<p class="dash-note">{ text }</p>
+		if v.Signed != "" && r.Attestation != nil {
+			<p><a class="btn" href={ templ.SafeURL(v.Signed) }>See the signed receipt</a></p>
+		}
+		if r.Attestation != nil {
+			<details class="rc-fold">
+				<summary>
+					<span>How to check it</span>
+					@chevron()
+				</summary>
+				<p class="dash-note">The signed receipt is this record exactly as KIFF signed it. Its signature checks against KIFF’s key below; change one character and it no longer does.
+					if r.Attestation.AnchorTxHash != "" {
+						Its fingerprint is also in a public record, with the time it was put there.
+					}
+				</p>
+				if _, fp, ok := receiptDevice(receiptStepOf(r, "hold_settled")); ok {
+					<p class="dash-note">The answer itself was signed on the approver's phone, with key { fp }. The signed receipt holds that key, the exact text it signed and the signature, so the answer can be checked without KIFF.</p>
+				}
+			</details>
+			<details class="rc-fold">
+				<summary>
+					<span>Technical details</span>
+					@chevron()
+				</summary>
+				<dl class="ny-args">
+					if r.Attestation.WalletAddress != "" {
+						<div><dt>Signed with</dt><dd><code title={ r.Attestation.WalletAddress }>{ truncHash(r.Attestation.WalletAddress) }</code></dd></div>
+					}
+					if r.Attestation.Algorithm != "" {
+						<div><dt>Signature</dt><dd><code title={ r.Attestation.Signature }>{ r.Attestation.Algorithm } { shortSignature(r.Attestation.Signature) }</code></dd></div>
+					}
+					if r.Attestation.AnchorTxHash != "" {
+						<div><dt>Public record</dt><dd>{ anchorNetworkLabel(r.Attestation.Network) }</dd></div>
+						<div><dt>Transaction</dt><dd><a href={ templ.URL(basescanTx(r.Attestation.Network, r.Attestation.AnchorTxHash)) } target="_blank" rel="noopener noreferrer"><code>{ truncHash(r.Attestation.AnchorTxHash) }</code></a></dd></div>
+					}
+					<div><dt>Receipt</dt><dd><code>{ r.TraceID }</code></dd></div>
+					<div><dt>Format</dt><dd>{ r.SchemaVersion }</dd></div>
+				</dl>
+			</details>
+		}
+	</section>
+}
+
+// ReceiptNotConfigured renders when the cloud operator has not
+// set KIFF_API_BASE_URL / KIFF_DEMO_API_KEY. The dashboard is
+// shipped behind operator config because v0.1's auth story is
+// "operator API key, not user session"; production deploys must
+// either configure the env vars or accept that /dashboard/* is
+// disabled.
+templ ReceiptNotConfigured() {
+	@components.LayoutSite("KIFF Cloud — dashboard", "", "css/receipt.css") {
+		@receiptNotConfiguredBody()
+	}
+}
+
+// DashboardReceiptNotConfigured is the signed-in-shell variant.
+templ DashboardReceiptNotConfigured(chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — dashboard", "activity", chrome, "css/receipt.css") {
+		@receiptNotConfiguredBody()
+	}
+}
+
+templ receiptNotConfiguredBody() {
+	<article class="receipt receipt-empty">
+		<header class="receipt-head">
+			<p class="eyebrow">Dashboard</p>
+			<h1>Dashboard not configured</h1>
+			<p class="receipt-lede">
+				This deployment has no API connection. Set
+				<code>KIFF_API_BASE_URL</code> and
+				<code>KIFF_DEMO_API_KEY</code> on the web binary.
+			</p>
+		</header>
+	</article>
+}
+
+// ReceiptPending renders when a decision-* receipt is not yet on the
+// tenant. Decision receipts are minted asynchronously by the anchor
+// sweep (KIFF_ANCHOR_INTERVAL), so a click immediately after a gallery
+// run can land before the receipt exists. Rather than the generic "not
+// found" dead-end, show an honest "being prepared" state that
+// auto-refreshes until the sweep mints it — decoupling the UX from the
+// sweep cadence.
+templ ReceiptPending(traceID string) {
+	@components.LayoutSite("KIFF Cloud — preparing receipt", "", "css/receipt.css") {
+		<meta http-equiv="refresh" content="4"/>
+		@receiptPendingBody(traceID)
+	}
+}
+
+// DashboardReceiptPending is the signed-in-shell variant.
+templ DashboardReceiptPending(traceID string, chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — preparing receipt", "activity", chrome, "css/receipt.css") {
+		<meta http-equiv="refresh" content="4"/>
+		@receiptPendingBody(traceID)
+	}
+}
+
+templ receiptPendingBody(traceID string) {
+	<article class="receipt receipt-empty">
+		<header class="receipt-head">
+			<p class="eyebrow">Receipt · being prepared</p>
+			<h1>Your signed receipt is being prepared</h1>
+			<p class="receipt-lede">
+				The decision is recorded and trace
+				<code>{ traceID }</code> is being signed.
+				This page refreshes on its own.
+			</p>
+			<p class="receipt-lede">
+				<a href={ templ.SafeURL("/dashboard/receipts/" + url.PathEscape(traceID)) }>Refresh now →</a>
+			</p>
+		</header>
+	</article>
+}
+
+// ReceiptNotFound renders when the API returned 404 for the trace.
+templ ReceiptNotFound(traceID string) {
+	@components.LayoutSite("KIFF Cloud — receipt not found", "", "css/receipt.css") {
+		@receiptNotFoundBody(traceID)
+	}
+}
+
+// DashboardReceiptNotFound is the signed-in-shell variant.
+templ DashboardReceiptNotFound(traceID string, chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — receipt not found", "activity", chrome, "css/receipt.css") {
+		@receiptNotFoundBody(traceID)
+	}
+}
+
+templ receiptNotFoundBody(traceID string) {
+	<article class="receipt receipt-empty">
+		<header class="receipt-head">
+			<p class="eyebrow">Receipt · not found</p>
+			<h1>No receipt for this trace</h1>
+			<p class="receipt-lede">
+				Trace <code>{ traceID }</code> has no receipt on this
+				account. The action may not have run, the receipt may
+				not be built yet, or the trace id is wrong.
+			</p>
+		</header>
+	</article>
+}
+
+// ReceiptError renders when the API call failed for any other
+// reason — a transport error, an unexpected status, an invalid
+// response. The page does not surface the underlying error
+// message to avoid leaking infrastructure detail; operators read
+// the cause in the server logs.
+templ ReceiptError() {
+	@components.LayoutSite("KIFF Cloud — receipt error", "", "css/receipt.css") {
+		@receiptErrorBody()
+	}
+}
+
+// DashboardReceiptError is the signed-in-shell variant.
+templ DashboardReceiptError(chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — receipt error", "activity", chrome, "css/receipt.css") {
+		@receiptErrorBody()
+	}
+}
+
+templ receiptErrorBody() {
+	<article class="receipt receipt-empty">
+		<header class="receipt-head">
+			<p class="eyebrow">Receipt · error</p>
+			<h1>Could not load this receipt right now</h1>
+			<p class="receipt-lede">
+				The dashboard couldn't reach the KIFF API. Try again in a moment.
+			</p>
+		</header>
+	</article>
+}
+
+// ─── sections ───────────────────────────────────────────────────
+
+// receiptEntityShown is whether the receipt names an entity worth
+// showing: a gateway call's entity is its own call id, which repeats
+// the trace.
+func receiptEntityShown(r *apiclient.Receipt) bool {
+	call := strings.TrimPrefix(strings.TrimPrefix(r.TraceID, "decision-"), "settled-")
+	return r.EntityID != "" && r.EntityID != r.TraceID && r.EntityID != call && r.EntityID != r.ProposalID
+}
+
+// receiptOutcomeLabel renders a decision outcome as a short, legible
+// verdict word for the receipt head (the outcome is the first thing
+// a reader needs). Unknown values pass through unchanged.
+func receiptOutcomeLabel(outcome string) string {
+	switch outcome {
+	case "allowed":
+		return "allowed"
+	case "blocked":
+		return "refused"
+	case "approval_required":
+		return "held for approval"
+	case "limit_exceeded":
+		return "rate-limited"
+	case "invalid":
+		return "invalid"
+	// A held call and how it was settled.
+	case "owner_required":
+		return "held for you"
+	case "approved_no_room":
+		return "approved, waiting for room"
+	case "approved_once":
+		return "approved once"
+	case "rejected":
+		return "rejected"
+	case "card_changed":
+		return "Card changed instead"
+	case "fit_on_retry":
+		return "fit the Card on a retry"
+	case "expired":
+		return "not answered in time"
+	case "withdrawn":
+		return "withdrawn"
+	default:
+		return outcome
+	}
+}
+
+// receiptOutcomePillClass maps an outcome to its pill colour class,
+// reusing the dashboard's outcome vocabulary so the receipt head reads
+// the same as the decisions table.
+func receiptOutcomePillClass(outcome string) string {
+	switch outcome {
+	case "allowed", "approved_once", "fit_on_retry", "card_changed":
+		return "receipt-outcome-allowed"
+	case "blocked", "invalid", "rejected", "expired", "withdrawn":
+		return "receipt-outcome-blocked"
+	case "approval_required", "owner_required", "approved_no_room":
+		return "receipt-outcome-held"
+	default:
+		return "receipt-outcome-muted"
+	}
+}
+
+// formatTime renders a time in the receipt's canonical UTC shape.
+// Plain function so templ can call it inline without an import.
+func formatTime(t time.Time) string {
+	if t.IsZero() {
+		return "—"
+	}
+	return t.UTC().Format("2006-01-02 15:04:05 UTC")
+}
+
+// truncHash returns the first 8 + last 8 hex characters with a
+// middle ellipsis. Long hashes (64+ hex chars) are unreadable on
+// screen; the truncated form is enough for visual inspection
+// while the full value lives in the JSON body.
+func truncHash(h string) string {
+	if len(h) <= 20 {
+		return h
+	}
+	return h[:8] + "…" + h[len(h)-8:]
+}
+
+// basescanTx returns the block-explorer URL for a transaction hash
+// on the receipt's anchor network: Base mainnet when the
+// attestation says so, Base Sepolia otherwise (the default/free
+// rung). The receipts deep-link to whichever chain actually
+// anchored them.
+func basescanTx(network, txHash string) string {
+	if txHash == "" {
+		return "#"
+	}
+	return explorerBase(network) + "/tx/" + txHash
+}
+
+// basescanAddress returns the explorer URL for a wallet address on
+// the receipt's anchor network.
+func basescanAddress(network, addr string) string {
+	if addr == "" {
+		return "#"
+	}
+	return explorerBase(network) + "/address/" + addr
+}
+
+// explorerBase maps an anchor network label to its Basescan origin.
+// Unknown/empty defaults to Sepolia (the free rung) so a receipt
+// missing the field still links somewhere sane.
+func explorerBase(network string) string {
+	if network == "base-mainnet" {
+		return "https://basescan.org"
+	}
+	return "https://sepolia.basescan.org"
+}
+
+// anchorNetworkLabel is the human tier label for a network value.
+func anchorNetworkLabel(network string) string {
+	switch network {
+	case "base-mainnet":
+		return "Base mainnet"
+	case "base-sepolia":
+		return "Base Sepolia"
+	default:
+		return "Base Sepolia"
+	}
+}
+
+// DashboardReceiptSigned shows the receipt as KIFF signed it, to read
+// first; downloading it is optional.
+templ DashboardReceiptSigned(v SignedReceiptView, chrome components.DashboardChrome) {
+	@components.DashboardLayoutWithCSS("KIFF Cloud — signed receipt", "activity", chrome, "css/cards.css") {
+		<section class="dash">
+			<article class="ny-story rc-receipt">
+				<p class="ny-back"><a href={ templ.SafeURL(v.Back) }>← The receipt</a></p>
+				<p class="eyebrow">Signed receipt</p>
+				<h1 class="ny-headline"><code>{ v.TraceID }</code></h1>
+				<p class="dash-note">This is the receipt as KIFF signed it, spaced out to read. Download saves it exactly as signed, to keep or to give to someone who wants to check it.</p>
+				<pre class="rc-json"><code>{ v.JSON }</code></pre>
+				<p><a class="btn" href={ templ.SafeURL(v.Download) } download>Download</a></p>
+			</article>
+		</section>
+	}
+}

@@ -1,0 +1,2780 @@
+/* deck.css, pitch decks at /deck/{slug}.
+ *
+ * One slide per page, server-rendered and fully no-JS:
+ * navigation is plain prev/next links plus wide first-party <a> click
+ * zones on the left/right margins, and the PDF affordance links to
+ * the print-all view (?print=1) that the browser's own print exports.
+ * Loaded after app.css alongside css/fonts.css. Binds the redesign
+ * webfonts scoped to the deck roots, and lays out a full-viewport
+ * slide stage with fixed chrome.
+ */
+
+.deck,
+.deck-index,
+.deck-print {
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-body: var(--font-sans);
+  --font-display: var(--font-sans);
+  --fg: #11141b;
+  --fg-soft: #3f4653;
+  --fg-muted: #788191;
+  --bg: #f7f8fa;
+  --bg-elev: #ffffff;
+  --bg-code: #10131b;
+  --rule: rgba(17, 20, 27, 0.18);
+  --rule-soft: rgba(17, 20, 27, 0.09);
+  --accent: #3154d4;
+  --accent-soft: #e8edff;
+  --danger: #b84852;
+  --warn: #8a650f;
+  --ok: #1f7a47;
+  --deck-rail-h: 52px;
+  --deck-footer-h: 52px;
+  font-family: var(--font-body);
+  color: var(--fg);
+  background:
+    linear-gradient(180deg, rgba(49, 84, 212, 0.035), transparent 34%),
+    #f7f8fa;
+}
+
+.deck *,
+.deck-index *,
+.deck-print * {
+  letter-spacing: 0;
+}
+
+html:has(.deck),
+body:has(.deck) {
+  overflow: hidden;
+  background: #f7f8fa;
+}
+
+/* The sales conversation inherits the dark, paper-shaped language of the
+ * public site. Other decks keep the neutral presenter theme so their
+ * existing compositions remain untouched. */
+.deck[data-deck="sales"] {
+  --font-display: var(--font-serif);
+  --fg: #f4f0e8;
+  --fg-soft: #bbb6ad;
+  --fg-muted: #77746e;
+  --bg: #101116;
+  --bg-elev: #17191f;
+  --bg-code: #090a0d;
+  --rule: rgba(244, 240, 232, 0.22);
+  --rule-soft: rgba(244, 240, 232, 0.10);
+  --accent: #f4a641;
+  --accent-soft: rgba(244, 166, 65, 0.13);
+  --danger: #e17773;
+  --warn: #d7a85c;
+  --ok: #78c894;
+  background:
+    radial-gradient(circle at 82% 14%, rgba(244, 166, 65, 0.09), transparent 28rem),
+    #101116;
+}
+
+html:has(.deck[data-deck="sales"]),
+body:has(.deck[data-deck="sales"]) {
+  background: #101116;
+}
+
+.deck[data-deck="sales"]::before {
+  background:
+    linear-gradient(rgba(244, 240, 232, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 240, 232, 0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.08));
+}
+
+.deck[data-deck="sales"]::after {
+  color: rgba(244, 166, 65, 0.035);
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.deck[data-deck="sales"] .deck-topbar,
+.deck[data-deck="sales"] .deck-footer {
+  border-color: rgba(244, 240, 232, 0.10);
+  background: rgba(16, 17, 22, 0.88);
+}
+
+.deck[data-deck="sales"] .deck-download,
+.deck[data-deck="sales"] .deck-nav-link {
+  border-color: rgba(244, 240, 232, 0.18);
+  background: #17191f;
+  color: var(--fg);
+  box-shadow: none;
+}
+
+.deck[data-deck="sales"] .deck-download:hover,
+.deck[data-deck="sales"] .deck-download:focus-visible,
+.deck[data-deck="sales"] .deck-nav-link:hover {
+  border-color: rgba(244, 166, 65, 0.48);
+  background: var(--accent-soft);
+}
+
+.deck[data-deck="sales"] .deck-nav-link:not(.deck-nav-disabled) {
+  color: var(--accent);
+}
+
+/* Scale the whole deck to the viewport height. The slides are laid out in
+ * rem against a fixed canvas; on a short window (a normal laptop browser at
+ * 100%) the content-dense slides overflow. Scaling the root font by height
+ * shrinks every rem-based size uniformly, the same effect as zooming the
+ * browser out, so a slide that fits at ~720px+ also fits shorter windows
+ * without clipping or overlap.
+ *
+ * The floor is 13px (not 11px): presenting in a windowed, non-fullscreen
+ * browser leaves a short viewport, and the old 11px floor rendered body copy
+ * too small to read across a room. A 13px floor keeps it legible; the /42
+ * divisor lets a mid-size window reach the 17px ceiling sooner. Fullscreen /
+ * tall monitors are unaffected (capped at 17px). */
+html:has(.deck) {
+  font-size: clamp(13px, calc(100vh / 42), 17px);
+}
+
+/* ── Slide stage ─────────────────────────────────────────────── */
+
+.deck {
+  display: grid;
+  grid-template-rows: var(--deck-rail-h) minmax(0, 1fr) var(--deck-footer-h);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+  --deck-pad-x: clamp(var(--size-5), 6vw, var(--size-9));
+  --deck-pad-y: clamp(var(--size-4), 4vh, var(--size-7));
+}
+
+.deck::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(17, 20, 27, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 20, 27, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px, 44px 44px, 100% 100%;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.12));
+}
+
+.deck::after {
+  content: attr(data-slide);
+  position: fixed;
+  right: clamp(2rem, 8vw, 7rem);
+  bottom: clamp(4rem, 10vw, 8rem);
+  z-index: -1;
+  font-family: var(--font-sans);
+  font-size: 18rem;
+  font-weight: 680;
+  line-height: 0.8;
+  color: rgba(17, 20, 27, 0.035);
+  pointer-events: none;
+}
+
+.deck-topbar {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto minmax(7rem, 1fr) auto;
+  align-items: center;
+  gap: var(--size-4);
+  padding: var(--size-3) clamp(var(--size-4), 4vw, var(--size-7));
+  border-bottom: 1px solid rgba(17, 20, 27, 0.12);
+  background: rgba(247, 248, 250, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.deck-brand {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.35rem 0;
+}
+
+.deck-progress {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--fg-muted) 20%, transparent);
+}
+
+.deck-progress::-webkit-progress-bar {
+  background: color-mix(in oklab, var(--fg-muted) 20%, transparent);
+  border-radius: inherit;
+}
+
+.deck-progress::-webkit-progress-value {
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.deck-progress::-moz-progress-bar {
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.deck-download {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--size-4);
+  border: 1px solid rgba(17, 20, 27, 0.16);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(17, 20, 27, 0.04);
+}
+
+.deck-download:hover,
+.deck-download:focus-visible {
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.deck-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--deck-pad-y) var(--deck-pad-x);
+  box-sizing: border-box;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.deck-slide-inner {
+  width: 100%;
+}
+
+.deck-slide-inner > *:first-child {
+  margin-top: 0;
+}
+
+.deck-slide-inner > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Display heading leads each slide; serif, fluid, tight. */
+.deck-slide h1 {
+  font-family: var(--font-display);
+  font-size: 5.25rem;
+  line-height: 0.9;
+  margin: 0 0 var(--size-5);
+  color: var(--fg);
+  font-weight: 660;
+  max-width: 10ch;
+}
+
+.deck-slide h2 {
+  font-family: var(--font-display);
+  font-size: 3.35rem;
+  line-height: 0.94;
+  margin: 0 0 var(--size-4);
+  color: var(--fg);
+  font-weight: 640;
+  max-width: 11ch;
+}
+
+.deck-slide p,
+.deck-slide li {
+  font-size: 1.24rem;
+  line-height: 1.42;
+  color: var(--fg-soft);
+  max-width: 46ch;
+}
+
+.deck-slide ul,
+.deck-slide ol {
+  margin: 0 0 var(--size-4);
+  padding-left: var(--size-5);
+  display: grid;
+  gap: var(--size-2);
+}
+
+.deck-slide strong { color: var(--fg); }
+
+.deck-slide a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.deck-slide a:hover { text-decoration: underline; }
+
+.deck-slide code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  color: var(--fg);
+}
+
+/* ── Slide compositions ────────────────────────────────────────
+ *
+ * The deck is intentionally laid out like a presentation canvas, not
+ * an article. Rich slides get their own frame so the eye scans
+ * top-to-bottom, and no slide depends on scrolling.
+ */
+.deck-slide:has(.ds-cards) .deck-slide-inner,
+.deck-slide:has(.ds-fit) .deck-slide-inner,
+.deck-slide:has(.ds-offer) .deck-slide-inner,
+.deck-slide:has(.iv-wall) .deck-slide-inner,
+.deck-slide:has(.iv-flow) .deck-slide-inner,
+.deck-slide:has(.iv-harness) .deck-slide-inner,
+.deck-slide:has(.iv-mechanics) .deck-slide-inner,
+.deck-slide:has(.iv-status) .deck-slide-inner {
+  display: grid;
+  align-content: center;
+  gap: clamp(var(--size-3), 2.4vh, var(--size-5));
+  min-height: 100%;
+}
+
+/* ── Sales deck v0.3: the shared operational spine (sd-) ───────
+ *
+ * Seven distinct compositions carry one buyer story. The visuals are
+ * code-native and responsive: lifecycle, fragmentation, shared spine,
+ * integrated system, proof, and the founder-led entry offer. */
+.deck[data-deck="sales"] .deck-slide {
+  max-width: 76rem;
+}
+
+.deck[data-deck="sales"] .deck-slide h1,
+.deck[data-deck="sales"] .deck-slide h2 {
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+.deck[data-deck="sales"] .deck-slide h1 {
+  font-size: clamp(4rem, 7vw, 6.4rem);
+  line-height: 0.91;
+  max-width: 8.5ch;
+}
+
+.deck[data-deck="sales"] .deck-slide h2 {
+  font-size: clamp(3rem, 5vw, 4.6rem);
+  line-height: 0.94;
+  max-width: 12ch;
+}
+
+.deck[data-deck="sales"] .deck-slide p,
+.deck[data-deck="sales"] .deck-slide li {
+  color: var(--fg-soft);
+}
+
+.deck[data-deck="sales"] .sd-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.deck-slide:has(.sd-opening) .deck-slide-inner {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(27rem, 1.18fr);
+  align-items: center;
+  gap: clamp(3rem, 7vw, 7rem);
+  min-height: 100%;
+}
+
+.deck-slide:has(.sd-opening) h1 {
+  margin: 0;
+}
+
+.sd-opening {
+  display: grid;
+  gap: 1.05rem;
+}
+
+.sd-opening-lede {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3vw, 3rem) !important;
+  line-height: 1 !important;
+  color: var(--accent) !important;
+}
+
+.sd-starts {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.sd-start {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+  padding: 1rem 0 1rem 1.2rem;
+  border-left: 2px solid var(--rule);
+  opacity: 0.72;
+}
+
+.sd-start strong {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.sd-start > span:last-child {
+  color: var(--fg-muted);
+  font-size: 0.86rem;
+}
+
+.sd-start-arrow {
+  padding-left: 1.2rem;
+  color: var(--accent);
+}
+
+.sd-opening-close {
+  margin: 0.8rem 0 0 !important;
+  max-width: 38ch !important;
+  font-size: 1rem !important;
+  color: var(--accent) !important;
+}
+
+.deck-slide:has(.sd-lifecycle-visual) .deck-slide-inner,
+.deck-slide:has(.sd-fragments) .deck-slide-inner,
+.deck-slide:has(.sd-spine) .deck-slide-inner,
+.deck-slide:has(.sd-system) .deck-slide-inner,
+.deck-slide:has(.sd-launch) .deck-slide-inner {
+  display: grid;
+  align-content: center;
+  gap: clamp(1.4rem, 3vh, 2.4rem);
+  min-height: 100%;
+}
+
+.deck-slide:has(.sd-lifecycle-visual) .deck-slide-inner {
+  grid-template-columns: minmax(22rem, 0.88fr) minmax(32rem, 1.12fr);
+  grid-template-areas:
+    "lifecycle-title lifecycle-visual"
+    "lifecycle-copy lifecycle-visual";
+  column-gap: clamp(3rem, 6vw, 6.5rem);
+  row-gap: 1.6rem;
+  align-content: center;
+  align-items: center;
+}
+
+.deck[data-deck="sales"] .deck-slide:has(.sd-lifecycle-visual) h2 {
+  grid-area: lifecycle-title;
+  align-self: end;
+  width: auto;
+  max-width: none;
+  font-size: clamp(3.15rem, 4.4vw, 4.35rem);
+  line-height: 0.9;
+}
+
+.deck-slide:has(.sd-lifecycle-visual) h2,
+.deck-slide:has(.sd-fragments) h2,
+.deck-slide:has(.sd-spine) h2,
+.deck-slide:has(.sd-system) h2,
+.deck-slide:has(.sd-launch) h2 {
+  margin: 0;
+}
+
+.sd-lifecycle-copy {
+  grid-area: lifecycle-copy;
+  display: grid;
+  align-self: start;
+  gap: 1.2rem;
+}
+
+.sd-lifecycle-copy p {
+  margin: 0;
+  max-width: 36ch;
+  font-size: 1rem !important;
+  line-height: 1.45;
+  color: var(--fg-soft) !important;
+}
+
+.sd-lifecycle-copy strong {
+  max-width: 28ch;
+  font-family: var(--font-serif);
+  font-size: 1.42rem;
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--fg);
+}
+
+.sd-lifecycle-copy > span {
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.sd-lifecycle-visual {
+  grid-area: lifecycle-visual;
+  display: grid;
+  gap: 1rem;
+  align-content: center;
+}
+
+.sd-compact-lives {
+  display: grid;
+  gap: 1px;
+  border-block: 1px solid var(--rule-soft);
+  background: var(--rule-soft);
+}
+
+.sd-compact-life {
+  display: grid;
+  grid-template-columns: 5.1rem minmax(3.2rem, 1fr) auto minmax(3.2rem, 1fr) auto minmax(3.2rem, 1fr) auto minmax(3.2rem, 1fr);
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1rem 0.9rem;
+  background: rgba(16, 17, 22, 0.96);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fg-soft);
+}
+
+.sd-compact-life strong {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.sd-compact-life span {
+  text-align: center;
+}
+
+.sd-compact-life i {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.sd-compact-participants {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.65rem;
+}
+
+.sd-compact-participants span {
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+.sd-life-track {
+  display: grid;
+  grid-template-columns: auto minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr) auto;
+  align-items: center;
+}
+
+.sd-life-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.4rem;
+  padding: 0 1.15rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--fg);
+  background: rgba(23, 25, 31, 0.88);
+}
+
+.sd-life-state-accent {
+  border-color: rgba(244, 166, 65, 0.58);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.sd-life-line {
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule), var(--accent), var(--rule));
+}
+
+.sd-participants {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.65rem;
+}
+
+.sd-participants span {
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+.sd-lifecycle p {
+  margin: 0;
+  max-width: 60ch;
+}
+
+.sd-statement {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.sd-fragments {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule-soft);
+  border-block: 1px solid var(--rule-soft);
+}
+
+.sd-fragment {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  min-height: 12.5rem;
+  padding: 1.5rem;
+  background: rgba(16, 17, 22, 0.94);
+}
+
+.sd-fragment strong {
+  margin: 0.65rem 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.sd-fragment > span:not(.sd-label) {
+  font-size: 0.82rem;
+  color: var(--fg-muted);
+}
+
+.sd-costline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-top: 0.25rem;
+}
+
+.sd-costline span {
+  color: var(--fg-muted);
+}
+
+.sd-costline strong {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--accent);
+  text-align: right;
+}
+
+.sd-spine {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.8fr) 2rem minmax(18rem, 1.3fr) auto minmax(8rem, 0.65fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.sd-spine-actors,
+.sd-spine-systems {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.sd-spine-actors span,
+.sd-spine-systems span {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--fg-soft);
+}
+
+.sd-spine-rail {
+  position: relative;
+  height: 80%;
+  border-left: 1px solid var(--accent);
+}
+
+.sd-spine-rail::before,
+.sd-spine-rail::after,
+.sd-spine-rail span {
+  content: '';
+  position: absolute;
+  left: -0.32rem;
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.sd-spine-rail::before { top: 0; }
+.sd-spine-rail span { top: calc(50% - 0.29rem); }
+.sd-spine-rail::after { bottom: 0; }
+
+.sd-spine-core {
+  display: grid;
+  gap: 0.65rem;
+  padding: 2rem;
+  border: 1px solid rgba(244, 166, 65, 0.5);
+  background: linear-gradient(135deg, rgba(244, 166, 65, 0.17), rgba(23, 25, 31, 0.78));
+}
+
+.sd-spine-core strong {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.sd-spine-arrow {
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+
+.sd-slide-close {
+  margin: 0 !important;
+  max-width: none !important;
+  font-family: var(--font-serif);
+  font-size: 1.55rem !important;
+  color: var(--fg) !important;
+}
+
+.sd-system {
+  display: grid;
+  gap: 1px;
+  border-block: 1px solid var(--rule-soft);
+  background: var(--rule-soft);
+}
+
+.sd-system-row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.65fr) minmax(13rem, 0.95fr) minmax(20rem, 1.65fr);
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.15rem 1.25rem;
+  background: rgba(16, 17, 22, 0.96);
+}
+
+.sd-system-row-accent {
+  background: linear-gradient(90deg, var(--accent-soft), rgba(16, 17, 22, 0.96) 68%);
+}
+
+.sd-system-name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.sd-system-row strong {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 400;
+}
+
+.sd-system-row > span:last-child {
+  font-size: 0.82rem;
+  line-height: 1.42;
+  color: var(--fg-soft);
+}
+
+.deck[data-deck="sales"] .sd-proof-cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.deck[data-deck="sales"] .ds-card {
+  min-height: 12.5rem;
+  border-color: var(--rule-soft);
+  background: rgba(23, 25, 31, 0.92);
+  box-shadow: none;
+}
+
+.deck[data-deck="sales"] .ds-card::before {
+  background: var(--accent);
+}
+
+.deck[data-deck="sales"] .ds-card:hover {
+  border-color: rgba(244, 166, 65, 0.52);
+}
+
+.sd-proof-foot {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.sd-proof-foot span + span::before {
+  content: '·';
+  margin-right: 1rem;
+  color: var(--accent);
+}
+
+.sd-proof-foot a {
+  margin-left: auto;
+  text-transform: none;
+  font-size: 0.76rem;
+}
+
+.sd-proof-context {
+  margin: 0 !important;
+  max-width: 72ch !important;
+  font-family: var(--font-mono);
+  font-size: 0.68rem !important;
+  line-height: 1.45 !important;
+  color: var(--fg-muted) !important;
+}
+
+.sd-launch {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(24rem, 1.18fr);
+  gap: 1px;
+  background: var(--rule-soft);
+  border: 1px solid var(--rule-soft);
+}
+
+.sd-launch-offer,
+.sd-launch-result {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  background: rgba(16, 17, 22, 0.96);
+}
+
+.sd-launch-offer {
+  background: linear-gradient(145deg, rgba(244, 166, 65, 0.22), rgba(23, 25, 31, 0.95));
+}
+
+.sd-launch-price {
+  margin-top: 1.2rem;
+  font-family: var(--font-serif);
+  font-size: clamp(3.8rem, 7vw, 6rem);
+  line-height: 0.9;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.sd-launch-period {
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+
+.sd-launch-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 0 1.2rem;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #101116 !important;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.sd-launch-result ul {
+  margin: 1.1rem 0 0;
+  padding-left: 1.25rem;
+  gap: 0.55rem;
+}
+
+.sd-launch-result li {
+  font-size: 0.88rem !important;
+  line-height: 1.35 !important;
+}
+
+.sd-launch-close {
+  margin: 0 !important;
+  max-width: 74ch !important;
+  font-family: var(--font-mono);
+  font-size: 0.68rem !important;
+  line-height: 1.45 !important;
+  color: var(--fg-muted) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .deck[data-deck="sales"] .deck-slide-inner {
+    animation: sd-enter 320ms ease-out both;
+  }
+
+  @keyframes sd-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.deck-slide:has(.ds-cards) .deck-slide-inner,
+.deck-slide:has(.ds-offer) .deck-slide-inner,
+.deck-slide:has(.iv-status) .deck-slide-inner {
+  /* h2, intro copy, the card/tier grid (flex), then a closing line -
+   * four children. Reserve the 4th row so the closing paragraph can't
+   * spill into an implicit row and overlap the cards. */
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+/* Base (non-media) compaction for the content-dense card/tier slides.
+ * These slides (3: proof cards, 6: pricing tiers) are the tallest in the
+ * deck; keeping their heading and intro copy modest lets the whole slide
+ * fit a 100%-zoom laptop viewport without the closing line overlapping. */
+.deck-slide:has(.ds-cards) h2,
+.deck-slide:has(.ds-offer) h2 {
+  font-size: clamp(2.2rem, 4vw, 2.9rem);
+  line-height: 1.05;
+}
+
+.deck-slide:has(.ds-cards) > .deck-slide-inner > p,
+.deck-slide:has(.ds-offer) > .deck-slide-inner > p {
+  font-size: 1.02rem;
+  line-height: 1.34;
+}
+
+.deck-slide:has(.iv-persona) .deck-slide-inner {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  gap: clamp(var(--size-5), 5vw, var(--size-8));
+  min-height: 100%;
+}
+
+.deck-slide:has(.iv-persona) .iv-persona {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+}
+
+.deck-slide:has(.iv-persona) h1,
+.deck-slide:has(.iv-persona) p {
+  grid-column: 1;
+}
+
+.deck-slide:has(.ds-cards) h2,
+.deck-slide:has(.ds-offer) h2,
+.deck-slide:has(.iv-status) h2,
+.deck-slide:has(.iv-mechanics) h2,
+
+.deck-slide:has(.ds-cards) > .deck-slide-inner > p,
+.deck-slide:has(.ds-offer) > .deck-slide-inner > p,
+.deck-slide:has(.iv-status) > .deck-slide-inner > p,
+.deck-slide:has(.iv-mechanics) > .deck-slide-inner > p {
+  max-width: 64ch;
+}
+
+.deck-slide:has(.ds-cards) .ds-cards,
+.deck-slide:has(.ds-offer) .ds-offer,
+.deck-slide:has(.iv-status) .iv-status {
+  align-self: stretch;
+}
+
+.deck-slide:has(.ds-fit) .deck-slide-inner,
+.deck-slide:has(.iv-wall) .deck-slide-inner,
+.deck-slide:has(.iv-flow) .deck-slide-inner,
+.deck-slide:has(.iv-harness) .deck-slide-inner {
+  grid-template-rows: auto auto minmax(0, auto) auto;
+}
+
+.deck-slide:has(.ds-fit) h2,
+.deck-slide:has(.iv-wall) h2,
+.deck-slide:has(.iv-flow) h2,
+.deck-slide:has(.iv-harness) h2 {
+  max-width: 17ch;
+}
+
+.deck-slide:has(.ds-fit) > .deck-slide-inner > p,
+.deck-slide:has(.iv-wall) > .deck-slide-inner > p,
+.deck-slide:has(.iv-flow) > .deck-slide-inner > p,
+.deck-slide:has(.iv-harness) > .deck-slide-inner > p {
+  max-width: 62ch;
+}
+
+.deck-slide:has(.iv-mechanics) .deck-slide-inner {
+  grid-template-rows: auto auto minmax(0, auto) auto;
+}
+
+/* Tables (the "five more risk shapes" slide). Scrolls horizontally
+ * on narrow viewports rather than crushing columns. */
+.deck-slide table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin: 0 0 var(--size-4);
+}
+
+.deck-slide th,
+.deck-slide td {
+  text-align: left;
+  padding: var(--size-2) var(--size-3);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.deck-slide th {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* Keep tables inside the slide frame; print/export can still reveal
+ * the full table if a user chooses paper output. */
+.deck-slide :is(table) {
+  display: block;
+  overflow: hidden;
+}
+
+.deck-hit {
+  position: fixed;
+  top: var(--deck-rail-h);
+  bottom: var(--deck-footer-h);
+  z-index: 1;
+  width: 50vw;
+  cursor: pointer;
+}
+
+.deck-hit-prev { left: 0; }
+.deck-hit-next { right: 0; }
+.deck[data-has-prev="false"] .deck-hit-prev,
+.deck[data-has-next="false"] .deck-hit-next {
+  display: none;
+}
+
+.deck-slide,
+.deck-topbar,
+.deck-footer {
+  position: relative;
+  z-index: 2;
+}
+
+.deck-slide a,
+.deck-footer a,
+.deck-topbar a,
+.deck-topbar button {
+  position: relative;
+  z-index: 6;
+}
+
+/* ── Footer (meta + nav) ─────────────────────────────────────── */
+
+.deck-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+  min-height: var(--deck-footer-h);
+  padding: 0 clamp(var(--size-4), 4vw, var(--size-7));
+  border-top: 1px solid color-mix(in oklab, var(--fg-muted) 18%, transparent);
+  background: rgba(247, 248, 250, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.deck-footer-meta {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+}
+
+.deck-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+}
+
+.deck-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: var(--font-size-3, 1.25rem);
+  color: var(--accent);
+  text-decoration: none;
+  border: 1px solid rgba(49, 84, 212, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(17, 20, 27, 0.04);
+}
+
+.deck-nav-link:hover { background: var(--accent-soft); }
+
+.deck-nav-disabled {
+  color: var(--fg-muted);
+  opacity: 0.4;
+  border-color: var(--rule-soft);
+}
+
+.deck-nav-count {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+  min-width: 4ch;
+  text-align: center;
+}
+
+/* ── Deck index ──────────────────────────────────────────────── */
+
+.deck-index {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--size-8) var(--size-6);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.deck-index h1 {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  margin: 0 0 var(--size-2);
+}
+
+.deck-index-lede {
+  color: var(--fg-soft);
+  font-size: var(--font-size-2);
+  margin: 0 0 var(--size-6);
+}
+
+.deck-index-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--size-4);
+}
+
+.deck-index-card {
+  display: grid;
+  gap: var(--size-1);
+  padding: var(--size-4) var(--size-5);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  text-decoration: none;
+  transition: border-color 120ms ease;
+}
+
+.deck-index-card:hover { border-color: var(--accent); }
+
+.deck-index-audience {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.deck-index-title {
+  font-size: var(--font-size-2);
+  color: var(--fg);
+}
+
+.deck-index-blurb {
+  font-size: var(--font-size-1);
+  color: var(--fg-soft);
+}
+
+.deck-index-stamp {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  margin-top: var(--size-1);
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .deck-slide {
+    justify-content: flex-start;
+    padding: var(--size-4) var(--size-5);
+  }
+  .deck-slide:has(.ds-cards) .deck-slide-inner,
+  .deck-slide:has(.ds-fit) .deck-slide-inner,
+  .deck-slide:has(.ds-offer) .deck-slide-inner,
+  .deck-slide:has(.iv-persona) .deck-slide-inner,
+  .deck-slide:has(.iv-wall) .deck-slide-inner,
+  .deck-slide:has(.iv-flow) .deck-slide-inner,
+  .deck-slide:has(.iv-harness) .deck-slide-inner,
+  .deck-slide:has(.iv-mechanics) .deck-slide-inner,
+  .deck-slide:has(.iv-status) .deck-slide-inner {
+    display: block;
+  }
+  .deck-slide h1,
+  .deck-slide h2 {
+    max-width: 16ch;
+  }
+  .deck-slide:has(.ds-cards) h2,
+  .deck-slide:has(.ds-offer) h2,
+  .deck-slide:has(.ds-fit) h2,
+  .deck-slide:has(.iv-wall) h2,
+  .deck-slide:has(.iv-harness) h2,
+  .deck-slide:has(.iv-status) h2,
+  .deck-slide:has(.iv-persona) h2,
+  .deck-slide:has(.iv-flow) h2 {
+    font-size: 2rem;
+    line-height: 1;
+    max-width: 17ch;
+  }
+  .deck-slide:has(.ds-cards) p,
+  .deck-slide:has(.ds-offer) p,
+  .deck-slide:has(.ds-fit) p,
+  .deck-slide:has(.iv-wall) p,
+  .deck-slide:has(.iv-harness) p,
+  .deck-slide:has(.iv-status) p,
+  .deck-slide:has(.iv-persona) p,
+  .deck-slide:has(.iv-flow) p {
+    font-size: 0.9rem;
+    line-height: 1.35;
+    max-width: 46ch;
+  }
+  .ds-cards,
+  .ds-fit,
+  .ds-offer,
+  .iv-persona,
+  .iv-wall,
+  .iv-flow,
+  .iv-harness,
+  .iv-mechanics,
+  .iv-status {
+    margin-top: var(--size-4);
+  }
+  .deck-slide:has(.ds-cards) .deck-slide-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+  .deck-slide:has(.ds-cards) h2 {
+    max-width: 18ch;
+  }
+  .deck-slide:has(.ds-cards) p {
+    max-width: 54ch;
+  }
+  .ds-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--size-1);
+  }
+  .ds-card {
+    min-height: 7.2rem;
+    padding: var(--size-2);
+    gap: var(--size-1);
+  }
+  .ds-card-risk {
+    font-size: 0.84rem;
+  }
+  .ds-without {
+    font-size: 0.72rem;
+  }
+  .ds-with {
+    font-size: 0.96rem;
+  }
+  .ds-card-tag {
+    font-size: 0.68rem;
+    line-height: 1.3;
+  }
+  .ds-card-fw {
+    font-size: 0.54rem;
+  }
+  .deck-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--size-2);
+  }
+  .deck-nav { justify-content: space-between; }
+  .deck-footer-meta { text-align: center; }
+}
+
+/* ── Rich slide blocks (sales deck: cards, receipt, fit, offer) ──
+ *
+ * These slides embed raw HTML in the markdown (the deck renderer
+ * passes HTML through). Classes are prefixed ds- (deck slide) to
+ * stay clear of the .deck chrome above. All dark-theme token-driven.
+ */
+
+/* Slide 3, six proof cards, each links to /proof/{slug}. */
+.ds-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--size-3);
+  margin: 0;
+}
+
+.ds-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  min-height: clamp(4.4rem, 12vh, 8rem);
+  padding: clamp(var(--size-3), 2vh, var(--size-4));
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  text-decoration: none !important;
+  color: var(--fg);
+  transition: border-color 120ms ease, transform 120ms ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.88) inset,
+    0 14px 28px rgba(17, 20, 27, 0.08);
+}
+
+.ds-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.ds-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.ds-card-risk {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.4vw, 1.16rem);
+  line-height: 1.08;
+  font-weight: 640;
+  color: var(--fg);
+}
+
+.ds-card-nums {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-2);
+  font-family: var(--font-mono);
+  margin-top: var(--size-1);
+}
+
+.ds-without {
+  font-size: var(--font-size-1);
+  color: var(--danger);
+  text-decoration: line-through;
+  text-decoration-color: rgba(184, 72, 82, 0.4);
+}
+
+.ds-card-count .ds-without { color: var(--warn); }
+
+.ds-arrow { color: var(--fg-muted); }
+
+.ds-with {
+  font-size: clamp(1.12rem, 1.8vw, 1.38rem);
+  color: var(--ok);
+}
+
+.ds-card-tag {
+  font-size: 0.82rem;
+  line-height: 1.32;
+  color: var(--fg-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ds-card-fw {
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* Slide 5, the "where KIFF is worth it" convergence diagram. */
+.ds-fit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--size-2);
+  margin: 0;
+}
+
+.ds-fit-conds {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.ds-fit-cond {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-3);
+  padding: var(--size-4) var(--size-5);
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.ds-fit-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--accent);
+  border: 1px solid rgba(49, 84, 212, 0.28);
+  background: var(--accent-soft);
+}
+
+.ds-fit-body {
+  font-size: var(--font-size-1);
+  line-height: 1.45;
+  color: var(--fg-soft);
+}
+
+.ds-fit-body strong { color: var(--fg); }
+
+.ds-fit-and {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ds-fit-join {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg-muted);
+  margin-top: var(--size-1);
+}
+
+.ds-fit-payoff {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--size-5) var(--size-6);
+  border: 1px solid rgba(49, 84, 212, 0.20);
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.ds-fit-payoff-lead {
+  font-family: var(--font-sans);
+  font-size: 1.6rem;
+  font-weight: 580;
+  color: var(--fg);
+}
+
+.ds-fit-payoff-sub {
+  font-size: var(--font-size-1);
+  color: var(--fg-soft);
+}
+
+/* Slide 6, the five-tier offer (Framework → Cloud Developer →
+ * Cloud Growth → Cloud Scale → Enterprise), anchored on the
+ * middle Cloud Growth tier. Growth is the 3rd of 5 cards, so the
+ * center column carries the wider "featured" track and the
+ * good-better-best emphasis lands on the "start here" tier. */
+.ds-offer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.15fr 1fr 1fr;
+  align-items: stretch;
+  gap: var(--size-3);
+  margin: 0;
+}
+
+.ds-tier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+  padding: clamp(var(--size-2), 1.6vh, var(--size-4));
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+/* The two flanking tiers are deliberately muted so the middle
+ * pilot reads as the obvious choice (good-better-best anchoring). */
+.ds-tier-low,
+.ds-tier-high {
+  opacity: 0.78;
+}
+
+.ds-tier-target {
+  border-color: rgba(49, 84, 212, 0.32);
+  background: var(--accent-soft);
+  box-shadow: 0 1px 0 rgba(49, 84, 212, 0.16);
+  position: relative;
+}
+
+.ds-tier-flag {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: var(--accent);
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  margin-bottom: var(--size-1);
+}
+
+.ds-tier-name {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 580;
+  color: var(--fg);
+}
+
+.ds-tier-price {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-4);
+  color: var(--fg);
+  line-height: 1.05;
+}
+
+.ds-tier-target .ds-tier-price { color: var(--accent); }
+
+.ds-tier-period {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ds-tier-note {
+  font-size: var(--font-size-0);
+  line-height: 1.34;
+  color: var(--fg-soft);
+  margin-top: var(--size-1);
+}
+
+.ds-tier-foot {
+  margin-top: auto;
+  padding-top: var(--size-2);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--fg-muted);
+}
+
+.ds-tier-target .ds-tier-foot { color: var(--accent); }
+
+/* Sales rich slides also own their internal rhythm; keep the outer
+ * frame centered so sparse decks do not collapse into the top band. */
+.deck-slide:has(.ds-cards),
+.deck-slide:has(.ds-offer) {
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .ds-cards { grid-template-columns: 1fr 1fr; }
+  .ds-offer { grid-template-columns: 1fr; }
+  .ds-tier-low,
+  .ds-tier-high { opacity: 1; }
+}
+
+/* Five tiers need more room than three: stack the offer below the
+ * desktop breakpoint so the cards never crush at tablet widths. */
+@media (min-width: 521px) and (max-width: 900px) {
+  .ds-offer { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 460px) {
+  .ds-cards { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 521px) and (max-width: 760px) {
+  .ds-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--size-2);
+  }
+  .ds-card {
+    min-height: 9rem;
+    padding: var(--size-3);
+    gap: var(--size-2);
+  }
+  .ds-card-risk { font-size: 1rem; }
+  .ds-card-nums {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    gap: 0 var(--size-1);
+  }
+  .ds-without { font-size: 0.86rem; }
+  .ds-with {
+    grid-column: 1 / -1;
+    font-size: 1.18rem;
+  }
+  .ds-card-tag { font-size: 0.78rem; }
+}
+
+/* ── Investor deck, the Pete narrative (iv-) ────────────────── *
+ *
+ * The investor deck tells one story across its slides, so it leans
+ * on a few bespoke visuals on top of the shared ds- blocks.
+ * Prefix iv- (investor) to stay clear of both .deck chrome and the
+ * sales ds- blocks. All dark-theme token-driven, no JS.
+ */
+
+/* Slide 1, the persona card. */
+.iv-persona {
+  display: flex;
+  gap: var(--size-4);
+  align-items: flex-start;
+  margin: 0;
+  padding: var(--size-6);
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 28px rgba(17, 20, 27, 0.08);
+}
+
+.iv-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-4);
+  font-weight: 580;
+  color: var(--accent);
+  border: 1px solid rgba(49, 84, 212, 0.28);
+  background: var(--accent-soft);
+}
+
+.iv-persona-body { display: flex; flex-direction: column; gap: var(--size-1); }
+
+.iv-persona-name {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-4);
+  font-weight: 580;
+  color: var(--fg);
+  line-height: 1.1;
+}
+
+.iv-persona-role {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.iv-persona-bio {
+  font-size: var(--font-size-0);
+  line-height: 1.5;
+  color: var(--fg-soft);
+  margin: var(--size-2) 0 var(--size-2);
+}
+
+.iv-persona-chips { display: flex; flex-wrap: wrap; gap: var(--size-1); }
+
+.iv-chip {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--fg-muted);
+  padding: 0.15em 0.6em;
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 999px;
+}
+
+/* Slide 2, the "money line" wall: free on the left, forbidden on
+ * the right, a hard bar between them. */
+.iv-wall {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(17, 20, 27, 0.08);
+}
+
+.iv-wall-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: var(--size-6);
+}
+
+.iv-wall-ok { background: #ffffff; }
+.iv-wall-goal { background: #ffffff; }
+
+.iv-wall-head {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+.iv-wall-ok .iv-wall-head { color: var(--ok); }
+.iv-wall-goal .iv-wall-head { color: var(--accent); }
+
+.iv-wall-item { font-size: var(--font-size-0); color: var(--fg-soft); }
+
+.iv-wall-bar {
+  width: 3px;
+  background: var(--danger);
+  position: relative;
+}
+.iv-wall-bar-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--danger);
+  background: var(--bg);
+  padding: 0.2em 0.5em;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--danger) 40%, var(--rule));
+}
+
+/* Slides 3 & 4, horizontal flow diagrams. */
+.iv-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--size-2);
+  margin: 0;
+}
+.iv-flow-tight { margin: var(--size-4) 0 var(--size-3); }
+
+.iv-flow-node {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  flex: 1 1 0;
+  min-width: 8rem;
+  padding: var(--size-5);
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+  text-align: center;
+}
+
+.iv-flow-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--fg-muted);
+}
+
+.iv-flow-block {
+  border-color: rgba(138, 101, 15, 0.28);
+  background: #fff9e8;
+  color: var(--fg);
+}
+.iv-flow-block .iv-flow-sub { color: var(--warn); }
+
+.iv-flow-go {
+  border-color: rgba(31, 122, 71, 0.26);
+  background: #e8f3ed;
+  color: var(--fg);
+}
+.iv-flow-go .iv-flow-sub { color: var(--accent); }
+
+.iv-flow-arrow {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-3);
+  color: var(--fg-muted);
+}
+
+/* Slide 6, the harness diagram: agent (opaque) → KIFF gate →
+ * action. The point is KIFF wraps the boundary, not the agent. */
+.iv-harness {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--size-2);
+  margin: 0;
+}
+
+.iv-harness-agent,
+.iv-harness-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--size-1);
+  flex: 1 1 0;
+  min-width: 9rem;
+  padding: var(--size-6);
+  border: 1px dashed rgba(17, 20, 27, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: center;
+  font-size: var(--font-size-0);
+  color: var(--fg-soft);
+}
+.iv-harness-action { border-style: solid; }
+
+.iv-harness-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.iv-harness-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--fg-muted);
+}
+
+.iv-harness-gate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  flex: 1 1 0;
+  min-width: 9rem;
+  padding: var(--size-6);
+  border: 1px solid rgba(49, 84, 212, 0.32);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  text-align: center;
+}
+.iv-harness-gate-name {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-4);
+  font-weight: 580;
+  color: var(--fg);
+  line-height: 1;
+}
+.iv-harness-gate-sub {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.iv-harness-arrow {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-3);
+  color: var(--fg-muted);
+}
+
+/* Slide 9, the propose→decide→execute→record mechanics strip. */
+.iv-mechanics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-2);
+  margin: 0;
+}
+.iv-mech-step {
+  padding: var(--size-3) var(--size-5);
+  border: 1px solid rgba(17, 20, 27, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+  color: var(--fg);
+}
+.iv-mech-arrow {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2);
+  color: var(--fg-muted);
+}
+
+/* Slide 11, the status rows. */
+.iv-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin: 0;
+}
+.iv-status-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-3);
+  padding: var(--size-4) var(--size-5);
+  border: 1px solid rgba(17, 20, 27, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+}
+.iv-status-badge {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+  margin-top: 0.1em;
+}
+.iv-status-live {
+  color: var(--ok);
+  border: 1px solid color-mix(in oklab, var(--ok) 45%, var(--rule));
+  background: color-mix(in oklab, var(--ok) 12%, transparent);
+}
+.iv-status-prog {
+  color: var(--warn);
+  border: 1px solid color-mix(in oklab, var(--warn) 50%, var(--rule));
+  background: color-mix(in oklab, var(--warn) 12%, transparent);
+}
+.iv-status-text { font-size: var(--font-size-0); line-height: 1.45; color: var(--fg-soft); }
+
+/* Closing slide, the merged defensibility + traction + ask + live-demo
+ * pointer (one slide, replacing the old moat/status/ask trio). Sits below
+ * the .iv-status strip on the same slide; the .iv-status :has() rules already
+ * center the slide and compact the heading, so this only needs its own
+ * internal rhythm and the highlighted "see it live" pointer. */
+.iv-close {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  margin: 0;
+}
+.iv-close p {
+  margin: 0;
+  line-height: 1.42;
+  color: var(--fg-soft);
+}
+/* Selector carries a p to out-specify `.iv-close p` (which sets --fg-soft),
+ * so the focal CTA gets full-strength --fg without !important. */
+.iv-close p.iv-close-demo {
+  padding: var(--size-3) var(--size-4);
+  border: 1px solid rgba(49, 84, 212, 0.26);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  box-shadow: 0 1px 0 rgba(49, 84, 212, 0.14);
+  color: var(--fg);
+}
+.iv-close-links {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-0);
+}
+.iv-close-links a { color: var(--accent); }
+
+/* One illustrated authorization ledger, never presented as customer data. */
+.iv-limit,
+.sd-limit {
+  display: grid;
+  gap: 1rem;
+  max-width: 56rem;
+  padding: 1.7rem 2rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg-elev);
+}
+
+.iv-limit-top,
+.sd-limit-top,
+.iv-limit-row,
+.sd-limit-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.iv-limit-top span,
+.sd-limit-top span {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.iv-limit-top strong,
+.sd-limit-top strong {
+  font-size: 1.65rem;
+  color: var(--fg);
+}
+
+.iv-limit-bar,
+.sd-limit-bar {
+  height: 1.6rem;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.iv-limit-used,
+.sd-limit-used {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--warn));
+}
+
+.iv-limit-row,
+.sd-limit-row {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--fg-soft);
+}
+
+.iv-limit-row strong,
+.sd-limit-row strong { color: var(--accent); }
+
+.iv-limit-refuse,
+.sd-limit-refuse {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--danger);
+}
+
+.iv-reuse {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) auto minmax(16rem, 1.4fr) auto minmax(9rem, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.iv-reuse-actors {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.iv-reuse-actors span {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--rule-soft);
+  background: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg-soft);
+}
+
+.iv-reuse-arrow { color: var(--accent); font-size: 1.8rem; }
+
+.iv-reuse-core {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.7rem;
+  border: 1px solid rgba(49, 84, 212, 0.3);
+  background: var(--accent-soft);
+}
+
+.iv-reuse-core small {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  color: var(--accent);
+}
+
+.iv-reuse-core strong { font-size: 1.3rem; line-height: 1.3; }
+
+/* The close slide packs four blocks (h2, intro p, .iv-status, .iv-close). In
+ * one column that's too tall for a windowed viewport, the .iv-status 1fr row
+ * (inherited from the rule above) collapses and its rows overlap .iv-close, or
+ * the heading clips off the top. Lay it as two columns instead: the narrative
+ * (heading, moat intro, the ask + links) on the left, the status rows on the
+ * right, spanning and vertically centred. Halving the stack lets it fit
+ * without clipping. The max-width:900px media block below drops all these
+ * slides back to display:block, so this collapses to a single column on
+ * narrow screens. */
+.deck-slide:has(.iv-close) .deck-slide-inner {
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  grid-template-rows: auto auto 1fr;
+  align-items: start;
+  column-gap: clamp(var(--size-5), 4vw, var(--size-8));
+}
+.deck-slide:has(.iv-close) > .deck-slide-inner > h2,
+.deck-slide:has(.iv-close) > .deck-slide-inner > p,
+.deck-slide:has(.iv-close) > .deck-slide-inner > .iv-close {
+  grid-column: 1;
+}
+.deck-slide:has(.iv-close) .iv-status {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: start;
+}
+
+/* Rich slides use their own internal composition; keep the slide
+ * canvas centered and let each composition distribute its content. */
+.deck-slide:has(.iv-wall),
+.deck-slide:has(.iv-harness),
+.deck-slide:has(.iv-status),
+.deck-slide:has(.iv-persona) {
+  justify-content: center;
+}
+
+/* Dense slides (rich blocks on either deck) pull the heading and body
+ * type down a notch so the block content fits without scrolling on a
+ * typical laptop viewport. Prose-only slides are untouched. */
+.deck-slide:has(.ds-cards) h1,
+.deck-slide:has(.ds-offer) h1,
+.deck-slide:has(.ds-fit) h1,
+.deck-slide:has(.iv-wall) h1,
+.deck-slide:has(.iv-harness) h1,
+.deck-slide:has(.iv-status) h1,
+.deck-slide:has(.iv-persona) h1,
+.deck-slide:has(.iv-flow) h1 {
+  font-size: 3rem;
+  margin-bottom: var(--size-3);
+  max-width: 14ch;
+}
+
+.deck-slide:has(.ds-cards) h2,
+.deck-slide:has(.ds-offer) h2,
+.deck-slide:has(.ds-fit) h2,
+.deck-slide:has(.iv-wall) h2,
+.deck-slide:has(.iv-harness) h2,
+.deck-slide:has(.iv-status) h2,
+.deck-slide:has(.iv-persona) h2,
+.deck-slide:has(.iv-flow) h2 {
+  font-size: clamp(2.05rem, 3.2vw, 2.75rem);
+  line-height: 0.98;
+  margin-bottom: var(--size-3);
+  max-width: 18ch;
+}
+
+.deck-slide:has(.ds-cards) p,
+.deck-slide:has(.ds-offer) p,
+.deck-slide:has(.ds-fit) p,
+.deck-slide:has(.iv-wall) p,
+.deck-slide:has(.iv-harness) p,
+.deck-slide:has(.iv-status) p,
+.deck-slide:has(.iv-persona) p,
+.deck-slide:has(.iv-flow) p {
+  font-size: clamp(0.95rem, 1.25vw, 1.08rem);
+  line-height: 1.45;
+}
+
+@media (max-height: 760px) {
+  /* The uniform root-font scale (html:has(.deck)) already shrinks every
+   * rem size on short viewports; here we only tighten the chrome padding
+   * so the slide body gets a little more room. Font sizes are intentionally
+   * NOT overridden, that would double-shrink against the root scale. */
+  .deck {
+    --deck-pad-y: var(--size-4);
+    --deck-pad-x: clamp(var(--size-5), 5vw, var(--size-8));
+  }
+}
+
+@media (max-height: 660px) {
+  .deck {
+    --deck-rail-h: 48px;
+    --deck-footer-h: 48px;
+    --deck-pad-y: var(--size-3);
+  }
+}
+
+@media (max-width: 520px) {
+  .iv-wall { grid-template-columns: 1fr; }
+  .iv-wall-bar { width: auto; height: 3px; }
+  .iv-wall-bar-label { transform: translate(-50%, -50%); }
+  .iv-flow, .iv-harness { flex-direction: column; }
+  .iv-flow-arrow, .iv-harness-arrow { transform: rotate(90deg); }
+}
+
+@media (max-width: 760px) {
+  .ds-cards {
+    gap: 0.35rem;
+  }
+  .ds-card {
+    min-height: 6.2rem;
+    padding: 0.45rem;
+    gap: 0.25rem;
+  }
+  .ds-card-risk {
+    font-size: 0.76rem;
+  }
+  .ds-card-nums {
+    gap: 0.15rem;
+  }
+  .ds-without {
+    font-size: 0.62rem;
+  }
+  .ds-with {
+    font-size: 0.82rem;
+  }
+  .ds-card-tag {
+    font-size: 0.58rem;
+    line-height: 1.2;
+  }
+  .ds-card-fw {
+    font-size: 0.48rem;
+  }
+}
+
+/* The presenter stays a fixed canvas on desktop. On phones each slide may
+ * scroll within its own URL, which keeps diagrams readable instead of
+ * shrinking them into an illegible thumbnail. */
+@media (max-width: 760px) {
+  html:has(.deck[data-deck="sales"]),
+  body:has(.deck[data-deck="sales"]) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .deck[data-deck="sales"] {
+    height: auto;
+    min-height: 100dvh;
+    grid-template-rows: var(--deck-rail-h) minmax(calc(100dvh - var(--deck-rail-h) - var(--deck-footer-h)), auto) var(--deck-footer-h);
+  }
+
+  .deck[data-deck="sales"] .deck-slide {
+    min-height: calc(100dvh - var(--deck-rail-h) - var(--deck-footer-h));
+    overflow: visible;
+    padding: 2rem 1.25rem;
+  }
+
+  .deck[data-deck="sales"] .deck-hit {
+    display: none;
+  }
+
+  .deck[data-deck="sales"] .deck-slide h1 {
+    max-width: 9ch;
+    font-size: clamp(3.2rem, 15vw, 4.8rem);
+  }
+
+  .deck[data-deck="sales"] .deck-slide h2 {
+    max-width: 13ch;
+    font-size: clamp(2.35rem, 11vw, 3.6rem);
+  }
+
+  .deck[data-deck="sales"] .deck-slide:has(.sd-lifecycle-visual) h2 {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(2.15rem, 9.5vw, 3rem);
+  }
+
+  .deck-slide:has(.sd-opening) .deck-slide-inner,
+  .deck-slide:has(.sd-lifecycle-visual) .deck-slide-inner,
+  .deck-slide:has(.sd-fragments) .deck-slide-inner,
+  .deck-slide:has(.sd-spine) .deck-slide-inner,
+  .deck-slide:has(.sd-system) .deck-slide-inner,
+  .deck-slide:has(.sd-launch) .deck-slide-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 1.5rem;
+  }
+
+  .deck-slide:has(.sd-lifecycle-visual) .deck-slide-inner {
+    grid-template-areas:
+      "lifecycle-title"
+      "lifecycle-copy"
+      "lifecycle-visual";
+  }
+
+  .sd-lifecycle-copy strong {
+    font-size: 1.25rem;
+  }
+
+  .sd-compact-life {
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    gap: 0.3rem;
+    padding: 0.8rem;
+    font-size: 0.58rem;
+  }
+
+  .sd-compact-life strong {
+    grid-column: 1 / -1;
+    margin-bottom: 0.25rem;
+  }
+
+  .sd-opening-lede {
+    font-size: 2rem !important;
+  }
+
+  .sd-start {
+    padding-block: 0.8rem;
+  }
+
+  .sd-life-track {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .sd-domain-life {
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    gap: 0.35rem;
+    padding: 0.8rem;
+    font-size: 0.6rem;
+  }
+
+  .sd-domain-life .sd-label {
+    grid-column: 1 / -1;
+    margin-bottom: 0.2rem;
+  }
+
+  .sd-domain-life > span:not(.sd-label) {
+    padding: 0.45rem 0.25rem;
+  }
+
+  .sd-life-line {
+    width: 1px;
+    height: 0.8rem;
+    margin-inline: auto;
+    background: var(--accent);
+  }
+
+  .sd-life-state {
+    min-height: 3.2rem;
+  }
+
+  .sd-participants {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sd-fragments {
+    grid-template-columns: 1fr;
+  }
+
+  .sd-fragment {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .sd-costline {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .sd-costline strong {
+    font-size: 1.5rem;
+    text-align: left;
+  }
+
+  .sd-spine {
+    grid-template-columns: 1fr;
+  }
+
+  .sd-spine-actors {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sd-spine-rail {
+    width: 65%;
+    height: 1px;
+    margin-inline: auto;
+    border-top: 1px solid var(--accent);
+    border-left: 0;
+  }
+
+  .sd-spine-rail::before,
+  .sd-spine-rail::after,
+  .sd-spine-rail span {
+    top: -0.29rem;
+    left: auto;
+  }
+
+  .sd-spine-rail::before { left: 0; }
+  .sd-spine-rail span { left: calc(50% - 0.29rem); }
+  .sd-spine-rail::after { right: 0; bottom: auto; }
+
+  .sd-spine-arrow {
+    text-align: center;
+    transform: rotate(90deg);
+  }
+
+  .sd-spine-systems {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sd-system-row {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+    padding: 1rem;
+  }
+
+  .sd-system-row strong {
+    font-size: 1.25rem;
+  }
+
+  .deck[data-deck="sales"] .sd-proof-cards {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .deck[data-deck="sales"] .ds-card {
+    min-height: 9rem;
+    padding: 1rem;
+    gap: 0.55rem;
+  }
+
+  .deck[data-deck="sales"] .ds-card-risk { font-size: 1rem; }
+  .deck[data-deck="sales"] .ds-without { font-size: 0.78rem; }
+  .deck[data-deck="sales"] .ds-with { font-size: 1.05rem; }
+  .deck[data-deck="sales"] .ds-card-tag { font-size: 0.76rem; }
+  .deck[data-deck="sales"] .ds-card-fw { font-size: 0.56rem; }
+
+  .sd-proof-foot {
+    flex-wrap: wrap;
+  }
+
+  .sd-proof-foot a {
+    width: 100%;
+    margin: 0.35rem 0 0;
+  }
+
+  .sd-launch {
+    grid-template-columns: 1fr;
+  }
+
+  .sd-launch-offer {
+    min-height: 18rem;
+  }
+
+  .sd-launch-result li {
+    font-size: 0.82rem !important;
+  }
+}
+
+/* ── Print-all view (/deck/{slug}?print=1) ───────────────────── *
+ *
+ * Replaces the old JS window.print() button. Every slide is rendered
+ * stacked on one scrollable page; the browser's own print dialog
+ * (⌘P / Ctrl+P) exports the whole deck to PDF. No JS, no toolchain.
+ */
+
+.deck-print {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: clamp(var(--size-5), 5vw, var(--size-8));
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-6);
+}
+
+.deck-print-hint {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: var(--size-3) var(--size-4);
+  border: 1px solid rgba(49, 84, 212, 0.24);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg);
+  text-align: center;
+}
+
+.deck-print-slide {
+  padding: clamp(var(--size-5), 4vw, var(--size-7));
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--bg-elev);
+  box-shadow: 0 8px 24px rgba(17, 20, 27, 0.06);
+}
+
+@media print {
+  /* The single-slide stage prints just its own content: drop the
+   * fixed chrome and the click zones so a one-slide ⌘P is clean. */
+  .deck-topbar,
+  .deck-footer,
+  .deck-hit,
+  .deck::before,
+  .deck::after {
+    display: none !important;
+  }
+  html:has(.deck),
+  body:has(.deck) {
+    overflow: visible;
+  }
+  .deck {
+    display: block;
+    height: auto;
+  }
+  .deck-slide {
+    overflow: visible;
+    max-width: none;
+  }
+
+  /* The print-all view: one slide per page, no screen banner. */
+  .deck-print-hint {
+    display: none;
+  }
+  .deck-print {
+    max-width: none;
+    padding: 0;
+    gap: 0;
+  }
+  .deck-print-slide {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+    padding: 0;
+    break-after: page;
+    page-break-after: always;
+  }
+  .deck-print-slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
+
+/* ── Investor deck ─────────────────────────────────────────────────
+ * Its own theme, scoped by data-deck. A dark neutral page, one sans
+ * family throughout, no italic accents, no monospace labels, no pills,
+ * no gradients: flat panels, plain rules and one accent colour. The
+ * slides use the inv-* classes below; the older iv-* compositions are
+ * no longer referenced by this deck. */
+.deck[data-deck="investors"],
+.deck-print[data-deck="investors"] {
+  --inv-bg: #14161b;
+  --inv-panel: #1b1e24;
+  --inv-fg: #eef0f3;
+  --inv-soft: #b4bac4;
+  --inv-muted: #7d8591;
+  --inv-rule: #2c3038;
+  --inv-accent: #f2a33a;
+  --inv-ok: #4fb37f;
+  --inv-warn: #e0a940;
+  --inv-off: #d0645f;
+  --font-display: var(--font-sans);
+  --fg: var(--inv-fg);
+  --fg-soft: var(--inv-soft);
+  --fg-muted: var(--inv-muted);
+  --bg: var(--inv-bg);
+  --bg-elev: var(--inv-panel);
+  --rule: var(--inv-rule);
+  --rule-soft: var(--inv-rule);
+  --accent: var(--inv-accent);
+  --accent-soft: var(--inv-panel);
+  color: var(--inv-fg);
+  background: var(--inv-bg);
+}
+html:has(.deck[data-deck="investors"]),
+body:has(.deck[data-deck="investors"]),
+body:has(.deck-print[data-deck="investors"]) { background: #14161b; }
+
+.deck[data-deck="investors"] .deck-topbar {
+  background: #14161b;
+  border-bottom: 1px solid var(--inv-rule);
+  backdrop-filter: none;
+}
+.deck[data-deck="investors"] .deck-brand,
+.deck[data-deck="investors"] .deck-download,
+.deck[data-deck="investors"] .deck-footer,
+.deck[data-deck="investors"] .deck-footer-meta,
+.deck[data-deck="investors"] .deck-nav-count,
+.deck-print[data-deck="investors"] .deck-print-hint {
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--inv-muted);
+}
+.deck[data-deck="investors"] .deck-brand { color: var(--inv-fg); font-weight: 600; font-size: 0.9rem; }
+.deck[data-deck="investors"] .deck-download {
+  background: transparent;
+  border: 1px solid var(--inv-rule);
+  border-radius: 4px;
+  box-shadow: none;
+  color: var(--inv-soft);
+  font-size: 0.8rem;
+}
+.deck[data-deck="investors"] .deck-download:hover,
+.deck[data-deck="investors"] .deck-download:focus-visible { background: var(--inv-panel); color: var(--inv-fg); }
+.deck[data-deck="investors"] .deck-progress,
+.deck[data-deck="investors"] .deck-progress::-webkit-progress-bar,
+.deck[data-deck="investors"] .deck-progress::-webkit-progress-value,
+.deck[data-deck="investors"] .deck-progress::-moz-progress-bar { border-radius: 0; }
+.deck[data-deck="investors"] .deck-progress,
+.deck[data-deck="investors"] .deck-progress::-webkit-progress-bar { background: var(--inv-rule); }
+.deck[data-deck="investors"] .deck-footer { background: #14161b; border-top: 1px solid var(--inv-rule); }
+.deck[data-deck="investors"] .deck-nav-link { color: var(--inv-soft); border-radius: 4px; }
+
+/* Typography: sans, upright, no accent words. */
+:is(.deck, .deck-print)[data-deck="investors"] .prose :is(h1, h2, h3) {
+  font-family: var(--font-sans);
+  font-style: normal;
+  color: var(--inv-fg);
+  letter-spacing: -0.02em;
+}
+:is(.deck, .deck-print)[data-deck="investors"] .prose h1 { font-weight: 700; font-size: clamp(2.6rem, 5vw, 4.4rem); line-height: 1.05; max-width: 16ch; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose h2 { font-weight: 650; font-size: clamp(1.9rem, 3.2vw, 2.9rem); line-height: 1.12; max-width: 24ch; margin-bottom: 1.6rem; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose h3 { font-size: 1rem; font-weight: 600; color: var(--inv-soft); margin: 0 0 0.8rem; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose :is(em, i) { font-style: normal; color: inherit; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose a { color: var(--inv-accent); }
+
+.inv-lede { font-size: clamp(1.2rem, 1.7vw, 1.5rem); line-height: 1.45; color: var(--inv-fg); max-width: 52ch; margin: 0 0 1.2rem; }
+.inv-body { font-size: 1.05rem; line-height: 1.6; color: var(--inv-soft); max-width: 62ch; margin: 0 0 1rem; }
+.inv-note { font-size: 0.9rem; color: var(--inv-muted); margin-top: 1rem; }
+
+.inv-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--inv-rule); margin: 0.5rem 0 1.5rem; }
+.inv-steps > div { padding: 1.2rem 1.4rem 1.2rem 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.inv-steps > div + div { padding-left: 1.4rem; border-left: 1px solid var(--inv-rule); }
+.inv-steps strong { color: var(--inv-fg); font-size: 1.15rem; font-weight: 600; }
+.inv-steps span { color: var(--inv-soft); line-height: 1.5; }
+.inv-steps .inv-hit { box-shadow: inset 0 3px 0 var(--inv-accent); }
+
+.inv-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.inv-cols > div { background: var(--inv-panel); border: 1px solid var(--inv-rule); padding: 1.3rem 1.5rem; }
+.inv-cols > div + div { border-top: 3px solid var(--inv-accent); }
+.inv-cols ul { margin: 0; padding-left: 1.1rem; color: var(--inv-soft); line-height: 1.6; }
+
+.inv-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.inv-table th { text-align: left; font-weight: 600; color: var(--inv-muted); font-size: 0.85rem; padding: 0 1rem 0.7rem 0; border-bottom: 1px solid var(--inv-rule); }
+.inv-table td { padding: 0.8rem 1rem 0.8rem 0; border-bottom: 1px solid var(--inv-rule); color: var(--inv-soft); vertical-align: top; line-height: 1.45; }
+.inv-table td:first-child { color: var(--inv-fg); font-weight: 500; }
+.inv-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.55rem; vertical-align: 1px; }
+.inv-ok { background: var(--inv-ok); }
+.inv-warn { background: var(--inv-warn); }
+.inv-off { background: var(--inv-off); }
+
+@media (max-width: 800px) {
+  .inv-steps, .inv-cols { grid-template-columns: 1fr; }
+  .inv-steps > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--inv-rule); }
+}
+
+/* PDF export prints on paper: same layout, dark text on white. */
+@media print {
+  .deck-print[data-deck="investors"] {
+    --inv-bg: #ffffff;
+    --inv-panel: #ffffff;
+    --inv-fg: #14161b;
+    --inv-soft: #3a3f48;
+    --inv-muted: #69707c;
+    --inv-rule: #d5d8dd;
+    --inv-accent: #b86a06;
+  }
+  body:has(.deck-print[data-deck="investors"]) { background: #ffffff; }
+}
+
+/* Investor deck: beat the base .deck-slide element rules. */
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table { width: 100%; max-width: none; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table th {
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--inv-muted);
+  background: none;
+}
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-note { font-size: 0.9rem; color: var(--inv-muted); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-lede { font-size: clamp(1.2rem, 1.7vw, 1.5rem); color: var(--inv-fg); max-width: 52ch; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-body { font-size: 1.05rem; color: var(--inv-soft); max-width: 62ch; }
+.deck[data-deck="investors"] .deck-nav-link {
+  background: transparent;
+  border: 1px solid var(--inv-rule);
+  box-shadow: none;
+  color: var(--inv-soft);
+}
+.deck[data-deck="investors"] .deck-nav-link:hover { background: var(--inv-panel); color: var(--inv-fg); }
+.deck[data-deck="investors"] .deck-nav-disabled { opacity: 0.35; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose h2 { max-width: 30ch; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table td:first-child { white-space: nowrap; }
+
+/* Investor deck, legibility pass (YC, "How to design a better pitch
+ * deck"): text at the top, large and high-contrast, one idea a slide. */
+.deck[data-deck="investors"] .deck-slide { justify-content: flex-start; padding-top: clamp(4rem, 11vh, 7.5rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose h2 { font-size: clamp(2.2rem, 3.6vw, 3.3rem); font-weight: 700; margin-bottom: 2rem; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-lede { font-size: clamp(1.5rem, 2.3vw, 2.05rem); line-height: 1.35; font-weight: 500; max-width: 38ch; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-body { font-size: clamp(1.15rem, 1.5vw, 1.35rem); max-width: 52ch; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose p.inv-note { font-size: 1.05rem; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table { font-size: clamp(1.05rem, 1.35vw, 1.25rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-steps strong { font-size: clamp(1.25rem, 1.7vw, 1.55rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-steps span { font-size: clamp(1.05rem, 1.35vw, 1.2rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-cols li { font-size: clamp(1.1rem, 1.4vw, 1.3rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table td { font-size: clamp(1.1rem, 1.45vw, 1.3rem); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-table th { font-size: clamp(0.95rem, 1.1vw, 1.05rem); }
+
+/* The investor story is drawn on the slide canvas. Pete's first three
+ * slides are graphite plans; Anne's introduction changes the same
+ * architectural language to a resolved colour rendering. The copy,
+ * tables and diagrams remain HTML above the artwork. */
+.deck[data-deck="investors"] {
+  --inv-art: none;
+  background-image:
+    linear-gradient(180deg, #14161b 0%, rgba(20, 22, 27, 0.98) 23%, rgba(20, 22, 27, 0.78) 43%, rgba(20, 22, 27, 0.05) 82%),
+    linear-gradient(90deg, rgba(20, 22, 27, 0.76), transparent 72%),
+    var(--inv-art);
+  background-color: #14161b;
+  background-size: cover;
+  background-position: center;
+}
+.deck[data-deck="investors"]::after { display: none; }
+.deck[data-deck="investors"][data-slide="1"],
+.deck[data-deck="investors"][data-slide="2"] { --inv-art: url("../img/deck-investors/pete-agent.webp"); }
+.deck[data-deck="investors"][data-slide="3"] { --inv-art: url("../img/deck-investors/pete-fleet.webp"); }
+.deck[data-deck="investors"][data-slide="4"] { --inv-art: url("../img/deck-investors/anne-authority.webp"); }
+.deck[data-deck="investors"][data-slide="6"] { --inv-art: url("../img/deck-investors/incident.webp"); }
+.deck[data-deck="investors"][data-slide="7"],
+.deck[data-deck="investors"][data-slide="8"] { --inv-art: url("../img/deck-investors/card-control.webp"); }
+.deck[data-deck="investors"][data-slide="10"] { --inv-art: url("../img/deck-investors/pete-resolved.webp"); }
+
+/* Cards sit on the plan like a presentation overlay, and stay legible
+ * where the illustration's fine lines pass behind them. */
+.deck[data-deck="investors"] .inv-steps > div {
+  background: rgba(20, 22, 27, 0.86);
+  padding: 1.2rem 1.4rem;
+}
+.deck[data-deck="investors"] .inv-steps > div + div { border-left-color: var(--inv-rule); }
+
+@media (max-width: 800px) {
+  .deck[data-deck="investors"] {
+    background-image:
+      linear-gradient(180deg, #14161b 0%, rgba(20, 22, 27, 0.99) 46%, rgba(20, 22, 27, 0.72) 75%),
+      var(--inv-art);
+    background-position: center, 62% center;
+  }
+}
+
+/* Investor deck roadmap: four milestones on one line. */
+.inv-timeline { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative; }
+.inv-timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 0.55rem; height: 2px; background: var(--inv-rule); }
+.inv-timeline li { position: relative; padding: 2rem 1.2rem 0 0; }
+.inv-timeline li::before { content: ""; position: absolute; left: 0; top: 0.2rem; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--inv-bg); border: 2px solid var(--inv-accent); }
+.inv-timeline li:last-child::before { background: var(--inv-accent); }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-timeline span { display: block; color: var(--inv-muted); font-size: clamp(1rem, 1.2vw, 1.15rem); margin-bottom: 0.5rem; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-timeline strong { color: var(--inv-fg); font-size: clamp(1.3rem, 1.9vw, 1.7rem); line-height: 1.25; font-weight: 600; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-cols p { font-size: clamp(1.05rem, 1.35vw, 1.2rem); line-height: 1.55; color: var(--inv-soft); max-width: none; margin: 0; }
+@media (max-width: 800px) { .inv-timeline { grid-template-columns: 1fr; } .inv-timeline::before { display: none; } }
+
+/* Investor deck: milestone evidence and the growth chain on the ask. */
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-timeline em { display: block; font-style: normal; color: var(--inv-soft); font-size: clamp(0.95rem, 1.15vw, 1.1rem); line-height: 1.45; margin-top: 0.5rem; }
+.inv-chain { list-style: none; padding: 0; margin: 0 0 1.6rem; display: flex; flex-wrap: wrap; gap: 0.6rem 0; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose .inv-chain li { color: var(--inv-fg); font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; max-width: none; }
+.inv-chain li + li::before { content: "→"; color: var(--inv-accent); margin: 0 0.8rem; font-weight: 400; }
+
+/* Phones: the slide frame is fixed-height with overflow hidden, so the
+ * taller one-column layouts must scroll inside it rather than clip
+ * behind the footer (a review, 390x844). */
+@media (max-width: 800px) {
+  .deck[data-deck="investors"] .deck-slide {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 2rem;
+    padding-bottom: calc(var(--deck-footer-h) + 1.5rem);
+  }
+  .inv-timeline li { padding-top: 1.2rem; }
+  .inv-timeline li::before { top: 0; }
+  :is(.deck, .deck-print)[data-deck="investors"] .prose .inv-timeline strong { font-size: 1.2rem; }
+  .inv-chain { flex-direction: column; }
+  .inv-chain li + li::before { content: "↓"; margin: 0 0.5rem 0 0; }
+  .inv-cols { gap: 1rem; }
+  .inv-cols > div { padding: 1rem 1.1rem; }
+}
+:is(.deck, .deck-print)[data-deck="investors"] .prose ol.inv-chain { display: flex; flex-wrap: wrap; padding-left: 0; gap: 0.6rem 0; }
+:is(.deck, .deck-print)[data-deck="investors"] .prose ol.inv-timeline { display: grid; padding-left: 0; gap: 0; }
+@media (max-width: 800px) {
+  :is(.deck, .deck-print)[data-deck="investors"] .prose ol.inv-chain { flex-direction: column; }
+}

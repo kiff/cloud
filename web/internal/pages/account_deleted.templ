@@ -1,0 +1,27 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// AccountDeleted confirms an account's deletion was accepted. ends
+// is the grace window's last day, in words, or "" when the API
+// didn't say.
+templ AccountDeleted(ends string) {
+	@components.LayoutSite("KIFF — account deletion requested", "", "css/prose.css", "css/whitepaper.css") {
+		<article class="whitepaper">
+			<div class="whitepaper-body prose">
+				<h1>Your account's deletion is requested</h1>
+				<p>The workspace is suspended, and its keys have stopped working. You've been signed out.</p>
+				if ends != "" {
+					<p>We keep its data until <strong>{ ends }</strong>, in case you want it back. Then it's erased.</p>
+				} else {
+					<p>We keep its data for 30 days, in case you want it back. Then it's erased.</p>
+				}
+				<p>To restore it before then, email <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> from the account's email address.</p>
+				<ul>
+					<li><a href="/privacy#retention">What we keep, and for how long</a></li>
+					<li><a href="/">The KIFF home page</a></li>
+				</ul>
+			</div>
+		</article>
+	}
+}

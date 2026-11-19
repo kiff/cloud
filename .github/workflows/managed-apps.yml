@@ -1,0 +1,62 @@
+name: managed apps disclosed
+
+# The apps a customer may connect as a managed connection (Composio, US) are
+# disclosed on /subprocessors from web/internal/pages/managed_apps.json.
+# planque keeps a copy and refuses a managed sign-in for any app not on it
+# (kiff/planque internal/planque/managed_apps.json). This check fails when
+# planque's copy names an app this list doesn't: an app may be disclosed here
+# before planque lets it through, never the other way round. It runs hourly
+# too, since a change in planque doesn't run this repository's checks.
+
+on:
+  pull_request:
+    paths:
+      - 'web/internal/pages/managed_apps.json'
+      - '.github/workflows/managed-apps.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'web/internal/pages/managed_apps.json'
+      - '.github/workflows/managed-apps.yml'
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: planque names only disclosed apps
+        run: |
+          url=https://raw.githubusercontent.com/kiff/planque/main/internal/planque/managed_apps.json
+          code=$(curl -sS -o planque.json -w '%{http_code}' --retry 3 "$url")
+          if [ "$code" = 404 ]; then
+            echo "::notice::planque has no managed_apps.json on main yet; nothing to compare."
+            exit 0
+          fi
+          if [ "$code" != 200 ]; then
+            echo "::error::reading planque's list answered $code"
+            exit 1
+          fi
+          python3 -I - planque.json web/internal/pages/managed_apps.json <<'EOF'
+          import json, sys
+          planque = json.load(open(sys.argv[1], encoding="utf-8"))
+          disclosed = json.load(open(sys.argv[2], encoding="utf-8"))
+          for name, v in (("planque", planque), ("the disclosed list", disclosed)):
+              if not isinstance(v, list) or not all(isinstance(a, str) for a in v):
+                  sys.exit(f"::error::{name}'s managed_apps.json isn't a JSON array of names")
+          undisclosed = sorted(set(planque) - set(disclosed))
+          if undisclosed:
+              sys.exit("::error::planque allows managed connections to apps /subprocessors doesn't name: " + ", ".join(undisclosed))
+          waiting = sorted(set(disclosed) - set(planque))
+          if waiting:
+              print("::notice::disclosed, not yet allowed in planque: " + ", ".join(waiting))
+          print("planque's list is within the disclosed list.")
+          EOF

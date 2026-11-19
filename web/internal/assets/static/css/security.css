@@ -1,0 +1,274 @@
+/* security.css — /security page. */
+
+/* ── Security page (/security) ───────────────────────────────────── */
+
+/* Same Layout as the landing/whitepaper. Reading-column constraint
+   like the whitepaper, but with section blocks (h2 + content) and a
+   grid layout for the operational practices. */
+.security {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: var(--size-9) var(--size-5) var(--size-9);
+  color: var(--fg-soft);
+  line-height: 1.7;
+}
+
+.security-head {
+  margin-bottom: var(--size-7);
+  border-bottom: 1px solid var(--rule-soft);
+  padding-bottom: var(--size-5);
+}
+
+.security-head .eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--font-size-0);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 var(--size-2);
+}
+
+.security-head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 var(--size-3);
+}
+
+.security-lede {
+  font-size: 17px;
+  margin: 0;
+}
+
+.security-section {
+  margin: var(--size-7) 0;
+}
+
+.security-section h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-5);
+  color: var(--fg);
+  margin: 0 0 var(--size-3);
+  letter-spacing: -0.01em;
+}
+
+.security-section h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3);
+  color: var(--fg);
+  margin: var(--size-5) 0 var(--size-2);
+  letter-spacing: -0.005em;
+}
+
+.security-section em {
+  font-style: italic;
+  color: var(--fg);
+}
+
+.security-section .section-lede {
+  margin: 0 0 var(--size-4);
+  color: var(--fg-muted);
+}
+
+.security-section p {
+  margin: 0 0 var(--size-3);
+}
+
+.security-section a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--rule);
+}
+
+.security-section a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.security-section code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-soft);
+  border: 1px solid var(--rule-soft);
+  padding: 0.05em 0.35em;
+  border-radius: var(--radius-2);
+  color: var(--fg);
+}
+
+/* Operational-practices grid: <dl> with one <div class="security-row">
+   per (term, definition) pair. Two columns on desktop, single column
+   on narrow viewports. */
+.security-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-5);
+  margin: 0;
+}
+
+.security-row {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--size-3);
+}
+
+.security-row dt {
+  font-family: var(--font-display);
+  font-size: var(--font-size-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin: 0 0 var(--size-2);
+}
+
+.security-row dd {
+  margin: 0;
+  color: var(--fg-soft);
+}
+
+@media (max-width: 640px) {
+  .security-grid {
+    grid-template-columns: 1fr;
+    gap: var(--size-4);
+  }
+}
+
+/* Sub-processor table. Same reading column, same border treatment
+   as the whitepaper's tables. */
+.security-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.security-table th,
+.security-table td {
+  text-align: left;
+  padding: var(--size-3) var(--size-2);
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+
+.security-table th {
+  font-family: var(--font-display);
+  font-size: var(--font-size-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.security-table tbody tr:last-child td { border-bottom: 0; }
+
+/* Roadmap section. Visually distinct so a reader scanning the page
+   for "what is missing" finds it without scrolling past artifacts. */
+.security-roadmap {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-3);
+  padding: var(--size-5);
+  background: var(--surface-soft);
+}
+
+.security-roadmap-list {
+  margin: 0 0 var(--size-4);
+  padding-left: var(--size-4);
+  display: grid;
+  gap: var(--size-3);
+}
+
+.security-roadmap-list li {
+  color: var(--fg-soft);
+}
+
+.security-roadmap-list strong {
+  color: var(--fg);
+}
+
+.security-roadmap-note {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: var(--font-size-1);
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--size-3);
+}
+
+/* ── Trust-at-a-glance summary (top of page) ─────────────────────── */
+
+/* Status table: a reviewer should be able to scan framework + status
+   in seconds. Reuses .security-table; the pills carry the meaning. */
+.security-trust-table td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.security-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+/* in place / supported — the green "this is real" state. */
+.security-pill-ok {
+  color: var(--ok);
+  background: color-mix(in oklab, var(--ok) 10%, transparent);
+}
+
+/* in progress — amber, honest "not done yet". */
+.security-pill-prog {
+  color: var(--warn);
+  background: color-mix(in oklab, var(--warn) 10%, transparent);
+}
+
+/* planned — muted, no implied date guarantee. */
+.security-pill-planned {
+  color: var(--fg-muted);
+  background: color-mix(in oklab, var(--fg-muted) 12%, transparent);
+}
+
+/* out of scope / not in scope — neutral; a deliberate non-claim. */
+.security-pill-na {
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--fg-soft) 10%, transparent);
+}
+
+.security-handover {
+  margin: 0 0 var(--size-4);
+  padding-left: var(--size-4);
+  display: grid;
+  gap: var(--size-2);
+}
+
+.security-handover li { color: var(--fg-soft); }
+
+.security-levels { margin: 0; padding-left: var(--size-4); }
+
+/* A section whose detail is one tap away: the heading is the summary. */
+.security-more > summary { cursor: pointer; list-style: none; }
+.security-more > summary::-webkit-details-marker { display: none; }
+.security-more > summary h2 { display: inline; margin: 0; }
+.security-more > summary::after { content: " +"; font-family: var(--font-mono); color: var(--fg-muted); }
+.security-more[open] > summary::after { content: " −"; }
+.security-more[open] > summary { margin-bottom: var(--size-3); }
+
+/* Phones: one fact per line, no sideways scroll. The trust table reads
+   as rows (area and status, then the detail); the other table stacks. */
+@media (max-width: 640px) {
+  .security { padding: var(--size-7) var(--size-3) var(--size-6); line-height: 1.55; font-size: 15px; }
+  .security-head { margin-bottom: var(--size-5); padding-bottom: var(--size-3); }
+  .security-section { margin: var(--size-6) 0; }
+  .security-section h2 { font-size: 26px; line-height: 1.2; }
+  .security-section h3 { margin-top: var(--size-4); font-size: 19px; }
+  .security-head h1 { font-size: 26px; }
+  .security-trust-table thead { display: none; }
+  .security-trust-table, .security-trust-table tbody, .security-trust-table tr { display: block; }
+  .security-trust-table tr { padding: var(--size-2) 0; border-bottom: 1px solid var(--rule-soft); }
+  .security-trust-table td { display: block; padding: 0; border: 0; }
+  .security-trust-table td:nth-child(1), .security-trust-table td:nth-child(2) { display: inline; margin-right: var(--size-2); color: var(--fg); }
+  .security-trust-table td:nth-child(3) { margin-top: 2px; }
+  .security-table th, .security-table td { padding: var(--size-2) var(--size-1); }
+  .security-roadmap { padding: var(--size-4); }
+  .security-roadmap-list, .security-handover { gap: var(--size-1); }
+}

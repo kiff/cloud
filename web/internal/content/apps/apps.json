@@ -1,0 +1,26 @@
+{
+  "_note": "The apps tafs connects, and the only place the site names them. status: works (connects today: by its API key, per the connect matrix, or by a sign-in a tester completed on a phone), coming (a managed sign-in, not proven yet) or not-yet (no way to connect confirmed; no connects). connects: key or sign-in. The nightly matrix (kiff-cloud#1612) will update the statuses once it's wired.",
+  "apps": [
+    {"id": "stripe", "name": "Stripe", "connects": "key", "status": "works"},
+    {"id": "qonto", "name": "Qonto", "connects": "key", "status": "works"},
+    {"id": "shippo", "name": "Shippo", "connects": "key", "status": "works"},
+    {"id": "intercom", "name": "Intercom", "connects": "key", "status": "works"},
+    {"id": "zendesk", "name": "Zendesk", "connects": "key", "status": "works"},
+    {"id": "pipedrive", "name": "Pipedrive", "connects": "key", "status": "works"},
+    {"id": "github", "name": "GitHub", "connects": "key", "status": "works"},
+    {"id": "gmail", "name": "Gmail", "connects": "sign-in", "status": "works"},
+    {"id": "typeform", "name": "Typeform", "connects": "sign-in", "status": "works"},
+    {"id": "google-calendar", "name": "Google Calendar", "connects": "sign-in", "status": "works"},
+    {"id": "google-drive", "name": "Google Drive", "connects": "sign-in", "status": "works"},
+    {"id": "google-sheets", "name": "Google Sheets", "connects": "sign-in", "status": "coming"},
+    {"id": "outlook", "name": "Outlook", "connects": "sign-in", "status": "coming"},
+    {"id": "shopify", "name": "Shopify", "connects": "sign-in", "status": "coming"},
+    {"id": "linkedin", "name": "LinkedIn", "connects": "sign-in", "status": "coming"},
+    {"id": "gorgias", "name": "Gorgias", "status": "not-yet"},
+    {"id": "freshdesk", "name": "Freshdesk", "status": "not-yet"},
+    {"id": "quickbooks", "name": "QuickBooks", "status": "not-yet"},
+    {"id": "zoho-books", "name": "Zoho Books", "status": "not-yet"},
+    {"id": "moneybird", "name": "Moneybird", "status": "not-yet"},
+    {"id": "harvest", "name": "Harvest", "status": "not-yet"}
+  ]
+}

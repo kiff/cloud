@@ -1,0 +1,159 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// CookiesNL is the Cookie Policy (/cookies) in Dutch, at /nl/cookies.
+// It is a translation of Cookies: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ CookiesNL() {
+	@components.LayoutSite("KIFF — cookiebeleid", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@cookiesHeadNL()
+			@cookiesSummaryNL()
+			@cookiesOursNL()
+			@cookiesSignInNL()
+			@cookiesStorageNL()
+			@cookiesControlNL()
+		</article>
+	}
+}
+
+templ cookiesHeadNL() {
+	<header class="legal-head">
+		<p class="legal-badge">Cookiebeleid · v0.1</p>
+		<h1>Cookiebeleid</h1>
+		<p class="legal-meta">
+			<strong>Laatst bijgewerkt:</strong> 23 oktober 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Welke cookies <code>kiff.dev</code> en
+			<code>app.kiff.dev</code> plaatsen, waar elke cookie voor
+			dient en hoe lang die blijft. Het
+			<a href="/nl/privacy">privacybeleid</a> gaat over de
+			overige persoonsgegevens die we verwerken. Vragen:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ cookiesSummaryNL() {
+	<section id="summary">
+		<h2>1. In het kort</h2>
+		<p>
+			We plaatsen geen analytische cookies, geen
+			advertentiecookies en geen trackers van derden. De cookies
+			hieronder bestaan alleen om je in te loggen en het
+			dashboard te laten werken. Ze zijn strikt noodzakelijk,
+			dus er is geen toestemming voor nodig, en er is geen
+			cookiebanner. Voegen we ooit een cookie toe die niet
+			strikt noodzakelijk is, dan vragen we je toestemming
+			voordat we die plaatsen.
+		</p>
+		<p>
+			Wie de openbare pagina's van <code>kiff.dev</code> leest
+			zonder in te loggen, krijgt geen cookie.
+		</p>
+	</section>
+}
+
+templ cookiesOursNL() {
+	<section id="ours">
+		<h2>2. Onze cookies</h2>
+		<div class="legal-table" tabindex="0">
+			<table>
+				<thead>
+					<tr>
+						<th>Cookie</th>
+						<th>Waar die voor dient</th>
+						<th>Hoe lang die blijft</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="kiff-session">
+						<td><code>kiff_session</code></td>
+						<td>Houdt je ingelogd. De cookie bevat wie je bent (je inlog-id, e-mailadres en naam) en het toegangsbewijs dat het dashboard voor jou gebruikt. Ondertekend, dus niet te wijzigen, en niet leesbaar voor scripts</td>
+						<td>24 uur, of tot je uitlogt</td>
+					</tr>
+					<tr id="kiff-flash">
+						<td><code>kiff_flash</code></td>
+						<td>Brengt een eenmalig bericht naar de volgende pagina, zoals “je sleutel is gemaakt”. Ondertekend. Een nieuwe sleutel staat er nooit in</td>
+						<td>Verwijderd zodra de volgende pagina de cookie leest, en uiterlijk na 5 minuten</td>
+					</tr>
+					<tr id="kiff-cb-attempts">
+						<td><code>kiff_cb_attempts</code></td>
+						<td>Telt hoe vaak de inlogpagina opnieuw is geladen, zodat een login die in een lus raakt wordt gestopt. Wordt alleen naar die pagina gestuurd</td>
+						<td>5 minuten, en gewist wanneer een login begint of slaagt</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Alle drie zijn first-party cookies, worden alleen via
+			HTTPS verstuurd en zijn niet leesbaar voor scripts op de
+			pagina. <code>kiff_session</code> en
+			<code>kiff_flash</code> worden geplaatst voor
+			<code>.kiff.dev</code>, zodat zowel <code>kiff.dev</code>
+			als <code>app.kiff.dev</code> ze ontvangt.
+		</p>
+	</section>
+}
+
+templ cookiesSignInNL() {
+	<section id="sign-in">
+		<h2>3. De cookies van onze inlogprovider</h2>
+		<p>
+			Voor het inloggen gebruiken we Clerk (zie de
+			<a href="/nl/subprocessors#clerk">subverwerkers</a>). Als
+			je inlogt, plaatst Clerk zijn eigen inlogcookies, op onze
+			site en op het domein van Clerk voor ons,
+			<code>clerk.kiff.dev</code>. Ze zijn strikt noodzakelijk
+			voor het inloggen en worden niet gebruikt voor analyse of
+			advertenties. De
+			<a href="https://clerk.com/docs/guides/how-clerk-works/cookies" target="_blank" rel="noopener">cookiedocumentatie</a>
+			van Clerk beschrijft elke cookie en hoe lang die blijft.
+		</p>
+	</section>
+}
+
+templ cookiesStorageNL() {
+	<section id="storage">
+		<h2>4. Wat in je browser blijft</h2>
+		<p>
+			Een paar pagina's onthouden een keuze in de opslag van je
+			browser in plaats van in een cookie. Die keuze wordt
+			nooit naar ons gestuurd.
+		</p>
+		<ul>
+			<li><code>kiff-theme</code>: het lichte of donkere thema dat je in het dashboard hebt gekozen. Blijft bewaard tot je het wist.</li>
+			<li><code>kiff.gatewayFormat</code>: het formaat dat je het laatst hebt gekozen bij het koppelen van een agent. Blijft bewaard tot je het wist.</li>
+			<li><code>kiff-demo-tour-step</code>, <code>kiff-demo-tour-active</code> en <code>kiff-demo-theme-touched</code>: waar je bent in de interactieve demo. Weg zodra je het tabblad sluit.</li>
+		</ul>
+	</section>
+}
+
+templ cookiesControlNL() {
+	<section id="control">
+		<h2>5. Jouw keuzes</h2>
+		<p>
+			Je kunt cookies blokkeren of verwijderen in de
+			instellingen van je browser. Blokkeer je die van ons of
+			van Clerk, dan kun je de openbare site nog lezen, maar
+			niet inloggen. Uitloggen verwijdert
+			<code>kiff_session</code>.
+		</p>
+		<p>
+			Als we de cookies die we plaatsen wijzigen, werken we
+			deze pagina en de datum ervan bij.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Documentversie:</strong> v0.1.<br/>
+			<strong>Laatst bijgewerkt:</strong> 23 oktober 2026.
+		</p>
+	</section>
+}

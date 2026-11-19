@@ -1,0 +1,315 @@
+package pages
+
+import (
+	"fmt"
+	"net/url"
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// DashboardControlsView renders the governed-actions (Control Room) page.
+type DashboardControlsView struct {
+	Email       string
+	Subject     string
+	DisplayName string
+
+	Me               *apiclient.Me
+	Controls         []apiclient.Control
+
+	SelectedControlID   string
+	Evidence            *ControlEvidence
+	EvidenceUnavailable string
+
+	// CurrentDomain is the domain this Govern view is scoped
+	// to, set from the ?domain= filter. When non-empty the
+	// controls list is filtered to this domain and the
+	// spine nav stays scoped to it; "" shows all
+	// of the tenant's controls (back-compatible).
+	CurrentDomain string
+
+	// WindowOptions is the evidence window selector (7 / 30 / 90 days),
+	// built server-side so it stays no-JS. Empty renders no selector.
+	WindowOptions []WindowOption
+	// Window is the active preset key ("7d"/"30d"/"90d"), threaded into the
+	// governed-action nav links so switching controls keeps the window.
+	Window string
+
+	Flash            *DashboardFlash
+	NotConfiguredMsg string
+	ErrMsg           string
+}
+
+templ DashboardControls(v DashboardControlsView) {
+	@components.DashboardLayoutWithCSS(
+		"KIFF Cloud — Govern",
+		"controls",
+		chromeForDomain(v.DisplayName, v.Email, v.Me, v.CurrentDomain),
+		"css/control-room.css",
+	) {
+		<section class="dash cr cr-v3">
+			<header class="dash-header dash-page-head cr-header">
+				<div class="dash-header-text">
+					<p class="eyebrow">{ governEyebrow(v) }</p>
+					<h1>{ controlRoomV3Heading(v) }</h1>
+					<p class="dash-note">{ controlRoomV3Copy(v) }</p>
+					if strings.TrimSpace(v.CurrentDomain) != "" {
+						<p class="cr-scope-chip">
+							<span>Scoped to <strong>{ v.CurrentDomain }</strong></span>
+							<a class="cr-scope-clear" href="/dashboard/govern">Show all domains →</a>
+						</p>
+					}
+				</div>
+				<div class="dash-header-actions cr-header-actions">
+					@controlRoomStateSwitch(v)
+					if controlRoomHasEvidence(v) {
+						<a class="btn btn-primary" href={ templ.SafeURL(controlRoomProofPackHref(v.Evidence)) }>Export proof pack</a>
+					}
+				</div>
+			</header>
+
+			if v.NotConfiguredMsg != "" {
+				<div class="dash-warn"><strong>API not configured.</strong> { v.NotConfiguredMsg }</div>
+			}
+			if v.ErrMsg != "" {
+				<div class="dash-warn"><strong>Heads up:</strong> { v.ErrMsg }</div>
+			}
+
+			@flashBanner(v.Flash)
+
+			if v.Me != nil {
+				if len(v.Controls) == 0 {
+					@ControlRoomEmptyState(v)
+				} else {
+					@ControlRoomControlNav(v)
+					<div class="cr-main">
+						if v.EvidenceUnavailable != "" {
+							<div class="dash-warn"><strong>Decision timeline unavailable.</strong> { v.EvidenceUnavailable }</div>
+						}
+						if v.Evidence != nil {
+							// Govern owns the control. The metric strip (with the
+							// window selector) and the control identity are shown
+							// whenever a control resolves — including when the
+							// selected window happens to be empty — so switching
+							// windows never strands the user or flips the posture.
+							// The evidence *stream* (rows, receipts, alerts,
+							// approvals) lives on Activity; Govern links out to it
+							// when there's evidence, else shows an empty-window note.
+							@ControlRoomMetrics(v.Evidence, v.WindowOptions)
+							if controlRoomHasEvidence(v) {
+								@governActionBreakdown(v.Evidence)
+							}
+							@ControlRoomIdentity(v.Evidence)
+							if controlRoomHasEvidence(v) {
+								@governEvidenceLink(v)
+							} else {
+								@governEmptyWindowNote(v)
+							}
+						}
+					</div>
+				}
+			}
+		</section>
+	}
+}
+
+	// ── helpers ──
+
+func controlFallback(value, fallback string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return fallback
+	}
+	return value
+}
+
+// governEyebrow shows the domain this Govern view is scoped to, when
+// the ?domain= filter is set; plain "Govern" otherwise.
+func governEyebrow(v DashboardControlsView) string {
+	if strings.TrimSpace(v.CurrentDomain) != "" {
+		return "Govern · " + v.CurrentDomain
+	}
+	return "Govern"
+}
+
+func controlRoomHasEvidence(v DashboardControlsView) bool {
+	return v.Evidence != nil && v.Evidence.Decisions.Total > 0
+}
+
+// governActionBreakdown shows each governed action's own window-complete
+// tally when the control governs several actions — so Govern answers
+// "which of my 8 actions are being exercised, and how" instead of only a
+// control-wide rollup. Single-action controls render nothing (the metric
+// strip already says it all).
+templ governActionBreakdown(e *ControlEvidence) {
+	if len(e.Decisions.ByAction) > 1 {
+		<section class="dash-card cr-card cr-by-action">
+			<div class="cr-card-head">
+				<div>
+					<p class="eyebrow">Per governed action</p>
+					<p class="dash-note">Decisions in this window, by action.</p>
+				</div>
+			</div>
+			<div class="cr-table-wrap">
+				<table class="cr-table">
+					<thead>
+						<tr>
+							<th>Action</th>
+							<th>Allowed</th>
+							<th>Blocked</th>
+							<th>Held</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, a := range e.Decisions.ByAction {
+							<tr>
+								<td><code>{ a.Action }</code></td>
+								<td>{ fmt.Sprintf("%d", a.Counts["allowed"]) }</td>
+								<td>{ fmt.Sprintf("%d", a.Counts["blocked"]) }</td>
+								<td>{ fmt.Sprintf("%d", a.Counts["approval_required"]) }</td>
+								<td>{ fmt.Sprintf("%d", a.Total) }</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	}
+}
+
+// governEvidenceLink is Govern's one pointer to the evidence stream. Govern
+// owns the control (posture, selector, metric strip, identity, proof-pack export);
+// the decision rows, receipts, verifiability, alert deliveries, and approval queue
+// are the evidence stream and live on Activity. This card
+// is the hand-off between the two surfaces so the same
+// tables are never rendered twice (the authenticated-surface design/031, SRP).
+templ governEvidenceLink(v DashboardControlsView) {
+	<section class="dash-card cr-card cr-activity-link">
+		<div class="cr-card-head">
+			<div>
+				<p class="eyebrow">Evidence</p>
+				<h2>Decisions, receipts and alerts are on Activity</h2>
+			</div>
+		</div>
+
+		<div class="dash-plan-actions">
+			<a class="btn btn-primary" href={ templ.SafeURL(governActivityHref(v)) }>View full activity →</a>
+		</div>
+	</section>
+}
+
+// governActivityHref resolves the Activity (domain evidence) URL this
+// Govern view hands off to: the scoped ?domain= filter when present,
+// else the control's own domain. Falls back to the slug-free Activity
+// route (which resolves per-tenant server-side) when neither is known.
+func governActivityHref(v DashboardControlsView) string {
+	domain := strings.TrimSpace(v.CurrentDomain)
+	if domain == "" && v.Evidence != nil {
+		domain = strings.TrimSpace(v.Evidence.Control.Domain)
+	}
+	if domain == "" {
+		return "/dashboard/activity"
+	}
+	return "/dashboard/domains/" + url.PathEscape(domain) + "/evidence"
+}
+
+// controlRoomV3Heading is the Govern H1. It is posture-led and reflects
+// the control's *mode* — not whether the selected window happens to hold
+// decisions. Narrowing the window to an empty range must not flip an
+// enforcing control to "Ready to govern"; the counts below carry the
+// window's emptiness, the posture stays constant.
+func controlRoomV3Heading(v DashboardControlsView) string {
+	switch {
+	case len(v.Controls) == 0:
+		return "No governed action yet."
+	case v.Evidence == nil:
+		return "Ready to govern."
+	case strings.EqualFold(v.Evidence.Control.Mode, "enforce"):
+		return "Enforced before execution."
+	case strings.EqualFold(v.Evidence.Control.Mode, "observe"):
+		return "Recording in observe."
+	default:
+		return "Ready to govern."
+	}
+}
+
+func controlRoomV3Copy(v DashboardControlsView) string {
+	switch {
+	case len(v.Controls) == 0:
+		return "Decision counts and signed receipts show here once a governed action exists."
+	case v.Evidence == nil:
+		return "Installed and waiting. Send one real call through the guard to see decisions here."
+	case strings.EqualFold(v.Evidence.Control.Mode, "enforce"):
+		return "Decisions bind before execution. Everything below exports as one signed proof pack."
+	case strings.EqualFold(v.Evidence.Control.Mode, "observe"):
+		return "KIFF records decisions on real traffic but doesn't block anything."
+	default:
+		return "Installed and waiting. Send one real call through the guard to see decisions here."
+	}
+}
+
+// governEmptyWindowNote replaces the full onboarding empty-state when a
+// live control simply has no decisions in the *selected* window. The
+// metric strip + window selector stay above it, so the fix for the
+// "narrow window flips the page / hides the selector" trap is that the
+// user can always widen the window from here.
+templ governEmptyWindowNote(v DashboardControlsView) {
+	<section class="dash-card cr-card">
+		<p class="eyebrow">No decisions in this window</p>
+		<p class="dash-note">
+			Widen the window above, or send a real call through the guard.
+		</p>
+		<div class="dash-plan-actions">
+			<a class="btn btn-primary" href={ templ.SafeURL(governActivityHref(v)) }>View full activity →</a>
+			<a class="btn btn-secondary" href="/cards">Test a card</a>
+		</div>
+	</section>
+}
+
+templ controlRoomStateSwitch(v DashboardControlsView) {
+	<div class="cr-state-switch" role="group" aria-label="Posture (operator-controlled, read-only)">
+		<span class="cr-state-caption">Posture</span>
+		<span class={ "cr-state-option", controlRoomStateClass(v, "none") }>None</span>
+		<span class={ "cr-state-option", controlRoomStateClass(v, "ready") }>Ready</span>
+		<span class={ "cr-state-option", controlRoomStateClass(v, "observe") }>Observe</span>
+		<span class={ "cr-state-option", controlRoomStateClass(v, "enforce") }>Enforce</span>
+	</div>
+}
+
+func controlRoomStateClass(v DashboardControlsView, state string) string {
+	active := false
+	switch state {
+	case "none":
+		active = len(v.Controls) == 0
+	case "ready":
+		active = len(v.Controls) > 0 && v.Evidence == nil
+	case "observe":
+		active = v.Evidence != nil && strings.EqualFold(v.Evidence.Control.Mode, "observe")
+	case "enforce":
+		active = v.Evidence != nil && strings.EqualFold(v.Evidence.Control.Mode, "enforce")
+	}
+	if active {
+		return "cr-state-option-active"
+	}
+	return ""
+}
+
+templ ControlRoomMetrics(e *ControlEvidence, windowOpts []WindowOption) {
+	<section class="dash-card cr-metrics">
+		if len(windowOpts) > 0 {
+			<div class="cr-metrics-head">
+				<p class="eyebrow">Decisions in this window</p>
+				@evidenceWindowSelector(windowOpts)
+			</div>
+		}
+		<div class="dash-metrics">
+			<div class="dash-metric"><span>Allowed</span><strong>{ fmt.Sprintf("%d", controlRoomDecisionCount(e, "allowed")) }</strong><small>before executor ran</small></div>
+			<div class="dash-metric"><span>Blocked</span><strong>{ fmt.Sprintf("%d", controlRoomDecisionCount(e, "blocked")) }</strong><small>withheld before execution</small></div>
+			<div class="dash-metric"><span>Held</span><strong>{ fmt.Sprintf("%d", controlRoomDecisionCount(e, "approval_required")) }</strong><small>waiting for a person</small></div>
+			<div class="dash-metric"><span>Receipts</span><strong>{ fmt.Sprintf("%d", e.Receipts.Count) }</strong><small>signed</small></div>
+			<div class="dash-metric"><span>Status</span><strong>{ controlRoomModeLabel(e.Control.Mode) }</strong><small>{ controlRoomWindowLabel(e) }</small></div>
+		</div>
+	</section>
+}

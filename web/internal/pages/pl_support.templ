@@ -1,0 +1,111 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// SupportPL is the support page (/support) in Polish, at /pl/support.
+// It is a translation of Support: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one.
+templ SupportPL() {
+	@components.LayoutSite("KIFF — wsparcie", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@supportHeadPL()
+			@supportWritePL()
+			@supportStatusPL()
+			@supportTafsPL()
+			@supportDataPL()
+			@supportSecurityPL()
+			if computerAppReleased() {
+				@supportComputerPL()
+			}
+		</article>
+	}
+}
+
+templ supportHeadPL() {
+	<header class="legal-head">
+		<p class="legal-badge">Wsparcie</p>
+		<h1>Wsparcie</h1>
+		<p class="legal-meta">
+			<strong>Ostatnia aktualizacja:</strong> 13 listopada 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Dla KIFF i dla tafs, aplikacji KIFF na iPhone, iPad i Androida.
+			Obie prowadzi Kiff Agents OÜ, Tallinn, Estonia.
+		</p>
+	</header>
+}
+
+templ supportWritePL() {
+	<section id="write">
+		<h2>1. Napisz do nas</h2>
+		<p>
+			Napisz na <a href="mailto:hello@kiff.dev">hello@kiff.dev</a> z
+			adresu e-mail swojego konta i opisz, co się stało. Odpowiada
+			człowiek, w czasach odpowiedzi określonych w
+			<a href="/legal/sla#support">umowie o gwarantowanym poziomie usług</a> (po angielsku) (§5).
+		</p>
+	</section>
+}
+
+templ supportStatusPL() {
+	<section id="status">
+		<h2>2. Czy coś nie działa?</h2>
+		<p>
+			<a href="https://status.kiff.dev">status.kiff.dev</a> działa
+			niezależnie od KIFF, więc odpowiada, gdy KIFF nie odpowiada.
+		</p>
+	</section>
+}
+
+templ supportTafsPL() {
+	<section id="tafs">
+		<h2>3. Usuń swoje konto</h2>
+		<p>
+			W tafs: Konto → <em>Usuń konto</em>. KIFF od razu
+			wyłącza Twoje klucze i kasuje swoje rekordy po 30-dniowym
+			okresie karencji, jak mówi
+			<a href="/pl/privacy">polityka prywatności</a>. Pomoc
+			dotyczącą aplikacji znajdziesz w
+			<a href="/docs/tafs">dokumentacji tafs</a> (po angielsku).
+			if WatchLive {
+				<a href="/pl/tafs/watch">tafs na Twoim zegarku</a>: co robi i jak go zdobyć.
+			}
+		</p>
+	</section>
+}
+
+templ supportDataPL() {
+	<section id="data">
+		<h2>4. Twoje dane</h2>
+		<p>
+			Aby zobaczyć, wyeksportować lub usunąć swoje dane albo konto
+			założone w witrynie, napisz na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportSecurityPL() {
+	<section id="security">
+		<h2>5. Bezpieczeństwo i sprawy prawne</h2>
+		<p>
+			Problemy z bezpieczeństwem: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+			Zawiadomienia prawne: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</section>
+}
+
+templ supportComputerPL() {
+	<section id="computer">
+		<h2>6. Dodaj komputer za pomocą telefonu</h2>
+		<ol>
+			<li>Na komputerze otwórz tafs i wybierz <em>Dodaj ten komputer za pomocą telefonu</em>. Pojawi się kod do zeskanowania.</li>
+			<li>Na telefonie, którego już używasz z tafs, otwórz <em>Konto</em> → <em>Urządzenia</em> → <em>Dodaj urządzenie</em> i zeskanuj ten kod.</li>
+			<li>Telefon zapyta, czy Twój komputer pokazuje kod. Sprawdź, czy to ten sam, i zatwierdź tylko ten jeden komputer, mając go przed sobą.</li>
+		</ol>
+		<p>Jeśli kod wygasł lub został już użyty, wybierz na komputerze <em>Pokaż nowy kod</em> i zeskanuj ponownie. Na Linuksie i na Macu bez Secure Enclave tafs pokazuje, co na Ciebie czeka, ale niczego nie zatwierdza; zatwierdzasz na telefonie{ macSecurityKey("pl") }.</p>
+	</section>
+}

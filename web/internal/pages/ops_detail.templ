@@ -1,0 +1,325 @@
+package pages
+
+import (
+	"strings"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// OpsTenantDetail renders one tenant's risk, usage, recent receipts
+// and proposals, posture history, and alert-delivery health. signals
+// is the tenant's open risk signals (from the command-center
+// attention list); empty when the tenant is within thresholds.
+templ OpsTenantDetail(v apiclient.OpsTenantDetail, signals []apiclient.OpsRiskSignal, chrome components.DashboardChrome) {
+	@components.OpsShell(v.Tenant.Slug, "tenants", chrome) {
+		<section class="dash">
+			<header class="dash-header">
+				<div class="dash-header-text">
+					<p class="eyebrow"><a href="/ops/tenants">← all tenants</a></p>
+					<h1>{ v.Tenant.Slug }</h1>
+					<div class="ops-state-line">
+						<span class="label">Status</span> <span class={ opsStatusClass(v.Tenant.Status) }>{ v.Tenant.Status }</span>
+						<span class="label">Plan</span> <span class="dash-pill dash-pill-info">{ v.Tenant.Plan }</span>
+						<span class="label">Billed by</span> <span>{ opsDash(v.Tenant.BilledBy) }</span>
+						<span class="label">Label</span> <span>{ opsDash(v.Tenant.Label) }</span>
+					</div>
+					<p class="dash-note">{ v.Tenant.DisplayName } · { v.Tenant.ID } · created { opsTime(v.Tenant.CreatedAt) }</p>
+				</div>
+			</header>
+
+			if len(signals) > 0 {
+				<article class="dash-card">
+					<h2>Risk signals</h2>
+					<p class="dash-note">Why this tenant is on the attention list. Computed live from current usage.</p>
+					<ul class="ops-risk-list">
+						for _, s := range signals {
+							<li><span class={ opsRiskClass(s.Level) }>{ s.Level }</span> <span>{ s.Detail }</span></li>
+						}
+					</ul>
+				</article>
+			}
+
+			@opsTenantActions(v.Tenant)
+
+			<article class="dash-card">
+				<h2>API keys</h2>
+				<p class="dash-note">Every key of this account's starts with <code>{ v.Tenant.KeyPrefix }</code>. The key itself is never stored or shown.</p>
+				if len(v.Keys) == 0 {
+					<p class="dash-note">No active keys.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Key</th><th>Label</th><th>Agent</th><th>Roles</th><th>Created</th><th>Last used</th><th>Expires</th></tr></thead>
+							<tbody>
+								for _, k := range v.Keys {
+									<tr>
+										<td><code>{ k.ID }</code></td>
+										<td>{ opsDash(k.Label) }</td>
+										<td>{ opsDash(k.Agent) }</td>
+										<td>{ opsDash(strings.Join(k.Roles, ", ")) }</td>
+										<td>{ opsTime(k.CreatedAt) }</td>
+										<td>{ opsTimePtr(k.LastUsedAt) }</td>
+										<td>{ opsTimePtr(k.ExpiresAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Runs, last 30 days</h2>
+				<p class="dash-note">{ opsInt(v.Tenant.Runs) } runs, { opsInt64(v.Tenant.Credits) } credits. Last run { opsTimePtr(v.Tenant.LastRunAt) }.</p>
+				if len(v.Agents) > 0 {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Taf</th><th>Agent</th><th>Runs</th><th>Counted</th><th>Credits</th><th>AI cost</th><th>Last run</th></tr></thead>
+							<tbody>
+								for _, a := range v.Agents {
+									<tr>
+										<td>
+											{ a.RuntimeAgent }
+											if a.Setup {
+												<span class="dash-note">· Setup</span>
+											}
+										</td>
+										<td><code>{ a.Agent }</code></td>
+										<td>{ opsInt(a.Runs) }</td>
+										<td>{ opsInt(a.Counted) }</td>
+										<td>{ opsInt64(a.Credits) }</td>
+										<td>{ opsUSD(a.CostMicroUSD) }</td>
+										<td>{ opsTime(a.Last) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Alert deliveries</h2>
+				<div class="dash-metrics">
+					<div class="dash-metric"><span>Delivered</span><strong>{ opsInt(v.Alerts.Delivered) }</strong><small>2xx</small></div>
+					<div class="dash-metric"><span>Failed</span><strong>{ opsInt(v.Alerts.Failed) }</strong><small>errored</small></div>
+					<div class="dash-metric"><span>Blocked</span><strong>{ opsInt(v.Alerts.Blocked) }</strong><small>SSRF guard</small></div>
+				</div>
+			</article>
+
+			<article class="dash-card">
+				<h2>Usage</h2>
+				if len(v.Usage) == 0 {
+					<p class="dash-note">No usage counters.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Counter</th><th>Hour</th><th>Count</th></tr></thead>
+							<tbody>
+								for _, c := range v.Usage {
+									<tr>
+										<td>{ opsCounterLabel(c.CounterName) }</td>
+										<td>{ opsTime(c.HourBucket) }</td>
+										<td>{ opsU64(c.Count) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Recent proposals</h2>
+				if len(v.Proposals) == 0 {
+					<p class="dash-note">No proposals.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Action</th><th>Outcome</th><th>Created</th></tr></thead>
+							<tbody>
+								for _, p := range v.Proposals {
+									<tr>
+										<td>{ p.ActionName }</td>
+										<td><span class={ opsOutcomeClass(p.Outcome) }>{ p.Outcome }</span></td>
+										<td>{ opsTime(p.CreatedAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Recent receipts</h2>
+				if len(v.Receipts) == 0 {
+					<p class="dash-note">No receipts.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>Action</th><th>Trace</th><th>Issued</th><th>Anchored</th></tr></thead>
+							<tbody>
+								for _, rc := range v.Receipts {
+									<tr>
+										<td>{ rc.ActionName }</td>
+										<td>{ rc.TraceID }</td>
+										<td>{ opsTime(rc.IssuedAt) }</td>
+										<td>
+											if rc.Attestation != nil && rc.Attestation.AnchorTxHash != "" {
+												<span class="dash-pill dash-pill-ok">anchored</span>
+											} else {
+												<span class="dash-pill dash-pill-muted">pending</span>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+
+			<article class="dash-card">
+				<h2>Posture history</h2>
+				if len(v.Posture) == 0 {
+					<p class="dash-note">No posture changes.</p>
+				} else {
+					<div class="dash-table-wrap">
+						<table class="dash-table">
+							<thead><tr><th>From</th><th>To</th><th>By</th><th>When</th></tr></thead>
+							<tbody>
+								for _, tr := range v.Posture {
+									<tr>
+										<td>{ tr.From }</td>
+										<td>{ tr.To }</td>
+										<td>{ tr.ChangedBy }</td>
+										<td>{ opsTime(tr.ChangedAt) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</article>
+		</section>
+	}
+}
+
+// opsTenantActions renders the operator action card: a Status block
+// (suspend/unsuspend) and a separate Plan block, each with a labeled,
+// required reason field and a clear primary action. Plain POST forms,
+// no JS. Erasing/provisioning tenants show no status action.
+templ opsTenantActions(t apiclient.OpsTenantRow) {
+	<article class="dash-card">
+		<h2>Operator actions</h2>
+
+		<div class="ops-action-block">
+			<h3>Status</h3>
+			if t.Status == "active" {
+				<p class="dash-note">Suspend holds this tenant offline immediately — new governed actions are refused (403) until you unsuspend.</p>
+				<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/suspend") } class="ops-action-form">
+					<div class="ops-field">
+						<label class="ops-field-label" for="suspend-reason">Reason (required — recorded in the audit log)</label>
+						<input id="suspend-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. 40% blocked — investigating" required/>
+					</div>
+					<button type="submit" class="btn btn-danger">Suspend tenant</button>
+				</form>
+			} else if t.Status == "suspended" {
+				<p class="dash-note">This tenant is suspended. Unsuspend restores service on the next call.</p>
+				<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/unsuspend") } class="ops-action-form">
+					<div class="ops-field">
+						<label class="ops-field-label" for="unsuspend-reason">Reason (required — recorded in the audit log)</label>
+						<input id="unsuspend-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. issue resolved, restoring service" required/>
+					</div>
+					<button type="submit" class="btn btn-primary">Unsuspend tenant</button>
+				</form>
+			} else {
+				<p class="dash-note">No status action available for a tenant in <strong>{ t.Status }</strong> state.</p>
+			}
+		</div>
+
+		<div class="ops-action-block">
+			<h3>Plan</h3>
+			<p class="dash-note">Current plan: <strong>{ t.Plan }</strong>. Changing it re-sizes limits immediately and is recorded in the audit log.</p>
+			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/plan") } class="ops-action-form">
+				<div class="ops-action-row">
+					<div class="ops-field">
+						<label class="ops-field-label" for="plan-select">New plan</label>
+						<select id="plan-select" name="plan" class="ops-plan-select">
+							@opsPlanOption("trial", t.Plan)
+							@opsPlanOption("solo", t.Plan)
+							@opsPlanOption("team", t.Plan)
+							@opsPlanOption("company", t.Plan)
+							@opsPlanOption("internal", t.Plan)
+						</select>
+					</div>
+					<div class="ops-field">
+						<label class="ops-field-label" for="plan-reason">Reason (required)</label>
+						<input id="plan-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. upgraded to paid pilot" required/>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-secondary">Change plan</button>
+			</form>
+		</div>
+
+		<div class="ops-action-block">
+			<h3>Label</h3>
+			<p class="dash-note">The operators' own label for this account. Display only: it changes nothing the account sees or pays. Recorded in the audit log.</p>
+			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/label") } class="ops-action-form">
+				<div class="ops-action-row">
+					<div class="ops-field">
+						<label class="ops-field-label" for="label-select">Label</label>
+						<select id="label-select" name="label" class="ops-plan-select">
+							@opsLabelOption("", "none", t.Label)
+							@opsLabelOption("internal", "internal", t.Label)
+							@opsLabelOption("eval", "eval", t.Label)
+							@opsLabelOption("e2e", "e2e", t.Label)
+							@opsLabelOption("demo", "demo", t.Label)
+						</select>
+					</div>
+					<div class="ops-field">
+						<label class="ops-field-label" for="label-reason">Reason</label>
+						<input id="label-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. the nightly Eval's account"/>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-secondary">Set label</button>
+			</form>
+		</div>
+
+		<div class="ops-action-block">
+			<h3>Bonus credits</h3>
+			<p class="dash-note">Gives the account credits as a bonus pack of their own. Bonus credits never expire. Recorded in the audit log.</p>
+			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/bonus") } class="ops-action-form">
+				<div class="ops-action-row">
+					<div class="ops-field">
+						<label class="ops-field-label" for="bonus-credits">Credits</label>
+						<input id="bonus-credits" type="number" name="credits" min="1" max="10000" class="ops-reason" placeholder="e.g. 500" required/>
+					</div>
+					<div class="ops-field">
+						<label class="ops-field-label" for="bonus-reason">Reason (required)</label>
+						<input id="bonus-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. sorry for the outage on 23 Oct" required/>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-secondary">Give bonus credits</button>
+			</form>
+		</div>
+	</article>
+}
+
+templ opsPlanOption(plan, current string) {
+	if plan == current {
+		<option value={ plan } selected>{ plan }</option>
+	} else {
+		<option value={ plan }>{ plan }</option>
+	}
+}
+
+templ opsLabelOption(value, text, current string) {
+	if value == current {
+		<option value={ value } selected>{ text }</option>
+	} else {
+		<option value={ value }>{ text }</option>
+	}
+}
