@@ -65,6 +65,12 @@
 #   between is skipped too. swap-slot.sh waits 3s after the new slot is
 #   healthy before stopping the old one, so Caddy has seen it healthy and any
 #   mark on it has expired when it's the only one up.
+# HSTS on every public site: browsers use HTTPS only for a year. No
+# includeSubDomains or preload yet: both are hard to take back.
+(hsts) {
+	header Strict-Transport-Security "max-age=31536000"
+}
+
 (slots) {
 	lb_policy first
 	lb_try_duration 30s
@@ -80,6 +86,7 @@
 
 # ─── api.kiff.dev → kiff-api :8080 ───────────────────────────
 api.kiff.dev {
+	import hsts
 	encode zstd gzip
 
 	log {
@@ -103,6 +110,7 @@ api.kiff.dev {
 # cutover note above). Caddy redacts Authorization in access logs by
 # default, so agents' keys are not logged.
 mcp.kiff.dev {
+	import hsts
 	log {
 		output file /var/lib/caddy/logs/caddy-mcp.log {
 			roll_size 50mb
@@ -142,6 +150,7 @@ http://:9282 {
 #
 # app.kiff.dev — uncommented in step C; its DNS A record is live.
 app.kiff.dev {
+	import hsts
 	encode zstd gzip
 
 	log {
@@ -162,12 +171,14 @@ app.kiff.dev {
 #
 # www.kiff.dev — uncommented in step D; its DNS A record is live.
 www.kiff.dev {
+	import hsts
 	redir https://kiff.dev{uri} 301
 }
 
 #
 # kiff.dev (apex) — uncommented in step E; its DNS A record is live.
 kiff.dev {
+	import hsts
 	encode zstd gzip
 
 	log {

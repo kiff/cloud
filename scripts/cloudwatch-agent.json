@@ -4,6 +4,7 @@
     "metrics_collection_interval": 60
   },
   "metrics": {
+    "namespace": "KiffCloud/Healthz",
     "append_dimensions": {
       "InstanceId": "${aws:InstanceId}"
     },
