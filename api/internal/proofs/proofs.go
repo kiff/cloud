@@ -135,7 +135,7 @@ var (
 	reVersion = regexp.MustCompile(`^[0-9a-f]{40}$`)
 	reEntry   = regexp.MustCompile(`^[a-z0-9][a-z0-9_.-]{0,63}@[A-Za-z0-9_.-]{1,64}$`)
 	// reEventsKey is the runner's layout, one prefix per run:
-	// proofs/<run_id>/... (kiff-qa, 17 Nov). No segment starts with a dot.
+	// proofs/<run_id>/<path>. No segment starts with a dot.
 	reEventsKey = regexp.MustCompile(`^proofs/([A-Za-z0-9_-]{8,64})(/[A-Za-z0-9_-][A-Za-z0-9._-]{0,127})*/?$`)
 )
 

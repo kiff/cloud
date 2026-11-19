@@ -28,7 +28,7 @@ const (
 	ReasonPreviousEntryRed = "previous_entry_red"
 )
 
-// Rules for an app's state (the PM, 17 Nov).
+// Rules for an app's state.
 const (
 	RedAfterFails  = 3
 	GreenAfterPass = 2
