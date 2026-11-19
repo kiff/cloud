@@ -10,8 +10,13 @@ import (
 
 // Prune keeps a test account small (the owner, 22 Oct 2026): what it
 // finished with before a cutoff is deleted, and the account goes on as it
-// was. Its people and roles, its settings, its live keys, live Cards and
-// what they have drawn, and anything still open stay. Only for accounts an
+// was. Its people and roles, its settings, its live keys, live Cards in use
+// and what they have drawn, and anything still open stay. A control version
+// replaced before the cutoff goes, and on an account the operators label
+// "eval", a Card issued before the cutoff that has drawn nothing since is
+// retired (archived) (the owner, 19 Nov 2026): Eval runs leave both behind
+// by the thousand, and a live Card is re-read for warnings every minute. A
+// test account a person uses keeps its Cards between tests. Only for accounts an
 // operator names (KIFF_PRUNE_TENANTS, kiff-tenant prune): a customer's
 // Record is never pruned. Pruning also forgets what makes an old
 // operation old: its permit binding, its first decision and its gateway
@@ -43,6 +48,14 @@ const endedCards = `SELECT id FROM cloud_meta.mandates WHERE tenant_id = $1
 
 // cloudMetaPruned run in order, children before parents.
 var cloudMetaPruned = []pruneStep{
+	// A control version replaced before the cutoff: a newer version of the
+	// same domain and environment was activated before the cutoff too, so no
+	// decision since then can name it. The active version always stays.
+	{"tenant_controls", `DELETE FROM cloud_meta.tenant_controls c WHERE c.tenant_id = $1
+		AND c.status = 'superseded' AND c.activated_at < $2
+		AND EXISTS (SELECT 1 FROM cloud_meta.tenant_controls n
+			WHERE n.tenant_id = c.tenant_id AND n.domain = c.domain AND n.environment = c.environment
+			AND n.activated_at > c.activated_at AND n.activated_at < $2)`},
 	// Cards that ended, and what only they hold. Their draws, holders,
 	// revisions and warnings go with them (ON DELETE CASCADE).
 	{"approver_grants", `DELETE FROM cloud_meta.approver_grants WHERE tenant_id = $1
@@ -55,7 +68,21 @@ var cloudMetaPruned = []pruneStep{
 		AND mandate_id IN (` + endedCards + `)`},
 	{"trial_draws", `DELETE FROM cloud_meta.trial_draws WHERE tenant_id = $1
 		AND mandate_id IN (` + endedCards + `)`},
-	{"mandates", `DELETE FROM cloud_meta.mandates WHERE tenant_id = $1
+	// The same statement retires the Cards an Eval account no longer uses:
+	// issued before the cutoff, with nothing drawn since. Only an account the
+	// operators label "eval" (ops_label): a test account a person uses keeps
+	// its Cards between tests. They're archived now, so warnings stop reading
+	// them at once, and a later prune deletes them as ended. (Each table has
+	// one step; the two don't meet, since a Card archived now isn't archived
+	// before the cutoff.)
+	{"mandates", `WITH retired AS (UPDATE cloud_meta.mandates m SET archived_at = now() WHERE m.tenant_id = $1
+			AND EXISTS (SELECT 1 FROM cloud_meta.tenants t WHERE t.id = $1 AND t.metadata->>'ops_label' = 'eval')
+			AND m.revoked_at IS NULL AND m.archived_at IS NULL AND m.issued_at < $2
+			AND (m.valid_until IS NULL OR m.valid_until >= $2)
+			AND NOT EXISTS (SELECT 1 FROM cloud_meta.mandate_draws d
+				WHERE d.tenant_id = m.tenant_id AND d.mandate_id = m.id AND d.drawn_at >= $2)
+			RETURNING m.id)
+		DELETE FROM cloud_meta.mandates WHERE tenant_id = $1
 		AND id IN (` + endedCards + `)`},
 	// Holds that ended and count toward no live Card.
 	{"mandate_exceptions", `DELETE FROM cloud_meta.mandate_exceptions e WHERE e.tenant_id = $1
@@ -153,7 +180,6 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"access_reads":                   "security: who read whose work, when and why; kept as the audit is",
 	"tenant_domains":                 "settings",
 	"tenant_domain_drafts":           "settings",
-	"tenant_controls":                "settings",
 	"permit_targets":                 "settings: how each tool's permits bind",
 	"alert_targets":                  "settings: where alerts go",
 	"guard_connections":              "the guards connected; their observations are pruned",

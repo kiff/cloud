@@ -115,8 +115,6 @@ allow_in=(
 	# Page-voice guards: the words a served page must never contain.
 	"private repository link|\./web/internal/handlers/(landing|pricing)_test\.go"
 	"private path reference|\./web/internal/handlers/(dpa|legal_pages|privacy|sla|support|terms)_test\.go"
-	# The invite form's placeholder address: visible text, kept as served.
-	"email address|\./web/internal/pages/people_invite_sheet(\.templ|_templ\.go)"
 	# The quickstart's commands append to the user's own AGENTS.md.
 	"private path reference|\./web/internal/content/quickstart/quickstart\.go"
 	# The media bucket's URL, as kiff.dev serves it in a post and the videos
