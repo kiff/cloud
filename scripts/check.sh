@@ -45,6 +45,8 @@ step "gitleaks" "$out" go run "$GITLEAKS" dir --no-banner --redact -v .
 deny=(
 	"AWS account id|(^|[^0-9a-fA-F])[0-9]{12}([^0-9a-fA-F]|$)"
 	"AWS ARN or host|arn:aws|amazonaws\.com"
+	"Secrets Manager name|(^|[^/A-Za-z0-9.])kiff/cloud/[a-z0-9]"
+	"EC2 instance id|\bi-[0-9a-f]{8}([0-9a-f]{9})?\b"
 	"internal hostname|[a-z0-9-]+\.(internal|local|lan|corp)([^a-z]|$)|ip-[0-9]+-[0-9]+-[0-9]+-[0-9]+"
 	"private key block|BEGIN [A-Z ]*PRIVATE KEY"
 	"live API key|(sk|pk|rk|whsec)_live_[A-Za-z0-9]+"

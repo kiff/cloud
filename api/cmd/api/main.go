@@ -175,8 +175,8 @@ const (
 	envGooglePackageName = "KIFF_GOOGLE_PACKAGE_NAME"
 	// envGoogleServiceAccount is the JSON key (raw, or base64 of it) of the
 	// service account KIFF reads purchases and acknowledges Solo with,
-	// invited in the Play Console. A secret: Secrets Manager's
-	// kiff/cloud/google-play-service-account on the box.
+	// invited in the Play Console. A secret: the deploy reads it from Secrets
+	// Manager, by the name in GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET.
 	envGoogleServiceAccount = "KIFF_GOOGLE_SERVICE_ACCOUNT"
 	// envGooglePushAudience and envGooglePushServiceAccount are the Pub/Sub
 	// push subscription's OIDC audience and the service account it signs

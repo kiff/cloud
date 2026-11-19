@@ -165,6 +165,47 @@ func (s *PostgresControlStore) List(ctx context.Context, tenantID string) ([]Con
 	return scanControls(rows)
 }
 
+// ListActive returns a tenant's active controls, newest first, through
+// tenant_controls_tenant_status: the decision path's read, which never
+// needs the superseded versions List returns.
+func (s *PostgresControlStore) ListActive(ctx context.Context, tenantID string) ([]Control, error) {
+	const query = `
+		SELECT id, tenant_id, domain, entity, actions, environment, workflow, version, activated_at, activated_by, status, mode
+		FROM ` + tenant.MetaSchema + `.tenant_controls
+		WHERE tenant_id = $1 AND status = 'active'
+		ORDER BY activated_at DESC
+	`
+	rows, err := s.pool.Query(ctx, query, tenantID)
+	if err != nil {
+		return nil, fmt.Errorf("query active controls: %w", err)
+	}
+	defer rows.Close()
+	return scanControls(rows)
+}
+
+// GetControl returns one of a tenant's controls by id, whatever its
+// status, or ErrControlNotFound: another tenant's id is never found.
+func (s *PostgresControlStore) GetControl(ctx context.Context, tenantID, controlID string) (Control, error) {
+	const query = `
+		SELECT id, tenant_id, domain, entity, actions, environment, workflow, version, activated_at, activated_by, status, mode
+		FROM ` + tenant.MetaSchema + `.tenant_controls
+		WHERE tenant_id = $1 AND id = $2
+	`
+	rows, err := s.pool.Query(ctx, query, tenantID, controlID)
+	if err != nil {
+		return Control{}, fmt.Errorf("query control: %w", err)
+	}
+	defer rows.Close()
+	list, err := scanControls(rows)
+	if err != nil {
+		return Control{}, err
+	}
+	if len(list) == 0 {
+		return Control{}, ErrControlNotFound
+	}
+	return list[0], nil
+}
+
 func scanControls(rows pgx.Rows) ([]Control, error) {
 	var out []Control
 	for rows.Next() {

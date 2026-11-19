@@ -815,12 +815,12 @@ func pickBucket(from, to time.Time) time.Duration {
 // does not own (mechanically tenant-scoped via the store's List, so a
 // cross-tenant slug is unreachable and 404s like an unknown one).
 func (h *ControlsHandler) activeControlForDomain(ctx context.Context, tenantID, slug string) (domain.Control, error) {
-	list, err := h.controls.List(ctx, tenantID)
+	list, err := domain.ActiveControls(ctx, h.controls, tenantID)
 	if err != nil {
 		return domain.Control{}, err
 	}
 	for _, c := range list {
-		if c.Status == "active" && strings.EqualFold(c.Domain, slug) {
+		if strings.EqualFold(c.Domain, slug) {
 			return c, nil
 		}
 	}

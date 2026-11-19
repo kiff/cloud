@@ -3,6 +3,24 @@
     "run_as_user": "root",
     "metrics_collection_interval": 60
   },
+  "metrics": {
+    "append_dimensions": {
+      "InstanceId": "${aws:InstanceId}"
+    },
+    "metrics_collected": {
+      "mem": {
+        "measurement": [
+          "mem_used_percent",
+          "mem_available"
+        ]
+      },
+      "swap": {
+        "measurement": [
+          "swap_used_percent"
+        ]
+      }
+    }
+  },
   "logs": {
     "logs_collected": {
       "files": {

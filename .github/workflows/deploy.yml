@@ -56,10 +56,11 @@ jobs:
           for b in kiff-api kiff-web kiff-gateway; do echo placeholder > ".deploy-staging/$sha/$b"; done
           export PATH="$stub:$PATH" KIFF_AUTH_PROVIDER=clerk KIFF_CLERK_PUBLISHABLE_KEY=pk_test_placeholder
           for v in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN \
-            ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN; do
+            ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET; do
             export "$v=placeholder-$v"
           done
-          for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+          for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS \
+            PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
             export "$v=-"
           done
           bash scripts/deploy.sh --dry-run --git-sha=$sha > "$RUNNER_TEMP/command.txt"
@@ -129,7 +130,7 @@ jobs:
       KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
       # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of
       # them. They are secrets of `production`, not variables, so a log shows each one masked. The last
-      # five take "-" for off.
+      # eight take "-" for off.
       INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
       STAGING_BUCKET: ${{ secrets.STAGING_BUCKET }}
       DB_HOST: ${{ secrets.DB_HOST }}
@@ -142,11 +143,15 @@ jobs:
       RESEND_SECRET_ARN: ${{ secrets.RESEND_SECRET_ARN }}
       STRIPE_WEBHOOK_SECRET_ARN: ${{ secrets.STRIPE_WEBHOOK_SECRET_ARN }}
       STRIPE_SECRET_KEY_ARN: ${{ secrets.STRIPE_SECRET_KEY_ARN }}
+      GATEWAY_KEYS_SECRET: ${{ secrets.GATEWAY_KEYS_SECRET }}
       PLANQUE_EVENT_SECRET_ARN: ${{ secrets.PLANQUE_EVENT_SECRET_ARN }}
       PROOF_STATE_TOKENS_ARN: ${{ secrets.PROOF_STATE_TOKENS_ARN }}
       CLERK_WEBHOOK_SECRET_ARN: ${{ secrets.CLERK_WEBHOOK_SECRET_ARN }}
       KIFF_OPS_SUBJECTS: ${{ secrets.KIFF_OPS_SUBJECTS }}
       KIFF_PRUNE_TENANTS: ${{ secrets.KIFF_PRUNE_TENANTS }}
+      PERMIT_KEY_SECRET: ${{ secrets.PERMIT_KEY_SECRET }}
+      PERMIT_PUBLISHED_SECRET: ${{ secrets.PERMIT_PUBLISHED_SECRET }}
+      GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -168,11 +173,11 @@ jobs:
             fi
           done
           exit "$fail"
-      # Before any credential: deploy.sh's 17 values, from `production`'s secrets.
+      # Before any credential: deploy.sh's 21 values, from `production`'s secrets.
       - name: Check the deploy values
         run: |
           fail=0
-          for n in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+          for n in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
             if [ -z "${!n:-}" ]; then
               echo "::error::$n must be set as a secret of the production environment (\"-\" for off where deploy.sh allows it)"
               fail=1

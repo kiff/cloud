@@ -55,13 +55,15 @@ AWS_REGION="${AWS_REGION:-eu-west-1}"
 INSTANCE_ID="${INSTANCE_ID:-}"
 STAGING_BUCKET="${STAGING_BUCKET:-}"
 # The gateway's tool-credential keys ("id:base64,…", current
-# first). Only kiff-gateway's env file receives them.
-GATEWAY_KEYS_SECRET="${GATEWAY_KEYS_SECRET:-kiff/cloud/gateway-credential-keys}"
+# first). Only kiff-gateway's env file receives them. Its Secrets Manager
+# name comes from the environment, like the ARNs below.
+GATEWAY_KEYS_SECRET="${GATEWAY_KEYS_SECRET:-}"
 # The execution-permit signing key ("kid:base64url(seed)") and any
 # extra published keys (the next key, or a retired one). Optional: a missing
 # signing key leaves permits off. Only kiff-api's env file receives them.
-PERMIT_KEY_SECRET="${PERMIT_KEY_SECRET:-kiff/cloud/permit-signing-key}"
-PERMIT_PUBLISHED_SECRET="${PERMIT_PUBLISHED_SECRET:-kiff/cloud/permit-published-keys}"
+# Their names come from the environment; "-" reads neither.
+PERMIT_KEY_SECRET="${PERMIT_KEY_SECRET:-}"
+PERMIT_PUBLISHED_SECRET="${PERMIT_PUBLISHED_SECRET:-}"
 # The secret the connection service signs the refund events it hands KIFF
 # with, by its full ARN. "-" reads nothing and
 # leaves the gateway's receiver (/v1/planque/refund-events) off: the box's
@@ -312,8 +314,9 @@ KIFF_PHONE_ALERT_URLS="${KIFF_PHONE_ALERT_URLS:-https://cloud.tafs.kiff.dev/v1/k
 KIFF_APPLE_SANDBOX_TENANTS="${KIFF_APPLE_SANDBOX_TENANTS:-}"
 # Google Play Billing for the Android app.
 # The service account's JSON key lives in Secrets Manager; a missing secret
-# leaves Google Play billing off. The rest is non-secret config.
-GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET="${GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET:-kiff/cloud/google-play-service-account}"
+# leaves Google Play billing off, and so does "-" for its name, which comes
+# from the environment. The rest is non-secret config.
+GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET="${GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET:-}"
 KIFF_GOOGLE_PACKAGE_NAME="${KIFF_GOOGLE_PACKAGE_NAME:-}"
 KIFF_GOOGLE_PUSH_AUDIENCE="${KIFF_GOOGLE_PUSH_AUDIENCE:-}"
 KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT="${KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT:-}"
@@ -324,14 +327,16 @@ KIFF_GOOGLE_TEST_TENANTS="${KIFF_GOOGLE_TEST_TENANTS:-}"
 # comes from .env.deploy or the environment, and a missing one stops the
 # deploy before anything is built. "-" turns an optional one off: the
 # receiver of planque's refund events, the proofs' state read, Clerk's
-# webhook, the operator console, and the pruning of test accounts.
+# webhook, the operator console, the pruning of test accounts, the permit
+# keys and Google Play's service account.
 for v in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN \
 	SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN \
-	STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN; do
+	STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET; do
 	[[ -n "${!v}" && "${!v}" != "-" ]] || fail "$v is not set (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
 done
 for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN \
-	KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+	KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET \
+	GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
 	[[ -n "${!v}" ]] || fail "$v is not set; \"-\" turns it off (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
 	if [ "${!v}" = "-" ]; then printf -v "$v" '%s' ""; fi
 done
@@ -607,8 +612,10 @@ clerk_webhook_secret=""
 if [ -n "\$CLERK_WEBHOOK_SECRET_ARN" ]; then clerk_webhook_secret=\$(optional_secret "\$CLERK_WEBHOOK_SECRET_ARN"); fi
 pricing_business_intake_url="\$KIFF_PRICING_BUSINESS_INTAKE_URL"
 gateway_keys=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$GATEWAY_KEYS_SECRET" --query SecretString --output text)
-permit_key=\$(optional_secret "\$PERMIT_KEY_SECRET")
-permit_published=\$(optional_secret "\$PERMIT_PUBLISHED_SECRET")
+permit_key=""
+if [ -n "\$PERMIT_KEY_SECRET" ]; then permit_key=\$(optional_secret "\$PERMIT_KEY_SECRET"); fi
+permit_published=""
+if [ -n "\$PERMIT_PUBLISHED_SECRET" ]; then permit_published=\$(optional_secret "\$PERMIT_PUBLISHED_SECRET"); fi
 planque_event_secret=""
 if [ -n "\$PLANQUE_EVENT_SECRET_ARN" ]; then
 	planque_event_secret=\$(optional_secret "\$PLANQUE_EVENT_SECRET_ARN")
@@ -625,7 +632,7 @@ fi
 # once Google Play is configured (its package name set): until then there is
 # no secret, and the EC2 role may not even be allowed to read its name.
 google_play_sa_b64=""
-if [ -n "\$KIFF_GOOGLE_PACKAGE_NAME" ]; then
+if [ -n "\$KIFF_GOOGLE_PACKAGE_NAME" ] && [ -n "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET" ]; then
 	google_play_sa=\$(optional_secret "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET")
 	google_play_sa_b64=\$(printf '%s' "\$google_play_sa" | base64 -w0)
 fi

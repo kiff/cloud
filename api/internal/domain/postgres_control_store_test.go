@@ -124,3 +124,57 @@ func TestPostgresControlStore_ConcurrentFirstActivation(t *testing.T) {
 		t.Errorf("versions not distinct 1,2: versions=%v total=%d", versions, len(list))
 	}
 }
+
+// TestPostgresControlStore_ActiveReads proves the decision path's reads:
+// ListActive returns only the active controls (never the superseded
+// versions List carries), and GetControl finds one control by id, whatever
+// its status, and never another tenant's. Gated on KIFF_TEST_POSTGRES_URL.
+func TestPostgresControlStore_ActiveReads(t *testing.T) {
+	pool := requirePostgres(t)
+	truncate(t, pool)
+	defer truncate(t, pool)
+
+	ctx := context.Background()
+	if err := domain.ApplyTenantControlsSchema(ctx, pool); err != nil {
+		t.Fatalf("ApplyTenantControlsSchema: %v", err)
+	}
+	tenants := tenant.NewPostgresStore(pool)
+	a := tenant.Tenant{ID: tenant.NewID(), Slug: "ctrl-act-a", DisplayName: "a", Status: tenant.StatusActive}
+	b := tenant.Tenant{ID: tenant.NewID(), Slug: "ctrl-act-b", DisplayName: "b", Status: tenant.StatusActive}
+	for _, tt := range []tenant.Tenant{a, b} {
+		if err := tenants.Create(ctx, tt); err != nil {
+			t.Fatalf("create tenant: %v", err)
+		}
+	}
+	store := domain.NewPostgresControlStore(pool)
+	for _, id := range []string{"v1", "v2", "v3"} { // v1 and v2 superseded by v3
+		if err := store.Create(ctx, domain.Control{ID: id, TenantID: a.ID, Domain: "d", Entity: "E", Actions: []string{"A"}, Environment: "prod"}); err != nil {
+			t.Fatalf("create %s: %v", id, err)
+		}
+	}
+	if err := store.Create(ctx, domain.Control{ID: "other", TenantID: b.ID, Domain: "d", Entity: "E", Actions: []string{"A"}, Environment: "prod"}); err != nil {
+		t.Fatalf("create other: %v", err)
+	}
+
+	active, err := store.ListActive(ctx, a.ID)
+	if err != nil {
+		t.Fatalf("ListActive: %v", err)
+	}
+	if len(active) != 1 || active[0].ID != "v3" || active[0].Status != "active" {
+		t.Fatalf("ListActive = %+v, want only v3", active)
+	}
+	if got, err := domain.FindActiveControl(ctx, store, a.ID, "A", "prod"); err != nil || got.ID != "v3" {
+		t.Fatalf("FindActiveControl = %v, %v; want v3", got.ID, err)
+	}
+
+	old, err := store.GetControl(ctx, a.ID, "v1")
+	if err != nil || old.Status != "superseded" || len(old.Actions) != 1 {
+		t.Fatalf("GetControl(v1) = %+v, %v; want the superseded v1", old, err)
+	}
+	if _, err := domain.FindControlByID(ctx, store, a.ID, "other"); err != domain.ErrControlNotFound {
+		t.Fatalf("another tenant's control: %v, want ErrControlNotFound", err)
+	}
+	if _, err := store.GetControl(ctx, a.ID, "missing"); err != domain.ErrControlNotFound {
+		t.Fatalf("missing control: %v, want ErrControlNotFound", err)
+	}
+}

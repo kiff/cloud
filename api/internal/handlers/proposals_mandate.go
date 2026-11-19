@@ -579,13 +579,13 @@ func (h *ProposalsHandler) cardEnvironmentFor(ctx context.Context, tenantID, act
 	if h.controls == nil {
 		return ""
 	}
-	list, err := h.controls.List(ctx, tenantID)
+	list, err := domain.ActiveControls(ctx, h.controls, tenantID)
 	if err != nil {
 		return ""
 	}
 	env, found := "", false
 	for _, c := range list {
-		if c.Status != "active" || !slices.Contains(c.Actions, action) {
+		if !slices.Contains(c.Actions, action) {
 			continue
 		}
 		if d := domain.Slugify(c.Domain); d != "" && d != domainID {
