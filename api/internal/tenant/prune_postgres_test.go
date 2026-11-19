@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kiff/cloud/api/internal/auth"
+	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/receipt"
 	"github.com/kiff/cloud/api/internal/tenant"
@@ -25,7 +26,7 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 	defer func() { dropTenantSchemas(t, pool); truncateTenants(t, pool) }()
 	for name, apply := range map[string]func(context.Context, *pgxpool.Pool) error{
 		"keys": auth.ApplyAPIKeysSchema, "subjects": tenant.ApplySubjectTenantsSchema,
-		"mandate": mandate.ApplySchema, "receipt": receipt.ApplySchema,
+		"mandate": mandate.ApplySchema, "receipt": receipt.ApplySchema, "controls": domain.ApplyTenantControlsSchema,
 	} {
 		if err := apply(ctx, pool); err != nil {
 			t.Fatalf("apply %s: %v", name, err)
@@ -74,6 +75,15 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		exec(`INSERT INTO cloud_meta.mandates (id, tenant_id, subject) VALUES ($1 || '-live', $1, 'agent-a')`, id)
 		exec(`INSERT INTO cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key, amount, drawn_at) VALUES
 			($1, $1 || '-ended', 'p-ended', 'count', 1, $2), ($1, $1 || '-live', 'p-live', 'count', 1, $2)`, id, old)
+		// Cards issued before the cutoff: one idle since, one that drew recently.
+		exec(`INSERT INTO cloud_meta.mandates (id, tenant_id, subject, issued_at) VALUES ($1 || '-idle', $1, 'agent-a', $2), ($1 || '-busy', $1, 'agent-a', $2)`, id, old)
+		exec(`INSERT INTO cloud_meta.mandate_draws (tenant_id, mandate_id, proposal_id, quantity_key, amount, drawn_at) VALUES ($1, $1 || '-busy', 'p-busy', 'count', 1, $2)`, id, recent)
+		// Control versions: v1 replaced by v2 before the cutoff; v2 replaced by
+		// v3 after it; v3 active.
+		exec(`INSERT INTO cloud_meta.tenant_controls (id, tenant_id, domain, entity, actions, environment, version, activated_at, status) VALUES
+			($1 || '-v1', $1, 'd', 'E', '["A"]', 'prod', 1, $2, 'superseded'),
+			($1 || '-v2', $1, 'd', 'E', '["A"]', 'prod', 2, $2::timestamptz + interval '1 minute', 'superseded'),
+			($1 || '-v3', $1, 'd', 'E', '["A"]', 'prod', 3, $3, 'active')`, id, old, recent)
 		exec(`INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, key_hash, revoked_at) VALUES ($1 || '-revoked', $1, 'k', $1 || '-h1', $2)`, id, old)
 		exec(`INSERT INTO cloud_meta.api_keys (id, tenant_id, subject, key_hash, created_at) VALUES ($1 || '-live', $1, 'k', $1 || '-h2', $2)`, id, old)
 		// Runs ended before the cutoff: one still owed (counted, not
@@ -101,6 +111,9 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		exec(`INSERT INTO `+schema+`.kiff_approvals (id, entity_id, entity_type, action_name, requested_by, status, created_at, inserted_at)
 			VALUES ('op-waiting-apr', 'op-waiting', 'ToolCall', 'refund', 'agent-a', 'pending', $1, $1)`, old)
 	}
+
+	// Only an account the operators label "eval" has its idle Cards retired.
+	exec(`UPDATE cloud_meta.tenants SET metadata = COALESCE(NULLIF(metadata, 'null'::jsonb), '{}'::jsonb) || '{"ops_label":"eval"}' WHERE id = $1`, a.ID)
 
 	if _, err := prov.Prune(ctx, a.ID, time.Hour, now, false); err == nil {
 		t.Fatal("pruned with a cutoff younger than a day")
@@ -130,6 +143,11 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		{"the ended Card's draw", `SELECT count(*) FROM cloud_meta.mandate_draws WHERE mandate_id = $1 || '-ended'`, 0},
 		{"the live Card", `SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-live'`, 1},
 		{"the live Card's old draw", `SELECT count(*) FROM cloud_meta.mandate_draws WHERE mandate_id = $1 || '-live'`, 1},
+		{"the idle old Card, retired", `SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-idle' AND archived_at IS NOT NULL`, 1},
+		{"the old Card that drew recently, still live", `SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-busy' AND archived_at IS NULL`, 1},
+		{"the live Card issued recently, still live", `SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-live' AND archived_at IS NULL`, 1},
+		{"the version replaced before the cutoff", `SELECT count(*) FROM cloud_meta.tenant_controls WHERE id = $1 || '-v1'`, 0},
+		{"the version replaced after it, and the active one", `SELECT count(*) FROM cloud_meta.tenant_controls WHERE id IN ($1 || '-v2', $1 || '-v3')`, 2},
 		{"the revoked key", `SELECT count(*) FROM cloud_meta.api_keys WHERE id = $1 || '-revoked'`, 0},
 		{"the live key", `SELECT count(*) FROM cloud_meta.api_keys WHERE id = $1 || '-live'`, 1},
 		{"the old receipt", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-old'`, 0},
@@ -153,8 +171,24 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 	if n := count(`SELECT count(*) FROM ` + schemaB + `.kiff_events`); n != 3 {
 		t.Errorf("the other account lost events: %d left", n)
 	}
-	if n := count(`SELECT count(*) FROM cloud_meta.mandates WHERE tenant_id = $1`, b.ID); n != 2 {
-		t.Errorf("the other account lost Cards: %d left", n)
+	if n := count(`SELECT count(*) FROM cloud_meta.mandates WHERE tenant_id = $1 AND archived_at IS NULL`, b.ID); n != 4 {
+		t.Errorf("the other account lost or retired Cards: %d left live", n)
+	}
+	if n := count(`SELECT count(*) FROM cloud_meta.tenant_controls WHERE tenant_id = $1`, b.ID); n != 3 {
+		t.Errorf("the other account lost control versions: %d left", n)
+	}
+	// A listed account without the label is pruned, but keeps its idle Card.
+	if _, err := prov.Prune(ctx, b.ID, 48*time.Hour, now, false); err != nil {
+		t.Fatal(err)
+	}
+	if n := count(`SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-idle' AND archived_at IS NULL`, b.ID); n != 1 {
+		t.Errorf("an account not labelled eval had its idle Card retired: %d live", n)
+	}
+	if n := count(`SELECT count(*) FROM cloud_meta.mandates WHERE id = $1 || '-ended'`, b.ID); n != 0 {
+		t.Errorf("an account not labelled eval kept its ended Card: %d", n)
+	}
+	if n := count(`SELECT count(*) FROM cloud_meta.tenant_controls WHERE id = $1 || '-v1'`, b.ID); n != 0 {
+		t.Errorf("an account not labelled eval kept a replaced version: %d", n)
 	}
 	if st, err := store.Get(ctx, a.ID); err != nil || st.Status != tenant.StatusActive {
 		t.Errorf("the account after a prune: %+v %v", st, err)

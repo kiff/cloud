@@ -44,7 +44,7 @@ are its real decisions.
   - **store credit:** up to €30 each and €100 a day;
   - **cancellations:** 10 a day;
   - **order lookups:** 500 a day.
-- **The inbox:** the shop's support address, luna@desk.kiff.dev. The agent
+- **The inbox:** the shop's support address, a demo inbox since retired. The agent
   can reply only to the person who wrote, and send the summary only to the
   owner. It cannot choose a recipient.
 - **The desk:** Claude Code, run headless with only these tools, with the
@@ -163,7 +163,7 @@ refunded, and #1009 shows nothing refunded, as the owner decided.
 
 - It ran on a development store with test orders and simulated payments,
   started by hand. A real shop would run it on a schedule.
-- Replies come from luna@desk.kiff.dev. Replying from the shop's own address
+- Replies came from a demo address. Replying from the shop's own address
   needs the shop's email settings.
 - Stop means no new refunds. A refund KIFF had already allowed a moment
   before may still complete.
