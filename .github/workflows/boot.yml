@@ -1,0 +1,83 @@
+name: boot
+
+# The api's server, built from this tree and started the way a developer
+# starts it: sign-in by stub (any typed subject, development only) and a fresh
+# Postgres 16. It must answer /healthz, refuse a request with no sign-in, and
+# refuse to start at all as production with the stub, so the stub can never be
+# the sign-in of a deployed server.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  boot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: api/go.mod
+          cache-dependency-path: api/go.sum
+      - name: Build the server
+        run: go build -o "$RUNNER_TEMP/api" ./cmd/api
+      - name: Start it in development, with the stub sign-in
+        env:
+          KIFF_API_ADDR: 127.0.0.1:8080
+          KIFF_AUTH_PROVIDER: stub
+          KIFF_DATABASE_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
+        run: |
+          "$RUNNER_TEMP/api" >"$RUNNER_TEMP/api.log" 2>&1 &
+          echo $! >"$RUNNER_TEMP/api.pid"
+          for _ in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8080/healthz >/dev/null 2>&1; then exit 0; fi
+            sleep 1
+          done
+          echo "the server didn't answer /healthz within a minute:"
+          cat "$RUNNER_TEMP/api.log"
+          exit 1
+      - name: It answers /healthz, and refuses a request with no sign-in
+        run: |
+          set -euo pipefail
+          test "$(curl -fsS http://127.0.0.1:8080/healthz)" = "ok"
+          code="$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/v1/me)"
+          test "$code" = "401" || { echo "/v1/me with no sign-in answered $code, want 401"; exit 1; }
+      - name: As production, it refuses to start with the stub sign-in
+        env:
+          KIFF_ENV: production
+          KIFF_API_ADDR: 127.0.0.1:8081
+          KIFF_AUTH_PROVIDER: stub
+          KIFF_DATABASE_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
+        run: |
+          set -uo pipefail
+          if timeout 30 "$RUNNER_TEMP/api" >"$RUNNER_TEMP/prod.log" 2>&1; then
+            echo "it started as production with the stub sign-in"; exit 1
+          fi
+          grep -q 'KIFF_ENV=production requires KIFF_AUTH_PROVIDER=clerk' "$RUNNER_TEMP/prod.log" || { cat "$RUNNER_TEMP/prod.log"; exit 1; }
+      - name: Server log
+        if: always()
+        run: |
+          kill "$(cat "$RUNNER_TEMP/api.pid")" 2>/dev/null || true
+          cat "$RUNNER_TEMP/api.log" 2>/dev/null || true

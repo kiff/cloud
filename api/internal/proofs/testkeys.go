@@ -8,7 +8,7 @@ import (
 
 // TestKeys are the proof runner's test phone keys (KIFF_PROOF_TEST_KEYS):
 // a hold answer signed by one counts only on a managed test tenant, and
-// one never reaches an override (kiff-qa, 17 Nov). Each entry is a key's
+// one never reaches an override. Each entry is a key's
 // fingerprint: the SHA-256 of its DER public key in hex (64 characters),
 // or the 16-character short form KIFF shows (auth.DeviceKeyFingerprint);
 // spaces and colons are ignored.

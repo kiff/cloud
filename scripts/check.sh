@@ -62,11 +62,15 @@ deny=(
 	# A tenant id shaped like a real one (made-up ids in tests read tnt_test,
 	# tnt_other, tnt_example9).
 	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
+	# Who decided something, never the requirement itself: "the PM", a
+	# ruling's time stamp, and a reference cut short to "(review on)".
+	"coordination note|\bthe PM\b|\(PM[ ,]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) on\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
-	# demos, deploy and smoke scripts (deploy.sh by name too), the API's
-	# server and HTTP layer, AGENTS.md, the desktop doc by name. Exported paths read as they do in
+	# demos, deploy and smoke scripts (deploy.sh by name too), AGENTS.md,
+	# the desktop doc by name. The API's server (cmd/api) and its HTTP layer
+	# (internal/handlers) are public since block 5. Exported paths read as they do in
 	# kiff/cloud (api/..., internal/...), never apps/...
-	"private path reference|(^|[^A-Za-z0-9_./-])(apps/(api|web|gateway)/|docs/|demos?/|spikes/|sdks/|infra/|skills/|scripts/(demo|stripe|smoke|deploy|caddy|systemd)|cmd/api\b|handlers/[a-z_]+\.go|AGENTS\.md|desktop-client\.md|HANDOFF|BRIEF-|RECORD\.md|deploy\.sh)"
+	"private path reference|(^|[^A-Za-z0-9_./-])(apps/(api|web|gateway)/|docs/|demos?/|spikes/|sdks/|infra/|skills/|scripts/(demo|stripe|smoke|deploy|caddy|systemd)|AGENTS\.md|desktop-client\.md|HANDOFF|BRIEF-|RECORD\.md|deploy\.sh)"
 )
 # Public names and placeholder data that match the patterns above, as
 # whole matches.
@@ -75,7 +79,7 @@ deny=(
 # accounts.kiff.dev is the sign-in provider's account page, ops@ the sender of
 # KIFF's emails and support@ their reply-to, all three seen by every customer;
 # #666 and #666666 are an email's grey text colour, not issues.
-allow='(api|app|mcp|www|planque|status|accounts)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid)|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)'
+allow='(api|app|mcp|www|planque|status|accounts)\.kiff\.dev|(security|privacy|gabriel|ai|ops|support)@kiff\.dev|:#666(666)?|user@app\.kiff\.dev|[^@]+@(example\.(com|org|net|invalid|test)|web\.example|x\.io|kiff\.test|acme\.test)|sk_live_(secret|abc)'
 
 # Backups an in-place edit can leave (BSD sed -i -e, .bak, .orig).
 printf '==> no editor backups\n'
