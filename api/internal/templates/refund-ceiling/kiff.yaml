@@ -1,0 +1,55 @@
+# refund-ceiling template
+#
+# A support agent issues refunds against an order. ISSUE_REFUND is allowed
+# while the order is PAID or PARTIALLY_REFUNDED. The running total is the
+# customer's app's job: it sums the refunds and, when the order is fully
+# refunded, emits ORDER_FULLY_REFUNDED. From the FULLY_REFUNDED state KIFF
+# refuses every further refund — a closed order can't be reopened. So KIFF
+# enforces the *terminal state* (no refunds after close); the monetary
+# ceiling arithmetic lives in your app, which supplies the closing event.
+#
+# Projected from kiff-guard cookbook/refund-ceiling-guard. Executor is
+# cloud.proxy: KIFF decides; the customer's app performs the credit.
+
+domain: refund-ceiling
+entity: Order
+
+events:
+  - ORDER_PAID
+  - REFUND_ISSUED
+  - ORDER_FULLY_REFUNDED
+
+states:
+  - PAID
+  - PARTIALLY_REFUNDED
+  - FULLY_REFUNDED
+
+transitions:
+  - on: ORDER_PAID
+    from: ""
+    to: PAID
+  - on: REFUND_ISSUED
+    from: PAID
+    to: PARTIALLY_REFUNDED
+  - on: REFUND_ISSUED
+    from: PARTIALLY_REFUNDED
+    to: PARTIALLY_REFUNDED
+  - on: ORDER_FULLY_REFUNDED
+    from: PARTIALLY_REFUNDED
+    to: FULLY_REFUNDED
+
+actions:
+  - name: ISSUE_REFUND
+    allowed_states: [PAID, PARTIALLY_REFUNDED]
+    required_parameters: [amount_cents]
+    required_permissions: [refund.issue]
+    risk: high
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    support:
+      - refund.issue
+    admin:
+      - refund.issue

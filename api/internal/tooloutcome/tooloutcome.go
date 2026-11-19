@@ -63,6 +63,20 @@ type Outcome struct {
 	At    time.Time `json:"at"`
 }
 
+// ForReader is the outcome as a person reads it, on every page and receipt
+// that shows one: for a call never sent, one whose answer was lost, or one
+// the connection refused before sending, the text is planque's or the
+// gateway's, in English, so it's left out and the reader reads KIFF's words
+// for it, by status and code, in their language. An app's own refusal
+// (RefusedByTool from the vendor) keeps its message. The gateway's record
+// keeps the text.
+func (o Outcome) ForReader() Outcome {
+	if o.Status == NotSent || o.Status == Unknown || (o.Status == RefusedByTool && o.RefusedBy == "connection") {
+		o.Message = ""
+	}
+	return o
+}
+
 // Reader reads outcomes by proposal id. A call the gateway has no record
 // of, or that has not reached the tool, has no outcome.
 type Reader interface {

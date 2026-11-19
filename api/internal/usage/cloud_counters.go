@@ -110,7 +110,7 @@ const (
 	// would-be answer is real); this counter only marks that the
 	// answer was non-binding.
 	//
-	// The series key keeps the pre-#773 "shadowed" spelling on
+	// The series key keeps the earlier "shadowed" spelling on
 	// purpose: it is a persisted metric name with recorded history
 	// behind it, so renaming it would orphan every existing row and
 	// any dashboard reading the series. Only the vocabulary in the

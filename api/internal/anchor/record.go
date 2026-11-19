@@ -80,7 +80,7 @@ func appendLP(dst, src []byte) []byte {
 // proof indices are stable.
 //
 // Salt is the per-tenant secret mixed into every leaf hash in this
-// batch. Empty for the pre-#107 unsalted form; for salted
+// batch. Empty for the unsalted form; for salted
 // batches the cloud reads it from the issuing tenant's
 // cloud_meta row before constructing the batch. Off-chain
 // verification needs the same salt to recompute the leaf, so

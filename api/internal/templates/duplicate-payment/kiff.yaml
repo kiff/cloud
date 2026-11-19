@@ -1,0 +1,46 @@
+# duplicate-payment template
+#
+# An accounts-payable agent pays invoices. The whole guard is the state
+# machine: PAY_INVOICE is allowed ONLY while the invoice is PENDING. The
+# first payment clears and the app advances the invoice to PAID; every
+# retry (a flaky-connection storm, a re-entered workflow) hits a PAID
+# invoice and KIFF returns state_not_allowed. "Pay once" is enforced by
+# the contract, not a dedupe table in the app.
+#
+# Projected from kiff-guard cookbook/duplicate-payment-guard. Executors
+# are cloud.proxy: KIFF decides; the customer's app performs the debit.
+
+domain: duplicate-payment
+entity: Invoice
+
+events:
+  - INVOICE_RECEIVED
+  - INVOICE_PAID
+
+states:
+  - PENDING
+  - PAID
+
+transitions:
+  - on: INVOICE_RECEIVED
+    from: ""
+    to: PENDING
+  - on: INVOICE_PAID
+    from: PENDING
+    to: PAID
+
+actions:
+  - name: PAY_INVOICE
+    allowed_states: [PENDING]
+    required_parameters: [amount_cents]
+    required_permissions: [ap.pay_invoice]
+    risk: high
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    ap_agent:
+      - ap.pay_invoice
+    admin:
+      - ap.pay_invoice

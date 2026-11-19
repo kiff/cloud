@@ -1,0 +1,36 @@
+{
+  "title": "Submit a chargeback once — refuse the resubmit",
+  "narrative": "A filed dispute is investigated, then the agent submits the chargeback; KIFF allows it once the dispute is INVESTIGATED and signs a receipt. When the agent re-submits the same dispute (a common retry that bills a second scheme penalty), KIFF refuses it — SUBMIT_CHARGEBACK is only allowed from INVESTIGATED, and the dispute is now SUBMITTED.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "A dispute is filed (state → FILED)."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "DISPUTE_INVESTIGATED", "payload": {} },
+      "description": "An analyst investigates the dispute (state → INVESTIGATED)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "SUBMIT_CHARGEBACK",
+      "actor_id": "disputes-agent",
+      "parameters": { "reason_code": "10.4", "amount_cents": 8500 },
+      "expect": "allowed",
+      "description": "The agent submits the chargeback. Allowed — the dispute is INVESTIGATED. Signed receipt."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "CHARGEBACK_SUBMITTED", "payload": {} },
+      "description": "The submission is recorded (state → SUBMITTED)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "SUBMIT_CHARGEBACK",
+      "actor_id": "disputes-agent",
+      "parameters": { "reason_code": "10.4", "amount_cents": 8500 },
+      "expect": "blocked",
+      "description": "The agent re-submits the same dispute. KIFF refuses it (state_not_allowed) — no duplicate scheme fee. Signed refusal."
+    }
+  ]
+}

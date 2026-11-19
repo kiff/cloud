@@ -254,3 +254,24 @@ func TestPostgresReadsToolTitles(t *testing.T) {
 		t.Fatalf("titles: %v %v", got, err)
 	}
 }
+
+// ForReader leaves out the connection's and the gateway's English for a call
+// never sent, one whose answer was lost and one the connection refused, and
+// keeps an app's own refusal and everything else.
+func TestForReaderKeepsOnlyAnAppsOwnWords(t *testing.T) {
+	for _, c := range []struct {
+		o    tooloutcome.Outcome
+		kept bool
+	}{
+		{tooloutcome.Outcome{Status: tooloutcome.NotSent, Message: "x"}, false},
+		{tooloutcome.Outcome{Status: tooloutcome.Unknown, Message: "x"}, false},
+		{tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, RefusedBy: "connection", Code: "app_closed", Message: "x"}, false},
+		{tooloutcome.Outcome{Status: tooloutcome.RefusedByTool, Message: "x"}, true},
+		{tooloutcome.Outcome{Status: tooloutcome.Done, Message: "x"}, true},
+	} {
+		got := c.o.ForReader()
+		if (got.Message == "x") != c.kept || got.Status != c.o.Status || got.RefusedBy != c.o.RefusedBy || got.Code != c.o.Code {
+			t.Errorf("%+v: %+v", c.o, got)
+		}
+	}
+}

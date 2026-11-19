@@ -1,0 +1,17 @@
+{
+  "id": "evt-refund-001",
+  "adapter": "cloud",
+  "type": "ORDER_PLACED",
+  "source": "dashboard-template",
+  "received_at": "2026-05-24T12:00:00Z",
+  "entity_id": "order-001",
+  "entity_type": "Order",
+  "actor_id": "actor-dev",
+  "metadata": {
+    "trace_id": "trace-refund-001"
+  },
+  "payload": {
+    "amount_cents": 4900,
+    "currency": "USD"
+  }
+}

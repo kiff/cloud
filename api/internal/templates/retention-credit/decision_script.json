@@ -1,0 +1,48 @@
+{
+  "title": "Store credit on its own card",
+  "narrative": "The same support agent that handles refunds can carry a separate card for retention credits. Eligibility comes from this domain and each authorized credit draws only from the credit card's daily balance.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "A retention case is marked eligible for store credit."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "ISSUE_STORE_CREDIT",
+      "actor_id": "support-agent",
+      "parameters": {"amount_cents": 75000},
+      "expect": "blocked",
+      "expect_reason": "no_mandate_issued",
+      "description": "Eligibility is not authority. With no Store Credit Card, the proposal is refused."
+    },
+    {
+      "kind": "issue_card",
+      "card": {
+        "id": "support-credit-card",
+        "subject": "support-agent",
+        "actions": ["ISSUE_STORE_CREDIT"],
+        "quantity": "sum(amount_cents)",
+        "limit": 200000,
+        "window": "calendar_day"
+      },
+      "description": "An owner issues a Store Credit Card with a €2,000 daily ceiling."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "ISSUE_STORE_CREDIT",
+      "actor_id": "support-agent",
+      "parameters": {"amount_cents": 75000},
+      "expect": "allowed",
+      "description": "KIFF authorizes €750 of credit and draws it from this card. The commerce system issues the credit afterwards."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "ISSUE_STORE_CREDIT",
+      "actor_id": "support-agent",
+      "parameters": {"amount_cents": 150000},
+      "expect": "blocked",
+      "expect_reason": "mandate_limit_reached",
+      "description": "A €1,500 proposal does not fit the €1,250 remaining. Refund and plan-change cards are unaffected."
+    }
+  ]
+}

@@ -106,3 +106,40 @@ func TestSettled(t *testing.T) {
 		t.Error("a failed tool read settled calls")
 	}
 }
+
+// A call its connection refused carries who refused it and the code into the
+// settlement, for the receipt, and none of the connection's text; an app's
+// own refusal carries neither, and keeps its message.
+func TestSettledKeepsWhoRefusedTheCall(t *testing.T) {
+	now := time.Date(2026, 11, 18, 22, 0, 0, 0, time.UTC)
+	ago := func(d time.Duration) *time.Time { x := now.Add(-d); return &x }
+	src := Source{Now: func() time.Time { return now },
+		Exceptions: exceptions{
+			{ID: "e-conn", ProposalID: "p-conn", Status: mandate.ExceptionConsumed, ResolvedBy: "bob", ResolvedAt: ago(time.Hour), ConsumedAt: ago(time.Hour)},
+			{ID: "e-app", ProposalID: "p-app", Status: mandate.ExceptionConsumed, ResolvedBy: "bob", ResolvedAt: ago(time.Hour), ConsumedAt: ago(time.Hour)},
+		},
+		Answers: answers{},
+		Tools: tools{m: map[string]tooloutcome.Outcome{
+			"p-conn": {Status: tooloutcome.RefusedByTool, RefusedBy: "connection", Code: "app_closed", Message: "closed", At: now.Add(-time.Minute)},
+			"p-app":  {Status: tooloutcome.RefusedByTool, Message: "Forbidden.", At: now.Add(-time.Minute)},
+		}}}
+	got, err := src.Settled(context.Background(), "t1")
+	if err != nil || len(got) != 2 {
+		t.Fatalf("settled %+v, %v", got, err)
+	}
+	for _, s := range got {
+		if s.Tool == nil {
+			t.Fatalf("%s: no tool", s.ProposalID)
+		}
+		switch s.ProposalID {
+		case "p-conn":
+			if s.Tool.RefusedBy != "connection" || s.Tool.Code != "app_closed" || s.Tool.Message != "" {
+				t.Errorf("a connection's refusal: %+v", *s.Tool)
+			}
+		case "p-app":
+			if s.Tool.RefusedBy != "" || s.Tool.Code != "" || s.Tool.Message != "Forbidden." {
+				t.Errorf("an app's own refusal: %+v", *s.Tool)
+			}
+		}
+	}
+}

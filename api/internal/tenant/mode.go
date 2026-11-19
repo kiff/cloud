@@ -38,7 +38,7 @@ const (
 	// evaluate the gate against real traffic before enforcing.
 	ModeObserve Mode = "observe"
 
-	// LegacyModeShadow is the pre-#773 spelling of ModeObserve. The
+	// LegacyModeShadow is the earlier spelling of ModeObserve. The
 	// guard runtime, the guard SDK, and the public docs all say
 	// "observe"; only this field and tenant_controls.mode ever said
 	// "shadow". Parsing still accepts it so tenant metadata written

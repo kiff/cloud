@@ -86,6 +86,14 @@ type SettlementTool struct {
 	Status  string    `json:"status"`
 	Message string    `json:"message,omitempty"`
 	At      time.Time `json:"at"`
+	// RefusedBy is "connection" when the connection refused the call before
+	// sending it, and Code is that refusal's code, so a page reading the
+	// receipt words it by code. Such a call, one never sent and one whose
+	// answer was lost carry no Message (settle applies tooloutcome's
+	// ForReader), so a receipt never keeps the connection's or the gateway's
+	// English. An app's own refusal has neither, and its Message is the app's.
+	RefusedBy string `json:"refused_by,omitempty"`
+	Code      string `json:"code,omitempty"`
 }
 
 // SettlementSource lists a tenant's settled holds. Only settled ones:
@@ -178,6 +186,12 @@ func BuildSettlement(ctx context.Context, audit AuditReader, tenantID string, s 
 		data := map[string]any{"status": t.Status, "at": t.At.UTC().Format(time.RFC3339Nano)}
 		if t.Message != "" {
 			data["message"] = t.Message
+		}
+		if t.RefusedBy != "" {
+			data["refused_by"] = t.RefusedBy
+		}
+		if t.Code != "" {
+			data["code"] = t.Code
 		}
 		h, err := hashFields(data)
 		if err != nil {

@@ -17,7 +17,7 @@ func TestControl_LineagePerDomain(t *testing.T) {
 	store := domain.NewMemoryControlStore()
 	ctx := context.Background()
 
-	// Same env (default) on purpose: the pre-#631 bug superseded
+	// Same env (default) on purpose: the earlier multi-domain bug superseded
 	// across domains because the lineage ignored the domain.
 	mustCreate(t, store, domain.Control{ID: "a1", TenantID: "t1", Domain: "alpha", Entity: "E", Actions: []string{"A"}})
 	mustCreate(t, store, domain.Control{ID: "b1", TenantID: "t1", Domain: "beta", Entity: "E", Actions: []string{"A"}})
@@ -88,7 +88,7 @@ func TestPostgresControl_LineagePerDomain(t *testing.T) {
 	if err := cs.Create(ctx, mk("a1", "alpha")); err != nil {
 		t.Fatalf("create alpha: %v", err)
 	}
-	// Both active in the same (default) environment — the pre-#631
+	// Both active in the same (default) environment — the earlier multi-domain
 	// one-active-per-env index would have rejected this insert.
 	if err := cs.Create(ctx, mk("b1", "beta")); err != nil {
 		t.Fatalf("create beta (two active domains, same env): %v", err)

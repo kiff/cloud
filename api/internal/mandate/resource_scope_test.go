@@ -335,7 +335,7 @@ func TestLegacyExceptionMatching(t *testing.T) {
 		if !strings.HasPrefix(v2.Fingerprint, "v2:") {
 			t.Fatalf("new fingerprints are versioned: %s", v2.Fingerprint)
 		}
-		// The pre-#1147 form: the same hash, unversioned, of the numeric fields.
+		// The earlier form: the same hash, unversioned, of the numeric fields.
 		return mandate.Exception{Fingerprint: mandate.LegacyFingerprintForTest(plain), Status: status}
 	}
 	for _, s := range []mandate.ExceptionStatus{mandate.ExceptionHeld, mandate.ExceptionApproved, mandate.ExceptionConsumed, mandate.ExceptionRejected} {

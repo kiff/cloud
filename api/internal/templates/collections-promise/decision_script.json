@@ -1,0 +1,31 @@
+{
+  "title": "Contact a borrower — refuse contact once they promise to pay",
+  "narrative": "A delinquent borrower can be contacted; KIFF allows the outreach and signs a receipt. The borrower then makes a promise to pay. From that moment KIFF refuses every further contact attempt — INITIATE_COLLECTIONS_CONTACT is only allowed from DELINQUENT or BROKEN, not while a promise is active — protecting the borrower from harassment and the lender from an FDCPA / CONC violation.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "A collections case is opened (state → DELINQUENT)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "INITIATE_COLLECTIONS_CONTACT",
+      "actor_id": "collections-agent",
+      "parameters": { "channel": "sms" },
+      "expect": "allowed",
+      "description": "The agent contacts the delinquent borrower. Allowed. Signed receipt."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "PROMISE_MADE", "payload": {} },
+      "description": "The borrower promises to pay (state → PROMISE_ACTIVE)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "INITIATE_COLLECTIONS_CONTACT",
+      "actor_id": "collections-agent",
+      "parameters": { "channel": "sms" },
+      "expect": "blocked",
+      "description": "The agent tries to contact again during the active promise. KIFF refuses it (state_not_allowed). Signed refusal."
+    }
+  ]
+}

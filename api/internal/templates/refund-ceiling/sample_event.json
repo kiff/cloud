@@ -1,0 +1,17 @@
+{
+  "id": "evt-rc-001",
+  "adapter": "cloud",
+  "type": "ORDER_PAID",
+  "source": "dashboard-template",
+  "received_at": "2026-06-23T12:00:00Z",
+  "entity_id": "order-001",
+  "entity_type": "Order",
+  "actor_id": "support-agent",
+  "metadata": {
+    "trace_id": "trace-rc-001"
+  },
+  "payload": {
+    "amount_cents": 10000,
+    "currency": "USD"
+  }
+}

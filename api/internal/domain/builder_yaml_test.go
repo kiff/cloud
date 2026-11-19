@@ -19,7 +19,7 @@ import (
 // single source of truth for "what does the cloud's executor
 // registry plus the framework's domain validator accept?"
 //
-// The shape mirrors the post-#203 canonical
+// The shape mirrors the current canonical
 // permission shape: paired proposing + .approve permissions,
 // one tenant_owner role holding both. kiff-studio v0.1.0's
 // generator emits exactly that shape.

@@ -1,0 +1,17 @@
+{
+  "id": "evt-cafe-001",
+  "adapter": "cloud",
+  "type": "SHIFT_SCHEDULED",
+  "source": "dashboard-template",
+  "received_at": "2026-05-24T08:00:00Z",
+  "entity_id": "shift-001",
+  "entity_type": "Shift",
+  "actor_id": "actor-dev",
+  "metadata": {
+    "trace_id": "trace-cafe-001"
+  },
+  "payload": {
+    "scheduled_for": "2026-05-24T09:00:00Z",
+    "barista": "alex"
+  }
+}

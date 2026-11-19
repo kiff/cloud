@@ -1,0 +1,114 @@
+# cafe-ops starter template
+#
+# Snapshot of the ai-cafe-ops domain that ships as a one-click
+# starter on Kiff Cloud. The canonical source is
+# kiff/kiff/examples/ai-cafe-ops + the cloud-side counterpart at
+# api/scripts/cafe.kiff.yaml; keep them in sync via
+# `make sync-templates` (see the api module's Makefile).
+#
+# The cloud's template apply path (POST /v1/me/domain/template)
+# loads this YAML through domain.ParseAndBuild, so the file must
+# stay validatable against executors.DefaultRegistry().
+
+domain: ai-cafe-ops
+entity: Shift
+
+events:
+  - SHIFT_SCHEDULED
+  - SHIFT_STARTED
+  - INVENTORY_ORDERED
+  - SPECIALTY_REQUESTED
+  - STAFF_MESSAGED
+  - SUPPLIER_ESCALATED
+
+states:
+  - NEW
+  - OPEN
+  - AWAITING_HUMAN
+
+transitions:
+  - on: SHIFT_SCHEDULED
+    from: ""
+    to: NEW
+  - on: SHIFT_STARTED
+    from: NEW
+    to: OPEN
+  - on: INVENTORY_ORDERED
+    from: OPEN
+    to: OPEN
+  - on: SPECIALTY_REQUESTED
+    from: OPEN
+    to: OPEN
+  - on: STAFF_MESSAGED
+    from: OPEN
+    to: OPEN
+  - on: SUPPLIER_ESCALATED
+    from: OPEN
+    to: AWAITING_HUMAN
+
+actions:
+  - name: START_SHIFT
+    allowed_states: [NEW]
+    required_parameters: [opened_by]
+    required_permissions: [aicafeops.start]
+    risk: low
+    approval: never
+    executor: cafe.start_shift
+
+  - name: AUTO_ORDER_INVENTORY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, quantity, amount_cents]
+    required_permissions: [aicafeops.order]
+    risk: medium
+    approval: never
+    executor: cafe.auto_order_inventory
+
+  - name: ORDER_INVENTORY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, quantity, amount_cents]
+    required_permissions: [aicafeops.order, aicafeops.approve]
+    risk: high
+    approval: required
+    executor: cafe.order_inventory
+
+  - name: REQUEST_SPECIALTY
+    allowed_states: [OPEN]
+    required_parameters: [item_id, rationale]
+    required_permissions: [aicafeops.specialty, aicafeops.approve]
+    risk: medium
+    approval: required
+    executor: cafe.request_specialty
+
+  - name: SEND_STAFF_MESSAGE
+    allowed_states: [OPEN]
+    required_parameters: [recipient, message, sent_at_local]
+    required_permissions: [aicafeops.message, aicafeops.approve]
+    risk: medium
+    approval: required
+    executor: cafe.send_staff_message
+
+  - name: ESCALATE_SUPPLIER
+    allowed_states: [OPEN]
+    required_parameters: [supplier_id, reason]
+    required_permissions: [aicafeops.escalate]
+    risk: medium
+    approval: never
+    executor: cafe.escalate_supplier
+
+permissions:
+  roles:
+    admin:
+      - aicafeops.start
+      - aicafeops.order
+      - aicafeops.specialty
+      - aicafeops.message
+      - aicafeops.escalate
+      - aicafeops.approve
+    shift_manager:
+      - aicafeops.start
+      - aicafeops.order
+      - aicafeops.specialty
+      - aicafeops.message
+      - aicafeops.escalate
+    system:
+      - aicafeops.start

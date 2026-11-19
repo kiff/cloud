@@ -7,7 +7,7 @@ import (
 
 // TestLeafHashEmptySaltMatchesUnsaltedFormat guards the
 // backward-compatibility contract: a batch with no salt produces
-// byte-identical leaves to the pre-#107 unsalted form. Receipts
+// byte-identical leaves to the unsalted form. Receipts
 // anchored before salting was wired up therefore stay verifiable
 // against the same root.
 func TestLeafHashEmptySaltMatchesUnsaltedFormat(t *testing.T) {
@@ -120,7 +120,7 @@ func TestBatchLeafHashesUseBatchSalt(t *testing.T) {
 
 // TestBatchLeafHashesDefaultsToUnsalted explicitly pins the
 // backward-compatibility behaviour at the Batch level: a batch with
-// nil/empty Salt must produce exactly the leaves the pre-#107
+// nil/empty Salt must produce exactly the leaves the unsalted
 // codebase would have produced. The legacy already-anchored receipts
 // in production rely on this.
 func TestBatchLeafHashesDefaultsToUnsalted(t *testing.T) {

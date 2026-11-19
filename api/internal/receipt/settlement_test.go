@@ -314,3 +314,56 @@ func TestSettledReceipt_DecisionStepsCarryTheAmount(t *testing.T) {
 		t.Fatalf("no decision step: %+v", r.CausalChain)
 	}
 }
+
+// A connection's refusal carries who refused it and its code into the
+// settled receipt's tool step, so a page reading the receipt words it by code;
+// settle leaves its English out (ForReader). An app's own refusal carries
+// neither, and keeps its message.
+func TestASettledReceiptSaysWhoRefusedTheCall(t *testing.T) {
+	t.Parallel()
+	store := receipt.NewMemoryStore()
+	at := time.Date(2026, time.November, 18, 21, 0, 0, 0, time.UTC)
+	answered := at.Add(5 * time.Minute)
+	settled := fakeSettlements{
+		{ProposalID: "tc-conn", HoldID: "exc-1", Outcome: "approved_once", Answer: "approve-once", AnsweredBy: "you", At: answered,
+			Tool: &receipt.SettlementTool{Status: "refused_by_tool", RefusedBy: "connection", Code: "app_closed", At: answered.Add(time.Minute)}},
+		{ProposalID: "tc-app", HoldID: "exc-2", Outcome: "approved_once", Answer: "approve-once", AnsweredBy: "you", At: answered,
+			Tool: &receipt.SettlementTool{Status: "refused_by_tool", Message: "Forbidden.", At: answered.Add(time.Minute)}},
+	}
+	pl, err := receipt.NewPipeline(store, receipt.NewLocalAttester(mustWallet(t), nil), receipt.WithSettlements(settled))
+	if err != nil {
+		t.Fatal(err)
+	}
+	rt := &kiffruntime.Runtime{Audit: newAuditStoreWith(t, []kiffaudit.Record{
+		proposalDecisionRecord("tc-conn", "owner_required", at),
+		proposalDecisionRecord("tc-app", "owner_required", at),
+	})}
+	ctx := context.Background()
+	if built, err := pl.ReconcileSettlements(ctx, "ten-1", rt); err != nil || built != 2 {
+		t.Fatalf("built %d, %v", built, err)
+	}
+	step := func(id string) receipt.ChainStep {
+		r, err := store.Get(ctx, "ten-1", receipt.SettledReceiptTraceID(id))
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, s := range r.CausalChain {
+			if s.Kind == "tool_outcome" {
+				return s
+			}
+		}
+		t.Fatalf("%s: no tool step", id)
+		return receipt.ChainStep{}
+	}
+	conn := step("tc-conn")
+	if _, quoted := conn.Data["message"]; quoted || conn.Data["refused_by"] != "connection" || conn.Data["code"] != "app_closed" {
+		t.Errorf("a connection's refusal: %v", conn.Data)
+	}
+	app := step("tc-app")
+	if _, ok := app.Data["refused_by"]; ok {
+		t.Errorf("an app's own refusal named a refuser: %v", app.Data)
+	}
+	if _, ok := app.Data["code"]; ok || app.Data["message"] != "Forbidden." {
+		t.Errorf("an app's own refusal: %v", app.Data)
+	}
+}

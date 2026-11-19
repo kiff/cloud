@@ -19,7 +19,7 @@ func CardLockID(tenantID, mandateID string) int64 {
 // holds the Card's lock.
 func SetAfterIssueLock(s *PostgresStore, fn func()) { s.afterIssueLock = fn }
 
-// LegacyFingerprintForTest is the pre-#1147 fingerprint, for tests of
+// LegacyFingerprintForTest is the earlier, unversioned fingerprint, for tests of
 // exceptions recorded then.
 var LegacyFingerprintForTest = legacyFingerprint
 

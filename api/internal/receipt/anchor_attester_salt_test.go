@@ -96,7 +96,7 @@ func TestAnchorAttester_ResolvesSaltFromTenant(t *testing.T) {
 // rollout-window contract: a nil SaltResolver (or a resolver that
 // hands back nil bytes for a tenant pending backfill) anchors with
 // unsalted leaves so legacy tenants still get receipts. The
-// behavior is byte-equivalent to the pre-#107 form.
+// behavior is byte-equivalent to the unsalted form.
 func TestAnchorAttester_NilResolverFallsBackToUnsalted(t *testing.T) {
 	t.Parallel()
 

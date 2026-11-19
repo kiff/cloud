@@ -57,8 +57,11 @@ deny=(
 	"price in euros|(€|EUR) ?[0-9][0-9.,]*( ?(/ ?(mo|yr|month|year|seat)|a (month|year|seat)|per (month|year|seat|person)))|[0-9][0-9.,]* ?(€|EUR)( ?(/ ?(mo|yr|month|year|seat)|a (month|year|seat)|per (month|year|seat|person)))"
 	# kiff-cloud's issues and RFCs are private. IETF RFCs have four digits,
 	# and references to public repos (kiff/tafs#N) name their repo.
-	"private issue reference|kiff(/kiff)?-cloud ?#|(^|[^A-Za-z0-9/_&.-])#[0-9]{2,5}\b"
+	"private issue reference|kiff(/kiff)?-cloud ?#|(^|[^A-Za-z0-9/_&.])#[0-9]{2,5}\b"
 	"private RFC reference|\bRFC[ -]?[0-9]{1,3}\b"
+	# A tenant id shaped like a real one (made-up ids in tests read tnt_test,
+	# tnt_other, tnt_example9).
+	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
 	# A path into kiff-cloud that the export does not carry: design docs,
 	# demos, deploy and smoke scripts (deploy.sh by name too), the API's
 	# server and HTTP layer, AGENTS.md, the desktop doc by name. Exported paths read as they do in

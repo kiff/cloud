@@ -1,0 +1,55 @@
+# collections-promise template
+#
+# A collections agent contacts delinquent borrowers. INITIATE_COLLECTIONS_
+# CONTACT is allowed only from DELINQUENT or BROKEN. While a promise-to-pay
+# is active (PROMISE_ACTIVE), every contact attempt is state_not_allowed —
+# protecting the borrower from harassment and the lender from FDCPA / CONC
+# violations. The "stop contacting after a promise" rule is the contract.
+#
+# Projected from kiff-guard cookbook/collections-promise-guard. Executor is
+# cloud.proxy: KIFF decides; the agent performs the outreach.
+
+domain: collections-promise
+entity: CollectionsCase
+
+events:
+  - CASE_OPENED
+  - PROMISE_MADE
+  - PROMISE_FULFILLED
+  - PROMISE_BROKEN
+
+states:
+  - DELINQUENT
+  - PROMISE_ACTIVE
+  - FULFILLED
+  - BROKEN
+
+transitions:
+  - on: CASE_OPENED
+    from: ""
+    to: DELINQUENT
+  - on: PROMISE_MADE
+    from: DELINQUENT
+    to: PROMISE_ACTIVE
+  - on: PROMISE_FULFILLED
+    from: PROMISE_ACTIVE
+    to: FULFILLED
+  - on: PROMISE_BROKEN
+    from: PROMISE_ACTIVE
+    to: BROKEN
+
+actions:
+  - name: INITIATE_COLLECTIONS_CONTACT
+    allowed_states: [DELINQUENT, BROKEN]
+    required_parameters: [channel]
+    required_permissions: [collections.contact]
+    risk: medium
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    collections:
+      - collections.contact
+    admin:
+      - collections.contact

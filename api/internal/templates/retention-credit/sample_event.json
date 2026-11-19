@@ -1,0 +1,17 @@
+{
+  "id": "evt-rc-001",
+  "adapter": "cloud",
+  "type": "CASE_MARKED_ELIGIBLE",
+  "source": "dashboard-template",
+  "received_at": "2026-09-20T12:00:00Z",
+  "entity_id": "case_2048",
+  "entity_type": "RetentionCase",
+  "actor_id": "support-agent",
+  "metadata": {
+    "trace_id": "trace-rc-001"
+  },
+  "payload": {
+    "customer_id": "cus_2048",
+    "reason": "renewal_risk"
+  }
+}

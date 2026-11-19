@@ -1,0 +1,17 @@
+{
+  "id": "evt-kyb-001",
+  "adapter": "cloud",
+  "type": "ONBOARDING_STARTED",
+  "source": "dashboard-template",
+  "received_at": "2026-06-23T12:00:00Z",
+  "entity_id": "biz-001",
+  "entity_type": "Business",
+  "actor_id": "kyb-workflow",
+  "metadata": {
+    "trace_id": "trace-kyb-001"
+  },
+  "payload": {
+    "legal_name": "Acme Trading Ltd",
+    "jurisdiction": "GB"
+  }
+}
