@@ -197,7 +197,7 @@ func FindControlByID(ctx context.Context, store ControlStore, tenantID, controlI
 
 // activeLister is a ControlStore that reads only a tenant's active
 // controls. List returns every version a tenant ever activated, superseded
-// ones included (one test tenant had 7,906 for 22 active), and the
+// ones included (a test tenant can carry thousands for a few active), and the
 // decision path reads controls on every call, so it reads only the
 // active ones when the store can.
 type activeLister interface {

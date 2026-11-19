@@ -40,16 +40,28 @@ func TestTheManagedAppsFileIsAPlainList(t *testing.T) {
 	}
 }
 
-// The shipped list is the owner's 18 Nov decision, in this order, and planque's
-// copy is held equal to it by planque's own test.
-func TestTheManagedAppsAreTheThreeGoogleApps(t *testing.T) {
-	want := []string{"Gmail", "Google Calendar", "Google Sheets"}
+// The shipped list is the owner's 18 Nov decision (the three Google apps) plus
+// wave 1a's 15 apps, named as planque's catalog names them, in this order.
+// planque's copy is held equal to it by planque's own test.
+func TestTheManagedAppsAreTheShippedList(t *testing.T) {
+	want := []string{"Gmail", "Google Calendar", "Google Sheets",
+		"Airtable", "Asana", "Cal", "Calendly", "ClickUp", "Confluence", "Dropbox", "Excel",
+		"Jira", "Linear", "Monday", "Notion", "OneDrive", "Trello", "Wrike"}
 	got := mustManagedApps(managedAppsJSON)
 	if strings.Join(got, "|") != strings.Join(want, "|") {
 		t.Fatalf("managed_apps.json: got %q, want %q", got, want)
 	}
-	if line := managedUse("en"); line != "Used only for: Gmail, Google Calendar, Google Sheets." {
-		t.Errorf("Composio's English line: got %q", line)
+	if !managedAppsListed() {
+		t.Fatal("18 apps should be listed under the table")
+	}
+	if before, after := managedManyParts("en"); before+"Apps connected through Composio"+after != "Used only for the 18 apps listed under Apps connected through Composio." {
+		t.Errorf("Composio's English line: got %q", before+"…"+after)
+	}
+	s := renderSubprocessorsList(t, "en")
+	for _, a := range want {
+		if !strings.Contains(s, "<li>"+a+"</li>") {
+			t.Errorf("/subprocessors doesn't list %q", a)
+		}
 	}
 }
 

@@ -13,13 +13,17 @@ role="${1:-kiff-ec2-app-role}"
 
 # The names come from deploy.sh; each value from the environment (deploy.sh
 # exports them, or source .env.deploy first), else from deploy.sh's literal
-# default. An empty value or "-" is a secret that's off.
+# default. An empty value or "-" is a secret that's off. Any other value is
+# neither a Secrets Manager name (kiff/...) nor its ARN, so its grant can't be
+# checked: it's said, never skipped without a word.
 secrets=""
 while IFS= read -r name; do
 	value="${!name-}"
 	[ -n "$value" ] || value=$(sed -nE "s/^${name}=\"\\\$\{${name}:-([^}]*)\}\"$/\1/p" scripts/deploy.sh)
 	case "$value" in
 		arn:aws:secretsmanager:*|kiff/*) secrets+="$value"$'\n' ;;
+		""|-) ;;
+		*) echo "warning: $name is neither a Secrets Manager name (kiff/...) nor its ARN; its grant isn't checked" >&2 ;;
 	esac
 done < <(sed -nE 's/^([A-Z_]+(_SECRET|_ARN))="\$\{[A-Z_]+:?-.*/\1/p' scripts/deploy.sh | sort -u)
 [ -n "$secrets" ] || { echo "no secrets set: source .env.deploy, or run it from deploy.sh" >&2; exit 1; }
