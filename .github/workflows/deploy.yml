@@ -63,6 +63,9 @@ jobs:
             PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
             export "$v=-"
           done
+          # The secrets check counts a value shaped like a Secrets Manager name or ARN: the
+          # gateway's keys stand in as one (a made-up name, never one of KIFF's).
+          export GATEWAY_KEYS_SECRET=kiff/placeholder-gateway-keys
           bash scripts/deploy.sh --dry-run --git-sha=$sha > "$RUNNER_TEMP/command.txt"
           grep -q 'placeholder-DB_HOST' "$RUNNER_TEMP/command.txt"
           echo "the dry run reached its command: $(wc -l < "$RUNNER_TEMP/command.txt") lines"
