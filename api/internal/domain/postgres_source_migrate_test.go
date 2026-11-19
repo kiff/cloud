@@ -12,7 +12,7 @@ import (
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
-// oldTenantDomainsDDL is the pre-#612 single-domain shape: tenant_id
+// oldTenantDomainsDDL is the earlier single-domain shape: tenant_id
 // is the whole primary key, no domain_id / slug / is_default. The
 // migration test recreates it to prove migrateTenantDomainsComposite
 // brings a real existing database forward.
@@ -50,7 +50,7 @@ func TestMigrateTenantDomainsComposite(t *testing.T) {
 	ctx := context.Background()
 
 	// Start from the legacy shape: drop the composite table
-	// requirePostgres created and recreate the pre-#612 one.
+	// requirePostgres created and recreate the earlier one.
 	truncate(t, pool)
 	if _, err := pool.Exec(ctx, "DROP TABLE IF EXISTS cloud_meta.tenant_domains CASCADE"); err != nil {
 		t.Fatalf("drop table: %v", err)

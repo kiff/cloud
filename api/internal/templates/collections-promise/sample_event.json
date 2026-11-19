@@ -1,0 +1,17 @@
+{
+  "id": "evt-col-001",
+  "adapter": "cloud",
+  "type": "CASE_OPENED",
+  "source": "dashboard-template",
+  "received_at": "2026-06-23T12:00:00Z",
+  "entity_id": "case-001",
+  "entity_type": "CollectionsCase",
+  "actor_id": "collections-agent",
+  "metadata": {
+    "trace_id": "trace-col-001"
+  },
+  "payload": {
+    "balance_cents": 250000,
+    "currency": "USD"
+  }
+}

@@ -1,0 +1,63 @@
+# retention-credit gives a support agent a dedicated store-credit card.
+# Eligibility comes from the domain. The card then limits the total
+# credit KIFF may authorize for its named holder in each window.
+
+domain: retention-credit
+entity: RetentionCase
+
+events:
+  - CASE_MARKED_ELIGIBLE
+  - CREDIT_ISSUED
+  - CASE_CLOSED
+
+states:
+  - ELIGIBLE
+  - CREDITED
+  - CLOSED
+
+transitions:
+  - on: CASE_MARKED_ELIGIBLE
+    from: ""
+    to: ELIGIBLE
+  - on: CREDIT_ISSUED
+    from: ELIGIBLE
+    to: CREDITED
+  - on: CASE_CLOSED
+    from: ELIGIBLE
+    to: CLOSED
+  - on: CASE_CLOSED
+    from: CREDITED
+    to: CLOSED
+
+actions:
+  - name: ISSUE_STORE_CREDIT
+    allowed_states: [ELIGIBLE]
+    required_parameters: [amount_cents]
+    parameters:
+      - name: amount_cents
+        type: int
+    required_permissions: [retention.credit.issue]
+    risk: high
+    approval: never
+    executor: cloud.proxy
+    requires_authority: true
+
+  - name: ESCALATE_RETENTION_CASE
+    allowed_states: [ELIGIBLE]
+    required_parameters: [reason]
+    parameters:
+      - name: reason
+        type: string
+    required_permissions: [retention.case.escalate]
+    risk: medium
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    support:
+      - retention.credit.issue
+      - retention.case.escalate
+    admin:
+      - retention.credit.issue
+      - retention.case.escalate

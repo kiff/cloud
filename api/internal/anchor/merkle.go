@@ -81,7 +81,7 @@ func keccak256(parts ...[]byte) Hash {
 // salt is an optional per-tenant secret prepended to the payload
 // before hashing. The on-chain leaf becomes
 // keccak256(0x00 || salt || payload). An empty/nil salt is
-// byte-identical to the pre-#107 leaf hash, so receipts written
+// byte-identical to the unsalted leaf hash, so receipts written
 // before salting was wired up keep verifying with the same root.
 //
 // The salt itself is the cloud's per-tenant

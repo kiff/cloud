@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS cloud_meta.tenant_controls (
                               CHECK (status IN ('active', 'superseded'))
 );
 
--- Backfill identity columns on pre-#376 tables.
+-- Backfill identity columns on older tables.
 ALTER TABLE cloud_meta.tenant_controls
     ADD COLUMN IF NOT EXISTS environment TEXT NOT NULL DEFAULT 'dev';
 ALTER TABLE cloud_meta.tenant_controls

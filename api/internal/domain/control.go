@@ -109,7 +109,7 @@ const (
 	ControlModeObserve = "observe"
 	ControlModeEnforce = "enforce"
 
-	// LegacyControlModeShadow is the pre-#773 spelling of
+	// LegacyControlModeShadow is the earlier spelling of
 	// ControlModeObserve. Still accepted on read so controls stored
 	// before the rename keep their advisory posture; never written.
 	LegacyControlModeShadow = "shadow"

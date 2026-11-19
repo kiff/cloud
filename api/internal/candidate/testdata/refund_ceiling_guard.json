@@ -1,0 +1,41 @@
+{
+  "_comment": "Fixture A — the runtime binding metadata kiff-cloud receives from a connected refund-ceiling-guard runtime. Grounded in the guard's refund-ceiling-guard cookbook example: ToolMap().bind('issue_refund', action='ISSUE_REFUND', entity_type='Order', entity_arg='order_id'), the issue_refund(order_id, amount_cents) tool signature, and the decision engine's domain (RequiredParameters: ['amount_cents'], Risk: RiskHigh). Mode is observe per the observe/shadow-first slice. Hand-derived from source, not model-generated.",
+  "connection": {
+    "tenant_id": "cookbook",
+    "project": "cookbook",
+    "environment": "aws",
+    "agent_id": "refund-agent",
+    "workflow": "refund-ceiling",
+    "adapter": "langgraph",
+    "sdk_version": "0.1.0",
+    "mode": "observe",
+    "seen_count": 1
+  },
+  "observation": {
+    "tenant_id": "cookbook",
+    "project": "cookbook",
+    "environment": "aws",
+    "agent_id": "refund-agent",
+    "workflow": "refund-ceiling",
+    "tools": [
+      {
+        "name": "issue_refund",
+        "description": "Issue a refund for an order. amount_cents is how much to refund.",
+        "entity_arg": "order_id",
+        "action": "ISSUE_REFUND",
+        "entity_type": "Order",
+        "required": ["amount_cents"],
+        "observed_call_count": 3,
+        "parameter_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "order_id": { "type": "string", "description": "The order to refund." },
+            "amount_cents": { "type": "integer", "description": "Amount to refund in cents." }
+          },
+          "required": ["order_id", "amount_cents"]
+        }
+      }
+    ]
+  }
+}

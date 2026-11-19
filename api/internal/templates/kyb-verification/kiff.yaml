@@ -1,0 +1,45 @@
+# kyb-verification template
+#
+# A KYB onboarding workflow runs a paid bureau check (Companies House /
+# sanctions / UBO screen). RUN_KYB_CHECK is allowed only from PENDING. Once
+# the business is VERIFIED, every re-check is state_not_allowed — the paid
+# verification runs exactly once, even when a workflow step is retried or
+# re-entered. "Once and done" is the contract, not the workflow runner.
+#
+# Projected from kiff-guard cookbook/kyb-verification-guard. Executor is
+# cloud.proxy: KIFF decides; the workflow runs the bureau verification.
+
+domain: kyb-verification
+entity: Business
+
+events:
+  - ONBOARDING_STARTED
+  - KYB_VERIFIED
+
+states:
+  - PENDING
+  - VERIFIED
+
+transitions:
+  - on: ONBOARDING_STARTED
+    from: ""
+    to: PENDING
+  - on: KYB_VERIFIED
+    from: PENDING
+    to: VERIFIED
+
+actions:
+  - name: RUN_KYB_CHECK
+    allowed_states: [PENDING]
+    required_parameters: [registration_number]
+    required_permissions: [kyb.verify]
+    risk: medium
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    kyb:
+      - kyb.verify
+    admin:
+      - kyb.verify

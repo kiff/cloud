@@ -123,7 +123,8 @@ var glossaryForms = map[Lang]map[string][]string{
 // notTheTerm are lines whose English word isn't the glossary's term (a
 // verb where the term is a noun), by term, then line.
 var notTheTerm = map[string][]string{
-	"run": {"InviteRoleWhat"}, // "run the account": the verb, not a run
+	"run": {"InviteRoleWhat", // "run the account": the verb, not a run
+		"ConnectionWhy"}, // tool_not_served, "this action is never run for this app": the verb
 }
 
 // Every line of every language uses the glossary's word for each glossary

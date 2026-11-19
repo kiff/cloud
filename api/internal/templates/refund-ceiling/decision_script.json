@@ -1,0 +1,36 @@
+{
+  "title": "Refund an order — refuse refunds after it closes",
+  "narrative": "A paid order can be refunded; KIFF allows a partial refund and signs a receipt. The app tracks the running total and, when it reaches the order amount, marks the order fully refunded. After that, KIFF refuses every further refund — a closed order can't be reopened. KIFF enforces the terminal state; the app owns the arithmetic.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "An order is paid (state → PAID)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "ISSUE_REFUND",
+      "actor_id": "support-agent",
+      "parameters": { "amount_cents": 5000 },
+      "expect": "allowed",
+      "description": "The agent issues a partial refund. Allowed — the order is PAID. Signed receipt."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "REFUND_ISSUED", "payload": { "amount_cents": 5000 } },
+      "description": "The app records the partial refund (state → PARTIALLY_REFUNDED)."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "ORDER_FULLY_REFUNDED", "payload": {} },
+      "description": "The app's running total reaches the order amount and closes the order (state → FULLY_REFUNDED)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "ISSUE_REFUND",
+      "actor_id": "support-agent",
+      "parameters": { "amount_cents": 5000 },
+      "expect": "blocked",
+      "description": "Another refund is attempted on the closed order. KIFF refuses it (state_not_allowed). Signed refusal."
+    }
+  ]
+}

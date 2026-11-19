@@ -1,0 +1,84 @@
+# card-refund template — the domain a KIFF Card actually refuses on.
+#
+# Every other template demonstrates the state machine: a PAID invoice
+# refuses a retry, a closed order refuses another refund. Those are
+# decisions the domain makes on its own, before any card is consulted.
+# This one is the other half of the product: REFUND_ORDER declares
+# `requires_authority`, so an agent holding no card is refused with
+# no_mandate_issued even when the order is perfectly refundable — and
+# an agent holding one draws against it on every refund until the
+# ceiling is reached.
+#
+# The two gates stay visible and separate, which is the point:
+#   - FULLY_REFUNDED refuses on state. No card is involved.
+#   - No card, or one without enough remaining authority, refuses on
+#     authority. The order was fine.
+#
+# ISSUE_CREDIT is deliberately left without `requires_authority`. A
+# domain decides per action which of its consequences need an issued
+# card, and a template where everything needs one would teach the
+# opposite.
+
+domain: card-refund
+entity: Order
+
+events:
+  - ORDER_PAID
+  - REFUND_ISSUED
+  - ORDER_FULLY_REFUNDED
+
+states:
+  - PAID
+  - PARTIALLY_REFUNDED
+  - FULLY_REFUNDED
+
+transitions:
+  - on: ORDER_PAID
+    from: ""
+    to: PAID
+  - on: REFUND_ISSUED
+    from: PAID
+    to: PARTIALLY_REFUNDED
+  - on: REFUND_ISSUED
+    from: PARTIALLY_REFUNDED
+    to: PARTIALLY_REFUNDED
+  - on: ORDER_FULLY_REFUNDED
+    from: PARTIALLY_REFUNDED
+    to: FULLY_REFUNDED
+
+actions:
+  - name: REFUND_ORDER
+    allowed_states: [PAID, PARTIALLY_REFUNDED]
+    required_parameters: [amount_cents]
+    parameters:
+      - name: amount_cents
+        type: int
+        min: 1
+    required_permissions: [refund.issue]
+    risk: high
+    approval: never
+    executor: cloud.proxy
+    # Without an issued card covering (subject, REFUND_ORDER)
+    # this is refused — not allowed as a no-op. Declared on the action
+    # because the domain's author knows which consequences are worth an
+    # instrument, and a tenant-wide switch would make that judgement
+    # for every action at once.
+    requires_authority: true
+
+  - name: ISSUE_CREDIT
+    allowed_states: [PAID, PARTIALLY_REFUNDED]
+    required_parameters: [amount_cents]
+    parameters:
+      - name: amount_cents
+        type: int
+    required_permissions: [refund.issue]
+    risk: medium
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    support:
+      - refund.issue
+    admin:
+      - refund.issue

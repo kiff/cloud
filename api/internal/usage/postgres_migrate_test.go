@@ -12,7 +12,7 @@ import (
 	"github.com/kiff/cloud/api/internal/usage"
 )
 
-// oldTenantUsageDDL is the pre-#612 shape: 4-column primary key, no
+// oldTenantUsageDDL is the earlier shape: 4-column primary key, no
 // domain_id. The migration test recreates it to prove ApplySchema
 // migrates a real existing table forward.
 const oldTenantUsageDDL = `

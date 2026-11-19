@@ -1,0 +1,17 @@
+{
+  "id": "evt-spc-001",
+  "adapter": "cloud",
+  "type": "SUBSCRIPTION_ACTIVATED",
+  "source": "dashboard-template",
+  "received_at": "2026-09-20T12:00:00Z",
+  "entity_id": "sub_4471",
+  "entity_type": "Subscription",
+  "actor_id": "support-agent",
+  "metadata": {
+    "trace_id": "trace-spc-001"
+  },
+  "payload": {
+    "customer_id": "cus_4471",
+    "current_plan": "starter"
+  }
+}

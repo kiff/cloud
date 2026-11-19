@@ -1,0 +1,31 @@
+{
+  "title": "Pay an invoice once — refuse the retry",
+  "narrative": "An invoice arrives and the AP agent pays it; KIFF allows the first payment and signs a receipt. The app debits and marks the invoice PAID. Then a flaky connection makes the agent retry the same payment — and KIFF refuses it, because PAY_INVOICE is only allowed while the invoice is PENDING. The refusal is signed too. Pay-once is the state machine, not a dedupe table.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "An invoice is received (state → PENDING)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "PAY_INVOICE",
+      "actor_id": "ap-agent",
+      "parameters": { "amount_cents": 1000000 },
+      "expect": "allowed",
+      "description": "The agent pays the invoice. Allowed — the invoice is PENDING. Signed receipt."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "INVOICE_PAID", "payload": { "amount_cents": 1000000 } },
+      "description": "The app debited and marks the invoice PAID (state → PAID)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "PAY_INVOICE",
+      "actor_id": "ap-agent",
+      "parameters": { "amount_cents": 1000000 },
+      "expect": "blocked",
+      "description": "A retry hits the now-PAID invoice. KIFF refuses it (state_not_allowed) — no double debit. Signed refusal."
+    }
+  ]
+}

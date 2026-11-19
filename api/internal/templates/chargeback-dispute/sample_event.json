@@ -1,0 +1,18 @@
+{
+  "id": "evt-cb-001",
+  "adapter": "cloud",
+  "type": "DISPUTE_FILED",
+  "source": "dashboard-template",
+  "received_at": "2026-06-23T12:00:00Z",
+  "entity_id": "dispute-001",
+  "entity_type": "Dispute",
+  "actor_id": "disputes-agent",
+  "metadata": {
+    "trace_id": "trace-cb-001"
+  },
+  "payload": {
+    "reason_code": "10.4",
+    "amount_cents": 8500,
+    "currency": "USD"
+  }
+}

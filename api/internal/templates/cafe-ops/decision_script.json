@@ -1,0 +1,30 @@
+{
+  "title": "Auto-order more milk before the morning rush",
+  "narrative": "A SHIFT_SCHEDULED event arrives and the agent starts the shift. Looking at inventory, it sees milk is running low for the 9 AM rush and decides to auto-order more under the auto_order policy (medium-risk, no human approval). The receipt below is the tamper-evident proof of that decision.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "Ingest a SHIFT_SCHEDULED event so the cafe runtime knows there's a shift starting at 9 AM. The shift lands in the NEW state."
+    },
+    {
+      "kind": "execute",
+      "action_name": "START_SHIFT",
+      "actor_id": "agent-cafe",
+      "parameters": {
+        "opened_by": "agent-cafe"
+      },
+      "description": "Start the shift. START_SHIFT runs from NEW and emits a SHIFT_STARTED event that moves the shift into OPEN, where inventory actions are allowed."
+    },
+    {
+      "kind": "execute",
+      "action_name": "AUTO_ORDER_INVENTORY",
+      "actor_id": "agent-cafe",
+      "parameters": {
+        "item_id": "milk-2pct",
+        "quantity": 6,
+        "amount_cents": 2400
+      },
+      "description": "Run the AUTO_ORDER_INVENTORY action on the now-OPEN shift. The agent's decision is signed and the receipt is anchored on Base Sepolia."
+    }
+  ]
+}

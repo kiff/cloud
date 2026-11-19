@@ -1,0 +1,31 @@
+{
+  "title": "Run a KYB check once — refuse the re-check",
+  "narrative": "A pending business onboarding can run a paid bureau check; KIFF allows it and signs a receipt. The app records the result and marks the business verified. When the workflow re-enters and tries to run the check again, KIFF refuses it — RUN_KYB_CHECK is only allowed from PENDING — so the paid verification runs exactly once, even on a retried workflow.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "A business starts onboarding (state → PENDING)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "RUN_KYB_CHECK",
+      "actor_id": "kyb-workflow",
+      "parameters": { "registration_number": "12345678" },
+      "expect": "allowed",
+      "description": "The workflow runs the paid bureau check. Allowed — the business is PENDING. Signed receipt."
+    },
+    {
+      "kind": "ingest",
+      "event": { "type": "KYB_VERIFIED", "payload": {} },
+      "description": "The result is recorded and the business is verified (state → VERIFIED)."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "RUN_KYB_CHECK",
+      "actor_id": "kyb-workflow",
+      "parameters": { "registration_number": "12345678" },
+      "expect": "blocked",
+      "description": "A retried workflow step runs the check again. KIFF refuses it (state_not_allowed) — no double bureau charge. Signed refusal."
+    }
+  ]
+}

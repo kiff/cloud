@@ -1,0 +1,67 @@
+{
+  "_comment": "Fixture B — multi-tool ranking. The observe-quickstart tool set as a connected runtime would report it. Grounded in the guard's observe-quickstart cookbook example (its support agent): three @tool functions with their real docstrings and signatures. observe-quickstart runs the guard in observe mode with NO ToolMap, so action/entity_type/entity_arg are unbound (empty) and the action is derived from the tool name. Hand-derived from source, not model-generated.",
+  "connection": {
+    "tenant_id": "cookbook",
+    "project": "cookbook",
+    "environment": "local",
+    "agent_id": "support-agent",
+    "workflow": "observe-quickstart",
+    "adapter": "agno",
+    "sdk_version": "0.1.0",
+    "mode": "observe",
+    "seen_count": 5
+  },
+  "observation": {
+    "tenant_id": "cookbook",
+    "project": "cookbook",
+    "environment": "local",
+    "agent_id": "support-agent",
+    "workflow": "observe-quickstart",
+    "tools": [
+      {
+        "name": "refund_order",
+        "description": "Issue a refund on an order.",
+        "observed_call_count": 2,
+        "required": ["order_id", "amount_cents", "reason"],
+        "parameter_schema": {
+          "type": "object",
+          "properties": {
+            "order_id": { "type": "string" },
+            "amount_cents": { "type": "integer" },
+            "reason": { "type": "string" }
+          },
+          "required": ["order_id", "amount_cents", "reason"]
+        }
+      },
+      {
+        "name": "send_email",
+        "description": "Send an email to a customer.",
+        "observed_call_count": 2,
+        "required": ["to", "subject", "body"],
+        "parameter_schema": {
+          "type": "object",
+          "properties": {
+            "to": { "type": "string" },
+            "subject": { "type": "string" },
+            "body": { "type": "string" }
+          },
+          "required": ["to", "subject", "body"]
+        }
+      },
+      {
+        "name": "escalate_ticket",
+        "description": "Escalate a support ticket to a human.",
+        "observed_call_count": 1,
+        "required": ["ticket_id", "priority"],
+        "parameter_schema": {
+          "type": "object",
+          "properties": {
+            "ticket_id": { "type": "string" },
+            "priority": { "type": "string" }
+          },
+          "required": ["ticket_id", "priority"]
+        }
+      }
+    ]
+  }
+}

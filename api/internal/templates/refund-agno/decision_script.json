@@ -1,0 +1,29 @@
+{
+  "title": "Auto-refund a damaged order under policy",
+  "narrative": "An ORDER_PLACED event arrives, immediately followed by ORDER_PAID. The customer reports the package arrived damaged. The agent checks the policy (under $100, within 30 days, eligible reason), and decides to auto-refund without escalating to a human. The receipt below is the tamper-evident proof of that decision.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "Ingest an ORDER_PLACED event so the refund runtime tracks the order."
+    },
+    {
+      "kind": "execute",
+      "action_name": "MARK_PAID",
+      "actor_id": "agent-payments",
+      "parameters": {
+        "payment_id": "pay-demo"
+      },
+      "description": "Mark the order paid (low-risk, no approval). Moves the order CREATED → PAID."
+    },
+    {
+      "kind": "execute",
+      "action_name": "AUTO_REFUND",
+      "actor_id": "agent-refunds",
+      "parameters": {
+        "amount": 4900,
+        "reason": "package arrived damaged"
+      },
+      "description": "Run AUTO_REFUND under the agent's policy. Decision signed and anchored."
+    }
+  ]
+}

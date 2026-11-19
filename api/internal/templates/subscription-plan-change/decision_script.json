@@ -1,0 +1,39 @@
+{
+  "title": "Plan changes on their own card",
+  "narrative": "A customer-support agent can carry a separate count-based card for active subscription changes. That card can be changed or revoked without disturbing its refund or store-credit authority.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "A subscription becomes active."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "CHANGE_PLAN",
+      "actor_id": "support-agent",
+      "parameters": {"target_plan": "growth"},
+      "expect": "blocked",
+      "expect_reason": "no_mandate_issued",
+      "description": "The subscription is active, but no Plan Change Card has been issued."
+    },
+    {
+      "kind": "issue_card",
+      "card": {
+        "id": "support-plan-card",
+        "subject": "support-agent",
+        "actions": ["CHANGE_PLAN"],
+        "quantity": "count",
+        "limit": 40,
+        "window": "calendar_day"
+      },
+      "description": "An owner issues a Plan Change Card for up to 40 authorizations per day."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "CHANGE_PLAN",
+      "actor_id": "support-agent",
+      "parameters": {"target_plan": "growth"},
+      "expect": "allowed",
+      "description": "KIFF authorizes one plan change and draws one from this card. The billing system applies the change afterwards."
+    }
+  ]
+}

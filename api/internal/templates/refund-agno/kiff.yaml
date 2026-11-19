@@ -1,0 +1,76 @@
+# refund-agno starter template
+#
+# A minimal e-commerce refund domain that ships as a one-click
+# starter on Kiff Cloud. Sized so a developer can read the whole
+# YAML in one screen and understand the model.
+#
+# Contract:
+#   - Order moves CREATED -> PAID via MARK_PAID (no approval).
+#   - PAID orders can be refunded via REFUND_ORDER (high-risk,
+#     approval required) or AUTO_REFUND (medium-risk, never).
+#
+# The cloud's template apply path validates this against
+# executors.DefaultRegistry(); change the executor: keys only when
+# the registry's keys change.
+
+domain: refund-agno
+entity: Order
+
+events:
+  - ORDER_PLACED
+  - ORDER_PAID
+  - ORDER_REFUNDED
+
+states:
+  - CREATED
+  - PAID
+  - REFUNDED
+
+transitions:
+  - on: ORDER_PLACED
+    from: ""
+    to: CREATED
+  - on: ORDER_PAID
+    from: CREATED
+    to: PAID
+  - on: ORDER_REFUNDED
+    from: PAID
+    to: REFUNDED
+
+actions:
+  - name: MARK_PAID
+    allowed_states: [CREATED]
+    required_parameters: [payment_id]
+    required_permissions: [orders.mark_paid]
+    risk: low
+    approval: never
+    executor: refund.mark_paid
+
+  - name: AUTO_REFUND
+    allowed_states: [PAID]
+    required_parameters: [amount, reason]
+    required_permissions: [orders.refund]
+    risk: medium
+    approval: never
+    executor: refund.auto_refund
+
+  - name: REFUND_ORDER
+    allowed_states: [PAID]
+    required_parameters: [amount, reason]
+    # orders.approve is the reviewer permission: held by admin,
+    # not by ops_agent, so the agent that requests the refund's
+    # approval cannot grant it. The proposer is not required to hold it.
+    required_permissions: [orders.refund, orders.approve]
+    risk: high
+    approval: required
+    executor: refund.issue_refund
+
+permissions:
+  roles:
+    admin:
+      - orders.mark_paid
+      - orders.refund
+      - orders.approve
+    ops_agent:
+      - orders.mark_paid
+      - orders.refund

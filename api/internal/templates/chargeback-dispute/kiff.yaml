@@ -1,0 +1,55 @@
+# chargeback-dispute template
+#
+# A disputes agent files and submits chargebacks. SUBMIT_CHARGEBACK is
+# allowed only from INVESTIGATED. Once a dispute is SUBMITTED, every
+# re-submission is state_not_allowed — preventing duplicate chargebacks to
+# the card scheme, each of which carries a penalty fee. The investigate→
+# submit→resolve order is enforced by the contract.
+#
+# Projected from kiff-guard cookbook/chargeback-dispute-guard. Executor is
+# cloud.proxy: KIFF decides; the agent submits to the card scheme.
+
+domain: chargeback-dispute
+entity: Dispute
+
+events:
+  - DISPUTE_FILED
+  - DISPUTE_INVESTIGATED
+  - CHARGEBACK_SUBMITTED
+  - DISPUTE_RESOLVED
+
+states:
+  - FILED
+  - INVESTIGATED
+  - SUBMITTED
+  - RESOLVED
+
+transitions:
+  - on: DISPUTE_FILED
+    from: ""
+    to: FILED
+  - on: DISPUTE_INVESTIGATED
+    from: FILED
+    to: INVESTIGATED
+  - on: CHARGEBACK_SUBMITTED
+    from: INVESTIGATED
+    to: SUBMITTED
+  - on: DISPUTE_RESOLVED
+    from: SUBMITTED
+    to: RESOLVED
+
+actions:
+  - name: SUBMIT_CHARGEBACK
+    allowed_states: [INVESTIGATED]
+    required_parameters: [reason_code, amount_cents]
+    required_permissions: [dispute.submit_chargeback]
+    risk: high
+    approval: never
+    executor: cloud.proxy
+
+permissions:
+  roles:
+    disputes:
+      - dispute.submit_chargeback
+    admin:
+      - dispute.submit_chargeback

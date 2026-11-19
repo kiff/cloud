@@ -1,0 +1,56 @@
+{
+  "title": "A refund on a card the owner issued",
+  "narrative": "The order is refundable and the support agent has permission, yet the first refund is refused because nobody issued its Refund Card. An owner issues one for REFUND_ORDER, up to €5,000 a day. The next authorization draws €4,000. A second €2,000 proposal is refused while €1,000 remains because that action does not fit. State and authority stay visible as separate checks.",
+  "steps": [
+    {
+      "kind": "ingest",
+      "description": "An order for €4,000 is paid (state → PAID). Refundable, by the domain's own rules."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "REFUND_ORDER",
+      "actor_id": "support-agent",
+      "parameters": {
+        "amount_cents": 400000
+      },
+      "expect": "blocked",
+      "description": "The agent proposes the refund holding no card. Refused with no_mandate_issued — nothing wrong with the order, the permission or the state. Nothing has been issued yet.",
+      "expect_reason": "no_mandate_issued"
+    },
+    {
+      "kind": "issue_card",
+      "card": {
+        "id": "support-refund-card",
+        "subject": "support-agent",
+        "actions": [
+          "REFUND_ORDER"
+        ],
+        "quantity": "sum(amount_cents)",
+        "limit": 500000,
+        "window": "calendar_day"
+      },
+      "description": "The owner issues the support agent a Refund Card: REFUND_ORDER, up to €5,000 a day. A person decided; the agent cannot raise it."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "REFUND_ORDER",
+      "actor_id": "support-agent",
+      "parameters": {
+        "amount_cents": 400000
+      },
+      "expect": "allowed",
+      "description": "The same refund, now authorized against the card. €4,000 is drawn and €1,000 is left for the day — and it is an authorization: your system runs the refund afterwards."
+    },
+    {
+      "kind": "attempt",
+      "action_name": "REFUND_ORDER",
+      "actor_id": "support-agent",
+      "parameters": {
+        "amount_cents": 200000
+      },
+      "expect": "blocked",
+      "description": "A second €2,000 refund. Refused — not because the card is empty, but because €2,000 does not fit the €1,000 it has left for the day. The order is still refundable and the permission still holds; the authority is what ran short. A smaller refund would still go through, and more room is the owner's decision, which leaves a record.",
+      "expect_reason": "mandate_limit_reached"
+    }
+  ]
+}

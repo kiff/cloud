@@ -98,6 +98,10 @@ func settlement(e mandate.Exception, now time.Time, answers map[string]membershi
 		}
 	}
 	tool, hasTool := tools[e.ProposalID]
+	// A receipt keeps the tool's own report, never the connection's or the
+	// gateway's English: those read by status and code (ForReader). The
+	// gateway's record keeps the text.
+	tool = tool.ForReader()
 	switch e.StatusAt(now) {
 	case mandate.ExceptionRejected:
 		s.Outcome, s.Answer = "rejected", "reject"
@@ -119,7 +123,7 @@ func settlement(e mandate.Exception, now time.Time, answers map[string]membershi
 		}
 		switch {
 		case hasTool && tool.Status != tooloutcome.Sending:
-			s.Tool = &receipt.SettlementTool{Status: string(tool.Status), Message: tool.Message, At: tool.At}
+			s.Tool = &receipt.SettlementTool{Status: string(tool.Status), Message: tool.Message, At: tool.At, RefusedBy: tool.RefusedBy, Code: tool.Code}
 		case hasTool, now.Sub(since) < Grace:
 			// Sent and not answered yet, or the report may still come.
 			return s, false
@@ -139,7 +143,7 @@ func settlement(e mandate.Exception, now time.Time, answers map[string]membershi
 		case hasTool && tool.Status == tooloutcome.Sending:
 			return s, false
 		case hasTool:
-			s.Tool = &receipt.SettlementTool{Status: string(tool.Status), Message: tool.Message, At: tool.At}
+			s.Tool = &receipt.SettlementTool{Status: string(tool.Status), Message: tool.Message, At: tool.At, RefusedBy: tool.RefusedBy, Code: tool.Code}
 		}
 	default:
 		// Held, approved and not yet used, or approved with no room: not
