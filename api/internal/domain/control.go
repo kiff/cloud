@@ -149,14 +149,11 @@ func NormalizeControlMode(mode string) string {
 // It is a helper over ControlStore.List so every store implementation
 // gets identity-addressed selection without a new interface method.
 func FindActiveControl(ctx context.Context, store ControlStore, tenantID, action, environment string) (Control, error) {
-	list, err := store.List(ctx, tenantID)
+	list, err := ActiveControls(ctx, store, tenantID)
 	if err != nil {
 		return Control{}, err
 	}
 	for _, c := range list {
-		if c.Status != "active" {
-			continue
-		}
 		if !containsAction(c.Actions, action) {
 			continue
 		}
@@ -183,6 +180,9 @@ func containsAction(actions []string, want string) bool {
 // tenant is mechanically unreachable (it isn't in this tenant's list)
 // — the endpoint relies on this to 404 cross-tenant ids.
 func FindControlByID(ctx context.Context, store ControlStore, tenantID, controlID string) (Control, error) {
+	if g, ok := store.(controlGetter); ok {
+		return g.GetControl(ctx, tenantID, controlID)
+	}
 	list, err := store.List(ctx, tenantID)
 	if err != nil {
 		return Control{}, err
@@ -193,6 +193,40 @@ func FindControlByID(ctx context.Context, store ControlStore, tenantID, controlI
 		}
 	}
 	return Control{}, ErrControlNotFound
+}
+
+// activeLister is a ControlStore that reads only a tenant's active
+// controls. List returns every version a tenant ever activated, superseded
+// ones included (one test tenant had 7,906 for 22 active), and the
+// decision path reads controls on every call, so it reads only the
+// active ones when the store can.
+type activeLister interface {
+	ListActive(ctx context.Context, tenantID string) ([]Control, error)
+}
+
+// controlGetter is a ControlStore that reads one control by id, tenant-
+// scoped, instead of listing every version to find it.
+type controlGetter interface {
+	GetControl(ctx context.Context, tenantID, controlID string) (Control, error)
+}
+
+// ActiveControls returns a tenant's active controls, newest first: the
+// store's own active read when it has one, else List filtered to them.
+func ActiveControls(ctx context.Context, store ControlStore, tenantID string) ([]Control, error) {
+	if a, ok := store.(activeLister); ok {
+		return a.ListActive(ctx, tenantID)
+	}
+	list, err := store.List(ctx, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	active := list[:0:0]
+	for _, c := range list {
+		if c.Status == "active" {
+			active = append(active, c)
+		}
+	}
+	return active, nil
 }
 
 // ErrControlNotFound is returned when a control lookup produces

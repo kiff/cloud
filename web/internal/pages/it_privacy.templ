@@ -116,7 +116,7 @@ templ privacyRolesIT() {
 				delle decisioni e gli altri contenuti che passano per il
 				runtime per conto dei nostri clienti, e per ciò che tafs
 				conserva per loro (le esecuzioni, le chat, i resoconti e
-				le note di memoria di ogni taf).
+				le note di memoria di ogni taf e i file che consegna).
 				I clienti (i tenant) sono titolari del trattamento di
 				quei dati; ci danno istruzioni tramite le impostazioni
 				del loro account e la configurazione del dominio.
@@ -234,21 +234,7 @@ templ privacyCategoriesIT() {
 				esercente o una persona. Su un telefono Android bloccato
 				mostra solo «Un taf ti aspetta», e anche su un iPhone
 				bloccato, a meno che tu non abbia impostato le sue
-				anteprime su mostra sempre. Un Apple Watch non conserva
-				nulla sul disco, non contiene sessioni né chiavi, comunica
-				solo con il tuo iPhone associato, non approva mai, e
-				mostra gli avvisi dell'iPhone; può rifiutare, bloccare o
-				inviare a Coach solo una volta che ha un codice. Un orologio Wear OS
-				conserva solo il numero di ciò che ti aspetta, azzerato
-				quando il telefono si disconnette o l'orologio viene
-				bloccato; non contiene sessioni né chiavi, comunica solo
-				con il tuo telefono associato, non approva mai, e può
-				rifiutare, bloccare o inviare a Coach solo mentre ha un
-				blocco schermo ed è sbloccato. Entrambi gli orologi inviano
-				ciò che dici a Coach solo come testo, tramite il telefono,
-				dopo che hai consentito l'IA. Il servizio vocale
-				dell'orologio stesso, di Apple o di Google, trasforma le tue
-				parole in quel testo. Su un PC Windows, un computer
+				anteprime su mostra sempre. <strong>Il tuo orologio:</strong> un orologio non contiene password né chiavi, comunica solo con il tuo telefono associato e non approva mai. Invia ciò che dici a Coach solo come testo, tramite il telefono, dopo che hai consentito l'IA. Il servizio vocale dell'orologio stesso, di Apple o di Google, trasforma le tue parole in quel testo. Può rifiutare, bloccare o inviare a Coach solo mentre ha un blocco schermo o un codice ed è sbloccato. <strong>Apple Watch:</strong> mostra i tuoi taf e le loro pagine senza conservarli. Conserva solo la tua sezione In arrivo, in un file che non può leggere mentre è bloccato: ogni chiamata trattenuta come il nome del suo taf e ciò che chiede, mai un importo, e le risposte di Coach a ciò che hai inviato dall'orologio, come testo. Non conserva nulla se l'orologio non ha un codice. La sezione In arrivo viene cancellata quando il tuo iPhone si disconnette, o la volta successiva che l'app si apre o si chiude senza codice. Non fa registrazioni, e le uniche notifiche che mostra sono quelle del tuo iPhone. <strong>Wear OS:</strong> mostra l'email del tuo account, il calendario di oggi e le pagine dei tuoi taf senza conservarli. Conserva la tua sezione In arrivo, dove ogni riga è il nome di un taf e ciò che dice, mai un importo, e un messaggio conservato per dopo, come testo. Disconnetterti, sull'orologio o sul telefono, cancella tutto. Per il suo riquadro, conserva anche il numero di ciò che ti aspetta, mostrato solo mentre l'orologio è sbloccato, e cancellato quando ti disconnetti, o la volta successiva che il riquadro viene mostrato mentre l'orologio è bloccato o non ha un blocco schermo. Dopo una disconnessione sull'orologio, ne conserva una nota, finché non accedi di nuovo. La sezione In arrivo viene cancellata anche la volta successiva che l'app si apre o si chiude mentre l'orologio è bloccato o non ha un blocco schermo. Un messaggio conservato per dopo resta finché non lo invii o lo elimini, perché hai chiesto che venga inviato. L'orologio non conserva alcuna registrazione. Il risultato di un taf può restare nelle notifiche dell'orologio finché non lo chiudi o ti disconnetti sull'orologio. Su un PC Windows, un computer
 				Linux o un Mac con l'app per macOS 12, gli avvisi sono
 				creati dall'app stessa mentre è in esecuzione, senza
 				token push e senza passare per nessun'altra azienda. Su
@@ -522,7 +508,7 @@ templ privacyRetentionIT() {
 				inattiva per un'ora e al massimo per quattro ore dalla
 				lettura, poi eliminato automaticamente, entro pochi
 				giorni), e le sue note di memoria finché il taf non
-				viene rimosso; il token o la chiave di un collegamento in planque, o l'accesso di un collegamento gestito presso Composio, finché non lo scolleghi, e la registrazione delle sue
+				viene rimosso; i file che consegna per 30 giorni dall'esecuzione che li ha creati, poi cancellati automaticamente entro un giorno; il token o la chiave di un collegamento in planque, o l'accesso di un collegamento gestito presso Composio, finché non lo scolleghi, e la registrazione delle sue
 				approvazioni fino alla fine dell'account; vedi
 				l'<a href="/it/legal/dpa#annex-4">Allegato 4 del DPA</a>.
 			</li>

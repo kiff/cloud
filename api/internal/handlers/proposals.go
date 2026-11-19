@@ -2429,12 +2429,12 @@ func (h *ProposalsHandler) activeDomainFor(ctx context.Context, tenantID string)
 	if h.controls == nil {
 		return ""
 	}
-	list, err := h.controls.List(ctx, tenantID)
+	list, err := domain.ActiveControls(ctx, h.controls, tenantID)
 	if err != nil {
 		return ""
 	}
 	for _, c := range list {
-		if c.Status == "active" && strings.TrimSpace(c.Domain) != "" {
+		if strings.TrimSpace(c.Domain) != "" {
 			return c.Domain
 		}
 	}

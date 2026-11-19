@@ -1,0 +1,13 @@
+# KIFF's service logs (/var/log/kiff): a few days on the host,
+# and CloudWatch keeps 7 (/kiff/api, /kiff/web), within the 30 days the privacy
+# page and the DPA's Annex 4 promise. copytruncate: systemd holds the file open.
+/var/log/kiff/*.log {
+    daily
+    rotate 3
+    maxsize 100M
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+}

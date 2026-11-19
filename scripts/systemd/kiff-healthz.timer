@@ -1,0 +1,13 @@
+[Unit]
+Description=Run kiff-cloud healthz probe every minute
+Documentation=https://github.com/kiff/cloud
+
+[Timer]
+# Wait 30s after boot, then fire every minute.
+OnBootSec=30s
+OnUnitActiveSec=60s
+AccuracySec=5s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

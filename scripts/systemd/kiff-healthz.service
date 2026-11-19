@@ -1,0 +1,13 @@
+[Unit]
+Description=kiff-cloud cron-on-box healthz probe (custom CloudWatch metrics)
+Documentation=https://github.com/kiff/cloud
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/kiff/bin/healthz-probe.sh
+User=root
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

@@ -118,8 +118,7 @@ templ privacyRolesFR() {
 				les enregistrements d'actions, les reçus de décision et
 				les autres contenus qui passent par le runtime pour le
 				compte de nos clients, et pour ce que tafs conserve pour
-				eux (les exécutions, les chats, les rapports et les
-				notes de mémoire de chaque taf).
+				eux (les exécutions, les chats, les rapports et les notes de mémoire de chaque taf et les fichiers qu'il livre).
 				Les clients (les locataires) sont responsables du
 				traitement de ces données ; ils nous donnent leurs
 				instructions par les réglages de leur compte et la
@@ -246,19 +245,7 @@ templ privacyCategoriesFR() {
 				l'alerte d'un téléphone déverrouillé peut afficher un
 				montant, un commerçant ou une personne. Sur un téléphone
 				Android verrouillé, elle n'affiche que « Un taf vous attend », et sur un iPhone verrouillé aussi, sauf si vous avez réglé ses aperçus pour qu'ils s'affichent toujours.
-				Une Apple Watch ne garde rien sur disque, ne détient ni session ni clé, ne communique qu'avec votre iPhone associé, n'approuve jamais, et affiche les alertes de l'iPhone ; elle ne peut refuser, bloquer ou envoyer à Coach qu'une fois qu'elle a un code. Une montre Wear OS ne garde que le nombre de
-				ce qui vous attend, effacé quand le téléphone se
-				déconnecte ou que la montre est verrouillée ; elle ne
-				détient ni session ni clé, ne communique qu'avec votre
-				téléphone associé, n'approuve jamais, et ne peut refuser,
-				bloquer ou envoyer à Coach que lorsqu'elle a un
-				verrouillage d'écran et qu'elle est déverrouillée.
-				Chacune des deux montres n'envoie ce que vous dites à
-				Coach que sous forme de texte, via le téléphone, une
-				fois que vous avez autorisé l'IA. C'est le service de
-				reconnaissance vocale de la montre elle-même, celui
-				d'Apple ou de Google, qui transforme vos paroles
-				en ce texte. Sur un PC Windows, un ordinateur Linux ou un Mac avec l'app macOS 12, les alertes sont créées par l'app elle-même pendant qu'elle tourne, sans jeton push et sans passer par aucune autre société. Sous Windows et Linux, elles indiquent quel taf, ce qu'il veut faire, le montant, pourquoi et pour quand ; dans l'app macOS 12, elles affichent les mots de KIFF pour l'appel, une fois que vous les avez activées, et un écran verrouillé affiche ce que permet le réglage d'aperçu du Mac.
+				<strong>Votre montre :</strong> une montre ne détient ni mot de passe ni clé, ne communique qu'avec votre téléphone associé, et n'approuve jamais. Elle n'envoie ce que vous dites à Coach que sous forme de texte, via le téléphone, une fois que vous avez autorisé l'IA. C'est le service de reconnaissance vocale de la montre elle-même, celui d'Apple ou de Google, qui transforme vos paroles en ce texte. Elle ne peut refuser, bloquer ou envoyer à Coach que lorsqu'elle a un verrouillage d'écran ou un code et qu'elle est déverrouillée. <strong>Apple Watch :</strong> elle affiche vos tafs et leurs pages sans les garder. Elle ne garde que votre Boîte de réception, dans un fichier qu'elle ne peut pas lire tant qu'elle est verrouillée : chaque appel retenu sous la forme du nom de son taf et de ce qu'il demande, jamais un montant, et les réponses de Coach à ce que vous avez envoyé depuis la montre, sous forme de texte. Elle ne garde rien si la montre n'a pas de code. La Boîte de réception est effacée quand votre iPhone se déconnecte, ou la prochaine fois que l'app s'ouvre ou se ferme sans code. Elle ne fait aucun enregistrement, et les seules notifications qu'elle affiche sont celles de votre iPhone. <strong>Wear OS :</strong> elle affiche l'adresse e-mail de votre compte, le calendrier du jour et les pages de vos tafs sans les garder. Elle garde votre Boîte de réception, où chaque ligne est le nom d'un taf et ce qu'il dit, jamais un montant, et un message gardé pour plus tard, sous forme de texte. Vous déconnecter, sur la montre ou sur le téléphone, efface tout cela. Pour sa carte, elle garde aussi le nombre de ce qui vous attend, affiché seulement quand la montre est déverrouillée, et effacé quand vous vous déconnectez, ou la prochaine fois que la carte s'affiche alors que la montre est verrouillée ou n'a pas de verrouillage d'écran. Après une déconnexion sur la montre, elle garde une trace de cette déconnexion, jusqu'à ce que vous vous reconnectiez. La Boîte de réception est aussi effacée la prochaine fois que l'app s'ouvre ou se ferme alors que la montre est verrouillée ou n'a pas de verrouillage d'écran. Un message gardé pour plus tard reste jusqu'à ce que vous l'envoyiez ou le supprimiez, puisque vous avez demandé qu'il soit envoyé. La montre ne garde aucun enregistrement. Le résultat d'un taf peut rester dans les notifications de la montre jusqu'à ce que vous le fermiez ou que vous vous déconnectiez sur la montre. Sur un PC Windows, un ordinateur Linux ou un Mac avec l'app macOS 12, les alertes sont créées par l'app elle-même pendant qu'elle tourne, sans jeton push et sans passer par aucune autre société. Sous Windows et Linux, elles indiquent quel taf, ce qu'il veut faire, le montant, pourquoi et pour quand ; dans l'app macOS 12, elles affichent les mots de KIFF pour l'appel, une fois que vous les avez activées, et un écran verrouillé affiche ce que permet le réglage d'aperçu du Mac.
 				Sous Windows, elles sont désactivées jusqu'à ce que vous
 				les activiez, et n'affichent que « Un taf vous attend »
 				quand l'écran est verrouillé. Une alerte affichée avant
@@ -540,7 +527,7 @@ templ privacyRetentionFR() {
 				heures après la lecture, puis supprimé automatiquement,
 				sous quelques jours), et ses notes de mémoire
 				jusqu'à la
-				suppression du taf ; le jeton ou la clé d'une connexion dans planque, ou l'authentification d'une connexion gérée chez Composio, jusqu'à ce que vous la déconnectiez, et
+				suppression du taf ; les fichiers qu'il livre 30 jours à partir de l'exécution qui les a créés, puis supprimés automatiquement dans un délai d'un jour ; le jeton ou la clé d'une connexion dans planque, ou l'authentification d'une connexion gérée chez Composio, jusqu'à ce que vous la déconnectiez, et
 				l'enregistrement de ses approbations jusqu'à la clôture du
 				compte ; voir l'<a href="/fr/legal/dpa#annex-4">annexe 4 du DPA</a>.
 			</li>

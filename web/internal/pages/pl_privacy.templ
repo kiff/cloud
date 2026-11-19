@@ -118,7 +118,7 @@ templ privacyRolesPL() {
 				decyzji i innych treści, które przepływają przez
 				środowisko wykonawcze w imieniu naszych klientów, oraz
 				tego, co tafs dla nich przechowuje (uruchomienia, czaty,
-				raporty i notatki pamięci każdego tafa).
+				raporty i notatki pamięci każdego tafa oraz pliki, które dostarcza).
 				Administratorami tych danych są klienci (tenanci);
 				wydają nam polecenia przez ustawienia konta
 				i konfigurację domeny. Tę relację reguluje umowa
@@ -241,23 +241,7 @@ templ privacyCategoriesPL() {
 				sprzedawcę lub osobę. Na zablokowanym telefonie
 				z Androidem pokazuje tylko „Taf czeka na Ciebie”, i tak
 				samo na zablokowanym iPhonie, chyba że ustawisz w nim, by
-				podglądy pokazywały się zawsze. Apple Watch nie
-				przechowuje niczego na dysku, nie przechowuje sesji ani
-				klucza, komunikuje się tylko z Twoim sparowanym
-				iPhone’em, nigdy nie zatwierdza i pokazuje alerty
-				iPhone’a; może odrzucić, zablokować lub wysłać do Coacha
-				dopiero wtedy, gdy ma ustawiony kod. Zegarek
-				z Wear OS przechowuje tylko liczbę tego, co czeka na
-				Ciebie, czyszczoną, gdy telefon się wyloguje albo
-				zegarek zostanie zablokowany; nie przechowuje sesji ani
-				klucza, komunikuje się tylko z Twoim sparowanym
-				telefonem, nigdy nie zatwierdza i może odrzucić,
-				zablokować lub wysłać do Coacha tylko wtedy, gdy ma
-				blokadę ekranu i jest odblokowany. Oba zegarki wysyłają
-				to, co mówisz do Coacha, tylko jako tekst, przez
-				telefon, gdy już zezwolisz na AI. Własna usługa
-				rozpoznawania mowy zegarka, Apple lub Google, zamienia
-				Twoje słowa na ten tekst. Na komputerze z Windows lub
+				podglądy pokazywały się zawsze. <strong>Twój zegarek:</strong> zegarek nie przechowuje hasła ani klucza, komunikuje się tylko z Twoim sparowanym telefonem i nigdy nie zatwierdza. To, co mówisz do Coacha, wysyła tylko jako tekst, przez telefon, gdy już zezwolisz na AI. Własna usługa rozpoznawania mowy zegarka, Apple lub Google, zamienia Twoje słowa na ten tekst. Może odrzucić, zablokować lub wysłać do Coacha tylko wtedy, gdy ma blokadę ekranu lub kod i jest odblokowany. <strong>Apple Watch:</strong> pokazuje Twoje tafy i ich strony, nie przechowując ich. Przechowuje tylko Twoją Skrzynkę, w pliku, którego nie może odczytać, gdy jest zablokowany: każde oczekujące wywołanie jako nazwę jego tafa i to, o co prosi, nigdy kwotę, oraz odpowiedzi Coacha na to, co wysłano z zegarka, jako tekst. Nie przechowuje niczego, jeśli zegarek nie ma kodu. Skrzynka znika, gdy Twój iPhone się wyloguje, albo przy następnym otwarciu lub zamknięciu aplikacji bez kodu. Niczego nie nagrywa, a jedyne powiadomienia, jakie pokazuje, to powiadomienia Twojego iPhone’a. <strong>Wear OS:</strong> pokazuje adres e-mail Twojego konta, dzisiejszy kalendarz i strony Twoich tafów, nie przechowując ich. Przechowuje Twoją Skrzynkę, w której każdy wiersz to nazwa tafa i to, co mówi, nigdy kwota, oraz jedną wiadomość zachowaną na później, jako tekst. Wylogowanie, na zegarku lub na telefonie, czyści to wszystko. Na potrzeby kafelka przechowuje też liczbę tego, co czeka na Ciebie, pokazywaną tylko wtedy, gdy zegarek jest odblokowany, i czyszczoną przy wylogowaniu albo przy następnym wyświetleniu kafelka, gdy zegarek jest zablokowany lub nie ma blokady ekranu. Po wylogowaniu na zegarku przechowuje informację o tym wylogowaniu, dopóki nie zalogujesz się ponownie. Skrzynka znika też przy następnym otwarciu lub zamknięciu aplikacji, gdy zegarek jest zablokowany albo nie ma blokady ekranu. Wiadomość zachowana na później zostaje, dopóki jej nie wyślesz lub nie usuniesz, bo jej wysłanie zostało zlecone. Zegarek nie przechowuje żadnego nagrania. Wynik tafa może zostać w powiadomieniach zegarka, dopóki go nie zamkniesz lub nie wylogujesz się na zegarku. Na komputerze z Windows lub
 				z Linuksem albo na Macu z aplikacją na macOS 12 alerty
 				tworzy sama aplikacja, gdy działa, bez tokenu push i bez
 				udziału żadnej innej firmy. W Windows i na Linuksie
@@ -533,7 +517,7 @@ templ privacyRetentionPL() {
 				godziny od odczytu, po czym jest automatycznie usuwane,
 				w ciągu kilku dni), a jego notatki pamięci do
 				usunięcia
-				tafa; token lub klucz połączenia w planque albo logowanie połączenia zarządzanego w Composio, dopóki go nie rozłączysz, a zapis jego zatwierdzeń do zamknięcia
+				tafa; pliki, które dostarcza, 30 dni od uruchomienia, które je utworzyło, a potem automatycznie usuwane w ciągu doby; token lub klucz połączenia w planque albo logowanie połączenia zarządzanego w Composio, dopóki go nie rozłączysz, a zapis jego zatwierdzeń do zamknięcia
 				konta; zobacz
 				<a href="/pl/legal/dpa#annex-4">Załącznik 4 do DPA</a>.
 			</li>
