@@ -87,8 +87,10 @@ jobs:
     # The protected environment `production` (main only, admin-managed). Its environment variables
     # override repository variables of the same name, so the values that decide who may approve and
     # what counts can be changed only by an admin, never by anyone with write access to this repo.
-    # Note: with an environment, the job's OIDC subject is `repo:kiff/cloud:environment:production`
-    # (no longer `…:ref:refs/heads/main`), so AWS_DEPLOY_ROLE's trust policy must accept it.
+    # Note: with an environment, and with this repo's immutable OIDC subjects on, the job's subject
+    # is the id form `repo:<owner>@<owner-id>/cloud@<repo-id>:environment:production` (not the name
+    # form `repo:kiff/cloud:…`, and no longer `…:ref:refs/heads/main`), so AWS_DEPLOY_ROLE's trust
+    # policy must accept that id form.
     environment: production
     runs-on: ubuntu-latest
     timeout-minutes: 30
