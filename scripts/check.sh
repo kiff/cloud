@@ -157,6 +157,40 @@ for rule in "${deny[@]}"; do
 done
 [[ $grep_failed -eq 0 ]] || failed+=("grep")
 
+# A workflow job's env is printed in clear at the top of each step's log, and this repository's logs are
+# public. So a value that names an account, a person, a key or a repository by id is read as `secrets.*`
+# (masked), never `vars.*`. Checked in the repository's own workflows, which the published tree doesn't
+# carry. The rule tries itself first on a line it must catch and one it must pass, so it never passes by
+# matching nothing.
+id_vars() { # files...: the `vars.NAME` reads whose NAME carries ids
+	grep -noE 'vars\.[A-Z0-9_]+' "$@" 2>/dev/null |
+		grep -E 'vars\.[A-Z0-9_]*(TENANT|SUBJECT|SERVICE_ACCOUNT|_EMAIL$|_IDS?$|_KEYS?$)' |
+		# Clerk's publishable key is public by design: every page that signs in serves it.
+		grep -vE 'vars\.KIFF_CLERK_PUBLISHABLE_KEY$' || true
+}
+printf '==> no id read from a workflow variable\n'
+repo="$(cd "$(dirname "$0")/.." && pwd)"
+probe="$(mktemp)"
+printf '%s\n' '      KIFF_GOOGLE_TEST_TENANTS: ${{ vars.KIFF_GOOGLE_TEST_TENANTS }}' > "$probe"
+caught="$(id_vars "$probe")"
+printf '%s\n' '      KIFF_GOOGLE_TEST_TENANTS: ${{ secrets.KIFF_GOOGLE_TEST_TENANTS }}' '      KIFF_CLERK_PUBLISHABLE_KEY: ${{ vars.KIFF_CLERK_PUBLISHABLE_KEY }}' > "$probe"
+passed="$(id_vars "$probe")"
+rm -f "$probe"
+if [[ -z "$caught" || -n "$passed" ]]; then
+	echo "the rule itself is broken: it must catch a vars.*TENANTS read and pass the secrets.* form"
+	failed+=("id vars")
+elif [[ ! -d "$repo/.github/workflows" ]]; then
+	echo "no workflows at $repo/.github/workflows: run scripts/check.sh from this repository's checkout"
+	failed+=("id vars")
+else
+	hits="$(id_vars "$repo"/.github/workflows/*.yml)"
+	if [[ -n "$hits" ]]; then
+		echo "$hits"
+		echo "read these from secrets.*: a job's env shows vars.* in clear in the public log"
+		failed+=("id vars")
+	fi
+fi
+
 if [[ ${#failed[@]} -gt 0 ]]; then
 	printf '\nFAILED:\n'
 	printf '  %s\n' "${failed[@]}"

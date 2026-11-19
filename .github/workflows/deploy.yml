@@ -194,6 +194,20 @@ jobs:
             fi
           done
           exit "$fail"
+      # A secret is masked only as a whole value. The ones that are lists (comma-separated tenants,
+      # subjects and key fingerprints) are masked element by element too, so a line that prints one
+      # element alone still shows `***` in this public log. An element shorter than 4 characters isn't
+      # masked: "-" means none, and masking it would star every hyphen in the log.
+      - name: Mask each element of the list secrets
+        run: |
+          for n in KIFF_STUB_SUBJECTS KIFF_APPLE_SANDBOX_TENANTS KIFF_GOOGLE_TEST_TENANTS KIFF_PROOF_TEST_TENANTS \
+            KIFF_PROOF_TEST_KEYS KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+            IFS=',' read -r -a parts <<< "${!n:-}"
+            for p in "${parts[@]}"; do
+              p="${p//[[:space:]]/}"
+              if [ "${#p}" -ge 4 ]; then echo "::add-mask::$p"; fi
+            done
+          done
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
