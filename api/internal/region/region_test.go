@@ -107,7 +107,8 @@ func TestTheGate(t *testing.T) {
 	}{
 		{"supported, through Caddy", req("POST", "/v1/auth/device/start", "127.0.0.1:5000", "192.0.2.10"), 204},
 		{"unsupported, through Caddy", req("POST", "/v1/auth/device/start", "127.0.0.1:5000", "198.51.100.1"), 403},
-		{"unsupported IPv6", req("GET", "/oauth/authorize", "[::1]:5000", "2001:db8:1::1"), 403},
+		{"unsupported IPv6", req("POST", "/oauth/device_authorization", "[::1]:5000", "2001:db8:1::1"), 403},
+		{"the browser's authorize goes on to the web's gated pages", req("GET", "/oauth/authorize", "127.0.0.1:5000", "198.51.100.1"), 204},
 		{"supported IPv6", req("POST", "/v1/auth/app/token", "[::1]:5000", "2001:db8::1"), 204},
 		{"unknown country fails closed", req("POST", "/v1/pair/claim", "127.0.0.1:5000", "8.8.8.8"), 403},
 		{"ZZ fails closed", req("POST", "/v1/pair/claim", "127.0.0.1:5000", "203.0.113.200"), 403},

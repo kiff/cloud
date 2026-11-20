@@ -20,11 +20,13 @@ type Gate struct {
 	log    *slog.Logger
 }
 
-// SessionRoutes are the API's routes that start a session or a sign-in: a
-// person signed in already isn't cut off mid-task by a trip abroad, but can't
-// start a new session from there.
+// SessionRoutes are the API's routes that start a session or a sign-in, the
+// ones a client calls itself and reads JSON from: a person signed in already
+// isn't cut off mid-task by a trip abroad, but can't start a new session from
+// there. /oauth/authorize isn't here: it runs in a browser and sends it on to
+// the web's pages (sign-in, consent, the app's sign-in), and the web's gate
+// refuses those with a page, not JSON.
 var SessionRoutes = []string{
-	"GET /oauth/authorize",
 	"POST /oauth/device_authorization",
 	"POST /v1/auth/device/start",
 	"POST /v1/auth/app/token",
