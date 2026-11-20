@@ -790,5 +790,5 @@ func buildRegionGate(path string, logger *slog.Logger) (*region.Gate, error) {
 		return nil, fmt.Errorf("region table: %d ranges, fewer than %d; not a whole file", table.Len(), region.MinRanges)
 	}
 	logger.Info("region: table loaded", slog.Int("ranges", table.Len()), slog.String("list_effective", region.ListEffective))
-	return region.NewGate(table, region.SessionRoutes, nil, logger), nil
+	return region.NewGate(table, region.SessionRoutes, handlers.RegionRefused, logger), nil
 }
