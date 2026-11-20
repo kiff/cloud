@@ -1,5 +1,7 @@
 # Korea
 
+This section is published in English and Korean. If they differ, the English text applies.
+
 This section applies if you use KIFF or tafs in the Republic of Korea. It adds what the Personal Information
 Protection Act (PIPA) and the Act on the Development of Artificial Intelligence and the Establishment of Trust (the
 AI Basic Act) ask, beyond KIFF's Privacy Policy and the tafs Privacy Policy. Where this section says more, it
