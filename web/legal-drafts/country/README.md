@@ -11,7 +11,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 |---|---|---|
 | `kr.en.md`, `kr.ko.md` | Korea (PIPA, AI Basic Act) | draft, live market |
 | `us.en.md` | United States (CCPA/CPRA and the state laws) | draft |
-| `ca.en.md` | Canada (PIPEDA, Quebec Law 25) | draft; fr-CA next |
+| `ca.en.md`, `ca.fr.md` | Canada (PIPEDA, Quebec Law 25), en and fr-CA | draft |
 | `au-nz.en.md` | Australia and New Zealand (APP, IPP) | draft |
 | `sg.en.md` | Singapore (PDPA) | draft |
 | `in.en.md` | India (DPDP Act and Rules; 18+) | draft |
