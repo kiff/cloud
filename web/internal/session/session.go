@@ -70,6 +70,10 @@ type Session struct {
 	SessionID   string    `json:"session_id,omitempty"`
 	DisplayName string    `json:"display_name,omitempty"`
 	ExpiresAt   time.Time `json:"expires_at"`
+	// SignedInFor is the tafs app's sign-in request this session's sign-in
+	// came back to (/sign-in/app?request=…), when it did: the app sign-in page
+	// answers a request at once only for a session signed in for it.
+	SignedInFor string `json:"signed_in_for,omitempty"`
 	// LastDomain is the slug of the domain the user most recently
 	// viewed (domain home or Activity). It lets the domain-scoped
 	// spine survive a hop through a non-domain tab (Runtimes,

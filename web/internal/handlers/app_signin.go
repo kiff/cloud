@@ -27,10 +27,11 @@ import (
 //
 // It never answers for the person without them acting (RFC 8252 §8.6: another
 // app can claim a private-use redirect). A person with no KIFF session signs
-// in on the form, and only a browser that was shown the form for this request
-// comes back to an approve: a cookie bound to the request, used once, checked
-// here before the API is called. The API's own recent sign-in check holds the
-// rest. A person already signed in is asked, "Continue as …", never approved
+// in on the form, and only a sign-in made for this request, in a browser that
+// was shown the form for it, comes back to an approve: a cookie bound to the
+// request, used once, and the session's own SignedInFor, both checked here
+// before the API is called. The API's recent sign-in check holds the rest. A
+// person signed in any other way is asked, "Continue as …", never approved
 // automatically.
 const (
 	appSignInPath = "/sign-in/app"
@@ -130,8 +131,9 @@ func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
 		h.showForm(w, r, v, q.Get("login_hint"))
 		return
 	}
-	// Back from the form shown for this request: answer it now, once.
-	if h.takeFormMark(w, r, request) {
+	// Back from the form shown for this request, signed in for it: answer it
+	// now, once.
+	if h.takeFormMark(w, r, request) && s.SignedInFor == request {
 		h.approve(w, r, s, v)
 		return
 	}
@@ -140,8 +142,13 @@ func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
 	h.render(w, r, http.StatusOK, v)
 }
 
-// answer is the person's "Continue as" or "Cancel".
+// answer is the person's "Continue as" or "Cancel": a tap on this page, so a
+// POST from anywhere else is refused (the server's SameOriginOnly does too).
 func (h *AppSignInHandler) answer(w http.ResponseWriter, r *http.Request) {
+	if !fromThisPage(r) {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
 	request := strings.TrimSpace(r.PostFormValue("request"))
 	lang := appSignInLang(r)
 	v := appSignInView{Lang: lang, W: words.AppSignInIn(lang), Request: request}
@@ -243,7 +250,12 @@ func (h *AppSignInHandler) answerWith(w http.ResponseWriter, r *http.Request, s 
 	case err == nil && strings.HasPrefix(to, appRedirectPrefix):
 		http.Redirect(w, r, to, http.StatusSeeOther)
 	case err == nil:
-		h.logger.ErrorContext(r.Context(), "app sign-in: the API sent the sheet elsewhere", slog.String("to", to))
+		// Where, never the whole address: it may carry a code.
+		where := "unparsable"
+		if u, perr := url.Parse(to); perr == nil {
+			where = u.Scheme + "://" + u.Host
+		}
+		h.logger.ErrorContext(r.Context(), "app sign-in: the API sent the sheet elsewhere", slog.String("to", where))
 		v.Stopped = v.W.Failed
 		h.render(w, r, http.StatusBadGateway, v)
 	case errors.Is(err, apiclient.ErrUnauthorized):
@@ -257,7 +269,8 @@ func (h *AppSignInHandler) answerWith(w http.ResponseWriter, r *http.Request, s 
 		v.Stopped = v.W.Expired
 		h.render(w, r, http.StatusGone, v)
 	case errors.Is(err, apiclient.ErrAppSignInOff):
-		http.NotFound(w, r)
+		v.Stopped = v.W.Off
+		h.render(w, r, http.StatusNotFound, v)
 	default:
 		h.logger.WarnContext(r.Context(), "app sign-in: answer failed", slog.String("err", err.Error()))
 		v.Stopped = v.W.Failed
@@ -280,6 +293,37 @@ func (h *AppSignInHandler) back(request, lang string) string {
 		q.Set("ui_locales", lang)
 	}
 	return appSignInPath + "?" + q.Encode()
+}
+
+// appSignInRequestOf is the app sign-in request a sign-in's next names
+// (/sign-in/app?request=…), or "": the session it mints is signed in for it.
+func appSignInRequestOf(next string) string {
+	u, err := url.Parse(next)
+	if err != nil || u.Scheme != "" || u.Host != "" || u.Path != appSignInPath {
+		return ""
+	}
+	if req := u.Query().Get("request"); requestShaped(req) {
+		return req
+	}
+	return ""
+}
+
+// fromThisPage reports whether a POST came from this site: Sec-Fetch-Site
+// where the browser sends it, else Origin, else (an old browser) yes, with
+// the server's SameOriginOnly and the Lax session cookie behind it.
+func fromThisPage(r *http.Request) bool {
+	switch r.Header.Get("Sec-Fetch-Site") {
+	case "same-origin", "none":
+		return true
+	case "":
+	default:
+		return false
+	}
+	if o := r.Header.Get("Origin"); o != "" {
+		u, err := url.Parse(o)
+		return err == nil && u.Host == r.Host
+	}
+	return true
 }
 
 // appSignInLang is the app's language: ui_locales when it's one of the
@@ -341,7 +385,8 @@ func appSignInCSP(frontendAPI, nonce string) string {
 func newNonce() string {
 	b := make([]byte, 16)
 	_, _ = rand.Read(b)
-	return base64.RawStdEncoding.EncodeToString(b)
+	// URL-safe: no character html/template would write as an entity.
+	return base64.RawURLEncoding.EncodeToString(b)
 }
 
 var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype html>

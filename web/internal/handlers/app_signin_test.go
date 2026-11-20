@@ -78,11 +78,23 @@ func signedInAs(t *testing.T, sessions *session.Manager, r *http.Request) *http.
 	return signedInWith(t, sessions, r, "ana@example.com")
 }
 
-// signedInWith adds a KIFF session for email to r.
+// signedInWith adds a KIFF session for email to r, signed in the ordinary way.
 func signedInWith(t *testing.T, sessions *session.Manager, r *http.Request, email string) *http.Request {
 	t.Helper()
+	return withSessionCookie(t, sessions, r, session.Session{Subject: "u_ana", Email: email, Bearer: "tok_ana", ExpiresAt: time.Now().Add(time.Hour)})
+}
+
+// signedInForRequest adds Ana's session as the form's sign-in for request mints it.
+func signedInForRequest(t *testing.T, sessions *session.Manager, r *http.Request, request string) *http.Request {
+	t.Helper()
+	return withSessionCookie(t, sessions, r, session.Session{Subject: "u_ana", Email: "ana@example.com", Bearer: "tok_ana",
+		ExpiresAt: time.Now().Add(time.Hour), SignedInFor: request})
+}
+
+func withSessionCookie(t *testing.T, sessions *session.Manager, r *http.Request, s session.Session) *http.Request {
+	t.Helper()
 	rec := httptest.NewRecorder()
-	if err := sessions.Issue(rec, session.Session{Subject: "u_ana", Email: email, Bearer: "tok_ana", ExpiresAt: time.Now().Add(time.Hour)}); err != nil {
+	if err := sessions.Issue(rec, s); err != nil {
 		t.Fatal(err)
 	}
 	for _, c := range rec.Result().Cookies() {
@@ -172,7 +184,7 @@ func TestAppSignIn_BackFromTheFormAnswersOnceAndSendsTheSheetToTheApp(t *testing
 	t.Parallel()
 	api, client := newAppAPI(t, http.StatusOK, `{"redirect_to":"dev.kiff.tafs:/oauth?code=c1&state=s1"}`)
 	mux, sessions := appSignIn(t, client, script{}, noon)
-	r := signedInAs(t, sessions, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil))
+	r := signedInForRequest(t, sessions, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil), appReq)
 	r.AddCookie(formMark(sessions, appReq, noon.Add(-2*time.Minute)))
 	rec := serve(mux, r)
 	if rec.Code != http.StatusSeeOther || rec.Header().Get("Location") != "dev.kiff.tafs:/oauth?code=c1&state=s1" {
@@ -211,7 +223,8 @@ func TestAppSignIn_ASessionWithoutThisRequestsMarkIsAskedNeverApproved(t *testin
 		t.Run(name, func(t *testing.T) {
 			api, client := newAppAPI(t, http.StatusOK, `{"redirect_to":"dev.kiff.tafs:/oauth?code=c&state=s"}`)
 			mux, sessions := appSignIn(t, client, script{}, noon)
-			r := signedInAs(t, sessions, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil))
+			// Signed in for this request: the mark alone decides here.
+			r := signedInForRequest(t, sessions, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil), appReq)
 			if c := mark(sessions); c != nil {
 				r.AddCookie(c)
 			}
@@ -428,5 +441,102 @@ func TestAppSignIn_NoGETAnswersWithoutTheFormsMark(t *testing.T) {
 	}
 	if api.approves.Load()+api.denies.Load() != 0 {
 		t.Fatalf("a GET answered the request: %d approves, %d denies", api.approves.Load(), api.denies.Load())
+	}
+}
+
+// mac-local's sequence: another app's authorize opens the form (the mark is set), the person closes it, signs in to
+// KIFF the ordinary way, and the app opens the page again. The mark is there and the sign-in is fresh, but it wasn't
+// made for this request: the person is asked, never approved for.
+func TestAppSignIn_AStaleMarkAndAnOrdinarySignInAreAskedNeverApproved(t *testing.T) {
+	t.Parallel()
+	for name, signedIn := range map[string]func(*testing.T, *session.Manager, *http.Request) *http.Request{
+		"signed in the ordinary way": func(t *testing.T, m *session.Manager, r *http.Request) *http.Request { return signedInAs(t, m, r) },
+		"signed in for another request": func(t *testing.T, m *session.Manager, r *http.Request) *http.Request {
+			return signedInForRequest(t, m, r, "rq_other0123456789abcdef")
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			api, client := newAppAPI(t, http.StatusOK, `{"redirect_to":"dev.kiff.tafs:/oauth?code=c&state=s"}`)
+			mux, sessions := appSignIn(t, client, script{}, noon)
+			// 1–2: the form for the request, shown with no session: its mark.
+			form := serve(mux, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil))
+			mark := markOf(form)
+			if mark == nil {
+				t.Fatal("no mark")
+			}
+			// 3–4: a sign-in made elsewhere, then the page again with the mark.
+			r := signedIn(t, sessions, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil))
+			r.AddCookie(mark)
+			rec := serve(mux, r)
+			if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "Continue as ana@example.com") || api.approves.Load() != 0 {
+				t.Fatalf("approved without a tap: %d, %d approves", rec.Code, api.approves.Load())
+			}
+		})
+	}
+}
+
+// The sign-in that comes back to the page is stamped with its request; any other is not.
+func TestAppSignIn_ASignInIsForTheRequestItsNextNames(t *testing.T) {
+	t.Parallel()
+	for next, want := range map[string]string{
+		"/sign-in/app?request=" + appReq:                     appReq,
+		"/sign-in/app?request=" + appReq + "&ui_locales=de":  appReq,
+		"/sign-in/app?request=short":                         "",
+		"/dashboard":                                         "",
+		"/sign-in/appx?request=" + appReq:                    "",
+		"https://evil.example/sign-in/app?request=" + appReq: "",
+		"//evil.example/sign-in/app?request=" + appReq:       "",
+		"": "",
+	} {
+		if got := appSignInRequestOf(next); got != want {
+			t.Errorf("%q: %q, want %q", next, got, want)
+		}
+	}
+}
+
+func TestAppSignIn_OffAtTheAPISaysSo(t *testing.T) {
+	t.Parallel()
+	_, client := newAppAPI(t, http.StatusNotFound, "404 page not found")
+	mux, sessions := appSignIn(t, client, script{}, noon)
+	rec := appPost(t, mux, sessions, "request="+appReq+"&answer=continue")
+	if rec.Code != http.StatusNotFound || !strings.Contains(rec.Body.String(), "Signing in inside the app isn’t on yet.") {
+		t.Fatalf("got %d:\n%s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestAppSignIn_APostFromAnotherSiteIsRefused(t *testing.T) {
+	t.Parallel()
+	api, client := newAppAPI(t, http.StatusOK, `{"redirect_to":"dev.kiff.tafs:/oauth?code=c&state=s"}`)
+	mux, sessions := appSignIn(t, client, script{}, noon)
+	for name, h := range map[string][2]string{
+		"cross-site":     {"Sec-Fetch-Site", "cross-site"},
+		"same-site":      {"Sec-Fetch-Site", "same-site"},
+		"another origin": {"Origin", "https://evil.example"},
+	} {
+		r := httptest.NewRequest(http.MethodPost, "/sign-in/app", strings.NewReader("request="+appReq+"&answer=continue"))
+		r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		r.Header.Set(h[0], h[1])
+		if rec := serve(mux, signedInAs(t, sessions, r)); rec.Code != http.StatusForbidden {
+			t.Errorf("%s: %d", name, rec.Code)
+		}
+	}
+	if api.approves.Load() != 0 {
+		t.Fatal("a POST from another site approved")
+	}
+	ok := httptest.NewRequest(http.MethodPost, "/sign-in/app", strings.NewReader("request="+appReq+"&answer=continue"))
+	ok.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	ok.Header.Set("Sec-Fetch-Site", "same-origin")
+	if rec := serve(mux, signedInAs(t, sessions, ok)); rec.Code != http.StatusSeeOther || api.approves.Load() != 1 {
+		t.Fatalf("this page's own POST: %d", rec.Code)
+	}
+}
+
+// A nonce html/template never rewrites: URL-safe base64, so the page's script tag carries it as the CSP names it.
+func TestAppSignIn_NoncesAreURLSafe(t *testing.T) {
+	t.Parallel()
+	for i := 0; i < 500; i++ {
+		if n := newNonce(); len(n) != 22 || strings.ContainsAny(n, "+/=") {
+			t.Fatalf("nonce %q", n)
+		}
 	}
 }
