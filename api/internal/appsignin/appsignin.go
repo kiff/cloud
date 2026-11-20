@@ -103,8 +103,9 @@ type Handler struct {
 }
 
 type spent struct {
-	minted  Replay
-	expires time.Time
+	minted   Replay
+	replayed bool // used again: whatever this code mints is ended
+	expires  time.Time
 }
 
 // Option configures a Handler.
@@ -185,7 +186,7 @@ func (h *Handler) TermsVersion() string { return h.terms }
 // Terms handles GET /v1/auth/app/terms: the version the welcome's tick agrees to.
 func (h *Handler) Terms(w http.ResponseWriter, r *http.Request) {
 	if !h.on {
-		http.NotFound(w, r)
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "unsupported_client", "error_description": "signing in inside the app isn't on yet"})
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"terms_version": h.terms})
@@ -283,7 +284,10 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 	delete(h.codes, key)
 	if !ok {
 		if sp, again := h.spent[key]; again && h.now().Before(sp.expires) {
-			delete(h.spent, key)
+			// Kept, marked: a session the first use mints after this moment
+			// is ended by Minted, so no replay can land between the two.
+			sp.replayed = true
+			h.spent[key] = sp
 			h.mu.Unlock()
 			r := sp.minted
 			return Signed{}, &r
@@ -303,15 +307,20 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 	return c.who, nil
 }
 
-// Minted records what a redeemed code made, so a replay of it can end them.
-func (h *Handler) Minted(raw, sessionID, deviceID string) {
+// Minted records what a redeemed code made, so a later replay of it can end
+// them. It reports whether the code was already used again while this was
+// minted: then the caller ends what it made and hands nothing over.
+func (h *Handler) Minted(raw, sessionID, deviceID string) (replayed bool) {
 	key := hashOf(raw)
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	if sp, ok := h.spent[key]; ok {
-		sp.minted = Replay{SessionID: sessionID, DeviceID: deviceID}
-		h.spent[key] = sp
+	sp, ok := h.spent[key]
+	if !ok {
+		return false
 	}
+	sp.minted = Replay{SessionID: sessionID, DeviceID: deviceID}
+	h.spent[key] = sp
+	return sp.replayed
 }
 
 func (h *Handler) keepRequest(id string, req request) bool {

@@ -102,7 +102,13 @@ func (h *DeviceAuthHandler) appToken(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "temporarily_unavailable", "error_description": "could not finish signing in; start again"})
 		return
 	}
-	h.app.Minted(req.Code, m.sess.ID, m.created)
+	if h.app.Minted(req.Code, m.sess.ID, m.created) {
+		// The code was used again while this was minted: end it, hand nothing over.
+		h.undoMint(r, m, now)
+		h.logger.WarnContext(r.Context(), "app token: the code was used again while its session was made; it's ended")
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_grant", "error_description": "the code is unknown, used, expired, or doesn't match"})
+		return
+	}
 	h.finishMint(r, id, m)
 	resp := deviceTokenResponse{AccessToken: m.token, TokenType: "Bearer", ExpiresIn: int(h.sessionTTL.Seconds()), Tenant: id.Tenant, Subject: id.Subject}
 	if in.deviceKey != nil {

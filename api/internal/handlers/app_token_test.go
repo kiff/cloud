@@ -29,7 +29,7 @@ type appRig struct {
 	consents *appsignin.MemoryConsents
 }
 
-func newAppRig(t *testing.T, on bool) *appRig {
+func newAppRig(t *testing.T, on bool, extra ...handlers.DeviceAuthOption) *appRig {
 	t.Helper()
 	r := &appRig{consents: &appsignin.MemoryConsents{}}
 	r.app = appsignin.New(on, "https://app.kiff.test/sign-in/app", appsignin.WithClock(func() time.Time {
@@ -40,7 +40,7 @@ func newAppRig(t *testing.T, on bool) *appRig {
 		defer r.mu.Unlock()
 		return r.now
 	}))
-	r.deviceRig, r.devices = devicesRig(t, "t_ana", "user_ana", handlers.WithDeviceAppSignIn(r.app, r.consents))
+	r.deviceRig, r.devices = devicesRig(t, "t_ana", "user_ana", append([]handlers.DeviceAuthOption{handlers.WithDeviceAppSignIn(r.app, r.consents)}, extra...)...)
 	r.appMux = http.NewServeMux()
 	r.app.RegisterAuthenticated(r.appMux)
 	return r
@@ -227,8 +227,8 @@ func TestAppTokenOff(t *testing.T) {
 	}
 	w := httptest.NewRecorder()
 	r.pub.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/v1/auth/app/terms", nil))
-	if w.Code != http.StatusNotFound {
-		t.Fatalf("terms off: %d", w.Code)
+	if w.Code != http.StatusBadRequest || !strings.Contains(w.Body.String(), `"error":"unsupported_client"`) {
+		t.Fatalf("terms off: %d %s", w.Code, w.Body.String())
 	}
 	on := newAppRig(t, true)
 	w = httptest.NewRecorder()
@@ -301,5 +301,32 @@ func TestFailedTokenRequestsAreLimitedPerAddress(t *testing.T) {
 	r.advance(10 * time.Minute)
 	if status, out := post("198.51.100.1", appBody(r.code(t), nil)); status != http.StatusOK {
 		t.Fatalf("after the window: %d %v", status, out)
+	}
+}
+
+// A second phone signing in inside the app gets the device flow's
+// new-approver email, as a device-code sign-in does; the first phone none.
+func TestASecondPhoneSigningInInsideTheAppTellsThePerson(t *testing.T) {
+	notices := &fakeNotices{}
+	r := newAppRig(t, true, handlers.WithDeviceNotices(fakeEmails{"user_ana": "ana@example.com"}, notices))
+	sent := func() int { notices.mu.Lock(); defer notices.mu.Unlock(); return len(notices.sent) }
+	phone := func(name string) {
+		t.Helper()
+		_, k := newKey(t)
+		_, a := newKey(t)
+		if status, out := r.token(t, appBody(r.code(t), map[string]any{"public_key": k, "approval_public_key": a, "platform": "ios", "kind": "iphone", "device_name": name})); status != http.StatusOK || out["approval_mode"] != auth.ApprovalModeKey {
+			t.Fatalf("%s: %d %v", name, status, out)
+		}
+	}
+	phone("Ana's iPhone")
+	if sent() != 0 {
+		t.Fatalf("the first phone sent %d emails", sent())
+	}
+	r.advance(time.Minute)
+	phone("Ana's other iPhone")
+	notices.mu.Lock()
+	defer notices.mu.Unlock()
+	if len(notices.sent) != 1 || notices.to[0] != "ana@example.com" || !strings.Contains(notices.sent[0].Body, "Ana's other iPhone") {
+		t.Fatalf("the new-approver email: %v %+v", notices.to, notices.sent)
 	}
 }

@@ -288,8 +288,9 @@ func TestASpentCodeUsedAgainIsAReplayNamingWhatItMade(t *testing.T) {
 	if !errors.As(err, &r) || r.SessionID != "ses_1" || r.DeviceID != "dev_1" || !errors.Is(err, appsignin.ErrBadGrant) {
 		t.Fatalf("replay: %v", err)
 	}
-	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); errors.As(err, &r) || !errors.Is(err, appsignin.ErrBadGrant) {
-		t.Fatalf("a second replay is told no more: %v", err)
+	// A second replay is told again: ending a session twice is harmless.
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); !errors.As(err, &r) || r.SessionID != "ses_1" {
+		t.Fatalf("a second replay: %v", err)
 	}
 	// A code a wrong try spent: its replay names nothing, since nothing was made.
 	c2 := f.signIn()
@@ -303,5 +304,30 @@ func TestASpentCodeUsedAgainIsAReplayNamingWhatItMade(t *testing.T) {
 	f.now = f.now.Add(appsignin.SpentTTL)
 	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c3, verifier, appsignin.RedirectURI); errors.As(err, &r) || !errors.Is(err, appsignin.ErrBadGrant) {
 		t.Fatalf("after SpentTTL: %v", err)
+	}
+}
+
+// A replay that lands between the first use's Redeem and its Minted: the
+// replay names nothing yet, and Minted then says so, so the first use ends
+// what it made instead of handing it over.
+func TestAReplayWhileTheFirstUseMintsEndsWhatItMakes(t *testing.T) {
+	f := newFixture(t, true)
+	c := f.signIn()
+	ctx := context.Background()
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); err != nil {
+		t.Fatal(err)
+	}
+	var r *appsignin.Replay
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); !errors.As(err, &r) || r.SessionID != "" {
+		t.Fatalf("the replay before Minted: %v", err)
+	}
+	if !f.h.Minted(c, "ses_1", "dev_1") {
+		t.Fatal("Minted didn't say the code was used again")
+	}
+	// Without a replay, Minted says nothing.
+	c2 := f.signIn()
+	_, _ = f.h.Redeem(ctx, appsignin.ClientID, c2, verifier, appsignin.RedirectURI)
+	if f.h.Minted(c2, "ses_2", "") {
+		t.Fatal("Minted said a code no one replayed was used again")
 	}
 }
