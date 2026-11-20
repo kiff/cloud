@@ -15,4 +15,13 @@ var StoreCountries = map[string][]string{
 		"PL", "PT", "RO", "SK", "SI", "ES", "SE",
 		"IS", "LI", "NO", "GB", "CH", "KR",
 	},
+	// The App Store, iOS and macOS, 20 Nov 2026: the EU, Iceland, Norway,
+	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
+	// isn't selected).
+	"app-store": {
+		"AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+		"DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
+		"PL", "PT", "RO", "SK", "SI", "ES", "SE",
+		"IS", "NO", "GB", "CH",
+	},
 }
