@@ -70,6 +70,10 @@ type Session struct {
 	SessionID   string    `json:"session_id,omitempty"`
 	DisplayName string    `json:"display_name,omitempty"`
 	ExpiresAt   time.Time `json:"expires_at"`
+	// SignedInFor is the tafs app's sign-in request this session's sign-in
+	// came back to (/sign-in/app?request=…), when it did: the app sign-in page
+	// answers a request at once only for a session signed in for it.
+	SignedInFor string `json:"signed_in_for,omitempty"`
 	// LastDomain is the slug of the domain the user most recently
 	// viewed (domain home or Activity). It lets the domain-scoped
 	// spine survive a hop through a non-domain tab (Runtimes,
@@ -349,4 +353,33 @@ func sign(secret, payload []byte) []byte {
 	h := hmac.New(sha256.New, secret)
 	h.Write(payload)
 	return h.Sum(nil)
+}
+
+// sealed is a value signed for one purpose (Seal): the purpose keeps a value
+// sealed for one cookie from passing as another's, or as a session.
+type sealed struct {
+	Purpose string `json:"purpose"`
+	Value   string `json:"value"`
+}
+
+// Seal signs value for purpose with the manager's secret, for a cookie the
+// browser carries and can't forge. The value isn't hidden: never seal a
+// secret.
+func (m *Manager) Seal(purpose, value string) string {
+	body, _ := json.Marshal(sealed{Purpose: purpose, Value: value})
+	return encodeRaw(body, m.secret)
+}
+
+// Open returns the value Seal signed for purpose, and false when the cookie
+// is forged, malformed, or sealed for anything else.
+func (m *Manager) Open(purpose, value string) (string, bool) {
+	body, err := decodeRaw(value, m.secret)
+	if err != nil {
+		return "", false
+	}
+	var s sealed
+	if json.Unmarshal(body, &s) != nil || s.Purpose == "" || s.Purpose != purpose {
+		return "", false
+	}
+	return s.Value, true
 }

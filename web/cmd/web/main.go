@@ -71,6 +71,10 @@ const (
 	envStubSubjects  = "KIFF_STUB_SUBJECTS"
 	envCookieSecure  = "KIFF_COOKIE_SECURE"
 
+	// envAppSignIn turns on the tafs apps' sign-in page (/sign-in/app), with
+	// the API's own switch of the same name.
+	envAppSignIn = "KIFF_APP_SIGNIN"
+
 	// envGatewayBaseURL is how the web reaches the KIFF MCP gateway for
 	// /tools; empty leaves /tools saying it is not available.
 	envGatewayBaseURL = "KIFF_GATEWAY_BASE_URL"
@@ -379,6 +383,11 @@ func run() error {
 	if provider != nil && sessions != nil {
 		authH := handlers.NewAuthHandler(provider, sessions, logger)
 		authH.Register(mux)
+		// /sign-in/app — the tafs apps' sign-in, in the app's sheet. Off
+		// unless KIFF_APP_SIGNIN is "on", the API's own switch: off, it
+		// says so and does nothing else.
+		appSignIn := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+		handlers.NewAppSignInHandler(appSignIn, sessionAPIClient, sessions, bearers, provider, logger).Register(mux)
 
 		// /dashboard surface — both the index and the action
 		// handlers (key mint, template apply, send event,
