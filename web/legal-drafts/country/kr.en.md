@@ -47,7 +47,6 @@ Article 28-8(1)(3) provides.
 [Stripe](https://stripe.com/privacy), [Resend](https://resend.com/legal/privacy-policy),
 [Apple](https://www.apple.com/legal/privacy/), [Google](https://policies.google.com/privacy),
 [Cloudflare](https://www.cloudflare.com/privacypolicy/), [Composio](https://composio.dev/privacy).
-**[mac-local]** check each link when building the page.
 
 **You can refuse.** You can ask us to stop transferring your personal information outside Korea, at
 privacy@kiff.dev. Because the service runs only through these recipients, stopping means we can no longer provide it,
