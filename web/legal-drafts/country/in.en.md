@@ -10,7 +10,7 @@ We process your personal data, with your consent, for these purposes:
 
 | What | Why |
 |---|---|
-| Your account: email address, name, and the identity from Apple or Google | To make and keep your account and sign you in |
+| Your account: email address, name, and the identity from Apple, Google or GitHub | To make and keep your account and sign you in |
 | Your devices: public key, name, platform, dates, push token | To check approvals come from your device, and to send alerts |
 | What you write to Coach and your tafs, files, what your apps return | To do the jobs you hand to tafs |
 | Billing details on a paid plan | To charge for the plan |

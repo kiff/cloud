@@ -7,7 +7,7 @@ California Consumer Privacy Act as amended by the CPRA, beyond KIFF's Privacy Po
 
 | Category (California's names) | What it is for us | Why we collect it | Sources | Who receives it | How long |
 |---|---|---|---|---|---|
-| Identifiers | Email address, name, the identity from Apple or Google, account and device ids, IP address | To make your account, sign you in and keep it secure | You; Apple or Google when you sign in with them | Our service providers (`/subprocessors`) | Until you delete your account; IP address in logs up to 90 days |
+| Identifiers | Email address, name, the identity from Apple, Google or GitHub, account and device ids, IP address | To make your account, sign you in and keep it secure | You; Apple, Google or GitHub when you sign in with them | Our service providers (`/subprocessors`) | Until you delete your account; IP address in logs up to 90 days |
 | Commercial information | Your plan, what you bought, usage counts | To provide and bill the plan | You; Stripe; Apple and Google for in-app purchases | Stripe, Apple, Google | As tax and accounting law requires |
 | Internet or other electronic activity | Request logs: browser, device, pages and calls | Security and abuse prevention | Your browser and device | AWS (hosting) | Up to 90 days; service logs 30 days |
 | Sensitive personal information: account log-in | Your sign-in and session | To sign you in | You | Clerk (sign-in) | While your account exists |

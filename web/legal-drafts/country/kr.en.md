@@ -9,7 +9,7 @@ applies; for everything else, those two policies apply.
 
 | What | Why | How long |
 |---|---|---|
-| Your account: the email address you sign in with, your name, and the identity from Apple or Google when you sign in with one of them | To make and keep your account and sign you in | Until you delete your account |
+| Your account: the email address you sign in with, your name, and the identity from Apple, Google or GitHub when you sign in with one of them | To make and keep your account and sign you in | Until you delete your account |
 | Your devices: each device's public key, name, platform and dates, and a push token if you turn alerts on | To check that an approval came from your device, and to send alerts | The push token until you sign out or remove the device; the rest until the account is deleted |
 | What you write to Coach and your tafs, the files you attach, and what your connected apps return while a taf works | To do the jobs you hand to tafs | Runs and chats 30 days; what your apps return only until the run ends; memory notes until the taf is removed |
 | Billing details on a paid plan | To charge for the plan | As long as tax and accounting law requires |
@@ -32,7 +32,7 @@ Article 28-8(1)(3) provides.
 |---|---|---|---|---|---|
 | Kiff Agents OÜ (us) | Estonia; hosted in Ireland | Everything in section 1 | To provide KIFF and tafs | Each time you use them, over an encrypted connection | As in section 1 |
 | Amazon Web Services | Ireland | Everything we keep (hosting) | Servers, database, backups | Each time you use the service, encrypted in transit and at rest | As in section 1 |
-| Clerk | United States | Your email address, name, sessions, IP address, device and browser, and your Apple or Google identity | Sign-in | When you sign in | While your account exists |
+| Clerk | United States | Your email address, name, sessions, IP address, device and browser, and your Apple, Google or GitHub identity | Sign-in | When you sign in | While your account exists |
 | Anthropic | United States (models may run in the US, Europe, Asia or Australia) | What you write to Coach and your tafs, attached files, and what your apps return to a taf | The AI models behind Coach and each taf | Each time a taf or Coach works, over an encrypted connection | Up to 30 days, to answer |
 | Stripe | EU and United States | Billing contact and payment details | Payment on a paid plan | When you pay | As tax and payment law requires |
 | Resend | United States | Your email address and the notice | Email notices | When a notice is sent | Per its terms |
