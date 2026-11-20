@@ -178,10 +178,11 @@ func TestAppSignInEndToEnd(t *testing.T) {
 	if got := asSession(h, code); got != http.StatusUnauthorized {
 		t.Fatalf("the code itself was let in: %d", got)
 	}
-	// The app exchanges it, with its verifier and the terms it ticked: the device flow's own session.
+	// The app exchanges it, with its verifier and the terms it ticked: the device flow's own session, for the person
+	// the page signed in (the stub provider's subject is the session's bearer, "ana-web") and her account.
 	status, tok := exchange(t, h, tokenBody(code, nil))
 	access, _ := tok["access_token"].(string)
-	if status != http.StatusOK || access == "" || tok["subject"] != "user_ana" || tok["tenant"] != anaTenant || tok["token_type"] != "Bearer" {
+	if status != http.StatusOK || access == "" || tok["subject"] != "ana-web" || tok["tenant"] != anaTenant || tok["token_type"] != "Bearer" {
 		t.Fatalf("token: %d %v", status, tok)
 	}
 	// The session it minted is Ana's, and the API lets it in.
