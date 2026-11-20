@@ -38,6 +38,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Abbrechen",
 		Expired:      "Diese Anmeldung ist abgelaufen. Fang in der App neu an.",
 		Failed:       "Die Anmeldung hat gerade nicht geklappt. Fang in der App neu an.",
+		Off:          "Die Anmeldung in der App ist noch nicht eingeschaltet. Melde dich wie bisher über die App an.",
 	},
 	"fr": {
 		Title:        "Se connecter à tafs",
@@ -47,6 +48,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Annuler",
 		Expired:      "Cette connexion a expiré. Recommencez depuis l’app.",
 		Failed:       "Nous n’avons pas pu vous connecter pour le moment. Recommencez depuis l’app.",
+		Off:          "La connexion dans l’app n’est pas encore activée. Connectez-vous depuis l’app comme avant.",
 	},
 	"es": {
 		Title:        "Iniciar sesión en tafs",
@@ -56,6 +58,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Cancelar",
 		Expired:      "Este inicio de sesión ha caducado. Vuelve a empezar desde la app.",
 		Failed:       "No hemos podido iniciar tu sesión ahora mismo. Vuelve a empezar desde la app.",
+		Off:          "Iniciar sesión dentro de la app aún no está activado. Inicia sesión desde la app como antes.",
 	},
 	"it": {
 		Title:        "Accedi a tafs",
@@ -65,6 +68,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Annulla",
 		Expired:      "Questo accesso è scaduto. Ricomincia dall’app.",
 		Failed:       "Non siamo riusciti a farti accedere in questo momento. Ricomincia dall’app.",
+		Off:          "L’accesso dentro l’app non è ancora attivo. Accedi dall’app come prima.",
 	},
 	"pt": {
 		Title:        "Iniciar sessão no tafs",
@@ -74,6 +78,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Cancelar",
 		Expired:      "Este início de sessão expirou. Comece de novo a partir da app.",
 		Failed:       "Não conseguimos iniciar a sua sessão agora. Comece de novo a partir da app.",
+		Off:          "O início de sessão dentro da app ainda não está ativo. Inicie sessão a partir da app como antes.",
 	},
 	"nl": {
 		Title:        "Inloggen bij tafs",
@@ -83,6 +88,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Annuleren",
 		Expired:      "Deze inlogpoging is verlopen. Begin opnieuw vanuit de app.",
 		Failed:       "Inloggen lukte nu niet. Begin opnieuw vanuit de app.",
+		Off:          "Inloggen in de app staat nog niet aan. Log zoals eerder in vanuit de app.",
 	},
 	"pl": {
 		Title:        "Zaloguj się do tafs",
@@ -92,6 +98,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Anuluj",
 		Expired:      "To logowanie wygasło. Zacznij od nowa w aplikacji.",
 		Failed:       "Nie udało się teraz Cię zalogować. Zacznij od nowa w aplikacji.",
+		Off:          "Logowanie w aplikacji nie jest jeszcze włączone. Zaloguj się z aplikacji tak jak dotąd.",
 	},
 }
 
