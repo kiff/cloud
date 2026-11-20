@@ -53,6 +53,21 @@ var (
 	ErrBadGrant = errors.New("appsignin: the code is unknown, used, expired, or doesn't match")
 )
 
+// SpentTTL is how long a spent code is remembered, so a replay is known as one.
+const SpentTTL = 10 * time.Minute
+
+// Replay is a code used again after it was spent: invalid_grant to the app, and
+// the session and device it made (Minted) are ended (RFC 6749 §4.1.2).
+type Replay struct {
+	SessionID string // "" when the first use minted nothing
+	DeviceID  string // a device that first use made, else ""
+}
+
+func (*Replay) Error() string { return "appsignin: a spent code was used again" }
+
+// Unwrap makes a Replay an ErrBadGrant too.
+func (*Replay) Unwrap() error { return ErrBadGrant }
+
 // Signed is who a redeemed code signed in.
 type Signed struct {
 	Subject string
@@ -83,6 +98,12 @@ type Handler struct {
 	mu       sync.Mutex
 	requests map[string]request // by request id
 	codes    map[string]code    // by sha256 of the code
+	spent    map[string]spent   // by sha256 of the code, for SpentTTL
+}
+
+type spent struct {
+	minted  Replay
+	expires time.Time
 }
 
 // Option configures a Handler.
@@ -97,7 +118,7 @@ func WithStepUp(s *auth.StepUp) Option { return func(h *Handler) { h.stepUp = s 
 // New returns a Handler. pageURL is the sign-in page the sheet opens on, such
 // as https://app.kiff.dev/sign-in/app. on is the KIFF_APP_SIGNIN switch.
 func New(on bool, pageURL string, opts ...Option) *Handler {
-	h := &Handler{on: on, pageURL: pageURL, now: time.Now, requests: map[string]request{}, codes: map[string]code{}}
+	h := &Handler{on: on, pageURL: pageURL, now: time.Now, requests: map[string]request{}, codes: map[string]code{}, spent: map[string]spent{}}
 	for _, o := range opts {
 		o(h)
 	}
@@ -241,6 +262,16 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 	h.mu.Lock()
 	c, ok := h.codes[key]
 	delete(h.codes, key)
+	if !ok {
+		if sp, again := h.spent[key]; again && h.now().Before(sp.expires) {
+			delete(h.spent, key)
+			h.mu.Unlock()
+			r := sp.minted
+			return Signed{}, &r
+		}
+	} else {
+		h.spent[key] = spent{expires: h.now().Add(SpentTTL)}
+	}
 	h.mu.Unlock()
 	switch {
 	case !ok, !h.now().Before(c.expires), clientID != ClientID, redirect != c.redirect, !verifierShaped(verifier):
@@ -251,6 +282,17 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 		return Signed{}, ErrBadGrant
 	}
 	return c.who, nil
+}
+
+// Minted records what a redeemed code made, so a replay of it can end them.
+func (h *Handler) Minted(raw, sessionID, deviceID string) {
+	key := hashOf(raw)
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if sp, ok := h.spent[key]; ok {
+		sp.minted = Replay{SessionID: sessionID, DeviceID: deviceID}
+		h.spent[key] = sp
+	}
 }
 
 func (h *Handler) keepRequest(id string, req request) bool {
@@ -285,6 +327,11 @@ func (h *Handler) sweepLocked() {
 	for k, v := range h.codes {
 		if !now.Before(v.expires) {
 			delete(h.codes, k)
+		}
+	}
+	for k, v := range h.spent {
+		if !now.Before(v.expires) {
+			delete(h.spent, k)
 		}
 	}
 }

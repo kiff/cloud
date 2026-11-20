@@ -271,3 +271,37 @@ func TestApproveNeedsARecentSignIn(t *testing.T) {
 		t.Fatalf("a 2-minute-old sign-in: %d %v", status, out)
 	}
 }
+
+// A code used again after it was spent is a Replay: invalid_grant to the app,
+// naming what the first use made so the token route can end it; told once,
+// and forgotten after SpentTTL.
+func TestASpentCodeUsedAgainIsAReplayNamingWhatItMade(t *testing.T) {
+	f := newFixture(t, true)
+	c := f.signIn()
+	ctx := context.Background()
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); err != nil {
+		t.Fatal(err)
+	}
+	f.h.Minted(c, "ses_1", "dev_1")
+	_, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI)
+	var r *appsignin.Replay
+	if !errors.As(err, &r) || r.SessionID != "ses_1" || r.DeviceID != "dev_1" || !errors.Is(err, appsignin.ErrBadGrant) {
+		t.Fatalf("replay: %v", err)
+	}
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c, verifier, appsignin.RedirectURI); errors.As(err, &r) || !errors.Is(err, appsignin.ErrBadGrant) {
+		t.Fatalf("a second replay is told no more: %v", err)
+	}
+	// A code a wrong try spent: its replay names nothing, since nothing was made.
+	c2 := f.signIn()
+	_, _ = f.h.Redeem(ctx, appsignin.ClientID, c2, strings.Repeat("w", 43), appsignin.RedirectURI)
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c2, verifier, appsignin.RedirectURI); !errors.As(err, &r) || r.SessionID != "" {
+		t.Fatalf("replay of a code a wrong try spent: %v", err)
+	}
+	// After SpentTTL it's just unknown.
+	c3 := f.signIn()
+	_, _ = f.h.Redeem(ctx, appsignin.ClientID, c3, verifier, appsignin.RedirectURI)
+	f.now = f.now.Add(appsignin.SpentTTL)
+	if _, err := f.h.Redeem(ctx, appsignin.ClientID, c3, verifier, appsignin.RedirectURI); errors.As(err, &r) || !errors.Is(err, appsignin.ErrBadGrant) {
+		t.Fatalf("after SpentTTL: %v", err)
+	}
+}
