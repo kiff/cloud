@@ -32,6 +32,9 @@ func TestTheWebGate(t *testing.T) {
 		{"GET", "/sign-in/app", "127.0.0.1:1", "8.8.8.8", 403},
 		{"GET", "/auth/device", "[::1]:1", "198.51.100.1", 403},
 		{"GET", "/auth/device", "127.0.0.1:1", "127.0.0.1", 204},
+		{"POST", "/sign-in/app", "127.0.0.1:1", "198.51.100.1", 403},
+		{"POST", "/auth/device", "127.0.0.1:1", "198.51.100.1", 403},
+		{"POST", "/sign-in/app", "127.0.0.1:1", "192.0.2.1", 204},
 		{"GET", "/oauth/consent", "127.0.0.1:1", "198.51.100.1", 403},
 		{"POST", "/oauth/device", "127.0.0.1:1", "198.51.100.1", 403},
 		{"GET", "/oauth/consent", "127.0.0.1:1", "192.0.2.1", 204},
@@ -54,5 +57,25 @@ func TestTheWebGate(t *testing.T) {
 	}
 	if gotCountry != "CN" {
 		t.Errorf("the refuser got %q, want the last refusal's country CN", gotCountry)
+	}
+}
+
+// Each page's approval is its POST, and the API can't stand in for it (the
+// web calls the API from the same box), so a gated path is gated for both
+// GET and POST. POST /auth/device and POST /sign-in/app were once missed.
+func TestEveryGatedPageIsGatedForItsPostToo(t *testing.T) {
+	gated := map[string]bool{}
+	for _, r := range SessionRoutes {
+		gated[r] = true
+	}
+	for _, r := range SessionRoutes {
+		method, path, _ := strings.Cut(r, " ")
+		other := "POST"
+		if method == "POST" {
+			other = "GET"
+		}
+		if !gated[other+" "+path] {
+			t.Errorf("%s is gated but %s %s isn't", r, other, path)
+		}
 	}
 }
