@@ -27,7 +27,7 @@ else can **Ask an admin**.
 included. It has 500 credits a month, then packs. **Company** is billed by seat on kiff.dev, with
 500 credits a seat a month, pooled. A plan is billed in one place.
 
-**Packs (Solo):** 500 credits €11.50, 1,500 credits €29.99, 5,000 credits €84.99. Bought in the
+**Packs (Solo):** 500 credits €11.49, 1,500 credits €29.99, 5,000 credits €84.99. Bought in the
 Android app today, not yet on the App Store or the web. They never expire, and are used after the
 month's credits, oldest first.
 
