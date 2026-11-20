@@ -34,6 +34,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Weiter als %s",
 		OtherAccount: "Anderes Konto verwenden",
 		Cancel:       "Abbrechen",
+		Expired:      "Diese Anmeldung ist abgelaufen. Fang in der App neu an.",
+		Failed:       "Die Anmeldung hat gerade nicht geklappt. Fang in der App neu an.",
 	},
 	"fr": {
 		Title:        "Se connecter à tafs",
@@ -41,6 +43,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Continuer en tant que %s",
 		OtherAccount: "Utiliser un autre compte",
 		Cancel:       "Annuler",
+		Expired:      "Cette connexion a expiré. Recommencez depuis l’app.",
+		Failed:       "Nous n’avons pas pu vous connecter pour le moment. Recommencez depuis l’app.",
 	},
 	"es": {
 		Title:        "Iniciar sesión en tafs",
@@ -48,6 +52,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Continuar como %s",
 		OtherAccount: "Usar otra cuenta",
 		Cancel:       "Cancelar",
+		Expired:      "Este inicio de sesión ha caducado. Vuelve a empezar desde la app.",
+		Failed:       "No hemos podido iniciar tu sesión ahora mismo. Vuelve a empezar desde la app.",
 	},
 	"it": {
 		Title:        "Accedi a tafs",
@@ -55,6 +61,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Continua come %s",
 		OtherAccount: "Usa un altro account",
 		Cancel:       "Annulla",
+		Expired:      "Questo accesso è scaduto. Ricomincia dall’app.",
+		Failed:       "Non siamo riusciti a farti accedere in questo momento. Ricomincia dall’app.",
 	},
 	"pt": {
 		Title:        "Iniciar sessão no tafs",
@@ -62,6 +70,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Continuar como %s",
 		OtherAccount: "Usar outra conta",
 		Cancel:       "Cancelar",
+		Expired:      "Este início de sessão expirou. Comece de novo a partir da app.",
+		Failed:       "Não conseguimos iniciar a sua sessão agora. Comece de novo a partir da app.",
 	},
 	"nl": {
 		Title:        "Inloggen bij tafs",
@@ -69,6 +79,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Doorgaan als %s",
 		OtherAccount: "Ander account gebruiken",
 		Cancel:       "Annuleren",
+		Expired:      "Deze inlogpoging is verlopen. Begin opnieuw vanuit de app.",
+		Failed:       "Inloggen lukte nu niet. Begin opnieuw vanuit de app.",
 	},
 	"pl": {
 		Title:        "Zaloguj się do tafs",
@@ -76,6 +88,8 @@ var appSignIn = map[string]AppSignIn{
 		ContinueAsF:  "Kontynuuj jako %s",
 		OtherAccount: "Użyj innego konta",
 		Cancel:       "Anuluj",
+		Expired:      "To logowanie wygasło. Zacznij od nowa w aplikacji.",
+		Failed:       "Nie udało się teraz Cię zalogować. Zacznij od nowa w aplikacji.",
 	},
 }
 
