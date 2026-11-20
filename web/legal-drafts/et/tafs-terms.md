@@ -1,6 +1,6 @@
 # tafsi tingimused
 
-Viimati uuendatud: 14. november 2026.
+Viimati uuendatud: 20. november 2026.
 
 See tõlge on avaldatud koos ingliskeelse tekstiga. Kui need erinevad, kehtib ingliskeelne tekst.
 
@@ -34,7 +34,7 @@ Teie, teie inimesed ja teie tafid peavad järgima [lubatud kasutuse põhimõttei
 
 ## 6. Tasud
 
-Selle uuenduse ajal maksab Solo 12,50 € kuus, käibemaks sisaldub, 500 krediidiga kuus, ja seda müüakse rakenduses App Store'i või Google Play kaudu. Rakenduses ostetavad krediidipaketid algavad 11,50 €-st ega aegu. Iga tafi käivitus kasutab krediite selle AI eest, mida see kasutas. Coach ja tafide seadistamine sisalduvad Coachi mõistliku kasutuse piires. Kehtivad hinnad on [hinnalehel](/pricing); tafs on ka osa KIFFi Company paketist.
+Selle uuenduse ajal maksab Solo 12,50 € kuus, käibemaks sisaldub, 500 krediidiga kuus, ja seda müüakse rakenduses App Store'i või Google Play kaudu. Rakenduses ostetavad krediidipaketid algavad 11,49 €-st ega aegu. Iga tafi käivitus kasutab krediite selle AI eest, mida see kasutas. Coach ja tafide seadistamine sisalduvad Coachi mõistliku kasutuse piires. Kehtivad hinnad on [hinnalehel](/pricing); tafs on ka osa KIFFi Company paketist.
 
 Prooviperioodi ei ole. Rakenduses ostetud Solot hallatakse ja tühistatakse teie Apple'i või Google Play tellimustes, selle poe makse-, uuendamis- ja tagasimaksetingimuste alusel. Pakett kehtib makstud perioodi lõpuni. Kui olete ELi tarbija, võite ostust taganeda 14 päeva jooksul. Üksikasjad on [KIFFi tingimuste punktis 8](/terms#fees).
 
