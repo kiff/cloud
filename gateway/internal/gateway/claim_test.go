@@ -153,6 +153,30 @@ func TestAClaimLapsesWithItsLeaseOrItsHold(t *testing.T) {
 	}
 }
 
+// A held call without an expiry holds its object for exactly 15 minutes:
+// another agent is refused at 14:59 and goes through at 15:01. The lease
+// matches the checkout's own (planque's checkoutKept), so a checkout an
+// agent stalled on is never claimed past the time it stays payable.
+func TestAClaimsLeaseIsFifteenMinutes(t *testing.T) {
+	if gateway.ClaimLease != 15*time.Minute {
+		t.Fatalf("ClaimLease is %s, want 15m", gateway.ClaimLease)
+	}
+	r := newRig(t)
+	r.gw.Catalog = catalog{claimedTool()}
+	start := *r.now
+	if held := r.callAs(t, "agent-key", orderCall(5000, "o-dsp", "op-held")); held.call["state"] != "held" {
+		t.Fatalf("first: %+v", held)
+	}
+	*r.now = start.Add(14*time.Minute + 59*time.Second)
+	if got := r.callAs(t, "chat-key", orderCall(200, "o-dsp", "op-at-14m59")); got.call["state"] != "refused" {
+		t.Fatalf("at 14:59 the claim still holds: %+v", got)
+	}
+	*r.now = start.Add(15*time.Minute + time.Second)
+	if got := r.callAs(t, "chat-key", orderCall(200, "o-dsp", "op-at-15m01")); got.call["state"] != "forwarded" {
+		t.Fatalf("at 15:01 the claim has lapsed: %+v", got)
+	}
+}
+
 // Without a claim on the operation, or for a read, nothing is claimed.
 func TestOnlyAClaimedWriteClaimsItsObject(t *testing.T) {
 	for name, edit := range map[string]func(*gateway.Tool){
