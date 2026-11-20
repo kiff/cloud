@@ -575,6 +575,30 @@ install -m 0644 -o root -g root "\$tmp/kiff-healthz.timer"   /etc/systemd/system
 install -m 0644 -o root -g root "\$tmp/kiff-db-credential-refresh.service" /etc/systemd/system/kiff-db-credential-refresh.service
 install -m 0644 -o root -g root "\$tmp/kiff-db-credential-refresh.timer" /etc/systemd/system/kiff-db-credential-refresh.timer
 
+# 3b. The IP-to-country table the API's region check reads (api/internal/region):
+# DB-IP's free country file (CC BY 4.0, attributed on the privacy page), one a
+# month. A month already here isn't fetched again. A fetch that fails, or a file
+# that doesn't look whole, keeps the last good one; with none at all the deploy
+# stops, since the API won't start without it.
+install -d -m 0755 -o root -g root /opt/kiff/geo
+geo_month=\$(date -u +%Y-%m)
+geo_file=/opt/kiff/geo/country-\$geo_month.csv.gz
+if [ ! -s "\$geo_file" ]; then
+	if curl -fsSL --max-time 120 -o "\$tmp/country.csv.gz" "https://download.db-ip.com/free/dbip-country-lite-\$geo_month.csv.gz" \
+		&& gzip -t "\$tmp/country.csv.gz" \
+		&& [ "\$(gzip -dc "\$tmp/country.csv.gz" | wc -l)" -ge 100000 ]; then
+		install -m 0644 -o root -g root "\$tmp/country.csv.gz" "\$geo_file"
+		log "region table: \$geo_month fetched"
+	else
+		log "region table: \$geo_month couldn't be fetched; keeping the last one"
+	fi
+fi
+geo_current=\$(ls -1 /opt/kiff/geo/country-*.csv.gz 2>/dev/null | sort | tail -1 || true)
+[ -n "\$geo_current" ] || { log "region table: none on the box; the API needs one"; exit 5; }
+ln -sfn "\$geo_current" /opt/kiff/geo/country.csv.gz
+# Keep the last three months.
+ls -1 /opt/kiff/geo/country-*.csv.gz | sort | head -n -3 | xargs -r rm -f
+
 # 4. Resolve secrets from Secrets Manager (server-side, never logged).
 # A secret that may be unset (the permit keys, Resend, Stripe): only a secret
 # that does not exist means "unset", and the box's log says so. Any other
@@ -685,6 +709,7 @@ KIFF_PROOF_RUNNER_VERSIONS=\${KIFF_PROOF_RUNNER_VERSIONS}
 KIFF_PROOF_RELEASE_ANYWAY=\${KIFF_PROOF_RELEASE_ANYWAY}
 KIFF_PROOF_STATE_TOKENS=\${proof_state_tokens}
 KIFF_PROOF_GITHUB_TOKEN=\${proof_github_token}
+KIFF_REGION_TABLE=/opt/kiff/geo/country.csv.gz
 API_ENV
 chmod 0640 /etc/kiff/api.env
 chown root:root /etc/kiff/api.env
