@@ -49,6 +49,10 @@ dev.kiff.tafs:/oauth?code=<code>&state=<state>
 **The code** lives 60 seconds, works once, and is bound to the challenge, the
 redirect, the client and the person.
 
+**Approving needs a recent sign-in**, as the device flow's approve does: the
+code mints a session that can approve held calls. A sheet that finds an older
+session asks the person to sign in again, then comes back.
+
 **A new sign-in** that uses a verified email matching an existing user is that
 same user, so it comes back to the same account. An address that doesn't match
 (a relay address, say) is a new user, and so a new account.
@@ -90,6 +94,18 @@ and an agent's grant never mix.
 ```
 
 A re-link answers `{"status": "relinked"}`, as the device flow does.
+
+**There is no waiting.** In the device flow the phone polls
+(`authorization_pending`) only until the person approves in a browser. Here,
+signing in inside the sheet is that approval, so this call answers at once.
+
+**A second device** gets the device flow's rules, unchanged:
+- A phone or tablet that sends an approval key enrols it, and the person gets
+  the new-device email.
+- A computer gets `"approval_mode": "view"`, then pairs with a device that
+  approves, as today.
+
+`approval_mode` in the answer says which.
 
 ## 3. Consent
 
