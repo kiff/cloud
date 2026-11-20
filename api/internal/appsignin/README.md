@@ -39,7 +39,8 @@ GET https://api.kiff.dev/oauth/authorize
   don't apply to it.
 
 **With no session in the sheet**, the sign-in page opens in it and offers the
-sign-in options KIFF has on. Once signed in, KIFF makes the account if it's the
+sign-in options KIFF has on: Apple and Google today. Email code is pending the
+owner's yes, to be turned on only when the sign-in page is ready to test. Once signed in, KIFF makes the account if it's the
 person's first sign-in (`tenant.EnsureForSubject`), then redirects:
 
 ```
@@ -47,7 +48,11 @@ dev.kiff.tafs:/oauth?code=<code>&state=<state>
 ```
 
 **The code** lives 60 seconds, works once, and is bound to the challenge, the
-redirect, the client and the person.
+redirect, the client and the person. **The client binding:** KIFF issues app
+codes only for an authorize that named `tafs-app`, and the token route refuses
+any other `client_id`. Agents' OAuth codes live in a different store, which
+this route never reads, so a code issued for an agent's client can never be
+exchanged here, and an app code never at `/oauth/token`.
 
 **The person acts in the sheet, every time.** Any other app on the device can
 register `dev.kiff.tafs:` and start its *own* authorize with its *own* PKCE
