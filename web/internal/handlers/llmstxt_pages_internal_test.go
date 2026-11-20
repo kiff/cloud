@@ -32,6 +32,7 @@ func LLMsFullTestSite() http.Handler {
 	mux.Handle("GET /legal/sla", SLA())
 	mux.Handle("GET /acceptable-use", AcceptableUse())
 	mux.Handle("GET /subprocessors", Subprocessors())
+	mux.Handle("GET /privacy/countries", CountryIndex())
 	mux.Handle("GET /cookies", Cookies())
 	mux.Handle("GET /support", Support())
 	mux.Handle("GET /tafs", Tafs(offer))

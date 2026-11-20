@@ -82,9 +82,13 @@ tafsi poolt Google'i API-dest saadud teabe kasutamine ja edastamine mis tahes te
 
 ## 7. Kes veel andmeid saab
 
+Me ei müü teie isikuandmeid ega jaga neid reklaami eesmärgil.
+
 tafsi jaoks kasutame neid ettevõtteid: Amazon Web Services (majutus, sealhulgas tafsi salvestus ja planque'i ühendused), Clerk (KIFFi kontode sisselogimine), Anthropic (AI-mudel), Composio (hallatud ühenduste sisselogimised ja päringud, mida planque palub tal teha), Apple (tõuketeavitused), Google (tõuketeavitused Androidis ja Google Play arveldus) ning Resend (tafi e-posti uks). Ametlik ja ajakohane nimekiri, koos sellega, mida igaüks puudutab ja kus, on lehel [/subprocessors](/subprocessors).
 
 Mõned neist asuvad väljaspool Euroopa Majanduspiirkonda, peamiselt Ameerika Ühendriikides. [KIFFi privaatsuspoliitika](/privacy#transfers) ütleb, kuidas neid edastusi kaitstakse.
+
+**Teie riik.** Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel [Teie riik](/privacy/countries).
 
 ## 8. Kui kaua me neid hoiame
 
@@ -111,6 +115,8 @@ GDPR-i alusel võite taotleda juurdepääsu oma andmetele, nende parandamist, ku
 tafsi konto kustutamiseks avage rakendus, minge menüüsse Account ja puudutage Delete account, seejärel kinnitage. Seda ei saa tagasi võtta. [KIFFi privaatsuspoliitika](/privacy#delete-account) ütleb, mida ja millal kustutatakse ning kuidas seda e-posti teel taotleda.
 
 Võite esitada kaebuse [Andmekaitse Inspektsioonile](https://www.aki.ee) või oma elukoha järelevalveasutusele.
+
+**Teie riik.** Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel [Teie riik](/privacy/countries).
 
 ## 11. Turvalisus, lapsed ja muudatused
 

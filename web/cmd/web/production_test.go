@@ -10,7 +10,8 @@ func TestCheckProductionPosture(t *testing.T) {
 		env     map[string]string
 		wantErr string
 	}{
-		{map[string]string{envDeployEnv: "production", envAuthProvider: "clerk"}, ""},
+		{map[string]string{envDeployEnv: "production", envAuthProvider: "clerk", envRegionTable: "/opt/kiff/geo/country.csv.gz"}, ""},
+		{map[string]string{envDeployEnv: "production", envAuthProvider: "clerk"}, "requires KIFF_REGION_TABLE"},
 		{map[string]string{envDeployEnv: "production", envAuthProvider: "stub"}, "requires KIFF_AUTH_PROVIDER=clerk"},
 		{map[string]string{envDeployEnv: "production"}, "requires KIFF_AUTH_PROVIDER=clerk"},
 		{map[string]string{envAuthProvider: "stub"}, ""},

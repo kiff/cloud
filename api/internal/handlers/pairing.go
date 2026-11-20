@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kiff/cloud/api/internal/appsignin"
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/membership"
 	"github.com/oklog/ulid/v2"
@@ -440,9 +441,19 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 			ClientDataJSON    string `json:"client_data_json"`
 			AttestationObject string `json:"attestation_object"`
 		} `json:"credential_proof"`
+		// TermsVersion is the terms the computer's welcome showed ticked
+		// (appsignin's README, Consent): optional; when sent, it must be the
+		// version in force, and it's recorded in the same step as the session.
+		TermsVersion string `json:"terms_version"`
 	}
 	if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 16<<10)).Decode(&req); err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		return
+	}
+	// Checked before anything is claimed, so the computer asks again and
+	// claims with the new version.
+	if req.TermsVersion != "" && h.app != nil && req.TermsVersion != h.app.TermsVersion() {
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "terms_outdated", "terms_version": h.app.TermsVersion()})
 		return
 	}
 	nonceHash, ok := auth.PairingNonceHash(req.Nonce)
@@ -592,6 +603,17 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
 		fail("insert session", err, device.ID)
 		return
+	}
+	// The terms the computer ticked, in the same step: a consent that can't
+	// be recorded undoes the session and the device, and the pairing can be
+	// claimed again.
+	if req.TermsVersion != "" && h.app != nil && h.consents != nil {
+		if err := h.consents.Record(r.Context(), appsignin.Consent{Tenant: p.Tenant, Subject: p.Subject, TermsVersion: req.TermsVersion,
+			Client: appsignin.PairClientID, DeviceID: device.ID, SessionID: sess.ID, AcceptedAt: now}); err != nil {
+			_ = h.sessions.Revoke(r.Context(), sess.ID, now)
+			fail("record consent", err, device.ID)
+			return
+		}
 	}
 	writeJSON(w, http.StatusOK, struct {
 		deviceTokenResponse
