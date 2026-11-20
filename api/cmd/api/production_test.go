@@ -11,6 +11,7 @@ func TestCheckProductionPosture(t *testing.T) {
 		envAuthProv:         "clerk",
 		envDatabaseURL:      "postgresql://x",
 		envAnchorPrivateKey: "0xabc",
+		envRegionTable:      "/opt/kiff/geo/country.csv.gz",
 	}
 	with := func(k, v string) map[string]string {
 		m := map[string]string{}
@@ -34,6 +35,7 @@ func TestCheckProductionPosture(t *testing.T) {
 		{"no database", with(envDatabaseURL, ""), "requires KIFF_DATABASE_URL"},
 		{"receipts disabled", with(envReceiptMode, "Disabled"), "KIFF_RECEIPT_MODE=disabled"},
 		{"no signing key", with(envAnchorPrivateKey, " "), "random key"},
+		{"no region table", with(envRegionTable, ""), "requires KIFF_REGION_TABLE"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

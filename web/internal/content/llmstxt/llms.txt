@@ -100,6 +100,7 @@ Agents now refund, credit, book, cancel and change accounts on their own. Each a
 - [Security](https://kiff.dev/security)
 - Languages: the page for tafs and the pages its apps link to (tafs, privacy, terms, acceptable-use, cookies, ai-act, security, subprocessors, legal/dpa) are also in German, French, Spanish, Italian, Portuguese, Dutch and Polish, each under its language code: https://kiff.dev/de/privacy, https://kiff.dev/fr/terms. The English page is the source, and for the legal texts it is the version that governs.
 - [Privacy](https://kiff.dev/privacy)
+- [Your country](https://kiff.dev/privacy/countries): what a country's law adds to KIFF's and tafs's privacy policies, each in English and in that country's language (Korea: English and Korean). The English text governs, except where local law requires the local text to.
 - [Terms](https://kiff.dev/terms)
 - [Acceptable Use Policy](https://kiff.dev/acceptable-use): What customers and their agents may not do through KIFF and tafs, what KIFF may do when it is broken, and how to report abuse.
 - [Data Processing Addendum](https://kiff.dev/legal/dpa)

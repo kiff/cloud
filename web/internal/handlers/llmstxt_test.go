@@ -292,6 +292,7 @@ func TestLLMsFullText_CarriesEachPublicPage(t *testing.T) {
 		{"/blog/an-approved-refund-can-still-fail", "KIFF records the tool’s response beside its authorization decision"},
 		{"/security", "If a claim here cannot be verified by an external party, we name it as a roadmap item rather than a guarantee."},
 		{"/privacy", "This policy explains how KIFF Cloud processes personal data"},
+		{"/privacy/countries", "Some countries' laws ask for more"},
 		{"/terms", "These terms govern use of KIFF Cloud, including tafs."},
 		{"/acceptable-use", "This policy is part of the Terms of Service (§5)"},
 		{"/legal/dpa", "This is a published template, not a signed contract."},
