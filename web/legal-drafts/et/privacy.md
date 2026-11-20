@@ -67,6 +67,7 @@ GDPR-i artikli 6 alusel tugineme järgmistele õiguslikele alustele:
 Rakendus tafs küsib teilt enne, kui midagi AI-le saadetakse, nende sõnadega:
 
 - tafs kasutab Coachi ja teie tafide jaoks Anthropicu AI-d Claude.
+- Coach ja teie tafid on AI-agendid: see, mida nad kirjutavad, on AI loodud ja võib olla vale. Sõnum, mille taf saadab väljapoole teie ettevõtet, ütleb, et selle kirjutas AI-agent.
 - Mida sinna saadetakse: see, mida kirjutate Coachile ja oma tafidele, teie lisatud failid, see, mida teie ühendatud rakendused tafile töö ajal tagastavad, ja see, mis on teie ekraanil, kui Coach teid rakenduses aitab.
 - Mida ei saadeta kunagi: paroole ja võtmeid, mida teie ühendatud rakendused kasutavad, ega teie sõrmejälge.
 - Anthropic kasutab seda vastamiseks ja hoiab seda kuni 30 päeva.
@@ -79,6 +80,8 @@ Kui nõusoleku tagasi võtate, lõpetavad Coach ja teie tafid teile vastamise. T
 Anthropic on nimetatud lehel [/subprocessors](/subprocessors), koos sellega, kus see andmeid töötleb ja millal võib neid kauem hoida.
 
 ## 6. Volitatud alamtöötlejad
+
+Me ei müü teie isikuandmeid ega jaga neid reklaami eesmärgil.
 
 Teenuse osutamiseks kasutame väikest hulka tarnijaid. Ametlik ja ajakohane nimekiri on lehel [/subprocessors](/subprocessors); seda lehte ajakohastatakse 30 päeva jooksul pärast iga muudatust. Nõuame igalt alamtöötlejalt kirjalike lepingute alusel meie omaga samaväärset kaitset, sealhulgas ELi lepingu tüüptingimusi, kui isikuandmed lahkuvad EList.
 
@@ -93,6 +96,8 @@ Mõned meie alamtöötlejad asuvad väljaspool Euroopa Majanduspiirkonda, peamis
 - Täiendavad meetmed: kui riskihinnang näitab, et lisakaitse on põhjendatud (krüpteerimine edastamisel ja salvestamisel, juurdepääsu logimine, andmete minimeerimine).
 
 Konkreetse alamtöötleja suhtes kohaldatava edastusinstrumendi saate küsida, kirjutades aadressil [privacy@kiff.dev](mailto:privacy@kiff.dev).
+
+**Teie riik.** Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel [Teie riik](/privacy/countries).
 
 ## 8. Säilitamine
 
@@ -146,6 +151,8 @@ Mida kustutatakse: konto võtmed lakkavad kohe toimimast. Selle tafid, vestlused
 Osa andmete kustutamiseks konto alles jättes: kustutage rakenduses vestlus ja selle sõnumid ning lisatud failid kaovad koos sellega; eemaldage taf ja selle vestlused, märkmed ja ühendused kaovad koos sellega. Muu puhul kirjutage aadressil [privacy@kiff.dev](mailto:privacy@kiff.dev) ja öelge, mida kustutada. Teeme seda ühe kuu jooksul.
 
 Teil on õigus esitada kaebus järelevalveasutusele. Meie juhtiv järelevalveasutus on [Andmekaitse Inspektsioon](https://www.aki.ee). Võite esitada kaebuse ka oma elukohajärgse liikmesriigi järelevalveasutusele.
+
+**Teie riik.** Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel [Teie riik](/privacy/countries).
 
 ## 10. Küpsised
 

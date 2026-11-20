@@ -82,9 +82,13 @@ tafs veiktā no Google API saņemtās informācijas izmantošana un nodošana je
 
 ## 7. Kas vēl saņem datus
 
+Mēs nepārdodam jūsu personas datus un nekopīgojam tos reklāmas nolūkos.
+
 tafs vajadzībām mēs izmantojam šos uzņēmumus: Amazon Web Services (mitināšana, tostarp tafs krātuve un planque savienojumi), Clerk (KIFF kontu pierakstīšanās), Anthropic (AI modelis), Composio (pārvaldīto savienojumu pierakstīšanās un izsaukumi, ko planque lūdz tam veikt), Apple (push paziņojumi), Google (push paziņojumi Android ierīcēs un Google Play norēķini) un Resend (taf e-pasta durvis). Oficiālais, aktuālais saraksts ar to, ko katrs skar un kur, ir lapā [/subprocessors](/subprocessors).
 
 Daži no tiem atrodas ārpus Eiropas Ekonomikas zonas, galvenokārt Amerikas Savienotajās Valstīs. [KIFF privātuma politika](/privacy#transfers) apraksta, kā šie pārsūtījumi tiek aizsargāti.
+
+**Jūsu valsts.** Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā [Jūsu valsts](/privacy/countries).
 
 ## 8. Cik ilgi mēs tos glabājam
 
@@ -111,6 +115,8 @@ Saskaņā ar VDAR jūs varat pieprasīt piekļuvi saviem datiem, to labošanu, d
 Lai dzēstu savu tafs kontu, atveriet lietotni, dodieties uz Account un pieskarieties Delete account, pēc tam apstipriniet. To nevar atsaukt. [KIFF privātuma politika](/privacy#delete-account) apraksta, kas un kad tiek dzēsts un kā to pieprasīt pa e-pastu.
 
 Jūs varat iesniegt sūdzību [Igaunijas Datu aizsardzības inspekcijai (Andmekaitse Inspektsioon)](https://www.aki.ee/en) vai savas dzīvesvietas uzraudzības iestādei.
+
+**Jūsu valsts.** Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā [Jūsu valsts](/privacy/countries).
 
 ## 11. Drošība, bērni un izmaiņas
 
