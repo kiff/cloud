@@ -22,8 +22,9 @@ type Gate struct {
 	log     *slog.Logger
 }
 
-// SessionRoutes are the web's routes that start a sign-in or approve a new
-// device.
+// SessionRoutes are the web's routes that start a sign-in, approve a new
+// device, or grant a new client access (OAuth consent, and the device grant's
+// approval): the pages the API's /oauth/authorize sends a browser on to.
 var SessionRoutes = []string{
 	"GET /sign-in",
 	"POST /sign-in",
@@ -31,6 +32,10 @@ var SessionRoutes = []string{
 	"POST /sign-in/callback",
 	"GET /sign-in/app",
 	"GET /auth/device",
+	"GET /oauth/consent",
+	"POST /oauth/consent",
+	"GET /oauth/device",
+	"POST /oauth/device",
 }
 
 // NewGate checks routes ("METHOD /path", exact) against table, answering a
