@@ -94,6 +94,7 @@ type Handler struct {
 	// stepUp, when set, needs a recent sign-in to approve, as the device
 	// flow's approve does: a code here mints a session that approves.
 	stepUp *auth.StepUp
+	terms  string
 
 	mu       sync.Mutex
 	requests map[string]request // by request id
@@ -102,8 +103,9 @@ type Handler struct {
 }
 
 type spent struct {
-	minted  Replay
-	expires time.Time
+	minted   Replay
+	replayed bool // used again: whatever this code mints is ended
+	expires  time.Time
 }
 
 // Option configures a Handler.
@@ -115,10 +117,13 @@ func WithClock(now func() time.Time) Option { return func(h *Handler) { h.now = 
 // WithStepUp needs a recent sign-in (auth.StepUp) to approve.
 func WithStepUp(s *auth.StepUp) Option { return func(h *Handler) { h.stepUp = s } }
 
+// WithTermsVersion sets the terms version in force (DefaultTermsVersion).
+func WithTermsVersion(v string) Option { return func(h *Handler) { h.terms = v } }
+
 // New returns a Handler. pageURL is the sign-in page the sheet opens on, such
 // as https://app.kiff.dev/sign-in/app. on is the KIFF_APP_SIGNIN switch.
 func New(on bool, pageURL string, opts ...Option) *Handler {
-	h := &Handler{on: on, pageURL: pageURL, now: time.Now, requests: map[string]request{}, codes: map[string]code{}, spent: map[string]spent{}}
+	h := &Handler{on: on, pageURL: pageURL, now: time.Now, terms: DefaultTermsVersion, requests: map[string]request{}, codes: map[string]code{}, spent: map[string]spent{}}
 	for _, o := range opts {
 		o(h)
 	}
@@ -170,6 +175,21 @@ func (h *Handler) Authorize(w http.ResponseWriter, r *http.Request) {
 	}
 	page.RawQuery = pq.Encode()
 	http.Redirect(w, r, page.String(), http.StatusFound)
+}
+
+// On reports whether app sign-in is on.
+func (h *Handler) On() bool { return h.on }
+
+// TermsVersion is the terms version in force.
+func (h *Handler) TermsVersion() string { return h.terms }
+
+// Terms handles GET /v1/auth/app/terms: the version the welcome's tick agrees to.
+func (h *Handler) Terms(w http.ResponseWriter, r *http.Request) {
+	if !h.on {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "unsupported_client", "error_description": "signing in inside the app isn't on yet"})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"terms_version": h.terms})
 }
 
 // RegisterAuthenticated mounts the routes the sign-in page calls with the
@@ -264,7 +284,10 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 	delete(h.codes, key)
 	if !ok {
 		if sp, again := h.spent[key]; again && h.now().Before(sp.expires) {
-			delete(h.spent, key)
+			// Kept, marked: a session the first use mints after this moment
+			// is ended by Minted, so no replay can land between the two.
+			sp.replayed = true
+			h.spent[key] = sp
 			h.mu.Unlock()
 			r := sp.minted
 			return Signed{}, &r
@@ -284,15 +307,20 @@ func (h *Handler) Redeem(_ context.Context, clientID, raw, verifier, redirect st
 	return c.who, nil
 }
 
-// Minted records what a redeemed code made, so a replay of it can end them.
-func (h *Handler) Minted(raw, sessionID, deviceID string) {
+// Minted records what a redeemed code made, so a later replay of it can end
+// them. It reports whether the code was already used again while this was
+// minted: then the caller ends what it made and hands nothing over.
+func (h *Handler) Minted(raw, sessionID, deviceID string) (replayed bool) {
 	key := hashOf(raw)
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	if sp, ok := h.spent[key]; ok {
-		sp.minted = Replay{SessionID: sessionID, DeviceID: deviceID}
-		h.spent[key] = sp
+	sp, ok := h.spent[key]
+	if !ok {
+		return false
 	}
+	sp.minted = Replay{SessionID: sessionID, DeviceID: deviceID}
+	h.spent[key] = sp
+	return sp.replayed
 }
 
 func (h *Handler) keepRequest(id string, req request) bool {

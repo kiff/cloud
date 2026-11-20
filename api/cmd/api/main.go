@@ -128,6 +128,8 @@ const (
 	envOAuthIssuer = "KIFF_OAUTH_ISSUER" // default https://api.kiff.dev
 	// envAppSignIn turns on signing in inside the tafs apps ("on"); off by default.
 	envAppSignIn = "KIFF_APP_SIGNIN"
+	// envAppTermsVersion is the tafs terms in force; a terms change sets it.
+	envAppTermsVersion = "KIFF_APP_TERMS_VERSION"
 	// envAndroidApps names the Android apps allowed to make and use kiff.dev's
 	// passkeys, "<package>=<signing certificate SHA-256 as AA:BB:…>", comma
 	// separated: each one's android:apk-key-hash origin is accepted beside
@@ -1487,6 +1489,14 @@ func newRouter(deps routerDeps) http.Handler {
 	if deps.devSessionStore != nil {
 		// Approving a device needs a recent sign-in.
 		opts := []handlers.DeviceAuthOption{handlers.WithDeviceLogger(deps.logger), handlers.WithDeviceStepUp(deps.stepUp)}
+		if appSignIn != nil {
+			// The tafs apps' token: the same session and device as this flow.
+			var consents appsignin.ConsentStore = &appsignin.MemoryConsents{}
+			if deps.pool != nil {
+				consents = appsignin.NewPostgresConsents(deps.pool)
+			}
+			opts = append(opts, handlers.WithDeviceAppSignIn(appSignIn, consents))
+		}
 		if deps.deviceStore != nil {
 			// A phone pairs a computer (the desktop-client design, §5).
 			opts = append(opts, handlers.WithDeviceStore(deps.deviceStore), handlers.WithDevicePairings(buildPairingStore(deps.pool)),
@@ -2339,6 +2349,10 @@ func openPool(ctx context.Context, url string, logger *slog.Logger) (*pgxpool.Po
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply approval_devices: %w", err)
 	}
+	if err := appsignin.ApplyConsentsSchema(dialCtx, pool); err != nil {
+		pool.Close()
+		return nil, nil, fmt.Errorf("apply app_terms_consents: %w", err)
+	}
 	if err := auth.ApplyPairingsSchema(dialCtx, pool); err != nil {
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply pairings: %w", err)
@@ -2479,7 +2493,7 @@ func buildAppSignIn(deps routerDeps) *appsignin.Handler {
 		return nil
 	}
 	on := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
-	var opts []appsignin.Option
+	opts := []appsignin.Option{appsignin.WithTermsVersion(envOr(envAppTermsVersion, appsignin.DefaultTermsVersion))}
 	if deps.stepUp != nil {
 		opts = append(opts, appsignin.WithStepUp(deps.stepUp))
 	}

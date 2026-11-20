@@ -39,8 +39,9 @@ GET https://api.kiff.dev/oauth/authorize
   don't apply to it.
 
 **With no session in the sheet**, the sign-in page opens in it and offers the
-sign-in options KIFF has on: Apple and Google today. Email code is pending the
-owner's yes, to be turned on only when the sign-in page is ready to test. Once signed in, KIFF makes the account if it's the
+sign-in options KIFF has on: **Apple and Google**. Signing in with an email
+code is **off** and the page offers none (owner, 20 Nov: tester accounts can't
+receive codes). Once signed in, KIFF makes the account if it's the
 person's first sign-in (`tenant.EnsureForSubject`), then redirects:
 
 ```
@@ -77,8 +78,8 @@ code without the person acting in this sheet, for this request:
 register, are decided **before the switch goes on in production**, not later.
 
 **`login_hint` sends nothing.** It prefills the email field, escaped as text,
-and no email code is sent until the person taps to send it. An authorize URL
-can never send a code to an address.
+and an authorize URL can never send anything to an address. (If email codes
+are ever turned on, none is sent until the person taps to send it.)
 
 **Approving needs a recent sign-in**, as the device flow's approve does: the
 code mints a session that can approve held calls. A sheet that finds an older
@@ -87,7 +88,7 @@ session asks the person to sign in again, then comes back.
 **A new sign-in** that uses a verified email matching an existing user is that
 same user, so it comes back to the same account. The sign-in service does this
 linking, not KIFF, and KIFF relies on it only for emails the provider marks
-verified: a provider's `email_verified`, or KIFF's own email code. An
+verified: the provider's `email_verified` (Apple, Google). An
 unverified address never lands in an existing account, and the end-to-end test
 proves it. An address that doesn't match (a relay address, say) is a new user,
 and so a new account.
@@ -150,7 +151,14 @@ KIFF records `{subject, tenant, terms_version, client, device, time}`, with
 KIFF's own clock, in the same step that mints the session. There's no separate
 call to forget.
 
-`GET /v1/auth/app/terms` answers `{"terms_version": "..."}`, the version in force.
+`GET /v1/auth/app/terms` answers `{"terms_version": "..."}`, the version in force:
+the date the tafs terms say they were last updated (`2026-11-14` today). A terms
+change sets `KIFF_APP_TERMS_VERSION`, so an app that ticked older ones is asked
+again. The record is kept in `cloud_meta.app_terms_consents` and erased with
+the account.
+
+A consent that can't be recorded undoes the session: no one is signed in
+without the terms on record.
 
 The AI consent is not part of sign-in. It stays its own screen and its own
 record.
@@ -165,9 +173,10 @@ verifier, redirect or client) spends it.
 a session revokes that session, and the device it made (RFC 6749 §4.1.2). The
 second request gets `invalid_grant`.
 
-**Limits.** Failed token requests are limited per IP. Email codes are the
-sign-in service's, limited per address and per IP, and its "send a code"
-answers the same whether or not the address has an account. KIFF's codes are
+**Limits.** Failed token requests are limited per IP. (Email codes are off; if
+they're ever turned on, they're the sign-in service's, limited per address and
+per IP, and "send a code" answers the same whether or not the address has an
+account.) KIFF's codes are
 kept only as hashes, and the verifier is compared in constant time.
 
 **Nothing secret in logs.** No `code`, `code_verifier`, email code or
@@ -200,8 +209,8 @@ requires: it's a 400 page in the sheet.
 | `temporarily_unavailable` | 500 | The sign-in couldn't be recorded. Nothing was kept; start again. |
 | `invalid_request` | 400 | A field is missing or malformed, or `/device/start` refuses a device field (same codes). |
 
-The device flow's own refusals keep their codes: `proof_test_key` (a test key on
-the live account), the rate limit, and a second device waiting for approval.
+The device flow's own refusals keep their codes, such as `proof_test_key` (a
+test key on the live account).
 
 ## Tests that hold this
 
