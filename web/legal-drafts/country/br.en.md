@@ -11,7 +11,11 @@ the tafs Privacy Policy.
 | Your account and devices | To make your account, sign you in, check approvals | Performance of the contract (V) |
 | What you write to Coach and your tafs, files, what your apps return | To do the jobs you hand to tafs | Performance of the contract (V); for the AI, also your consent (I), asked in the app |
 | Billing details | To charge a paid plan | Performance of the contract (V); legal obligation (II) for tax records |
-| Request logs | Security and abuse prevention | Legitimate interest (IX); Brazil's Internet Civil Framework requires access logs for 6 months (II) |
+| Request logs | Security and abuse prevention | Legitimate interest (IX) |
+
+**[owner + mac-local]** Brazil's Internet Civil Framework (Marco Civil, Art. 15) asks application providers that
+operate in Brazil to keep access logs for 6 months. Ours keep them up to 90 days. Decide before Brazil is a market:
+keep Brazil's access logs 6 months (and say so here), or confirm the rule doesn't reach us.
 
 ## 2. Age
 
