@@ -40,5 +40,8 @@ func checkProductionPosture(getenv func(string) string) error {
 	if strings.TrimSpace(getenv(envAnchorPrivateKey)) == "" {
 		errs = append(errs, fmt.Errorf("%s=production requires %s; without it receipts are signed by a random key that cannot be verified after a restart", envDeployEnv, envAnchorPrivateKey))
 	}
+	if strings.TrimSpace(getenv(envRegionTable)) == "" {
+		errs = append(errs, fmt.Errorf("%s=production requires %s; without it no session-starting route checks the caller's country", envDeployEnv, envRegionTable))
+	}
 	return errors.Join(errs...)
 }
