@@ -11,8 +11,9 @@ type AppSignIn struct {
 	// ContinueAsF is "Continue as %s", the signed-in email; OtherAccount and
 	// Cancel are beside it.
 	ContinueAsF, OtherAccount, Cancel string
-	// Expired: the request lapsed or was used. Failed: anything else.
-	Expired, Failed string
+	// Expired: the request lapsed or was used. Failed: anything else. Off:
+	// signing in inside the app isn't on.
+	Expired, Failed, Off string
 }
 
 // ContinueAs is the button that signs the app in as email.
@@ -27,6 +28,7 @@ var appSignIn = map[string]AppSignIn{
 		Cancel:       "Cancel",
 		Expired:      "This sign-in has expired. Start again from the app.",
 		Failed:       "We couldn’t sign you in just now. Start again from the app.",
+		Off:          "Signing in inside the app isn’t on yet. Sign in from the app as before.",
 	},
 	"de": {
 		Title:        "Bei tafs anmelden",

@@ -350,3 +350,32 @@ func sign(secret, payload []byte) []byte {
 	h.Write(payload)
 	return h.Sum(nil)
 }
+
+// sealed is a value signed for one purpose (Seal): the purpose keeps a value
+// sealed for one cookie from passing as another's, or as a session.
+type sealed struct {
+	Purpose string `json:"purpose"`
+	Value   string `json:"value"`
+}
+
+// Seal signs value for purpose with the manager's secret, for a cookie the
+// browser carries and can't forge. The value isn't hidden: never seal a
+// secret.
+func (m *Manager) Seal(purpose, value string) string {
+	body, _ := json.Marshal(sealed{Purpose: purpose, Value: value})
+	return encodeRaw(body, m.secret)
+}
+
+// Open returns the value Seal signed for purpose, and false when the cookie
+// is forged, malformed, or sealed for anything else.
+func (m *Manager) Open(purpose, value string) (string, bool) {
+	body, err := decodeRaw(value, m.secret)
+	if err != nil {
+		return "", false
+	}
+	var s sealed
+	if json.Unmarshal(body, &s) != nil || s.Purpose == "" || s.Purpose != purpose {
+		return "", false
+	}
+	return s.Value, true
+}

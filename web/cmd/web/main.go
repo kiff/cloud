@@ -384,11 +384,10 @@ func run() error {
 		authH := handlers.NewAuthHandler(provider, sessions, logger)
 		authH.Register(mux)
 		// /sign-in/app — the tafs apps' sign-in, in the app's sheet. Off
-		// unless KIFF_APP_SIGNIN is "on", the API's own switch: off, the
-		// path is the landing page's 404.
-		if strings.TrimSpace(os.Getenv(envAppSignIn)) == "on" {
-			handlers.NewAppSignInHandler(sessionAPIClient, sessions, bearers, provider, logger).Register(mux)
-		}
+		// unless KIFF_APP_SIGNIN is "on", the API's own switch: off, it
+		// says so and does nothing else.
+		appSignIn := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+		handlers.NewAppSignInHandler(appSignIn, sessionAPIClient, sessions, bearers, provider, logger).Register(mux)
 
 		// /dashboard surface — both the index and the action
 		// handlers (key mint, template apply, send event,

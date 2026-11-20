@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"html/template"
 	"log/slog"
@@ -33,14 +35,20 @@ import (
 const (
 	appSignInPath = "/sign-in/app"
 	// appSignInCookie marks that this browser was shown the form for one
-	// request: "<request>.<unix seconds>".
+	// request: "<request>.<unix seconds>", sealed with the session secret
+	// (session.Manager.Seal), so it can't be forged or carried over.
 	appSignInCookie = "kiff_app_signin"
+	// appSignInSeal is the mark's purpose for Seal.
+	appSignInSeal = "app-signin-form"
 	// appSignInFormTTL is how long the form's mark holds: a request lives as
 	// long (apps/api's appsignin.RequestTTL).
 	appSignInFormTTL = 10 * time.Minute
 	// appRedirectPrefix is where the API may send the sheet: the app's own
 	// redirect (appsignin.RedirectURI), nowhere else.
 	appRedirectPrefix = "dev.kiff.tafs:/oauth?"
+	// providerScriptVersion pins the sign-in provider's browser script the
+	// form loads: a new version is a reviewed change, never @latest.
+	providerScriptVersion = "6.46.2"
 )
 
 // SignInScript is the sign-in provider's browser script and key, for the
@@ -50,9 +58,10 @@ type SignInScript interface {
 	PublishableKey() string
 }
 
-// AppSignInHandler serves /sign-in/app. It's mounted only when app sign-in
-// is on (KIFF_APP_SIGNIN, as the API's).
+// AppSignInHandler serves /sign-in/app. Off (KIFF_APP_SIGNIN, as the API's),
+// the page says signing in inside the app isn't on, and does nothing else.
 type AppSignInHandler struct {
+	on       bool
 	api      *apiclient.Client
 	sessions *session.Manager
 	bearers  BearerSource
@@ -61,12 +70,13 @@ type AppSignInHandler struct {
 	now      func() time.Time
 }
 
-// NewAppSignInHandler wires the page. script may be nil.
-func NewAppSignInHandler(api *apiclient.Client, sessions *session.Manager, bearers BearerSource, provider auth.Provider, logger *slog.Logger) *AppSignInHandler {
+// NewAppSignInHandler wires the page; on is KIFF_APP_SIGNIN. provider's
+// script is used when it has one.
+func NewAppSignInHandler(on bool, api *apiclient.Client, sessions *session.Manager, bearers BearerSource, provider auth.Provider, logger *slog.Logger) *AppSignInHandler {
 	if logger == nil {
 		logger = slog.Default()
 	}
-	h := &AppSignInHandler{api: api, sessions: sessions, bearers: bearers, logger: logger, now: time.Now}
+	h := &AppSignInHandler{on: on, api: api, sessions: sessions, bearers: bearers, logger: logger, now: time.Now}
 	if s, ok := provider.(SignInScript); ok && s.FrontendAPI() != "" && s.PublishableKey() != "" {
 		h.script = s
 	}
@@ -95,6 +105,9 @@ type appSignInView struct {
 	Other string
 	// Stopped is why there's nothing to do here but go back to the app.
 	Stopped string
+	// Nonce lets the page's own script run under its CSP; ScriptVersion is
+	// the provider script's pinned version.
+	Nonce, ScriptVersion string
 }
 
 func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +115,11 @@ func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
 	request := strings.TrimSpace(q.Get("request"))
 	lang := appSignInLang(r)
 	v := appSignInView{Lang: lang, W: words.AppSignInIn(lang), Request: request}
+	if !h.on {
+		v.Stopped = v.W.Off
+		h.render(w, r, http.StatusNotFound, v)
+		return
+	}
 	if !requestShaped(request) {
 		v.Stopped = v.W.Expired
 		h.render(w, r, http.StatusBadRequest, v)
@@ -127,6 +145,11 @@ func (h *AppSignInHandler) answer(w http.ResponseWriter, r *http.Request) {
 	request := strings.TrimSpace(r.PostFormValue("request"))
 	lang := appSignInLang(r)
 	v := appSignInView{Lang: lang, W: words.AppSignInIn(lang), Request: request}
+	if !h.on {
+		v.Stopped = v.W.Off
+		h.render(w, r, http.StatusNotFound, v)
+		return
+	}
 	if !requestShaped(request) {
 		v.Stopped = v.W.Expired
 		h.render(w, r, http.StatusBadRequest, v)
@@ -149,7 +172,7 @@ func (h *AppSignInHandler) answer(w http.ResponseWriter, r *http.Request) {
 // form mounts, so nothing passes without the person signing in here.
 func (h *AppSignInHandler) showForm(w http.ResponseWriter, r *http.Request, v appSignInView, hint string) {
 	http.SetCookie(w, &http.Cookie{
-		Name: appSignInCookie, Value: v.Request + "." + strconv.FormatInt(h.now().Unix(), 10),
+		Name: appSignInCookie, Value: h.sessions.Seal(appSignInSeal, v.Request+"."+strconv.FormatInt(h.now().Unix(), 10)),
 		Path: appSignInPath, MaxAge: int(appSignInFormTTL.Seconds()),
 		HttpOnly: true, Secure: h.sessions.CookieSecure(), SameSite: http.SameSiteLaxMode,
 	})
@@ -159,7 +182,7 @@ func (h *AppSignInHandler) showForm(w http.ResponseWriter, r *http.Request, v ap
 		return
 	}
 	v.Form = true
-	v.FrontendAPI, v.PublishableKey = h.script.FrontendAPI(), h.script.PublishableKey()
+	v.FrontendAPI, v.PublishableKey, v.ScriptVersion = h.script.FrontendAPI(), h.script.PublishableKey(), providerScriptVersion
 	v.Hint = hint
 	// The provider sends the browser to the callback, which mints KIFF's
 	// session and comes back here.
@@ -176,7 +199,11 @@ func (h *AppSignInHandler) takeFormMark(w http.ResponseWriter, r *http.Request, 
 	}
 	http.SetCookie(w, &http.Cookie{Name: appSignInCookie, Value: "", Path: appSignInPath, MaxAge: -1,
 		HttpOnly: true, Secure: h.sessions.CookieSecure(), SameSite: http.SameSiteLaxMode})
-	id, at, ok := strings.Cut(c.Value, ".")
+	mark, ok := h.sessions.Open(appSignInSeal, c.Value)
+	if !ok {
+		return false
+	}
+	id, at, ok := strings.Cut(mark, ".")
 	if !ok || id != request {
 		return false
 	}
@@ -281,13 +308,40 @@ func requestShaped(s string) bool {
 }
 
 func (h *AppSignInHandler) render(w http.ResponseWriter, r *http.Request, status int, v appSignInView) {
+	v.Nonce = newNonce()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("Referrer-Policy", "no-referrer")
+	// Never framed: a site can't lay "Continue as …" under its own bait.
+	w.Header().Set("X-Frame-Options", "DENY")
+	w.Header().Set("Content-Security-Policy", appSignInCSP(v.FrontendAPI, v.Nonce))
 	w.WriteHeader(status)
 	if err := appSignInPage.Execute(w, v); err != nil {
 		h.logger.ErrorContext(r.Context(), "app sign-in: render", slog.String("err", err.Error()))
 	}
+}
+
+// appSignInCSP is the page's policy: its own script by nonce, the provider's
+// script, requests and pictures from its frontend host and the hosts its
+// bot and fraud checks use (the provider's documented list), and no framing.
+func appSignInCSP(frontendAPI, nonce string) string {
+	script, connect := "'self' 'nonce-"+nonce+"'", "'self'"
+	if frontendAPI != "" {
+		fapi := "https://" + frontendAPI
+		script += " " + fapi + " https://challenges.cloudflare.com https://*.protect.clerk.com"
+		connect += " " + fapi + " https://*.protect.clerk.com:*"
+	}
+	return "default-src 'none'; script-src " + script + "; connect-src " + connect +
+		"; img-src 'self' https://img.clerk.com; style-src 'self' 'unsafe-inline'; font-src 'self'" +
+		"; frame-src https://challenges.cloudflare.com https://*.protect.clerk.com; worker-src 'self' blob:" +
+		"; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+}
+
+// newNonce is a fresh CSP nonce, one per page.
+func newNonce() string {
+	b := make([]byte, 16)
+	_, _ = rand.Read(b)
+	return base64.RawStdEncoding.EncodeToString(b)
 }
 
 var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype html>
@@ -324,11 +378,11 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
   <p>{{.W.Lead}}</p>
   <div id="sign-in"></div>
   <script
-    src="https://{{.FrontendAPI}}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    src="https://{{.FrontendAPI}}/npm/@clerk/clerk-js@{{.ScriptVersion}}/dist/clerk.browser.js"
     data-clerk-publishable-key="{{.PublishableKey}}"
     crossorigin="anonymous"
     async></script>
-  <script>
+  <script nonce="{{.Nonce}}">
     (async function () {
       var waited = 0;
       while (typeof window.Clerk === "undefined" && waited < 8000) {
