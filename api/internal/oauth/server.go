@@ -106,6 +106,10 @@ type Server struct {
 	afterPendingDevice func()
 	// fetch is the HTTP client for metadata documents.
 	fetch *http.Client
+	// appID and appAuthorize: the tafs apps' own sign-in (package
+	// appsignin) takes GET /oauth/authorize for its one client.
+	appID        string
+	appAuthorize http.HandlerFunc
 
 	mu       sync.Mutex
 	register map[string][]time.Time  // per-IP registration times
@@ -120,6 +124,12 @@ func WithClock(now func() time.Time) Option { return func(s *Server) { s.now = n
 
 // WithLogger sets the logger.
 func WithLogger(l *slog.Logger) Option { return func(s *Server) { s.logger = l } }
+
+// WithAppSignIn hands GET /oauth/authorize for clientID to authorize: the
+// tafs apps' sign-in (package appsignin), which is not an agent's grant.
+func WithAppSignIn(clientID string, authorize http.HandlerFunc) Option {
+	return func(s *Server) { s.appID, s.appAuthorize = clientID, authorize }
+}
 
 // WithHTTPClient sets the client that fetches metadata documents.
 func WithHTTPClient(c *http.Client) Option { return func(s *Server) { s.fetch = c } }
@@ -456,6 +466,10 @@ func (s *Server) fetchMetadata(ctx context.Context, id string) (Client, error) {
 
 func (s *Server) authorize(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
+	if s.appAuthorize != nil && q.Get("client_id") == s.appID {
+		s.appAuthorize(w, r)
+		return
+	}
 	c, err := s.client(r.Context(), q.Get("client_id"))
 	if err != nil {
 		if !errors.Is(err, ErrNotFound) && !errors.Is(err, errBadMetadata) {

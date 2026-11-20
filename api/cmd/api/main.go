@@ -52,6 +52,7 @@ import (
 	"github.com/kiff/cloud/api/internal/alert"
 	"github.com/kiff/cloud/api/internal/anchor"
 	"github.com/kiff/cloud/api/internal/approvals"
+	"github.com/kiff/cloud/api/internal/appsignin"
 	"github.com/kiff/cloud/api/internal/appstore"
 	"github.com/kiff/cloud/api/internal/attention"
 	"github.com/kiff/cloud/api/internal/auth"
@@ -125,6 +126,8 @@ const (
 	// there is a database and KIFF_APP_BASE_URL (the consent page's
 	// origin) is set. Defaults are production's.
 	envOAuthIssuer = "KIFF_OAUTH_ISSUER" // default https://api.kiff.dev
+	// envAppSignIn turns on signing in inside the tafs apps ("on"); off by default.
+	envAppSignIn = "KIFF_APP_SIGNIN"
 	// envAndroidApps names the Android apps allowed to make and use kiff.dev's
 	// passkeys, "<package>=<signing certificate SHA-256 as AA:BB:…>", comma
 	// separated: each one's android:apk-key-hash origin is accepted beside
@@ -1450,7 +1453,8 @@ func newRouter(deps routerDeps) http.Handler {
 		memberSvc = membership.NewService(deps.memberStore)
 		mwOpts = append(mwOpts, auth.WithMemberships(memberSvc))
 	}
-	oauthServer := buildOAuthServer(deps)
+	appSignIn := buildAppSignIn(deps)
+	oauthServer := buildOAuthServer(deps, appSignIn)
 	if oauthServer != nil {
 		mwOpts = append(mwOpts, auth.WithOAuthTokens(oauthServer))
 	}
@@ -1596,6 +1600,9 @@ func newRouter(deps routerDeps) http.Handler {
 	auth.NewKeysHandler(deps.apiKeyStore, keysOpts...).Register(authed)
 	if oauthServer != nil {
 		oauthServer.Register(authed)
+	}
+	if appSignIn != nil {
+		appSignIn.RegisterAuthenticated(authed)
 	}
 
 	// The people on an account: /v1/tenant/* behind the auth
@@ -2417,7 +2424,7 @@ func openLockPool(ctx context.Context, url string) (*pgxpool.Pool, func(), error
 // developer_sessions schema is applied by the pool opener.
 // buildOAuthServer is the gateway-OAuth design's authorization server, or nil when there
 // is no database or no consent page origin.
-func buildOAuthServer(deps routerDeps) *oauth.Server {
+func buildOAuthServer(deps routerDeps, app *appsignin.Handler) *oauth.Server {
 	if deps.pool == nil || deps.appBaseURL == "" {
 		return nil
 	}
@@ -2433,6 +2440,9 @@ func buildOAuthServer(deps routerDeps) *oauth.Server {
 		SharedNets: splitNets(deps.logger, envOr(envOAuthSharedNets, "160.79.104.0/21")),
 	}
 	opts := []oauth.Option{oauth.WithLogger(deps.logger)}
+	if app != nil {
+		opts = append(opts, oauth.WithAppSignIn(appsignin.ClientID, app.Authorize))
+	}
 	// Consent binds the key only to an agent the account has:
 	// the same agents GET /v1/me/agents shows.
 	if known := handlers.NewAgentsHandler(deps.agentStore,
@@ -2460,6 +2470,20 @@ func buildOAuthServer(deps routerDeps) *oauth.Server {
 		opts = append(opts, oauth.WithGranterActive(oauth.MemberGranterActive(deps.memberStore.Latest)))
 	}
 	return oauth.New(oauth.NewStore(deps.pool), deps.apiKeyStore, cfg, opts...)
+}
+
+// buildAppSignIn is the tafs apps' sign-in (package appsignin), or nil with
+// no web origin for its page. Off unless KIFF_APP_SIGNIN is "on".
+func buildAppSignIn(deps routerDeps) *appsignin.Handler {
+	if deps.appBaseURL == "" {
+		return nil
+	}
+	on := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+	var opts []appsignin.Option
+	if deps.stepUp != nil {
+		opts = append(opts, appsignin.WithStepUp(deps.stepUp))
+	}
+	return appsignin.New(on, strings.TrimRight(deps.appBaseURL, "/")+"/sign-in/app", opts...)
 }
 
 func splitHosts(s string) []string {
