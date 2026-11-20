@@ -16,3 +16,4 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `sg.en.md` | Singapore (PDPA) | draft |
 | `in.en.md` | India (DPDP Act and Rules; 18+) | draft |
 | `br.en.md`, `br.pt.md` | Brazil (LGPD, ECA Digital; 18+), en and pt-BR | draft |
+| `jp.en.md`, `jp.ja.md` | Japan (APPI), en and ja | draft |
