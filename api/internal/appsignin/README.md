@@ -61,11 +61,14 @@ code without the person acting in this sheet, for this request:
 - No silent sign-in and no automatic continue. A session already in the
   browser, KIFF's or the sign-in service's, never completes an authorize by
   itself.
-- The sign-in page proves it showed the person the form, or a visible
-  "Continue as …" screen they tapped (never automatic), for this request id.
-  It does that with a short-lived
-  HttpOnly cookie bound to the request and the session, used once and checked
-  server-side before it calls approve.
+- The sign-in page calls approve only after the person acts on it, for this
+  request id:
+  - **The form:** before sign-in there's no session, so a short-lived HttpOnly
+    cookie bound to the request id (and when the form was shown) proves this
+    browser was shown the form for this request. It's used once, and checked
+    server-side before approve.
+  - **A session already there:** a visible "Continue as …" screen. The
+    person's tap is a same-origin POST, never automatic.
 - Approve also needs a recent sign-in, as below.
 - The end-to-end test runs a second authorize with the first one's cookies
   present, and expects no code until the person acts.
