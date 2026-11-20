@@ -353,3 +353,30 @@ func TestRead_AllDuplicatesInvalid(t *testing.T) {
 		t.Fatalf("err = %v, want ErrInvalid", err)
 	}
 }
+
+func TestSealOpensOnlyForItsPurposeAndItsSecret(t *testing.T) {
+	m, _ := session.NewManager([]byte(strings.Repeat("a", 32)))
+	other, _ := session.NewManager([]byte(strings.Repeat("b", 32)))
+	v := m.Seal("app-signin", "rq_1.1700000000")
+	if got, ok := m.Open("app-signin", v); !ok || got != "rq_1.1700000000" {
+		t.Fatalf("Open = %q, %v", got, ok)
+	}
+	// A session cookie, signed with the same secret, is no mark.
+	rec := httptest.NewRecorder()
+	if err := m.Issue(rec, session.Session{Subject: "u1", Bearer: "b", ExpiresAt: time.Now().Add(time.Hour)}); err != nil {
+		t.Fatal(err)
+	}
+	asSession := rec.Result().Cookies()[0].Value
+	for name, try := range map[string]func() (string, bool){
+		"another purpose": func() (string, bool) { return m.Open("flash", v) },
+		"another secret":  func() (string, bool) { return other.Open("app-signin", v) },
+		"tampered":        func() (string, bool) { return m.Open("app-signin", "x"+v) },
+		"bare value":      func() (string, bool) { return m.Open("app-signin", "rq_1.1700000000") },
+		"a session":       func() (string, bool) { return m.Open("app-signin", asSession) },
+		"no purpose":      func() (string, bool) { return m.Open("", m.Seal("", "x")) },
+	} {
+		if got, ok := try(); ok {
+			t.Errorf("%s: opened as %q", name, got)
+		}
+	}
+}

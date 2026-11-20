@@ -50,6 +50,7 @@ func checkCatalog[T any](t *testing.T, name string, catalog map[string]T) {
 func TestEveryLanguageHasEveryLine(t *testing.T) {
 	checkCatalog(t, "device", device)
 	checkCatalog(t, "held", held)
+	checkCatalog(t, "app sign-in", appSignIn)
 	for _, lang := range Languages {
 		for status := range held["en"].Status {
 			if held[lang].Status[status] == "" {

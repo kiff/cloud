@@ -142,6 +142,7 @@ func (h *AuthHandler) signInCallbackSubmit(w http.ResponseWriter, r *http.Reques
 		Bearer:      id.Bearer,
 		SessionID:   id.SessionID,
 		DisplayName: id.DisplayName,
+		SignedInFor: appSignInRequestOf(r.URL.Query().Get("next")),
 	}); err != nil {
 		h.logger.ErrorContext(r.Context(), "sign-in callback: issue session failed",
 			slog.String("subject", id.Subject),
@@ -217,6 +218,7 @@ func (h *AuthHandler) signInSubmit(w http.ResponseWriter, r *http.Request) {
 		Bearer:      id.Bearer,
 		SessionID:   id.SessionID,
 		DisplayName: id.DisplayName,
+		SignedInFor: appSignInRequestOf(r.URL.Query().Get("next")),
 	}); err != nil {
 		h.logger.ErrorContext(r.Context(), "sign-in: issue session failed",
 			slog.String("subject", id.Subject),

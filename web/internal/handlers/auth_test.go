@@ -499,3 +499,30 @@ func TestSignInCallbackSubmit_ClearsLoopGuardOnSuccess(t *testing.T) {
 		t.Fatalf("expected a valid session cookie after callback submit: %v", err)
 	}
 }
+
+// A sign-in that comes back to the tafs app's sign-in page is stamped with that request, so the page answers it at
+// once; any other sign-in isn't, so the page asks.
+func TestSignInSubmit_StampsTheAppSignInRequestItComesBackTo(t *testing.T) {
+	t.Parallel()
+	for next, want := range map[string]string{
+		"/sign-in/app?request=rq_0123456789abcdefABCDEF": "rq_0123456789abcdefABCDEF",
+		"/dashboard": "",
+	} {
+		mgr := newTestSessionManager(t)
+		mux := http.NewServeMux()
+		handlers.NewAuthHandler(auth.NewStubProvider(nil), mgr, nil).Register(mux)
+		form := url.Values{"subject": {"ana@example.com"}}
+		req := httptest.NewRequest(http.MethodPost, "/sign-in?next="+url.QueryEscape(next), strings.NewReader(form.Encode()))
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		rec := httptest.NewRecorder()
+		mux.ServeHTTP(rec, req)
+		verify := httptest.NewRequest(http.MethodGet, "/", nil)
+		for _, c := range rec.Result().Cookies() {
+			verify.AddCookie(c)
+		}
+		got, err := mgr.Read(verify)
+		if err != nil || got.SignedInFor != want {
+			t.Errorf("next %q: SignedInFor %q, want %q (%v)", next, got.SignedInFor, want, err)
+		}
+	}
+}
