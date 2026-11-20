@@ -577,20 +577,29 @@ install -m 0644 -o root -g root "\$tmp/kiff-db-credential-refresh.timer" /etc/sy
 
 # 3b. The IP-to-country table the region checks read (api's and web's internal/region):
 # DB-IP's free country file (CC BY 4.0, attributed on the privacy page), one a
-# month. A month already here isn't fetched again. A fetch that fails, or a file
-# that doesn't look whole, keeps the last good one; with none at all the deploy
-# stops, since neither the API nor the web starts without it.
+# month. A month already here isn't fetched again. A fetch that fails, a file
+# that doesn't look whole, or one whose size moves more than a tenth from the
+# last good one (the file has no checksum) keeps the last good one; with none
+# at all the deploy stops, since neither the API nor the web starts without it.
 install -d -m 0755 -o root -g root /opt/kiff/geo
 geo_month=\$(date -u +%Y-%m)
 geo_file=/opt/kiff/geo/country-\$geo_month.csv.gz
 if [ ! -s "\$geo_file" ]; then
+	geo_last=\$(ls -1 /opt/kiff/geo/country-*.csv.gz 2>/dev/null | sort | tail -1 || true)
+	geo_lines=0
 	if curl -fsSL --max-time 120 -o "\$tmp/country.csv.gz" "https://download.db-ip.com/free/dbip-country-lite-\$geo_month.csv.gz" \
-		&& gzip -t "\$tmp/country.csv.gz" \
-		&& [ "\$(gzip -dc "\$tmp/country.csv.gz" | wc -l)" -ge 100000 ]; then
-		install -m 0644 -o root -g root "\$tmp/country.csv.gz" "\$geo_file"
-		log "region table: \$geo_month fetched"
+		&& gzip -t "\$tmp/country.csv.gz"; then
+		geo_lines=\$(gzip -dc "\$tmp/country.csv.gz" | wc -l | tr -d " ")
+	fi
+	geo_prev=0
+	[ -z "\$geo_last" ] || geo_prev=\$(gzip -dc "\$geo_last" | wc -l | tr -d " ")
+	if [ "\$geo_lines" -lt 100000 ]; then
+		log "region table: \$geo_month couldn't be fetched whole; keeping the last one"
+	elif [ "\$geo_prev" -gt 0 ] && [ \$(( (geo_lines > geo_prev ? geo_lines - geo_prev : geo_prev - geo_lines) * 10 )) -gt "\$geo_prev" ]; then
+		log "region table: \$geo_month has \$geo_lines ranges, last good \$geo_prev; more than a tenth apart, keeping the last one"
 	else
-		log "region table: \$geo_month couldn't be fetched; keeping the last one"
+		install -m 0644 -o root -g root "\$tmp/country.csv.gz" "\$geo_file"
+		log "region table: \$geo_month fetched (\$geo_lines ranges)"
 	fi
 fi
 geo_current=\$(ls -1 /opt/kiff/geo/country-*.csv.gz 2>/dev/null | sort | tail -1 || true)

@@ -9,16 +9,18 @@ import (
 
 // ClientAddr is the caller's address. Caddy, on the same box, is the only
 // proxy: the last X-Forwarded-For entry is the one it appended, and it's
-// trusted only when the connection itself comes from loopback. A loopback or
-// private last hop is a call from the box (internal); a connection that isn't
-// from loopback is taken by its own address, whatever it sends.
+// trusted only when the connection itself comes from loopback. Only a loopback
+// last hop is a call from the box (internal). A connection that isn't from
+// loopback is taken by its own address, whatever it sends, and is never
+// internal, even from a private address: a balancer put in front later is
+// then refused loudly (no country) instead of quietly turning the gate off.
 func ClientAddr(r *http.Request) (addr netip.Addr, internal bool) {
 	peer := peerAddr(r.RemoteAddr)
 	if !peer.IsValid() {
 		return netip.Addr{}, false
 	}
 	if !peer.IsLoopback() {
-		return peer, isInternal(peer)
+		return peer, false
 	}
 	f := r.Header.Values("X-Forwarded-For")
 	if len(f) == 0 {
@@ -30,11 +32,7 @@ func ClientAddr(r *http.Request) (addr netip.Addr, internal bool) {
 		return netip.Addr{}, false
 	}
 	last = last.Unmap()
-	return last, isInternal(last)
-}
-
-func isInternal(a netip.Addr) bool {
-	return a.IsLoopback() || a.IsPrivate()
+	return last, last.IsLoopback()
 }
 
 func peerAddr(remote string) netip.Addr {
