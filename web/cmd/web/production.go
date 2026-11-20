@@ -24,5 +24,8 @@ func checkProductionPosture(getenv func(string) string) error {
 	if p := strings.TrimSpace(getenv(envAuthProvider)); p != "clerk" {
 		return fmt.Errorf("%s=production requires %s=clerk (got %q); stub sign-in accepts any typed subject", envDeployEnv, envAuthProvider, p)
 	}
+	if strings.TrimSpace(getenv(envRegionTable)) == "" {
+		return fmt.Errorf("%s=production requires %s; without it the sign-in pages don't check the caller's country", envDeployEnv, envRegionTable)
+	}
 	return nil
 }
