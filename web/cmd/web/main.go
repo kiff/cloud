@@ -324,6 +324,11 @@ func run() error {
 	mux.Handle("GET /legal/sla", handlers.SLA())
 	mux.Handle("GET /acceptable-use", handlers.AcceptableUse())
 	mux.Handle("GET /subprocessors", handlers.Subprocessors())
+	// What a country's law adds to the two privacy policies, in English and in
+	// the country's language (internal/content/country).
+	mux.Handle("GET /privacy/countries", handlers.CountryIndex())
+	mux.Handle("GET /privacy/countries/{country}", handlers.CountrySection())
+	mux.Handle("GET /privacy/countries/{country}/{lang}", handlers.CountrySection())
 	mux.Handle("GET /cookies", handlers.Cookies())
 	// The DPA lives at /legal/dpa; /dpa is the short form.
 	mux.Handle("GET /dpa", handlers.Redirect("/legal/dpa"))
