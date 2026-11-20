@@ -129,8 +129,10 @@ type appFailures struct {
 	by map[string][]time.Time
 }
 
+// recent is ip's failures inside the window, as a new slice: the stored one is
+// never written through, so reading it can't change it.
 func (f *appFailures) recent(ip string, now time.Time) []time.Time {
-	kept := f.by[ip][:0]
+	kept := make([]time.Time, 0, len(f.by[ip]))
 	for _, t := range f.by[ip] {
 		if now.Sub(t) < appFailWindow {
 			kept = append(kept, t)
