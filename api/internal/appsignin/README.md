@@ -159,6 +159,14 @@ the account.
 A consent that can't be recorded undoes the session: no one is signed in
 without the terms on record.
 
+**Signing in by pairing** ("Sign in with your phone", on an iPad or a computer)
+records the same consent: `POST /v1/pair/claim` takes an optional
+`terms_version`. When it's sent, it's checked before anything is claimed (409
+`terms_outdated`, naming the version in force), then recorded with client
+`tafs-pair` against the computer's device and session, in the same step as the
+session. A consent that can't be recorded undoes both, and the pairing can be
+claimed again. Without it, a claim is as it was.
+
 The AI consent is not part of sign-in. It stays its own screen and its own
 record.
 

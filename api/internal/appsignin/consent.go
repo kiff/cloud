@@ -17,6 +17,10 @@ import (
 // so an app that ticked older ones is asked again (terms_outdated).
 const DefaultTermsVersion = "2026-11-14"
 
+// PairClientID is the consent's client for a computer that signed in by
+// pairing with a phone (POST /v1/pair/claim), beside ClientID's sheet.
+const PairClientID = "tafs-pair"
+
 // Consent is one person agreeing to the terms as they signed in.
 type Consent struct {
 	Tenant       string
