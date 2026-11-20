@@ -15,3 +15,4 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `au-nz.en.md` | Australia and New Zealand (APP, IPP) | draft |
 | `sg.en.md` | Singapore (PDPA) | draft |
 | `in.en.md` | India (DPDP Act and Rules; 18+) | draft |
+| `br.en.md` | Brazil (LGPD, ECA Digital; 18+) | draft; pt-BR next |
