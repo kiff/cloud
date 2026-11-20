@@ -39,7 +39,8 @@ GET https://api.kiff.dev/oauth/authorize
   don't apply to it.
 
 **With no session in the sheet**, the sign-in page opens in it and offers the
-sign-in options KIFF has on: **Apple and Google**. Signing in with an email
+sign-in options KIFF has on: **Apple, Google and GitHub** (what the sign-in
+service has on, so the page offers exactly those). Signing in with an email
 code is **off** and the page offers none (owner, 20 Nov: tester accounts can't
 receive codes). Once signed in, KIFF makes the account if it's the
 person's first sign-in (`tenant.EnsureForSubject`), then redirects:
@@ -88,7 +89,7 @@ session asks the person to sign in again, then comes back.
 **A new sign-in** that uses a verified email matching an existing user is that
 same user, so it comes back to the same account. The sign-in service does this
 linking, not KIFF, and KIFF relies on it only for emails the provider marks
-verified: the provider's `email_verified` (Apple, Google). An
+verified: the provider's `email_verified` (Apple, Google, GitHub). An
 unverified address never lands in an existing account, and the end-to-end test
 proves it. An address that doesn't match (a relay address, say) is a new user,
 and so a new account.
