@@ -17,6 +17,7 @@ import (
 	"github.com/kiff/cloud/api/internal/appsignin"
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/receipt"
+	"github.com/kiff/cloud/api/internal/tenant"
 	"github.com/kiff/cloud/api/internal/testdb"
 	"github.com/kiff/kiff/pkg/kiff/actor"
 )
@@ -29,6 +30,9 @@ import (
 // own schema on a Postgres (KIFF_TEST_POSTGRES_URL, as CI runs it), since
 // /oauth/authorize is served only with a database; skipped without one. Not
 // parallel: the switch is an environment variable.
+
+// anaTenant is Ana's account in the test database, made by appSignInRouter.
+var anaTenant string
 
 const (
 	e2eVerifier = "e2e-verifier-0123456789abcdefghijklmnopqrstuvwxyz"
@@ -55,8 +59,13 @@ func appSignInRouter(t *testing.T, on bool) http.Handler {
 	} else {
 		t.Setenv(envAppSignIn, "")
 	}
+	// Ana's account, as her first sign-in makes it (tenant.EnsureForSubject): the consent is kept with it.
+	anaTenant = tenant.NewID()
+	if err := tenant.NewPostgresStore(pool).Create(context.Background(), tenant.Tenant{ID: anaTenant, Slug: "ana-" + anaTenant[len(anaTenant)-8:], DisplayName: "Ana"}); err != nil {
+		t.Fatalf("Ana's account: %v", err)
+	}
 	resolver := auth.NewMapResolver()
-	resolver.Set("ana-web", actor.Actor{ID: "user_ana", Type: actor.TypeHuman, DisplayName: "Ana", Roles: []string{"admin"}}, "t_ana")
+	resolver.Set("ana-web", actor.Actor{ID: "user_ana", Type: actor.TypeHuman, DisplayName: "Ana", Roles: []string{"admin"}}, anaTenant)
 	return newRouter(routerDeps{
 		provider:         auth.NewStubProvider(resolver),
 		apiKeyStore:      auth.NewMemoryAPIKeyStore(),
@@ -172,7 +181,7 @@ func TestAppSignInEndToEnd(t *testing.T) {
 	// The app exchanges it, with its verifier and the terms it ticked: the device flow's own session.
 	status, tok := exchange(t, h, tokenBody(code, nil))
 	access, _ := tok["access_token"].(string)
-	if status != http.StatusOK || access == "" || tok["subject"] != "user_ana" || tok["tenant"] != "t_ana" || tok["token_type"] != "Bearer" {
+	if status != http.StatusOK || access == "" || tok["subject"] != "user_ana" || tok["tenant"] != anaTenant || tok["token_type"] != "Bearer" {
 		t.Fatalf("token: %d %v", status, tok)
 	}
 	// The session it minted is Ana's, and the API lets it in.
