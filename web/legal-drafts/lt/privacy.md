@@ -61,6 +61,7 @@ Pagal BDAR 6 straipsnį remiamės šiais teisiniais pagrindais:
 
 Programėlė tafs paklausia jūsų prieš bet ką siųsdama AI, šiais žodžiais:
 - tafs naudoja Anthropic AI Claude, kad veiktų Coach ir jūsų tafs.
+- Coach ir jūsų tafs yra AI agentai: tai, ką jie rašo, sukuria AI, todėl tai gali būti klaidinga. Žinutėje, kurią taf siunčia už jūsų įmonės ribų, nurodoma, kad ją parašė AI agentas.
 - Kas jam siunčiama: tai, ką rašote Coach ir savo tafs, jūsų pridėti failai, tai, ką jūsų prijungtos programėlės grąžina taf, kol jis dirba, ir tai, kas yra jūsų ekrane, kol Coach jums padeda programėlėje.
 - Kas niekada nesiunčiama: slaptažodžiai ir raktai, kuriuos naudoja jūsų prijungtos programėlės, ar jūsų piršto atspaudas.
 - Anthropic tai naudoja atsakyti ir saugo iki 30 dienų.
@@ -74,6 +75,8 @@ Anthropic nurodyta puslapyje [/subprocessors](/subprocessors) kartu su tuo, kur 
 
 ## 6. Duomenų subtvarkytojai
 
+Mes neparduodame jūsų asmens duomenų ir nesidalijame jais reklamos tikslais.
+
 Paslaugai teikti pasitelkiame nedidelį tiekėjų ratą. Oficialus, dabartinis sąrašas pateikiamas puslapyje [/subprocessors](/subprocessors); šis puslapis atnaujinamas per 30 dienų po bet kokio pakeitimo. Reikalaujame, kad kiekvienas subtvarkytojas pagal rašytines sutartis užtikrintų mūsiškei lygiavertę apsaugą, įskaitant ES standartines sutarčių sąlygas, kai asmens duomenys perduodami už ES ribų.
 
 Apie esminius subtvarkytojų papildymus ar pakeitimus, susijusius su asmens duomenimis, aktyviems klientams pranešama iš anksto, suteikiant teisę prieštarauti.
@@ -86,6 +89,8 @@ Kai kurie mūsų subtvarkytojai yra įsisteigę už Europos ekonominės erdvės 
 - Papildomos priemonės: kai rizikos vertinimas rodo, kad reikia papildomų apsaugos priemonių (šifravimas perduodant ir saugant, prieigos registravimas, duomenų kiekio mažinimas).
 
 Galite paprašyti konkrečios perdavimo priemonės, taikomos konkrečiam subtvarkytojui, parašę adresu [privacy@kiff.dev](mailto:privacy@kiff.dev).
+
+**Jūsų šalis.** Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje [Jūsų šalis](/privacy/countries).
 
 ## 8. Saugojimas
 
@@ -136,6 +141,8 @@ Kas ištrinama: paskyros raktai nedelsiant nustoja veikti. Jos tafs, pokalbiai, 
 Norėdami ištrinti dalį savo duomenų ir išsaugoti paskyrą: programėlėje ištrinkite pokalbį, ir kartu su juo ištrinamos jo žinutės ir pridėti failai; pašalinkite taf, ir kartu su juo ištrinami jo pokalbiai, pastabos ir ryšiai. Dėl visko kito rašykite adresu [privacy@kiff.dev](mailto:privacy@kiff.dev) ir nurodykite, ką ištrinti. Tai padarome per vieną mėnesį.
 
 Turite teisę pateikti skundą priežiūros institucijai. Mūsų vadovaujanti priežiūros institucija yra [Estijos duomenų apsaugos inspekcija (Andmekaitse Inspektsioon)](https://www.aki.ee/en). Taip pat galite pateikti skundą savo gyvenamosios valstybės narės priežiūros institucijai.
+
+**Jūsų šalis.** Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje [Jūsų šalis](/privacy/countries).
 
 ## 10. Slapukai
 
