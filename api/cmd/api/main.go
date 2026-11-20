@@ -83,6 +83,7 @@ import (
 	"github.com/kiff/cloud/api/internal/proofs"
 	"github.com/kiff/cloud/api/internal/proposals"
 	"github.com/kiff/cloud/api/internal/receipt"
+	"github.com/kiff/cloud/api/internal/region"
 	"github.com/kiff/cloud/api/internal/requestlog"
 	cloudruntime "github.com/kiff/cloud/api/internal/runtime"
 	"github.com/kiff/cloud/api/internal/settle"
@@ -126,6 +127,11 @@ const (
 	// there is a database and KIFF_APP_BASE_URL (the consent page's
 	// origin) is set. Defaults are production's.
 	envOAuthIssuer = "KIFF_OAUTH_ISSUER" // default https://api.kiff.dev
+	// envRegionTable is the IP-to-country table (api/internal/region) the
+	// session-starting routes check the caller's country against. Production
+	// requires it (deploy.sh fetches it monthly); unset elsewhere, nothing is
+	// checked.
+	envRegionTable = "KIFF_REGION_TABLE"
 	// envAppSignIn turns on signing in inside the tafs apps ("on"); off by default.
 	envAppSignIn = "KIFF_APP_SIGNIN"
 	// envAppTermsVersion is the tafs terms in force; a terms change sets it.
@@ -1276,11 +1282,16 @@ func run() error {
 	})
 	proofs.LogBoot(logger, proofBootConfig(proofStore, proofTestKeys, proofTenants))
 
+	regionGate, err := buildRegionGate(os.Getenv(envRegionTable), logger)
+	if err != nil {
+		return err
+	}
+
 	srv := &http.Server{
 		Addr: *addr,
 		// One line per request: its route, status and duration, never an id
 		// (requestlog).
-		Handler:           requestlog.Wrap(handler, logger),
+		Handler:           requestlog.Wrap(regionGate.Wrap(handler), logger),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
@@ -3796,3 +3807,23 @@ func buildGooglePlay(tenants tenant.Store, accounts appstore.Accounts, purchases
 // newDeviceSessionsURL is where a person sees the devices signed in to
 // their account and signs one out: the sign-in provider's account page.
 const newDeviceSessionsURL = "https://accounts.kiff.dev/user"
+
+// buildRegionGate loads the IP-to-country table at path and checks the
+// session-starting routes against it. With no path (development, tests) it
+// checks nothing; a path that doesn't load, or a table too small to be whole,
+// stops the API, so a broken download never lets every country in.
+func buildRegionGate(path string, logger *slog.Logger) (*region.Gate, error) {
+	if path == "" {
+		logger.Info("region: no table; session routes aren't checked by country")
+		return region.NewGate(nil, nil, logger), nil
+	}
+	table, err := region.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("region table: %w", err)
+	}
+	if table.Len() < region.MinRanges {
+		return nil, fmt.Errorf("region table: %d ranges, fewer than %d; not a whole file", table.Len(), region.MinRanges)
+	}
+	logger.Info("region: table loaded", slog.Int("ranges", table.Len()), slog.String("list_effective", region.ListEffective))
+	return region.NewGate(table, region.SessionRoutes, logger), nil
+}
