@@ -11,11 +11,11 @@ the tafs Privacy Policy.
 | Your account and devices | To make your account, sign you in, check approvals | Performance of the contract (V) |
 | What you write to Coach and your tafs, files, what your apps return | To do the jobs you hand to tafs | Performance of the contract (V); for the AI, also your consent (I), asked in the app |
 | Billing details | To charge a paid plan | Performance of the contract (V); legal obligation (II) for tax records |
-| Request logs | Security and abuse prevention | Legitimate interest (IX) |
+| Request logs | Security and abuse prevention; access logs kept as Brazil's Internet Civil Framework requires | Legitimate interest (IX); legal obligation (II) for access logs |
 
-**[owner + mac-local]** Brazil's Internet Civil Framework (Marco Civil, Art. 15) asks application providers that
-operate in Brazil to keep access logs for 6 months. Ours keep them up to 90 days. Decide before Brazil is a market:
-keep Brazil's access logs 6 months (and say so here), or confirm the rule doesn't reach us.
+**Access logs.** As Brazil's Internet Civil Framework (Marco Civil, Art. 15) requires, we keep the access logs of
+people in Brazil (the date, time and IP address of each access) for 6 months, kept secure and used for nothing else,
+then delete them. **[mac-local]** Brazil's logs need the 6-month retention before Brazil is a market (PM 15:36).
 
 ## 2. Age
 
@@ -37,7 +37,7 @@ by automated processing. tafs makes no such decision about you. Write to privacy
 
 ## 5. Data protection officer (Encarregado)
 
-**[owner]** [name], Kiff Agents OÜ, privacy@kiff.dev.
+The managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
 
 ## 6. Where to complain
 

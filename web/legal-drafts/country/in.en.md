@@ -38,7 +38,7 @@ privacy@kiff.dev. We answer within 90 days.
 
 ## 5. Grievances
 
-**[owner]** The person who answers questions about your personal data: [name or position], Kiff Agents OÜ,
+The person who answers questions about your personal data: the managing director **(owner-pending)**, Kiff Agents OÜ,
 privacy@kiff.dev. Write to them first. If you're not satisfied, you can complain to the Data Protection Board of
 India.
 

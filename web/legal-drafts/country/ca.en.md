@@ -35,8 +35,7 @@ Write to privacy@kiff.dev. We answer within 30 days. If we refuse, we tell you w
 
 ## 4. Person in charge of protecting personal information
 
-**[owner]** Law 25 makes the company's highest-ranking officer the person in charge unless that role is delegated in
-writing, and asks us to publish their title and contact. Proposal: "[Title], Kiff Agents OÜ, privacy@kiff.dev."
+The managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
 
 ## 5. Breaches
 

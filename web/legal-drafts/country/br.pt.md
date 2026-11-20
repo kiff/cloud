@@ -11,7 +11,11 @@ Privacidade da KIFF e da Política de Privacidade do tafs.
 | Sua conta e seus dispositivos | Criar sua conta, fazer seu login e verificar aprovações | Execução de contrato (V) |
 | O que você escreve para o Coach e seus tafs, arquivos e o que seus apps retornam | Fazer as tarefas que você confia ao tafs | Execução de contrato (V); para a IA, também o seu consentimento (I), pedido no app |
 | Dados de cobrança | Cobrar um plano pago | Execução de contrato (V); obrigação legal (II) para registros fiscais |
-| Registros de acesso | Segurança e prevenção de abusos | Legítimo interesse (IX) |
+| Registros de acesso | Segurança e prevenção de abusos; registros de acesso guardados como exige o Marco Civil da Internet | Legítimo interesse (IX); obrigação legal (II) para os registros de acesso |
+
+**Registros de acesso.** Como exige o Marco Civil da Internet (art. 15), guardamos os registros de acesso de
+pessoas no Brasil (data, hora e endereço IP de cada acesso) por 6 meses, em ambiente seguro e sem outro uso, e depois
+os eliminamos.
 
 ## 2. Idade
 
@@ -34,7 +38,7 @@ desse tipo sobre você. Escreva para privacy@kiff.dev. Respondemos em até 15 di
 
 ## 5. Encarregado pelo tratamento de dados pessoais
 
-**[owner]** [nome], Kiff Agents OÜ, privacy@kiff.dev.
+O diretor-geral (managing director), Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
 
 ## 6. Onde reclamar
 

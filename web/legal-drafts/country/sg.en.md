@@ -22,8 +22,7 @@ Write to privacy@kiff.dev. We answer within 30 days, or tell you within that tim
 
 ## 4. Data protection officer
 
-**[owner]** The PDPA asks us to name a data protection officer and publish a business contact. Proposal: the same
-person as the other countries' privacy officer, at privacy@kiff.dev.
+Data protection officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
 
 ## 5. Breaches
 

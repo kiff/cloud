@@ -40,8 +40,12 @@ Article 28-8(1)(3) provides.
 | Cloudflare, Google Workspace | United States | Mail you send to a kiff.dev address | Receiving support and privacy mail | When you write to us | Per their terms |
 | Composio | United States | The sign-ins of connections you make through it, and each call's input and answer | Managed connections | When a taf uses that connection | Until you disconnect it |
 
-**[owner]** PIPA asks for each recipient's contact for privacy questions. Proposal: link each name to its public
-privacy page, as `/subprocessors` lists them, rather than copying addresses that change.
+**Each recipient's privacy contact** is on its own privacy page: [Amazon Web Services](https://aws.amazon.com/privacy/),
+[Clerk](https://clerk.com/legal/privacy), [Anthropic](https://www.anthropic.com/legal/privacy),
+[Stripe](https://stripe.com/privacy), [Resend](https://resend.com/legal/privacy-policy),
+[Apple](https://www.apple.com/legal/privacy/), [Google](https://policies.google.com/privacy),
+[Cloudflare](https://www.cloudflare.com/privacypolicy/), [Composio](https://composio.dev/privacy).
+**[mac-local]** check each link when building the page.
 
 **You can refuse.** You can ask us to stop transferring your personal information outside Korea, at
 privacy@kiff.dev. Because the service runs only through these recipients, stopping means we can no longer provide it,
@@ -75,8 +79,7 @@ signing in then won't work. The cookie policy lists each one.
 
 ## 7. Privacy officer
 
-**[owner]** PIPA asks us to name a person responsible for privacy: a name or position, and a contact.
-Proposal: "Privacy officer: [name, position], Kiff Agents OÜ, privacy@kiff.dev."
+Privacy officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
 
 ## 8. Domestic agent
 

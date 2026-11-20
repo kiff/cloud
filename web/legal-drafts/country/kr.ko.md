@@ -32,7 +32,11 @@ KIFF는 에스토니아 회사인 Kiff Agents OÜ가 운영합니다. 보내 주
 | Cloudflare, Google Workspace | 미국 | kiff.dev 주소로 보낸 메일 | 고객 지원·개인정보 문의 메일 수신 | 당사에 메일을 보낼 때 | 해당 회사의 약관에 따름 |
 | Composio | 미국 | Composio를 통해 만든 연결의 로그인 정보, 각 호출의 입력과 응답 | 관리형 연결 | taf가 그 연결을 쓸 때 | 연결을 해제할 때까지 |
 
-**[owner]** 이전받는 자별 개인정보 문의 연락처.
+**이전받는 자별 개인정보 문의 연락처**는 각 회사의 개인정보처리방침에 있습니다: [Amazon Web Services](https://aws.amazon.com/privacy/),
+[Clerk](https://clerk.com/legal/privacy), [Anthropic](https://www.anthropic.com/legal/privacy),
+[Stripe](https://stripe.com/privacy), [Resend](https://resend.com/legal/privacy-policy),
+[Apple](https://www.apple.com/legal/privacy/), [Google](https://policies.google.com/privacy),
+[Cloudflare](https://www.cloudflare.com/privacypolicy/), [Composio](https://composio.dev/privacy).
 
 **거부할 수 있습니다.** privacy@kiff.dev로 개인정보의 국외 이전 중단을 요청할 수 있습니다. 서비스는 위 이전받는 자를 통해서만 운영되므로, 이전을 중단하면 서비스를 더 이상 제공할 수 없으며 제1조에 따라 계정을 삭제합니다.
 
@@ -56,7 +60,7 @@ KIFF 웹사이트는 로그인과 설정 유지에 꼭 필요한 쿠키만 사�
 
 ## 7. 개인정보 보호책임자
 
-**[owner]** 개인정보 보호책임자: [성명, 직책], Kiff Agents OÜ, privacy@kiff.dev
+개인정보 보호책임자: 대표이사(managing director), Kiff Agents OÜ, privacy@kiff.dev **(owner-pending)**
 
 ## 8. 국내대리인
 
