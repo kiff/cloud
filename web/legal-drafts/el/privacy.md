@@ -175,3 +175,5 @@
 Επίσημες νομικές ειδοποιήσεις προς την Kiff Agents OÜ: [legal@kiff.dev](mailto:legal@kiff.dev) ή ταχυδρομικά στη διεύθυνση Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Εσθονία.
 
 Επικεφαλής εποπτική αρχή για καταγγελίες: [Εσθονική Επιθεώρηση Προστασίας Δεδομένων (Andmekaitse Inspektsioon)](https://www.aki.ee/en).
+
+Έκδοση εγγράφου: v0.1. Τελευταία ενημέρωση: 17 Νοεμβρίου 2026.

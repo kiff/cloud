@@ -197,3 +197,5 @@
 Εμπορικά και συμβατικά ερωτήματα: [legal@kiff.dev](mailto:legal@kiff.dev).
 
 Γενικά ερωτήματα για το προϊόν: [hello@kiff.dev](mailto:hello@kiff.dev). Ερωτήματα απορρήτου: [privacy@kiff.dev](mailto:privacy@kiff.dev). Γνωστοποιήσεις ζητημάτων ασφαλείας: [security@kiff.dev](mailto:security@kiff.dev).
+
+Έκδοση εγγράφου: v0.1. Τελευταία ενημέρωση: 9 Νοεμβρίου 2026.
