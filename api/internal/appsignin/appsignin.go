@@ -94,6 +94,7 @@ type Handler struct {
 	// stepUp, when set, needs a recent sign-in to approve, as the device
 	// flow's approve does: a code here mints a session that approves.
 	stepUp *auth.StepUp
+	terms  string
 
 	mu       sync.Mutex
 	requests map[string]request // by request id
@@ -115,10 +116,13 @@ func WithClock(now func() time.Time) Option { return func(h *Handler) { h.now = 
 // WithStepUp needs a recent sign-in (auth.StepUp) to approve.
 func WithStepUp(s *auth.StepUp) Option { return func(h *Handler) { h.stepUp = s } }
 
+// WithTermsVersion sets the terms version in force (DefaultTermsVersion).
+func WithTermsVersion(v string) Option { return func(h *Handler) { h.terms = v } }
+
 // New returns a Handler. pageURL is the sign-in page the sheet opens on, such
 // as https://app.kiff.dev/sign-in/app. on is the KIFF_APP_SIGNIN switch.
 func New(on bool, pageURL string, opts ...Option) *Handler {
-	h := &Handler{on: on, pageURL: pageURL, now: time.Now, requests: map[string]request{}, codes: map[string]code{}, spent: map[string]spent{}}
+	h := &Handler{on: on, pageURL: pageURL, now: time.Now, terms: DefaultTermsVersion, requests: map[string]request{}, codes: map[string]code{}, spent: map[string]spent{}}
 	for _, o := range opts {
 		o(h)
 	}
@@ -170,6 +174,21 @@ func (h *Handler) Authorize(w http.ResponseWriter, r *http.Request) {
 	}
 	page.RawQuery = pq.Encode()
 	http.Redirect(w, r, page.String(), http.StatusFound)
+}
+
+// On reports whether app sign-in is on.
+func (h *Handler) On() bool { return h.on }
+
+// TermsVersion is the terms version in force.
+func (h *Handler) TermsVersion() string { return h.terms }
+
+// Terms handles GET /v1/auth/app/terms: the version the welcome's tick agrees to.
+func (h *Handler) Terms(w http.ResponseWriter, r *http.Request) {
+	if !h.on {
+		http.NotFound(w, r)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"terms_version": h.terms})
 }
 
 // RegisterAuthenticated mounts the routes the sign-in page calls with the

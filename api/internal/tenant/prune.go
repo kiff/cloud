@@ -170,6 +170,7 @@ var cloudMetaPruned = []pruneStep{
 var cloudMetaKeptOnPrune = map[string]string{
 	"schemas_applied":                "not an account's: the hash of each store's schema last applied (pgschema)",
 	"tenants":                        "the account itself",
+	"app_terms_consents":             "evidence: the terms each person agreed to at sign-in, kept while the account is",
 	"tenant_memberships":             "the account's people and roles",
 	"subject_tenants":                "who signs in to the account",
 	"tenant_governance":              "the account's policy",

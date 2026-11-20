@@ -29,9 +29,9 @@ func TestEveryWriteRouteHasARule(t *testing.T) {
 		for _, m := range pattern.FindAllStringSubmatch(string(src), -1) {
 			route := m[1]
 			found++
-			if strings.HasPrefix(route, "POST /v1/auth/device/start") || strings.HasPrefix(route, "POST /v1/auth/device/token") || route == "POST /v1/pair/claim" ||
+			if strings.HasPrefix(route, "POST /v1/auth/device/start") || strings.HasPrefix(route, "POST /v1/auth/device/token") || route == "POST /v1/auth/app/token" || route == "POST /v1/pair/claim" ||
 				strings.HasPrefix(route, "POST /v1/invites/") || route == "POST /v1/coach/act" || route == "POST /v1/coach/credits" {
-				continue // public (pair/claim's credential is its proof, coach/act's and coach/credits' credential is KIFF's own permit), or behind WrapPerson: never reach the policy
+				continue // public (app/token's credential is its code and verifier; pair/claim's credential is its proof, coach/act's and coach/credits' credential is KIFF's own permit), or behind WrapPerson: never reach the policy
 			}
 			if strings.HasPrefix(route, "POST /v1/ops/") {
 				continue // covered by the "POST /v1/ops/" rule; the console checks its allow-list

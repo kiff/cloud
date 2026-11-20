@@ -150,7 +150,14 @@ KIFF records `{subject, tenant, terms_version, client, device, time}`, with
 KIFF's own clock, in the same step that mints the session. There's no separate
 call to forget.
 
-`GET /v1/auth/app/terms` answers `{"terms_version": "..."}`, the version in force.
+`GET /v1/auth/app/terms` answers `{"terms_version": "..."}`, the version in force:
+the date the tafs terms say they were last updated (`2026-11-14` today). A terms
+change sets `KIFF_APP_TERMS_VERSION`, so an app that ticked older ones is asked
+again. The record is kept in `cloud_meta.app_terms_consents` and erased with
+the account.
+
+A consent that can't be recorded undoes the session: no one is signed in
+without the terms on record.
 
 The AI consent is not part of sign-in. It stays its own screen and its own
 record.
@@ -200,8 +207,8 @@ requires: it's a 400 page in the sheet.
 | `temporarily_unavailable` | 500 | The sign-in couldn't be recorded. Nothing was kept; start again. |
 | `invalid_request` | 400 | A field is missing or malformed, or `/device/start` refuses a device field (same codes). |
 
-The device flow's own refusals keep their codes: `proof_test_key` (a test key on
-the live account), the rate limit, and a second device waiting for approval.
+The device flow's own refusals keep their codes, such as `proof_test_key` (a
+test key on the live account).
 
 ## Tests that hold this
 

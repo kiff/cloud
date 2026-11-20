@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kiff/cloud/api/internal/appsignin"
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/membership"
 	"github.com/kiff/cloud/api/internal/notify"
@@ -108,6 +109,10 @@ type DeviceAuthHandler struct {
 	passkeys auth.PasskeyStore
 	// passkeyRP is who a registered passkey is for (WithDevicePasskeyRP).
 	passkeyRP auth.RelyingParty
+	// app and consents: the tafs apps' sign-in (WithDeviceAppSignIn). Nil:
+	// no app routes.
+	app      *appsignin.Handler
+	consents appsignin.ConsentStore
 
 	mu           sync.Mutex
 	pending      map[string]*pendingAuth       // key: device-code hash (hex)
@@ -318,6 +323,10 @@ func NewDeviceAuthHandler(sessions auth.DeveloperSessionStore, opts ...DeviceAut
 func (h *DeviceAuthHandler) RegisterPublic(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/auth/device/start", h.start)
 	mux.HandleFunc("POST /v1/auth/device/token", h.token)
+	if h.app != nil && h.consents != nil {
+		mux.HandleFunc("POST /v1/auth/app/token", h.appToken)
+		mux.HandleFunc("GET /v1/auth/app/terms", h.app.Terms)
+	}
 	if h.pairings != nil && h.devices != nil {
 		mux.HandleFunc("POST /v1/pair/claim", h.claimPairing)
 	}
@@ -355,95 +364,113 @@ type deviceStartResponse struct {
 	Interval                int    `json:"interval"`
 }
 
-func (h *DeviceAuthHandler) start(w http.ResponseWriter, r *http.Request) {
-	// A phone may send the public half of its signing key, and its name.
-	// The key is bound only when a person approves this flow in
-	// the browser; nothing else can add a key to a session.
-	var req struct {
-		PublicKey  string `json:"public_key"`
-		DeviceName string `json:"device_name"`
-		// ApprovalPublicKey is the key that signs what grants authority
-		// (kiff/tafs#233); it comes with public_key.
-		ApprovalPublicKey string `json:"approval_public_key"`
-		// Platform is ios, ipados, macos, android, windows or linux.
-		Platform string `json:"platform"`
-		// Kind is what the device is: iphone, ipad, android_phone,
-		// android_tablet or other. Left out, or one KIFF doesn't know, its
-		// name says it (auth.DeviceKindOf).
-		Kind string `json:"kind"`
-		// Approval is "passkey" for a computer with no approval key of its
-		// own (Linux, a Mac without Touch ID), sent instead of
-		// approval_public_key; KeyStore is "software" when its device key
-		// isn't in hardware, sent only with it (the desktop-client design, §1.1).
-		Approval string `json:"approval"`
-		KeyStore string `json:"key_store"`
-	}
-	if r.Body != nil && r.ContentLength != 0 {
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 4<<10)).Decode(&req); err != nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
-			return
-		}
-	}
+type deviceFields struct {
+	PublicKey  string `json:"public_key"`
+	DeviceName string `json:"device_name"`
+	// ApprovalPublicKey is the key that signs what grants authority
+	// (kiff/tafs#233); it comes with public_key.
+	ApprovalPublicKey string `json:"approval_public_key"`
+	// Platform is ios, ipados, macos, android, windows or linux.
+	Platform string `json:"platform"`
+	// Kind is what the device is: iphone, ipad, android_phone,
+	// android_tablet or other. Left out, or one KIFF doesn't know, its
+	// name says it (auth.DeviceKindOf).
+	Kind string `json:"kind"`
+	// Approval is "passkey" for a computer with no approval key of its
+	// own (Linux, a Mac without Touch ID), sent instead of
+	// approval_public_key; KeyStore is "software" when its device key
+	// isn't in hardware, sent only with it (the desktop-client design, §1.1).
+	Approval string `json:"approval"`
+	KeyStore string `json:"key_store"`
+}
+
+// deviceIn is a device's sign-in fields, checked: what /v1/auth/device/start
+// and the apps' /v1/auth/app/token take alike.
+type deviceIn struct {
+	deviceKey, approvalKey []byte
+	passkey                bool
+	keyStore               string
+	platform               string
+	platformSent           bool
+	deviceName, kind       string
+}
+
+// deviceRefusal is a 400 with its body.
+type deviceRefusal map[string]string
+
+// check reads a device's fields as /v1/auth/device/start always has: the
+// same rules and the same refusals, for every flow that signs a device in.
+func (f deviceFields) check() (deviceIn, deviceRefusal) {
 	var deviceKey []byte
-	if strings.TrimSpace(req.PublicKey) != "" {
-		k, err := auth.ParseDeviceKey(req.PublicKey)
+	if strings.TrimSpace(f.PublicKey) != "" {
+		k, err := auth.ParseDeviceKey(f.PublicKey)
 		if err != nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_public_key", "detail": err.Error()})
-			return
+			return deviceIn{}, deviceRefusal{"error": "invalid_public_key", "detail": err.Error()}
 		}
 		deviceKey = k
 	}
 	var approvalKey []byte
-	if strings.TrimSpace(req.ApprovalPublicKey) != "" {
+	if strings.TrimSpace(f.ApprovalPublicKey) != "" {
 		if deviceKey == nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "approval_public_key comes with the device's public_key"})
-			return
+			return deviceIn{}, deviceRefusal{"error": "invalid_request", "detail": "approval_public_key comes with the device's public_key"}
 		}
-		k, err := auth.ParseDeviceKey(req.ApprovalPublicKey)
+		k, err := auth.ParseDeviceKey(f.ApprovalPublicKey)
 		if err != nil {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_approval_public_key", "detail": err.Error()})
-			return
+			return deviceIn{}, deviceRefusal{"error": "invalid_approval_public_key", "detail": err.Error()}
 		}
 		if bytes.Equal(k, deviceKey) {
-			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_approval_public_key", "detail": "the approval key is a second key, not the device key"})
-			return
+			return deviceIn{}, deviceRefusal{"error": "invalid_approval_public_key", "detail": "the approval key is a second key, not the device key"}
 		}
 		approvalKey = k
 	}
 	// A computer approves with an approval key or a passkey, never with its
 	// device key alone: it says which. key_store goes only with a passkey.
-	passkey := req.Approval == "passkey"
+	passkey := f.Approval == "passkey"
 	switch {
-	case req.Approval != "" && !passkey:
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "approval is \"passkey\", or left out"})
-		return
+	case f.Approval != "" && !passkey:
+		return deviceIn{}, deviceRefusal{"error": "invalid_request", "detail": "approval is \"passkey\", or left out"}
 	case passkey && (deviceKey == nil || approvalKey != nil):
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "approval \"passkey\" comes with public_key, instead of approval_public_key"})
-		return
-	case req.KeyStore != "" && (req.KeyStore != auth.KeyStoreSoftware || !passkey):
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "key_store is \"software\", sent only with approval \"passkey\""})
-		return
-	case deviceKey != nil && approvalKey == nil && !passkey && pairingPlatforms[strings.TrimSpace(req.Platform)]:
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "approval_required",
-			"detail": "a computer sends approval_public_key, or approval \"passkey\": it never approves with its device key"})
-		return
+		return deviceIn{}, deviceRefusal{"error": "invalid_request", "detail": "approval \"passkey\" comes with public_key, instead of approval_public_key"}
+	case f.KeyStore != "" && (f.KeyStore != auth.KeyStoreSoftware || !passkey):
+		return deviceIn{}, deviceRefusal{"error": "invalid_request", "detail": "key_store is \"software\", sent only with approval \"passkey\""}
+	case deviceKey != nil && approvalKey == nil && !passkey && pairingPlatforms[strings.TrimSpace(f.Platform)]:
+		return deviceIn{}, deviceRefusal{"error": "approval_required",
+			"detail": "a computer sends approval_public_key, or approval \"passkey\": it never approves with its device key"}
 	}
-	platform := strings.TrimSpace(req.Platform)
+	platform := strings.TrimSpace(f.Platform)
 	// A device that names no platform is stored with none, never as a phone:
 	// a missing platform proves nothing, and a computer that left it out must
 	// not pass as an iPhone where a phone is trusted more (planque's window
 	// rule for computers). A later sign-in that names it fills it in.
 	switch {
 	case platform != "" && deviceKey == nil:
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "platform comes with the device's public_key"})
-		return
+		return deviceIn{}, deviceRefusal{"error": "invalid_request", "detail": "platform comes with the device's public_key"}
 	case platform != "" && !auth.ValidDevicePlatform(platform):
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_platform", "detail": "platform is ios, ipados, macos, android, windows or linux"})
-		return
+		return deviceIn{}, deviceRefusal{"error": "invalid_platform", "detail": "platform is ios, ipados, macos, android, windows or linux"}
 	}
-	deviceName, ok := cleanDeviceName(req.DeviceName)
+	deviceName, ok := cleanDeviceName(f.DeviceName)
 	if !ok {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_device_name", "detail": "device_name is at most 64 characters, without control characters"})
+		return deviceIn{}, deviceRefusal{"error": "invalid_device_name", "detail": "device_name is at most 64 characters, without control characters"}
+	}
+	return deviceIn{deviceKey: deviceKey, approvalKey: approvalKey, passkey: passkey, keyStore: f.KeyStore,
+		platform: platform, platformSent: platform != "", deviceName: deviceName,
+		kind: auth.DeviceKindOf(strings.TrimSpace(f.Kind), deviceName)}, nil
+}
+
+func (h *DeviceAuthHandler) start(w http.ResponseWriter, r *http.Request) {
+	// A phone may send the public half of its signing key, and its name.
+	// The key is bound only when a person approves this flow in
+	// the browser; nothing else can add a key to a session.
+	var req deviceFields
+	if r.Body != nil && r.ContentLength != 0 {
+		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 4<<10)).Decode(&req); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+			return
+		}
+	}
+	in, refusal := req.check()
+	if refusal != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string(refusal))
 		return
 	}
 	now := h.clock()
@@ -478,16 +505,16 @@ func (h *DeviceAuthHandler) start(w http.ResponseWriter, r *http.Request) {
 		status:     "pending",
 		createdAt:  now,
 		expiresAt:  now.Add(h.deviceTTL),
-		deviceKey:  deviceKey,
-		deviceName: deviceName,
-		platform:   platform,
-		kind:       auth.DeviceKindOf(strings.TrimSpace(req.Kind), deviceName),
+		deviceKey:  in.deviceKey,
+		deviceName: in.deviceName,
+		platform:   in.platform,
+		kind:       in.kind,
 
-		approvalKey: approvalKey,
-		passkey:     passkey,
-		keyStore:    req.KeyStore,
+		approvalKey: in.approvalKey,
+		passkey:     in.passkey,
+		keyStore:    in.keyStore,
 
-		platformSent: strings.TrimSpace(req.Platform) != "",
+		platformSent: in.platformSent,
 	}
 	if err := h.keep(r.Context(), p); err != nil {
 		h.logger.ErrorContext(r.Context(), "device start: sign-in not kept", slog.String("err", err.Error()))
@@ -716,6 +743,59 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	m, ok := h.mintSession(w, r, id, deviceIn{deviceKey: deviceKey, deviceName: deviceName, platform: platform, platformSent: platformSent,
+		approvalKey: approvalKey, kind: kind, keyStore: keyStore, passkey: passkey}, req.Label, now)
+	if !ok {
+		return
+	}
+
+	h.mu.Lock()
+	// Re-fetch: the pending record may have expired/been consumed while
+	// we minted. If so, revoke the just-minted session to avoid an orphan.
+	if cur := h.pending[hash]; cur == p && cur.status == "approving" && !now.After(cur.expiresAt) {
+		cur.status = "approved"
+		cur.subject = id.Subject
+		cur.tenant = id.Tenant
+		cur.tokenOnce = m.token
+		if deviceKey != nil {
+			cur.approvalMode = m.shownMode
+		}
+		cur.approvingSubject = ""
+		committed = true
+		h.mu.Unlock()
+		// Approved, it's no longer waiting (claimed above): the session it
+		// minted is handed to the device from this process's memory, never
+		// kept.
+	} else {
+		h.mu.Unlock()
+		h.undoMint(r, m, now)
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "unknown or expired code"})
+		return
+	}
+
+	h.clearApproveFails(id.Subject)
+	h.finishMint(r, id, m)
+	writeJSON(w, http.StatusOK, map[string]string{"status": "approved", "user_code": userCode})
+}
+
+// mintedSession is a device's session, minted and kept: what both the device
+// flow's approve and the apps' token hand on once it's theirs.
+type mintedSession struct {
+	token        string // the plaintext, handed to the device once
+	sess         auth.DeveloperSession
+	created      string // a device this sign-in made, undone if it doesn't finish
+	relabel      func() // a new name for a device the key already has, once it finishes
+	alsoApproves bool   // a second phone that enrolled its approval key: the person is told
+	label        string
+	shownMode    string // the approval mode the device is told
+}
+
+// mintSession mints a device's session for id, as the device flow's approve
+// always has: the approval mode by the person's devices, the key restriction,
+// the device kept or found by its key, then the session. It writes any
+// refusal itself. browserLabel names a device that named none (the CLI).
+func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, id auth.Identity, in deviceIn, browserLabel string, now time.Time) (mintedSession, bool) {
+	deviceKey, deviceName, platform, platformSent, approvalKey, kind, keyStore, passkey := in.deviceKey, in.deviceName, in.platform, in.platformSent, in.approvalKey, in.kind, in.keyStore, in.passkey
 	// Once the person has a device that approves, active or removed in the
 	// last 30 days, the browser enrols no approval key (the desktop-client design,
 	// §1.1), whatever the device sent: it's view-only until a device that
@@ -734,7 +814,7 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			h.logger.ErrorContext(r.Context(), "device approve: read approval devices failed", slog.String("err", err.Error()))
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not read the devices"})
-			return
+			return mintedSession{}, false
 		}
 		// Until phones pair (the desktop-client design, §1.1, "(a)"), a phone or
 		// tablet that sends an approval key still enrols it, so a second
@@ -754,20 +834,20 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 	// The proof runner's test phone signs in on a test tenant only.
 	if !h.keys.Allows(r.Context(), id.Tenant, deviceKey, approvalKey) {
 		auth.WriteKeyRestricted(w)
-		return
+		return mintedSession{}, false
 	}
 	// Mint the developer session bound to the approving human. Done
 	// outside the lock (store call); re-check under lock before commit.
 	gen, err := auth.NewDevSessionToken()
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not mint developer session"})
-		return
+		return mintedSession{}, false
 	}
 	// A device that named itself keeps its name; the browser's label is
 	// for flows that didn't (the CLI).
 	label := deviceName
 	if label == "" {
-		label = strings.TrimSpace(req.Label)
+		label = strings.TrimSpace(browserLabel)
 	}
 	if label == "" {
 		label = "cli"
@@ -807,7 +887,7 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 				h.logger.ErrorContext(r.Context(), "device approve: insert device failed",
 					slog.String("tenant", id.Tenant), slog.String("err", ierr.Error()))
 				writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not persist the device"})
-				return
+				return mintedSession{}, false
 			}
 		}
 		switch {
@@ -819,7 +899,7 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 			if approvalKey != nil {
 				if merr := h.devices.MarkApprovalKey(r.Context(), existing.ID); merr != nil {
 					writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not persist the device"})
-					return
+					return mintedSession{}, false
 				}
 			}
 			// A later sign-in of the same key names the device as it is now,
@@ -844,7 +924,7 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 			}
 		default:
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not read the devices"})
-			return
+			return mintedSession{}, false
 		}
 	}
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
@@ -852,43 +932,33 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 		h.logger.ErrorContext(r.Context(), "device approve: insert session failed",
 			slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not persist developer session"})
-		return
+		return mintedSession{}, false
 	}
 
-	h.mu.Lock()
-	// Re-fetch: the pending record may have expired/been consumed while
-	// we minted. If so, revoke the just-minted session to avoid an orphan.
-	if cur := h.pending[hash]; cur == p && cur.status == "approving" && !now.After(cur.expiresAt) {
-		cur.status = "approved"
-		cur.subject = id.Subject
-		cur.tenant = id.Tenant
-		cur.tokenOnce = gen.Plaintext
-		if deviceKey != nil {
-			cur.approvalMode = auth.ShownApprovalMode(sess.ApprovalMode, approvalKey != nil, keyStore)
-		}
-		cur.approvingSubject = ""
-		committed = true
-		h.mu.Unlock()
-		// Approved, it's no longer waiting (claimed above): the session it
-		// minted is handed to the device from this process's memory, never
-		// kept.
-	} else {
-		h.mu.Unlock()
-		_ = h.sessions.Revoke(r.Context(), sess.ID, now)
-		h.revokeDevice(r, created, now)
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "unknown or expired code"})
-		return
+	shown := ""
+	if deviceKey != nil {
+		shown = auth.ShownApprovalMode(sess.ApprovalMode, approvalKey != nil, keyStore)
 	}
+	return mintedSession{token: gen.Plaintext, sess: sess, created: created, relabel: relabel, alsoApproves: alsoApproves, label: label, shownMode: shown}, true
+}
 
-	if relabel != nil {
-		relabel()
+// undoMint revokes a minted session, and the device it made, when the sign-in
+// didn't finish.
+func (h *DeviceAuthHandler) undoMint(r *http.Request, m mintedSession, now time.Time) {
+	_ = h.sessions.Revoke(r.Context(), m.sess.ID, now)
+	h.revokeDevice(r, m.created, now)
+}
+
+// finishMint does what follows a sign-in that finished: the device's new name,
+// tafs told, and the email when a second phone now approves.
+func (h *DeviceAuthHandler) finishMint(r *http.Request, id auth.Identity, m mintedSession) {
+	if m.relabel != nil {
+		m.relabel()
 	}
-	h.clearApproveFails(id.Subject)
 	h.throughTafs(r.Context(), id)
-	if alsoApproves {
-		h.newApproverNotice(r.Context(), id.Tenant, id.Subject, label)
+	if m.alsoApproves {
+		h.newApproverNotice(r.Context(), id.Tenant, id.Subject, m.label)
 	}
-	writeJSON(w, http.StatusOK, map[string]string{"status": "approved", "user_code": userCode})
 }
 
 // phoneEnrolPlatforms are the platforms that still enrol an approval key from
