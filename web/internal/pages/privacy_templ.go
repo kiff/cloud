@@ -364,7 +364,7 @@ func privacySubprocessors() templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sub-processors\"><h2>6. Sub-processors</h2><p>We engage a small set of vendors to deliver the service. The official, current list lives at <a href=\"/subprocessors\">/subprocessors</a>; that page is updated within 30 days of any change. We require each sub-processor to provide protections equivalent to ours under written agreements, including the EU Standard Contractual Clauses where personal data leaves the EU.</p><p>Material additions to or replacements of sub-processors that affect personal data are notified to active customers in advance, with a right to object.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sub-processors\"><h2>6. Sub-processors</h2><p>We don't sell your personal data, and we don't share it for advertising.</p><p>We engage a small set of vendors to deliver the service. The official, current list lives at <a href=\"/subprocessors\">/subprocessors</a>; that page is updated within 30 days of any change. We require each sub-processor to provide protections equivalent to ours under written agreements, including the EU Standard Contractual Clauses where personal data leaves the EU.</p><p>Material additions to or replacements of sub-processors that affect personal data are notified to active customers in advance, with a right to object.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
