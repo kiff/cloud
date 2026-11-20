@@ -88,9 +88,10 @@ session asks the person to sign in again, then comes back.
 **A new sign-in** that uses a verified email matching an existing user is that
 same user, so it comes back to the same account. The sign-in service does this
 linking, not KIFF, and KIFF relies on it only for emails the provider marks
-verified: the provider's `email_verified` (Apple, Google). An
-unverified address never lands in an existing account, and the end-to-end test
-proves it. An address that doesn't match (a relay address, say) is a new user,
+verified: the provider's `email_verified` (Apple, Google, GitHub). An
+unverified address never lands in an existing account. The linking is the
+sign-in service's, so the end-to-end test (which stubs the identity) can't prove
+it: the device pass does, for each way to sign in, before the switch goes on. An address that doesn't match (a relay address, say) is a new user,
 and so a new account.
 
 ## 2. Token
@@ -222,5 +223,4 @@ covers:
   off (`unsupported_client` on both routes);
 - a second authorize with the first's cookies present: no code without the
   person acting;
-- an unverified email that matches an existing user: not that user's account;
 - `login_hint` sending no code by itself.
