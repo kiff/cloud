@@ -197,3 +197,5 @@ Trešās personas labuma guvēji. Tādu nav, izņemot tiktāl, ciktāl skaidri n
 Komerciāli un līgumiski jautājumi: [legal@kiff.dev](mailto:legal@kiff.dev).
 
 Vispārīgi jautājumi par produktu: [hello@kiff.dev](mailto:hello@kiff.dev). Privātuma jautājumi: [privacy@kiff.dev](mailto:privacy@kiff.dev). Ziņojumi par drošības problēmām: [security@kiff.dev](mailto:security@kiff.dev).
+
+Dokumenta versija: v0.1. Pēdējoreiz atjaunināti: 2026. gada 9. novembrī.
