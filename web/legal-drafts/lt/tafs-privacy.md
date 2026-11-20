@@ -82,9 +82,13 @@ tafs naudojimasis iš Google API gauta informacija ir jos perdavimas bet kuriai 
 
 ## 7. Kas dar gauna duomenis
 
+Mes neparduodame jūsų asmens duomenų ir nesidalijame jais reklamos tikslais.
+
 tafs reikmėms naudojame šias įmones: Amazon Web Services (prieglobos paslaugos, įskaitant tafs saugyklą ir planque ryšius), Clerk (KIFF paskyrų prisijungimas), Anthropic (AI modelis), Composio (valdomų ryšių prisijungimai ir užklausos, kurias planque prašo jos atlikti), Apple (push pranešimai), Google (push pranešimai Android įrenginiuose ir Google Play atsiskaitymas) ir Resend (taf el. pašto durys). Oficialus, dabartinis sąrašas, nurodantis, ką kiekviena jų paliečia ir kur, pateikiamas puslapyje [/subprocessors](/subprocessors).
 
 Kai kurios iš jų yra už Europos ekonominės erdvės ribų, daugiausia Jungtinėse Amerikos Valstijose. [KIFF privatumo politikoje](/privacy#transfers) nurodyta, kaip šie perdavimai apsaugomi.
+
+**Jūsų šalis.** Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje [Jūsų šalis](/privacy/countries).
 
 ## 8. Kiek laiko juos saugome
 
@@ -111,6 +115,8 @@ Pagal BDAR galite prašyti susipažinti su savo duomenimis, juos ištaisyti, iš
 Norėdami ištrinti savo tafs paskyrą, atidarykite programėlę, eikite į Account ir palieskite Delete account, tada patvirtinkite. To negalima atšaukti. [KIFF privatumo politikoje](/privacy#delete-account) nurodyta, kas ir kada ištrinama ir kaip to paprašyti el. paštu.
 
 Galite pateikti skundą [Estijos duomenų apsaugos inspekcijai (Andmekaitse Inspektsioon)](https://www.aki.ee/en) arba savo gyvenamosios vietos priežiūros institucijai.
+
+**Jūsų šalis.** Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje [Jūsų šalis](/privacy/countries).
 
 ## 11. Saugumas, vaikai ir pakeitimai
 
