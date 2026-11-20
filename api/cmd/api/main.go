@@ -52,6 +52,7 @@ import (
 	"github.com/kiff/cloud/api/internal/alert"
 	"github.com/kiff/cloud/api/internal/anchor"
 	"github.com/kiff/cloud/api/internal/approvals"
+	"github.com/kiff/cloud/api/internal/appsignin"
 	"github.com/kiff/cloud/api/internal/appstore"
 	"github.com/kiff/cloud/api/internal/attention"
 	"github.com/kiff/cloud/api/internal/auth"
@@ -125,6 +126,10 @@ const (
 	// there is a database and KIFF_APP_BASE_URL (the consent page's
 	// origin) is set. Defaults are production's.
 	envOAuthIssuer = "KIFF_OAUTH_ISSUER" // default https://api.kiff.dev
+	// envAppSignIn turns on signing in inside the tafs apps ("on"); off by default.
+	envAppSignIn = "KIFF_APP_SIGNIN"
+	// envAppTermsVersion is the tafs terms in force; a terms change sets it.
+	envAppTermsVersion = "KIFF_APP_TERMS_VERSION"
 	// envAndroidApps names the Android apps allowed to make and use kiff.dev's
 	// passkeys, "<package>=<signing certificate SHA-256 as AA:BB:…>", comma
 	// separated: each one's android:apk-key-hash origin is accepted beside
@@ -1450,7 +1455,8 @@ func newRouter(deps routerDeps) http.Handler {
 		memberSvc = membership.NewService(deps.memberStore)
 		mwOpts = append(mwOpts, auth.WithMemberships(memberSvc))
 	}
-	oauthServer := buildOAuthServer(deps)
+	appSignIn := buildAppSignIn(deps)
+	oauthServer := buildOAuthServer(deps, appSignIn)
 	if oauthServer != nil {
 		mwOpts = append(mwOpts, auth.WithOAuthTokens(oauthServer))
 	}
@@ -1483,6 +1489,14 @@ func newRouter(deps routerDeps) http.Handler {
 	if deps.devSessionStore != nil {
 		// Approving a device needs a recent sign-in.
 		opts := []handlers.DeviceAuthOption{handlers.WithDeviceLogger(deps.logger), handlers.WithDeviceStepUp(deps.stepUp)}
+		if appSignIn != nil {
+			// The tafs apps' token: the same session and device as this flow.
+			var consents appsignin.ConsentStore = &appsignin.MemoryConsents{}
+			if deps.pool != nil {
+				consents = appsignin.NewPostgresConsents(deps.pool)
+			}
+			opts = append(opts, handlers.WithDeviceAppSignIn(appSignIn, consents))
+		}
 		if deps.deviceStore != nil {
 			// A phone pairs a computer (the desktop-client design, §5).
 			opts = append(opts, handlers.WithDeviceStore(deps.deviceStore), handlers.WithDevicePairings(buildPairingStore(deps.pool)),
@@ -1596,6 +1610,9 @@ func newRouter(deps routerDeps) http.Handler {
 	auth.NewKeysHandler(deps.apiKeyStore, keysOpts...).Register(authed)
 	if oauthServer != nil {
 		oauthServer.Register(authed)
+	}
+	if appSignIn != nil {
+		appSignIn.RegisterAuthenticated(authed)
 	}
 
 	// The people on an account: /v1/tenant/* behind the auth
@@ -2332,6 +2349,10 @@ func openPool(ctx context.Context, url string, logger *slog.Logger) (*pgxpool.Po
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply approval_devices: %w", err)
 	}
+	if err := appsignin.ApplyConsentsSchema(dialCtx, pool); err != nil {
+		pool.Close()
+		return nil, nil, fmt.Errorf("apply app_terms_consents: %w", err)
+	}
 	if err := auth.ApplyPairingsSchema(dialCtx, pool); err != nil {
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply pairings: %w", err)
@@ -2417,7 +2438,7 @@ func openLockPool(ctx context.Context, url string) (*pgxpool.Pool, func(), error
 // developer_sessions schema is applied by the pool opener.
 // buildOAuthServer is the gateway-OAuth design's authorization server, or nil when there
 // is no database or no consent page origin.
-func buildOAuthServer(deps routerDeps) *oauth.Server {
+func buildOAuthServer(deps routerDeps, app *appsignin.Handler) *oauth.Server {
 	if deps.pool == nil || deps.appBaseURL == "" {
 		return nil
 	}
@@ -2433,6 +2454,9 @@ func buildOAuthServer(deps routerDeps) *oauth.Server {
 		SharedNets: splitNets(deps.logger, envOr(envOAuthSharedNets, "160.79.104.0/21")),
 	}
 	opts := []oauth.Option{oauth.WithLogger(deps.logger)}
+	if app != nil {
+		opts = append(opts, oauth.WithAppSignIn(appsignin.ClientID, app.Authorize))
+	}
 	// Consent binds the key only to an agent the account has:
 	// the same agents GET /v1/me/agents shows.
 	if known := handlers.NewAgentsHandler(deps.agentStore,
@@ -2460,6 +2484,20 @@ func buildOAuthServer(deps routerDeps) *oauth.Server {
 		opts = append(opts, oauth.WithGranterActive(oauth.MemberGranterActive(deps.memberStore.Latest)))
 	}
 	return oauth.New(oauth.NewStore(deps.pool), deps.apiKeyStore, cfg, opts...)
+}
+
+// buildAppSignIn is the tafs apps' sign-in (package appsignin), or nil with
+// no web origin for its page. Off unless KIFF_APP_SIGNIN is "on".
+func buildAppSignIn(deps routerDeps) *appsignin.Handler {
+	if deps.appBaseURL == "" {
+		return nil
+	}
+	on := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+	opts := []appsignin.Option{appsignin.WithTermsVersion(envOr(envAppTermsVersion, appsignin.DefaultTermsVersion))}
+	if deps.stepUp != nil {
+		opts = append(opts, appsignin.WithStepUp(deps.stepUp))
+	}
+	return appsignin.New(on, strings.TrimRight(deps.appBaseURL, "/")+"/sign-in/app", opts...)
 }
 
 func splitHosts(s string) []string {

@@ -64,6 +64,7 @@ var cloudMetaErased = []string{
 	"oauth_grants",
 	"oauth_connect_links",
 	"oauth_device_codes", // pending codes carry no tenant until approved
+	"app_terms_consents", // the terms each person agreed to when signing in inside the tafs apps
 	"api_keys",
 	"developer_sessions",
 	"pairings",         // computers a phone approved, with their keys and names
