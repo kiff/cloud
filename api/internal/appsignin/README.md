@@ -61,8 +61,9 @@ code without the person acting in this sheet, for this request:
 - No silent sign-in and no automatic continue. A session already in the
   browser, KIFF's or the sign-in service's, never completes an authorize by
   itself.
-- The sign-in page proves it showed the person the form, or a "Continue as …"
-  screen they tapped, for this request id. It does that with a short-lived
+- The sign-in page proves it showed the person the form, or a visible
+  "Continue as …" screen they tapped (never automatic), for this request id.
+  It does that with a short-lived
   HttpOnly cookie bound to the request and the session, used once and checked
   server-side before it calls approve.
 - Approve also needs a recent sign-in, as below.
