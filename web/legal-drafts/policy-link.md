@@ -16,3 +16,19 @@ the "Your country" page (`/privacy/countries`), with the link text in the page's
 | pl | Twój kraj | **Twój kraj.** W niektórych krajach prawo wymaga więcej, niż mówi ta polityka. To, co dodaje, znajdziesz po angielsku i w języku danego kraju na stronie {link}. |
 
 The link text is the page's title in that language, so the page's own `<h1>` matches it.
+
+## No sale, no advertising (both policies, 8 languages)
+
+Goes in KIFF's Privacy Policy (section 6 "Sub-processors", as its first paragraph) and the tafs Privacy Policy (section 7
+"Who else receives data", as its first paragraph), in each language.
+
+| lang | Line |
+|---|---|
+| en | We don't sell your personal data, and we don't share it for advertising. |
+| de | Wir verkaufen deine personenbezogenen Daten nicht und geben sie nicht für Werbung weiter. |
+| fr | Nous ne vendons pas vos données personnelles et ne les partageons pas à des fins publicitaires. |
+| es | No vendemos tus datos personales ni los compartimos con fines publicitarios. |
+| it | Non vendiamo i tuoi dati personali e non li condividiamo per scopi pubblicitari. |
+| pt | Não vendemos os seus dados pessoais nem os partilhamos para fins publicitários. |
+| nl | We verkopen je persoonsgegevens niet en delen ze niet voor advertenties. |
+| pl | Nie sprzedajemy Twoich danych osobowych i nie udostępniamy ich w celach reklamowych. |
