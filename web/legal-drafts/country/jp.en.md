@@ -16,7 +16,7 @@ Your personal information is provided to recipients outside Japan. For each coun
 |---|---|---|
 | Ireland, and the EU | Kiff Agents OÜ (Estonia), Amazon Web Services, Stripe | The EU's GDPR. Japan's Personal Information Protection Commission recognises the EU as having a system equivalent to Japan's. |
 | United States | Clerk, Anthropic, Stripe, Resend, Cloudflare, Google, Apple, Composio | No single federal law; sector laws and state laws such as California's CCPA. The FTC can act against unfair or deceptive practices. |
-| Other countries where Anthropic's models may run (Europe, Asia, Australia) | Anthropic | That country's law; Anthropic's commitments below apply wherever it runs. |
+| Other countries where Anthropic's models may run (Europe, Asia, Australia) | Anthropic | That country's law; the written agreement under "Our measures" applies wherever it runs. |
 
 **Our measures.** Each recipient is bound by a written agreement to handle your personal information in line with the
 APPI's standards: for the stated purpose only, kept secure, not passed on without the same terms, and deleted or
