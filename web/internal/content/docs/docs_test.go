@@ -513,7 +513,7 @@ func TestCreditsPageCarriesThePricingDetails(t *testing.T) {
 	body := string(h)
 	for _, want := range []string{
 		`id="pricing-details"`,
-		"€11.50", "€29.99", "€84.99", "never expire",
+		"€11.49", "€29.99", "€84.99", "never expire",
 		"€0.01 a credit", "€50 to start", "80%", "100%", "48 hours",
 		"€0.02 an action", "reverse charge", "order form", "kiff.dev",
 	} {

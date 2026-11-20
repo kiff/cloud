@@ -16,7 +16,7 @@ const (
 )
 
 // TafsPackCents is each pack of credits' price, by its credits.
-var TafsPackCents = map[int]int{500: 1150, 1500: 2999, 5000: 8499}
+var TafsPackCents = map[int]int{500: 1149, 1500: 2999, 5000: 8499}
 
 // The models tafs run on, as kiff/tafs' definitions name them: a taf's work
 // (tafdef.ts' MODEL) and Coach (setupdef.ts' SETUP_MODEL). Named as facts,
