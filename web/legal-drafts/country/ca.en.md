@@ -35,7 +35,7 @@ Write to privacy@kiff.dev. We answer within 30 days. If we refuse, we tell you w
 
 ## 4. Person in charge of protecting personal information
 
-The managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+The managing director, Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 5. Breaches
 

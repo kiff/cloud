@@ -38,7 +38,7 @@ desse tipo sobre você. Escreva para privacy@kiff.dev. Respondemos em até 15 di
 
 ## 5. Encarregado pelo tratamento de dados pessoais
 
-O diretor-geral (managing director), Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+O diretor-geral (managing director), Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 6. Onde reclamar
 

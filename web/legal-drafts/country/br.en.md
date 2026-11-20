@@ -37,7 +37,7 @@ by automated processing. tafs makes no such decision about you. Write to privacy
 
 ## 5. Data protection officer (Encarregado)
 
-The managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+The managing director, Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 6. Where to complain
 

@@ -28,4 +28,4 @@
 
 ## 5. お問い合わせ先
 
-Kiff Agents OÜ、Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。代表者：managing director **(owner-pending)**。個人情報に関するお問い合わせ・苦情：privacy@kiff.dev
+Kiff Agents OÜ、Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。代表者：managing director。個人情報に関するお問い合わせ・苦情：privacy@kiff.dev

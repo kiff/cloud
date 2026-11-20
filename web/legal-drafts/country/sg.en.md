@@ -22,7 +22,7 @@ Write to privacy@kiff.dev. We answer within 30 days, or tell you within that tim
 
 ## 4. Data protection officer
 
-Data protection officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+Data protection officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 5. Breaches
 

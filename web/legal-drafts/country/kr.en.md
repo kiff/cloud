@@ -70,7 +70,7 @@ If we learn we have, we delete it.
 
 Our measures are on the security page. They include keeping each customer's data apart in the database, TLS 1.2 or
 later in transit, encryption at rest, access only for those who need it, and a signing key that approves actions on
-your own device and never leaves it. If a breach affects you, we tell you without undue delay.
+your own device and never leaves it. If your personal information is leaked, we tell you within 72 hours of learning of it: what leaked, when and how, what we're doing about it, what you can do, and how to reach us. Where PIPA requires, we also report it to the Personal Information Protection Commission or KISA within 72 hours.
 
 ## 6. Cookies
 
@@ -79,7 +79,7 @@ signing in then won't work. The cookie policy lists each one.
 
 ## 7. Privacy officer
 
-Privacy officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+Privacy officer: the managing director, Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 8. Domestic agent
 

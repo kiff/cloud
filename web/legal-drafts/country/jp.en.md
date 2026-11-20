@@ -39,5 +39,5 @@ privacy@kiff.dev. We answer without delay, and don't charge for it.
 
 ## 5. Contact
 
-Kiff Agents OÜ, Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Representative: the managing director **(owner-pending)**.
+Kiff Agents OÜ, Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Representative: the managing director.
 Privacy questions and complaints: privacy@kiff.dev.

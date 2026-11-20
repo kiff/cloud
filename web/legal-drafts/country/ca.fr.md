@@ -39,7 +39,7 @@ raisons et vous indiquons comment porter plainte.
 
 ## 4. Personne responsable de la protection des renseignements personnels
 
-Le directeur général (managing director), Kiff Agents OÜ, privacy@kiff.dev. **(owner-pending)**
+Le directeur général (managing director), Kiff Agents OÜ, privacy@kiff.dev.
 
 ## 5. Incidents de confidentialité
 
