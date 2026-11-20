@@ -175,3 +175,5 @@ Privatumo klausimai ir prašymai dėl teisių: [privacy@kiff.dev](mailto:privacy
 Oficialūs teisiniai pranešimai Kiff Agents OÜ: [legal@kiff.dev](mailto:legal@kiff.dev) arba paštu adresu Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estija.
 
 Vadovaujanti priežiūros institucija skundams: [Estijos duomenų apsaugos inspekcija (Andmekaitse Inspektsioon)](https://www.aki.ee/en).
+
+Dokumento versija: v0.1. Paskutinį kartą atnaujinta: 2026 m. lapkričio 17 d.

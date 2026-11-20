@@ -197,3 +197,5 @@ Tretieji naudos gavėjai. Jų nėra, išskyrus tiek, kiek aiškiai nurodytos sus
 Komerciniai ir sutartiniai klausimai: [legal@kiff.dev](mailto:legal@kiff.dev).
 
 Bendri klausimai apie produktą: [hello@kiff.dev](mailto:hello@kiff.dev). Privatumo klausimai: [privacy@kiff.dev](mailto:privacy@kiff.dev). Pranešimai apie saugumo spragas: [security@kiff.dev](mailto:security@kiff.dev).
+
+Dokumento versija: v0.1. Paskutinį kartą atnaujinta: 2026 m. lapkričio 9 d.
