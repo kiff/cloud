@@ -1,6 +1,7 @@
 package region
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"net/netip"
@@ -150,6 +151,38 @@ func TestEveryStoreCountryIsSupported(t *testing.T) {
 			if !IsSupported(c) {
 				t.Errorf("%s offers tafs in %s, which isn't on the list effective %s (%s)", store, c, ListEffective, ListSource)
 			}
+		}
+	}
+}
+
+func TestTheRefusalSpeaksTheRequestsLanguage(t *testing.T) {
+	if len(Here) != 8 {
+		t.Fatalf("%d languages, want 8", len(Here))
+	}
+	for lang, line := range Here {
+		if strings.TrimSpace(line) == "" || !strings.Contains(line, "KIFF") {
+			t.Errorf("%s: %q", lang, line)
+		}
+	}
+	h := NewGate(table(t), SessionRoutes, nil).Wrap(http.NotFoundHandler())
+	for accept, want := range map[string]string{
+		"":                        "en",
+		"de-DE,de;q=0.9,en;q=0.8": "de",
+		"ja,pt-BR;q=0.5":          "pt",
+		"ko":                      "en",
+		"fr;q=0,it;q=0.2":         "it",
+		"nl;q=nope,pl;q=0.1":      "pl",
+	} {
+		r := req("POST", "/v1/auth/device/start", "127.0.0.1:5000", "198.51.100.1")
+		r.Header.Set("Accept-Language", accept)
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		var body map[string]string
+		if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+			t.Fatal(err)
+		}
+		if w.Header().Get("Content-Language") != want || body["message"] != Here[want] || body["code"] != Code || body["error"] != Code || body["error_description"] != Here[want] {
+			t.Errorf("Accept-Language %q: %s %v", accept, w.Header().Get("Content-Language"), body)
 		}
 	}
 }
