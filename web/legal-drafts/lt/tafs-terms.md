@@ -1,6 +1,6 @@
 # tafs sąlygos
 
-Paskutinį kartą atnaujinta: 2026 m. lapkričio 14 d.
+Paskutinį kartą atnaujinta: 2026 m. lapkričio 20 d.
 
 Šis vertimas skelbiamas kartu su tekstu anglų kalba. Jei jie skiriasi, taikomas tekstas anglų kalba.
 
@@ -34,7 +34,7 @@ Jūs, jūsų žmonės ir jūsų taf turite laikytis [Priimtino naudojimo politik
 
 ## 6. Mokesčiai
 
-Šio atnaujinimo metu Solo kainuoja 12,50 € per mėnesį su PVM, su 500 kreditų per mėnesį, ir parduodamas programėlėje per App Store arba Google Play. Programėlėje perkami kreditų paketai prasideda nuo 11,50 € ir nenustoja galioti. Kiekvienas taf paleidimas naudoja kreditus už jo panaudotą AI. Coach ir tafs nustatymas įskaičiuoti į sąžiningo Coach naudojimo ribas. Dabartinės kainos pateikiamos [kainų puslapyje](/pricing); tafs taip pat yra KIFF Company plano dalis.
+Šio atnaujinimo metu Solo kainuoja 12,50 € per mėnesį su PVM, su 500 kreditų per mėnesį, ir parduodamas programėlėje per App Store arba Google Play. Programėlėje perkami kreditų paketai prasideda nuo 11,49 € ir nenustoja galioti. Kiekvienas taf paleidimas naudoja kreditus už jo panaudotą AI. Coach ir tafs nustatymas įskaičiuoti į sąžiningo Coach naudojimo ribas. Dabartinės kainos pateikiamos [kainų puslapyje](/pricing); tafs taip pat yra KIFF Company plano dalis.
 
 Bandomojo laikotarpio nėra. Programėlėje įsigytas Solo valdomas ir atšaukiamas jūsų Apple arba Google Play prenumeratose pagal tos parduotuvės mokėjimo, atnaujinimo ir pinigų grąžinimo sąlygas. Planas galioja iki apmokėto laikotarpio pabaigos. Jei esate vartotojas ES, galite atsisakyti pirkimo per 14 dienų. Išsamiau – [KIFF sąlygų 8 punkte](/terms#fees).
 

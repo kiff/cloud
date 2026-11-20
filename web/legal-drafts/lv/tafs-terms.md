@@ -1,6 +1,6 @@
 # tafs noteikumi
 
-Pēdējoreiz atjaunināti: 2026. gada 14. novembrī.
+Pēdējoreiz atjaunināti: 2026. gada 20. novembrī.
 
 Šis tulkojums ir publicēts kopā ar tekstu angļu valodā. Ja tie atšķiras, noteicošais ir teksts angļu valodā.
 
@@ -34,7 +34,7 @@ Jums, jūsu cilvēkiem un jūsu taf jāievēro [Pieņemamas lietošanas politika
 
 ## 6. Maksas
 
-Šī atjauninājuma brīdī Solo maksā 12,50 € mēnesī, ieskaitot PVN, ar 500 kredītiem mēnesī, un to pārdod lietotnē caur App Store vai Google Play. Lietotnē pērkamās kredītu paketes sākas no 11,50 €, un tām nav derīguma termiņa. Katra taf palaišana izmanto kredītus par tā izmantoto AI. Coach un taf iestatīšana ir iekļauta Coach godīgas lietošanas ietvaros. Pašreizējās cenas ir [cenu lapā](/pricing); tafs ir arī daļa no KIFF Company plāna.
+Šī atjauninājuma brīdī Solo maksā 12,50 € mēnesī, ieskaitot PVN, ar 500 kredītiem mēnesī, un to pārdod lietotnē caur App Store vai Google Play. Lietotnē pērkamās kredītu paketes sākas no 11,49 €, un tām nav derīguma termiņa. Katra taf palaišana izmanto kredītus par tā izmantoto AI. Coach un taf iestatīšana ir iekļauta Coach godīgas lietošanas ietvaros. Pašreizējās cenas ir [cenu lapā](/pricing); tafs ir arī daļa no KIFF Company plāna.
 
 Izmēģinājuma perioda nav. Lietotnē pirktu Solo pārvalda un atceļ jūsu Apple vai Google Play abonementos saskaņā ar attiecīgā veikala maksājumu, atjaunošanas un atmaksas noteikumiem. Plāns darbojas līdz apmaksātā perioda beigām. Ja esat patērētājs ES, jūs varat atkāpties no pirkuma 14 dienu laikā. Sīkāka informācija ir [KIFF noteikumu 8. punktā](/terms#fees).
 
