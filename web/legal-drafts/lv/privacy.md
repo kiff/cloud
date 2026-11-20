@@ -61,6 +61,7 @@ Saskaņā ar VDAR 6. pantu mēs balstāmies uz šādiem tiesiskajiem pamatiem:
 
 Lietotne tafs jums jautā, pirms kaut kas tiek nosūtīts AI, ar šiem vārdiem:
 - tafs izmanto Anthropic AI Claude, lai darbinātu Coach un jūsu taf.
+- Coach un jūsu taf ir AI aģenti: to rakstīto ģenerē AI, un tas var būt kļūdains. Ziņā, ko taf sūta ārpus jūsu uzņēmuma, ir norādīts, ka to ir rakstījis AI aģents.
 - Kas tam tiek sūtīts: tas, ko rakstāt Coach un saviem taf, jūsu pievienotie faili, tas, ko jūsu pievienotās lietotnes atgriež taf, kamēr tas strādā, un tas, kas ir jūsu ekrānā, kamēr Coach jums palīdz lietotnē.
 - Kas nekad netiek sūtīts: paroles un atslēgas, ko izmanto jūsu pievienotās lietotnes, vai jūsu pirksta nospiedums.
 - Anthropic to izmanto, lai atbildētu, un glabā to līdz 30 dienām.
@@ -74,6 +75,8 @@ Anthropic ir norādīts lapā [/subprocessors](/subprocessors) kopā ar to, kur 
 
 ## 6. Apakšapstrādātāji
 
+Mēs nepārdodam jūsu personas datus un nekopīgojam tos reklāmas nolūkos.
+
 Pakalpojuma sniegšanai mēs piesaistām nelielu piegādātāju loku. Oficiālais, aktuālais saraksts ir lapā [/subprocessors](/subprocessors); šī lapa tiek atjaunināta 30 dienu laikā pēc jebkuras izmaiņas. Mēs pieprasām, lai katrs apakšapstrādātājs saskaņā ar rakstiskiem līgumiem nodrošina mūsējai līdzvērtīgu aizsardzību, tostarp ES līguma standartklauzulas, ja personas dati tiek nosūtīti ārpus ES.
 
 Par būtiskiem apakšapstrādātāju papildinājumiem vai aizstāšanu, kas skar personas datus, aktīvajiem klientiem paziņo iepriekš, ar tiesībām iebilst.
@@ -86,6 +89,8 @@ Daži no mūsu apakšapstrādātājiem ir reģistrēti ārpus Eiropas Ekonomikas
 - Papildu pasākumi: ja riska novērtējums norāda, ka nepieciešamas papildu garantijas (šifrēšana pārsūtīšanas laikā un glabāšanā, piekļuves reģistrēšana, datu minimizēšana).
 
 Jūs varat pieprasīt konkrēto nosūtīšanas instrumentu, kas piemērojams konkrētam apakšapstrādātājam, rakstot uz [privacy@kiff.dev](mailto:privacy@kiff.dev).
+
+**Jūsu valsts.** Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā [Jūsu valsts](/privacy/countries).
 
 ## 8. Glabāšana
 
@@ -136,6 +141,8 @@ Kas tiek dzēsts: konta atslēgas nekavējoties pārstāj darboties. Tā taf, t�
 Lai dzēstu daļu savu datu un saglabātu kontu: lietotnē dzēsiet tērzēšanas sarunu, un tās ziņas un pievienotie faili tiek dzēsti kopā ar to; noņemiet taf, un tā tērzēšanas sarunas, piezīmes un savienojumi tiek dzēsti kopā ar to. Visam citam rakstiet uz [privacy@kiff.dev](mailto:privacy@kiff.dev) un norādiet, ko dzēst. Mēs to izdarām viena mēneša laikā.
 
 Jums ir tiesības iesniegt sūdzību uzraudzības iestādei. Mūsu vadošā uzraudzības iestāde ir [Igaunijas Datu aizsardzības inspekcija (Andmekaitse Inspektsioon)](https://www.aki.ee/en). Jūs varat iesniegt sūdzību arī savas dzīvesvietas dalībvalsts uzraudzības iestādei.
+
+**Jūsu valsts.** Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā [Jūsu valsts](/privacy/countries).
 
 ## 10. Sīkdatnes
 
