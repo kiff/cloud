@@ -1,5 +1,7 @@
 # Japan
 
+This section is published in English and Japanese. If they differ, the English text applies.
+
 This section applies if you live in Japan. It adds what the Act on the Protection of Personal Information (APPI) asks,
 beyond KIFF's Privacy Policy and the tafs Privacy Policy.
 

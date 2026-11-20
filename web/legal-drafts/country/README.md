@@ -4,6 +4,10 @@ One "Your country" page that both privacy policies (KIFF's `/privacy` and `/tafs
 "International transfers" and "Your rights". Each country's section exists once, in English and in that country's
 language. The two policies stay as they are; a section only adds what that country's law asks beyond them.
 
+**Which text binds.** Each section is published in English and in its country's language. The English text binds,
+except where local law requires the local-language text to bind (Quebec's Charter of the French language; any other
+country so marked below). The page says so in both languages at its top.
+
 These are drafts for the owner's read. Nothing here is served until mac-local builds it into `web/internal/pages`
 and the owner has approved the text. Lines marked **[owner]** need a fact only the owner can give.
 

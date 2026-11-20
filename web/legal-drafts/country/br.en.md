@@ -1,5 +1,7 @@
 # Brazil
 
+This section is published in English and Portuguese. If they differ, the English text applies.
+
 This section applies if you live in Brazil. It adds what the General Data Protection Law (LGPD, Law 13.709/2018) and
 the Digital Statute of Children and Adolescents (ECA Digital, Law 15.211/2025) ask, beyond KIFF's Privacy Policy and
 the tafs Privacy Policy.

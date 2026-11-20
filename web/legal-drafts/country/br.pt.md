@@ -1,5 +1,7 @@
 # Brasil
 
+Esta seção é publicada em inglês e em português. Se houver diferença, prevalece o texto em inglês.
+
 Esta seção se aplica se você mora no Brasil. Ela acrescenta o que pedem a Lei Geral de Proteção de Dados (LGPD, Lei
 13.709/2018) e o Estatuto Digital da Criança e do Adolescente (ECA Digital, Lei 15.211/2025), além da Política de
 Privacidade da KIFF e da Política de Privacidade do tafs.

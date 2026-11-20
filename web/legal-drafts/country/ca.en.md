@@ -1,5 +1,7 @@
 # Canada
 
+This section is published in English and French. In Quebec, the French text binds; elsewhere in Canada, the English text applies.
+
 This section applies if you live in Canada. It adds what the Personal Information Protection and Electronic
 Documents Act (PIPEDA) and, in Quebec, the Act respecting the protection of personal information in the private
 sector (as amended by Law 25) ask, beyond KIFF's Privacy Policy and the tafs Privacy Policy.

@@ -1,5 +1,7 @@
 # Canada
 
+Cette section est publiée en français et en anglais. Au Québec, la version française fait foi.
+
 Cette section s'applique si vous habitez au Canada. Elle ajoute ce que demandent la Loi sur la protection des
 renseignements personnels et les documents électroniques (LPRPDE) et, au Québec, la Loi sur la protection des
 renseignements personnels dans le secteur privé (modifiée par la Loi 25), en plus de la Politique de confidentialité
