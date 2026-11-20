@@ -113,6 +113,7 @@ type DeviceAuthHandler struct {
 	// no app routes.
 	app      *appsignin.Handler
 	consents appsignin.ConsentStore
+	appFails appFailures
 
 	mu           sync.Mutex
 	pending      map[string]*pendingAuth       // key: device-code hash (hex)

@@ -244,3 +244,62 @@ func TestAppTokenOff(t *testing.T) {
 		t.Fatalf("no app sign-in: %d", w.Code)
 	}
 }
+
+// A code used again after it minted a session ends that session and the
+// device it made (RFC 6749 §4.1.2): whoever replays it gets invalid_grant, and
+// the first sign-in is signed out too.
+func TestAReplayedCodeEndsTheSessionItMade(t *testing.T) {
+	r := newAppRig(t, true)
+	devDER, devB64 := newKey(t)
+	_, apprB64 := newKey(t)
+	c := r.code(t)
+	body := appBody(c, map[string]any{"public_key": devB64, "approval_public_key": apprB64, "platform": "ios", "kind": "iphone"})
+	status, out := r.token(t, body)
+	if status != http.StatusOK {
+		t.Fatalf("first: %d %v", status, out)
+	}
+	parsed, _ := auth.ParseDevSessionToken(out["access_token"].(string))
+	if _, err := r.sessions.GetByHash(context.Background(), parsed.Hash, r.now); err != nil {
+		t.Fatalf("the session before the replay: %v", err)
+	}
+	if status, out := r.token(t, body); status != http.StatusBadRequest || out["error"] != "invalid_grant" {
+		t.Fatalf("replay: %d %v", status, out)
+	}
+	if _, err := r.sessions.GetByHash(context.Background(), parsed.Hash, r.now); err == nil {
+		t.Fatal("the replayed code's session still works")
+	}
+	if dev, err := r.devices.FindByKey(context.Background(), "t_ana", "user_ana", devDER); err == nil && dev.RevokedAt == nil {
+		t.Fatalf("the replayed code's device stayed: %+v", dev)
+	}
+}
+
+// Failed token requests from one address are limited: after 20 in ten
+// minutes it's slow_down, even with a good code, and another address isn't.
+func TestFailedTokenRequestsAreLimitedPerAddress(t *testing.T) {
+	r := newAppRig(t, true)
+	post := func(ip string, body map[string]any) (int, map[string]any) {
+		b, _ := json.Marshal(body)
+		req := httptest.NewRequest(http.MethodPost, "/v1/auth/app/token", bytes.NewReader(b))
+		req.Header.Set("X-Forwarded-For", "203.0.113.9, "+ip)
+		w := httptest.NewRecorder()
+		r.pub.ServeHTTP(w, req)
+		var out map[string]any
+		_ = json.Unmarshal(w.Body.Bytes(), &out)
+		return w.Code, out
+	}
+	for i := range 20 {
+		if status, out := post("198.51.100.1", appBody("guess", nil)); out["error"] != "invalid_grant" {
+			t.Fatalf("try %d: %d %v", i, status, out)
+		}
+	}
+	if status, out := post("198.51.100.1", appBody(r.code(t), nil)); status != http.StatusTooManyRequests || out["error"] != "slow_down" {
+		t.Fatalf("21st: %d %v", status, out)
+	}
+	if status, out := post("198.51.100.2", appBody(r.code(t), nil)); status != http.StatusOK {
+		t.Fatalf("another address: %d %v", status, out)
+	}
+	r.advance(10 * time.Minute)
+	if status, out := post("198.51.100.1", appBody(r.code(t), nil)); status != http.StatusOK {
+		t.Fatalf("after the window: %d %v", status, out)
+	}
+}
