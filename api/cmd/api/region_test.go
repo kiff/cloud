@@ -101,3 +101,21 @@ func TestTheRegionRoutesAreServed(t *testing.T) {
 		}
 	}
 }
+
+// The web keeps its own copy of the region package's shared files (the two
+// modules can't share an internal package). They must stay identical.
+func TestTheWebsRegionFilesAreTheAPIs(t *testing.T) {
+	for _, f := range []string{"addr.go", "countries.go", "geo.go", "stores.go", "words.go"} {
+		api, err := os.ReadFile(filepath.Join("../../internal/region", f))
+		if err != nil {
+			t.Fatal(err)
+		}
+		web, err := os.ReadFile(filepath.Join("../../../web/internal/region", f))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if string(api) != string(web) {
+			t.Errorf("web/internal/region/%s differs from api/internal/region/%s; copy it over", f, f)
+		}
+	}
+}

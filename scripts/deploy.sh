@@ -575,11 +575,11 @@ install -m 0644 -o root -g root "\$tmp/kiff-healthz.timer"   /etc/systemd/system
 install -m 0644 -o root -g root "\$tmp/kiff-db-credential-refresh.service" /etc/systemd/system/kiff-db-credential-refresh.service
 install -m 0644 -o root -g root "\$tmp/kiff-db-credential-refresh.timer" /etc/systemd/system/kiff-db-credential-refresh.timer
 
-# 3b. The IP-to-country table the API's region check reads (api/internal/region):
+# 3b. The IP-to-country table the region checks read (api's and web's internal/region):
 # DB-IP's free country file (CC BY 4.0, attributed on the privacy page), one a
 # month. A month already here isn't fetched again. A fetch that fails, or a file
 # that doesn't look whole, keeps the last good one; with none at all the deploy
-# stops, since the API won't start without it.
+# stops, since neither the API nor the web starts without it.
 install -d -m 0755 -o root -g root /opt/kiff/geo
 geo_month=\$(date -u +%Y-%m)
 geo_file=/opt/kiff/geo/country-\$geo_month.csv.gz
@@ -594,7 +594,7 @@ if [ ! -s "\$geo_file" ]; then
 	fi
 fi
 geo_current=\$(ls -1 /opt/kiff/geo/country-*.csv.gz 2>/dev/null | sort | tail -1 || true)
-[ -n "\$geo_current" ] || { log "region table: none on the box; the API needs one"; exit 5; }
+[ -n "\$geo_current" ] || { log "region table: none on the box; the API and the web need one"; exit 5; }
 ln -sfn "\$geo_current" /opt/kiff/geo/country.csv.gz
 # Keep the last three months.
 ls -1 /opt/kiff/geo/country-*.csv.gz | sort | head -n -3 | xargs -r rm -f
@@ -743,6 +743,7 @@ KIFF_ANDROID_APPS=\${KIFF_ANDROID_APPS}
 KIFF_APPS_PROVED=\${KIFF_APPS_PROVED}
 KIFF_DESKTOP_RELEASES=\${KIFF_DESKTOP_RELEASES}
 KIFF_DESKTOP_NOT_AVAILABLE=\${KIFF_DESKTOP_NOT_AVAILABLE}
+KIFF_REGION_TABLE=/opt/kiff/geo/country.csv.gz
 WEB_ENV
 chmod 0640 /etc/kiff/web.env
 chown root:root /etc/kiff/web.env

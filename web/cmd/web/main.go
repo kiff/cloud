@@ -57,6 +57,7 @@ import (
 	"github.com/kiff/cloud/web/internal/gatewayclient"
 	"github.com/kiff/cloud/web/internal/handlers"
 	"github.com/kiff/cloud/web/internal/pages"
+	"github.com/kiff/cloud/web/internal/region"
 	"github.com/kiff/cloud/web/internal/session"
 
 	clerksdk "github.com/clerk/clerk-sdk-go/v2"
@@ -106,6 +107,10 @@ const (
 	// Empty (default) disables canonicalization — correct for local
 	// single-host dev.
 	envAppHost = "KIFF_APP_HOST"
+	// envRegionTable is the IP-to-country table the sign-in pages check the
+	// caller's country against (internal/region). Production requires it;
+	// unset elsewhere, nothing is checked.
+	envRegionTable = "KIFF_REGION_TABLE"
 
 	// envAppleAppIDs and envAndroidApps are the apps kiff.dev vouches for, so
 	// they can make and use its passkeys: /.well-known/apple-app-site-association
@@ -501,9 +506,14 @@ func run() error {
 		mux.Handle("GET /dashboard/receipts/{trace_id}", handlers.Receipt(publicAPIClient, logger))
 	}
 
+	regionGate, err := buildRegionGate(os.Getenv(envRegionTable), logger)
+	if err != nil {
+		return err
+	}
+
 	srv := &http.Server{
 		Addr:              *addr,
-		Handler:           serverHandler(mux, strings.TrimSpace(os.Getenv(envAppHost))),
+		Handler:           regionGate.Wrap(serverHandler(mux, strings.TrimSpace(os.Getenv(envAppHost)))),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
@@ -761,4 +771,24 @@ func startDesktopReleases(ctx context.Context, getenv func(string) string, logge
 	}}
 	src.Start(ctx)
 	return true
+}
+
+// buildRegionGate loads the IP-to-country table at path and checks the sign-in
+// pages against it. With no path (development, tests) it checks nothing; a path
+// that doesn't load, or a table too small to be whole, stops the web, so a
+// broken download never lets every country in.
+func buildRegionGate(path string, logger *slog.Logger) (*region.Gate, error) {
+	if path == "" {
+		logger.Info("region: no table; the sign-in pages aren't checked by country")
+		return region.NewGate(nil, nil, nil, logger), nil
+	}
+	table, err := region.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("region table: %w", err)
+	}
+	if table.Len() < region.MinRanges {
+		return nil, fmt.Errorf("region table: %d ranges, fewer than %d; not a whole file", table.Len(), region.MinRanges)
+	}
+	logger.Info("region: table loaded", slog.Int("ranges", table.Len()), slog.String("list_effective", region.ListEffective))
+	return region.NewGate(table, region.SessionRoutes, nil, logger), nil
 }
