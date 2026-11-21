@@ -23,7 +23,7 @@ var TafsPackCents = map[int]int{500: 1149, 1500: 2999, 5000: 8499}
 // where the cost is explained: no logo, no claim about Anthropic.
 const (
 	TafsWorkModel  = "Claude Sonnet 5.5"
-	TafsCoachModel = "Claude Opus 5.5"
+	TafsCoachModel = "Claude Sonnet 5.5"
 )
 
 // tafsCostWords write money and numbers as one language does, with the line
