@@ -35,6 +35,15 @@ const claimInterval = 3 * time.Second
 // pairingPlatforms are the computers that pair.
 var pairingPlatforms = map[string]bool{"windows": true, "macos": true, "linux": true}
 
+// The tafs browser extension pairs as platform chrome, kind extension. Its
+// device key lives in the browser's software store, so it pairs only with
+// key_store software: a view device that reads, chats and signs out, and
+// never approves (§2.6). Neither value pairs any other way.
+const (
+	extensionPlatform = "chrome"
+	extensionKind     = "extension"
+)
+
 // phonePairingKinds are the phones and tablets that pair from another phone
 // (the desktop-client design, §5.8), each with the kind of key store its approval
 // key is in: the Secure Enclave on iOS and iPadOS, the hardware-backed
@@ -154,6 +163,12 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 			"This computer approves with a passkey, which KIFF can't pair yet.")
 		return
 	}
+	if req.Platform == extensionPlatform || req.Kind == extensionKind {
+		if req.Platform != extensionPlatform || req.Kind != extensionKind || !software || req.DeviceKind != "" {
+			invalid(`an extension pairs with platform chrome, kind extension and key_store software: it approves nothing`)
+			return
+		}
+	}
 	name, nameOK := cleanDeviceName(req.Name)
 	switch {
 	case req.V != auth.PairingMessage:
@@ -162,8 +177,8 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 	case phonePairingKinds[req.Platform] != "" && req.Kind != phonePairingKinds[req.Platform]:
 		invalid("a phone or tablet pairs with kind enclave (ios, ipados) or keystore (android)")
 		return
-	case phonePairingKinds[req.Platform] == "" && req.Kind != "hello" && req.Kind != "enclave" && req.Kind != "passkey":
-		invalid("kind is hello, enclave or passkey")
+	case phonePairingKinds[req.Platform] == "" && req.Kind != "hello" && req.Kind != "enclave" && req.Kind != "passkey" && req.Kind != extensionKind:
+		invalid("kind is hello, enclave or passkey (extension for the browser extension)")
 		return
 	case req.DeviceKind != "" && !slices.Contains(pairingDeviceKinds[req.Platform], req.DeviceKind):
 		invalid("device_kind is the phone or tablet's: iphone (ios), ipad (ipados), android_phone or android_tablet (android); a computer leaves it out")
@@ -171,8 +186,8 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 	case req.Kind != "passkey" && req.Credential != nil:
 		invalid("credential comes with kind passkey")
 		return
-	case !pairingPlatforms[req.Platform] && phonePairingKinds[req.Platform] == "":
-		invalid("platform is windows, macos, linux, ios, ipados or android")
+	case !pairingPlatforms[req.Platform] && phonePairingKinds[req.Platform] == "" && req.Platform != extensionPlatform:
+		invalid("platform is windows, macos, linux, ios, ipados, android or chrome")
 		return
 	case !nameOK || name == "":
 		invalid("name is 1 to 64 characters, without control characters")

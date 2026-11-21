@@ -14,6 +14,8 @@ type AppSignIn struct {
 	// Expired: the request lapsed or was used. Failed: anything else. Off:
 	// signing in inside the app isn't on.
 	Expired, Failed, Off string
+	// NotLoaded: the sign-in form didn't load in the page; TryAgain reloads it.
+	NotLoaded, TryAgain string
 }
 
 // ContinueAs is the button that signs the app in as email.
@@ -29,6 +31,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "This sign-in has expired. Start again from the app.",
 		Failed:       "We couldn’t sign you in just now. Start again from the app.",
 		Off:          "Signing in inside the app isn’t on yet. Sign in from the app as before.",
+		NotLoaded:    "The sign-in page didn’t load. Try again.",
+		TryAgain:     "Try again",
 	},
 	"de": {
 		Title:        "Bei tafs anmelden",
@@ -39,6 +43,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Diese Anmeldung ist abgelaufen. Fang in der App neu an.",
 		Failed:       "Die Anmeldung hat gerade nicht geklappt. Fang in der App neu an.",
 		Off:          "Die Anmeldung in der App ist noch nicht eingeschaltet. Melde dich wie bisher über die App an.",
+		NotLoaded:    "Die Anmeldeseite wurde nicht geladen. Versuch es erneut.",
+		TryAgain:     "Erneut versuchen",
 	},
 	"fr": {
 		Title:        "Se connecter à tafs",
@@ -49,6 +55,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Cette connexion a expiré. Recommencez depuis l’app.",
 		Failed:       "Nous n’avons pas pu vous connecter pour le moment. Recommencez depuis l’app.",
 		Off:          "La connexion dans l’app n’est pas encore activée. Connectez-vous depuis l’app comme avant.",
+		NotLoaded:    "La page de connexion ne s’est pas chargée. Réessayez.",
+		TryAgain:     "Réessayer",
 	},
 	"es": {
 		Title:        "Iniciar sesión en tafs",
@@ -59,6 +67,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Este inicio de sesión ha caducado. Vuelve a empezar desde la app.",
 		Failed:       "No hemos podido iniciar tu sesión ahora mismo. Vuelve a empezar desde la app.",
 		Off:          "Iniciar sesión dentro de la app aún no está activado. Inicia sesión desde la app como antes.",
+		NotLoaded:    "La página de inicio de sesión no se cargó. Vuelve a intentarlo.",
+		TryAgain:     "Reintentar",
 	},
 	"it": {
 		Title:        "Accedi a tafs",
@@ -69,6 +79,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Questo accesso è scaduto. Ricomincia dall’app.",
 		Failed:       "Non siamo riusciti a farti accedere in questo momento. Ricomincia dall’app.",
 		Off:          "L’accesso dentro l’app non è ancora attivo. Accedi dall’app come prima.",
+		NotLoaded:    "La pagina di accesso non si è caricata. Riprova.",
+		TryAgain:     "Riprova",
 	},
 	"pt": {
 		Title:        "Iniciar sessão no tafs",
@@ -79,6 +91,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Este início de sessão expirou. Comece de novo a partir da app.",
 		Failed:       "Não conseguimos iniciar a sua sessão agora. Comece de novo a partir da app.",
 		Off:          "O início de sessão dentro da app ainda não está ativo. Inicie sessão a partir da app como antes.",
+		NotLoaded:    "A página de início de sessão não carregou. Tente novamente.",
+		TryAgain:     "Tentar novamente",
 	},
 	"nl": {
 		Title:        "Inloggen bij tafs",
@@ -89,6 +103,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "Deze inlogpoging is verlopen. Begin opnieuw vanuit de app.",
 		Failed:       "Inloggen lukte nu niet. Begin opnieuw vanuit de app.",
 		Off:          "Inloggen in de app staat nog niet aan. Log zoals eerder in vanuit de app.",
+		NotLoaded:    "De aanmeldpagina is niet geladen. Probeer het opnieuw.",
+		TryAgain:     "Opnieuw proberen",
 	},
 	"pl": {
 		Title:        "Zaloguj się do tafs",
@@ -99,6 +115,8 @@ var appSignIn = map[string]AppSignIn{
 		Expired:      "To logowanie wygasło. Zacznij od nowa w aplikacji.",
 		Failed:       "Nie udało się teraz Cię zalogować. Zacznij od nowa w aplikacji.",
 		Off:          "Logowanie w aplikacji nie jest jeszcze włączone. Zaloguj się z aplikacji tak jak dotąd.",
+		NotLoaded:    "Strona logowania się nie wczytała. Spróbuj ponownie.",
+		TryAgain:     "Spróbuj ponownie",
 	},
 }
 

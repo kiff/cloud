@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"html"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,6 +15,7 @@ import (
 	"github.com/kiff/cloud/web/internal/apiclient"
 	"github.com/kiff/cloud/web/internal/auth"
 	"github.com/kiff/cloud/web/internal/session"
+	"github.com/kiff/cloud/web/internal/words"
 )
 
 const appReq = "rq_0123456789abcdefABCDEF"
@@ -411,6 +413,9 @@ func TestAppSignIn_IsNeverFramedAndRunsOnlyItsOwnAndThePinnedScript(t *testing.T
 	if !strings.Contains(body, "/npm/@clerk/clerk-js@"+providerScriptVersion+"/dist/clerk.browser.js") || strings.Contains(body, "@latest") {
 		t.Errorf("the provider's script isn't the pinned version")
 	}
+	if !strings.Contains(body, "/npm/@clerk/ui@"+providerUIVersion+"/dist/ui.browser.js") {
+		t.Errorf("the provider's UI script isn't loaded at the pinned version")
+	}
 	if !strings.Contains(csp, "script-src 'self' 'nonce-"+nonce+"' https://clerk.example.test ") {
 		t.Errorf("script-src: %q", csp)
 	}
@@ -537,6 +542,37 @@ func TestAppSignIn_NoncesAreURLSafe(t *testing.T) {
 	for i := 0; i < 500; i++ {
 		if n := newNonce(); len(n) != 22 || strings.ContainsAny(n, "+/=") {
 			t.Fatalf("nonce %q", n)
+		}
+	}
+}
+
+// The provider's core script has no components since its version 6: the form
+// must load the UI script and hand it to load, or mountSignIn throws and the
+// page shows nothing to sign in with (K5, 21 Nov). And whatever fails, the
+// person reads why and can try again, in the app's language.
+func TestAppSignIn_TheFormLoadsTheProvidersUIAndNeverShowsABlankPage(t *testing.T) {
+	t.Parallel()
+	_, client := newAppAPI(t, http.StatusOK, "{}")
+	mux, _ := appSignIn(t, client, script{}, noon)
+	for _, lang := range []string{"en", "de", "fr", "es", "it", "pt", "nl", "pl"} {
+		body := serve(mux, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq+"&ui_locales="+lang, nil)).Body.String()
+		w := words.AppSignInIn(lang)
+		if w.NotLoaded == "" || w.TryAgain == "" {
+			t.Fatalf("%s has no words for a form that didn't load", lang)
+		}
+		for _, want := range []string{
+			"/dist/ui.browser.js",
+			"window.__internal_ClerkUICtor",
+			"ui: { ClerkUI: window.__internal_ClerkUICtor }",
+			`<div id="not-loaded" hidden>`,
+			html.EscapeString(w.NotLoaded),
+			html.EscapeString(w.TryAgain),
+			"catch (e)",
+			`box.querySelector("button, input")`,
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("%s: the form misses %q", lang, want)
+			}
 		}
 	}
 }
