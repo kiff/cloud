@@ -1,11 +1,13 @@
 package region
 
-// StoreCountries are the countries each app store may offer tafs in: the ones
-// we permit, of which each console offers a subset (a territory with no
-// storefront of its own is listed but can't be selected). This list is what CI
-// checks against Supported, so a country is never offered where the AI isn't.
-// Selecting a country in a console means adding it here first, and the test
-// says whether it may be added.
+// StoreCountries are the countries where each app store sells tafs: what its
+// console offers and has selected, read from the console. A store can only sell
+// where it has a storefront, so a country we permit but a store doesn't offer
+// isn't listed here (Supported, where the service may be used, is wider). Play
+// serves some territories under a parent country, as its console lists them;
+// those are listed too. CI checks this list against Supported, so a country is
+// never offered where the AI isn't. Selecting a country in a console means
+// adding it here first, and the test says whether it may be added.
 var StoreCountries = map[string][]string{
 	// Google Play, production track (the Wear track inherits it), 21 Nov 2026:
 	// the EU, Iceland, Liechtenstein, Norway, the United Kingdom, Switzerland
@@ -19,17 +21,17 @@ var StoreCountries = map[string][]string{
 		"IS", "LI", "NO", "GB", "CH", "KR",
 		"US", "CA", "MX", "PA", "BR", "AR", "CL", "PE", "CO",
 		"AU", "NZ", "SG", "MY", "IN", "ZA",
-		// Wave 2, Group A, 21 Nov 2026: 30 countries, then 47 territories of
-		// listed countries. Haiti and Burundi are held out (sanctions regimes, as
-		// the Central African Republic and DR Congo are), pending the owner.
-		"BO", "DO", "GT", "HN", "PY", "GQ", "MZ", "GW", "ST", "TL",
-		"DM", "GD", "TT", "FJ", "KI", "MH", "FM", "NR", "PW", "PG",
-		"WS", "SB", "TO", "TV", "VU", "LR", "NA", "SL", "PK", "SR",
-		"PR", "GU", "VI", "AS", "MP", "UM", "GI", "IM", "JE", "GG",
-		"BM", "KY", "VG", "AI", "MS", "TC", "FK", "SH", "IO", "GS",
-		"PN", "GF", "GP", "MQ", "RE", "YT", "PM", "BL", "MF", "PF",
-		"NC", "WF", "TF", "AW", "CW", "SX", "BQ", "CX", "CC", "NF",
-		"HM", "TK", "SJ", "BV", "GL", "FO", "AX",
+		// Wave 2, Group A, 21 Nov 2026 (Haiti and Burundi held out, pending
+		// the owner): the 28 Play offers on their own, then the territories it
+		// serves under a parent country (United States: AS, GU, MH, MP, PW, PR,
+		// VI; France: GF, PF, GP, MQ, YT, NC, RE, BL, MF, PM, WF; Denmark: FO,
+		// GL; Finland: AX; Norway: SJ). Play doesn't offer the group's other 27.
+		"BO", "DO", "GT", "HN", "PY", "MZ", "GW", "DM", "GD", "TT",
+		"FJ", "FM", "PG", "WS", "SB", "TO", "VU", "LR", "NA", "SL",
+		"PK", "SR", "GI", "BM", "KY", "VG", "TC", "AW",
+		"AS", "GU", "MH", "MP", "PW", "PR", "VI",
+		"GF", "PF", "GP", "MQ", "YT", "NC", "RE", "BL", "MF", "PM", "WF",
+		"FO", "GL", "AX", "SJ",
 	},
 	// The App Store, iOS and macOS, 21 Nov 2026: the EU, Iceland, Norway,
 	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
@@ -41,16 +43,10 @@ var StoreCountries = map[string][]string{
 		"IS", "NO", "GB", "CH",
 		"US", "CA", "MX", "PA", "BR", "AR", "CL", "PE", "CO",
 		"AU", "NZ", "SG", "MY", "IN", "ZA",
-		// Wave 2, Group A, 21 Nov 2026: 30 countries, then 47 territories of
-		// listed countries. Haiti and Burundi are held out (sanctions regimes, as
-		// the Central African Republic and DR Congo are), pending the owner.
-		"BO", "DO", "GT", "HN", "PY", "GQ", "MZ", "GW", "ST", "TL",
-		"DM", "GD", "TT", "FJ", "KI", "MH", "FM", "NR", "PW", "PG",
-		"WS", "SB", "TO", "TV", "VU", "LR", "NA", "SL", "PK", "SR",
-		"PR", "GU", "VI", "AS", "MP", "UM", "GI", "IM", "JE", "GG",
-		"BM", "KY", "VG", "AI", "MS", "TC", "FK", "SH", "IO", "GS",
-		"PN", "GF", "GP", "MQ", "RE", "YT", "PM", "BL", "MF", "PF",
-		"NC", "WF", "TF", "AW", "CW", "SX", "BQ", "CX", "CC", "NF",
-		"HM", "TK", "SJ", "BV", "GL", "FO", "AX",
+		// Wave 2, Group A, 21 Nov 2026 (Haiti and Burundi held out, pending
+		// the owner): the 29 with a storefront. The group's other 48 have none.
+		"BO", "DO", "GT", "HN", "PY", "MZ", "GW", "ST", "DM", "GD",
+		"TT", "FJ", "FM", "PW", "PG", "SB", "TO", "VU", "LR", "NA",
+		"SL", "PK", "SR", "BM", "KY", "VG", "AI", "MS", "TC",
 	},
 }
