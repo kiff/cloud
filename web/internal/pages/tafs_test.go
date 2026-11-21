@@ -170,7 +170,7 @@ func TestTafsEnglishAsDesigned(t *testing.T) {
 		"The assistant that runs <em>your company's routine work.</em>",
 		"Across the apps you already use. You set its limits, the actions that matter wait for your yes, and the AI never sees your passwords or keys.",
 		"Acknowledge every support ticket", "Save a customer who cancels", "Customer replies",
-		"€12.50 a month to start, with 500 credits, VAT included. Runs on Claude Sonnet 5.5 and Opus 5.5.",
+		"€12.50 a month to start, with 500 credits, VAT included. Runs on Claude Sonnet 5.5.",
 		">€12.50<", "Top up<br>from €11.49", "Heavy use<br>~€160 / month",
 		"No answer means no.", "Three French words", "Hand over the taf. Keep the keys in the planque. Kiff.",
 		"App Store, coming soon", "We believe in open code. Read it on GitHub.",
