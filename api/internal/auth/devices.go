@@ -65,7 +65,9 @@ func ValidDevicePlatform(p string) bool { return devicePlatforms[p] }
 // storedDevicePlatform reports whether a device may be kept with platform p:
 // one ValidDevicePlatform names, or none, for a device that didn't say. A
 // device with none is never taken for a phone.
-func storedDevicePlatform(p string) bool { return p == "" || ValidDevicePlatform(p) }
+// The browser extension's "chrome" is kept too: it only ever pairs view-only,
+// and isn't a platform a device names to sign in.
+func storedDevicePlatform(p string) bool { return p == "" || p == "chrome" || ValidDevicePlatform(p) }
 
 // NewDeviceID makes a device id: "dev_" and 26 base32 characters (130
 // random bits).

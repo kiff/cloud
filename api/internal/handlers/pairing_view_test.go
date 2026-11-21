@@ -158,3 +158,54 @@ func TestASoftwareKeyedComputerPairsAsAViewDevice(t *testing.T) {
 		t.Fatalf("it removes itself: %d %v", code, out)
 	}
 }
+
+// The tafs browser extension pairs as platform chrome, kind extension, and
+// only with key_store software: a view device. Neither value pairs any other
+// way, so it can never come in as a device that approves.
+func TestTheBrowserExtensionPairsOnlyAsAViewDevice(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	r := newPairRig(t, handlers.WithDevicePasskeys(auth.NewMemoryPasskeyStore()))
+	extension := func() map[string]any {
+		q := viewQR(r, "extension")
+		q["platform"], q["name"] = "chrome", "tafs in Chrome"
+		return q
+	}
+	for name, spoil := range map[string]func(q map[string]any){
+		"in hardware":          func(q map[string]any) { delete(q, "key_store"); q["approval_pub"] = b64url(r.pcApprovalDER) },
+		"with an approval key": func(q map[string]any) { q["approval_pub"] = b64url(r.pcApprovalDER) },
+		"kind hello":           func(q map[string]any) { q["kind"] = "hello" },
+		"kind passkey":         func(q map[string]any) { q["kind"] = "passkey" },
+		"on macos":             func(q map[string]any) { q["platform"] = "macos" },
+		"as a phone":           func(q map[string]any) { q["platform"] = "android" },
+		"with a device kind":   func(q map[string]any) { q["device_kind"] = "android_phone" },
+		"with a credential": func(q map[string]any) {
+			q["credential"] = map[string]string{"id": b64url([]byte("cred")), "public_key": b64url(r.pcApprovalDER)}
+		},
+	} {
+		q := extension()
+		spoil(q)
+		if code, out := r.approve(q); code != http.StatusBadRequest || out["error"] != "invalid_pairing" {
+			t.Errorf("%s: %d %v, want 400 invalid_pairing", name, code, out)
+		}
+	}
+
+	q := extension()
+	code, out := r.approve(q)
+	if pairing, _ := out["pairing"].(map[string]any); code != http.StatusCreated || pairing["code"] != auth.PairingCode(r.pcDER, nil) {
+		t.Fatalf("the pairing: %d %v", code, out)
+	}
+	code, out = r.claim(q["nonce"].(string), r.pcDER, r.pcKey)
+	if code != http.StatusOK || out["approval_mode"] != auth.ApprovalModeView {
+		t.Fatalf("the claim: %d %v", code, out)
+	}
+	parsed, _ := auth.ParseDevSessionToken(out["access_token"].(string))
+	sess, err := r.sessions.GetByHash(ctx, parsed.Hash, r.now)
+	if err != nil || sess.ApprovalMode != auth.ApprovalModeView {
+		t.Fatalf("the session: %+v %v", sess, err)
+	}
+	d, err := r.devices.Get(ctx, sess.DeviceID)
+	if err != nil || d.HasApprovalKey || d.KeyStore != auth.KeyStoreSoftware || d.Platform != "chrome" {
+		t.Fatalf("the device: %+v %v", d, err)
+	}
+}
