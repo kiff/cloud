@@ -1,0 +1,24 @@
+{
+  "v": "kiff.profile.v1",
+  "vendor": "shop.example",
+  "transport": "mcp",
+  "pin": {"kind": "none"},
+  "source": "catalog",
+  "catalog_entry": "browser@1",
+  "test_proven": false,
+  "operations": [
+    {"tool": "browse_open", "title": "Open a page", "kind": "read", "required_arguments": ["url"]},
+    {"tool": "browse_checkout", "title": "Read a checkout", "kind": "read", "required_arguments": ["url"]},
+    {
+      "tool": "browse_pay",
+      "title": "Pay a checkout",
+      "kind": "write",
+      "effect": "moves_money",
+      "shape": "single",
+      "resource": {"arg": "url", "noun": "page"},
+      "amount": {"from": "read", "read": {"tool": "browse_checkout", "args": {"url": "$args.url"}, "path": "total"}, "format": "decimal_string", "scale": 2, "unit": "EUR"},
+      "required_arguments": ["url", "ref"],
+      "ask_each_call": true
+    }
+  ]
+}

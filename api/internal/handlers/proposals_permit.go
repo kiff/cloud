@@ -92,15 +92,18 @@ type coveringKey struct{}
 type covering struct {
 	ids      []string
 	consumed bool
+	// approval is the held call whose owner's approval this request
+	// redeemed; "" when the Cards' room allowed it.
+	approval string
 }
 
 func withCoveringSlot(ctx context.Context) context.Context {
 	return context.WithValue(ctx, coveringKey{}, &covering{})
 }
 
-func recordCovering(ctx context.Context, ids []string, consumed bool) {
+func recordCovering(ctx context.Context, ids []string, consumed bool, approval string) {
 	if slot, ok := ctx.Value(coveringKey{}).(*covering); ok {
-		slot.ids, slot.consumed = ids, consumed
+		slot.ids, slot.consumed, slot.approval = ids, consumed, approval
 	}
 }
 
@@ -234,7 +237,7 @@ func (h *ProposalsHandler) mintPermit(ctx context.Context, id auth.Identity, pro
 	if len(cov.ids) > 0 {
 		card = cov.ids[0]
 	}
-	tok, minted, err := h.permits.Mint(ctx, id.Tenant, prop.ActorID, prop.ID, card, runGrantSubjectOf(ctx), b)
+	tok, minted, err := h.permits.Mint(ctx, id.Tenant, prop.ActorID, prop.ID, card, runGrantSubjectOf(ctx), cov.approval, b)
 	switch {
 	case err != nil:
 		h.logger.ErrorContext(ctx, "proposals: permit not minted",
