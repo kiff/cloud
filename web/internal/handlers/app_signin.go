@@ -47,6 +47,11 @@ const (
 	// appRedirectPrefix is where the API may send the sheet: the app's own
 	// redirect (appsignin.RedirectURI), nowhere else.
 	appRedirectPrefix = "dev.kiff.tafs:/oauth?"
+	// appBackToApp is where "Back to the app" sends the sheet when there's
+	// nothing left to do here: the app's own redirect, as a cancel. The
+	// request is spent or unknown, so there's no state to send; the app
+	// takes it as "signing in didn't go on" and lets the person start again.
+	appBackToApp = template.URL("dev.kiff.tafs:/oauth?error=access_denied")
 	// providerScriptVersion pins the sign-in provider's browser script the
 	// form loads: a new version is a reviewed change, never @latest.
 	providerScriptVersion = "6.46.2"
@@ -108,8 +113,10 @@ type appSignInView struct {
 	Email string
 	// Other is where "Use another account" goes.
 	Other string
-	// Stopped is why there's nothing to do here but go back to the app.
+	// Stopped is why there's nothing to do here but go back to the app, and
+	// Back is the button that does.
 	Stopped string
+	Back    template.URL
 	// Nonce lets the page's own script run under its CSP; ScriptVersion and
 	// UIVersion are the provider's core and UI scripts' pinned versions.
 	Nonce, ScriptVersion, UIVersion string
@@ -357,6 +364,9 @@ func requestShaped(s string) bool {
 
 func (h *AppSignInHandler) render(w http.ResponseWriter, r *http.Request, status int, v appSignInView) {
 	v.Nonce = newNonce()
+	if v.Stopped != "" {
+		v.Back = appBackToApp
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("Referrer-Policy", "no-referrer")
@@ -423,6 +433,7 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
   <h1>{{.W.Title}}</h1>
   {{if .Stopped}}
   <p role="alert">{{.Stopped}}</p>
+  <a class="other" href="{{.Back}}">{{.W.BackToApp}}</a>
   {{else if .Form}}
   <p>{{.W.Lead}}</p>
   <div id="sign-in"></div>
