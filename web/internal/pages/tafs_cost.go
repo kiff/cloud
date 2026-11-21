@@ -97,12 +97,15 @@ var tafsCostJA = tafsCostWords{Lang: "ja"}
 // tafsCostET writes the prices tafs's terms state in Estonian: "12,50 €".
 // Estonian has no /tafs page, so it has no footer line of its own.
 var tafsCostET = tafsCostWords{Lang: "et"}
+
 // tafsCostLV writes the prices tafs's terms state in Latvian, as "12,50 €".
 // Latvian has no /tafs page, so it has no footer line of its own.
 var tafsCostLV = tafsCostWords{Lang: "lv"}
+
 // tafsCostEL writes the prices tafs's terms state in Greek: "12,50 €",
 // "1.500". Greek has no /tafs page, so it has no footer line of its own.
 var tafsCostEL = tafsCostWords{Lang: "el"}
+
 // tafsCostLT writes the prices tafs's terms state in Lithuanian: "12,50 €",
 // money's default, and the credits as they stand ("500"). Lithuanian has no
 // /tafs page, so it has no footer line of its own.
