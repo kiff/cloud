@@ -68,6 +68,8 @@ func (w tafsCostWords) number(n int) string {
 		sep = " "
 	case "sl":
 		sep = "."
+	case "ro":
+		sep = "."
 	}
 	s := fmt.Sprint(n)
 	if sep == "" || len(s) <= 3 {
@@ -133,3 +135,7 @@ var tafsCostSL = tafsCostWords{Lang: "sl"}
 // no four-digit number. Hungarian has no /tafs page, so it has no footer
 // line of its own.
 var tafsCostHU = tafsCostWords{Lang: "hu"}
+
+// tafsCostRO writes the prices tafs's terms state in Romanian: "12,50 €",
+// "1.500". Romanian has no /tafs page, so it has no footer line of its own.
+var tafsCostRO = tafsCostWords{Lang: "ro"}

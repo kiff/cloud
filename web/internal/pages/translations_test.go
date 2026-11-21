@@ -331,6 +331,7 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 		"cs": `<main><section id="a"><h2>Poplatky</h2><p>Až 1 240,50 € dne 9. listopadu 2026, viz <a href="/cs/privacy#tafs">ochrana soukromí</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`, // so does Czech ("9. listopadu 2026")
 		"sk": `<main><section id="a"><h2>Poplatky</h2><p>Najviac 1 240,50 € 9. novembra 2026, pozri <a href="/sk/privacy#tafs">ochrana súkromia</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`,
 		"sl": `<main><section id="a"><h2>Pristojbine</h2><p>Do 1.240,50 € 9. novembra 2026, glej <a href="/sl/privacy#tafs">zasebnost</a> in <code>x</code>.</p><ul><li>30 dni</li></ul></section></main>`,
+		"ro": `<main><section id="a"><h2>Taxe</h2><p>Până la 1.240,50 € la 9 noiembrie 2026, vezi <a href="/ro/privacy#tafs">confidențialitate</a> și <code>x</code>.</p><ul><li>30 de zile</li></ul></section></main>`,
 	} {
 		if a, b := multisetDiff(en.figures, shapeOf(page, lang).figures); len(a)+len(b) > 0 {
 			t.Errorf("%s date: figures %v %v", lang, a, b)
