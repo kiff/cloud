@@ -33,7 +33,10 @@ func TestMacSecurityKeyFollowsItsSwitch(t *testing.T) {
 			if clause == "" {
 				t.Fatalf("no clause in %s", lang)
 			}
-			pages := map[string]string{"/support §6": render(section[lang])}
+			pages := map[string]string{}
+			if c, ok := section[lang]; ok { // Korean has no /support
+				pages["/support §6"] = render(c)
+			}
 			for _, path := range []string{"/privacy", "/tafs/privacy"} {
 				pages[path] = renderPage(t, lang, path)
 			}

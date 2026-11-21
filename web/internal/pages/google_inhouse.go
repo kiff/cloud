@@ -50,6 +50,7 @@ var googleAppScopes = map[string][]googleScope{
 			"nl": "al je spreadsheets in Google Sheets zien, bewerken, maken en verwijderen",
 			"pl": "widzieć, edytować, tworzyć i usuwać wszystkie Twoje arkusze w Google Sheets",
 			"pt": "ver, editar, criar e eliminar todas as suas folhas de cálculo do Google Sheets",
+			"ko": "Google Sheets의 모든 스프레드시트 보기, 수정, 만들기, 삭제",
 		}},
 	},
 	"Google Calendar": {
@@ -62,6 +63,7 @@ var googleAppScopes = map[string][]googleScope{
 			"nl": "de afspraken in je agenda's zien",
 			"pl": "widzieć wydarzenia w Twoich kalendarzach",
 			"pt": "ver os eventos dos seus calendários",
+			"ko": "캘린더의 일정 보기",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -72,6 +74,7 @@ var googleAppScopes = map[string][]googleScope{
 			"nl": "de afspraken in je agenda's zien en bewerken",
 			"pl": "widzieć i edytować wydarzenia w Twoich kalendarzach",
 			"pt": "ver e editar os eventos dos seus calendários",
+			"ko": "캘린더의 일정 보기 및 수정",
 		}},
 	},
 }

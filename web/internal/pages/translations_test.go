@@ -205,12 +205,19 @@ func TestTranslationsKeepTheEnglishPage(t *testing.T) {
 					if i := strings.IndexAny(page, "#?"); i >= 0 {
 						page = page[:i]
 					}
-					if components.IsTranslatedPage(page) && !HeldBackTranslations[page] {
+					if components.HasPage(lang, page) && !HeldBackTranslations[page] {
 						t.Errorf("link %q goes to the English page: write %q", h[1], components.LangPath(lang, h[1]))
 					}
 				}
-				// A link to an English-only page the reader may follow says so.
-				for _, only := range []string{"/pricing", "/whitepaper", "/legal/sla"} {
+				// A link to an English-only page the reader may follow says so,
+				// and so does one to a page this language doesn't have.
+				englishOnly := []string{"/pricing", "/whitepaper", "/legal/sla"}
+				for _, p := range components.TranslatedPages {
+					if !components.HasPage(lang, p) {
+						englishOnly = append(englishOnly, p)
+					}
+				}
+				for _, only := range englishOnly {
 					n := strings.Count(mainOf(html), `href="`+only+`"`) + strings.Count(mainOf(html), `href="`+only+`#`)
 					if n > 0 && strings.Count(html, components.InEnglish(lang)) < n {
 						t.Errorf("%d link(s) to %s, an English page: each is followed by %q", n, only, components.InEnglish(lang))
@@ -225,6 +232,20 @@ func TestTranslationsKeepTheEnglishPage(t *testing.T) {
 			})
 		}
 	}
+}
+
+// languagesWith lists the translated languages that have path
+// (components.HasPage): every site language, and a language that has some
+// pages only where it lists path. A site language that lacks it fails
+// TestEveryTranslatedLanguageHasEveryPage.
+func languagesWith(path string) []string {
+	var out []string
+	for _, lang := range TranslatedLanguages() {
+		if components.HasPage(lang, path) {
+			out = append(out, lang)
+		}
+	}
+	return out
 }
 
 func mainOf(html string) string {
@@ -259,11 +280,16 @@ func TestTheAnchorsTheAppsLinkToExist(t *testing.T) {
 	}
 }
 
-// TestEveryTranslatedLanguageHasEveryPage: a language is all nine pages
-// or none, so a reader never falls from one language into another.
+// TestEveryTranslatedLanguageHasEveryPage: a site language is every
+// translated page or none, so a reader never falls from one language into
+// another; a language that has some of them (Korean: the legal texts) has
+// each one it lists, and links to the rest as English pages.
 func TestEveryTranslatedLanguageHasEveryPage(t *testing.T) {
 	for _, lang := range TranslatedLanguages() {
 		for _, path := range components.TranslatedPages {
+			if !components.HasPage(lang, path) {
+				continue
+			}
 			if _, ok := translations[lang][path]; !ok {
 				t.Errorf("%s has no %s", lang, path)
 			}

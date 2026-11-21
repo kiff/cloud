@@ -11,6 +11,9 @@ func TestLangPath(t *testing.T) {
 		{"de", "/pricing", "/pricing"}, // English only: the link stays English
 		{"xx", "/privacy", "/privacy"}, // not a site language
 		{"de", "/docs/tafs", "/docs/tafs"},
+		{"ko", "/privacy#tafs", "/ko/privacy#tafs"},
+		{"ko", "/tafs/terms", "/ko/tafs/terms"},
+		{"ko", "/cookies", "/cookies"}, // Korean has the legal texts only
 	} {
 		if got := LangPath(c.lang, c.path); got != c.want {
 			t.Errorf("LangPath(%q, %q) = %q, want %q", c.lang, c.path, got, c.want)
@@ -28,6 +31,8 @@ func TestSplitLangPath(t *testing.T) {
 		{"/pl/legal/dpa/", "pl", "/legal/dpa", true},
 		{"/en/privacy", "en", "/en/privacy", false}, // English has no prefix
 		{"/de/pricing", "en", "/de/pricing", false},
+		{"/ko/tafs/privacy", "ko", "/tafs/privacy", true},
+		{"/ko/cookies", "en", "/ko/cookies", false},
 		{"/pricing", "en", "/pricing", false},
 		{"/", "en", "/", false},
 	} {
@@ -38,9 +43,9 @@ func TestSplitLangPath(t *testing.T) {
 	}
 }
 
-// Every site language has its name, its notice and its marker.
+// Every page language has its name, its notice and its marker.
 func TestEveryLanguageHasItsWords(t *testing.T) {
-	for _, l := range SiteLanguages {
+	for _, l := range PageLanguages {
 		if LanguageName(l) == "" {
 			t.Errorf("%s has no name", l)
 		}
