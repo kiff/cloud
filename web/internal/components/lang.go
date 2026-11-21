@@ -37,11 +37,12 @@ var partialPages = map[string][]string{
 	"hr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Croatian: the same four
 	"tr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"id": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"vi": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -75,6 +76,7 @@ var languageNames = map[string]string{
 	"hr": "Hrvatski",
 	"tr": "Türkçe",
 	"id": "Bahasa Indonesia",
+	"vi": "Tiếng Việt",
 }
 
 // LanguageName is a site language's name in that language.
@@ -249,6 +251,7 @@ var translationNotices = map[string]string{
 	"hr": "Ovo je prijevod u informativne svrhe. Mjerodavna je engleska verzija:",
 	"tr": "Bu, bilgilendirme amaçlı bir çeviridir. İngilizce sürüm esastır:",
 	"id": "Ini adalah terjemahan untuk informasi. Versi bahasa Inggris yang berlaku:",
+	"vi": "Đây là bản dịch để tham khảo. Bản tiếng Anh là bản có hiệu lực:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -274,6 +277,7 @@ var inEnglish = map[string]string{
 	"hr": "(na engleskom)",
 	"tr": "(İngilizce)",
 	"id": "(dalam bahasa Inggris)",
+	"vi": "(bằng tiếng Anh)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
