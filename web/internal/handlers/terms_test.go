@@ -106,7 +106,7 @@ func TestTerms(t *testing.T) {
 		// bought in the app is refunded by its store.
 		"Bonus credits that KIFF adds to an account", "don't expire either, like packs.",
 		"Solo purchases are refunded through the App Store or Google Play, under their terms.",
-		"Last updated:</strong> 9 November 2026.",
+		"Last updated:</strong> 21 November 2026.",
 		// Leaving and switching (EU Data Act, Chapter VI): export any
 		// time, at most two months' notice, a thirty-day transition,
 		// thirty more days to export, and no charge.
