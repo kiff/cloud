@@ -85,6 +85,7 @@ var pl = Words{
 		OwnerAskSecondRefund: "ta płatność ma już zwrot, więc drugi czeka na zatwierdzenie",
 		OwnerAskNoRequestID:  "agent nie podał żadnej prośby z połączonej aplikacji, więc ten zwrot czeka na zatwierdzenie",
 		OwnerAskOther:        "każde wywołanie tego narzędzia czeka na zatwierdzenie",
+		OwnerAskEachCall:     "każde wywołanie tego narzędzia czeka na zatwierdzenie",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("wywołanie nie wskazuje żadnego %s, a ta Card dotyczy tylko wymienionych w niej %s", param, param)

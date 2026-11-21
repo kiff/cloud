@@ -80,6 +80,7 @@ var nl = Words{
 		OwnerAskSecondRefund: "deze betaling heeft al een terugbetaling, dus een tweede wacht op goedkeuring",
 		OwnerAskNoRequestID:  "de agent noemde geen verzoek uit een gekoppelde app, dus deze terugbetaling wacht op goedkeuring",
 		OwnerAskOther:        "elke aanroep van deze tool wacht op goedkeuring",
+		OwnerAskEachCall:     "elke aanroep van deze tool wacht op goedkeuring",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("de aanroep noemt geen %s, en deze Card geldt alleen voor de %s die erop staan", param, param)

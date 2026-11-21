@@ -101,6 +101,11 @@ type Operation struct {
 	// first agent's call is being decided, held or sent (the gateway's
 	// object claims). It needs a resource.
 	Claim string `json:"claim,omitempty"`
+	// AskEachCall holds every call of a write for the Card's owner, however
+	// much room the Card has: approving one call approves that call only,
+	// and a Card set to refuse what's outside it refuses the call. For a
+	// tool whose every call the owner must see (a website's checkout).
+	AskEachCall bool `json:"ask_each_call,omitempty"`
 	// ClaimRelated names a related object the agent is shown what was
 	// already done on: {kind: "refund", path}, the path in the read the
 	// operation's amount lookup makes (a dispute's charge). It shows, and
@@ -383,8 +388,8 @@ func (p Profile) validateOp(o Operation, byTool map[string]Operation) error {
 	}
 	switch o.Kind {
 	case "read":
-		if o.Effect != "" || o.Amount != nil || o.VerifyRead != nil || o.Marker != nil || o.StatusRead != nil || o.NoEffect != nil || o.Claim != "" {
-			return errors.New("a read has no effect, amount, verify_read, marker, status_read, no_effect or claim")
+		if o.Effect != "" || o.Amount != nil || o.VerifyRead != nil || o.Marker != nil || o.StatusRead != nil || o.NoEffect != nil || o.Claim != "" || o.AskEachCall {
+			return errors.New("a read has no effect, amount, verify_read, marker, status_read, no_effect, claim or ask_each_call")
 		}
 	case "write":
 		switch o.Effect {
