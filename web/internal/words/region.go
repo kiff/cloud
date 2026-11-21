@@ -50,9 +50,26 @@ var region = map[string]Region{
 	},
 }
 
+// regionBeyond is the refusal in the languages the apps speak beyond
+// kiff.dev's pages: the region gate's page answers a browser in them (the
+// API's region.Here has the same lines).
+var regionBeyond = map[string]Region{
+	"ko": {
+		Here:     "지금 계신 곳에서는 KIFF를 이용할 수 없습니다. KIFF는 Anthropic의 Claude를 이용할 수 있는 국가와 지역에서만 제공됩니다.",
+		CountryF: "이 국가에서는 KIFF를 이용할 수 없습니다: {country}. KIFF는 Anthropic의 Claude를 이용할 수 있는 국가와 지역에서만 제공됩니다.",
+	},
+	"ja": {
+		Here:     "現在地ではKIFFをご利用いただけません。KIFFは、AnthropicのClaudeが利用できる国と地域でのみ提供しています。",
+		CountryF: "この国ではKIFFをご利用いただけません：{country}。KIFFは、AnthropicのClaudeが利用できる国と地域でのみ提供しています。",
+	},
+}
+
 // RegionIn is the refusal in lang, English when it has none.
 func RegionIn(lang string) Region {
 	if r, ok := region[lang]; ok {
+		return r
+	}
+	if r, ok := regionBeyond[lang]; ok {
 		return r
 	}
 	return region["en"]
