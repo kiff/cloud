@@ -52,6 +52,13 @@ var blockTags = map[string]bool{
 	"details": true, "summary": true, "blockquote": true, "pre": true, "figure": true, "address": true,
 }
 
+// cjkDateRE and cjkMonthRE are a full date and a month with its year, as
+// Korean and Japanese write them (see shapeOf).
+var (
+	cjkDateRE  = regexp.MustCompile(`(\d{4})\s*[년年]\s*(\d{1,2})\s*[월月]\s*(\d{1,2})\s*[일日]`)
+	cjkMonthRE = regexp.MustCompile(`(\d{4})\s*[년年]\s*\d{1,2}\s*[월月]`)
+)
+
 // shape is what a page's translation must share with its English source.
 type shape struct {
 	ids     []string // every id, in order: the anchors people are sent to
@@ -99,6 +106,12 @@ func shapeOf(page, lang string) shape {
 	sort.Strings(s.links)
 	// Entities are decoded first: an escaped apostrophe (&#39;) is no figure.
 	text := html.UnescapeString(anyTagRE.ReplaceAllString(body, " "))
+	// A date in Korean or Japanese form ("2026년 11월 21일", "2026年11月21日")
+	// names its month with a figure, where English names it with a word
+	// ("21 November 2026"): read it as the English date's figures, the day and
+	// the year, so the month isn't an extra figure.
+	text = cjkDateRE.ReplaceAllString(text, "$3 $1")
+	text = cjkMonthRE.ReplaceAllString(text, "$1")
 	for _, f := range figureRE.FindAllString(text, -1) {
 		digits := strings.Map(func(r rune) rune {
 			if r >= '0' && r <= '9' {
@@ -205,12 +218,19 @@ func TestTranslationsKeepTheEnglishPage(t *testing.T) {
 					if i := strings.IndexAny(page, "#?"); i >= 0 {
 						page = page[:i]
 					}
-					if components.IsTranslatedPage(page) && !HeldBackTranslations[page] {
+					if components.HasPage(lang, page) && !HeldBackTranslations[page] {
 						t.Errorf("link %q goes to the English page: write %q", h[1], components.LangPath(lang, h[1]))
 					}
 				}
-				// A link to an English-only page the reader may follow says so.
-				for _, only := range []string{"/pricing", "/whitepaper", "/legal/sla"} {
+				// A link to an English-only page the reader may follow says so,
+				// and so does one to a page this language doesn't have.
+				englishOnly := []string{"/pricing", "/whitepaper", "/legal/sla"}
+				for _, p := range components.TranslatedPages {
+					if !components.HasPage(lang, p) {
+						englishOnly = append(englishOnly, p)
+					}
+				}
+				for _, only := range englishOnly {
 					n := strings.Count(mainOf(html), `href="`+only+`"`) + strings.Count(mainOf(html), `href="`+only+`#`)
 					if n > 0 && strings.Count(html, components.InEnglish(lang)) < n {
 						t.Errorf("%d link(s) to %s, an English page: each is followed by %q", n, only, components.InEnglish(lang))
@@ -225,6 +245,20 @@ func TestTranslationsKeepTheEnglishPage(t *testing.T) {
 			})
 		}
 	}
+}
+
+// languagesWith lists the translated languages that have path
+// (components.HasPage): every site language, and a language that has some
+// pages only where it lists path. A site language that lacks it fails
+// TestEveryTranslatedLanguageHasEveryPage.
+func languagesWith(path string) []string {
+	var out []string
+	for _, lang := range TranslatedLanguages() {
+		if components.HasPage(lang, path) {
+			out = append(out, lang)
+		}
+	}
+	return out
 }
 
 func mainOf(html string) string {
@@ -259,11 +293,16 @@ func TestTheAnchorsTheAppsLinkToExist(t *testing.T) {
 	}
 }
 
-// TestEveryTranslatedLanguageHasEveryPage: a language is all nine pages
-// or none, so a reader never falls from one language into another.
+// TestEveryTranslatedLanguageHasEveryPage: a site language is every
+// translated page or none, so a reader never falls from one language into
+// another; a language that has some of them (Korean, Japanese: the legal texts) has
+// each one it lists, and links to the rest as English pages.
 func TestEveryTranslatedLanguageHasEveryPage(t *testing.T) {
 	for _, lang := range TranslatedLanguages() {
 		for _, path := range components.TranslatedPages {
+			if !components.HasPage(lang, path) {
+				continue
+			}
 			if _, ok := translations[lang][path]; !ok {
 				t.Errorf("%s has no %s", lang, path)
 			}
@@ -283,6 +322,36 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 	}
 	if a, b := multisetDiff(en.figures, de.figures); len(a)+len(b) > 0 {
 		t.Errorf("figures: %v %v (en %v, de %v)", a, b, en.figures, de.figures)
+	}
+	// Korean and Japanese write a date's month as a figure: it reads as the English date.
+	for lang, page := range map[string]string{
+		"ko": `<main><section id="a"><h2>요금</h2><p>2026년 11월 9일에 최대 €1,240.50, <a href="/ko/privacy#tafs">개인정보</a> 및 <code>x</code>.</p><ul><li>30일</li></ul></section></main>`,
+		"ja": `<main><section id="a"><h2>料金</h2><p>2026年11月9日に最大€1,240.50、<a href="/ja/privacy#tafs">プライバシー</a>と<code>x</code>。</p><ul><li>30日</li></ul></section></main>`,
+		"et": `<main><section id="a"><h2>Tasud</h2><p>Kuni 1 240,50 € 9. novembril 2026, vt <a href="/et/privacy#tafs">privaatsus</a> ja <code>x</code>.</p><ul><li>30 päeva</li></ul></section></main>`,          // a month's name: no extra figure
+		"cs": `<main><section id="a"><h2>Poplatky</h2><p>Až 1 240,50 € dne 9. listopadu 2026, viz <a href="/cs/privacy#tafs">ochrana soukromí</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`, // so does Czech ("9. listopadu 2026")
+		"sk": `<main><section id="a"><h2>Poplatky</h2><p>Najviac 1 240,50 € 9. novembra 2026, pozri <a href="/sk/privacy#tafs">ochrana súkromia</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`,
+		"sl": `<main><section id="a"><h2>Pristojbine</h2><p>Do 1.240,50 € 9. novembra 2026, glej <a href="/sl/privacy#tafs">zasebnost</a> in <code>x</code>.</p><ul><li>30 dni</li></ul></section></main>`,
+		"ro": `<main><section id="a"><h2>Taxe</h2><p>Până la 1.240,50 € la 9 noiembrie 2026, vezi <a href="/ro/privacy#tafs">confidențialitate</a> și <code>x</code>.</p><ul><li>30 de zile</li></ul></section></main>`,
+		"hr": `<main><section id="a"><h2>Naknade</h2><p>Do 1.240,50 € 9. studenoga 2026., vidi <a href="/hr/privacy#tafs">privatnost</a> i <code>x</code>.</p><ul><li>30 dana</li></ul></section></main>`, // the month in words, the year with its full stop
+	} {
+		if a, b := multisetDiff(en.figures, shapeOf(page, lang).figures); len(a)+len(b) > 0 {
+			t.Errorf("%s date: figures %v %v", lang, a, b)
+		}
+	}
+	// Hungarian puts the year first and names the month ("2026. november 9."): the year and the day are the figures.
+	hu := shapeOf(`<main><section id="a"><h2>Díjak</h2><p>2026. november 9-én legfeljebb 1 240,50 €, lásd <a href="/hu/privacy#tafs">adatvédelem</a> és <code>x</code>.</p><ul><li>30 nap</li></ul></section></main>`, "hu")
+	if a, b := multisetDiff(en.figures, hu.figures); len(a)+len(b) > 0 {
+		t.Errorf("hu date: figures %v %v", a, b)
+	}
+	// Bulgarian names the month with a word and closes the year with "г." ("9 ноември 2026 г."): no extra figure.
+	bg := shapeOf(`<main><section id="a"><h2>Такси</h2><p>До 1 240,50 € на 9 ноември 2026 г., вж. <a href="/bg/privacy#tafs">поверителност</a> и <code>x</code>.</p><ul><li>30 дни</li></ul></section></main>`, "bg")
+	if a, b := multisetDiff(en.figures, bg.figures); len(a)+len(b) > 0 {
+		t.Errorf("bg date: figures %v %v", a, b)
+	}
+	// Lithuanian names the month with a word ("2026 m. lapkričio 9 d."): only the year and the day are figures.
+	lt := shapeOf(`<main><section id="a"><h2>Mokesčiai</h2><p>2026 m. lapkričio 9 d. iki 1 240,50 €, žr. <a href="/lt/privacy#tafs">privatumą</a> ir <code>x</code>.</p><ul><li>30 dienų</li></ul></section></main>`, "lt")
+	if a, b := multisetDiff(en.figures, lt.figures); len(a)+len(b) > 0 {
+		t.Errorf("lt date: figures %v %v", a, b)
 	}
 	short := shapeOf(`<main><section id="a"><h2>Gebühren</h2><p>Bis zu 1.240 €.</p></section></main>`, "de")
 	if firstDiff(en.blocks, short.blocks) == "" {

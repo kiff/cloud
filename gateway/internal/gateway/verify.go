@@ -78,6 +78,8 @@ type profileFacts struct {
 	Probation bool
 	// Money: the operation moves or records money.
 	Money bool
+	// AskEachCall: every call of the write is the owner's to approve.
+	AskEachCall bool
 }
 
 // profileOp is what the profile says of tool that the gateway acts on.
@@ -91,6 +93,7 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 			StatusRead *StatusRead   `json:"status_read"`
 			Kind       string        `json:"kind"`
 			Claim      string        `json:"claim"`
+			AskEach    bool          `json:"ask_each_call"`
 			Related    *ClaimRelated `json:"claim_related"`
 			Resource   *struct{}     `json:"resource"`
 			Marker     *struct {
@@ -119,7 +122,8 @@ func profileOp(profile []byte, tool string) (profileFacts, error) {
 			if related != nil && (o.Kind != "write" || related.Kind != RelatedRefund || related.Path == "") {
 				related = nil
 			}
-			return profileFacts{Verify: o.VerifyRead, Status: status, Probation: money && !p.TestProven, Money: money, Claim: claim, ClaimRelated: related}, nil
+			return profileFacts{Verify: o.VerifyRead, Status: status, Probation: money && !p.TestProven, Money: money, Claim: claim, ClaimRelated: related,
+				AskEachCall: o.AskEach && o.Kind == "write"}, nil
 		}
 	}
 	return profileFacts{}, nil

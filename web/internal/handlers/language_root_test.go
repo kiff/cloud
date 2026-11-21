@@ -10,7 +10,9 @@ import (
 )
 
 // A reader who types a bare language prefix ("/de/", "/de") lands on
-// that language's /tafs, not a 404; "/de/anything-else" is not caught.
+// that language's /tafs, not a 404; "/de/anything-else" is not caught. A
+// language that has no /tafs (Korean, Japanese: the legal texts only) lands on the
+// home page.
 func TestALanguagePrefixLandsOnItsTafs(t *testing.T) {
 	targets := LanguageRootTargets()
 	mux := http.NewServeMux()
@@ -21,9 +23,13 @@ func TestALanguagePrefixLandsOnItsTafs(t *testing.T) {
 		}
 		mux.Handle(pattern, LanguageRoot(to))
 	}
-	for _, lang := range components.SiteLanguages {
+	for _, lang := range components.PageLanguages {
 		if lang == "en" {
 			continue
+		}
+		want := "/" + lang + "/tafs"
+		if !components.HasPage(lang, "/tafs") {
+			want = "/"
 		}
 		for _, from := range []string{"/" + lang, "/" + lang + "/"} {
 			rec := httptest.NewRecorder()
@@ -31,7 +37,7 @@ func TestALanguagePrefixLandsOnItsTafs(t *testing.T) {
 			if rec.Code != http.StatusFound {
 				t.Fatalf("%s: status %d, want 302", from, rec.Code)
 			}
-			if got, want := rec.Header().Get("Location"), "/"+lang+"/tafs"; got != want {
+			if got := rec.Header().Get("Location"); got != want {
 				t.Errorf("%s: Location %q, want %q", from, got, want)
 			}
 		}

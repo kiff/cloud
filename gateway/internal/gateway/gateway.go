@@ -114,6 +114,9 @@ type Tool struct {
 	// connection where KIFF holds the key, every call of it asks the owner
 	// (OwnerAskParam).
 	Money bool
+	// AskEachCall: the profile holds every call of the operation for the
+	// owner, whatever its custody (OwnerAskEachCall).
+	AskEachCall bool
 	// Paused says why the operation is paused, "" when it runs.
 	Paused string
 	// AmountFormat is FormatDecimal when the call carries its amount as a
@@ -161,10 +164,17 @@ const OwnerAskParam = "kiff_owner_ask"
 // approves each one.
 const OwnerAskSealedMoney = "sealed_money"
 
-// ownerAsk is the code for why every call of t asks its owner, or "": a
-// money operation that no permit binds at the tool (any custody but verify
-// or relay).
+// OwnerAskEachCall is the code for an operation whose reviewed profile
+// holds every call for its owner (ask_each_call): a website's checkout.
+const OwnerAskEachCall = "each_call"
+
+// ownerAsk is the code for why every call of t asks its owner, or "": an
+// operation its profile holds on every call, or a money operation that no
+// permit binds at the tool (any custody but verify or relay).
 func (t Tool) ownerAsk() string {
+	if t.AskEachCall && !t.ReadOnly {
+		return OwnerAskEachCall
+	}
 	if t.Money && !t.ReadOnly && !t.needsPermit() {
 		return OwnerAskSealedMoney
 	}
@@ -1372,6 +1382,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}
 			t.Verify, t.Status, t.Probation, t.Money, t.Claim, t.ClaimRelated = f.Verify, f.Status, f.Probation, f.Money, f.Claim, f.ClaimRelated
+			t.AskEachCall = f.AskEachCall
 			if t.Case, t.NoEffect, err = profileCase(profile, t.Name); err != nil {
 				return nil, fmt.Errorf("gateway: profile of %s: %w", t.Name, err)
 			}

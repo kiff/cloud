@@ -12,6 +12,18 @@ import (
 var googleSections = map[string]templ.Component{
 	"en": tafsPrivacyGoogle(), "de": tafsPrivacyGoogleDE(), "es": tafsPrivacyGoogleES(), "fr": tafsPrivacyGoogleFR(),
 	"it": tafsPrivacyGoogleIT(), "nl": tafsPrivacyGoogleNL(), "pl": tafsPrivacyGooglePL(), "pt": tafsPrivacyGooglePT(),
+	"ko": tafsPrivacyGoogleKO(), "ja": tafsPrivacyGoogleJA(),
+	"et": tafsPrivacyGoogleET(),
+	"lv": tafsPrivacyGoogleLV(),
+	"el": tafsPrivacyGoogleEL(),
+	"lt": tafsPrivacyGoogleLT(),
+	"cs": tafsPrivacyGoogleCS(),
+	"sk": tafsPrivacyGoogleSK(),
+	"sl": tafsPrivacyGoogleSL(),
+	"hu": tafsPrivacyGoogleHU(),
+	"ro": tafsPrivacyGoogleRO(),
+	"bg": tafsPrivacyGoogleBG(),
+	"hr": tafsPrivacyGoogleHR(),
 }
 
 func renderGoogleSection(t *testing.T, lang string) string {
@@ -143,6 +155,19 @@ var googleRouteWords = map[string]struct{ Managed, InHouse, NoOtherCompany strin
 	"nl": {"Via onze inlogpartner:", "Via de eigen Google-login van tafs:", "dus geen ander bedrijf doet de aanroep of bewaart je login."},
 	"pl": {"Przez naszego partnera do logowania:", "Przez własne logowanie Google tafs:", "więc żadna inna firma nie wykonuje wywołania ani nie przechowuje Twojego logowania."},
 	"pt": {"Através do nosso parceiro de início de sessão:", "Através do próprio início de sessão Google do tafs:", "por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão."},
+	"ko": {"로그인 파트너를 통하는 경우:", "tafs 자체 Google 로그인을 통하는 경우:", "다른 어떤 회사도 호출을 하거나 로그인 정보를 보관하지 않습니다."},
+	"ja": {"サインインパートナーを通じて：", "tafs自身のGoogleサインインを通じて：", "他のどの会社も呼び出しを行わず、あなたのサインインを保持することもありません。"},
+	"et": {"Meie sisselogimispartneri kaudu:", "tafsi enda Google'i sisselogimise kaudu:", "nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist."},
+	"lv": {"Caur mūsu pierakstīšanās partneri:", "Caur paša tafs Google pierakstīšanos:", "tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos."},
+	"el": {"Μέσω του συνεργάτη σύνδεσής μας:", "Μέσω της δικής του σύνδεσης Google του tafs:", "οπότε καμία άλλη εταιρεία δεν κάνει την κλήση ούτε κρατά τη σύνδεσή σας."},
+	"lt": {"Per mūsų prisijungimo partnerį:", "Per paties tafs Google prisijungimą:", "todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo."},
+	"cs": {"Prostřednictvím našeho partnera pro přihlašování:", "Prostřednictvím vlastního přihlášení Google aplikace tafs:", "takže volání neprovádí ani vaše přihlášení neuchovává žádná jiná společnost."},
+	"sk": {"Prostredníctvom nášho partnera pre prihlasovanie:", "Prostredníctvom vlastného prihlásenia Google v tafs:", "takže žiadna iná spoločnosť nevykonáva volanie ani neuchováva vaše prihlásenie."},
+	"sl": {"Prek našega partnerja za prijavo:", "Prek lastne prijave Google aplikacije tafs:", "zato klica ne izvede in vaše prijave ne hrani nobeno drugo podjetje."},
+	"hu": {"Bejelentkezési partnerünkön keresztül:", "A tafs saját Google-bejelentkezésén keresztül:", "így más vállalat nem indítja a hívást, és nem őrzi az Ön bejelentkezését."},
+	"ro": {"Prin partenerul nostru de autentificare:", "Prin autentificarea Google proprie a tafs:", "astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră."},
+	"bg": {"Чрез нашия партньор за вход:", "Чрез собствения вход с Google на tafs:", "така че никоя друга компания не извършва заявката и не съхранява вашия вход."},
+	"hr": {"Putem našeg partnera za prijavu:", "Putem tafsove vlastite Google prijave:", "pa nijedno drugo poduzeće ne upućuje poziv niti čuva vašu prijavu."},
 }
 
 // itemAt returns the <li> that holds s[i]: from the nearest "<li>" before it.

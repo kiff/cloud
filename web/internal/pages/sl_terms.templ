@@ -1,0 +1,780 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsSL is the Terms of Service (/terms) in Slovene, at /sl/terms. It is
+// a translation of Terms: the same sections, anchors, links and figures,
+// held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Slovene has the
+// legal texts only, so a link to any other page goes to English and says
+// so.
+templ TermsSL() {
+	@components.LayoutSite("KIFF — pogoji storitve", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadSL()
+			@termsDefinitionsSL()
+			@termsAgreementSL()
+			@termsServiceSL()
+			@termsTafsSL()
+			@termsAccountSL()
+			@termsAcceptableUseSL()
+			@termsCustomerDataSL()
+			@termsConfidentialitySL()
+			@termsFeesSL()
+			@termsTermSL()
+			@termsWarrantiesSL()
+			@termsDisclaimerSL()
+			@termsLiabilitySL()
+			@termsIndemnitySL()
+			@termsSLASL()
+			@termsServiceModsSL()
+			@termsTermsModsSL()
+			@termsForceMajeureSL()
+			@termsGoverningLawSL()
+			@termsGeneralSL()
+			@termsContactSL()
+		</article>
+	}
+}
+
+templ termsHeadSL() {
+	<header class="legal-head">
+		<p class="legal-badge">Pogoji storitve · v0.1</p>
+		<h1>Pogoji storitve</h1>
+		<p class="legal-meta">
+			<strong>Zadnja posodobitev:</strong> 21. novembra 2026.
+			<strong>Datum začetka veljavnosti:</strong> 24. maja 2026.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Kaj se je spremenilo:</strong> s kom imate pogodbo, ko vas je predstavilo drugo podjetje (§2), in mikropodjetja (§8). Prej: kdo sme uporabljati Storitev, glede na regijo, lastništvo in sankcije (§4); aplikacija tafs v Androidu in
+			Solo, kupljen prek Google Play (§1, §8). Še prej: plačljivi
+			paketi (§3A, §8),
+			<a href="/legal/sla">pogodba o ravni storitev</a> (v angleščini) (§14) in
+			seznam prepovedanih uporab, ki je zdaj v
+			<a href="/acceptable-use">pravilniku o sprejemljivi uporabi</a> (v angleščini) (§5).
+		</p>
+		<p class="legal-disclaimer">
+			Ti pogoji urejajo uporabo KIFF Cloud, vključno s tafs.
+			Pogodbena vprašanja:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsSL() {
+	<section id="definitions">
+		<h2>1. Opredelitve pojmov</h2>
+		<ul>
+			<li><strong>»Kiff Agents OÜ«</strong>, <strong>»mi«</strong>, <strong>»nas«</strong>, <strong>»naš«</strong> — estonska družba z omejeno odgovornostjo, ki zagotavlja Storitev. Registrska številka 17372313.</li>
+			<li><strong>»Stranka«</strong>, <strong>»vi«</strong>, <strong>»vaš«</strong> — fizična ali pravna oseba, ki se strinja s temi pogoji.</li>
+			<li><strong>»Uporabnik«</strong> — vsak posameznik, ki mu Stranka dovoli dostop do Storitve prek računa Stranke.</li>
+			<li><strong>»Storitev«</strong> — izdelek KIFF Cloud, vključno z <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs ter dokumentacijo, nadzornimi ploščami in API-ji, ki jih tam objavljamo.</li>
+			<li><strong>»tafs«</strong> — aplikacija tafs za iPhone, iPad, Android in računalnike (Mac, Windows in Linux) ter storitev v njenem ozadju, vključno s Setupom in planque (§3A), v kateri Stranka zaupa nalogo agentu AI, ki dela v okviru KIFF Cards. <strong>»Taf«</strong> je en tak agent.</li>
+			<li><strong>»Najemnik«</strong> — logično ločen delovni prostor v Storitvi, ki pripada eni Stranki.</li>
+			<li><strong>»Revizijski podatki«</strong> — dogodki, odločitve, dejanja, odobritve in potrdila, ki jih Storitev prek izvajalnega okolja hrani v imenu Stranke.</li>
+			<li><strong>»Podatki tafs«</strong> — kar tafs hrani v imenu Stranke: zagoni in klepeti vsakega tafa (vključno s tem, kar mu vrnejo povezana orodja Stranke), njegova poročila, njegovi zapiski v spominu in telefoni, registrirani za njegova opozorila.</li>
+			<li><strong>»Potrdilo«</strong> — podpisan zapis o odločitvi z različico, ki ga Storitev izda za vsako upravljano dejanje.</li>
+			<li><strong>»Dokumentacija«</strong> — tehnična dokumentacija Storitve in varnostni ukrepi v datirani različici, na katero se sklicujejo ti Pogoji (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Ne vključuje strateške bele knjige, trženjskega gradiva in dokumentacije za ločeno licencirano odprtokodno ogrodje.</li>
+			<li><strong>»DPA«</strong> — pogodba o obdelavi podatkov na <a href="/legal/dpa">/legal/dpa</a> (v angleščini), ki ureja naše razmerje v vlogi obdelovalca.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementSL() {
+	<section id="agreement">
+		<h2>2. Pogodba</h2>
+		<p>
+			Ti pogoji urejajo vašo uporabo Storitve. Z ustvarjanjem
+			računa, ustvarjanjem ključa API ali drugačno uporabo
+			Storitve se strinjate s temi pogoji. Če jih sprejmete
+			v imenu podjetja ali druge pravne osebe, izjavljate, da
+			imate pooblastilo za zavezovanje te osebe, »vi«
+			in »vaš« pa se nanašata na to osebo.
+		</p>
+		<p>
+			Če vas je s KIFF seznanil ali agenta, ki ga uporabljate, izdelal razvijalec, partner ali drugo podjetje, je vaša pogodba za Storitev neposredno z nami, po teh pogojih, in jih sprejmete sami. To podjetje ni naš zastopnik: ne more za vas sprejeti teh pogojev, dati privolitve ali odobriti plačila in Storitve ne prodaja v našem imenu.
+		</p>
+		<p>
+			Za posamezne funkcije (funkcije beta, integracije tretjih
+			oseb) lahko objavimo dopolnilne pogoje. Kadar so
+			v nasprotju s temi pogoji, za posamezno funkcijo
+			prevladajo dopolnilni pogoji.
+		</p>
+	</section>
+}
+
+templ termsServiceSL() {
+	<section id="service">
+		<h2>3. Storitev</h2>
+		<p>
+			KIFF Cloud je gostovana storitev za upravljanje
+			prenesenih dejanj. Zahteve presoja glede na dovoljenja
+			in Cards, ki jih je nastavila Stranka, lahko zahteva
+			človeško odobritev in beleži odločitve o upravljanju.
+			Glede na nastavljeno integracijo KIFF pooblaščeno zahtevo
+			posreduje naprej ali zagotovi pooblastilo, ki ga preveri
+			zaščiteni sistem. Samo dejanje izvede povezani sistem.
+		</p>
+		<p>
+			Veljavno tehnično delovanje, dokazi, zahteve za
+			integracijo in omejitve izvajanja so določeni v datirani
+			Dokumentaciji, na katero se sklicujejo ti Pogoji.
+			Strateška <a href="/whitepaper">bela knjiga</a> (v angleščini) pojasnjuje
+			načela in model KIFF; po teh Pogojih ni vključena kot
+			tehnična Dokumentacija.
+		</p>
+		<p>
+			Storitev upravljanja KIFF Cloud <em>ni</em> ogrodje za
+			agente, mehanizem za delovne tokove, prehod za modele ali
+			upravljana platforma za agente. Kombinira se s tem, kar
+			že uporabljate. Izrecen seznam je v razdelku <a href="/#not">»Kaj KIFF ni«</a> (v angleščini)
+			na domači strani. tafs je edini
+			del Storitve, ki za vas poganja agente, v okviru
+			Cards, ki jih izdate; opisuje ga §3A.
+		</p>
+		<p>
+			Odprtokodno ogrodje <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			ureja lastna licenca MIT in ne spada pod te
+			pogoje. Ko ogrodje poganjate v lastni infrastrukturi,
+			ne nastane nobena pogodba s Kiff Agents OÜ.
+		</p>
+	</section>
+}
+
+templ termsTafsSL() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			V tafs zaupate nalogo (na primer vračila, plačevanje
+			računov ali spore pri karticah) tafu: agentu AI, ki dela
+			po urniku z orodji, ki jih povežete, v okviru KIFF Cards,
+			ki jih izdate zanj. Vsak taf teče v našem izvajalnem
+			okolju za agente, model AI, ki ga uporablja, pa zagotavlja
+			Anthropic. Na njegove zadržane klice odgovarjate v aplikaciji tafs.
+		</p>
+		<p>
+			<strong>Povezovanje vaših orodij.</strong> Setup, agent AI
+			v tafs, ki teče kot taf, vam pomaga povezati orodje in
+			nastaviti taf za nalogo. Sam ne poveže
+			ničesar. Prijavite se pri lastnem ponudniku orodja (na
+			primer Stripe) in na svoji napravi odobrite vsako
+			povezavo, orodja, ki jih taf sme uporabljati, in njegove
+			Cards. Žeton iz te prijave hrani planque, naša storitev
+			za povezave. Je šifriran, uporablja se samo za klic,
+			o katerem je odločil KIFF, in se nikoli ne da tafu.
+			Prekinitev povezave z orodjem prekliče žeton pri
+			ponudniku in ga izbriše.
+		</p>
+		<p>
+			<strong>Vaše Cards so vaša navodila.</strong> Taf
+			doseže vaša orodja samo prek KIFF, ki vsak klic pred
+			pošiljanjem preveri glede na Cards tafa. Klic v okviru
+			Card, ki ste ga izdali, se opravi po vašem navodilu.
+			Klic zunaj Card se zadrži ali zavrne, kot določa Card.
+			Zadržan klic se opravi šele, ko ga odobri nekdo, ki mu
+			vaš račun dovoljuje odgovarjati na zadržane klice.
+			V aplikaciji tafs odgovor nosi podpis z njegove naprave,
+			ki ga KIFF preveri, potrdilo pa ta dokaz hrani. Vaš račun
+			lahko odgovori tudi v samem KIFF (na nadzorni plošči,
+			z njegovim orodjem za ukazno vrstico ali prek odobritelja,
+			ki ga tam pooblastite); potrdilo nato zabeleži, kdo je
+			odgovoril in kako.
+		</p>
+		<p>
+			<strong>Kaj ostane na vas.</strong> Izberete nalogo in Cards
+			vsakega tafa, odgovarjate na njegove zadržane klice in
+			zagotovite, da smete uporabljati orodja in račune, ki jih
+			povežete. Poročila, sporočila in zapiske v spominu tafa
+			piše model AI in so lahko napačni; preden se zanesete
+			na kaj pomembnega, to preverite.
+		</p>
+		<p>
+			<strong>Ustavitev tafa.</strong> Ustavite lahko en taf ali
+			vse, začasno ustavite taf, prekličete katerega koli od
+			njegovih Cards ali ga odstranite. Od trenutka, ko taf
+			ustavite ali Card prekličete, KIFF ne dovoli nobenega
+			novega klica v okviru tega. Aplikacija tafs prikaže taf
+			kot ustavljen šele, ko ustavitev potrdita KIFF in planque;
+			od takrat planque ne pošlje nobenega njegovega klica, tudi
+			ne klica, ki ga je KIFF dovolil tik pred tem. Zahteva, ki
+			je bila že poslana ponudniku orodja, se lahko še dokonča:
+			ustavimo nove klice, ne moremo pa razveljaviti tega, kar
+			je ponudnik naredil. Orodje, ki dovoljenja KIFF preverja
+			samo, brez planque, lahko še sprejme dovoljenje, ki ga je
+			KIFF izdal tik pred tem, največ 90 sekund. Nadaljevanje
+			ustavljenega tafa zahteva vašo odobritev na napravi in nič,
+			kar je bilo zadržano ali v čakalni vrsti pred ustavitvijo,
+			se po njej ne izvede.
+		</p>
+		<p>
+			<strong>Odstranitev tafa</strong> ustavi njegov
+			urnik in izbriše njegove zagone, klepete, spomin in ključ,
+			ki ga je uporabljal. Že pred tem se to, kar vaša orodja
+			vrnejo tafu, hrani samo do konca njegovega zagona (kar je
+			klepet le prebral, šifrirano, za njegova naslednja
+			sporočila: uporablja se največ štiri ure, nato se izbriše),
+			njegovi zagoni in klepeti pa 30 dni. KIFF hrani potrdila o tem, kar je naredil.
+		</p>
+		<p>
+			<strong>Akt EU o umetni inteligenci.</strong> Za tafs je Kiff Agents OÜ
+			ponudnik sistema AI, vi pa ste njegov uvajalec.
+			Zagotovimo, da vse, kar taf napiše nekomu zunaj vašega
+			podjetja, navaja, da je to napisal agent AI. tafs
+			uporabljate samo za naloge, ki jih ponuja, in ne za
+			nobeno uporabo, ki jo akt o AI prepoveduje ali uvršča med
+			visokotvegane, kot so odločitve o zaposlitvi osebe,
+			kreditu ali dostopu do bistvenih storitev. Ohranite
+			človeške odobritve, ki jih zahtevajo vaše Cards, in
+			zagotovite, da ljudje, ki za vas uporabljajo tafs,
+			razumejo, kaj počne in kje so njegove omejitve.
+		</p>
+		<p>
+			<strong>Stroški.</strong> tafs je del vašega paketa KIFF
+			(§8): vsak zagon tafa porabi kredite za AI, ki jo je
+			uporabil. Coach in nastavljanje tafov sta vključena
+			v okviru poštene uporabe Coacha.
+		</p>
+	</section>
+}
+
+templ termsAccountSL() {
+	<section id="account">
+		<h2>4. Računi in dostop</h2>
+		<p>
+			Za uporabo Storitve morate ustvariti račun. Strinjate se,
+			da boste navajali točne podatke za registracijo, svoje
+			poverilnice hranili zaupno in bili odgovorni za vso
+			dejavnost v svojem računu.
+		</p>
+		<p>
+			Stari morate biti najmanj 16 let ali toliko, kolikor znaša
+			starost za digitalno privolitev v vaši jurisdikciji, kar
+			je višje. Storitev ni namenjena otrokom.
+		</p>
+		<p>
+			Storitev se ponuja samo v državah in regijah, kjer Anthropic, ki zagotavlja njen model AI, ponuja svojo lastno storitev, kot jih <a href="https://www.anthropic.com/supported-countries">Anthropic navaja</a>. Od drugod je ne smete uporabljati. Podjetje je ne sme uporabljati, če ima sedež v državi ali regiji zunaj tega seznama ali je v večinski lasti ali pod nadzorom podjetja s sedežem v takšni državi ali regiji, ne glede na to, kje so njegovi uporabniki. Prav tako je ne smete uporabljati, če ste vi ali podjetje, za katero jo uporabljate, predmet sankcij Evropske unije, Združenih narodov ali Združenih držav. Računov, ki kršijo to pravilo, ne sprejmemo, takšen račun pa lahko začasno onemogočimo.
+		</p>
+		<p>
+			Odgovorni ste za dejanja vsakega Uporabnika, ki ga
+			pooblastite v svojem računu. Če zaznamo verodostojno
+			kršitev teh pogojev, lahko z razumnim obvestilom začasno
+			onemogočimo račun ali prekličemo dostop. Pri kršitvah
+			pravilnika o sprejemljivi uporabi (glejte §5) je lahko
+			onemogočenje takojšnje.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseSL() {
+	<section id="acceptable-use">
+		<h2>5. Sprejemljiva uporaba</h2>
+		<p>
+			Vi, vaši uporabniki in vaši agenti morate upoštevati
+			<a href="/acceptable-use">pravilnik o sprejemljivi uporabi</a> (v angleščini). Je
+			del teh pogojev in navaja, za kaj se Storitev ne sme
+			uporabljati.
+		</p>
+		<p>
+			Ob verodostojni kršitvi tega pravilnika lahko takoj
+			začasno onemogočimo dostop. Vsebine Stranke nismo dolžni
+			spremljati, lahko pa ukrepamo na podlagi verodostojnih
+			prijav.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataSL() {
+	<section id="customer-data">
+		<h2>6. Podatki in vsebina Stranke</h2>
+		<p>
+			Vaši Revizijski podatki so vaši. Kiff Agents OÜ podeljujete
+			omejeno, neizključno, brezplačno, svetovno licenco za
+			gostovanje, kopiranje, prenos, prikazovanje in drugačno
+			obdelavo vaših Revizijskih podatkov izključno v obsegu,
+			potrebnem za delovanje, vzdrževanje in izboljšanje
+			Storitve za vas.
+		</p>
+		<p>
+			Za vaše Revizijske podatke in vaše Podatke tafs nastopamo
+			kot <strong>obdelovalec</strong> v skladu s členom 28 GDPR;
+			to razmerje podrobno ureja
+			<a href="/legal/dpa">DPA</a> (v angleščini). Za metapodatke
+			vašega računa nastopamo kot <strong>upravljavec</strong>;
+			to razmerje ureja
+			<a href="/sl/privacy">pravilnik o zasebnosti</a>.
+		</p>
+		<p>
+			Izjavljate, da imate vse pravice, potrebne za predložitev
+			podatkov, ki jih predložite, in da je predložitev skladna
+			z veljavnimi zakoni (vključno z zakoni o varstvu podatkov
+			in, kjer se uporablja, aktom EU o umetni inteligenci).
+		</p>
+	</section>
+}
+
+templ termsConfidentialitySL() {
+	<section id="confidentiality">
+		<h2>7. Zaupnost</h2>
+		<p>
+			Vsaka stranka lahko od druge prejme nejavne informacije
+			(»Zaupne informacije«). Prejemna stranka bo Zaupne
+			informacije uporabljala samo, kolikor je potrebno za
+			izpolnjevanje svojih obveznosti in uresničevanje svojih
+			pravic po teh pogojih, in jih bo varovala z vsaj enako
+			skrbnostjo, kot jo namenja svojim lastnim zaupnim
+			informacijam.
+		</p>
+		<p>
+			Zaupne informacije ne vključujejo informacij, ki (a) so ali
+			postanejo javno dostopne brez kršitve, (b) so bile
+			prejemni stranki znane pred razkritjem, (c) so bile
+			razvite neodvisno brez uporabe Zaupnih informacij ali
+			(d) jih je treba razkriti po zakonu (z obvestilom drugi
+			stranki, kjer je to dovoljeno).
+		</p>
+	</section>
+}
+
+templ termsFeesSL() {
+	<section id="fees">
+		<h2>8. Pristojbine in plačilo</h2>
+		<p>
+			<strong>Paketi.</strong> Vsak račun ima en paket.
+			Trenutne cene so na <a href="/pricing">strani
+			s cenami</a> (v angleščini); v času te posodobitve:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> ena oseba, za tafs, prodaja se v aplikaciji tafs prek App Store ali Google Play po 12,50 € na mesec, z vključenim DDV, s 500 krediti na mesec v ceni.</li>
+			<li><strong>Company:</strong> 10,50 € na mesec za vsako mesto, s 500 krediti na mesec za vsako mesto, skupnimi, in za klice vaših lastnih agentov prek KIFF Cloud s 500 dejanji na mesec za vsako mesto, skupnimi.</li>
+			<li><strong>Pogodba:</strong> pristojbine in pogoji iz njenega naročilnega obrazca.</li>
+		</ul>
+		<p>
+			Mesta so skrbniki in uredniki računa. Odobritelji
+			in pregledovalci so v vsakem paketu brezplačni. V paketu
+			Company nad vključenim kredit stane 0,01 €, dejanje pa 0,02 €.
+			Krediti nad vključenimi se zaračunajo do
+			mesečne omejitve porabe, ki jo nastavi račun (ob začetku 50 €):
+			ob dosegu omejitve KIFF ne zažene nobenega novega zagona
+			tafov računa, dokler se ne začne naslednje obdobje ali je
+			ne zviša nekdo, ki upravlja obračun.
+		</p>
+		<p>
+			<strong>Paketi kreditov.</strong> Pri paketu Solo krediti
+			nad mesečnimi vključenimi prihajajo iz paketov kreditov,
+			kupljenih v aplikaciji tafs. Paket kreditov se kupi enkrat,
+			ne poteče in ni naročnina; njegovi krediti se porabijo po
+			mesečnih vključenih, najprej najstarejši paket. Paket, za
+			katerega je bilo plačilo v celoti vrnjeno, se odvzame,
+			skupaj s preostalimi krediti. Ko so mesečni krediti in
+			paketi porabljeni, KIFF ne zažene nobenega novega zagona
+			tafov računa, dokler se ne začne naslednje obdobje ali se
+			ne doda paket.
+			Bonusni krediti, ki jih KIFF doda računu, prav tako
+			ne potečejo, tako kot paketi.
+		</p>
+		<p>
+			<strong>Kaj se šteje.</strong> <em>Kredit</em> plača
+			AI, ki jo je uporabil zagon tafa, v celih kreditih,
+			zaokroženo navzgor enkrat na zagon in šteto enkrat, ko se
+			zagon konča. Zagon, katerega klic je KIFF zavrnil, je svojo
+			AI vseeno uporabil. Nikoli se ne šteje: Coach in
+			nastavljanje tafov v okviru poštene uporabe Coacha;
+			preizkus nove različice, ki ne pošlje ničesar; in zagon, ki
+			je spodletel na naši strani. <em>Dejanje</em> je klic
+			vašega lastnega agenta prek KIFF Cloud, ki je nekaj
+			opravil: KIFF ga je dovolil, poslan je bil in orodje je
+			sporočilo uspeh. Nikoli se ne šteje kot dejanje: klic, ki
+			je bil zavrnjen, zadržan in nato zavrnjen, ustavljen
+			z ustavitvijo, neveljaven, neuspešen v orodju ali čigar
+			izid ni znan, in klic, ki samo bere.
+		</p>
+		<p>
+			<strong>Brez preizkusnega obdobja.</strong> Račun plačuje
+			od prvega dne. Preden se paket začne, KIFF ne zažene
+			nobenega zagona njegovih tafov, razen Coachovega
+			nastavljanja; nič se ne izbriše.
+		</p>
+		<p>
+			<strong>Plačilo in računi.</strong> Paket se zaračunava
+			na enem mestu. Paket, kupljen na kiff.dev, se tam kupi,
+			spremeni in prekliče, pa tudi na portalu za obračun, na
+			katerega vodi, njegova plačila pa obdeluje Stripe. Solo,
+			kupljen v aplikaciji tafs, se prodaja prek App Store na
+			iPhonu in iPadu ali Google Play v Androidu ter upravlja
+			v vaših naročninah Apple ali naročninah Google Play,
+			v skladu s pogoji te trgovine za plačila, podaljšanje in
+			vračila. Paketi kreditov se kupijo v aplikaciji. Company
+			se kupi na kiff.dev. Pristojbine se zaračunavajo mesečno
+			vnaprej; poraba nad vključenim se zaračuna z naslednjim
+			računom. Sprememba števila oseb velja od naslednjega
+			računa. Če plačilo ne uspe in ni poravnano, se paket
+			konča in KIFF zavrača klice računa, dokler ni izbran
+			paket.
+		</p>
+		<p>
+			<strong>Preklic.</strong> Prekličete lahko kadar koli
+			na portalu za obračun ali, pri Solo, kupljenem v aplikaciji,
+			v svojih naročninah Apple ali naročninah Google Play. Paket traja do konca
+			plačanega obdobja in se ne podaljša. Razen če zakon tako
+			zahteva, že plačane pristojbine niso vrnjene. Če ste
+			potrošnik v EU, lahko od nakupa odstopite v 14 dneh
+			brez navedbe razloga in vrnemo vam, kar ste plačali,
+			zmanjšano za delež za dneve, ko je paket že tekel.
+			Nakupi Solo se vračajo prek App Store ali Google Play, v skladu z njunimi pogoji.
+		</p>
+		<p>
+			<strong>Mikropodjetja.</strong> Če ima vaše podjetje manj kot 10 oseb in letni promet ali bilančno vsoto največ 2 milijona evrov, ga obravnavamo kot potrošnika pri vseh pravilih teh pogojev o plačilih s kartico, vključno s paketom Company.
+		</p>
+		<p>
+			<strong>DDV.</strong> Cene Company ne vključujejo DDV; Solo
+			in pakete kreditov prodaja App Store ali Google
+			Play z vključenim DDV. Kiff Agents OÜ
+			(identifikacijska številka za DDV EE102924327) doda
+			estonski DDV, kjer se uporablja. Prodaje med podjetji
+			v EU Stranki zunaj Estonije z veljavno identifikacijsko
+			številko za DDV se zaračunajo po mehanizmu obrnjene
+			davčne obveznosti v EU.
+		</p>
+		<p>
+			<strong>Spremembe.</strong> O zvišanju cene aktivne račune
+			pisno obvestimo vsaj trideset dni vnaprej (§16). Znižanje
+			cene velja od naslednjega računa.
+		</p>
+	</section>
+}
+
+templ termsTermSL() {
+	<section id="term">
+		<h2>9. Trajanje in prenehanje</h2>
+		<p>
+			Ti pogoji začnejo veljati, ko Storitev prvič uporabite,
+			in veljajo do prenehanja.
+		</p>
+		<p>
+			Prekinete jih lahko kadar koli z izbrisom svojega računa.
+			Mi jih lahko prekinemo (a) zaradi bistvene kršitve, ki ni
+			odpravljena v tridesetih dneh od pisnega obvestila, ali
+			(b) takoj zaradi kršitev pravilnika o sprejemljivi
+			uporabi ali v primeru insolventnosti.
+		</p>
+		<p id="leaving">
+			<strong>Odhod in odnos vaših podatkov.</strong>
+			Svoje podatke lahko kadar koli izvozite v strukturirani,
+			strojno berljivi obliki: v KIFF Nastavitve → Podatki da
+			datoteko JSON z vašim računom, vašimi Cards z vsemi
+			različicami, odločitvami v vašem Zapisu (zadnjih 10.000;
+			za več nas prosite), podpisanim potrdilom vsake, ki jo je
+			KIFF dovolil, in podrobnostmi vaših ključev API (nikoli
+			samih ključev). V aplikaciji tafs vsaka oseba izvozi svoje
+			lastne klepete, datoteke in zapiske iz Račun →  Izvozi moje
+			klepete; klepeti se v vsakem primeru hranijo trideset dni,
+			kot pove pravilnik o zasebnosti. Izbris računa takoj
+			konča Storitev, zato najprej izvozite.
+		</p>
+		<p>
+			Namesto tega lahko odidete z odpovedjo, da preidete
+			k drugemu ponudniku ali na lastne sisteme, tako da pišete na
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a>.
+			Nikoli ne zahtevamo več kot dveh mesecev odpovednega roka:
+			vaša odpoved začne veljati na dan, ki ga izberete, najpozneje
+			dva meseca po tem, ko jo pošljete. Od tega dne sledi
+			prehodno obdobje tridesetih dni, v katerem Storitev še
+			naprej deluje, vi izvozite svoje podatke in preselite svoje
+			delo, mi pa vam pri tem pomagamo ob razumnih zahtevah.
+			Prehodno obdobje lahko enkrat podaljšate, za toliko, kolikor
+			potrebujete. Če ga tehnično ne moremo dokončati v tridesetih
+			dneh, vam to sporočimo v štirinajstih delovnih dneh od
+			vaše odpovedi, z razlogi in novim obdobjem, ki ne presega
+			sedmih mesecev. Po prehodnem obdobju ostanejo vaši podatki
+			na voljo za izvoz še najmanj trideset dni. Pristojbine
+			paketa tečejo kot običajno do konca prehodnega obdobja.
+			Solo, kupljen v App Store ali Google Play, se prekliče
+			v trgovini; prehodno obdobje in obdobje za izvoz veljata
+			enako.
+		</p>
+		<p>
+			Za odhod, prehod ali izvoz vaših podatkov ne zaračunavamo
+			ničesar. Ta razdelek vsaki stranki daje pravice do
+			zamenjave iz poglavja VI akta EU o podatkih (Uredba (EU)
+			2023/2854).
+		</p>
+		<p>
+			Ob prenehanju in po morebitnem prehodnem obdobju
+			in obdobju za izvoz izbrišemo vaše Revizijske podatke, vaše
+			Podatke tafs in metapodatke računa v skladu s pravili
+			o hrambi v
+			<a href="/sl/privacy#retention">pravilniku o zasebnosti</a>.
+		</p>
+		<p>
+			Določbe, ki bi po svoji naravi morale veljati tudi po
+			prenehanju, veljajo naprej — vključno z zaupnostjo,
+			intelektualno lastnino, odškodnino, omejitvijo
+			odgovornosti, izključitvami jamstev, veljavnim pravom in
+			morebitnimi nastalimi pristojbinami.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesSL() {
+	<section id="warranties">
+		<h2>10. Jamstva</h2>
+		<p>
+			Vsaka stranka izjavlja, da ima pravico in pooblastilo za
+			sklenitev in izvajanje teh pogojev.
+		</p>
+		<p>
+			Jamčimo, da bomo Storitev zagotavljali strokovno in
+			v bistveni skladnosti z Dokumentacijo. Vaše edino pravno
+			sredstvo ob kršitvi tega jamstva je, po naši izbiri,
+			ponovna izvedba ali sorazmerno vračilo pristojbin, ki se
+			nanašajo na prizadeto Storitev za obdobje kršitve.
+		</p>
+		<p>
+			Jamčite, da je vaša uporaba Storitve skladna
+			z veljavnim pravom in temi pogoji.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerSL() {
+	<section id="disclaimer">
+		<h2>11. Izključitev jamstev</h2>
+		<p>
+			Razen izrecnih jamstev v §10 se Storitev zagotavlja
+			<strong>»takšna, kot je« in »kot je na voljo«</strong>.
+			V največjem obsegu, ki ga dovoljuje zakon, izključujemo
+			vsa druga jamstva, izrecna, implicitna ali zakonska,
+			vključno z jamstvi za primernost za prodajo, primernost
+			za določen namen, nekršitev pravic in vsakim jamstvom, ki
+			izhaja iz poslovne prakse ali trgovinskih običajev.
+		</p>
+		<p>
+			Ne jamčimo, da bo Storitev neprekinjena, brez napak ali
+			brez škodljivih komponent, niti da se podatki ne bodo
+			izgubili ali poškodovali. Za varnostno kopiranje svojih
+			podatkov ste odgovorni sami.
+		</p>
+	</section>
+}
+
+templ termsLiabilitySL() {
+	<section id="liability">
+		<h2>12. Omejitev odgovornosti</h2>
+		<p>
+			V največjem obsegu, ki ga dovoljuje zakon, nobena stranka
+			ni odgovorna drugi za kakršno koli posredno, naključno,
+			posledično, posebno, zgledno ali kaznovalno škodo,
+			vključno z izgubljenim dobičkom, izgubljenimi prihodki,
+			izgubljenimi podatki ali prekinitvijo poslovanja, ki izhaja
+			iz teh pogojev ali Storitve ali je z njimi povezana, tudi
+			če je bila na možnost take škode opozorjena.
+		</p>
+		<p>
+			Skupna odgovornost vsake stranke, ki izhaja iz teh
+			pogojev ali je z njimi povezana, ne bo presegla višjega
+			od naslednjih zneskov: (a) pristojbin, ki jih je Stranka
+			plačala ali jih mora plačati Kiff Agents OÜ v dvanajstih
+			mesecih pred dogodkom, ki je povzročil odgovornost, ali
+			(b) sto tisoč evrov (100.000 €).
+		</p>
+		<p>
+			Nič v teh pogojih ne omejuje ali izključuje odgovornosti,
+			ki je po veljavnem pravu ni mogoče omejiti ali izključiti,
+			vključno z odgovornostjo za smrt, telesno poškodbo zaradi
+			malomarnosti, goljufijo ali naklepno ravnanje ter
+			odgovornostjo za proizvod z napako po zakonih, ki izvajajo
+			Direktivo (EU) 2024/2853 o odgovornosti za proizvode
+			z napako.
+		</p>
+	</section>
+}
+
+templ termsIndemnitySL() {
+	<section id="indemnification">
+		<h2>13. Odškodnina</h2>
+		<p>
+			Branili vas bomo pred zahtevki tretjih oseb, da Storitev,
+			kot jo zagotavljamo in kot jo uporabljate v skladu s temi
+			pogoji, krši pravice intelektualne lastnine te tretje
+			osebe, in plačali odškodnino, ki vam je pravnomočno
+			naložena (ali dogovorjeni znesek poravnave), za take
+			zahtevke.
+		</p>
+		<p>
+			Vi nas boste branili pred zahtevki tretjih oseb, ki izhajajo
+			iz (a) vaših podatkov ali vsebine Stranke; (b) vaše
+			uporabe Storitve v nasprotju s temi pogoji (vključno
+			s pravilnikom o sprejemljivi uporabi); ali (c) vaše hude
+			malomarnosti ali naklepnega ravnanja, in plačali
+			odškodnino, ki nam je pravnomočno naložena (ali dogovorjeni
+			znesek poravnave), za take zahtevke.
+		</p>
+		<p>
+			Odškodnina je pogojena s pravočasnim obvestilom o zahtevku,
+			izključnim nadzorom nad obrambo in poravnavo s strani
+			stranke, ki odškodnino daje, in razumnim sodelovanjem
+			stranke, ki jo prejme. Stranka, ki odškodnino daje, ne sme
+			brez privolitve skleniti poravnave, ki nalaga obveznosti
+			stranki, ki odškodnino prejme.
+		</p>
+	</section>
+}
+
+templ termsSLASL() {
+	<section id="sla">
+		<h2>14. Zaveza glede ravni storitev</h2>
+		<p>
+			Pri plačljivem paketu <a href="/legal/sla">pogodba
+			o ravni storitev</a> (v angleščini) določa razpoložljivost,
+			h kateri se zavezujemo, kako se šteje počasna ali
+			neuspešna zahteva, naše odzivne čase podpore in dobropise
+			za storitev, kadar zaveze ne izpolnimo. Je del teh pogojev.
+		</p>
+		<p>
+			Operativne prakse, odzivanje na incidente in zaveze
+			glede obveščanja o kršitvah so opisani v datirani
+			različici, na katero se sklicujejo ti Pogoji
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			<a href="/security">/security</a> (v angleščini) prikazuje
+			trenutne prakse.
+		</p>
+	</section>
+}
+
+templ termsServiceModsSL() {
+	<section id="service-mods">
+		<h2>15. Spremembe Storitve</h2>
+		<p>
+			Funkcije lahko kadar koli dodamo, spremenimo ali
+			odstranimo. O bistvenem zmanjšanju funkcionalnosti ali
+			opustitvi dela API-ja, ki prekine dokumentirano delovanje,
+			aktivne stranke obvestimo vsaj trideset dni vnaprej,
+			z objavljenim časovnim načrtom opustitve.
+			Spremembe zaradi varnosti lahko izvedemo brez obvestila,
+			kadar bi samo obvestilo ustvarilo tveganje.
+		</p>
+	</section>
+}
+
+templ termsTermsModsSL() {
+	<section id="terms-mods">
+		<h2>16. Spremembe teh pogojev</h2>
+		<p>
+			Te pogoje lahko občasno spremenimo. O bistvenih
+			spremembah obvestimo po e-pošti in z opazno pasico na
+			tej strani vsaj trideset dni vnaprej. Nebistvene
+			spremembe (pojasnila, sklici) objavimo z novim datumom
+			»zadnje posodobitve«. Vaša nadaljnja uporaba
+			Storitve po datumu začetka veljavnosti posodobitve
+			pomeni sprejetje.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureSL() {
+	<section id="force-majeure">
+		<h2>17. Višja sila</h2>
+		<p>
+			Nobena stranka ni odgovorna za neizpolnitev ali zamudo
+			pri izpolnitvi, kolikor jo povzročijo okoliščine zunaj
+			njenega razumnega nadzora, vključno z naravnimi pojavi,
+			vojno, terorizmom, državljanskimi nemiri, delovnimi spori,
+			požarom, naravno nesrečo, vladnimi ukrepi zaradi pandemije,
+			izpadi interneta ali elektrike ali dejanji ponudnikov
+			telekomunikacijskih storitev ali gostiteljske
+			infrastrukture tretjih oseb.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawSL() {
+	<section id="governing-law">
+		<h2>18. Veljavno pravo in pristojnost</h2>
+		<p>
+			Za te pogoje velja pravo Republike Estonije, ne glede na
+			njegova kolizijska pravila. Izključno pristojno sodišče
+			za spore je okrožno sodišče Harju (Harju Maakohus)
+			v Talinu.
+		</p>
+		<p>
+			Če ste potrošnik s prebivališčem v drugi državi članici
+			EU, se obvezna pravila varstva potrošnikov vaše domače
+			jurisdikcije še naprej uporabljajo, kolikor vam dajejo
+			pravice, ki se jim s pogodbo ne morete odpovedati; ta
+			določba vam ne odvzame varstva teh pravil.
+		</p>
+	</section>
+}
+
+templ termsGeneralSL() {
+	<section id="general">
+		<h2>19. Splošno</h2>
+		<p>
+			<strong>Celotna pogodba.</strong> Ti pogoji skupaj
+			s pravilnikom o zasebnosti, DPA, morebitnimi naročilnimi
+			obrazci in vsemi dopolnilnimi pogoji, ki so izrecno
+			vključeni, so celotna pogodba med nami o njihovem
+			predmetu in nadomeščajo vse prejšnje ali sočasne dogovore.
+		</p>
+		<p>
+			<strong>Deljivost.</strong> Če se izkaže, da določba ni
+			izvršljiva, ostale ostanejo v veljavi.
+		</p>
+		<p>
+			<strong>Odstop.</strong> Teh pogojev ne smete odstopiti
+			brez našega pisnega soglasja. Mi jih lahko odstopimo brez
+			soglasja v povezavi z združitvijo, prevzemom ali prodajo
+			vseh ali skoraj vseh naših sredstev, z obvestilom vam.
+		</p>
+		<p>
+			<strong>Brez odpovedi.</strong> Neuveljavljanje katere koli
+			določbe ne pomeni odpovedi pravici, da se uveljavi pozneje.
+		</p>
+		<p>
+			<strong>Obvestila.</strong> Obvestila za Kiff Agents OÜ se
+			pošiljajo na <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			ali po pošti na Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Estonija. Obvestila za vas se
+			pošiljajo na e-poštni naslov, povezan z vašim računom,
+			ali, če ste ga navedli, na vaš določeni naslov za pravna
+			obvestila.
+		</p>
+		<p>
+			<strong>Neodvisni pogodbeniki.</strong> Nič v teh pogojih
+			ne ustvarja partnerstva, zastopništva, skupnega podjetja
+			ali delovnega razmerja.
+		</p>
+		<p>
+			<strong>Tretji upravičenci.</strong> Ni jih, razen kolikor
+			so povezane osebe, upravičene do odškodnine, izrecno
+			navedene.
+		</p>
+	</section>
+}
+
+templ termsContactSL() {
+	<section id="contact">
+		<h2>20. Kontakt</h2>
+		<p>
+			Poslovna in pogodbena vprašanja:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Splošna vprašanja o izdelku:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Vprašanja o zasebnosti:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Prijave varnostnih težav:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Različica dokumenta:</strong> v0.1.<br/>
+			<strong>Zadnja posodobitev:</strong> 21. novembra 2026.
+		</p>
+	</section>
+}

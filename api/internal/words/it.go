@@ -80,6 +80,7 @@ var it = Words{
 		OwnerAskSecondRefund: "questo addebito ha già un rimborso, quindi un secondo attende un'approvazione",
 		OwnerAskNoRequestID:  "l'agente non ha indicato nessuna richiesta da un'app collegata, quindi questo rimborso attende un'approvazione",
 		OwnerAskOther:        "ogni chiamata di questo strumento attende un'approvazione",
+		OwnerAskEachCall:     "ogni chiamata di questo strumento attende un'approvazione",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("la chiamata non indica alcun %s, e questa Card si applica solo ai %s che elenca", param, param)

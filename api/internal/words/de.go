@@ -83,6 +83,7 @@ var de = Words{
 		OwnerAskSecondRefund: "diese Zahlung hat schon eine Erstattung, daher wartet eine zweite auf Genehmigung",
 		OwnerAskNoRequestID:  "der Agent hat keine Anfrage aus einer verbundenen App genannt, daher wartet diese Erstattung auf Genehmigung",
 		OwnerAskOther:        "jeder Aufruf dieses Tools wartet auf Genehmigung",
+		OwnerAskEachCall:     "jeder Aufruf dieses Tools wartet auf Genehmigung",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("der Aufruf nennt kein %s, und diese Card gilt nur für die %s, die sie aufführt", param, param)

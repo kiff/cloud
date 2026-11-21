@@ -47,6 +47,11 @@ const (
 	// appRedirectPrefix is where the API may send the sheet: the app's own
 	// redirect (appsignin.RedirectURI), nowhere else.
 	appRedirectPrefix = "dev.kiff.tafs:/oauth?"
+	// appBackToApp is where "Back to the app" sends the sheet when there's
+	// nothing left to do here: the app's own redirect, as a cancel. The
+	// request is spent or unknown, so there's no state to send; the app
+	// takes it as "signing in didn't go on" and lets the person start again.
+	appBackToApp = template.URL("dev.kiff.tafs:/oauth?error=access_denied")
 	// providerScriptVersion pins the sign-in provider's browser script the
 	// form loads: a new version is a reviewed change, never @latest.
 	providerScriptVersion = "6.46.2"
@@ -108,8 +113,10 @@ type appSignInView struct {
 	Email string
 	// Other is where "Use another account" goes.
 	Other string
-	// Stopped is why there's nothing to do here but go back to the app.
+	// Stopped is why there's nothing to do here but go back to the app, and
+	// Back is the button that does.
 	Stopped string
+	Back    template.URL
 	// Nonce lets the page's own script run under its CSP; ScriptVersion and
 	// UIVersion are the provider's core and UI scripts' pinned versions.
 	Nonce, ScriptVersion, UIVersion string
@@ -357,6 +364,9 @@ func requestShaped(s string) bool {
 
 func (h *AppSignInHandler) render(w http.ResponseWriter, r *http.Request, status int, v appSignInView) {
 	v.Nonce = newNonce()
+	if v.Stopped != "" {
+		v.Back = appBackToApp
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("Referrer-Policy", "no-referrer")
@@ -407,12 +417,15 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
     main { max-width: 420px; margin: 0 auto; padding: 24px 16px 40px; }
     .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 24px; }
     .brand img { width: 28px; height: 28px; border-radius: 7px; }
-    h1 { font-size: 24px; margin: 0 0 8px; }
-    p { color: var(--soft); margin: 0 0 20px; }
-    form { margin: 0 0 12px; }
-    button, .other { display: block; width: 100%; box-sizing: border-box; padding: 14px; border-radius: 12px; font: inherit; font-weight: 600; text-align: center; text-decoration: none; }
-    button.go { background: var(--amber); color: #fff; border: 0; }
-    button.no { background: none; color: var(--soft); border: 0; }
+    /* The page's own elements only: the provider's form draws inside
+       #sign-in, and a bare p, form or button rule would reshape its fields
+       (a full-width show-password button over the password, K5, 21 Nov). */
+    main > h1 { font-size: 24px; margin: 0 0 8px; }
+    main > p, #not-loaded > p { color: var(--soft); margin: 0 0 20px; }
+    main > form { margin: 0 0 12px; }
+    .go, .no, .other { display: block; width: 100%; box-sizing: border-box; padding: 14px; border-radius: 12px; font: inherit; font-weight: 600; text-align: center; text-decoration: none; }
+    .go { background: var(--amber); color: #fff; border: 0; }
+    .no { background: none; color: var(--soft); border: 0; }
     .other { color: var(--ink); border: 1px solid var(--line); margin-bottom: 12px; }
     #sign-in { min-height: 320px; }
   </style>
@@ -423,6 +436,7 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
   <h1>{{.W.Title}}</h1>
   {{if .Stopped}}
   <p role="alert">{{.Stopped}}</p>
+  <a class="other" href="{{.Back}}">{{.W.BackToApp}}</a>
   {{else if .Form}}
   <p>{{.W.Lead}}</p>
   <div id="sign-in"></div>

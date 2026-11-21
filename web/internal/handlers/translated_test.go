@@ -152,7 +152,7 @@ func TestTheSitemapNamesEveryLanguage(t *testing.T) {
 
 // The app host sends a translated page to kiff.dev, as it does the English one.
 func TestATranslatedPathIsPublic(t *testing.T) {
-	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/de/dashboard": false, "/xx/privacy": false, "/de": false} {
+	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/et/tafs/privacy": true, "/et/support": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false, "/el/privacy": true, "/el/tafs/watch": false, "/lt/privacy": true, "/lt/legal/dpa": false, "/cs/privacy": true, "/cs/tafs": false, "/sk/privacy": true, "/sk/tafs/watch": false, "/sl/privacy": true, "/sl/legal/dpa": false, "/hu/privacy": true, "/hu/cookies": false, "/ro/privacy": true, "/ro/tafs": false, "/bg/privacy": true, "/bg/support": false, "/hr/privacy": true, "/hr/tafs/watch": false} {
 		if got := isPublicPath(path); got != want {
 			t.Errorf("isPublicPath(%q) = %v, want %v", path, got, want)
 		}

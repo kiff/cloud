@@ -93,6 +93,9 @@ func render(p Profile, version string) Words {
 		if o.Shape == "batch" {
 			add(o.Tool, KindDoes, t+": can act on several at once.")
 		}
+		if o.Kind == "write" && o.AskEachCall {
+			add(o.Tool, KindDoes, t+": every call waits for your approval, whatever a Card allows.")
+		}
 		if r := o.Resource; r != nil {
 			switch {
 			case r.ReachesOutside() && o.Effect == EffectDraft:

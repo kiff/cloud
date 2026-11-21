@@ -1,0 +1,827 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsHU is the Terms of Service (/terms) in Hungarian, at /hu/terms. It
+// is a translation of Terms: the same sections, anchors, links and figures,
+// held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Hungarian has the
+// legal texts only, so a link to any other page goes to English and says
+// so.
+templ TermsHU() {
+	@components.LayoutSite("KIFF — szolgáltatási feltételek", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadHU()
+			@termsDefinitionsHU()
+			@termsAgreementHU()
+			@termsServiceHU()
+			@termsTafsHU()
+			@termsAccountHU()
+			@termsAcceptableUseHU()
+			@termsCustomerDataHU()
+			@termsConfidentialityHU()
+			@termsFeesHU()
+			@termsTermHU()
+			@termsWarrantiesHU()
+			@termsDisclaimerHU()
+			@termsLiabilityHU()
+			@termsIndemnityHU()
+			@termsSLAHU()
+			@termsServiceModsHU()
+			@termsTermsModsHU()
+			@termsForceMajeureHU()
+			@termsGoverningLawHU()
+			@termsGeneralHU()
+			@termsContactHU()
+		</article>
+	}
+}
+
+templ termsHeadHU() {
+	<header class="legal-head">
+		<p class="legal-badge">Szolgáltatási feltételek · v0.1</p>
+		<h1>Szolgáltatási feltételek</h1>
+		<p class="legal-meta">
+			<strong>Utolsó frissítés:</strong> 2026. november 21.
+			<strong>Hatálybalépés dátuma:</strong> 2026. május 24.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Mi változott:</strong> kivel köt szerződést, ha egy másik vállalkozás ajánlotta Önnek a szolgáltatást (§2), és a mikrovállalkozások (§8). Korábban: ki használhatja a Szolgáltatást régió, tulajdonviszonyok és szankciók szerint (§4); a tafs alkalmazás Androidon és
+			a Google Playen vásárolt Solo (§1, §8). Azelőtt: a fizetős
+			csomagok (§3A, §8), a
+			<a href="/legal/sla">szolgáltatásszint-megállapodás</a> (angolul) (§14) és
+			a tiltott felhasználások listája, amely most az
+			<a href="/acceptable-use">elfogadható felhasználási szabályzatban</a> (angolul) található (§5).
+		</p>
+		<p class="legal-disclaimer">
+			Ezek a feltételek a KIFF Cloud használatára vonatkoznak,
+			a tafsot is beleértve. Szerződéses kérdések:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsHU() {
+	<section id="definitions">
+		<h2>1. Fogalommeghatározások</h2>
+		<ul>
+			<li><strong>„Kiff Agents OÜ”</strong>, <strong>„mi”</strong>, <strong>„minket”</strong>, <strong>„miénk”</strong> — a Szolgáltatást nyújtó észt korlátolt felelősségű társaság. Cégjegyzékszám: 17372313.</li>
+			<li><strong>„Ügyfél”</strong>, <strong>„Ön”</strong>, <strong>„Öné”</strong> — az a természetes vagy jogi személy, amely elfogadja ezeket a feltételeket.</li>
+			<li><strong>„Felhasználó”</strong> — bármely magánszemély, akinek az Ügyfél engedélyezi a Szolgáltatáshoz való hozzáférést az Ügyfél fiókján keresztül.</li>
+			<li><strong>„Szolgáltatás”</strong> — a KIFF Cloud termék, beleértve az <code>api.kiff.dev</code>, az <code>app.kiff.dev</code>, a <code>kiff.dev</code>, a tafs, valamint az ott közzétett dokumentáció, irányítópultok és API-k.</li>
+			<li><strong>„tafs”</strong> — az iPhone-ra, iPadre, Androidra és számítógépre (Mac, Windows és Linux) készült tafs alkalmazás és a mögötte álló szolgáltatás, beleértve a Setupot és a planque-ot (§3A), amelyben az Ügyfél egy MI-ügynökre bíz egy feladatot, aki a KIFF Cards keretein belül dolgozik. Egy <strong>„taf”</strong> egy ilyen ügynök.</li>
+			<li><strong>„Bérlő”</strong> — a Szolgáltatáson belüli, logikailag elkülönített munkaterület, amely egyetlen Ügyfélhez tartozik.</li>
+			<li><strong>„Auditadatok”</strong> — azok az események, döntések, műveletek, jóváhagyások és nyugták, amelyeket a Szolgáltatás a futtatókörnyezeten keresztül az Ügyfél nevében megőriz.</li>
+			<li><strong>„tafs-adatok”</strong> — amit a tafs az Ügyfél nevében tárol: minden taf futásai és csevegései (beleértve azt, amit az Ügyfél összekapcsolt eszközei visszaadnak neki), a jelentései, a memóriajegyzetei és az értesítéseihez regisztrált telefonok.</li>
+			<li><strong>„Nyugta”</strong> — aláírt, verziózott döntési rekord, amelyet a Szolgáltatás minden irányított művelethez kiállít.</li>
+			<li><strong>„Dokumentáció”</strong> — a Szolgáltatás technikai dokumentációja és biztonsági intézkedései az ezekből a Feltételekből hivatkozott, dátummal ellátott változatban (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Nem tartozik bele a stratégiai fehér könyv, a marketinganyagok és a külön licencelt nyílt forráskódú keretrendszer dokumentációja.</li>
+			<li><strong>„DPA”</strong> — a <a href="/legal/dpa">/legal/dpa</a> (angolul) oldalon található adatfeldolgozási megállapodás, amely adatfeldolgozói viszonyunkat szabályozza.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementHU() {
+	<section id="agreement">
+		<h2>2. A megállapodás</h2>
+		<p>
+			Ezek a feltételek szabályozzák a Szolgáltatás Ön általi
+			használatát. Fiók létrehozásával, API-kulcs generálásával
+			vagy a Szolgáltatás bármely más használatával elfogadja
+			ezeket a feltételeket. Ha egy vállalat vagy más jogi
+			személy nevében fogadja el őket, kijelenti, hogy jogosult
+			az adott jogi személyt kötelezni, és az „Ön” és „Öné”
+			kifejezések erre a jogi személyre vonatkoznak.
+		</p>
+		<p>
+			Ha egy fejlesztő, partner vagy más vállalkozás ismertette meg Önnel a KIFF-et, vagy ő készítette az Ön által használt ügynököt, a Szolgáltatásra vonatkozó szerződése közvetlenül velünk jön létre, ezen feltételek szerint, és Ön maga fogadja el őket. Az a vállalkozás nem a mi képviselőnk: nem fogadhatja el Ön helyett ezeket a feltételeket, nem adhat hozzájárulást, és nem hagyhat jóvá fizetést, és nem a mi nevünkben értékesíti a Szolgáltatást.
+		</p>
+		<p>
+			Egyes funkciókra (béta funkciók, harmadik féltől származó
+			integrációk) kiegészítő feltételeket tehetünk közzé. Ha
+			ezek ellentétesek ezekkel a feltételekkel, az adott
+			funkcióra a kiegészítő feltételek az irányadók.
+		</p>
+	</section>
+}
+
+templ termsServiceHU() {
+	<section id="service">
+		<h2>3. A Szolgáltatás</h2>
+		<p>
+			A KIFF Cloud a delegált műveletek irányítására szolgáló
+			hosztolt szolgáltatás. A kéréseket az Ügyfél által
+			beállított jogosultságok és Cardok alapján értékeli,
+			emberi jóváhagyást kérhet, és rögzíti az irányítási
+			döntéseket. A beállított integrációtól függően a KIFF
+			továbbítja az engedélyezett kérést, vagy olyan
+			engedélyt ad, amelyet a védett rendszer ellenőriz.
+			Magát a műveletet az összekapcsolt rendszer hajtja végre.
+		</p>
+		<p>
+			Az alkalmazandó technikai működést, bizonyítékokat,
+			integrációs követelményeket és végrehajtási korlátokat
+			az ezekből a Feltételekből hivatkozott, dátummal ellátott
+			Dokumentáció határozza meg. A stratégiai
+			<a href="/whitepaper">fehér könyv</a> (angolul) a KIFF elveit
+			és modelljét ismerteti; ezen Feltételek alapján nem
+			része a technikai Dokumentációnak.
+		</p>
+		<p>
+			A KIFF Cloud irányítási szolgáltatása <em>nem</em>
+			ügynök-keretrendszer, munkafolyamat-motor, modellátjáró
+			vagy felügyelt ügynökplatform. Bármivel kombinálható, amit
+			már használ. A kifejezett listát lásd a kezdőlap
+			<a href="/#not">„Mi nem a KIFF”</a> (angolul) részében.
+			A tafs a Szolgáltatás egyetlen
+			olyan része, amely ügynököket futtat Ön helyett, az Ön
+			által kiadott Cardok keretein belül; a §3A írja le.
+		</p>
+		<p>
+			A nyílt forráskódú <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			keretrendszerre saját MIT-licence vonatkozik, és kívül
+			esik ezeken a feltételeken. Ha a keretrendszert saját
+			infrastruktúráján futtatja, nem jön létre szerződés
+			a Kiff Agents OÜ-vel.
+		</p>
+	</section>
+}
+
+templ termsTafsHU() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			A tafsban egy feladatot (például visszatérítéseket,
+			számlafizetést vagy kártyás vitarendezést) egy tafra bíz:
+			egy MI-ügynökre, amely ütemezés szerint dolgozik az Ön
+			által összekapcsolt eszközökkel, az Ön által számára
+			kiadott KIFF Cards keretein belül. Minden taf a mi
+			ügynök-futtatókörnyezetünkben fut, az általa használt
+			MI-modellt pedig az Anthropic biztosítja. A visszatartott
+			hívásaira a tafs alkalmazásban válaszol.
+		</p>
+		<p>
+			<strong>Eszközei összekapcsolása.</strong> A Setup, egy
+			tafként futó MI-ügynök a tafsban, segít összekapcsolni
+			egy eszközt és beállítani egy tafot egy feladathoz.
+			Önmagától semmit sem kapcsol össze. Ön az eszköz saját
+			szolgáltatójánál jelentkezik be (például a Stripe-nál), és
+			a készülékén hagy jóvá minden kapcsolatot, az eszközöket,
+			amelyeket egy taf használhat, és a Cardjait. A bejelentkezés
+			tokenjét a planque, a kapcsolódási szolgáltatásunk tárolja.
+			Titkosítva van, csak egy olyan hívás végrehajtására
+			használjuk, amelyről a KIFF döntött, és soha nem kapja meg
+			egy taf. Egy eszköz leválasztása visszavonja a tokent
+			a szolgáltatónál, és törli azt.
+		</p>
+		<p>
+			<strong>A Cardjai az Ön utasításai.</strong> Egy taf
+			csak a KIFF-en keresztül éri el az eszközeit, amely minden
+			hívást elküldés előtt ellenőriz a taf Cardjai alapján.
+			Egy Ön által kiadott Card keretein belüli hívás az Ön
+			utasítására történik. Egy Cardon kívüli hívást a Card
+			előírása szerint visszatartunk vagy elutasítunk.
+			A visszatartott hívás csak azután történik meg, hogy
+			jóváhagyta valaki, akinek a fiókja megengedi
+			a visszatartott hívások megválaszolását. A tafs
+			alkalmazásban a válasz az illető készülékéről származó
+			aláírást tartalmaz, amelyet a KIFF ellenőriz, és a nyugta
+			megőrzi ezt a bizonyítékot. A fiókja magában a KIFF-ben
+			is válaszolhat (az irányítópulton, a parancssori eszközével
+			vagy az ott meghatalmazott jóváhagyón keresztül); a nyugta
+			ekkor rögzíti, ki és hogyan válaszolt.
+		</p>
+		<p>
+			<strong>Ami Önnél marad.</strong> Ön választja ki minden
+			taf feladatát és Cardjait, válaszol a visszatartott
+			hívásaira, és gondoskodik arról, hogy használhassa az
+			összekapcsolt eszközöket és fiókokat. Egy taf jelentéseit,
+			üzeneteit és memóriajegyzeteit egy MI-modell írja, és
+			tévedhetnek; mielőtt valami fontosra hagyatkozna,
+			ellenőrizze.
+		</p>
+		<p>
+			<strong>Egy taf leállítása.</strong> Leállíthat egy tafot
+			vagy mindet, szüneteltethet egy tafot, visszavonhatja
+			bármelyik Cardját, vagy eltávolíthatja. Attól a pillanattól,
+			hogy leállít egy tafot vagy visszavon egy Cardot, a KIFF
+			nem enged új hívást annak alapján. A tafs alkalmazás csak
+			akkor mutatja leállítottnak a tafot, amikor a KIFF és
+			a planque is megerősítette a leállítást; ettől kezdve
+			a planque egyetlen hívását sem küldi el, azt sem, amelyet
+			a KIFF közvetlenül előtte engedélyezett. Egy eszköz
+			szolgáltatójához már elküldött kérés még befejeződhet:
+			az új hívásokat leállítjuk, de nem tudjuk visszacsinálni,
+			amit egy szolgáltató megtett. Egy olyan eszköz, amely
+			a KIFF engedélyeit maga ellenőrzi, a planque nélkül, még
+			elfogadhat egy közvetlenül előtte kiadott KIFF-engedélyt,
+			legfeljebb 90 másodpercig. Egy leállított taf folytatásához
+			a készülékén adott jóváhagyás szükséges, és semmi, amit
+			a leállítás előtt visszatartottak vagy sorba állítottak,
+			nem fut le utána.
+		</p>
+		<p>
+			<strong>Egy taf eltávolítása</strong> leállítja
+			az ütemezését, és törli a futásait, csevegéseit,
+			memóriáját és az általa használt kulcsot. Már ezt
+			megelőzően is, amit az eszközei visszaadnak egy tafnak,
+			azt csak a futása végéig tároljuk (amit egy csevegés csak
+			elolvasott, titkosítva, a következő üzeneteihez:
+			legfeljebb négy óráig használjuk, utána töröljük),
+			a futásait és csevegéseit pedig 30 napig. A KIFF megőrzi a tettei nyugtáit.
+		</p>
+		<p>
+			<strong>Az uniós MI-rendelet.</strong> A tafs tekintetében a Kiff Agents OÜ
+			az MI-rendszer szolgáltatója, Ön pedig az alkalmazója.
+			Gondoskodunk arról, hogy mindaz, amit egy taf a vállalatán
+			kívüli személynek ír, közölje, hogy MI-ügynök írta.
+			A tafsot csak az általa kínált feladatokra használja, és
+			nem olyan célra, amelyet az MI-rendelet tilt vagy nagy
+			kockázatúnak minősít, például egy személy foglalkoztatásáról,
+			hiteléről vagy alapvető szolgáltatásokhoz való
+			hozzáféréséről szóló döntésekre. Fenntartja a Cardjai által
+			előírt emberi jóváhagyásokat, és gondoskodik arról, hogy
+			azok, akik az Ön nevében használják a tafsot, megértsék,
+			mit csinál, és mik a korlátai.
+		</p>
+		<p>
+			<strong>Költségek.</strong> A tafs a KIFF-csomagja része
+			(§8): egy taf minden futása krediteket használ fel az
+			általa igénybe vett MI-ért. A Coach és a tafok beállítása
+			a Coach méltányos használatának keretein belül benne van.
+		</p>
+	</section>
+}
+
+templ termsAccountHU() {
+	<section id="account">
+		<h2>4. Fiókok és hozzáférés</h2>
+		<p>
+			A Szolgáltatás használatához fiókot kell létrehoznia.
+			Vállalja, hogy pontos regisztrációs adatokat ad meg,
+			bizalmasan kezeli hitelesítő adatait, és felel a fiókjában
+			végzett minden tevékenységért.
+		</p>
+		<p>
+			Legalább 16 évesnek kell lennie, vagy a joghatósága
+			szerinti digitális beleegyezési korhatárt el kell érnie,
+			attól függően, hogy melyik a magasabb. A Szolgáltatás nem
+			gyermekeknek szól.
+		</p>
+		<p>
+			A Szolgáltatást csak azokban az országokban és régiókban kínáljuk, ahol az MI-modelljét biztosító Anthropic a saját szolgáltatását kínálja, ahogyan azokat az <a href="https://www.anthropic.com/supported-countries">Anthropic felsorolja</a>. Máshonnan nem használhatja. Egy vállalat nem használhatja, ha a székhelye ezen a listán kívüli országban vagy régióban van, vagy ha egy ilyen országban vagy régióban székhellyel rendelkező vállalat többségi tulajdonában vagy irányítása alatt áll, függetlenül attól, hol vannak a felhasználói. Akkor sem használhatja, ha Ön vagy az a vállalat, amelynek számára használja, az Európai Unió, az Egyesült Nemzetek Szervezete vagy az Egyesült Államok szankciói alatt áll. Az ezt a szabályt megsértő fiókokat elutasítjuk, és az ilyen fiókot felfüggeszthetjük.
+		</p>
+		<p>
+			Ön felel minden olyan Felhasználó cselekedeteiért, akinek
+			a fiókjában engedélyt ad. Ha ezen feltételek hiteles
+			megsértését észleljük, észszerű előzetes értesítéssel
+			felfüggeszthetünk egy fiókot vagy visszavonhatjuk
+			a hozzáférést. Az elfogadható felhasználási szabályzat
+			megsértése esetén (lásd §5) a felfüggesztés azonnali is
+			lehet.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseHU() {
+	<section id="acceptable-use">
+		<h2>5. Elfogadható felhasználás</h2>
+		<p>
+			Önnek, a felhasználóinak és az ügynökeinek be kell tartaniuk
+			az <a href="/acceptable-use">elfogadható felhasználási szabályzatot</a> (angolul). Ez
+			ezen feltételek része, és felsorolja, mire nem szabad
+			a Szolgáltatást használni.
+		</p>
+		<p>
+			A szabályzat hiteles megsértése esetén azonnal
+			felfüggeszthetjük a hozzáférést. Nem vagyunk kötelesek
+			figyelemmel kísérni az Ügyfél tartalmait, de hiteles
+			bejelentések alapján intézkedhetünk.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataHU() {
+	<section id="customer-data">
+		<h2>6. Ügyféladatok és tartalom</h2>
+		<p>
+			Az Auditadatai az Ön tulajdonában vannak. Ön korlátozott,
+			nem kizárólagos, díjmentes, világszerte érvényes
+			felhasználási jogot ad a Kiff Agents OÜ-nek az Auditadatai
+			tárolására, másolására, továbbítására, megjelenítésére és
+			egyéb kezelésére, kizárólag a Szolgáltatás Ön számára
+			történő működtetéséhez, karbantartásához és fejlesztéséhez
+			szükséges mértékben.
+		</p>
+		<p>
+			Az Auditadatai és a tafs-adatai tekintetében a GDPR
+			28. cikke szerinti <strong>adatfeldolgozóként</strong>
+			járunk el; ezt a viszonyt részletesen a
+			<a href="/legal/dpa">DPA</a> (angolul) szabályozza. A fiókja
+			metaadatai tekintetében <strong>adatkezelőként</strong>
+			járunk el; ezt a viszonyt az
+			<a href="/hu/privacy">adatvédelmi szabályzat</a> szabályozza.
+		</p>
+		<p>
+			Kijelenti, hogy rendelkezik az általa megadott adatok
+			megadásához szükséges valamennyi joggal, és hogy a megadás
+			megfelel az alkalmazandó jogszabályoknak (beleértve az
+			adatvédelmi jogszabályokat és adott esetben az uniós
+			MI-rendeletet).
+		</p>
+	</section>
+}
+
+templ termsConfidentialityHU() {
+	<section id="confidentiality">
+		<h2>7. Titoktartás</h2>
+		<p>
+			Mindkét fél kaphat nem nyilvános információt a másiktól
+			(„Bizalmas Információ”). A fogadó fél a Bizalmas
+			Információt csak az ezen feltételek szerinti
+			kötelezettségei teljesítéséhez és jogai gyakorlásához
+			szükséges mértékben használja, és legalább ugyanolyan
+			gondossággal védi, mint saját bizalmas információit.
+		</p>
+		<p>
+			Nem minősül Bizalmas Információnak az az információ,
+			amely (a) kötelezettségszegés nélkül nyilvánosan
+			hozzáférhető, vagy azzá válik, (b) a fogadó fél számára
+			a közlés előtt ismert volt, (c) a Bizalmas Információ
+			felhasználása nélkül, önállóan került kifejlesztésre,
+			vagy (d) jogszabály alapján kell közölni (a másik fél
+			értesítésével, ahol ez megengedett).
+		</p>
+	</section>
+}
+
+templ termsFeesHU() {
+	<section id="fees">
+		<h2>8. Díjak és fizetés</h2>
+		<p>
+			<strong>Csomagok.</strong> Minden fióknak egy csomagja van.
+			Az aktuális árak az <a href="/pricing">árazási
+			oldalon</a> (angolul) találhatók; e frissítés időpontjában:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> egy személy, a tafshoz, a tafs alkalmazásban az App Store-on vagy a Google Playen keresztül értékesítve, havi 12,50 € áron, áfával, havi 500 kredittel.</li>
+			<li><strong>Company:</strong> havi 10,50 € minden helyért, helyenként havi 500 kredittel, közösen felhasználhatóan, és a saját ügynökei KIFF Cloudon keresztüli hívásaihoz helyenként havi 500 művelettel, közösen felhasználhatóan.</li>
+			<li><strong>Megállapodás:</strong> a megrendelőlapjában szereplő díjak és feltételek.</li>
+		</ul>
+		<p>
+			A helyek a fiók adminisztrátorai és szerkesztői.
+			A jóváhagyók és a megtekintők minden csomagban ingyenesek.
+			A Company csomagban a benne foglaltakon felül egy kredit
+			0,01 €-ba, egy művelet 0,02 €-ba kerül. A benne foglaltakon
+			felüli krediteket a fiók által beállított havi költési
+			korlátig számlázzuk (induláskor 50 €): a korlát elérésekor
+			a KIFF nem indít új futást a fiók tafjaiból, amíg a következő
+			időszak el nem kezdődik, vagy valaki, aki a számlázást
+			kezeli, meg nem emeli.
+		</p>
+		<p>
+			<strong>Kreditcsomagok.</strong> A Solo csomagban a havi
+			benne foglalt krediteken felüli kreditek a tafs
+			alkalmazásban vásárolt kreditcsomagokból származnak. Egy
+			kreditcsomagot egyszer vásárol meg, nem jár le, és nem
+			előfizetés; kreditjei a havi benne foglaltak után
+			használódnak fel, a legrégebbi csomaggal kezdve. Az
+			a csomag, amelynek a díját teljes egészében visszatérítették,
+			a megmaradt kreditjeivel együtt visszavonásra kerül. Ha
+			a havi kreditek és a csomagok elfogytak, a KIFF nem indít
+			új futást a fiók tafjaiból, amíg a következő időszak el nem
+			kezdődik, vagy új csomagot nem adnak hozzá.
+			A KIFF által egy fiókhoz hozzáadott bónuszkreditek sem
+			járnak le, a csomagokhoz hasonlóan.
+		</p>
+		<p>
+			<strong>Mi számít bele.</strong> Egy <em>kredit</em> egy
+			taf futása által használt MI-t fizeti, egész kreditekben,
+			futásonként egyszer felfelé kerekítve és egyszer
+			elszámolva, amikor a futás véget ér. Az a futás, amelynek
+			hívását a KIFF elutasította, ettől még felhasználta az
+			MI-jét. Soha nem számít bele: a Coach és a tafok beállítása
+			a Coach méltányos használatának keretein belül; egy új
+			verzió próbája, amely semmit sem küld el; és az a futás,
+			amely a mi oldalunkon hiúsult meg. Egy <em>művelet</em>
+			a saját ügynöke KIFF Cloudon keresztüli olyan hívása,
+			amely elvégzett valamit: a KIFF engedélyezte, elküldték,
+			és az eszköz sikert jelzett. Soha nem számít műveletnek:
+			az a hívás, amelyet elutasítottak, visszatartottak, majd
+			elutasítottak, leállítás miatt megállt, érvénytelen,
+			az eszköznél meghiúsult vagy kimenetele ismeretlen,
+			valamint az a hívás, amely csak olvas.
+		</p>
+		<p>
+			<strong>Nincs próbaidőszak.</strong> Egy fiók az első
+			naptól fizet. Mielőtt egy csomag elindul, a KIFF nem indít
+			futást a fiók tafjaiból, a Coach általi beállításon
+			kívül; semmi sem törlődik.
+		</p>
+		<p>
+			<strong>Fizetés és számlák.</strong> Egy csomagot egy
+			helyen számlázunk. A kiff.dev oldalon vásárolt csomagot
+			ott és az onnan elérhető számlázási portálon lehet
+			megvásárolni, módosítani és lemondani, fizetéseit pedig
+			a Stripe dolgozza fel. A tafs alkalmazásban vásárolt Solót
+			iPhone-on és iPaden az App Store, Androidon a Google Play
+			értékesíti, és az Apple-előfizetéseiben vagy a Google
+			Play-előfizetéseiben kezelhető, az adott áruház fizetésre,
+			megújításra és visszatérítésre vonatkozó feltételei
+			szerint. A kreditcsomagokat az alkalmazásban lehet
+			megvásárolni. A Company csomagot a kiff.dev oldalon
+			lehet megvásárolni. A díjakat havonta előre számlázzuk;
+			a benne foglaltakon felüli használatot a következő
+			számlával számlázzuk. A személyek számának változása
+			a következő számlától érvényes. Ha egy fizetés sikertelen,
+			és nem rendezik, a csomag megszűnik, és a KIFF elutasítja
+			a fiók hívásait, amíg csomagot nem választanak.
+		</p>
+		<p>
+			<strong>Lemondás.</strong> Bármikor lemondhatja a számlázási
+			portálon, vagy az alkalmazásban vásárolt Solo esetén az
+			Apple-előfizetéseiben vagy a Google Play-előfizetéseiben. A csomag az
+			Ön által kifizetett időszak végéig tart, és nem újul meg.
+			A jogszabályban előírt eseteket kivéve a már kifizetett
+			díjakat nem térítjük vissza. Ha Ön fogyasztó az EU-ban,
+			a vásárlástól számított 14 napon belül indoklás nélkül
+			elállhat, és visszatérítjük, amit fizetett, csökkentve
+			azon napok arányos részével, amelyeken a csomag már futott.
+			A Solo-vásárlásokat az App Store vagy a Google Play téríti vissza, saját feltételei szerint.
+		</p>
+		<p>
+			<strong>Mikrovállalkozások.</strong> Ha vállalkozásában 10 főnél kevesebben dolgoznak, és éves árbevétele vagy mérlegfőösszege legfeljebb 2 millió euró, ezen feltételek kártyás fizetésre vonatkozó valamennyi szabálya tekintetében fogyasztóként kezeljük, a Company csomagot is beleértve.
+		</p>
+		<p>
+			<strong>Áfa.</strong> A Company árai nem tartalmazzák az
+			áfát; a Solót és a kreditcsomagokat az App Store vagy
+			a Google Play áfával együtt értékesíti. A Kiff Agents OÜ
+			(uniós adószám: EE102924327) ahol alkalmazandó, észt áfát
+			számít fel. Az Észtországon kívüli, érvényes közösségi
+			adószámmal rendelkező Ügyfélnek történő uniós
+			vállalkozások közötti értékesítéseket az uniós fordított
+			adózás szerint számlázzuk.
+		</p>
+		<p>
+			<strong>Változások.</strong> Az aktív fiókokat legalább
+			harminc nappal előre írásban értesítjük az áremelésről
+			(§16). Az árcsökkentés a következő számlától érvényes.
+		</p>
+	</section>
+}
+
+templ termsTermHU() {
+	<section id="term">
+		<h2>9. Időtartam és megszűnés</h2>
+		<p>
+			Ezek a feltételek akkor lépnek hatályba, amikor először
+			használja a Szolgáltatást, és a megszűnésükig érvényesek.
+		</p>
+		<p>
+			Bármikor megszüntetheti őket a fiókja törlésével.
+			Mi megszüntethetjük őket (a) olyan lényeges
+			szerződésszegés miatt, amelyet az írásbeli értesítéstől
+			számított harminc napon belül nem orvosoltak, vagy
+			(b) azonnal, az elfogadható felhasználási szabályzat
+			megsértése vagy fizetésképtelenségi esemény miatt.
+		</p>
+		<p id="leaving">
+			<strong>Távozás és az adatai magával vitele.</strong>
+			Adatait bármikor exportálhatja strukturált, géppel
+			olvasható formátumban: a KIFF-ben a Beállítások → Adatok
+			egy JSON-fájlt ad a fiókjával, a Cardjaival minden
+			változatukkal együtt, a Nyilvántartásában szereplő
+			döntésekkel (a legutóbbi 10 000; ha többre van szüksége,
+			kérje tőlünk), minden KIFF által engedélyezett döntés
+			aláírt nyugtájával és az API-kulcsai adataival (soha nem
+			magukkal a kulcsokkal). A tafs alkalmazásban mindenki
+			a saját csevegéseit, fájljait és jegyzeteit exportálja
+			a Fiók →  Csevegéseim
+			exportálása menüpontból; a csevegéseket mindenképpen harminc
+			napig őrizzük meg, ahogy az adatvédelmi szabályzat
+			mondja. A fiók törlése azonnal megszünteti a Szolgáltatást,
+			ezért előbb exportáljon.
+		</p>
+		<p>
+			Ehelyett felmondással is távozhat, hogy másik
+			szolgáltatóra vagy saját rendszereire váltson, a
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a>
+			címre írva. Soha nem követelünk két hónapnál hosszabb
+			felmondási időt: a felmondása az Ön által választott
+			napon lép hatályba, legkésőbb két hónappal az elküldése
+			után. Ettől a naptól harmincnapos átmeneti időszak
+			következik, amely alatt a Szolgáltatás tovább működik,
+			Ön exportálja adatait és áthelyezi a munkáját, mi pedig
+			az erre irányuló észszerű kérésekben segítünk. Az átmeneti
+			időszakot egyszer meghosszabbíthatja, amennyi ideig
+			szüksége van rá. Ha technikailag nem tudjuk harminc nap
+			alatt befejezni, a felmondásától számított tizennégy
+			munkanapon belül közöljük Önnel, az okok és egy legfeljebb
+			hét hónapos új időszak megjelölésével. Az átmeneti időszak
+			után adatai még legalább harminc napig elérhetők maradnak
+			exportálásra. A csomag díjai a szokásos módon folytatódnak
+			az átmeneti időszak végéig. Az App Store-ban vagy a Google
+			Playen vásárolt Solót az áruházban kell lemondani; az
+			átmeneti és az exportálási időszak ugyanúgy érvényes.
+		</p>
+		<p>
+			A távozásért, a váltásért vagy az adatai exportálásáért
+			nem számítunk fel díjat. Ez a szakasz minden ügyfél
+			számára biztosítja az uniós adatrendelet (az (EU)
+			2023/2854 rendelet) VI. fejezete szerinti váltási jogokat.
+		</p>
+		<p>
+			A megszűnéskor, valamint az esetleges átmeneti és
+			exportálási időszak után töröljük az Auditadatait,
+			a tafs-adatait és a fiók metaadatait az
+			<a href="/hu/privacy#retention">adatvédelmi szabályzat</a>
+			megőrzési szabályai szerint.
+		</p>
+		<p>
+			Azok a rendelkezések, amelyeknek természetüknél fogva
+			a megszűnés után is hatályban kell maradniuk, hatályban
+			maradnak — beleértve a titoktartást, a szellemi
+			tulajdont, a kártalanítást, a felelősségkorlátozást,
+			a kizáró nyilatkozatokat, az irányadó jogot és
+			a felmerült díjakat.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesHU() {
+	<section id="warranties">
+		<h2>10. Szavatosság</h2>
+		<p>
+			Mindkét fél kijelenti, hogy joga és felhatalmazása van
+			ezen feltételek megkötésére és teljesítésére.
+		</p>
+		<p>
+			Szavatoljuk, hogy a Szolgáltatást szakszerűen és
+			a Dokumentációnak lényegében megfelelően nyújtjuk.
+			E szavatosság megsértése esetén az Ön kizárólagos
+			jogorvoslata – választásunk szerint – az ismételt
+			teljesítés vagy az érintett Szolgáltatásra a szerződésszegés
+			időszakára eső díjak arányos visszatérítése.
+		</p>
+		<p>
+			Ön szavatolja, hogy a Szolgáltatás Ön általi használata
+			megfelel az alkalmazandó jognak és ezeknek a feltételeknek.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerHU() {
+	<section id="disclaimer">
+		<h2>11. Felelősségkizárás</h2>
+		<p>
+			A §10-ben foglalt kifejezett szavatosságokat kivéve
+			a Szolgáltatást <strong>„adott állapotában” és „rendelkezésre
+			állás szerint”</strong> nyújtjuk. A jogszabályok által
+			megengedett legnagyobb mértékben kizárunk minden egyéb
+			kifejezett, hallgatólagos vagy jogszabályon alapuló
+			szavatosságot, beleértve a forgalomképességre, egy adott
+			célra való alkalmasságra, a jogsértés hiányára vonatkozó
+			szavatosságot, valamint az üzleti gyakorlatból vagy
+			kereskedelmi szokásból eredő bármely szavatosságot.
+		</p>
+		<p>
+			Nem szavatoljuk, hogy a Szolgáltatás megszakításmentes,
+			hibamentes vagy káros összetevőktől mentes lesz, sem azt,
+			hogy semmilyen adat nem vész el vagy sérül meg. Adatai
+			biztonsági mentéséért Ön felel.
+		</p>
+	</section>
+}
+
+templ termsLiabilityHU() {
+	<section id="liability">
+		<h2>12. A felelősség korlátozása</h2>
+		<p>
+			A jogszabályok által megengedett legnagyobb mértékben
+			egyik fél sem felel a másikkal szemben semmilyen közvetett,
+			járulékos, következményes, különleges, példaértékű vagy
+			büntető jellegű kárért, beleértve az elmaradt hasznot,
+			az elmaradt bevételt, az adatvesztést vagy az üzletmenet
+			megszakadását, amely ezekből a feltételekből vagy
+			a Szolgáltatásból ered vagy azokkal kapcsolatos, akkor
+			sem, ha az ilyen károk lehetőségére figyelmeztették.
+		</p>
+		<p>
+			Az egyes felek ezekből a feltételekből eredő vagy azokkal
+			kapcsolatos teljes felelőssége nem haladhatja meg a kettő
+			közül a nagyobbat: (a) az Ügyfél által a Kiff Agents
+			OÜ-nek a felelősséget megalapozó eseményt megelőző
+			tizenkét hónapban kifizetett vagy fizetendő díjak, vagy
+			(b) százezer euró (100 000 €).
+		</p>
+		<p>
+			Ezek a feltételek nem korlátozzák és nem zárják ki azt
+			a felelősséget, amelyet az alkalmazandó jog szerint nem
+			lehet korlátozni vagy kizárni, beleértve a halálért,
+			a gondatlanságból okozott személyi sérülésért, a csalásért
+			vagy a szándékos kötelezettségszegésért való felelősséget,
+			valamint a hibás termékekért való felelősségről szóló
+			(EU) 2024/2853 irányelvet átültető jogszabályok szerinti,
+			hibás termékért való felelősséget.
+		</p>
+	</section>
+}
+
+templ termsIndemnityHU() {
+	<section id="indemnification">
+		<h2>13. Kártalanítás</h2>
+		<p>
+			Megvédjük Önt harmadik felek olyan követeléseivel szemben,
+			amelyek szerint a Szolgáltatás – ahogyan mi nyújtjuk, és
+			ahogyan Ön ezeknek a feltételeknek megfelelően használja –
+			sérti az adott harmadik fél szellemi tulajdonjogait, és
+			megfizetjük az ilyen követelések miatt Önnel szemben
+			jogerősen megítélt kártérítést (vagy a megegyezés szerinti
+			egyezségi összeget).
+		</p>
+		<p>
+			Ön megvéd minket harmadik felek olyan követeléseivel
+			szemben, amelyek (a) az Ön ügyféladataiból vagy
+			tartalmából; (b) a Szolgáltatás ezen feltételeket (beleértve
+			az elfogadható felhasználási szabályzatot) sértő
+			használatából; vagy (c) az Ön súlyos gondatlanságából vagy
+			szándékos kötelezettségszegéséből erednek, és megfizeti az
+			ilyen követelések miatt velünk szemben jogerősen megítélt
+			kártérítést (vagy a megegyezés szerinti egyezségi összeget).
+		</p>
+		<p>
+			A kártalanítás feltétele a követelésről szóló haladéktalan
+			értesítés, a védekezés és az egyezség feletti kizárólagos
+			rendelkezés a kártalanító fél részéről, valamint
+			a kártalanított fél észszerű együttműködése. A kártalanító
+			fél hozzájárulás nélkül nem köthet olyan egyezséget,
+			amely kötelezettségeket ró a kártalanított félre.
+		</p>
+	</section>
+}
+
+templ termsSLAHU() {
+	<section id="sla">
+		<h2>14. Szolgáltatásszint-vállalás</h2>
+		<p>
+			Fizetős csomag esetén a <a href="/legal/sla">szolgáltatásszint-megállapodás</a> (angolul)
+			határozza meg a vállalt rendelkezésre állást, azt, hogy
+			hogyan számít egy lassú vagy sikertelen kérés, az
+			ügyfélszolgálati válaszidőket, valamint a jóváírásokat,
+			ha nem teljesítjük a vállalást. Ezen feltételek része.
+		</p>
+		<p>
+			Az üzemeltetési gyakorlatot, az incidenskezelést és az
+			incidensek bejelentésére vonatkozó vállalásokat az ezekből
+			a Feltételekből hivatkozott, dátummal ellátott változat
+			ismerteti
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			a <a href="/security">/security</a> (angolul) oldal mutatja
+			az aktuális gyakorlatot.
+		</p>
+	</section>
+}
+
+templ termsServiceModsHU() {
+	<section id="service-mods">
+		<h2>15. A Szolgáltatás módosítása</h2>
+		<p>
+			Bármikor hozzáadhatunk, módosíthatunk vagy
+			eltávolíthatunk funkciókat. A funkcionalitás jelentős
+			csökkentéséről vagy egy API-felület olyan megszüntetéséről,
+			amely megtöri a dokumentált működést, az aktív ügyfeleket
+			legalább harminc nappal előre értesítjük, közzétett
+			kivezetési ütemtervvel. Biztonsági okokból szükséges
+			változtatásokat értesítés nélkül is végrehajthatunk, ha
+			maga az értesítés kockázatot teremtene.
+		</p>
+	</section>
+}
+
+templ termsTermsModsHU() {
+	<section id="terms-mods">
+		<h2>16. Ezen feltételek módosítása</h2>
+		<p>
+			Ezeket a feltételeket időről időre módosíthatjuk.
+			A jelentős változásokról e-mailben és ezen az oldalon
+			jól látható sávval legalább harminc nappal előre
+			értesítünk. A nem jelentős változásokat (pontosítások,
+			hivatkozások) új „utolsó frissítés” dátummal tesszük
+			közzé. Ha a frissítés hatálybalépése után is használja
+			a Szolgáltatást, az elfogadásnak minősül.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureHU() {
+	<section id="force-majeure">
+		<h2>17. Vis maior</h2>
+		<p>
+			Egyik fél sem felel a teljesítés elmaradásáért vagy
+			késedelméért annyiban, amennyiben azt észszerű
+			befolyásán kívül eső körülmények okozták, ideértve
+			a természeti csapásokat, háborút, terrorizmust,
+			polgári zavargásokat, munkaügyi vitákat, tüzet,
+			természeti katasztrófát, járványhoz kapcsolódó kormányzati
+			intézkedéseket, internet- vagy áramkimaradást, illetve
+			távközlési szolgáltatók vagy harmadik felek tárhely-
+			infrastruktúrájának cselekményeit.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawHU() {
+	<section id="governing-law">
+		<h2>18. Irányadó jog és illetékesség</h2>
+		<p>
+			Ezekre a feltételekre az Észt Köztársaság joga az
+			irányadó, kollíziós szabályainak figyelmen kívül
+			hagyásával. A jogviták kizárólagos fóruma a tallinni
+			Harjui Megyei Bíróság (Harju Maakohus).
+		</p>
+		<p>
+			Ha Ön egy másik uniós tagállamban lakóhellyel rendelkező
+			fogyasztó, a lakóhelye szerinti joghatóság kötelező
+			fogyasztóvédelmi szabályai továbbra is alkalmazandók
+			annyiban, amennyiben olyan jogokat biztosítanak, amelyekről
+			szerződéssel nem mondhat le; ez a rendelkezés nem fosztja
+			meg Önt e szabályok védelmétől.
+		</p>
+	</section>
+}
+
+templ termsGeneralHU() {
+	<section id="general">
+		<h2>19. Általános rendelkezések</h2>
+		<p>
+			<strong>Teljes megállapodás.</strong> Ezek a feltételek
+			az adatvédelmi szabályzattal, a DPA-val, az esetleges
+			megrendelőlapokkal és a kifejezetten beépített kiegészítő
+			feltételekkel együtt alkotják a felek közötti teljes
+			megállapodást a tárgyukban, és felülírnak minden korábbi
+			vagy egyidejű megállapodást.
+		</p>
+		<p>
+			<strong>Részleges érvénytelenség.</strong> Ha egy
+			rendelkezés végrehajthatatlannak bizonyul, a többi
+			hatályban marad.
+		</p>
+		<p>
+			<strong>Engedményezés.</strong> Ezeket a feltételeket
+			írásbeli hozzájárulásunk nélkül nem engedményezheti.
+			Mi hozzájárulás nélkül engedményezhetjük őket egyesülés,
+			felvásárlás vagy eszközeink egészének vagy lényegében
+			egészének értékesítése kapcsán, Önnek küldött értesítéssel.
+		</p>
+		<p>
+			<strong>Joglemondás kizárása.</strong> Ha valamely
+			rendelkezést nem érvényesítünk, az nem jelent lemondást
+			annak későbbi érvényesítéséről.
+		</p>
+		<p>
+			<strong>Értesítések.</strong> A Kiff Agents OÜ-nek szóló
+			értesítéseket a <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			címre vagy postán a Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Észtország címre kell küldeni.
+			Az Önnek szóló értesítéseket a fiókjához tartozó e-mail-címre,
+			vagy ha megadott ilyet, a kijelölt jogi értesítési címére
+			küldjük.
+		</p>
+		<p>
+			<strong>Független felek.</strong> Ezek a feltételek nem
+			hoznak létre társulást, képviseletet, közös vállalkozást
+			vagy munkaviszonyt.
+		</p>
+		<p>
+			<strong>Harmadik fél kedvezményezettek.</strong> Nincsenek,
+			kivéve, ha a kártalanított kapcsolt vállalkozásokat
+			kifejezetten megnevezik.
+		</p>
+	</section>
+}
+
+templ termsContactHU() {
+	<section id="contact">
+		<h2>20. Kapcsolat</h2>
+		<p>
+			Kereskedelmi és szerződéses kérdések:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Általános termékkérdések:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Adatvédelmi kérdések:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Biztonsági bejelentések:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Dokumentumverzió:</strong> v0.1.<br/>
+			<strong>Utolsó frissítés:</strong> 2026. november 21.
+		</p>
+	</section>
+}

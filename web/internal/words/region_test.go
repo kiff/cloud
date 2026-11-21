@@ -1,6 +1,8 @@
 package words
 
 import (
+	"maps"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -8,7 +10,13 @@ import (
 // Each refusal names a place only as the key says: the stated country's by its
 // name, where the person is never (an address's country is a guess).
 func TestRegionNamesACountryOnlyForAStatedOne(t *testing.T) {
-	for _, lang := range Languages {
+	// Every language with words, kiff.dev's and the ones beyond them that the
+	// region gate's page speaks.
+	langs := slices.Collect(maps.Keys(region))
+	for lang := range regionBeyond {
+		langs = append(langs, lang)
+	}
+	for _, lang := range langs {
 		r := RegionIn(lang)
 		if strings.Contains(r.Here, "{") {
 			t.Errorf("%s: region.unsupported_here names a country: %q", lang, r.Here)
