@@ -35,13 +35,14 @@ type Section struct {
 var Served = map[string][]string{
 	"cm": {"en", "fr"},
 	"kr": {"en", "ko"},
+	"mc": {"en", "fr"},
 	"ni": {"en", "es"},
 	"sm": {"en", "it"},
 	"sv": {"en", "es"},
 }
 
 // Names are each served country's name in English, for the index.
-var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador"}
+var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador"}
 
 var (
 	once     sync.Once
