@@ -88,7 +88,8 @@ DB_SECRET_ARN="${DB_SECRET_ARN:-}"
 # web_demo_key, resend_api_key, stripe_webhook_secret, stripe_secret_key, clerk_webhook_secret,
 # gateway_keys, permit_key, permit_published, planque_event_secret, proof_state_tokens,
 # proof_github_token, google_play_service_account), by its full ARN. Set: every value is read from it,
-# once, and a required name it lacks stops the deploy; an optional name it lacks is off. Empty: each
+# once: each field must be a non-empty string, a required name it lacks stops the deploy, and an
+# optional name it lacks is read from its own secret if that's still named, else off. Empty: each
 # value is read from its own secret below, as before. The database's own (DB_SECRET_ARN, RDS-managed
 # and rotated) is never in it.
 KIFF_SECRET_ARN="${KIFF_SECRET_ARN:-}"
@@ -642,8 +643,9 @@ optional_secret() {
 }
 # KIFF's one secret (KIFF_SECRET_ARN), read once. secret_value NAME ARN MODE gives NAME from it when
 # it's set; else the secret at ARN, as before (MODE "required" reads it plainly, "optional" through
-# optional_secret). From the one secret, a required NAME it lacks stops the deploy, and an optional
-# one it lacks is off.
+# optional_secret). From the one secret, a field must be a non-empty string; a required NAME it
+# lacks stops the deploy, and an optional one it lacks is read from its own secret when ARN is set,
+# else off.
 kiff_bundle=""
 if [ -n "\$KIFF_SECRET_ARN" ]; then
 	kiff_bundle=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$KIFF_SECRET_ARN" --query SecretString --output text) || {
@@ -652,15 +654,25 @@ if [ -n "\$KIFF_SECRET_ARN" ]; then
 		echo "KIFF's one secret isn't a JSON object; refusing to deploy" >&2; exit 6; }
 fi
 secret_value() {
-	if [ -n "\$kiff_bundle" ]; then
-		if printf '%s' "\$kiff_bundle" | jq -e --arg n "\$1" 'has(\$n)' > /dev/null; then
+	if [ -n "\$kiff_bundle" ] && printf '%s' "\$kiff_bundle" | jq -e --arg n "\$1" 'has(\$n)' > /dev/null; then
+		# A field is a non-empty string, or the copy is wrong: null, a number or a pasted
+		# object would otherwise deploy as its JSON text.
+		if printf '%s' "\$kiff_bundle" | jq -e --arg n "\$1" '.[\$n] | type == "string" and . != ""' > /dev/null; then
 			printf '%s' "\$kiff_bundle" | jq -j --arg n "\$1" '.[\$n]'
-		elif [ "\$3" = optional ]; then
-			echo "KIFF's one secret has no \$1; deploying with it unset" >&2
 		else
-			echo "KIFF's one secret has no \$1; refusing to deploy" >&2
+			echo "KIFF's one secret has \$1, but not as a non-empty string; refusing to deploy" >&2
 			return 1
 		fi
+	elif [ -n "\$kiff_bundle" ] && [ "\$3" != optional ]; then
+		echo "KIFF's one secret has no \$1; refusing to deploy" >&2
+		return 1
+	elif [ -n "\$kiff_bundle" ] && [ -z "\$2" ]; then
+		echo "KIFF's one secret has no \$1; deploying with it unset" >&2
+	elif [ -n "\$kiff_bundle" ]; then
+		# An optional field the one secret lacks, while its own secret is still named: read
+		# that, so a field left out of the copy changes nothing. The log says so.
+		echo "KIFF's one secret has no \$1; reading its own secret" >&2
+		optional_secret "\$2"
 	elif [ "\$3" = optional ]; then
 		optional_secret "\$2"
 	else
