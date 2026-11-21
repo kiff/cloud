@@ -17,6 +17,18 @@ func TestLangPath(t *testing.T) {
 		{"ja", "/privacy#delete-account", "/ja/privacy#delete-account"},
 		{"ja", "/tafs/privacy", "/ja/tafs/privacy"},
 		{"ja", "/subprocessors#composio", "/subprocessors#composio"}, // so has Japanese
+		{"et", "/terms#fees", "/et/terms#fees"},
+		{"et", "/tafs/privacy", "/et/tafs/privacy"},
+		{"et", "/legal/dpa", "/legal/dpa"}, // and Estonian
+		{"lv", "/terms#fees", "/lv/terms#fees"},
+		{"lv", "/tafs/privacy#google", "/lv/tafs/privacy#google"},
+		{"lv", "/acceptable-use", "/acceptable-use"}, // and Latvian
+		{"el", "/terms#fees", "/el/terms#fees"},
+		{"el", "/tafs/privacy", "/el/tafs/privacy"},
+		{"el", "/security", "/security"}, // and Greek
+		{"lt", "/terms#fees", "/lt/terms#fees"},
+		{"lt", "/tafs/privacy", "/lt/tafs/privacy"},
+		{"lt", "/security", "/security"}, // and Lithuanian
 	} {
 		if got := LangPath(c.lang, c.path); got != c.want {
 			t.Errorf("LangPath(%q, %q) = %q, want %q", c.lang, c.path, got, c.want)
@@ -38,6 +50,14 @@ func TestSplitLangPath(t *testing.T) {
 		{"/ko/cookies", "en", "/ko/cookies", false},
 		{"/ja/terms", "ja", "/terms", true},
 		{"/ja/tafs", "en", "/ja/tafs", false},
+		{"/et/tafs/terms", "et", "/tafs/terms", true},
+		{"/et/security", "en", "/et/security", false},
+		{"/lv/tafs/terms", "lv", "/tafs/terms", true},
+		{"/lv/support", "en", "/lv/support", false},
+		{"/el/tafs/terms", "el", "/tafs/terms", true},
+		{"/el/support", "en", "/el/support", false},
+		{"/lt/tafs/terms", "lt", "/tafs/terms", true},
+		{"/lt/support", "en", "/lt/support", false},
 		{"/pricing", "en", "/pricing", false},
 		{"/", "en", "/", false},
 	} {
