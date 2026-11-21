@@ -63,6 +63,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ro": "să vadă, să editeze, să creeze și să șteargă toate foile dumneavoastră de calcul din Google Sheets",
 			"bg": "преглед, редактиране, създаване и изтриване на всички ваши електронни таблици в Google Sheets",
 			"hr": "pregled, uređivanje, izrada i brisanje svih vaših proračunskih tablica u Google Sheetsu",
+			"tr": "tüm Google Sheets e-tablolarınızı görüntüleme, düzenleme, oluşturma ve silme",
 		}},
 	},
 	"Google Calendar": {
@@ -88,6 +89,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ro": "să vadă evenimentele din calendarele dumneavoastră",
 			"bg": "преглед на събитията във вашите календари",
 			"hr": "pregled događaja u vašim kalendarima",
+			"tr": "takvimlerinizdeki etkinlikleri görüntüleme",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -111,6 +113,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ro": "să vadă și să editeze evenimentele din calendarele dumneavoastră",
 			"bg": "преглед и редактиране на събитията във вашите календари",
 			"hr": "pregled i uređivanje događaja u vašim kalendarima",
+			"tr": "takvimlerinizdeki etkinlikleri görüntüleme ve düzenleme",
 		}},
 	},
 }
