@@ -25,6 +25,7 @@ import (
 	"net/mail"
 	"net/url"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -95,6 +96,10 @@ type Handler struct {
 	// flow's approve does: a code here mints a session that approves.
 	stepUp *auth.StepUp
 	terms  string
+	// only, when not nil, is the tenants that may sign in (KIFF_APP_SIGNIN
+	// "test"): any other is refused at approve, so no code is ever minted
+	// for it. An empty set refuses everyone.
+	only map[string]bool
 
 	mu       sync.Mutex
 	requests map[string]request // by request id
@@ -116,6 +121,31 @@ func WithClock(now func() time.Time) Option { return func(h *Handler) { h.now = 
 
 // WithStepUp needs a recent sign-in (auth.StepUp) to approve.
 func WithStepUp(s *auth.StepUp) Option { return func(h *Handler) { h.stepUp = s } }
+
+// WithOnlyTenants limits signing in to these tenants (KIFF_APP_SIGNIN
+// "test"): approve refuses any other, so it never gets a code. None refuses
+// everyone.
+func WithOnlyTenants(tenants []string) Option {
+	return func(h *Handler) {
+		h.only = map[string]bool{}
+		for _, t := range tenants {
+			h.only[t] = true
+		}
+	}
+}
+
+// Switch reads KIFF_APP_SIGNIN: "on" is on for everyone, "test" is on for
+// the listed tenants only (WithOnlyTenants), and anything else, empty or
+// unknown, is off. A typo never turns it on for everyone.
+func Switch(v string) (on, test bool) {
+	switch strings.TrimSpace(v) {
+	case "on":
+		return true, false
+	case "test":
+		return true, true
+	}
+	return false, false
+}
 
 // WithTermsVersion sets the terms version in force (DefaultTermsVersion).
 func WithTermsVersion(v string) Option { return func(h *Handler) { h.terms = v } }
@@ -218,6 +248,12 @@ func (h *Handler) approve(w http.ResponseWriter, r *http.Request) {
 	}
 	req, ok := h.takeRequest(w, r)
 	if !ok {
+		return
+	}
+	if h.only != nil && !h.only[id.Tenant] {
+		// The request is spent and the sheet goes back to the app: no code,
+		// so the token route has nothing to redeem for this account.
+		writeJSON(w, http.StatusOK, Response{RedirectTo: errorRedirect(req.state, "unsupported_client", "signing in inside the app isn't on for this account yet")})
 		return
 	}
 	raw := randomToken()

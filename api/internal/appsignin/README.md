@@ -9,6 +9,13 @@ same rules for a second device. Nothing after sign-in changes for the apps.
 
 **Off by default.** Behind `KIFF_APP_SIGNIN`. While it's off, `tafs-app` is an
 unknown client (`unsupported_client`), and the device flow is untouched.
+`KIFF_APP_SIGNIN=on` turns it on for everyone. `test` turns the routes on, but
+approve lets only the tenants in `KIFF_APP_SIGNIN_TENANTS` (a production secret)
+through: any other account is sent back to the app with `unsupported_client`
+and no code, so nothing is redeemed, no session is made and no consent is
+recorded for it. An empty list refuses everyone. Any other value is off. The
+web's sign-in page follows the same switch. Turning it off again is
+`KIFF_APP_SIGNIN=off` (or empty) and a deploy.
 
 ## 1. Authorize
 

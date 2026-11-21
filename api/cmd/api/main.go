@@ -132,8 +132,12 @@ const (
 	// requires it (deploy.sh fetches it monthly); unset elsewhere, nothing is
 	// checked.
 	envRegionTable = "KIFF_REGION_TABLE"
-	// envAppSignIn turns on signing in inside the tafs apps ("on"); off by default.
+	// envAppSignIn turns on signing in inside the tafs apps: "on" for everyone,
+	// "test" for the tenants in envAppSignInTenants only; anything else is off.
 	envAppSignIn = "KIFF_APP_SIGNIN"
+	// envAppSignInTenants is the comma-separated tenants "test" lets sign in
+	// (a production secret: it names accounts). Empty refuses everyone.
+	envAppSignInTenants = "KIFF_APP_SIGNIN_TENANTS"
 	// envAppTermsVersion is the tafs terms in force; a terms change sets it.
 	envAppTermsVersion = "KIFF_APP_TERMS_VERSION"
 	// envAndroidApps names the Android apps allowed to make and use kiff.dev's
@@ -2499,13 +2503,17 @@ func buildOAuthServer(deps routerDeps, app *appsignin.Handler) *oauth.Server {
 }
 
 // buildAppSignIn is the tafs apps' sign-in (package appsignin), or nil with
-// no web origin for its page. Off unless KIFF_APP_SIGNIN is "on".
+// no web origin for its page. Off unless KIFF_APP_SIGNIN is "on", or "test"
+// for the tenants in KIFF_APP_SIGNIN_TENANTS.
 func buildAppSignIn(deps routerDeps) *appsignin.Handler {
 	if deps.appBaseURL == "" {
 		return nil
 	}
-	on := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+	on, test := appsignin.Switch(os.Getenv(envAppSignIn))
 	opts := []appsignin.Option{appsignin.WithTermsVersion(envOr(envAppTermsVersion, appsignin.DefaultTermsVersion))}
+	if test {
+		opts = append(opts, appsignin.WithOnlyTenants(splitList(os.Getenv(envAppSignInTenants))))
+	}
 	if deps.stepUp != nil {
 		opts = append(opts, appsignin.WithStepUp(deps.stepUp))
 	}
