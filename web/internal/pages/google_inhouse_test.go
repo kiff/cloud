@@ -13,6 +13,10 @@ var googleSections = map[string]templ.Component{
 	"en": tafsPrivacyGoogle(), "de": tafsPrivacyGoogleDE(), "es": tafsPrivacyGoogleES(), "fr": tafsPrivacyGoogleFR(),
 	"it": tafsPrivacyGoogleIT(), "nl": tafsPrivacyGoogleNL(), "pl": tafsPrivacyGooglePL(), "pt": tafsPrivacyGooglePT(),
 	"ko": tafsPrivacyGoogleKO(), "ja": tafsPrivacyGoogleJA(),
+	"et": tafsPrivacyGoogleET(),
+	"lv": tafsPrivacyGoogleLV(),
+	"el": tafsPrivacyGoogleEL(),
+	"lt": tafsPrivacyGoogleLT(),
 }
 
 func renderGoogleSection(t *testing.T, lang string) string {
@@ -146,6 +150,10 @@ var googleRouteWords = map[string]struct{ Managed, InHouse, NoOtherCompany strin
 	"pt": {"Através do nosso parceiro de início de sessão:", "Através do próprio início de sessão Google do tafs:", "por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão."},
 	"ko": {"로그인 파트너를 통하는 경우:", "tafs 자체 Google 로그인을 통하는 경우:", "다른 어떤 회사도 호출을 하거나 로그인 정보를 보관하지 않습니다."},
 	"ja": {"サインインパートナーを通じて：", "tafs自身のGoogleサインインを通じて：", "他のどの会社も呼び出しを行わず、あなたのサインインを保持することもありません。"},
+	"et": {"Meie sisselogimispartneri kaudu:", "tafsi enda Google'i sisselogimise kaudu:", "nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist."},
+	"lv": {"Caur mūsu pierakstīšanās partneri:", "Caur paša tafs Google pierakstīšanos:", "tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos."},
+	"el": {"Μέσω του συνεργάτη σύνδεσής μας:", "Μέσω της δικής του σύνδεσης Google του tafs:", "οπότε καμία άλλη εταιρεία δεν κάνει την κλήση ούτε κρατά τη σύνδεσή σας."},
+	"lt": {"Per mūsų prisijungimo partnerį:", "Per paties tafs Google prisijungimą:", "todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo."},
 }
 
 // itemAt returns the <li> that holds s[i]: from the nearest "<li>" before it.
