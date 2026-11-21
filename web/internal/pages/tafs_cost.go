@@ -30,7 +30,7 @@ const (
 // that says KIFF has no tie to Anthropic.
 type tafsCostWords struct {
 	// Lang writes money and numbers: "en", "de", "fr", "es", "it", "pt",
-	// "nl", "pl" or "ko".
+	// "nl", "pl", "ko" or "ja".
 	Lang string
 	// NotAffiliated closes the page's footer, after "Part of Claude for
 	// Startups.": KIFF has no tie to Anthropic, said in plain words.
@@ -41,7 +41,7 @@ type tafsCostWords struct {
 func (w tafsCostWords) money(cents int) string {
 	whole, frac := cents/100, cents%100
 	switch w.Lang {
-	case "en", "ko":
+	case "en", "ko", "ja":
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
@@ -54,7 +54,7 @@ func (w tafsCostWords) money(cents int) string {
 func (w tafsCostWords) number(n int) string {
 	sep := ""
 	switch w.Lang {
-	case "en", "ko":
+	case "en", "ko", "ja":
 		sep = ","
 	case "de", "es", "it", "nl":
 		sep = "."
@@ -85,3 +85,7 @@ var tafsCostPL = tafsCostWords{Lang: "pl", NotAffiliated: "KIFF nie jest powiąz
 // tafsCostKO writes the prices tafs's terms state in Korean. Korean has no
 // /tafs page, so it has no footer line of its own.
 var tafsCostKO = tafsCostWords{Lang: "ko"}
+
+// tafsCostJA writes the prices tafs's terms state in Japanese. Japanese has
+// no /tafs page, so it has no footer line of its own.
+var tafsCostJA = tafsCostWords{Lang: "ja"}

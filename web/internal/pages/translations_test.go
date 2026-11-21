@@ -282,7 +282,7 @@ func TestTheAnchorsTheAppsLinkToExist(t *testing.T) {
 
 // TestEveryTranslatedLanguageHasEveryPage: a site language is every
 // translated page or none, so a reader never falls from one language into
-// another; a language that has some of them (Korean: the legal texts) has
+// another; a language that has some of them (Korean, Japanese: the legal texts) has
 // each one it lists, and links to the rest as English pages.
 func TestEveryTranslatedLanguageHasEveryPage(t *testing.T) {
 	for _, lang := range TranslatedLanguages() {

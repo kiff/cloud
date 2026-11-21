@@ -19,15 +19,16 @@ var SiteLanguages = []string{"en", "de", "fr", "es", "it", "pt", "nl", "pl"}
 // page goes to its English version, marked as English (InEnglish). They
 // are not site languages: the screens the apps open (RequestLanguage)
 // speak SiteLanguages only, so a browser in one of these languages still
-// gets them in English. Korean has KIFF's and tafs's privacy policies and
-// terms.
+// gets them in English. Korean and Japanese have KIFF's and tafs's privacy
+// policies and terms.
 var partialPages = map[string][]string{
 	"ko": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ja": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -47,6 +48,7 @@ var languageNames = map[string]string{
 	"en": "English", "de": "Deutsch", "fr": "Français", "es": "Español",
 	"it": "Italiano", "pt": "Português", "nl": "Nederlands", "pl": "Polski",
 	"ko": "한국어",
+	"ja": "日本語",
 }
 
 // LanguageName is a site language's name in that language.
@@ -207,6 +209,7 @@ var translationNotices = map[string]string{
 	"nl": "Dit is een vertaling ter informatie. De Engelse versie is leidend:",
 	"pl": "To tłumaczenie ma charakter informacyjny. Wiążąca jest wersja angielska:",
 	"ko": "이 번역본은 참고용입니다. 영어 원문이 우선합니다:",
+	"ja": "これは参考のための翻訳です。英語版が優先します：",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -218,6 +221,7 @@ var inEnglish = map[string]string{
 	"de": "(auf Englisch)", "fr": "(en anglais)", "es": "(en inglés)", "it": "(in inglese)",
 	"pt": "(em inglês)", "nl": "(in het Engels)", "pl": "(po angielsku)",
 	"ko": "(영어)",
+	"ja": "（英語）",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

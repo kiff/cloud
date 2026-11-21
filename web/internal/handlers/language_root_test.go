@@ -11,7 +11,7 @@ import (
 
 // A reader who types a bare language prefix ("/de/", "/de") lands on
 // that language's /tafs, not a 404; "/de/anything-else" is not caught. A
-// language that has no /tafs (Korean: the legal texts only) lands on the
+// language that has no /tafs (Korean, Japanese: the legal texts only) lands on the
 // home page.
 func TestALanguagePrefixLandsOnItsTafs(t *testing.T) {
 	targets := LanguageRootTargets()
