@@ -14,6 +14,7 @@ var googleSections = map[string]templ.Component{
 	"it": tafsPrivacyGoogleIT(), "nl": tafsPrivacyGoogleNL(), "pl": tafsPrivacyGooglePL(), "pt": tafsPrivacyGooglePT(),
 	"ko": tafsPrivacyGoogleKO(), "ja": tafsPrivacyGoogleJA(),
 	"et": tafsPrivacyGoogleET(),
+	"lv": tafsPrivacyGoogleLV(),
 }
 
 func renderGoogleSection(t *testing.T, lang string) string {
@@ -148,6 +149,7 @@ var googleRouteWords = map[string]struct{ Managed, InHouse, NoOtherCompany strin
 	"ko": {"로그인 파트너를 통하는 경우:", "tafs 자체 Google 로그인을 통하는 경우:", "다른 어떤 회사도 호출을 하거나 로그인 정보를 보관하지 않습니다."},
 	"ja": {"サインインパートナーを通じて：", "tafs自身のGoogleサインインを通じて：", "他のどの会社も呼び出しを行わず、あなたのサインインを保持することもありません。"},
 	"et": {"Meie sisselogimispartneri kaudu:", "tafsi enda Google'i sisselogimise kaudu:", "nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist."},
+	"lv": {"Caur mūsu pierakstīšanās partneri:", "Caur paša tafs Google pierakstīšanos:", "tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos."},
 }
 
 // itemAt returns the <li> that holds s[i]: from the nearest "<li>" before it.

@@ -60,6 +60,8 @@ func (w tafsCostWords) number(n int) string {
 		sep = "."
 	case "fr":
 		sep = " "
+	case "lv":
+		sep = " "
 	}
 	s := fmt.Sprint(n)
 	if sep == "" || len(s) <= 3 {
@@ -93,3 +95,6 @@ var tafsCostJA = tafsCostWords{Lang: "ja"}
 // tafsCostET writes the prices tafs's terms state in Estonian: "12,50 €".
 // Estonian has no /tafs page, so it has no footer line of its own.
 var tafsCostET = tafsCostWords{Lang: "et"}
+// tafsCostLV writes the prices tafs's terms state in Latvian, as "12,50 €".
+// Latvian has no /tafs page, so it has no footer line of its own.
+var tafsCostLV = tafsCostWords{Lang: "lv"}

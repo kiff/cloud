@@ -1,0 +1,785 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsLV is the Terms of Service (/terms) in Latvian, at /lv/terms. It is
+// a translation of Terms: the same sections, anchors, links and figures,
+// held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Latvian has the
+// legal texts only, so a link to any other page goes to English and says
+// so.
+templ TermsLV() {
+	@components.LayoutSite("KIFF — pakalpojumu noteikumi", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadLV()
+			@termsDefinitionsLV()
+			@termsAgreementLV()
+			@termsServiceLV()
+			@termsTafsLV()
+			@termsAccountLV()
+			@termsAcceptableUseLV()
+			@termsCustomerDataLV()
+			@termsConfidentialityLV()
+			@termsFeesLV()
+			@termsTermLV()
+			@termsWarrantiesLV()
+			@termsDisclaimerLV()
+			@termsLiabilityLV()
+			@termsIndemnityLV()
+			@termsSLALV()
+			@termsServiceModsLV()
+			@termsTermsModsLV()
+			@termsForceMajeureLV()
+			@termsGoverningLawLV()
+			@termsGeneralLV()
+			@termsContactLV()
+		</article>
+	}
+}
+
+templ termsHeadLV() {
+	<header class="legal-head">
+		<p class="legal-badge">Pakalpojumu noteikumi · v0.1</p>
+		<h1>Pakalpojumu noteikumi</h1>
+		<p class="legal-meta">
+			<strong>Pēdējoreiz atjaunināti:</strong> 2026. gada 21. novembrī.
+			<strong>Spēkā stāšanās datums:</strong> 2026. gada 24. maijs.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Kas mainījies:</strong> ar ko jums ir noslēgts līgums, ja jūs ar mums iepazīstināja cits uzņēmums (2. punkts), un mikrouzņēmumi (8. punkts). Agrāk: kas drīkst lietot Pakalpojumu, atkarībā no reģiona, īpašumtiesībām un sankcijām (4. punkts); lietotne tafs Android ierīcēm un
+			Solo, kas pirkts Google Play (1. un 8. punkts). Vēl agrāk: maksas
+			plāni (3.A un 8. punkts),
+			<a href="/legal/sla">pakalpojumu līmeņa līgums</a> (angliski) (14. punkts) un
+			aizliegto lietojumu saraksts, kas tagad ir
+			<a href="/acceptable-use">Pieņemamas lietošanas politikā</a> (angliski) (5. punkts).
+		</p>
+		<p class="legal-disclaimer">
+			Šie noteikumi regulē KIFF Cloud lietošanu, tostarp tafs.
+			Līgumiski jautājumi:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsLV() {
+	<section id="definitions">
+		<h2>1. Definīcijas</h2>
+		<ul>
+			<li><strong>"Kiff Agents OÜ"</strong>, <strong>"mēs"</strong>, <strong>"mūs"</strong>, <strong>"mūsu"</strong> — Igaunijas sabiedrība ar ierobežotu atbildību, kas nodrošina Pakalpojumu. Reģistra kods 17372313.</li>
+			<li><strong>"Klients"</strong>, <strong>"jūs"</strong>, <strong>"jūsu"</strong> — fiziskā vai juridiskā persona, kas piekrīt šiem noteikumiem.</li>
+			<li><strong>"Lietotājs"</strong> — jebkura fiziskā persona, kurai Klients atļauj piekļūt Pakalpojumam ar Klienta kontu.</li>
+			<li><strong>"Pakalpojums"</strong> — produkts KIFF Cloud, tostarp <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs un tur publicētā dokumentācija, vadības paneļi un API.</li>
+			<li><strong>"tafs"</strong> — lietotne tafs iPhone, iPad, Android ierīcēm un datoriem (Mac, Windows un Linux) un pakalpojums, uz kura tā darbojas, tostarp Setup un planque (3.A punkts), kurā Klients uztic darbu mākslīgā intelekta (AI) aģentam, kas strādā KIFF Card ietvaros. <strong>"taf"</strong> ir viens šāds aģents.</li>
+			<li><strong>"Tenant"</strong> — loģiski nodalīta darba telpa Pakalpojumā, kas pieder vienam Klientam.</li>
+			<li><strong>"Audita dati"</strong> — notikumi, lēmumi, darbības, apstiprinājumi un kvītis (receipts), ko Pakalpojums ar izpildlaika (runtime) starpniecību saglabā Klienta vārdā.</li>
+			<li><strong>"tafs dati"</strong> — tas, ko tafs glabā Klienta vārdā: katra taf palaišanas un tērzēšanas sarunas (tostarp to, ko tam atgriež Klienta pievienotie rīki), tā ziņojumi, atmiņas piezīmes un tā brīdinājumiem reģistrētie tālruņi.</li>
+			<li><strong>"Kvīts"</strong> (Receipt) — parakstīts lēmuma ieraksts ar versiju, ko Pakalpojums izdod par katru pārvaldītu darbību.</li>
+			<li><strong>"Dokumentācija"</strong> — Pakalpojuma tehniskā dokumentācija un drošības pasākumi datētajā redakcijā, uz kuru atsaucas šie Noteikumi (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Tajā neietilpst stratēģiskā baltā grāmata (whitepaper), mārketinga materiāli un atsevišķi licencētā atvērtā koda ietvara dokumentācija.</li>
+			<li><strong>"DPA"</strong> — Datu apstrādes līgums vietnē <a href="/legal/dpa">/legal/dpa</a> (angliski), kas regulē mūsu kā apstrādātāja attiecības.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementLV() {
+	<section id="agreement">
+		<h2>2. Līgums</h2>
+		<p>
+			Šie noteikumi regulē to, kā jūs lietojat Pakalpojumu.
+			Izveidojot kontu, ģenerējot API atslēgu vai citādi lietojot
+			Pakalpojumu, jūs piekrītat šiem noteikumiem. Ja piekrītat
+			uzņēmuma vai citas juridiskas personas vārdā, jūs
+			apliecināt, ka esat tiesīgs šo personu saistīt, un "jūs"
+			un "jūsu" attiecas uz to.
+		</p>
+		<p>
+			Ja izstrādātājs, partneris vai cits uzņēmums jūs iepazīstināja ar KIFF vai izveidoja aģentu, ko jūs lietojat, jūsu līgums par Pakalpojumu ir noslēgts tieši ar mums saskaņā ar šiem noteikumiem, un jūs tos pieņemat paši. Šis uzņēmums nav mūsu pārstāvis: tas nevar jūsu vietā pieņemt šos noteikumus, sniegt piekrišanu vai apstiprināt maksājumu, un tas nepārdod Pakalpojumu mūsu vārdā.
+		</p>
+		<p>
+			Mēs varam publicēt papildu noteikumus konkrētām funkcijām
+			(beta funkcijām, trešo pušu integrācijām). Ja tie ir
+			pretrunā ar šiem noteikumiem, attiecībā uz konkrēto
+			funkciju noteicošie ir papildu noteikumi.
+		</p>
+	</section>
+}
+
+templ termsServiceLV() {
+	<section id="service">
+		<h2>3. Pakalpojums</h2>
+		<p>
+			KIFF Cloud ir mitināts pakalpojums deleģētu darbību
+			pārvaldībai. Tas izvērtē pieprasījumus pret Klienta
+			iestatītajām atļaujām un Card, var pieprasīt cilvēka
+			apstiprinājumu un reģistrē pārvaldības lēmumus. Atkarībā no
+			iestatītās integrācijas KIFF pārsūta atļautu pieprasījumu
+			vai sniedz autorizāciju, ko pārbauda aizsargātā sistēma.
+			Pašu darbību veic pievienotā sistēma.
+		</p>
+		<p>
+			Piemērojamā tehniskā darbība, pierādījumi, integrācijas
+			prasības un izpildes ierobežojumi ir noteikti datētajā
+			Dokumentācijā, uz kuru atsaucas šie Noteikumi. Stratēģiskā
+			<a href="/whitepaper">baltā grāmata</a> (angliski) izskaidro
+			KIFF principus un modeli; tā nav iekļauta šajos Noteikumos
+			kā tehniskā Dokumentācija.
+		</p>
+		<p>
+			KIFF Cloud pārvaldības pakalpojums <em>nav</em> aģentu
+			ietvars, darbplūsmu dzinējs, modeļu vārteja vai pārvaldīta
+			aģentu platforma. Tas darbojas kopā ar to, ko jūs jau
+			izmantojat. Skaidru sarakstu skatiet sākumlapas sadaļā
+			<a href="/#not">"Kas KIFF nav"</a> (angliski). tafs ir
+			vienīgā Pakalpojuma daļa, kas darbina aģentus jūsu vietā,
+			jūsu izsniegto Card ietvaros; to apraksta 3.A punkts.
+		</p>
+		<p>
+			Atvērtā koda ietvaru <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			regulē tā paša MIT licence, un uz to šie noteikumi
+			neattiecas. Ja darbināt ietvaru savā infrastruktūrā, līgums
+			ar Kiff Agents OÜ netiek noslēgts.
+		</p>
+	</section>
+}
+
+templ termsTafsLV() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			tafs jūs uzticat darbu (piemēram, naudas atmaksas, rēķinu
+			apmaksu vai karšu darījumu apstrīdēšanu) taf: AI aģentam,
+			kas strādā pēc grafika ar jūsu pievienotajiem rīkiem, to
+			KIFF Card ietvaros, ko jūs tam izsniedzat. Katrs taf
+			darbojas mūsu aģentu izpildlaikā, un tā izmantoto AI modeli
+			nodrošina Anthropic. Uz tā aizturētajiem izsaukumiem jūs
+			atbildat lietotnē tafs.
+		</p>
+		<p>
+			<strong>Rīku pievienošana.</strong> Setup, tafs AI aģents,
+			kas darbojas kā taf, palīdz jums pievienot rīku un iestatīt
+			taf kādam darbam. Pats tas neko nepievieno. Jūs
+			pierakstāties pie paša rīka nodrošinātāja (piemēram,
+			Stripe) un savā ierīcē apstiprināt katru savienojumu,
+			rīkus, ko taf drīkst izmantot, un tā Card. Šīs
+			pierakstīšanās žetonu glabā planque, mūsu savienojumu
+			pakalpojums. Tas ir šifrēts, tiek izmantots tikai, lai
+			veiktu izsaukumu, par kuru KIFF ir lēmusi, un nekad netiek
+			nodots taf. Atvienojot rīku, žetons tiek atsaukts pie
+			nodrošinātāja un dzēsts.
+		</p>
+		<p>
+			<strong>Jūsu Card ir jūsu norādījumi.</strong> taf piekļūst
+			jūsu rīkiem tikai caur KIFF, kas pirms nosūtīšanas pārbauda
+			katru izsaukumu pret taf Card. Izsaukums jūsu izsniegtas
+			Card ietvaros tiek veikts pēc jūsu norādījuma. Izsaukums
+			ārpus Card tiek aizturēts vai atteikts, kā nosaka Card.
+			Aizturēts izsaukums tiek veikts tikai pēc tam, kad to
+			apstiprina kāds, kam jūsu konts ļauj atbildēt uz
+			aizturētiem izsaukumiem. Lietotnē tafs atbildei ir paraksts
+			no šīs personas ierīces, ko KIFF pārbauda, un kvīts saglabā
+			šo pierādījumu. Jūsu konts var atbildēt arī pašā KIFF
+			(vadības panelī, tās komandrindas rīkā vai ar apstiprinātāju,
+			ko tur pilnvarojat); tad kvītī tiek reģistrēts, kas
+			atbildēja un kā.
+		</p>
+		<p>
+			<strong>Kas paliek jūsu ziņā.</strong> Jūs izvēlaties katra
+			taf darbu un Card, atbildat uz tā aizturētajiem izsaukumiem
+			un nodrošināt, ka drīkstat izmantot pievienotos rīkus un
+			kontus. taf ziņojumus, ziņas un atmiņas piezīmes raksta AI
+			modelis, un tie var būt kļūdaini; pārbaudiet svarīgo, pirms
+			uz to paļaujaties.
+		</p>
+		<p>
+			<strong>taf apturēšana.</strong> Jūs varat apturēt vienu taf
+			vai visus, iepauzēt taf, atsaukt jebkuru tā Card vai to
+			noņemt. No brīža, kad apturat taf vai atsaucat Card, KIFF
+			neatļauj nevienu jaunu izsaukumu saskaņā ar tiem. Lietotne
+			tafs rāda taf kā apturētu tikai tad, kad apturēšanu ir
+			apstiprinājušas gan KIFF, gan planque; no tā brīža planque
+			nesūta nevienu tā izsaukumu, arī tādu, ko KIFF atļāva tieši
+			pirms tam. Rīka nodrošinātājam jau nosūtīts pieprasījums
+			tomēr var tikt izpildīts: mēs apturam jaunus izsaukumus un
+			nevaram padarīt nebijušu to, ko nodrošinātājs jau ir izdarījis.
+			Rīks, kas pats pārbauda KIFF atļaujas (permits) bez planque,
+			vēl var pieņemt atļauju, ko KIFF izdeva tieši pirms tam, ne
+			ilgāk kā 90 sekundes. Apturēta taf darbības turpināšanai
+			nepieciešams jūsu apstiprinājums jūsu ierīcē, un nekas, kas
+			bija aizturēts vai rindā pirms apturēšanas, pēc tās netiek
+			izpildīts.
+		</p>
+		<p>
+			<strong>taf noņemšana</strong> aptur tā
+			grafiku un dzēš tā palaišanas, tērzēšanas sarunas, atmiņu un
+			tā izmantoto atslēgu. Jau pirms tam tas, ko jūsu rīki atgriež
+			taf, tiek glabāts tikai līdz tā palaišanas beigām (tas, ko
+			tērzēšanas saruna tikai nolasīja, šifrēti, tās nākamajām
+			ziņām: tiek izmantots ne ilgāk kā četras stundas, pēc tam
+			dzēsts), un tā palaišanas un tērzēšanas sarunas 30 dienas. KIFF saglabā kvītis par to, ko tā darīja.
+		</p>
+		<p>
+			<strong>ES Mākslīgā intelekta akts.</strong> Attiecībā uz
+			tafs Kiff Agents OÜ ir AI sistēmas nodrošinātājs, un jūs
+			esat tās uzturētājs. Mēs nodrošinām, ka viss, ko taf raksta
+			kādam ārpus jūsu uzņēmuma, norāda, ka to ir rakstījis AI
+			aģents. Jūs izmantojat tafs tikai tā piedāvātajiem darbiem
+			un ne lietojumam, ko AI akts aizliedz vai klasificē kā
+			augsta riska, piemēram, lēmumiem par personas nodarbinātību,
+			kredītu vai piekļuvi būtiskiem pakalpojumiem. Jūs
+			saglabājat cilvēka apstiprinājumus, ko pieprasa jūsu Card,
+			un nodrošināt, ka cilvēki, kas jūsu vārdā izmanto tafs,
+			saprot, ko tas dara un kādi ir tā ierobežojumi.
+		</p>
+		<p>
+			<strong>Izmaksas.</strong> tafs ir daļa no jūsu KIFF plāna
+			(8. punkts): katra taf palaišana izmanto kredītus par tā
+			izmantoto AI. Coach un taf iestatīšana ir iekļauta Coach
+			godīgas lietošanas ietvaros.
+		</p>
+	</section>
+}
+
+templ termsAccountLV() {
+	<section id="account">
+		<h2>4. Konti un piekļuve</h2>
+		<p>
+			Lai lietotu Pakalpojumu, jums jāizveido konts. Jūs
+			apņematies sniegt precīzu reģistrācijas informāciju, glabāt
+			savus pierakstīšanās datus slepenībā un atbildēt par visām
+			darbībām savā kontā.
+		</p>
+		<p>
+			Jums jābūt vismaz 16 gadus vecam vai savas jurisdikcijas
+			digitālās piekrišanas vecumā, atkarībā no tā, kurš ir
+			augstāks. Pakalpojums nav paredzēts bērniem.
+		</p>
+		<p>
+			Pakalpojums tiek piedāvāts tikai tajās valstīs un reģionos, kuros Anthropic, kas nodrošina tā AI modeli, piedāvā savu pakalpojumu, kā <a href="https://www.anthropic.com/supported-countries">tos uzskaita Anthropic</a>. Jūs nedrīkstat to lietot no citurienes. Uzņēmums to nedrīkst lietot, ja tā galvenā mītne ir valstī vai reģionā ārpus šī saraksta vai ja tas ir tāda uzņēmuma vairākuma īpašumā vai kontrolē, kura galvenā mītne ir valstī vai reģionā ārpus šī saraksta, neatkarīgi no tā, kur atrodas tā lietotāji. Jūs to nedrīkstat lietot arī tad, ja jums vai uzņēmumam, kura labā to lietojat, ir piemērotas Eiropas Savienības, Apvienoto Nāciju Organizācijas vai Amerikas Savienoto Valstu sankcijas. Mēs atsakām kontus, kas pārkāpj šo noteikumu, un varam apturēt kontu, kas to pārkāpj.
+		</p>
+		<p>
+			Jūs atbildat par katra Lietotāja darbībām, kuram piešķirat
+			piekļuvi savam kontam. Ja konstatējam ticamu šo noteikumu
+			pārkāpumu, mēs varam ar saprātīgu paziņojumu apturēt kontu
+			vai atsaukt piekļuvi. Pieņemamas lietošanas pārkāpumu
+			gadījumā (skatīt 5. punktu) apturēšana var būt tūlītēja.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseLV() {
+	<section id="acceptable-use">
+		<h2>5. Pieņemama lietošana</h2>
+		<p>
+			Jums, jūsu lietotājiem un jūsu aģentiem jāievēro
+			<a href="/acceptable-use">Pieņemamas lietošanas politika</a> (angliski).
+			Tā ir daļa no šiem noteikumiem un uzskaita, kam Pakalpojumu
+			nedrīkst izmantot.
+		</p>
+		<p>
+			Ticama Pieņemamas lietošanas politikas pārkāpuma gadījumā
+			mēs varam nekavējoties apturēt lietošanu. Mums nav
+			pienākuma uzraudzīt Klienta saturu, bet mēs varam rīkoties,
+			pamatojoties uz ticamiem ziņojumiem.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataLV() {
+	<section id="customer-data">
+		<h2>6. Klienta dati un saturs</h2>
+		<p>
+			Jūsu Audita dati pieder jums. Jūs piešķirat Kiff Agents OÜ
+			ierobežotu, neekskluzīvu, bezatlīdzības, pasaules mēroga
+			licenci mitināt, kopēt, pārsūtīt, attēlot un citādi
+			apstrādāt jūsu Audita datus tikai tiktāl, cik tas
+			nepieciešams, lai darbinātu, uzturētu un uzlabotu
+			Pakalpojumu jūsu labā.
+		</p>
+		<p>
+			Attiecībā uz jūsu Audita datiem un tafs datiem mēs
+			darbojamies kā <strong>apstrādātājs</strong> saskaņā ar
+			VDAR 28. pantu; šīs attiecības sīki regulē
+			<a href="/legal/dpa">DPA</a> (angliski). Attiecībā uz jūsu
+			konta metadatiem mēs darbojamies kā
+			<strong>pārzinis</strong>; šīs attiecības regulē
+			<a href="/lv/privacy">privātuma politika</a>.
+		</p>
+		<p>
+			Jūs apliecināt, ka jums ir visas tiesības iesniegt datus,
+			ko iesniedzat, un ka to iesniegšana atbilst
+			piemērojamajiem tiesību aktiem (tostarp datu aizsardzības
+			tiesību aktiem un, ja piemērojams, ES Mākslīgā intelekta
+			aktam).
+		</p>
+	</section>
+}
+
+templ termsConfidentialityLV() {
+	<section id="confidentiality">
+		<h2>7. Konfidencialitāte</h2>
+		<p>
+			Katra puse var saņemt no otras nepublisku informāciju
+			("Konfidenciāla informācija"). Saņēmēja puse izmanto
+			Konfidenciālo informāciju tikai tiktāl, cik tas
+			nepieciešams, lai pildītu savas saistības un īstenotu savas
+			tiesības saskaņā ar šiem noteikumiem, un aizsargā to ar
+			vismaz tādu pašu rūpību, kādu tā izmanto savai
+			konfidenciālajai informācijai.
+		</p>
+		<p>
+			Konfidenciāla informācija neietver informāciju, kas (a) ir
+			vai kļūst publiski pieejama bez pārkāpuma, (b) saņēmējai
+			pusei bija zināma pirms izpaušanas, (c) ir izstrādāta
+			neatkarīgi, neizmantojot Konfidenciālo informāciju, vai (d)
+			ir jāizpauž saskaņā ar likumu (ar paziņojumu otrai pusei,
+			ja tas ir atļauts).
+		</p>
+	</section>
+}
+
+templ termsFeesLV() {
+	<section id="fees">
+		<h2>8. Maksas un maksājumi</h2>
+		<p>
+			<strong>Plāni.</strong> Katram kontam ir viens plāns.
+			Pašreizējās cenas ir <a href="/pricing">cenu
+			lapā</a> (angliski); šī atjauninājuma brīdī:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> viena persona, tafs lietošanai, pārdod lietotnē tafs caur App Store vai Google Play par 12,50 € mēnesī, ieskaitot PVN, ar 500 iekļautiem kredītiem mēnesī.</li>
+			<li><strong>Company:</strong> 10,50 € mēnesī par katru vietu, ar 500 kredītiem mēnesī par katru vietu, kopīgi, un jūsu pašu aģentu izsaukumiem caur KIFF Cloud 500 darbībām mēnesī par katru vietu, kopīgi.</li>
+			<li><strong>Līgums:</strong> maksas un noteikumi tā pasūtījuma veidlapā.</li>
+		</ul>
+		<p>
+			Vietas ir konta administratori un redaktori. Apstiprinātāji
+			un skatītāji ir bez maksas visos plānos. Company plānā pāri
+			iekļautajam kredīts maksā 0,01 € un darbība 0,02 €.
+			Kredītus pāri iekļautajiem iekasē līdz ikmēneša tēriņu
+			limitam, ko iestata konts (sākumā 50 €): sasniedzot limitu,
+			KIFF nesāk nevienu jaunu konta taf palaišanu, līdz sākas
+			nākamais periods vai kāds, kas pārvalda norēķinus, limitu
+			paaugstina.
+		</p>
+		<p>
+			<strong>Kredītu paketes.</strong> Solo plānā kredīti pāri
+			mēneša iekļautajiem nāk no kredītu paketēm, ko pērk lietotnē
+			tafs. Paketi pērk vienreiz, tai nav derīguma termiņa, un tā
+			nav abonements; tās kredītus izmanto pēc mēneša
+			iekļautajiem, sākot ar vecāko paketi. Pakete, kuras
+			maksājums ir pilnībā atmaksāts, tiek atņemta kopā ar tajā
+			atlikušajiem kredītiem. Kad mēneša kredīti un paketes ir
+			izlietoti, KIFF nesāk nevienu jaunu konta taf palaišanu,
+			līdz sākas nākamais periods vai tiek pievienota pakete.
+			Arī bonusa kredītiem, ko KIFF pievieno kontam,
+			tāpat kā paketēm nav derīguma termiņa.
+		</p>
+		<p>
+			<strong>Kas tiek skaitīts.</strong> <em>Kredīts</em>
+			apmaksā AI, ko izmantoja taf palaišana, veselos kredītos,
+			noapaļojot uz augšu vienu reizi palaišanā, un tiek skaitīts
+			vienreiz, kad palaišana beidzas. Palaišana, kuras izsaukumu
+			KIFF atteica, tomēr izmantoja savu AI. Nekad netiek
+			skaitīts: Coach un taf iestatīšana Coach godīgas lietošanas
+			ietvaros; jaunas versijas izmēģinājums, kas neko nesūta; un
+			palaišana, kas neizdevās mūsu pusē. <em>Darbība</em> ir jūsu
+			pašu aģenta izsaukums caur KIFF Cloud, kas kaut ko paveica:
+			KIFF to atļāva, tas tika nosūtīts, un rīks ziņoja par
+			panākumiem. Nekad netiek skaitīts kā darbība: izsaukums, kas
+			tika atteikts, aizturēts un pēc tam atteikts, apturēts
+			apturēšanas dēļ, nederīgs, neizdevās rīkā vai kura iznākums
+			nav zināms, kā arī izsaukums, kas tikai nolasa.
+		</p>
+		<p>
+			<strong>Bez izmēģinājuma perioda.</strong> Konts maksā no
+			pirmās dienas. Pirms plāns sākas, KIFF nesāk nevienu tā taf
+			palaišanu, izņemot Coach veikto iestatīšanu; nekas netiek
+			dzēsts.
+		</p>
+		<p>
+			<strong>Maksājumi un rēķini.</strong> Par plānu norēķinās
+			vienā vietā. Vietnē kiff.dev pirktu plānu tur arī pērk,
+			maina un atceļ, kā arī norēķinu portālā, uz kuru tā saite
+			ved, un tā maksājumus apstrādā Stripe. Lietotnē tafs pirktais
+			Solo tiek pārdots caur App Store iPhone un iPad ierīcēs vai
+			Google Play Android ierīcēs, un to pārvalda jūsu Apple
+			abonementos vai Google Play abonementos saskaņā ar attiecīgā
+			veikala maksājumu, atjaunošanas un atmaksas noteikumiem.
+			Kredītu paketes pērk lietotnē. Company pērk vietnē
+			kiff.dev. Maksas iekasē reizi mēnesī avansā;
+			lietojumu pāri iekļautajam iekļauj nākamajā rēķinā. Cilvēku
+			skaita izmaiņas tiek piemērotas no nākamā rēķina. Ja
+			maksājums neizdodas un netiek nokārtots, plāns beidzas, un
+			KIFF atsaka konta izsaukumus, līdz tiek izvēlēts plāns.
+		</p>
+		<p>
+			<strong>Atcelšana.</strong> Jūs varat atcelt jebkurā laikā
+			norēķinu portālā vai, ja Solo pirkts lietotnē, savos Apple
+			abonementos vai Google Play abonementos. Plāns darbojas līdz
+			apmaksātā perioda beigām un netiek atjaunots. Izņemot
+			gadījumus, kad to pieprasa likums, jau samaksātās maksas
+			netiek atmaksātas. Ja esat patērētājs ES, jūs varat
+			atkāpties no pirkuma 14 dienu laikā, nenorādot iemeslu, un
+			mēs atmaksājam samaksāto, atskaitot daļu par dienām, kurās
+			plāns jau darbojās.
+			Solo pirkumus atmaksā caur App Store vai Google Play saskaņā ar to noteikumiem.
+		</p>
+		<p>
+			<strong>Mikrouzņēmumi.</strong> Ja jūsu uzņēmumā strādā mazāk nekā 10 cilvēku un tā gada apgrozījums vai bilances kopsumma nepārsniedz 2 miljonus €, mēs to uzskatām par patērētāju attiecībā uz visiem šo noteikumu noteikumiem par maksājumiem, kas veikti ar karti, arī Company plānā.
+		</p>
+		<p>
+			<strong>PVN.</strong> Company cenās nav iekļauts PVN; Solo
+			un kredītu paketes pārdod App Store vai Google Play ar
+			iekļautu PVN. Kiff Agents OÜ
+			(PVN numurs EE102924327) pievieno Igaunijas PVN, ja tas
+			piemērojams. ES uzņēmumu savstarpējiem darījumiem ar Klientu
+			ārpus Igaunijas, kuram ir derīgs PVN identifikācijas numurs,
+			rēķinu izraksta saskaņā ar ES apgrieztās maksāšanas
+			mehānismu.
+		</p>
+		<p>
+			<strong>Izmaiņas.</strong> Par cenu paaugstināšanu mēs
+			aktīvajiem kontiem rakstiski paziņojam vismaz trīsdesmit
+			dienas iepriekš (16. punkts). Cenu samazinājums tiek
+			piemērots no nākamā rēķina.
+		</p>
+	</section>
+}
+
+templ termsTermLV() {
+	<section id="term">
+		<h2>9. Termiņš un izbeigšana</h2>
+		<p>
+			Šie noteikumi stājas spēkā, kad jūs pirmo reizi lietojat
+			Pakalpojumu, un ir spēkā līdz to izbeigšanai.
+		</p>
+		<p>
+			Jūs varat izbeigt līgumu jebkurā laikā, dzēšot savu kontu.
+			Mēs varam to izbeigt (a) būtiska pārkāpuma dēļ, kas nav
+			novērsts trīsdesmit dienu laikā pēc rakstiska paziņojuma,
+			vai (b) nekavējoties Pieņemamas lietošanas pārkāpumu vai
+			maksātnespējas gadījumu dēļ.
+		</p>
+		<p id="leaving">
+			<strong>Aiziešana un datu paņemšana līdzi.</strong>
+			Jūs varat jebkurā laikā eksportēt savus datus strukturētā,
+			mašīnlasāmā formātā: KIFF sadaļa Settings → Data sniedz
+			JSON failu ar jūsu kontu, jūsu Card ar katru to versiju,
+			lēmumiem jūsu Žurnālā jeb Record (jaunākajiem 10 000; vairāk
+			varat lūgt mums), parakstītu kvīti par katru, ko KIFF
+			atļāva, un jūsu API atslēgu informāciju (nekad pašas
+			atslēgas). Lietotnē tafs katra persona eksportē savas
+			tērzēšanas sarunas, failus un piezīmes sadaļā Konts →
+			Eksportēt manas sarunas; tērzēšanas sarunas jebkurā gadījumā
+			tiek glabātas trīsdesmit dienas, kā norādīts privātuma
+			politikā. Konta dzēšana nekavējoties izbeidz Pakalpojumu,
+			tāpēc vispirms eksportējiet datus.
+		</p>
+		<p>
+			Tā vietā jūs varat aiziet ar paziņojumu, lai pārietu pie
+			cita nodrošinātāja vai uz savām sistēmām, rakstot uz
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a>.
+			Mēs nekad nepieprasām paziņojumu, kas garāks par diviem
+			mēnešiem: jūsu paziņojums stājas spēkā jūsu izvēlētajā
+			datumā, ne vēlāk kā divus mēnešus pēc tā nosūtīšanas. No šī
+			datuma seko trīsdesmit dienu pārejas periods, kurā
+			Pakalpojums turpina darboties, jūs eksportējat savus datus
+			un pārceļat savu darbu, un mēs palīdzam ar saprātīgiem
+			lūgumiem šajā nolūkā. Jūs varat pārejas periodu vienreiz
+			pagarināt, cik ilgi jums nepieciešams. Ja tehniski nevaram
+			to pabeigt trīsdesmit dienās, mēs to paziņojam četrpadsmit
+			darba dienu laikā pēc jūsu paziņojuma, norādot iemeslus un
+			jaunu periodu, kas nav garāks par septiņiem mēnešiem. Pēc
+			pārejas perioda jūsu dati paliek pieejami eksportam vēl
+			vismaz trīsdesmit dienas. Plāna maksas turpinās kā parasti
+			līdz pārejas perioda beigām. Solo, kas pirkts App Store vai
+			Google Play, atceļ veikalā; pārejas un eksporta periodi tiek
+			piemēroti tāpat.
+		</p>
+		<p>
+			Mēs neiekasējam maksu par aiziešanu, pāreju vai datu
+			eksportu. Šī sadaļa piešķir ikvienam klientam ES Datu akta
+			(Regula (ES) 2023/2854) VI nodaļā paredzētās pārejas
+			tiesības.
+		</p>
+		<p>
+			Pēc izbeigšanas un pēc jebkura pārejas un eksporta perioda
+			mēs dzēšam jūsu Audita datus, jūsu tafs datus un konta
+			metadatus saskaņā ar
+			<a href="/lv/privacy#retention">privātuma politikas</a> glabāšanas noteikumiem.
+		</p>
+		<p>
+			Sadaļas, kurām pēc to būtības jāpaliek spēkā pēc
+			izbeigšanas, paliek spēkā, tostarp par konfidencialitāti,
+			intelektuālo īpašumu, zaudējumu atlīdzināšanu, atbildības
+			ierobežošanu, atrunām, piemērojamajiem tiesību aktiem un
+			jebkurām uzkrātajām maksām.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesLV() {
+	<section id="warranties">
+		<h2>10. Garantijas</h2>
+		<p>
+			Katra puse apliecina, ka tai ir tiesības un pilnvaras
+			noslēgt un izpildīt šos noteikumus.
+		</p>
+		<p>
+			Mēs garantējam, ka nodrošināsim Pakalpojumu profesionāli un
+			būtiskā atbilstībā Dokumentācijai. Jūsu vienīgais tiesiskās
+			aizsardzības līdzeklis šīs garantijas pārkāpuma gadījumā ir,
+			pēc mūsu izvēles, atkārtota izpilde vai proporcionāla to
+			maksu atmaksa, kas attiecas uz ietekmēto Pakalpojumu
+			pārkāpuma periodā.
+		</p>
+		<p>
+			Jūs garantējat, ka jūsu Pakalpojuma lietošana atbilst
+			piemērojamajiem tiesību aktiem un šiem noteikumiem.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerLV() {
+	<section id="disclaimer">
+		<h2>11. Atruna</h2>
+		<p>
+			Izņemot 10. punktā skaidri paredzētās garantijas,
+			Pakalpojums tiek nodrošināts <strong>"tāds, kāds tas ir" un
+			"kā pieejams"</strong>. Maksimāli likumā atļautajā apjomā mēs
+			atsakāmies no visām citām garantijām, gan skaidri
+			izteiktām, gan netiešām, gan likumā noteiktām, tostarp no
+			piemērotības pārdošanai, piemērotības konkrētam mērķim,
+			tiesību neaizskaršanas garantijām un jebkurām garantijām,
+			kas izriet no darījumu prakses vai tirdzniecības paražām.
+		</p>
+		<p>
+			Mēs negarantējam, ka Pakalpojums darbosies bez
+			pārtraukumiem, bez kļūdām vai bez kaitīgiem komponentiem,
+			ne arī to, ka dati netiks zaudēti vai bojāti. Jūs atbildat
+			par savu datu rezerves kopiju veidošanu.
+		</p>
+	</section>
+}
+
+templ termsLiabilityLV() {
+	<section id="liability">
+		<h2>12. Atbildības ierobežojums</h2>
+		<p>
+			Maksimāli likumā atļautajā apjomā neviena puse neatbild
+			otrai par netiešiem, nejaušiem, izrietošiem, īpašiem,
+			priekšzīmīgiem vai sodošiem zaudējumiem, tostarp par negūto
+			peļņu, zaudētiem ieņēmumiem, zaudētiem datiem vai darbības
+			pārtraukumu, kas izriet no šiem noteikumiem vai Pakalpojuma
+			vai ir ar tiem saistīti, pat ja tā bija informēta par šādu
+			zaudējumu iespējamību.
+		</p>
+		<p>
+			Katras puses kopējā atbildība, kas izriet no šiem
+			noteikumiem vai ir ar tiem saistīta, nepārsniedz lielāko no
+			šīm summām: (a) maksas, ko Klients samaksāja vai kas tam
+			jāmaksā Kiff Agents OÜ divpadsmit mēnešos pirms notikuma,
+			kas rada atbildību, vai (b) simt tūkstoši eiro
+			(100 000 €).
+		</p>
+		<p>
+			Nekas šajos noteikumos neierobežo un neizslēdz atbildību, ko
+			nevar ierobežot vai izslēgt saskaņā ar piemērojamajiem
+			tiesību aktiem, tostarp atbildību par nāvi, nolaidības
+			izraisītu miesas bojājumu, krāpšanu vai tīšu pārkāpumu, kā
+			arī atbildību par produktu ar trūkumiem saskaņā ar tiesību
+			aktiem, ar kuriem transponēta Direktīva (ES) 2024/2853 par
+			atbildību par produktiem ar trūkumiem.
+		</p>
+	</section>
+}
+
+templ termsIndemnityLV() {
+	<section id="indemnification">
+		<h2>13. Zaudējumu atlīdzināšana</h2>
+		<p>
+			Mēs jūs aizstāvēsim pret trešo personu prasībām, ka
+			Pakalpojums, kādu mēs to nodrošinām un kādu jūs to lietojat
+			saskaņā ar šiem noteikumiem, aizskar šīs trešās personas
+			intelektuālā īpašuma tiesības, un samaksāsim zaudējumus, kas
+			pret jums piespriesti ar galīgu nolēmumu (vai saskaņoto
+			izlīguma summu) par šādām prasībām.
+		</p>
+		<p>
+			Jūs mūs aizstāvēsiet pret trešo personu prasībām, kas izriet
+			no (a) jūsu kā Klienta datiem vai satura; (b) jūsu
+			Pakalpojuma lietošanas, pārkāpjot šos noteikumus (tostarp
+			Pieņemamas lietošanas politiku); vai (c) jūsu rupjas
+			nolaidības vai tīša pārkāpuma, un samaksāsiet zaudējumus, kas
+			pret mums piespriesti ar galīgu nolēmumu (vai saskaņoto
+			izlīguma summu) par šādām prasībām.
+		</p>
+		<p>
+			Zaudējumu atlīdzināšanas priekšnoteikums ir tūlītējs
+			paziņojums par prasību, atlīdzinātājas puses ekskluzīva
+			kontrole pār aizstāvību un izlīgumu un atlīdzības
+			saņēmējas puses saprātīga sadarbība. Atlīdzinātāja puse
+			nedrīkst bez piekrišanas noslēgt izlīgumu, kas uzliek
+			pienākumus atlīdzības saņēmējai pusei.
+		</p>
+	</section>
+}
+
+templ termsSLALV() {
+	<section id="sla">
+		<h2>14. Pakalpojumu līmeņa apņemšanās</h2>
+		<p>
+			Maksas plānā <a href="/legal/sla">pakalpojumu līmeņa
+			līgums</a> (angliski) nosaka pieejamību, ko mēs apņemamies
+			nodrošināt, kā tiek ieskaitīts lēns vai neizdevies
+			pieprasījums, mūsu atbalsta reaģēšanas laikus un
+			pakalpojumu kredītus, ja mēs neizpildām apņemšanos. Tas ir
+			daļa no šiem noteikumiem.
+		</p>
+		<p>
+			Darbības prakse, reaģēšana uz incidentiem un apņemšanās
+			paziņot par pārkāpumiem ir aprakstītas datētajā redakcijā,
+			uz kuru atsaucas šie Noteikumi
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			lapā <a href="/security">/security</a> (angliski) redzama
+			pašreizējā prakse.
+		</p>
+	</section>
+}
+
+templ termsServiceModsLV() {
+	<section id="service-mods">
+		<h2>15. Pakalpojuma izmaiņas</h2>
+		<p>
+			Mēs varam jebkurā laikā pievienot, mainīt vai noņemt
+			funkcijas. Par būtisku funkcionalitātes samazināšanu vai
+			tādas API daļas novecošanu, kas izjauc dokumentētu
+			darbību, aktīvajiem klientiem paziņo vismaz trīsdesmit
+			dienas iepriekš, publicējot novecošanas grafiku. Drošības
+			nolūkā izmaiņas var veikt bez paziņojuma, ja pats
+			paziņojums radītu risku.
+		</p>
+	</section>
+}
+
+templ termsTermsModsLV() {
+	<section id="terms-mods">
+		<h2>16. Šo noteikumu izmaiņas</h2>
+		<p>
+			Mēs laiku pa laikam varam grozīt šos noteikumus. Par
+			būtiskām izmaiņām paziņo pa e-pastu un ar labi redzamu
+			paziņojumu šajā lapā vismaz trīsdesmit dienas iepriekš.
+			Nebūtiskas izmaiņas (precizējumi, atsauces) publicē ar jaunu
+			"pēdējoreiz atjaunināti" datumu. Ja jūs turpināt lietot
+			Pakalpojumu pēc atjauninājuma spēkā stāšanās datuma, tas
+			nozīmē, ka jūs to pieņemat.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureLV() {
+	<section id="force-majeure">
+		<h2>17. Nepārvarama vara</h2>
+		<p>
+			Neviena puse neatbild par saistību neizpildi vai kavējumu
+			tiktāl, ciktāl to izraisījuši apstākļi ārpus tās saprātīgas
+			kontroles, tostarp dabas stihijas, karš, terorisms, masu
+			nekārtības, darba strīdi, ugunsgrēks, dabas katastrofas,
+			valdības rīcība saistībā ar pandēmiju, interneta vai
+			elektroapgādes pārtraukumi vai telekomunikāciju
+			nodrošinātāju vai trešo pušu mitināšanas infrastruktūras
+			darbības.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawLV() {
+	<section id="governing-law">
+		<h2>18. Piemērojamie tiesību akti un jurisdikcija</h2>
+		<p>
+			Šiem noteikumiem piemēro Igaunijas Republikas tiesību aktus,
+			neņemot vērā tās kolīziju normas. Ekskluzīvā strīdu
+			izskatīšanas vieta ir Harju apriņķa tiesa (Harju Maakohus)
+			Tallinā.
+		</p>
+		<p>
+			Ja esat patērētājs, kura dzīvesvieta ir citā ES
+			dalībvalstī, jūsu mītnes valsts obligātie patērētāju
+			aizsardzības noteikumi joprojām ir spēkā tiktāl, ciktāl tie
+			piešķir jums tiesības, no kurām nevarat atteikties ar
+			līgumu; šis noteikums neatņem jums šo noteikumu aizsardzību.
+		</p>
+	</section>
+}
+
+templ termsGeneralLV() {
+	<section id="general">
+		<h2>19. Vispārīgi noteikumi</h2>
+		<p>
+			<strong>Viss līgums.</strong> Šie noteikumi kopā ar
+			privātuma politiku, DPA, jebkurām pasūtījuma veidlapām un
+			jebkuriem skaidri iekļautiem papildu noteikumiem ir viss
+			mūsu līgums par to priekšmetu un aizstāj jebkuru iepriekšēju
+			vai vienlaicīgu vienošanos.
+		</p>
+		<p>
+			<strong>Atdalāmība.</strong> Ja kāds noteikums tiek atzīts
+			par nepiemērojamu, pārējie paliek spēkā.
+		</p>
+		<p>
+			<strong>Cesija.</strong> Jūs nedrīkstat nodot šos
+			noteikumus bez mūsu rakstiskas piekrišanas. Mēs varam tos
+			nodot bez piekrišanas saistībā ar apvienošanu, iegādi vai
+			visu vai būtībā visu mūsu aktīvu pārdošanu, par to jums
+			paziņojot.
+		</p>
+		<p>
+			<strong>Neatteikšanās.</strong> Kāda noteikuma izpildes
+			nepieprasīšana nenozīmē atteikšanos no tiesībām to pieprasīt
+			vēlāk.
+		</p>
+		<p>
+			<strong>Paziņojumi.</strong> Paziņojumus Kiff Agents OÜ sūta
+			uz <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			vai pa pastu uz adresi Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Igaunija. Paziņojumus jums sūta uz
+			e-pasta adresi, kas saistīta ar jūsu kontu, vai, ja esat to
+			norādījis, uz jūsu norādīto juridisko paziņojumu adresi.
+		</p>
+		<p>
+			<strong>Neatkarīgi līgumslēdzēji.</strong> Nekas šajos
+			noteikumos nerada partnerības, pārstāvības, kopuzņēmuma vai
+			darba attiecības.
+		</p>
+		<p>
+			<strong>Trešās personas labuma guvēji.</strong> Tādu nav,
+			izņemot tiktāl, ciktāl skaidri norādīti saistītie
+			uzņēmumi, kuriem tiek atlīdzināti zaudējumi.
+		</p>
+	</section>
+}
+
+templ termsContactLV() {
+	<section id="contact">
+		<h2>20. Sazinieties ar mums</h2>
+		<p>
+			Komerciāli un līgumiski jautājumi:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Vispārīgi jautājumi par produktu:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Privātuma jautājumi:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Ziņojumi par drošības problēmām:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Dokumenta versija:</strong> v0.1.<br/>
+			<strong>Pēdējoreiz atjaunināti:</strong> 2026. gada 21. novembrī.
+		</p>
+	</section>
+}
