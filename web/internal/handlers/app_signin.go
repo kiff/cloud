@@ -50,6 +50,10 @@ const (
 	// providerScriptVersion pins the sign-in provider's browser script the
 	// form loads: a new version is a reviewed change, never @latest.
 	providerScriptVersion = "6.46.2"
+	// providerUIVersion pins the provider's UI script, released with
+	// providerScriptVersion: since its version 6 the core script carries no
+	// components, so without this the form mounts nothing. Bump the two together.
+	providerUIVersion = "1.44.2"
 )
 
 // SignInScript is the sign-in provider's browser script and key, for the
@@ -106,9 +110,9 @@ type appSignInView struct {
 	Other string
 	// Stopped is why there's nothing to do here but go back to the app.
 	Stopped string
-	// Nonce lets the page's own script run under its CSP; ScriptVersion is
-	// the provider script's pinned version.
-	Nonce, ScriptVersion string
+	// Nonce lets the page's own script run under its CSP; ScriptVersion and
+	// UIVersion are the provider's core and UI scripts' pinned versions.
+	Nonce, ScriptVersion, UIVersion string
 }
 
 func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
@@ -189,7 +193,7 @@ func (h *AppSignInHandler) showForm(w http.ResponseWriter, r *http.Request, v ap
 		return
 	}
 	v.Form = true
-	v.FrontendAPI, v.PublishableKey, v.ScriptVersion = h.script.FrontendAPI(), h.script.PublishableKey(), providerScriptVersion
+	v.FrontendAPI, v.PublishableKey, v.ScriptVersion, v.UIVersion = h.script.FrontendAPI(), h.script.PublishableKey(), providerScriptVersion, providerUIVersion
 	v.Hint = hint
 	// The provider sends the browser to the callback, which mints KIFF's
 	// session and comes back here.
@@ -422,31 +426,52 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
   {{else if .Form}}
   <p>{{.W.Lead}}</p>
   <div id="sign-in"></div>
+  <div id="not-loaded" hidden>
+    <p role="alert">{{.W.NotLoaded}}</p>
+    <button class="go" type="button" id="try-again">{{.W.TryAgain}}</button>
+  </div>
   <script
     src="https://{{.FrontendAPI}}/npm/@clerk/clerk-js@{{.ScriptVersion}}/dist/clerk.browser.js"
     data-clerk-publishable-key="{{.PublishableKey}}"
     crossorigin="anonymous"
     async></script>
+  <script
+    src="https://{{.FrontendAPI}}/npm/@clerk/ui@{{.UIVersion}}/dist/ui.browser.js"
+    crossorigin="anonymous"
+    async></script>
   <script nonce="{{.Nonce}}">
     (async function () {
-      var waited = 0;
-      while (typeof window.Clerk === "undefined" && waited < 8000) {
-        await new Promise(function (r) { setTimeout(r, 50); });
-        waited += 50;
+      var box = document.getElementById("sign-in");
+      // Never a blank page: when the form can't load or mounts nothing to
+      // sign in with, the person reads why and can load it again.
+      function notLoaded() {
+        box.hidden = true;
+        document.getElementById("not-loaded").hidden = false;
       }
-      if (typeof window.Clerk === "undefined") return;
-      await window.Clerk.load({ publishableKey: {{.PublishableKey}} });
-      // A provider session left in this browser is never used: the person
-      // signs in here.
-      if (window.Clerk.session) await window.Clerk.signOut();
-      var done = {{.Done}};
-      var hint = {{.Hint}};
-      window.Clerk.mountSignIn(document.getElementById("sign-in"), {
-        withSignUp: true,
-        forceRedirectUrl: done,
-        signUpForceRedirectUrl: done,
-        initialValues: hint ? { emailAddress: hint } : undefined
-      });
+      document.getElementById("try-again").addEventListener("click", function () { window.location.reload(); });
+      try {
+        var waited = 0;
+        while ((typeof window.Clerk === "undefined" || typeof window.__internal_ClerkUICtor === "undefined") && waited < 15000) {
+          await new Promise(function (r) { setTimeout(r, 50); });
+          waited += 50;
+        }
+        if (typeof window.Clerk === "undefined" || typeof window.__internal_ClerkUICtor === "undefined") return notLoaded();
+        await window.Clerk.load({ publishableKey: {{.PublishableKey}}, ui: { ClerkUI: window.__internal_ClerkUICtor } });
+        // A provider session left in this browser is never used: the person
+        // signs in here.
+        if (window.Clerk.session) await window.Clerk.signOut();
+        var done = {{.Done}};
+        var hint = {{.Hint}};
+        window.Clerk.mountSignIn(box, {
+          withSignUp: true,
+          forceRedirectUrl: done,
+          signUpForceRedirectUrl: done,
+          initialValues: hint ? { emailAddress: hint } : undefined
+        });
+        setTimeout(function () { if (!box.querySelector("button, input")) notLoaded(); }, 10000);
+      } catch (e) {
+        notLoaded();
+      }
     })();
   </script>
   {{else}}
