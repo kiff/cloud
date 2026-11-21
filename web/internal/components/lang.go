@@ -34,11 +34,12 @@ var partialPages = map[string][]string{
 	"hu": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Hungarian: the same four
 	"ro": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Romanian: the same four
 	"bg": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Bulgarian: the same four
+	"hr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Croatian: the same four
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -69,6 +70,7 @@ var languageNames = map[string]string{
 	"hu": "Magyar",
 	"ro": "Română",
 	"bg": "Български",
+	"hr": "Hrvatski",
 }
 
 // LanguageName is a site language's name in that language.
@@ -240,6 +242,7 @@ var translationNotices = map[string]string{
 	"hu": "Ez egy tájékoztató jellegű fordítás. Az angol nyelvű változat az irányadó:",
 	"ro": "Aceasta este o traducere cu titlu informativ. Prevalează versiunea în limba engleză:",
 	"bg": "Това е превод с информационна цел. Меродавна е версията на английски език:",
+	"hr": "Ovo je prijevod u informativne svrhe. Mjerodavna je engleska verzija:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -262,6 +265,7 @@ var inEnglish = map[string]string{
 	"hu": "(angolul)",
 	"ro": "(în engleză)",
 	"bg": "(на английски)",
+	"hr": "(na engleskom)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
