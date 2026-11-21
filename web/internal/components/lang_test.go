@@ -29,6 +29,27 @@ func TestLangPath(t *testing.T) {
 		{"lt", "/terms#fees", "/lt/terms#fees"},
 		{"lt", "/tafs/privacy", "/lt/tafs/privacy"},
 		{"lt", "/security", "/security"}, // and Lithuanian
+		{"cs", "/terms#fees", "/cs/terms#fees"},
+		{"cs", "/tafs/privacy", "/cs/tafs/privacy"},
+		{"cs", "/cookies", "/cookies"}, // and Czech
+		{"sk", "/terms#fees", "/sk/terms#fees"},
+		{"sk", "/tafs/privacy", "/sk/tafs/privacy"},
+		{"sk", "/security", "/security"}, // and Slovak
+		{"sl", "/terms#fees", "/sl/terms#fees"},
+		{"sl", "/tafs/privacy", "/sl/tafs/privacy"},
+		{"sl", "/ai-act", "/ai-act"}, // and Slovene
+		{"hu", "/terms#fees", "/hu/terms#fees"},
+		{"hu", "/tafs/privacy", "/hu/tafs/privacy"},
+		{"hu", "/cookies", "/cookies"}, // and Hungarian
+		{"ro", "/terms#fees", "/ro/terms#fees"},
+		{"ro", "/tafs/privacy", "/ro/tafs/privacy"},
+		{"ro", "/security", "/security"}, // and Romanian
+		{"bg", "/terms#fees", "/bg/terms#fees"},
+		{"bg", "/tafs/privacy", "/bg/tafs/privacy"},
+		{"bg", "/subprocessors", "/subprocessors"}, // and Bulgarian
+		{"hr", "/terms#fees", "/hr/terms#fees"},
+		{"hr", "/tafs/privacy", "/hr/tafs/privacy"},
+		{"hr", "/security", "/security"}, // and Croatian
 	} {
 		if got := LangPath(c.lang, c.path); got != c.want {
 			t.Errorf("LangPath(%q, %q) = %q, want %q", c.lang, c.path, got, c.want)
@@ -58,6 +79,20 @@ func TestSplitLangPath(t *testing.T) {
 		{"/el/support", "en", "/el/support", false},
 		{"/lt/tafs/terms", "lt", "/tafs/terms", true},
 		{"/lt/support", "en", "/lt/support", false},
+		{"/cs/tafs/terms", "cs", "/tafs/terms", true},
+		{"/cs/support", "en", "/cs/support", false},
+		{"/sk/tafs/terms", "sk", "/tafs/terms", true},
+		{"/sk/support", "en", "/sk/support", false},
+		{"/sl/tafs/terms", "sl", "/tafs/terms", true},
+		{"/sl/support", "en", "/sl/support", false},
+		{"/hu/tafs/terms", "hu", "/tafs/terms", true},
+		{"/hu/support", "en", "/hu/support", false},
+		{"/ro/tafs/terms", "ro", "/tafs/terms", true},
+		{"/ro/support", "en", "/ro/support", false},
+		{"/bg/tafs/terms", "bg", "/tafs/terms", true},
+		{"/bg/cookies", "en", "/bg/cookies", false},
+		{"/hr/tafs/terms", "hr", "/tafs/terms", true},
+		{"/hr/support", "en", "/hr/support", false},
 		{"/pricing", "en", "/pricing", false},
 		{"/", "en", "/", false},
 	} {

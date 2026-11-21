@@ -1,0 +1,784 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// PrivacyHU is the privacy policy (/privacy) in Hungarian, at /hu/privacy.
+// It is a translation of Privacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one. Hungarian has
+// the legal texts only, so a link to any other page goes to English and
+// says so.
+templ PrivacyHU() {
+	@components.LayoutSite("KIFF — adatvédelmi szabályzat", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@privacyHeadHU()
+			@privacyWhoWeAreHU()
+			@privacyScopeHU()
+			@privacyRolesHU()
+			@privacyCategoriesHU()
+			@privacyLawfulBasesHU()
+			@privacySubprocessorsHU()
+			@privacyTransfersHU()
+			@privacyRetentionHU()
+			@privacyRightsHU()
+			@privacyCookiesHU()
+			@privacySecurityHU()
+			@privacyChildrenHU()
+			@privacyAutomatedHU()
+			@privacyChangesHU()
+			@privacyContactHU()
+		</article>
+	}
+}
+
+templ privacyHeadHU() {
+	<header class="legal-head">
+		<p class="legal-badge">Adatvédelmi szabályzat · v0.1</p>
+		<h1>Adatvédelmi szabályzat</h1>
+		<p class="legal-meta">
+			<strong>Utolsó frissítés:</strong> 2026. november 21.
+			<strong>Hatálybalépés dátuma:</strong> 2026. május 24.
+		</p>
+		<p class="legal-disclaimer">
+			Ez a szabályzat elmagyarázza, hogyan kezeli a KIFF Cloud
+			a személyes adatokat a weboldalon, az irányítópulton, az
+			API-ban és az iPhone-ra, iPadre, Androidra és számítógépre
+			készült tafs alkalmazásban. Kérdések:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ privacyWhoWeAreHU() {
+	<section id="who-we-are">
+		<h2>1. Kik vagyunk</h2>
+		<p>
+			A KIFF Cloudot a <strong>Kiff Agents OÜ</strong>, egy
+			Észtországban bejegyzett korlátolt felelősségű társaság
+			üzemelteti. Cégjegyzéki adatok:
+		</p>
+		<ul>
+			<li><strong>Cégjegyzékszám:</strong> 17372313 (észt e-Business Register)</li>
+			<li><strong>Uniós adószám:</strong> EE102924327</li>
+			<li><strong>Székhely:</strong> Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Észtország</li>
+			<li><strong>Adatvédelmi kapcsolattartás:</strong> <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a></li>
+			<li><strong>Hivatalos jogi értesítések:</strong> <a href="mailto:legal@kiff.dev">legal@kiff.dev</a></li>
+		</ul>
+		<p>
+			Mivel a Kiff Agents OÜ az Európai Unióban van letelepedve,
+			adatkezelésünkre közvetlenül vonatkozik az EU általános
+			adatvédelmi rendelete
+			(<abbr title="General Data Protection Regulation">GDPR</abbr>).
+			Nincs szükségünk a 27. cikk szerinti uniós képviselőre.
+		</p>
+	</section>
+}
+
+templ privacyScopeHU() {
+	<section id="scope">
+		<h2>2. A szabályzat hatálya</h2>
+		<p>
+			Ez a szabályzat azokra a személyes adatokra vonatkozik,
+			amelyeket akkor kezelünk, amikor Ön a következőket használja:
+		</p>
+		<ul>
+			<li><a href="https://kiff.dev"><code>kiff.dev</code></a> — marketingoldalunk, ez a szabályzatoldal és a nyugták nyilvános megjelenítése.</li>
+			<li><a href="https://app.kiff.dev"><code>app.kiff.dev</code></a> — bejelentkezést igénylő irányítópultunk.</li>
+			<li><a href="https://api.kiff.dev"><code>api.kiff.dev</code></a> — HTTP API-nk.</li>
+			<li id="tafs"><strong>tafs</strong> — iPhone-ra, iPadre, Androidra és számítógépre (Mac, Windows és Linux) készült alkalmazásunk és a mögötte álló szolgáltatás (beleértve a Setupot, amely összekapcsolja egy vállalat eszközeit, és a planque-ot, amely ezeket a kapcsolatokat tárolja), amelyben egy vállalat egy MI-ügynökre bíz egy feladatot, aki a KIFF Cards keretein belül dolgozik.</li>
+		</ul>
+		<p>
+			Ez a szabályzat <em>nem</em> vonatkozik a nyílt forráskódú
+			<code>kiff/kiff</code> keretrendszerre, amelyet Ön maga
+			futtathat. Ha a keretrendszert saját infrastruktúráján
+			futtatja, Ön az általa kezelt adatok adatkezelője, és
+			a Kiff Agents OÜ nem vesz részt ebben az adatkezelésben.
+		</p>
+	</section>
+}
+
+templ privacyRolesHU() {
+	<section id="roles">
+		<h2>3. Szerepeink a GDPR szerint</h2>
+		<p>
+			Az adatoktól függően két minőségben járunk el:
+		</p>
+		<ul>
+			<li>
+				<strong>Adatkezelőként</strong> a fiók- és bejelentkezési
+				metaadatok, a számlázási adatok (ha a számlázás aktív),
+				az Ön által kért marketingüzenetek és saját
+				szolgáltatásunk üzemeltetési telemetriája tekintetében.
+			</li>
+			<li>
+				<strong>Adatfeldolgozóként</strong> az auditadatok,
+				műveleti nyilvántartások, döntési nyugták és egyéb olyan
+				tartalmak tekintetében, amelyek ügyfeleink nevében
+				haladnak át a futtatókörnyezeten, valamint azok
+				tekintetében, amelyeket a tafs tárol számukra (minden taf futásai, csevegései, jelentései, memóriajegyzetei és az általuk átadott fájlok).
+				Ezen adatok adatkezelői az ügyfelek (a bérlők); fiókjuk
+				beállításain és domainkonfigurációjukon keresztül adnak
+				nekünk utasításokat. Ezt a viszonyt az adatfeldolgozási
+				megállapodás
+				(<abbr title="Data Processing Agreement">DPA</abbr>)
+				szabályozza; a közzétett feltételeket lásd a
+				<a href="/legal/dpa">DPA-mintában</a> (angolul).
+			</li>
+		</ul>
+		<p>
+			Ez a szabályzat elsősorban az adatkezelői minőségünkben
+			végzett adatkezeléssel foglalkozik. Ahol az
+			adatfeldolgozóként kezelt adatokat említjük, ott a DPA
+			a részletesebb dokumentum.
+		</p>
+	</section>
+}
+
+templ privacyCategoriesHU() {
+	<section id="categories">
+		<h2>4. Az általunk kezelt személyes adatok kategóriái</h2>
+		<p>
+			Az alábbi kategóriák összhangban vannak a
+			<a href="/security#data-we-process">/security#data-we-process</a> (angolul)
+			oldalon található technikai jegyzékkel. Ha a kettő eltér,
+			a technikai oldal az irányadó, és ezt a szakaszt ahhoz
+			igazítjuk.
+		</p>
+		<ul>
+			<li>
+				<strong>Fiókazonosítók</strong> — az Ön azonosítója
+				a felsőbb szintű hitelesítésnél (amelyet
+				identitásszolgáltatónk állít ki), és az e-mail-cím,
+				amellyel bejelentkezik. Ma eredeti formájukban tároljuk
+				őket; a hash-elt tárolás tervben van.
+			</li>
+			<li>
+				<strong>Bérlői metaadatok</strong> — bérlőazonosító,
+				slug, megjelenített név, létrehozási időbélyeg, valamint
+				az a nyelv, amelyet az egyes személyek alkalmazása
+				legutóbb használt, hogy a KIFF által nekik küldött
+				e-mailek ezen a nyelven érkezzenek.
+			</li>
+			<li>
+				<strong>API-hitelesítő adatok</strong> — átláthatatlan
+				API-kulcs-rekordok (hash-eket tárolunk, soha nem
+				a nyílt szöveget).
+			</li>
+			<li>
+				<strong>Munkamenet-süti adatai</strong> — bejelentkezés
+				után beállított, HMAC-cel aláírt munkamenet-süti. Lásd
+				lent a sütikről szóló szakaszt.
+			</li>
+			<li>
+				<strong>HTTP-kérések metaadatai</strong> — IP-cím,
+				felhasználói ügynök, a kérés útvonala, a válasz állapota,
+				késleltetés. Fordított proxynk hozzáférési naplóiban
+				tároljuk korlátozott ideig, biztonsági okokból és
+				a visszaélések megelőzése érdekében.
+			</li>
+			<li>
+				<strong>Bérlő által ellenőrzött tartalom</strong> —
+				a futtatókörnyezetbe küldött <code>parameters</code>,
+				<code>actor</code> és <code>entity</code> adatok. Ezeket
+				<em>adatfeldolgozóként</em> tároljuk az ügyfél nevében;
+				azért, hogy mi kerül továbbításra, az ügyfél felel.
+				A domainenkénti kitakarási konfiguráció tervben van.
+			</li>
+			<li>
+				<strong>Kommunikáció</strong> — az ügyfélszolgálati,
+				értékesítési, biztonsági vagy adatvédelmi postafiókjainkba
+				küldött e-mailek.
+			</li>
+			<li>
+				<strong>A tafs alkalmazás</strong> — a tafsba KIFF-fiókjával
+				jelentkezik be. Telefonon vagy táblagépen az alkalmazás
+				a munkamenetet a készülék kulcskarikájában (Keychain)
+				tárolja (Androidon annak titkosított tárhelyén).
+				Számítógépen a felhasználói fiókjához lezárva tárolja:
+				Windows rendszerű számítógépen a Windows saját
+				adatvédelmével, Linuxon az Ön kulcstartójában, Macen
+				a kulcskarikában. Egy számítógépes munkamenet legfeljebb
+				90 napig tart.
+				Az alkalmazás olyan aláírókulcsot hoz létre, amely soha
+				nem hagyja el a készüléket: iPhone, iPad vagy Mac Secure
+				Enclave-jében, androidos készülék Keystore-jában vagy
+				Windows rendszerű számítógép TPM-jében. Linuxon és Secure
+				Enclave nélküli Macen a kulcs szoftveres kulcs, amelyet
+				a kulcstartóban vagy a kulcskarikában tárolunk, és az
+				ilyen számítógép megmutathatja, mi vár Önre, de nem
+				hagyhatja jóvá; a jóváhagyás a telefonon történik{ macSecurityKey("hu") }. TPM nélküli
+				Windows rendszerű számítógéppel nem lehet bejelentkezni a tafsba. A KIFF tárolja a kulcs nyilvános felét, a készülék
+				nevét és platformját, valamint azt, hogy mikor adták hozzá
+				és mikor használták utoljára, hogy ellenőrizni tudja az
+				Ön válaszait a visszatartott hívásokra és a kapcsolatok
+				jóváhagyását. Ha számítógépén jelkulccsal hagy jóvá,
+				például a Windows Hellóval vagy biztonsági kulccsal,
+				az arca,
+				ujjlenyomata vagy PIN-kódja a számítógép saját rendszerénél
+				marad; a KIFF a jelkulcs nyilvános kulcsát, azonosítóját,
+				egy számlálót és egy nevet tárol, soha semmi titkosat,
+				és elutasítja azt a jelkulcsot, amely más készülékekkel
+				szinkronizál. Ha telefonon, táblagépen vagy az iPad
+				alkalmazást futtató Macen bekapcsolja az értesítéseket,
+				tároljuk a készülék push-tokenjét a KIFF-személyazonosítójával
+				és az alkalmazás által megjelenített nyelvvel, hogy az
+				értesítések ezen a nyelven érkezzenek. A tafs szolgáltatás
+				a fiók nyelvét is tárolja – annak alapján, aki legutóbb
+				csevegett a Coachcsal – legfeljebb három hónapig, hogy egy
+				taf jelentései ezen a nyelven érkezzenek. A telefon
+				értesítése az Apple-en vagy a Google-ön keresztül csak
+				azzal megy, hogy melyik tafról van szó és mit szeretne,
+				egy ajtó értesítésében pedig annak nevével vagy
+				e-mail-címével, aki írt: soha nem összeggel vagy a kérés
+				részleteivel. Ezeket az alkalmazás magán a készüléken
+				egészíti ki, a KIFF-től, így egy feloldott telefon
+				értesítése megjeleníthet összeget, kereskedőt vagy
+				személyt. Zárolt androidos telefonon csak annyit mutat:
+				„Egy tafnak szüksége van Önre”, és zárolt iPhone-on is,
+				hacsak nem állította be, hogy az előnézetek mindig
+				látszódjanak. <strong>Az órája:</strong> az óra nem tárol jelszót vagy kulcsot, csak a párosított telefonjával kommunikál, és soha nem hagy jóvá semmit. Amit a Coachnak vagy a kiválasztott tafnak mond, csak szövegként küldi el, a telefonon keresztül, miután engedélyezte az MI-t. Szavait az óra saját beszédfelismerő szolgáltatása – az Apple-é vagy a Google-é – alakítja ezzé a szöveggé. Wear OS-en, ha az leáll, mielőtt befejezné, helyette a telefonja saját felismerője végzi el, a telefonon. Elutasítani, leállítani vagy a Coachnak, illetve egy tafnak küldeni csak akkor tud, ha van képernyőzára vagy jelkódja, és fel van oldva. Amit egy tafnak küld, az a taf saját csevegésébe kerül, mintha a telefonján írta volna. Egy taf csevegése – az összegekkel együtt – csak addig látszik az órán, amíg nyitva van, és minden alkalommal a telefonon keresztül töltődik be; az óra semmit sem tárol belőle. <strong>Apple Watch:</strong> megjeleníti a tafjait és azok oldalait, de nem tárolja őket. Csak a Bejövő listáját tárolja, egy olyan fájlban, amelyet zárolt állapotban nem tud olvasni: minden visszatartott hívást a tafja nevével és azzal, amit kér, soha nem összeggel, valamint a Coach válaszait arra, amit az óráról küldött, szövegként. Ha kijelentkezik az órán, azt is tárolja, hogy ezt megtette, amíg újra be nem jelentkezik az órán. Ezen kívül semmit sem tárol, ha az órának nincs jelkódja. A Bejövő lista törlődik, amikor kijelentkezik az órán vagy az iPhone-ja kijelentkezik, vagy amikor az alkalmazás legközelebb jelkód nélkül nyílik meg vagy záródik be. Nem készít felvételt, és csak az iPhone-ja értesítéseit jeleníti meg. <strong>Wear OS:</strong> megjeleníti a fiókja e-mail-címét és a mai naptárat, de nem tárolja őket. Hogy azonnal megnyíljon, titkosítva tárolja, hány dolog vár Önre, valamint minden taf nevét és azt, hogy le van-e állítva vagy szüneteltetve van-e: soha nem összeget, egy visszatartott hívás részleteit vagy egy taf csevegését. Ez törlődik, amikor kijelentkezik, amikor az óra zárolódik vagy leveszi a csuklójáról, és 24 óra után. Tárolja a Bejövő listáját, ahol minden sor egy taf neve és az, amit mond, soha nem összeg, valamint egy későbbre tett üzenetet, szövegként. A kijelentkezés – az órán vagy a telefonon – mindezt törli. A csempéje számára azt is tárolja, hány dolog vár Önre, amely csak feloldott óránál látszik, és törlődik, amikor kijelentkezik, vagy amikor a csempe legközelebb zárolt vagy képernyőzár nélküli óránál jelenik meg. Az órán való kijelentkezés után feljegyzi, hogy kijelentkezett, amíg újra be nem jelentkezik. A Bejövő lista akkor is törlődik, amikor az alkalmazás legközelebb zárolt vagy képernyőzár nélküli óránál nyílik meg vagy záródik be. Egy későbbre tett üzenet megmarad, amíg el nem küldi vagy nem törli, mivel Ön kérte az elküldését. Ha az óra beszédfelismerő szolgáltatása leáll, mielőtt befejezné, az óra elküldi a felvételt a telefonjára, amely magán a telefonon alakítja szöveggé, soha nem szerveren. A felvétel mindkét eszközön törlődik, amint a szöveg visszaérkezik vagy Ön megszakítja, és legfeljebb 2 perc után. A Coachhoz vagy a tafjához csak a szöveg jut el. Egy taf eredménye az óra értesítései között maradhat, amíg el nem veti, vagy ki nem jelentkezik az órán. Windows rendszerű számítógépen,
+				linuxos számítógépen vagy a macOS 12 alkalmazást futtató
+				Macen az értesítéseket maga az alkalmazás készíti, amíg
+				fut, push-token nélkül és más vállalat bevonása nélkül.
+				Windowson és Linuxon megmutatják, melyik tafról van szó,
+				mit akar tenni, az összeget, miért és meddig; a macOS 12
+				alkalmazásban a hívásra vonatkozó KIFF-szöveget mutatják,
+				miután bekapcsolta őket, a zárolt képernyő pedig azt
+				mutatja, amit a Mac előnézeti beállítása megenged.
+				Windowson ki vannak kapcsolva,
+				amíg be nem kapcsolja őket, és zárolt képernyőnél csak
+				annyit mutatnak: „Egy tafnak szüksége van Önre”. Egy,
+				a képernyő zárolása előtt megjelent értesítés megtartja
+				részleteit a Windows értesítési listájában. Linuxon be
+				vannak kapcsolva, amíg ki nem kapcsolja őket, és hogy
+				a zárolt képernyő mit mutat, az az asztali környezettől
+				függ. Amikor
+				összekapcsol egy eszközt, az eszköz saját szolgáltatójánál jelentkezik be. Az olyan alkalmazásnál, amelybe a planque maga jelentkezik be, például a Stripe-nál, vagy egy Ön által megadott kulcsnál a planque titkosítva tárolja ezt a tokent vagy kulcsot a vállalata számára; felügyelt kapcsolat esetén a bejelentkezést a Composio, a planque által használt kapcsolódási szolgáltatás tárolja, a planque pedig csak a kapcsolat rekordját és az Ön által jóváhagyott eszközöket tárolja (mindezt adatfeldolgozóként, lásd lent). A kapcsolat rekordja tartalmazhatja azt a fiókot, amelybe be van jelentkezve (nevét vagy e-mail-címét), hogy az alkalmazás megmutathassa, melyikről van szó. A KIFF felügyelt kapcsolatokat csak a <a href="/subprocessors#composio">/subprocessors</a> (angolul) oldalon megnevezett alkalmazásokhoz használ. Az alkalmazásban nincs analitikai vagy
+				reklámkövető.
+			</li>
+			<li>
+				<strong>App Store-vásárlások</strong> — amikor a tafsban
+				Solót vagy kreditcsomagot vásárol, azt az Apple értékesíti
+				Önnek: az Apple az eladó, ő veszi át a fizetést és tárolja
+				fizetési adatait. Az Apple közli velünk, mit vásároltak,
+				melyik KIFF-fiók számára (egy véletlenszerű azonosító,
+				amelyet az alkalmazás a vásárláshoz csatol), mikor, az
+				Apple tranzakcióazonosítóját, Solo esetén pedig azt, hogy
+				mikor ér véget vagy újul meg az időszak. Ezt arra
+				használjuk, hogy jóváírjuk a krediteket vagy a csomagot
+				a fiókján. Az Apple nem adja meg nekünk az Apple ID-ját,
+				nevét, e-mail-címét vagy kártyáját.
+			</li>
+			<li>
+				<strong>Google Play-vásárlások</strong> — Androidon
+				ugyanezek a vásárlások a Google Play számlázásán keresztül
+				történnek: a Google veszi át a fizetést és tárolja fizetési
+				adatait. A Google közli velünk, mit vásároltak, melyik
+				KIFF-fiók számára (ugyanaz a véletlenszerű azonosító),
+				mikor, a vásárlás tokenjét és rendelésazonosítóját, Solo
+				esetén pedig azt, hogy mikor ér véget vagy újul meg az
+				időszak, és ezt ugyanígy használjuk.
+				A Google nem adja meg nekünk a Google-fiókját, nevét,
+				e-mail-címét vagy kártyáját.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyLawfulBasesHU() {
+	<section id="lawful-bases">
+		<h2>5. Az adatkezelés jogalapjai</h2>
+		<p>
+			A GDPR 6. cikke alapján a következő jogalapokra
+			támaszkodunk:
+		</p>
+		<ul>
+			<li>
+				<strong>Szerződés teljesítése</strong> (6. cikk
+				(1) bekezdés b) pont) — a fiók létrehozásához,
+				a hitelesítéshez, a futtatókörnyezet az Ön nevében
+				történő működtetéséhez, a számlázáshoz (ha aktív) és
+				a szolgáltatás fő részeihez.
+			</li>
+			<li>
+				<strong>Jogos érdek</strong> (6. cikk (1) bekezdés f) pont)
+				— a biztonsághoz, a csalások megelőzéséhez, a visszaélések
+				felderítéséhez, az üzemeltetési telemetriához és
+				a szolgáltatás védelméhez. Érdekeinket mérlegeljük az
+				Ön jogaival szemben, és kérésre közöljük, milyen
+				eredményre vezetett ez az érdekmérlegelés.
+			</li>
+			<li>
+				<strong>Hozzájárulás</strong> (6. cikk (1) bekezdés a) pont) — a tafs alkalmazás MI-jéhez: mi kerül elküldésre a Coachot és a tafjait működtető MI-modellnek, ahogyan <a href="#ai-in-tafs">alább</a> leírjuk. Semmi sem kerül elküldésre, amíg nem engedélyezi, és hozzájárulását a Fiókban visszavonhatja. Hozzájárulást kérnénk akkor is, mielőtt bármilyen analitikai sütit, nem kötelező marketingüzenetet vagy olyan új adatkezelést vezetnénk be, amely érdemben kiterjeszti az adatai felhasználását. Nem végzünk analitikát, nem jelenítünk meg reklámot, és nem végzünk nem alapvető követést.
+			</li>
+			<li>
+				<strong>Jogi kötelezettség</strong> (6. cikk (1) bekezdés c) pont)
+				— az adónyilvántartásokhoz (az észt számviteli törvény
+				12. §-a, 7 év), a hatóságok jogszerű megkereséseinek
+				megválaszolásához és a pénzmosás elleni szabályok által
+				előírt megőrzéshez, ahol alkalmazandó.
+			</li>
+		</ul>
+		<h3 id="ai-in-tafs">Az MI a tafs alkalmazásban</h3>
+		<p>A tafs alkalmazás megkérdezi Önt, mielőtt bármi az MI-hez kerülne, a következő szavakkal:</p>
+		<ul>
+			<li>A tafs az Anthropic Claude MI-jét használja a Coachhoz és a tafjaihoz.</li>
+			<li>A Coach és a tafjai MI-ügynökök: amit írnak, azt MI generálja, és tévedhet. Az az üzenet, amelyet egy taf a vállalatán kívülre küld, közli, hogy MI-ügynök írta.</li>
+			<li>Mi kerül elküldésre: amit a Coachnak és a tafjainak ír, a csatolt fájlok, amit az összekapcsolt alkalmazásai munka közben visszaadnak egy tafnak, és ami a képernyőjén van, amíg a Coach segít Önnek az alkalmazásban.</li>
+			<li>Mi nem kerül soha elküldésre: az összekapcsolt alkalmazásai által használt jelszavak és kulcsok, illetve az ujjlenyomata.</li>
+			<li>Az Anthropic a válaszadáshoz használja, és legfeljebb 30 napig tárolja.</li>
+			<li>Semmi sem kerül elküldésre, amíg nem engedélyezi. Hozzájárulását a Fiókban visszavonhatja.</li>
+		</ul>
+		<p>Az a taf, amely úgy fut, hogy abban a pillanatban senki sincs jelen (az ütemezése szerint, vagy amikor valami beérkezik), annak a személynek a hozzájárulásán alapul, aki létrehozta vagy átvette, egyébként annak az első személynek a hozzájárulásán, aki a fiók tafjait kezeli, és engedélyezi.</p>
+		<p><strong>Amikor visszavonja a hozzájárulását,</strong> a Coach és a tafjai nem válaszolnak többé Önnek. Az a taf, amelynek futásai az Ön hozzájárulásán alapulnak, szünetel: az ütemezései leállnak, a beérkező dolgok pedig várnak. Akkor folytatódik, amikor ismét megadják a hozzájárulást, vagy valaki, aki a fiók tafjait kezeli, saját hozzájárulásával átveszi. A visszavonás nem érinti a korábban elküldötteket.</p>
+		<p>Az Anthropic szerepel a <a href="/subprocessors">/subprocessors</a> (angolul) oldalon, azzal együtt, hogy hol kezel adatokat, és mikor tárolhatja őket hosszabb ideig.</p>
+	</section>
+}
+
+templ privacySubprocessorsHU() {
+	<section id="sub-processors">
+		<h2>6. További adatfeldolgozók</h2>
+		<p>Személyes adatait nem adjuk el, és nem osztjuk meg reklámcélokra.</p>
+		<p>
+			A szolgáltatás nyújtásához szolgáltatók szűk körét vesszük
+			igénybe. A hivatalos, aktuális lista a
+			<a href="/subprocessors">/subprocessors</a> (angolul) oldalon
+			található; ezt az oldalt minden változástól számított 30
+			napon belül frissítjük. Minden további adatfeldolgozótól
+			írásbeli megállapodásokban a miénkkel egyenértékű védelmet
+			követelünk meg, beleértve az uniós általános szerződési
+			feltételeket, ha a személyes adatok elhagyják az EU-t.
+		</p>
+		<p>
+			A további adatfeldolgozók személyes adatokat érintő
+			jelentős bővítéséről vagy cseréjéről az aktív ügyfeleket
+			előre értesítjük, a tiltakozás jogával.
+		</p>
+	</section>
+}
+
+templ privacyTransfersHU() {
+	<section id="transfers">
+		<h2>7. Nemzetközi adattovábbítás</h2>
+		<p>
+			Néhány további adatfeldolgozónk az Európai Gazdasági
+			Térségen kívül, elsősorban az Egyesült Államokban van
+			letelepedve. Minden ilyen adattovábbításnál legalább az
+			alábbi garanciák egyikére támaszkodunk:
+		</p>
+		<ul>
+			<li>
+				<strong>EU–USA adatvédelmi keretrendszer</strong> —
+				azoknál az egyesült államokbeli további
+				adatfeldolgozóknál, amelyek tanúsítványt szereztek
+				a keretrendszer szerint. A megfelelőségi határozat 2023
+				közepe óta hatályos; figyelemmel kísérjük státuszának
+				bármilyen változását.
+			</li>
+			<li>
+				<strong>Általános szerződési feltételek</strong> —
+				a 2. modul (adatkezelő–adatfeldolgozó) közvetlen további
+				adatfeldolgozóinknál, és a 3. modul
+				(adatfeldolgozó–további adatfeldolgozó), ahol láncolt
+				adatfeldolgozók vannak. A Bizottság által 2021-ben
+				jóváhagyott általános szerződési feltételeket használjuk.
+			</li>
+			<li>
+				<strong>Kiegészítő intézkedések</strong> — ahol
+				a kockázatértékelés szerint további garanciák indokoltak
+				(titkosítás továbbítás közben és tároláskor, hozzáférés
+				naplózása, adattakarékosság).
+			</li>
+		</ul>
+		<p>
+			Az egyes további adatfeldolgozókra alkalmazandó konkrét
+			adattovábbítási eszközt e-mailben kérheti a
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			címen.
+		</p>
+		<p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet követelnek, mint amit ez a szabályzat mond. Hogy mit tesznek hozzá, angolul és az ország nyelvén, az <a href="/privacy/countries">Az Ön országa</a> oldalon található.</p>
+	</section>
+}
+
+templ privacyRetentionHU() {
+	<section id="retention">
+		<h2>8. Megőrzés</h2>
+		<p>
+			A személyes adatokat a lehető legrövidebb ideig őrizzük
+			meg, amely összhangban van azokkal a célokkal, amelyekre
+			kezeljük őket, és az esetleges alkalmazandó jogi
+			kötelezettséggel.
+		</p>
+		<ul>
+			<li>
+				<strong>Fiók- és bejelentkezési metaadatok</strong> —
+				a fiók törléséig. A tafs alkalmazásban a tulajdonos
+				a Fiók → <em>Fiók
+				törlése</em> menüpontban törli. A weben létrehozott fiók
+				a
+				<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+				címre küldött e-maillel törölhető, a GDPR 12. cikk
+				(3) bekezdése szerinti egyhónapos határidőn belül.
+				A kulcsok mindkét esetben azonnal megszűnnek működni.
+				A tafs alkalmazásban végzett törlés nem vonható vissza:
+				a tafs-csevegések, jegyzetek és kapcsolatok azonnal
+				törlődnek, a KIFF által tárolt adatok pedig 30 napon
+				belül. A weben végzett törlésnél az adatokat 30 napos
+				türelmi időszakig megőrizzük, arra az esetre, ha
+				a tulajdonos vissza szeretné kapni, majd töröljük.
+			</li>
+			<li>
+				<strong>API-kulcs-rekordok</strong> — a fiók törléséig,
+				akkor is, ha egy kulcsot visszavontak. Az ügynök
+				bejelentkezési kapcsolatához tartozó kulcs a kapcsolattal
+				együtt törlődik, 30 nappal annak megszűnése után.
+			</li>
+			<li>
+				<strong>Munkamenet-sütik</strong> — lejáratukig
+				(alapértelmezés szerint 24 óra) vagy kijelentkezésig.
+			</li>
+			<li>
+				<strong>Fordított proxy hozzáférési naplói</strong> — legfeljebb 90
+				napig, utána összesítjük vagy töröljük őket.
+			</li>
+			<li>
+				<strong>Szolgáltatási naplók</strong> — amit a KIFF
+				szolgáltatásai és a planque működésük közben rögzítenek:
+				hibák és kérések, amelyek megnevezhetnek egy fiókot,
+				személyt vagy ügynököt. 30
+				nap, utána törlődnek.
+			</li>
+			<li>
+				<strong>Biztonsági mentések</strong> — a KIFF adatbázisáról
+				naponta titkosított biztonsági mentés készül, és minden
+				mentést 7 napig őrzünk meg, így egy törölt rekord 7 napon
+				belül eltűnik belőlük.
+				A tafs és a planque tárhelyei 35 napig őriznek meg
+				titkosított, időponthoz kötött másolatokat, amelyeket
+				kizárólag egy tárhely meghibásodás utáni
+				helyreállítására használnak, így egy törölt rekord 35
+				napon belül eltűnik belőlük.
+			</li>
+			<li>
+				<strong>Bérlői auditadatok</strong> — adatfeldolgozóként
+				tároljuk az ügyfél bérlői konfigurációja szerint.
+				Alapértelmezés: a bérlő fennállásának teljes idejére
+				megőrizzük; a bérlő törlésekor töröljük. Lásd:
+				<a href="/security#deletion">/security#deletion</a> (angolul).
+			</li>
+			<li>
+				<strong>A KIFF átjárón keresztüli hívások</strong> —
+				a hívás argumentumai a hívás elküldéséig, elutasításáig
+				vagy sikertelenségéig, utána törlődnek; az eszköz
+				eredménye 24 óráig, utána törlődik. A döntési rekordot
+				és az argumentumok hash-ét bérlői auditadatként őrizzük
+				meg. Lásd:
+				<a href="/security#data-kept">/security#data-kept</a> (angolul).
+			</li>
+			<li>
+				<strong>Használat</strong> — minden átjárón keresztüli
+				hívásnál, amint véget ér: melyik ügynök indította, az
+				eszköz, és hogy műveletnek számított-e, vagy ingyenes
+				volt (és miért). Egy taf vagy a Coach minden futásánál,
+				amint véget ér: a taf, mikor, az MI-je által felhasznált
+				kreditek, és hogy beszámítottak-e, vagy miért nem.
+				A fiók törléséig; amit számlázás céljából jelentünk
+				fizetési szolgáltatónknak, azt a számlázási
+				nyilvántartásokkal együtt őrizzük meg.
+			</li>
+			<li>
+				<strong>Ügynökök bejelentkezési kapcsolatai</strong> —
+				melyik ügynök, az alkalmazás neve, ki engedélyezte,
+				mikor és utolsó használata: amíg a kapcsolat él, majd
+				megszűnése után 30
+				napig (ez idő alatt az irányítópulton is látható marad),
+				utána a tokenjeivel és API-kulcsával együtt törlődik.
+				Mindez a fiókkal együtt törlődik.
+			</li>
+			<li>
+				<strong>tafs</strong> — egy készülék push-tokenje,
+				amíg ki nem jelentkezik az alkalmazásból, el nem
+				távolítja a készüléket, vagy az Apple vagy a Google nem
+				jelzi, hogy a token megszűnt. Egy készülék nyilvános
+				kulcsa, neve, platformja és dátumai, amíg használja;
+				miután kijelentkezteti, eltávolítottként jelöljük meg, és
+				a fiók törléséig megőrizzük, hogy a KIFF elutasíthassa
+				egy késői válaszát, és megmutathassa, melyik készülék írt
+				alá egy korábbit. Egy jelkulcs nyilvános kulcsát,
+				azonosítóját és nevét a készüléke adataiként őrizzük.
+				Egy számítógép legfeljebb 90 napig vagy kijelentkezésig
+				őrzi meg a munkamenetét. Amit a tafs a vállalata számára
+				tárol, azt adatfeldolgozóként tároljuk: egy taf futásait
+				és csevegéseit, a csevegés összefoglalójával (és
+				a Setupéval), 30 napig, amit az eszközei visszaadnak,
+				csak a futás végéig (egy csevegésben, amit csak
+				elolvasott, titkosítva tároljuk a következő üzeneteihez,
+				addig használjuk, amíg a csevegés egy órán át nem
+				tétlen, és legfeljebb négy órával az olvasás után, utána
+				automatikusan törlődik, néhány napon belül), valamint
+				a memóriajegyzeteit a taf
+				eltávolításáig; az általa átadott fájlokat az őket létrehozó futástól számított 30 napig, utána egy napon belül automatikusan törlődnek, vagy előbb, ha valaki a fiókjából töröl egyet; egy kapcsolat tokenjét vagy kulcsát a planque-ban, illetve egy felügyelt kapcsolat bejelentkezését a Composiónál, amíg a kapcsolatot meg nem szünteti (ha az adott szolgáltatónál ugyanazt a fiókot egy másik kapcsolata is használhatja, használat nélkül megőrizzük, amíg azt is meg nem szünteti), a jóváhagyásainak nyilvántartását pedig
+				a fiók megszűnéséig; lásd a
+				<a href="/legal/dpa#annex-4">DPA 4. mellékletét</a> (angolul).
+			</li>
+			<li>
+				<strong>Számlázási nyilvántartások</strong> — a pénzügyi
+				év végétől számított 7 évig (az észt számviteli törvény
+				12. §-a).
+			</li>
+			<li>
+				<strong>App Store- és Google Play-vásárlások</strong> —
+				amit az Apple vagy a Google közölt velünk az egyes
+				vásárlásokról, az a fiók törléséig a fiókjában marad.
+				Értékesítési és kifizetési jelentéseik, amelyeket
+				számlázási nyilvántartásként 7 évig őrzünk meg, nem
+				nevesítik Önt.
+			</li>
+			<li>
+				<strong>Ügyfélszolgálati levelezés</strong> — az utolsó
+				kapcsolatfelvételtől számított 3 évig, utána törlődik.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyRightsHU() {
+	<section id="rights">
+		<h2>9. Az Ön jogai</h2>
+		<p>
+			A GDPR alapján személyes adataival kapcsolatban a következő
+			jogok illetik meg:
+		</p>
+		<ul>
+			<li><strong>Hozzáférés</strong> (15. cikk) — tájékoztatás arról, hogy kezeljük-e az adatait, és azok másolata.</li>
+			<li><strong>Helyesbítés</strong> (16. cikk) — a pontatlan vagy hiányos adatok helyesbítése.</li>
+			<li><strong>Törlés</strong> (17. cikk) — adatai törlése, a jogszabályi megőrzési kivételek fenntartásával.</li>
+			<li><strong>Korlátozás</strong> (18. cikk) — az adatkezelés felfüggesztése, amíg egy vita rendeződik.</li>
+			<li><strong>Adathordozhatóság</strong> (20. cikk) — az Ön által megadott adatok géppel olvasható exportja.</li>
+			<li><strong>Tiltakozás</strong> (21. cikk) — a jogos érdeken alapuló adatkezelés ellen; abbahagyjuk, hacsak nem tudunk elsőbbséget élvező okokat igazolni.</li>
+			<li><strong>A hozzájárulás visszavonása</strong> (7. cikk (3) bekezdés) — bármely hozzájáruláson alapuló adatkezelésnél, például a tafs alkalmazás MI-jénél (a Fiókban, ahogy <a href="#ai-in-tafs">fent</a> leírtuk). A visszavonás nem érinti a korábbi jogszerű adatkezelést.</li>
+		</ul>
+		<p>
+			E jogok bármelyikét a
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			címre küldött e-maillel gyakorolhatja. A 12. cikk
+			(3) bekezdése szerint egy hónapon belül válaszolunk;
+			összetett kérelmek esetén ezt legfeljebb további két
+			hónappal meghosszabbíthatjuk, és erről tájékoztatjuk.
+		</p>
+		<h3 id="export-chats">Saját tafs-csevegései</h3>
+		<p>
+			A tafs alkalmazásban a Fiók →  Csevegéseim exportálása
+			letölti az egyes tafokkal folytatott saját csevegéseit,
+			a Coachcsal folytatottakat is, a csatolt fájlok nevét és
+			saját jegyzeteit, olvasható fájlként és JSON-ként. Csak Ön
+			exportálhatja őket: egy rendszergazda vagy a fiók
+			tulajdonosa nem, és a KIFF fiókexportja sem tartalmazza őket.
+		</p>
+		<h3 id="delete-account">A tafs-fiók törlése</h3>
+		<p>
+			A tafs a KIFF alkalmazása. A tafs-fiók és adatai
+			törlése:
+		</p>
+		<ol>
+			<li>Nyissa meg a tafs alkalmazást, és jelentkezzen be.</li>
+			<li>Lépjen a Fiók menüpontba, és koppintson a <em>Fiók törlése</em> elemre.</li>
+			<li>Erősítse meg. A fiók törlése nem vonható vissza.</li>
+		</ol>
+		<p>
+			A <em>Fiók törlése</em> annak jelenik meg, aki törölheti
+			a vállalat fiókját, általában a tulajdonosának. Ha nem
+			látja, vagy már nincs meg az alkalmazás, írjon a
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			címre arról a címről, amellyel bejelentkezik, és egy
+			hónapon belül töröljük az adatait.
+		</p>
+		<p>
+			Mi törlődik: a fiók kulcsai azonnal megszűnnek működni.
+			Tafjai, csevegései, jegyzetei, csatolt fájljai és
+			kapcsolatai azonnal törlődnek, időponthoz kötött
+			másolataikból pedig 35 napon belül. Amit a KIFF a fiók
+			számára tárol, az 30 napon belül törlődik, a biztonsági
+			mentésekből pedig az azt követő 7 napon belül.
+			A fiókot megnevező szolgáltatási naplók 30 napon belül
+			eltűnnek. A bérlői auditadatok a bérlővel együtt törlődnek.
+			Az egyes adattípusokról lásd: <a href="#retention">Megőrzés</a>.
+		</p>
+		<p id="delete-data">
+			Ha adatai egy részét törölné, de a fiókot megtartaná: az
+			alkalmazásban töröljön egy csevegést, és vele együtt
+			törlődnek az üzenetei és a csatolt fájljai; távolítson el
+			egy tafot, és vele együtt törlődnek a csevegései,
+			jegyzetei és kapcsolatai. Minden más esetben írjon a
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			címre, és írja meg, mit töröljünk. Egy hónapon belül megtesszük.
+		</p>
+		<p>
+			Joga van panaszt tenni egy
+			felügyeleti hatóságnál. Fő felügyeleti hatóságunk
+			az
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">észt adatvédelmi felügyelet (Andmekaitse Inspektsioon)</a>.
+			Panaszt tehet a lakóhelye szerinti tagállam felügyeleti
+			hatóságánál is.
+		</p>
+		<p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet követelnek, mint amit ez a szabályzat mond. Hogy mit tesznek hozzá, angolul és az ország nyelvén, az <a href="/privacy/countries">Az Ön országa</a> oldalon található.</p>
+	</section>
+}
+
+templ privacyCookiesHU() {
+	<section id="cookies">
+		<h2>10. Sütik</h2>
+		<p>
+			Három sütit helyezünk el, mindegyik feltétlenül szükséges,
+			saját süti, csak HTTPS-en keresztül küldjük, és az oldalon
+			futó szkriptek nem olvashatják. Az uniós elektronikus
+			hírközlési adatvédelmi szabályok szerint nem igényelnek
+			hozzájárulást; azért soroljuk fel őket, hogy tudjon
+			róluk. A részleteket a
+			<a href="/cookies">sütikről szóló szabályzat</a> (angolul) tartalmazza.
+		</p>
+		<ul>
+			<li>
+				<strong><code>kiff_session</code></strong> — bejelentkezve
+				tartja Önt. Aláírt munkamenet-süti, amely a bejelentkezési
+				azonosítóját, e-mail-címét és nevét, valamint azt
+				a hitelesítő adatot tartalmazza, amelyet az irányítópult
+				az Ön nevében használ. A <code>.kiff.dev</code> számára
+				beállítva. 24 óráig vagy kijelentkezésig érvényes.
+			</li>
+			<li>
+				<strong><code>kiff_flash</code></strong> — egyszeri
+				üzenetet visz át a következő oldalra, például „a kulcsa
+				elkészült”. Aláírt; új kulcs soha nincs benne.
+				A <code>.kiff.dev</code> számára beállítva. Törlődik,
+				amikor a következő oldal elolvassa, és legfeljebb 5 perc után.
+			</li>
+			<li>
+				<strong><code>kiff_cb_attempts</code></strong> — számolja,
+				hányszor töltődött újra a bejelentkezési oldal, hogy egy
+				hurokba került bejelentkezés leálljon. Csak erre az oldalra
+				küldjük. 5
+				percig érvényes, és törlődik, amikor egy bejelentkezés elindul vagy sikerül.
+			</li>
+		</ul>
+		<p>
+			Nem használunk analitikai sütiket, reklámsütiket vagy
+			harmadik féltől származó követőt. Ha valaha bevezetnénk
+			ilyet, a süti elhelyezése előtt hozzájárulási sávot
+			jelenítenénk meg, összhangban az elektronikus hírközlési
+			adatvédelmi szabályokkal és az EDPB követési
+			technológiákról szóló 2023-as iránymutatásával.
+		</p>
+		<p>
+			Ha a Clerken (hitelesítési további adatfeldolgozónkon)
+			keresztül jelentkezik be, a Clerk saját frontend-domainjén
+			(<code>clerk.kiff.dev</code>) is elhelyez sütiket. Ezek
+			a sütik szükségesek ahhoz, hogy a Clerk felismerje Önt
+			a bejelentkezési folyamat során, és rájuk a Clerk
+			adatvédelmi szabályzata és a miénk is vonatkozik.
+			A részleteket lásd a további adatfeldolgozók listájában.
+		</p>
+	</section>
+}
+
+templ privacySecurityHU() {
+	<section id="security">
+		<h2>11. Biztonság</h2>
+		<p>
+			Technikai és szervezési biztonsági intézkedéseinket
+			a <a href="/security">/security</a> (angolul) oldalon írjuk le.
+			Ezek közé tartozik a bérlők adatbázisszintű elkülönítése,
+			a TLS 1.2+ továbbítás közben, a tárolt adatok titkosítása
+			a felügyelt szolgáltató alapbeállításaival, valamint
+			a legkisebb jogosultság elvén alapuló hozzáférés-szabályozás.
+		</p>
+		<p>
+			Az adatvédelmi incidensről az érintett ügyfeleket
+			indokolatlan késedelem nélkül, a megerősítéstől számított
+			72 órán belül értesítjük, a GDPR 33. cikkével összhangban.
+			Az értesítés tartalmazza az incidens jellegét, az érintettek
+			és a nyilvántartások kategóriáit és hozzávetőleges számát,
+			a valószínű következményeket, valamint a megtett vagy
+			tervezett intézkedéseket.
+		</p>
+	</section>
+}
+
+templ privacyChildrenHU() {
+	<section id="children">
+		<h2>12. Gyermekek</h2>
+		<p>
+			A KIFF Cloud fejlesztői infrastruktúra-termék, amely nem
+			gyermekeknek szól. Tudatosan nem gyűjtünk személyes adatokat
+			16 év alatti gyermekektől. Ha úgy gondolja, hogy egy
+			gyermek személyes adatokat adott meg nekünk, írjon a
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			címre, és töröljük azokat.
+		</p>
+	</section>
+}
+
+templ privacyAutomatedHU() {
+	<section id="automated">
+		<h2>13. Automatizált döntéshozatal</h2>
+		<p>
+			A KIFF Cloud futtatókörnyezete determinisztikus,
+			szabályalapú döntéseket hoz az ügyfeleink által küldött
+			adatok alapján. Ezek nem a GDPR 22. cikke szerinti,
+			Önre vonatkozó, joghatással járó vagy Önt hasonlóképpen
+			jelentős mértékben érintő döntések; ezek az ügyfél
+			műveleteire (visszatérítések, megrendelések, üzenetek
+			stb.) vonatkozó döntések, amelyeket az ügyfél saját
+			szabályai szerint hajtanak végre.
+		</p>
+		<p>
+			Azok az ügyfelek, akik a KIFF Cloudot saját végfelhasználóikat
+			érintő döntésekhez használják, maguk felelnek a 22. cikk
+			betartásáért. Irányítási nyugtáinkat úgy terveztük, hogy
+			ezeknek az ügyfeleknek megadják az emberi felügyelet
+			igazolásához szükséges auditnyomot, de az emberi felügyelet
+			biztosításának jogi kötelezettsége
+			az ügyfelet terheli.
+		</p>
+	</section>
+}
+
+templ privacyChangesHU() {
+	<section id="changes">
+		<h2>14. A szabályzat módosítása</h2>
+		<p>
+			Ezt a szabályzatot időről időre frissíthetjük. A jelentős
+			változásokról az aktív ügyfeleket e-mailben, valamint
+			ezen az oldalon legalább 30 napig jól látható sávval
+			értesítjük. A nem jelentős változásokat új „utolsó
+			frissítés” dátummal tesszük közzé.
+		</p>
+	</section>
+}
+
+templ privacyContactHU() {
+	<section id="contact">
+		<h2>15. Kapcsolat</h2>
+		<p>
+			Adatvédelmi kérdések és a jogok gyakorlására irányuló kérelmek:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p>
+			Hivatalos jogi értesítések a Kiff Agents OÜ részére:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>,
+			vagy postán: Tööstuse tn 75-71, Põhja-Tallinna linnaosa,
+			Tallinn 10416, Észtország.
+		</p>
+		<p>
+			Panaszok esetén a fő felügyeleti hatóság:
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">észt adatvédelmi felügyelet (Andmekaitse Inspektsioon)</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Dokumentumverzió:</strong> v0.1.<br/>
+			<strong>Utolsó frissítés:</strong> 2026. november 21.
+		</p>
+	</section>
+}

@@ -327,11 +327,26 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 	for lang, page := range map[string]string{
 		"ko": `<main><section id="a"><h2>요금</h2><p>2026년 11월 9일에 최대 €1,240.50, <a href="/ko/privacy#tafs">개인정보</a> 및 <code>x</code>.</p><ul><li>30일</li></ul></section></main>`,
 		"ja": `<main><section id="a"><h2>料金</h2><p>2026年11月9日に最大€1,240.50、<a href="/ja/privacy#tafs">プライバシー</a>と<code>x</code>。</p><ul><li>30日</li></ul></section></main>`,
-		"et": `<main><section id="a"><h2>Tasud</h2><p>Kuni 1 240,50 € 9. novembril 2026, vt <a href="/et/privacy#tafs">privaatsus</a> ja <code>x</code>.</p><ul><li>30 päeva</li></ul></section></main>`, // a month's name: no extra figure
+		"et": `<main><section id="a"><h2>Tasud</h2><p>Kuni 1 240,50 € 9. novembril 2026, vt <a href="/et/privacy#tafs">privaatsus</a> ja <code>x</code>.</p><ul><li>30 päeva</li></ul></section></main>`,          // a month's name: no extra figure
+		"cs": `<main><section id="a"><h2>Poplatky</h2><p>Až 1 240,50 € dne 9. listopadu 2026, viz <a href="/cs/privacy#tafs">ochrana soukromí</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`, // so does Czech ("9. listopadu 2026")
+		"sk": `<main><section id="a"><h2>Poplatky</h2><p>Najviac 1 240,50 € 9. novembra 2026, pozri <a href="/sk/privacy#tafs">ochrana súkromia</a> a <code>x</code>.</p><ul><li>30 dní</li></ul></section></main>`,
+		"sl": `<main><section id="a"><h2>Pristojbine</h2><p>Do 1.240,50 € 9. novembra 2026, glej <a href="/sl/privacy#tafs">zasebnost</a> in <code>x</code>.</p><ul><li>30 dni</li></ul></section></main>`,
+		"ro": `<main><section id="a"><h2>Taxe</h2><p>Până la 1.240,50 € la 9 noiembrie 2026, vezi <a href="/ro/privacy#tafs">confidențialitate</a> și <code>x</code>.</p><ul><li>30 de zile</li></ul></section></main>`,
+		"hr": `<main><section id="a"><h2>Naknade</h2><p>Do 1.240,50 € 9. studenoga 2026., vidi <a href="/hr/privacy#tafs">privatnost</a> i <code>x</code>.</p><ul><li>30 dana</li></ul></section></main>`, // the month in words, the year with its full stop
 	} {
 		if a, b := multisetDiff(en.figures, shapeOf(page, lang).figures); len(a)+len(b) > 0 {
 			t.Errorf("%s date: figures %v %v", lang, a, b)
 		}
+	}
+	// Hungarian puts the year first and names the month ("2026. november 9."): the year and the day are the figures.
+	hu := shapeOf(`<main><section id="a"><h2>Díjak</h2><p>2026. november 9-én legfeljebb 1 240,50 €, lásd <a href="/hu/privacy#tafs">adatvédelem</a> és <code>x</code>.</p><ul><li>30 nap</li></ul></section></main>`, "hu")
+	if a, b := multisetDiff(en.figures, hu.figures); len(a)+len(b) > 0 {
+		t.Errorf("hu date: figures %v %v", a, b)
+	}
+	// Bulgarian names the month with a word and closes the year with "г." ("9 ноември 2026 г."): no extra figure.
+	bg := shapeOf(`<main><section id="a"><h2>Такси</h2><p>До 1 240,50 € на 9 ноември 2026 г., вж. <a href="/bg/privacy#tafs">поверителност</a> и <code>x</code>.</p><ul><li>30 дни</li></ul></section></main>`, "bg")
+	if a, b := multisetDiff(en.figures, bg.figures); len(a)+len(b) > 0 {
+		t.Errorf("bg date: figures %v %v", a, b)
 	}
 	// Lithuanian names the month with a word ("2026 m. lapkričio 9 d."): only the year and the day are figures.
 	lt := shapeOf(`<main><section id="a"><h2>Mokesčiai</h2><p>2026 m. lapkričio 9 d. iki 1 240,50 €, žr. <a href="/lt/privacy#tafs">privatumą</a> ir <code>x</code>.</p><ul><li>30 dienų</li></ul></section></main>`, "lt")
