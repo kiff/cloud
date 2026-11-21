@@ -1806,6 +1806,7 @@ func newRouter(deps routerDeps) http.Handler {
 				handlers.WithControlsReceipts(deps.receiptStore),
 				handlers.WithControlsAlertDeliveries(deps.alertDeliveries),
 				handlers.WithControlsToolOutcomes(toolOutcomes(deps)),
+				handlers.WithControlsReleases(releasedProposals(deps)),
 				handlers.WithControlsCallAbout(deps.callAbout),
 				handlers.WithControlsToolTitles(gatewayTitles(deps)),
 				handlers.WithControlsHoldAnswers(holdExceptions(deps), holdAnswers(deps)),
@@ -3761,6 +3762,14 @@ func toolOutcomes(deps routerDeps) tooloutcome.Reader {
 		return nil
 	}
 	return tooloutcome.NewPostgres(deps.pool)
+}
+
+// releasedProposals reads which calls a Card gave its room back for, from the
+// account's Card store when it keeps releases. Nil otherwise: no call is then
+// marked as not counted.
+func releasedProposals(deps routerDeps) mandate.ReleasedProposalsReader {
+	r, _ := deps.mandateStore.(mandate.ReleasedProposalsReader)
+	return r
 }
 
 // callsReader is the account's calls, which a trial's counts are read from

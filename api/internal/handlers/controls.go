@@ -15,6 +15,7 @@ import (
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/evidence"
 	"github.com/kiff/cloud/api/internal/halts"
+	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/posture"
 	"github.com/kiff/cloud/api/internal/proposals"
 	"github.com/kiff/cloud/api/internal/receipt"
@@ -41,13 +42,14 @@ type ControlsHandler struct {
 	receipts   receipt.Store       // optional; control-scoped receipts
 	deliveries alert.DeliveryStore // optional; alert deliveries (G4)
 	composer   *evidence.Composer
-	outcomes   tooloutcome.Reader // optional; how allowed gateway calls ended
-	callAbout  callabout.Store    // optional; what each call is about, in the taf's words
-	titles     GatewayToolTitles  // optional; each call's tool title for people
-	holds      HeldCallExceptions // optional; how held calls were answered (kiff/tafs#167)
-	answers    HoldAnswers        // optional; who answered them, and from which phone
-	halts      halts.Store        // optional; the owner's halts and resumes, on the Record
-	ownUse     *OwnUse            // optional; what of the Record each person reads
+	outcomes   tooloutcome.Reader              // optional; how allowed gateway calls ended
+	released   mandate.ReleasedProposalsReader // optional; which calls a Card gave its room back for
+	callAbout  callabout.Store                 // optional; what each call is about, in the taf's words
+	titles     GatewayToolTitles               // optional; each call's tool title for people
+	holds      HeldCallExceptions              // optional; how held calls were answered (kiff/tafs#167)
+	answers    HoldAnswers                     // optional; who answered them, and from which phone
+	halts      halts.Store                     // optional; the owner's halts and resumes, on the Record
+	ownUse     *OwnUse                         // optional; what of the Record each person reads
 	logger     *slog.Logger
 }
 
@@ -72,6 +74,12 @@ func WithControlsToolTitles(t GatewayToolTitles) ControlsOption {
 // the call ended at the tool.
 func WithControlsToolOutcomes(r tooloutcome.Reader) ControlsOption {
 	return func(h *ControlsHandler) { h.outcomes = r }
+}
+
+// WithControlsReleases marks, on a call the tool refused or that was never
+// sent, that its Card gave the room back (tool_outcome.counted: false).
+func WithControlsReleases(r mandate.ReleasedProposalsReader) ControlsOption {
+	return func(h *ControlsHandler) { h.released = r }
 }
 
 // WithControlsCallAbout shows on each call what it's about, in the taf's
@@ -125,6 +133,37 @@ func (h *ControlsHandler) withToolOutcomes(ctx context.Context, tenantID string,
 		if o, ok := found[rows[i].ProposalID]; ok && rows[i].Outcome == "allowed" {
 			o = forReader(o)
 			rows[i].ToolOutcome = &o
+		}
+	}
+	h.withCounted(ctx, tenantID, rows)
+}
+
+// withCounted sets Counted=false on a call the tool refused, or that was never
+// sent, when a Card gave its room back: only then, never from the tool's words.
+// Best effort: without the read, or for a call with no release, it stays absent
+// and the apps keep their line.
+func (h *ControlsHandler) withCounted(ctx context.Context, tenantID string, rows []proposals.DecisionRow) {
+	if h.released == nil {
+		return
+	}
+	var ids []string
+	for _, r := range rows {
+		if o := r.ToolOutcome; o != nil && (o.Status == tooloutcome.RefusedByTool || o.Status == tooloutcome.NotSent) {
+			ids = append(ids, r.ProposalID)
+		}
+	}
+	if len(ids) == 0 {
+		return
+	}
+	released, err := h.released.ReleasedProposals(ctx, tenantID, ids)
+	if err != nil {
+		h.logger.WarnContext(ctx, "controls: releases unavailable", slog.String("tenant", tenantID), slog.String("err", err.Error()))
+		return
+	}
+	for i := range rows {
+		if o := rows[i].ToolOutcome; o != nil && released[rows[i].ProposalID] {
+			counted := false
+			o.Counted = &counted
 		}
 	}
 }

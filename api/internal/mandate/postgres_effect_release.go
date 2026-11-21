@@ -85,6 +85,28 @@ func (s *PostgresStore) EffectReleases(ctx context.Context, tenant, id string) (
 	return out, rows.Err()
 }
 
+// ReleasedProposals are the proposals among ids that have a release on any Card.
+func (s *PostgresStore) ReleasedProposals(ctx context.Context, tenant string, ids []string) (map[string]bool, error) {
+	out := map[string]bool{}
+	if len(ids) == 0 {
+		return out, nil
+	}
+	rows, err := s.pool.Query(ctx, `SELECT DISTINCT proposal_id FROM cloud_meta.mandate_effect_releases
+	WHERE tenant_id=$1 AND proposal_id = ANY($2)`, tenant, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		out[id] = true
+	}
+	return out, rows.Err()
+}
+
 func (s *PostgresStore) LimitBalance(ctx context.Context, tenant string, m Mandate, a Aggregate, now time.Time, exclude string) (LimitBalance, error) {
 	return readLimitBalance(ctx, s.pool, tenant, m, a, now, exclude)
 }
