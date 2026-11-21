@@ -576,3 +576,33 @@ func TestAppSignIn_TheFormLoadsTheProvidersUIAndNeverShowsABlankPage(t *testing.
 		}
 	}
 }
+
+// The page's styles never reach into the provider's form: it draws inside
+// #sign-in, so a bare element rule (button, input, form, p, a, label) would
+// reshape its fields. A full-width "button" rule put the show-password
+// button over the password field (K5, 21 Nov).
+func TestAppSignIn_ThePagesStylesStayOutOfTheProvidersForm(t *testing.T) {
+	t.Parallel()
+	_, client := newAppAPI(t, http.StatusOK, "{}")
+	mux, _ := appSignIn(t, client, script{}, noon)
+	body := serve(mux, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil)).Body.String()
+	_, css, _ := strings.Cut(body, "<style>")
+	css, _, _ = strings.Cut(css, "</style>")
+	for _, rule := range strings.Split(css, "}") {
+		sel, _, ok := strings.Cut(rule, "{")
+		if !ok {
+			continue
+		}
+		if i := strings.LastIndex(sel, "*/"); i >= 0 {
+			sel = sel[i+2:]
+		}
+		for _, one := range strings.Split(sel, ",") {
+			one = strings.TrimSpace(one)
+			for _, bare := range []string{"button", "input", "form", "p", "a", "label", "div", "span"} {
+				if one == bare || strings.HasPrefix(one, bare+".") || strings.HasPrefix(one, bare+" ") || strings.HasPrefix(one, bare+":") || strings.HasPrefix(one, bare+"[") {
+					t.Errorf("the selector %q reaches into the provider's form", one)
+				}
+			}
+		}
+	}
+}
