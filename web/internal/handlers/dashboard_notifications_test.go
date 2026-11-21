@@ -449,6 +449,8 @@ func TestWithChrome_PageReusesTheRequestBearer(t *testing.T) {
 	if got := bearers.n.Load(); got != 1 {
 		t.Errorf("bearer minted %d times for one page, want 1", got)
 	}
+	mu.Lock()
+	defer mu.Unlock()
 	if len(seen) != 1 || !seen["Bearer minted-1"] {
 		t.Errorf("API saw bearers %v, want only the one minted for this request", seen)
 	}
