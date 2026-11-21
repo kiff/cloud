@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kiff/cloud/web/internal/components"
 	"github.com/kiff/cloud/web/internal/content/country"
 )
 
@@ -70,7 +69,6 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 	if len(want) < 20 || !strings.Contains(strings.Join(keys(want), " "), "/legal/japan/ja") {
 		t.Errorf("the test covers too few pages: %d", len(want))
 	}
-	_ = components.SiteBaseURL
 }
 
 func keys(m map[string]string) []string {
