@@ -1,10 +1,11 @@
 package region
 
-// StoreCountries are the countries each app store offers tafs in, copied from
-// the store's console. The consoles are the truth; this copy is what CI checks
-// against Supported, so a country is never offered where the AI isn't. Adding a
-// country in a console means adding it here first, and the test says whether
-// it may be added.
+// StoreCountries are the countries each app store may offer tafs in: the ones
+// we permit, of which each console offers a subset (a territory with no
+// storefront of its own is listed but can't be selected). This list is what CI
+// checks against Supported, so a country is never offered where the AI isn't.
+// Selecting a country in a console means adding it here first, and the test
+// says whether it may be added.
 var StoreCountries = map[string][]string{
 	// Google Play, production track (the Wear track inherits it), 21 Nov 2026:
 	// the EU, Iceland, Liechtenstein, Norway, the United Kingdom, Switzerland
