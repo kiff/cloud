@@ -417,12 +417,15 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
     main { max-width: 420px; margin: 0 auto; padding: 24px 16px 40px; }
     .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 24px; }
     .brand img { width: 28px; height: 28px; border-radius: 7px; }
-    h1 { font-size: 24px; margin: 0 0 8px; }
-    p { color: var(--soft); margin: 0 0 20px; }
-    form { margin: 0 0 12px; }
-    button, .other { display: block; width: 100%; box-sizing: border-box; padding: 14px; border-radius: 12px; font: inherit; font-weight: 600; text-align: center; text-decoration: none; }
-    button.go { background: var(--amber); color: #fff; border: 0; }
-    button.no { background: none; color: var(--soft); border: 0; }
+    /* The page's own elements only: the provider's form draws inside
+       #sign-in, and a bare p, form or button rule would reshape its fields
+       (a full-width show-password button over the password, K5, 21 Nov). */
+    main > h1 { font-size: 24px; margin: 0 0 8px; }
+    main > p, #not-loaded > p { color: var(--soft); margin: 0 0 20px; }
+    main > form { margin: 0 0 12px; }
+    .go, .no, .other { display: block; width: 100%; box-sizing: border-box; padding: 14px; border-radius: 12px; font: inherit; font-weight: 600; text-align: center; text-decoration: none; }
+    .go { background: var(--amber); color: #fff; border: 0; }
+    .no { background: none; color: var(--soft); border: 0; }
     .other { color: var(--ink); border: 1px solid var(--line); margin-bottom: 12px; }
     #sign-in { min-height: 320px; }
   </style>
