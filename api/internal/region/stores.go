@@ -18,9 +18,9 @@ var StoreCountries = map[string][]string{
 		"IS", "LI", "NO", "GB", "CH", "KR",
 		"US", "CA", "MX", "PA", "BR", "AR", "CL", "PE", "CO",
 		"AU", "NZ", "SG", "MY", "IN", "ZA",
-		// Wave 2, Group A (PM 03:44; legal-i18n's readiness list 03:19): 30 countries,
-		// then 47 territories of listed countries. Haiti and Burundi are held out
-		// (qa-kiff: sanctions regimes, as CF and CD are held), pending the owner.
+		// Wave 2, Group A, 21 Nov 2026: 30 countries, then 47 territories of
+		// listed countries. Haiti and Burundi are held out (sanctions regimes, as
+		// the Central African Republic and DR Congo are), pending the owner.
 		"BO", "DO", "GT", "HN", "PY", "GQ", "MZ", "GW", "ST", "TL",
 		"DM", "GD", "TT", "FJ", "KI", "MH", "FM", "NR", "PW", "PG",
 		"WS", "SB", "TO", "TV", "VU", "LR", "NA", "SL", "PK", "SR",
@@ -40,9 +40,9 @@ var StoreCountries = map[string][]string{
 		"IS", "NO", "GB", "CH",
 		"US", "CA", "MX", "PA", "BR", "AR", "CL", "PE", "CO",
 		"AU", "NZ", "SG", "MY", "IN", "ZA",
-		// Wave 2, Group A (PM 03:44; legal-i18n's readiness list 03:19): 30 countries,
-		// then 47 territories of listed countries. Haiti and Burundi are held out
-		// (qa-kiff: sanctions regimes, as CF and CD are held), pending the owner.
+		// Wave 2, Group A, 21 Nov 2026: 30 countries, then 47 territories of
+		// listed countries. Haiti and Burundi are held out (sanctions regimes, as
+		// the Central African Republic and DR Congo are), pending the owner.
 		"BO", "DO", "GT", "HN", "PY", "GQ", "MZ", "GW", "ST", "TL",
 		"DM", "GD", "TT", "FJ", "KI", "MH", "FM", "NR", "PW", "PG",
 		"WS", "SB", "TO", "TV", "VU", "LR", "NA", "SL", "PK", "SR",
