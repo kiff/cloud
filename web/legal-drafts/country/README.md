@@ -21,5 +21,10 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `in.en.md` | India (DPDP Act and Rules; 18+) | draft |
 | `br.en.md`, `br.pt.md` | Brazil (LGPD, ECA Digital; 18+), en and pt-BR | draft |
 | `jp.en.md`, `jp.ja.md` | Japan (APPI), en and ja | draft |
+| `sv.en.md`, `sv.es.md` | El Salvador (Ley para la Protección de Datos Personales 2024), en and es | served (ruling B) |
+| `ni.en.md`, `ni.es.md` | Nicaragua (Ley 787 de 2012), en and es | served (ruling B) |
+| `sm.en.md`, `sm.it.md` | San Marino (Legge 171/2018), en and it | served (ruling B) |
+| `cm.en.md`, `cm.fr.md` | Cameroon (Loi 2024/017), en and fr | served (ruling B) |
+| `mc.en.md`, `mc.fr.md` | Monaco (Loi 1.565), en and fr | draft: waits for the representative **[owner]** |
 
 Also here: `../region.md`, the refusal words and the terms clause for "where KIFF is available", in 8 languages.
