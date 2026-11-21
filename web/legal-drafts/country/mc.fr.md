@@ -24,7 +24,7 @@ KIFF et tafs ne sont pas destinés aux personnes de moins de 16 ans.
 
 Contact pour la confidentialité : le directeur général, Kiff Agents OÜ, privacy@kiff.dev.
 
-**Représentant à Monaco.** Notre représentant à Monaco, point de contact pour l'Autorité de Protection des Données Personnelles et pour les personnes à Monaco : [owner: nom et adresse à Monaco, une fois désigné].
+**Représentant à Monaco.** Nous n'avons pas de représentant à Monaco aujourd'hui. Nous en désignerons un ici, comme point de contact pour l'Autorité de Protection des Données Personnelles et pour les personnes à Monaco, avant que KIFF et tafs soient proposés à Monaco.
 
 ## 6. Où porter plainte
 
