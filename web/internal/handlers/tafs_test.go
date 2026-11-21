@@ -30,7 +30,7 @@ func TestTafs(t *testing.T) {
 		`id="top"`, `id="pricing"`, `id="download"`, `href="#pricing"`, `href="#download"`,
 		"The assistant that runs", "A taf is a job you give to an agent.", "No answer means no.",
 		// The price and the models, then the store and the code.
-		"€12.50 a month to start, with 500 credits, VAT included. Runs on Claude Sonnet 5.5 and Opus 5.5.",
+		"€12.50 a month to start, with 500 credits, VAT included. Runs on Claude Sonnet 5.5.",
 		`href="https://play.google.com/store/apps/details?id=dev.kiff.tafs"`, "App Store, coming soon",
 		`href="https://github.com/kiff/tafs"`,
 		// The footer.
