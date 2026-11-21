@@ -342,17 +342,39 @@ KIFF_APP_SIGNIN_TENANTS="${KIFF_APP_SIGNIN_TENANTS:-}"
 # receiver of planque's refund events, the proofs' state read, Clerk's
 # webhook, the operator console, the pruning of test accounts, the permit
 # keys and Google Play's service account.
-for v in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN \
-	SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN \
-	STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET; do
+if [ "$KIFF_SECRET_ARN" = "-" ]; then KIFF_SECRET_ARN=""; fi
+for v in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN; do
 	[[ -n "${!v}" && "${!v}" != "-" ]] || fail "$v is not set (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
 done
-for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN \
-	KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET \
-	GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
+for v in KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
 	[[ -n "${!v}" ]] || fail "$v is not set; \"-\" turns it off (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
 	if [ "${!v}" = "-" ]; then printf -v "$v" '%s' ""; fi
 done
+# The secrets KIFF's one secret holds. Without it, each is named as before: the first
+# eight must be set, the rest set or "-" for off. With it, none is needed: the box reads
+# the required ones only from it, so their own names are dropped (never read, never
+# checked against the role); an optional one still named is read when the one secret
+# lacks its field, so it stays, and "-" or empty turns it off.
+if [ -z "$KIFF_SECRET_ARN" ]; then
+	for v in CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN \
+		STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET; do
+		[[ -n "${!v}" && "${!v}" != "-" ]] || fail "$v is not set (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
+	done
+	for v in PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN \
+		PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
+		[[ -n "${!v}" ]] || fail "$v is not set; \"-\" turns it off (no .env.deploy at $REPO_ROOT or the main checkout?)" 2
+		if [ "${!v}" = "-" ]; then printf -v "$v" '%s' ""; fi
+	done
+else
+	for v in CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN GATEWAY_KEYS_SECRET; do
+		printf -v "$v" '%s' ""
+	done
+	for v in RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN PLANQUE_EVENT_SECRET_ARN \
+		PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET \
+		GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET PROOF_GITHUB_TOKEN_ARN; do
+		if [ "${!v}" = "-" ]; then printf -v "$v" '%s' ""; fi
+	done
+fi
 # check-deploy-secrets.sh reads the secrets' names from this file and their
 # values from its environment.
 while IFS= read -r v; do export "$v"; done < <(sed -nE 's/^([A-Z_]+(_SECRET|_ARN))="\$\{[A-Z_]+:?-.*/\1/p' "$SCRIPT_DIR/deploy.sh" | sort -u)
@@ -650,8 +672,10 @@ kiff_bundle=""
 if [ -n "\$KIFF_SECRET_ARN" ]; then
 	kiff_bundle=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$KIFF_SECRET_ARN" --query SecretString --output text) || {
 		echo "KIFF's one secret could not be read; refusing to deploy" >&2; exit 6; }
-	printf '%s' "\$kiff_bundle" | jq -e 'type == "object"' > /dev/null || {
-		echo "KIFF's one secret isn't a JSON object; refusing to deploy" >&2; exit 6; }
+	# Exactly one JSON object: jq reads a stream, so two pasted objects would otherwise pass
+	# and each field would come out as both values joined.
+	printf '%s' "\$kiff_bundle" | jq -s -e 'length == 1 and (.[0] | type) == "object"' > /dev/null 2>&1 || {
+		echo "KIFF's one secret isn't exactly one JSON object; refusing to deploy" >&2; exit 6; }
 fi
 secret_value() {
 	if [ -n "\$kiff_bundle" ] && printf '%s' "\$kiff_bundle" | jq -e --arg n "\$1" 'has(\$n)' > /dev/null; then
