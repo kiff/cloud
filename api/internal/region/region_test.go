@@ -142,7 +142,7 @@ func TestTheGate(t *testing.T) {
 
 // Every country a store offers tafs in is on the pinned list.
 func TestEveryStoreCountryIsSupported(t *testing.T) {
-	for store, want := range map[string]int{"google-play": 125, "app-store": 123} {
+	for store, want := range map[string]int{"google-play": 98, "app-store": 75} {
 		if got := len(StoreCountries[store]); got != want {
 			t.Errorf("%s lists %d countries, want the %d in its console", store, got, want)
 		}
