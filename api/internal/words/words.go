@@ -43,6 +43,9 @@ const (
 	// OwnerAskNoRequestID: a refund whose agent named no request from a
 	// connected app, so KIFF can't hand it to one taf (thune step one).
 	OwnerAskNoRequestID = "no_request_id"
+	// OwnerAskEachCall: an operation whose reviewed profile holds every
+	// call for its owner (ask_each_call), such as a website's checkout.
+	OwnerAskEachCall = "each_call"
 	// OwnerAskOther: any code KIFF doesn't know, or a value that isn't one.
 	OwnerAskOther = "other"
 )

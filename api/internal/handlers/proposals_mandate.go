@@ -145,7 +145,9 @@ func (h *ProposalsHandler) mandateRefusal(
 		}, true
 	}
 	if d.Allowed() {
-		recordCovering(ctx, d.Covering, d.Consumed)
+		// An allowed decision with a held call is the owner's approval,
+		// redeemed: the permit names it.
+		recordCovering(ctx, d.Covering, d.Consumed, d.ExceptionID)
 		return proposalResponse{}, false
 	}
 	if d.Outcome == mandate.OutcomeApprovedNoRoom {
