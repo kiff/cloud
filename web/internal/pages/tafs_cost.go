@@ -45,6 +45,8 @@ func (w tafsCostWords) money(cents int) string {
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
+	case "id":
+		return fmt.Sprintf("€%s,%02d", w.number(whole), frac)
 	}
 	return fmt.Sprintf("%s,%02d €", w.number(whole), frac)
 }
@@ -73,6 +75,8 @@ func (w tafsCostWords) number(n int) string {
 	case "bg":
 		sep = " "
 	case "hr":
+		sep = "."
+	case "id":
 		sep = "."
 	case "tr":
 		sep = "."
@@ -156,3 +160,6 @@ var tafsCostHR = tafsCostWords{Lang: "hr"}
 
 // tafsCostTR writes the prices tafs's terms state in Turkish: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
 var tafsCostTR = tafsCostWords{Lang: "tr"}
+
+// tafsCostID writes the prices tafs's terms state in Indonesian: "€12,50", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostID = tafsCostWords{Lang: "id"}

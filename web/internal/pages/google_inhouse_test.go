@@ -24,6 +24,7 @@ var googleSections = map[string]templ.Component{
 	"ro": tafsPrivacyGoogleRO(),
 	"bg": tafsPrivacyGoogleBG(),
 	"hr": tafsPrivacyGoogleHR(),
+	"id": tafsPrivacyGoogleID(),
 	"tr": tafsPrivacyGoogleTR(),
 }
 
@@ -169,6 +170,7 @@ var googleRouteWords = map[string]struct{ Managed, InHouse, NoOtherCompany strin
 	"ro": {"Prin partenerul nostru de autentificare:", "Prin autentificarea Google proprie a tafs:", "astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră."},
 	"bg": {"Чрез нашия партньор за вход:", "Чрез собствения вход с Google на tafs:", "така че никоя друга компания не извършва заявката и не съхранява вашия вход."},
 	"hr": {"Putem našeg partnera za prijavu:", "Putem tafsove vlastite Google prijave:", "pa nijedno drugo poduzeće ne upućuje poziv niti čuva vašu prijavu."},
+	"id": {"Melalui mitra login kami:", "Melalui login Google milik tafs sendiri:", "sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda."},
 	"tr": {"Giriş ortağımız üzerinden:", "tafs'ın kendi Google girişi üzerinden:", "böylece çağrıyı başka hiçbir şirket yapmaz ve girişinizi tutmaz."},
 }
 

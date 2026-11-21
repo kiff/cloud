@@ -64,6 +64,7 @@ var googleAppScopes = map[string][]googleScope{
 			"bg": "преглед, редактиране, създаване и изтриване на всички ваши електронни таблици в Google Sheets",
 			"hr": "pregled, uređivanje, izrada i brisanje svih vaših proračunskih tablica u Google Sheetsu",
 			"tr": "tüm Google Sheets e-tablolarınızı görüntüleme, düzenleme, oluşturma ve silme",
+			"id": "melihat, mengedit, membuat, dan menghapus semua spreadsheet Anda di Google Sheets",
 		}},
 	},
 	"Google Calendar": {
@@ -90,6 +91,7 @@ var googleAppScopes = map[string][]googleScope{
 			"bg": "преглед на събитията във вашите календари",
 			"hr": "pregled događaja u vašim kalendarima",
 			"tr": "takvimlerinizdeki etkinlikleri görüntüleme",
+			"id": "melihat acara di kalender Anda",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -114,6 +116,7 @@ var googleAppScopes = map[string][]googleScope{
 			"bg": "преглед и редактиране на събитията във вашите календари",
 			"hr": "pregled i uređivanje događaja u vašim kalendarima",
 			"tr": "takvimlerinizdeki etkinlikleri görüntüleme ve düzenleme",
+			"id": "melihat dan mengedit acara di kalender Anda",
 		}},
 	},
 }
