@@ -8,7 +8,7 @@ and its credits, sold in Japan through the App Store and Google Play.
 | Seller | Kiff Agents OÜ (an Estonian private limited company, registry code 17372313) |
 | Person responsible | **[owner]** name of the management board member |
 | Address | Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia |
-| Telephone | **[owner]** a number, or: we disclose it without delay on request to legal@kiff.dev |
+| Telephone | We disclose it without delay on request to legal@kiff.dev |
 | Email | legal@kiff.dev |
 | Prices | Shown on each item in the app, in yen, tax included: Solo (monthly subscription) and packs of credits. **[mac-local]** the yen prices once set |
 | Other costs | None from us. Your internet connection is at your own cost. |
