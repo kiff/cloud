@@ -33,7 +33,7 @@ var tafsNL = tafsWords{
 	Why: tafsScreen{Big: "Automatisering moet een bedrijf sterker maken, niet kwetsbaar.", Giant: "Niet kwetsbaar.", Idx: "Waarom we bestaan",
 		Stickers: []string{"Jij houdt de controle", "Bewijs van alles", "Open code", "Privacy voorop"}},
 	Price: tafsScreen{Big: "Begin klein. Schaal op als het druk is.",
-		Small: "%s per maand om te beginnen, met %s credits, inclusief btw. Draait op %s en %s.", Idx: "Wat het kost",
+		Small: "%s per maand om te beginnen, met %s credits, inclusief btw. Draait op %s.", Idx: "Wat het kost",
 		Ring: "credits verlopen nooit · geen verrassingen op de rekening ·", Stickers: []string{"Bijkopen", "vanaf %s", "Veel gebruik", "~€ 160 / maand"}},
 	Get: tafsScreen{Big: "Nu op Google Play.", Small: "Android: op Google Play in 33 landen en regio's.", Giant: "haal 'm.", Idx: "Download",
 		Stickers: []string{"Ontdek het op", "App Store, binnenkort", "Wij geloven in open code. Lees hem op GitHub.", "Voor je computer: macOS, Windows en Linux →"}},
