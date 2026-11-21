@@ -45,6 +45,10 @@ In `GET /v1/me/activity`, each call has `name`, `kind` (`done`,
 `approved`, `not_done`, `sending`, `unknown`, `held` or `refused`),
 `detail` and `amount_text`. `tool_outcome` is what the tool reported;
 with `refused_by: "connection"`, nothing reached the tool. Show `detail`.
+`tool_outcome.counted` is `false` when the tool refused the call (or it was
+never sent) and the Card gave its room back, so the call does not count
+toward the day's limit. It is absent for every other call and when KIFF
+can't say: treat absent as "counts".
 
 ## Allow this from now on
 

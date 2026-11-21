@@ -59,8 +59,14 @@ type Outcome struct {
 	// Found: a Done call whose outcome wasn't known until the profile's
 	// status read found it at the vendor by its operation id
 	// (kiff/tafs#498).
-	Found bool      `json:"found,omitempty"`
-	At    time.Time `json:"at"`
+	Found bool `json:"found,omitempty"`
+	// Counted is false when the call did nothing and its Card gave the room
+	// back (a release exists for it): the apps then say it doesn't count toward
+	// the day's limit. Absent otherwise: a call that counts, one KIFF can't
+	// tell, and any row from before this field. Never set from the tool's own
+	// words, only from a release written on trusted no-effect evidence.
+	Counted *bool     `json:"counted,omitempty"`
+	At      time.Time `json:"at"`
 }
 
 // ForReader is the outcome as a person reads it, on every page and receipt

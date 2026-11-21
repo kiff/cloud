@@ -58,6 +58,26 @@ func (s *MemoryStore) EffectReleases(_ context.Context, tenant, id string) ([]Ef
 	return out, nil
 }
 
+// ReleasedProposals are the proposals among ids that have a release on any Card.
+func (s *MemoryStore) ReleasedProposals(_ context.Context, tenant string, ids []string) (map[string]bool, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if s.failDraws != nil {
+		return nil, s.failDraws
+	}
+	want := make(map[string]bool, len(ids))
+	for _, id := range ids {
+		want[id] = true
+	}
+	out := map[string]bool{}
+	for _, r := range s.releases {
+		if r.TenantID == tenant && want[r.ProposalID] {
+			out[r.ProposalID] = true
+		}
+	}
+	return out, nil
+}
+
 func (s *MemoryStore) LimitBalance(_ context.Context, tenant string, m Mandate, a Aggregate, now time.Time, exclude string) (LimitBalance, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

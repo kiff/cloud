@@ -40,6 +40,13 @@ type EffectReleaseStore interface {
 	EffectReleases(context.Context, string, string) ([]EffectRelease, error)
 }
 
+// ReleasedProposalsReader says which of some proposals have a release: a call
+// that did nothing, whose room a Card was given back. It never decides one: a
+// release is written only from trusted no-effect evidence (ReleaseEffects).
+type ReleasedProposalsReader interface {
+	ReleasedProposals(ctx context.Context, tenant string, proposals []string) (map[string]bool, error)
+}
+
 type LimitBalance struct{ Gross, Released, Net int64 }
 
 type limitUsageReader interface {
