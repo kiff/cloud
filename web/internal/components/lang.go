@@ -26,6 +26,7 @@ var partialPages = map[string][]string{
 	"ja": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"et": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"lv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"el": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // PageLanguages are every language a translated page can be in: the site
@@ -53,6 +54,7 @@ var languageNames = map[string]string{
 	"ja": "日本語",
 	"et": "Eesti",
 	"lv": "Latviešu",
+	"el": "Ελληνικά",
 }
 
 // LanguageName is a site language's name in that language.
@@ -216,6 +218,7 @@ var translationNotices = map[string]string{
 	"ja": "これは参考のための翻訳です。英語版が優先します：",
 	"et": "See on teavitamiseks mõeldud tõlge. Kehtib ingliskeelne versioon:",
 	"lv": "Šis ir tulkojums uzziņai. Noteicošā ir versija angļu valodā:",
+	"el": "Αυτή είναι μετάφραση για ενημερωτικούς σκοπούς. Υπερισχύει η αγγλική έκδοση:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -230,6 +233,7 @@ var inEnglish = map[string]string{
 	"ja": "（英語）",
 	"et": "(inglise keeles)",
 	"lv": "(angliski)",
+	"el": "(στα αγγλικά)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

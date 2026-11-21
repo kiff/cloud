@@ -23,6 +23,7 @@ var macSecurityKeyClause = map[string]string{
 	"ja": "、またはMacではセキュリティキーで",
 	"et": ", või Macis turvavõtmega",
 	"lv": " vai Mac datorā ar drošības atslēgu",
+	"el": ", ή, σε Mac, με κλειδί ασφαλείας",
 }
 
 // macSecurityKey is the clause, or nothing while the switch is off.

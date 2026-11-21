@@ -54,6 +54,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ja": "Google Sheetsのすべてのスプレッドシートの参照、編集、作成、削除",
 			"et": "kõigi teie Google Sheetsi arvutustabelite vaatamine, muutmine, loomine ja kustutamine",
 			"lv": "skatīt, rediģēt, izveidot un dzēst visas jūsu Google Sheets izklājlapas",
+			"el": "προβολή, επεξεργασία, δημιουργία και διαγραφή όλων των υπολογιστικών φύλλων σας στα Google Sheets",
 		}},
 	},
 	"Google Calendar": {
@@ -70,6 +71,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ja": "カレンダーの予定の参照",
 			"et": "teie kalendrite sündmuste vaatamine",
 			"lv": "skatīt notikumus jūsu kalendāros",
+			"el": "προβολή των συμβάντων στα ημερολόγιά σας",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -84,6 +86,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ja": "カレンダーの予定の参照と編集",
 			"et": "teie kalendrite sündmuste vaatamine ja muutmine",
 			"lv": "skatīt un rediģēt notikumus jūsu kalendāros",
+			"el": "προβολή και επεξεργασία των συμβάντων στα ημερολόγιά σας",
 		}},
 	},
 }
