@@ -88,3 +88,22 @@ func KeepLang(path, lang string) string {
 	}
 	return path + sep + "lang=" + lang
 }
+
+type htmlLangKey struct{}
+
+// WithHTMLLanguage marks ctx as rendering a public page whose text is in
+// lang, though its path isn't a translated page's ("/privacy/countries/kr/ko"
+// is Korean), so the document's <html lang> says so. It changes nothing else
+// about the page: hreflang and the language row still follow the path.
+func WithHTMLLanguage(ctx context.Context, lang string) context.Context {
+	return context.WithValue(ctx, htmlLangKey{}, lang)
+}
+
+// HTMLLanguage is the language the public shell puts on <html lang>: the one
+// a handler set with WithHTMLLanguage, else the language of the page's path.
+func HTMLLanguage(ctx context.Context) string {
+	if l, _ := ctx.Value(htmlLangKey{}).(string); l != "" {
+		return l
+	}
+	return PageLanguage(ctx)
+}

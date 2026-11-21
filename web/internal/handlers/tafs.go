@@ -26,11 +26,20 @@ func TafsWatch() http.Handler { return htmlPage(pages.TafsWatch()) }
 // TafsPrivacy serves /tafs/privacy: tafs's own privacy policy, in English
 // (the other languages are at /<lang>/tafs/privacy),
 // with the Google user data section Google's review of the sign-in reads.
-func TafsPrivacy() http.Handler { return htmlPage(pages.TafsPrivacy()) }
+func TafsPrivacy() http.Handler { return inEnglish(htmlPage(pages.TafsPrivacy())) }
 
 // TafsTerms serves /tafs/terms: tafs's terms, in English (the other
 // languages are at /<lang>/tafs/terms), restating KIFF's.
-func TafsTerms() http.Handler { return htmlPage(pages.TafsTerms()) }
+func TafsTerms() http.Handler { return inEnglish(htmlPage(pages.TafsTerms())) }
+
+// inEnglish marks a page's response as English: Content-Language: en, to
+// match its <html lang="en">.
+func inEnglish(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Language", "en")
+		h.ServeHTTP(w, r)
+	})
+}
 
 // htmlPage serves a page that needs nothing from the request.
 func htmlPage(c templ.Component) http.Handler {
