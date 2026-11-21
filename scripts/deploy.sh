@@ -84,6 +84,14 @@ PLANQUE_EVENT_SECRET_ARN="${PLANQUE_EVENT_SECRET_ARN:-}"
 PROOF_STATE_TOKENS_ARN="${PROOF_STATE_TOKENS_ARN:-}"
 PROOF_GITHUB_TOKEN_ARN="${PROOF_GITHUB_TOKEN_ARN:-}"
 DB_SECRET_ARN="${DB_SECRET_ARN:-}"
+# KIFF's one secret: a JSON of named values (clerk_secret_key, session_secret, anchor_private_key,
+# web_demo_key, resend_api_key, stripe_webhook_secret, stripe_secret_key, clerk_webhook_secret,
+# gateway_keys, permit_key, permit_published, planque_event_secret, proof_state_tokens,
+# proof_github_token, google_play_service_account), by its full ARN. Set: every value is read from it,
+# once, and a required name it lacks stops the deploy; an optional name it lacks is off. Empty: each
+# value is read from its own secret below, as before. The database's own (DB_SECRET_ARN, RDS-managed
+# and rotated) is never in it.
+KIFF_SECRET_ARN="${KIFF_SECRET_ARN:-}"
 CLERK_SECRET_ARN="${CLERK_SECRET_ARN:-}"
 # Clerk's publishable key is public (it ships in every page), so it comes from the repository
 # variable KIFF_CLERK_PUBLISHABLE_KEY (deploy.yml, or .env.deploy), not from Secrets Manager.
@@ -468,6 +476,7 @@ PLANQUE_EVENT_SECRET_ARN="${PLANQUE_EVENT_SECRET_ARN}"
 PROOF_STATE_TOKENS_ARN="${PROOF_STATE_TOKENS_ARN}"
 PROOF_GITHUB_TOKEN_ARN="${PROOF_GITHUB_TOKEN_ARN}"
 DB_SECRET_ARN="${DB_SECRET_ARN}"
+KIFF_SECRET_ARN="${KIFF_SECRET_ARN}"
 CLERK_SECRET_ARN="${CLERK_SECRET_ARN}"
 KIFF_CLERK_PUBLISHABLE_KEY="${KIFF_CLERK_PUBLISHABLE_KEY}"
 SESSION_SECRET_ARN="${SESSION_SECRET_ARN}"
@@ -631,6 +640,33 @@ optional_secret() {
 		return 1
 	fi
 }
+# KIFF's one secret (KIFF_SECRET_ARN), read once. secret_value NAME ARN MODE gives NAME from it when
+# it's set; else the secret at ARN, as before (MODE "required" reads it plainly, "optional" through
+# optional_secret). From the one secret, a required NAME it lacks stops the deploy, and an optional
+# one it lacks is off.
+kiff_bundle=""
+if [ -n "\$KIFF_SECRET_ARN" ]; then
+	kiff_bundle=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$KIFF_SECRET_ARN" --query SecretString --output text) || {
+		echo "KIFF's one secret could not be read; refusing to deploy" >&2; exit 6; }
+	printf '%s' "\$kiff_bundle" | jq -e 'type == "object"' > /dev/null || {
+		echo "KIFF's one secret isn't a JSON object; refusing to deploy" >&2; exit 6; }
+fi
+secret_value() {
+	if [ -n "\$kiff_bundle" ]; then
+		if printf '%s' "\$kiff_bundle" | jq -e --arg n "\$1" 'has(\$n)' > /dev/null; then
+			printf '%s' "\$kiff_bundle" | jq -j --arg n "\$1" '.[\$n]'
+		elif [ "\$3" = optional ]; then
+			echo "KIFF's one secret has no \$1; deploying with it unset" >&2
+		else
+			echo "KIFF's one secret has no \$1; refusing to deploy" >&2
+			return 1
+		fi
+	elif [ "\$3" = optional ]; then
+		optional_secret "\$2"
+	else
+		aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$2" --query SecretString --output text
+	fi
+}
 # RDS-generated passwords contain URL-unsafe characters. Percent-encode the
 # password through jq stdin so it is safe in both systemd's EnvironmentFile
 # and pgx, without exposing the credential in process arguments.
@@ -639,40 +675,40 @@ db_password_uri=\$(printf '%s' "\$db_password" | jq -Rr '@uri')
 # TLS for every database URL: the certificate and host name are checked
 # against Amazon's RDS CA bundle installed above.
 db_tls="sslmode=verify-full&sslrootcert=/etc/kiff/rds-ca.pem"
-clerk_secret=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$CLERK_SECRET_ARN" --query SecretString --output text)
+clerk_secret=\$(secret_value clerk_secret_key "\$CLERK_SECRET_ARN" required)
 clerk_publishable="\$KIFF_CLERK_PUBLISHABLE_KEY"
-session_secret=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$SESSION_SECRET_ARN" --query SecretString --output text)
-anchor_private_key=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$ANCHOR_WALLET_ARN" --query SecretString --output text)
-web_demo_key=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$WEB_DEMO_KEY_ARN" --query SecretString --output text)
-resend_key=\$(optional_secret "\$RESEND_SECRET_ARN")
-stripe_webhook_secret=\$(optional_secret "\$STRIPE_WEBHOOK_SECRET_ARN")
-stripe_secret_key=\$(optional_secret "\$STRIPE_SECRET_KEY_ARN")
+session_secret=\$(secret_value session_secret "\$SESSION_SECRET_ARN" required)
+anchor_private_key=\$(secret_value anchor_private_key "\$ANCHOR_WALLET_ARN" required)
+web_demo_key=\$(secret_value web_demo_key "\$WEB_DEMO_KEY_ARN" required)
+resend_key=\$(secret_value resend_api_key "\$RESEND_SECRET_ARN" optional)
+stripe_webhook_secret=\$(secret_value stripe_webhook_secret "\$STRIPE_WEBHOOK_SECRET_ARN" optional)
+stripe_secret_key=\$(secret_value stripe_secret_key "\$STRIPE_SECRET_KEY_ARN" optional)
 clerk_webhook_secret=""
-if [ -n "\$CLERK_WEBHOOK_SECRET_ARN" ]; then clerk_webhook_secret=\$(optional_secret "\$CLERK_WEBHOOK_SECRET_ARN"); fi
+if [ -n "\$CLERK_WEBHOOK_SECRET_ARN" ] || [ -n "\$kiff_bundle" ]; then clerk_webhook_secret=\$(secret_value clerk_webhook_secret "\$CLERK_WEBHOOK_SECRET_ARN" optional); fi
 pricing_business_intake_url="\$KIFF_PRICING_BUSINESS_INTAKE_URL"
-gateway_keys=\$(aws --region "\$AWS_REGION" secretsmanager get-secret-value --secret-id "\$GATEWAY_KEYS_SECRET" --query SecretString --output text)
+gateway_keys=\$(secret_value gateway_keys "\$GATEWAY_KEYS_SECRET" required)
 permit_key=""
-if [ -n "\$PERMIT_KEY_SECRET" ]; then permit_key=\$(optional_secret "\$PERMIT_KEY_SECRET"); fi
+if [ -n "\$PERMIT_KEY_SECRET" ] || [ -n "\$kiff_bundle" ]; then permit_key=\$(secret_value permit_key "\$PERMIT_KEY_SECRET" optional); fi
 permit_published=""
-if [ -n "\$PERMIT_PUBLISHED_SECRET" ]; then permit_published=\$(optional_secret "\$PERMIT_PUBLISHED_SECRET"); fi
+if [ -n "\$PERMIT_PUBLISHED_SECRET" ] || [ -n "\$kiff_bundle" ]; then permit_published=\$(secret_value permit_published "\$PERMIT_PUBLISHED_SECRET" optional); fi
 planque_event_secret=""
-if [ -n "\$PLANQUE_EVENT_SECRET_ARN" ]; then
-	planque_event_secret=\$(optional_secret "\$PLANQUE_EVENT_SECRET_ARN")
+if [ -n "\$PLANQUE_EVENT_SECRET_ARN" ] || [ -n "\$kiff_bundle" ]; then
+	planque_event_secret=\$(secret_value planque_event_secret "\$PLANQUE_EVENT_SECRET_ARN" optional)
 fi
 proof_state_tokens=""
-if [ -n "\$PROOF_STATE_TOKENS_ARN" ]; then
-	proof_state_tokens=\$(optional_secret "\$PROOF_STATE_TOKENS_ARN")
+if [ -n "\$PROOF_STATE_TOKENS_ARN" ] || [ -n "\$kiff_bundle" ]; then
+	proof_state_tokens=\$(secret_value proof_state_tokens "\$PROOF_STATE_TOKENS_ARN" optional)
 fi
 proof_github_token=""
-if [ -n "\$PROOF_GITHUB_TOKEN_ARN" ]; then
-	proof_github_token=\$(optional_secret "\$PROOF_GITHUB_TOKEN_ARN")
+if [ -n "\$PROOF_GITHUB_TOKEN_ARN" ] || [ -n "\$kiff_bundle" ]; then
+	proof_github_token=\$(secret_value proof_github_token "\$PROOF_GITHUB_TOKEN_ARN" optional)
 fi
 # The JSON key is multi-line: one base64 line in the env file. Read only
 # once Google Play is configured (its package name set): until then there is
 # no secret, and the EC2 role may not even be allowed to read its name.
 google_play_sa_b64=""
-if [ -n "\$KIFF_GOOGLE_PACKAGE_NAME" ] && [ -n "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET" ]; then
-	google_play_sa=\$(optional_secret "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET")
+if [ -n "\$KIFF_GOOGLE_PACKAGE_NAME" ] && { [ -n "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET" ] || [ -n "\$kiff_bundle" ]; }; then
+	google_play_sa=\$(secret_value google_play_service_account "\$GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET" optional)
 	google_play_sa_b64=\$(printf '%s' "\$google_play_sa" | base64 -w0)
 fi
 

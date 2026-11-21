@@ -166,6 +166,8 @@ jobs:
       PERMIT_KEY_SECRET: ${{ secrets.PERMIT_KEY_SECRET }}
       PERMIT_PUBLISHED_SECRET: ${{ secrets.PERMIT_PUBLISHED_SECRET }}
       GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET }}
+      # KIFF's one secret (deploy.sh): empty until it exists and the box may read it.
+      KIFF_SECRET_ARN: ${{ secrets.KIFF_SECRET_ARN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
