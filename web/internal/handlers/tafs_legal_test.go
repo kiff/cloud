@@ -38,7 +38,7 @@ func tafsLegalPage(t *testing.T, h http.Handler, path, updated string) string {
 // review reads, the Limited Use statement word for word, and both links.
 func TestTafsPrivacy(t *testing.T) {
 	t.Parallel()
-	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "18 November 2026")
+	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "21 November 2026")
 	start := strings.Index(body, `<section id="google">`)
 	if start < 0 {
 		t.Fatal("no #google section")
