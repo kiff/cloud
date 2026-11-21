@@ -118,7 +118,8 @@ func TestTafsLegalPagesAreListed(t *testing.T) {
 	}
 }
 
-// Both documents are served in each of the seven other languages, at
+// Both documents are served in each of the seven other site languages, and
+// in Korean and Japanese, which have the legal texts only, at
 // /<lang>/tafs/terms and /<lang>/tafs/privacy, as translations that say the
 // English version governs and keep the company, its address, the emails
 // and the date; the Limited Use statement stays in Google's English. The
@@ -130,8 +131,8 @@ func TestTafsLegalPagesInEveryLanguage(t *testing.T) {
 		routed[tr.Path] = true
 	}
 	for _, page := range []string{"/tafs/terms", "/tafs/privacy"} {
-		for _, lang := range components.SiteLanguages {
-			if lang == "en" {
+		for _, lang := range components.PageLanguages {
+			if lang == "en" || !components.HasPage(lang, page) {
 				continue
 			}
 			path := "/" + lang + page

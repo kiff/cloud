@@ -43,7 +43,7 @@ func emptyWords(v, en reflect.Value, path string) []string {
 // /tafs in every language: every word its own, the same screens, today's
 // prices as the language writes them, the links, and the footer's line.
 func TestTafsInEveryLanguage(t *testing.T) {
-	langs := append([]string{"en"}, TranslatedLanguages()...)
+	langs := append([]string{"en"}, languagesWith("/tafs")...)
 	if len(langs) != len(tafsByLang) {
 		t.Fatalf("/tafs is served in %d languages, and %d have words", len(langs), len(tafsByLang))
 	}
