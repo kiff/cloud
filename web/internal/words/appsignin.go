@@ -16,6 +16,9 @@ type AppSignIn struct {
 	Expired, Failed, Off string
 	// NotLoaded: the sign-in form didn't load in the page; TryAgain reloads it.
 	NotLoaded, TryAgain string
+	// BackToApp is the button under Expired, Failed and Off that returns the
+	// sheet to the app.
+	BackToApp string
 }
 
 // ContinueAs is the button that signs the app in as email.
@@ -33,6 +36,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "Signing in inside the app isn’t on yet. Sign in from the app as before.",
 		NotLoaded:    "The sign-in page didn’t load. Try again.",
 		TryAgain:     "Try again",
+		BackToApp:    "Back to the app",
 	},
 	"de": {
 		Title:        "Bei tafs anmelden",
@@ -45,6 +49,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "Die Anmeldung in der App ist noch nicht eingeschaltet. Melde dich wie bisher über die App an.",
 		NotLoaded:    "Die Anmeldeseite wurde nicht geladen. Versuch es erneut.",
 		TryAgain:     "Erneut versuchen",
+		BackToApp:    "Zurück zur App",
 	},
 	"fr": {
 		Title:        "Se connecter à tafs",
@@ -57,6 +62,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "La connexion dans l’app n’est pas encore activée. Connectez-vous depuis l’app comme avant.",
 		NotLoaded:    "La page de connexion ne s’est pas chargée. Réessayez.",
 		TryAgain:     "Réessayer",
+		BackToApp:    "Retour à l’app",
 	},
 	"es": {
 		Title:        "Iniciar sesión en tafs",
@@ -69,6 +75,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "Iniciar sesión dentro de la app aún no está activado. Inicia sesión desde la app como antes.",
 		NotLoaded:    "La página de inicio de sesión no se cargó. Vuelve a intentarlo.",
 		TryAgain:     "Reintentar",
+		BackToApp:    "Volver a la app",
 	},
 	"it": {
 		Title:        "Accedi a tafs",
@@ -81,6 +88,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "L’accesso dentro l’app non è ancora attivo. Accedi dall’app come prima.",
 		NotLoaded:    "La pagina di accesso non si è caricata. Riprova.",
 		TryAgain:     "Riprova",
+		BackToApp:    "Torna all’app",
 	},
 	"pt": {
 		Title:        "Iniciar sessão no tafs",
@@ -93,6 +101,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "O início de sessão dentro da app ainda não está ativo. Inicie sessão a partir da app como antes.",
 		NotLoaded:    "A página de início de sessão não carregou. Tente novamente.",
 		TryAgain:     "Tentar novamente",
+		BackToApp:    "Voltar à app",
 	},
 	"nl": {
 		Title:        "Inloggen bij tafs",
@@ -105,6 +114,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "Inloggen in de app staat nog niet aan. Log zoals eerder in vanuit de app.",
 		NotLoaded:    "De aanmeldpagina is niet geladen. Probeer het opnieuw.",
 		TryAgain:     "Opnieuw proberen",
+		BackToApp:    "Terug naar de app",
 	},
 	"pl": {
 		Title:        "Zaloguj się do tafs",
@@ -117,6 +127,7 @@ var appSignIn = map[string]AppSignIn{
 		Off:          "Logowanie w aplikacji nie jest jeszcze włączone. Zaloguj się z aplikacji tak jak dotąd.",
 		NotLoaded:    "Strona logowania się nie wczytała. Spróbuj ponownie.",
 		TryAgain:     "Spróbuj ponownie",
+		BackToApp:    "Wróć do aplikacji",
 	},
 }
 

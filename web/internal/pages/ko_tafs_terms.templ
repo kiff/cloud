@@ -1,0 +1,66 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsKO is tafs's terms (/tafs/terms) in Korean, at /ko/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one. Korean has
+// the legal texts only, so a link to any other page goes to English and
+// says so.
+templ TafsTermsKO() {
+	@components.LayoutSiteWithMeta("tafs 서비스 약관", "KIFF의 앱 tafs의 서비스 약관입니다. 제공자, 계정, taf가 하는 일과 이를 통제하는 방법, 허용되는 이용, 요금, 책임, 이용 종료를 다룹니다.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · 서비스 약관</p>
+				<h1>tafs 서비스 약관</h1>
+				<p class="legal-meta"><strong>최종 업데이트:</strong> 2026년 11월 21일.</p>
+				<p class="legal-disclaimer">이 약관은 iPhone, iPad, Android와 컴퓨터용 KIFF 앱인 tafs와 그 바탕이 되는 서비스에 적용됩니다. tafs는 KIFF Cloud의 일부이며, 이 페이지는 <a href="/ko/terms">KIFF 서비스 약관</a>이 tafs에 관해 정한 내용을 그대로 옮긴 것으로, 그 약관에 아무것도 더하지 않습니다. 이 페이지가 다루지 않는 사항에는 KIFF 서비스 약관이 적용됩니다. 문의: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. tafs의 제공자</h2>
+				<p>tafs는 에스토니아의 유한회사(private limited company)인 <strong>Kiff Agents OÜ</strong>(등록번호 17372313, 주소: Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia)가 제공합니다. 계정을 만들거나 그 밖의 방법으로 tafs를 이용하면 이용자는 이 약관과 KIFF 서비스 약관에 동의하는 것입니다. 회사를 대신하여 동의하는 경우, 이용자는 그 회사를 구속할 권한이 있음을 확인합니다.</p>
+			</section>
+			<section id="account">
+				<h2>2. 계정</h2>
+				<p>tafs에는 KIFF 계정으로 로그인합니다. 이용자는 정확한 정보를 제공하고 로그인 정보를 비밀로 유지해야 하며, 자신의 계정에서 이루어지는 모든 활동과 계정에 들어오도록 허용한 모든 사람에 대해 책임을 집니다. 이용자는 만 16세 이상이거나, 거주지의 디지털 동의 연령 이상이어야 하며, 둘 중 더 높은 연령이 적용됩니다. tafs는 Anthropic이 자체 서비스를 제공하는 국가 또는 지역(<a href="https://www.anthropic.com/supported-countries">Anthropic이 게시한 목록</a>)에서만 이용할 수 있습니다. 그 목록 밖의 국가 또는 지역에 본사를 둔 회사, 또는 그러한 곳에 본사를 둔 회사가 과반수 지분을 소유하거나 지배하는 회사를 위해서는 이용할 수 없으며, 이용자 본인 또는 이용자가 tafs를 이용하는 대상 회사가 유럽연합, 국제연합 또는 미국의 제재 대상인 경우에도 이용할 수 없습니다(KIFF 서비스 약관 §4).</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. taf가 하는 일</h2>
+				<p>tafs에서 이용자는 taf에게 일을 맡깁니다. taf는 이용자가 연결한 도구를 사용해 일정에 따라, 이용자가 그 taf를 위해 발급한 KIFF Card 안에서 일하는 AI 에이전트입니다. taf가 사용하는 AI 모델은 Anthropic이 제공합니다. tafs의 AI 에이전트인 구성(Setup)은 이용자가 도구를 연결하고 taf를 설정하도록 돕지만, 스스로는 아무것도 연결하지 않습니다. 이용자는 도구 제공업체의 자체 페이지에서 로그인하고, 각 연결, taf가 사용할 수 있는 도구, 그리고 taf의 Card를 자신의 기기에서 승인합니다.</p>
+				<p>taf의 보고서, 메시지, 메모는 AI 모델이 작성하며 틀릴 수 있습니다. 중요한 내용은 의존하기 전에 확인하십시오. taf가 이용자의 회사 밖의 사람에게 쓰는 모든 글에는 AI 에이전트가 썼다는 사실이 표시됩니다.</p>
+			</section>
+			<section id="control">
+				<h2>4. 이용자의 통제: Card와 승인</h2>
+				<p>taf는 KIFF를 통해서만 이용자의 도구에 접근하며, KIFF는 모든 호출을 보내기 전에 그 taf의 Card에 비추어 확인합니다. 이용자가 발급한 Card 안의 호출은 이용자의 지시에 따라 이루어집니다. Card 밖의 호출은 Card가 정한 대로 보류되거나 거절됩니다. 보류된 호출은 이용자의 계정이 보류된 호출에 응답하도록 허용한 사람이 승인한 후에만 이루어집니다.</p>
+				<p>이용자는 각 taf의 일과 Card를 정하고, 보류된 호출에 응답하며, 자신이 연결하는 도구와 계정을 사용할 권한이 있는지 확인합니다. 이용자는 taf 하나 또는 전체를 차단하거나, taf를 일시 중지하거나, 그 taf의 Card를 취소하거나, taf를 삭제할 수 있습니다. 이용자가 taf를 차단하거나 Card를 취소한 순간부터 KIFF는 그 taf에 의한, 또는 그 Card에 따른 새 호출을 허용하지 않습니다. 이미 도구 제공업체에 보내진 요청은 그대로 완료될 수 있습니다. 당사는 새 호출을 멈추지만, 제공업체가 이미 한 일을 되돌릴 수는 없습니다. 자세한 내용은 <a href="/ko/terms#tafs">KIFF 서비스 약관 §3A</a>에 있습니다.</p>
+				<p>EU 인공지능법(AI Act)상 Kiff Agents OÜ는 tafs의 제공자이고 이용자는 그 배포자입니다. tafs는 tafs가 제공하는 일에만 이용하고, 사람의 고용, 신용 또는 필수 서비스 이용에 관한 결정처럼 인공지능법이 금지하거나 고위험으로 분류하는 용도에는 이용하지 마십시오.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. 허용되는 이용</h2>
+				<p>이용자, 이용자의 구성원, 이용자의 taf는 <a href="/acceptable-use">허용되는 이용 정책</a>(영어)을 따라야 합니다. 에이전트의 행동은 이용자의 행동입니다. 특히 이용자는 tafs를 이용하여 법을 위반하거나, 사용 권한이 없는 시스템이나 계정에 작용하거나, 자신이 제공할 권한이 없는 로그인 정보로 도구를 연결하거나, 스팸을 보내거나, Card, 한도 또는 보류를 우회해서는 안 됩니다. 신빙성 있는 위반이 있으면 당사는 즉시 이용을 정지할 수 있습니다.</p>
+			</section>
+			<section id="fees">
+				<h2>6. 요금</h2>
+				<p>이 업데이트 시점에 Solo는 월 { tafsCostKO.money(TafsSoloCents) }(부가가치세 포함)이며, 매월 { tafsCostKO.number(TafsSoloCredits) } 크레딧이 제공되고, 앱 안에서 App Store 또는 Google Play를 통해 판매됩니다. 앱에서 구매하는 크레딧 팩은 { tafsCostKO.money(TafsPackCents[TafsSoloCredits]) }부터 시작하며, 만료되지 않습니다. taf의 각 실행은 그 실행이 사용한 AI에 대해 크레딧을 사용합니다. Coach와 taf 설정은 Coach의 공정 이용 범위 안에서 포함되어 있습니다. 이는 유로 지역의 가격입니다. 그 밖의 지역에서는 App Store 또는 Google Play가 해당 국가의 규정에 따라 현지 세금을 포함하거나 포함하지 않은 가격을 이용자의 통화로 표시하며, 그 가격이 이용자가 지불하는 가격입니다. 현재 가격은 <a href="/pricing">가격 페이지</a>(영어)에 있으며, tafs는 KIFF의 Company 요금제에도 포함되어 있습니다.</p>
+				<p>체험 기간은 없습니다. 앱에서 구매한 Solo는 이용자의 Apple 구독 또는 Google Play 구독에서 관리하고 해지하며, 결제, 갱신, 환불에는 해당 스토어의 약관이 적용됩니다. 요금제는 이용자가 대금을 지불한 기간이 끝날 때까지 유지됩니다. 이용자가 EU의 소비자라면 구매일로부터 14일 이내에 청약을 철회할 수 있습니다. 자세한 내용은 <a href="/ko/terms#fees">KIFF 서비스 약관 §8</a>에 있습니다.</p>
+			</section>
+			<section id="liability">
+				<h2>7. 책임</h2>
+				<p>tafs는 KIFF 서비스 약관(§10)의 보증을 제외하고 "있는 그대로" 및 "이용 가능한 상태로" 제공됩니다. 법이 허용하는 범위에서 어느 당사자도 간접 손해 또는 결과적 손해에 대해 책임을 지지 않으며, 각 당사자의 총 책임은 <a href="/ko/terms#liability">KIFF 서비스 약관 §12</a>가 정한 대로 제한됩니다. 법이 제한을 허용하지 않는 책임은 어떠한 경우에도 제한되지 않습니다.</p>
+			</section>
+			<section id="termination">
+				<h2>8. 이용 종료</h2>
+				<p>이용자는 언제든지 이용을 멈출 수 있습니다. 앱의 계정 → <em>계정 삭제</em>에서 계정을 삭제하십시오. 그 전에 계정 → 내 채팅 내보내기에서 채팅을 내보내십시오. 당사는 통지 후 삼십 일 이내에 시정되지 않은 중대한 위반이 있는 경우, 또는 허용되는 이용 정책 위반이 있는 경우 즉시 이용자의 이용을 종료할 수 있습니다. 이용자가 서비스를 떠나고 자신의 데이터를 가져갈 권리는 <a href="/ko/terms#term">KIFF 서비스 약관 §9</a>에 있습니다.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. 변경 및 준거법</h2>
+				<p>당사는 KIFF 서비스 약관이 그 약관 자체에 대해 정한 방식(§16)으로 이 약관을 변경합니다. 이 약관에는 에스토니아 공화국 법이 적용되며, 분쟁은 탈린에 있는 하르유 카운티 법원(Harju County Court)이 관할합니다. 이용자가 다른 EU 회원국의 소비자인 경우, 이용자 본국의 강행적인 소비자 보호 규정이 계속 적용됩니다.</p>
+			</section>
+			<section id="contact">
+				<h2>10. 연락처</h2>
+				<p>계약 관련 문의: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. 앱 이용 도움: <a href="mailto:support@kiff.dev">support@kiff.dev</a>. 개인정보: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. tafs가 개인정보를 처리하는 방식은 <a href="/ko/tafs/privacy">tafs 개인정보처리방침</a>에 있습니다.</p>
+			</section>
+		</article>
+	}
+}

@@ -754,3 +754,49 @@ func TestPermit_FailedLateCheckThenRetryGetsNoPermit(t *testing.T) {
 	}
 	approvalUnconsumed(t, store, tenantID)
 }
+
+// A permit minted from the owner's approval names that approval, so a tool
+// that must never run without its owner can tell; one a Card's room
+// allowed names none.
+func TestPermit_NamesTheOwnersApprovalItWasMintedFrom(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	targets := &switchTargets{}
+	targets.set(true)
+	clock := time.Now()
+	h, store, tenantID, is := realCardRig(t, targets, &clock)
+	pub := is.Key.Public().Pub
+
+	within := decideAs(t, h, "op-in", "REFUND_ORDER", map[string]any{"amount_cents": 500},
+		map[string]any{"arguments": json.RawMessage(`{"order_number":"1042","amount_cents":500,"idempotency_key":"op-in"}`)})
+	if within.Outcome != "allowed" || within.Permit == "" {
+		t.Fatalf("within the Card: %+v", within)
+	}
+	if d := permitClaims(t, within.Permit, pub).Details[0]; d.Approval != "" {
+		t.Fatalf("a call the Card's room allowed names an approval: %+v", d)
+	}
+
+	args := json.RawMessage(`{"order_number":"1042","amount_cents":5000,"idempotency_key":"op-big"}`)
+	body := map[string]any{"id": "op-big", "entity_id": "o1", "entity_type": "Order", "action_name": "REFUND_ORDER",
+		"actor_id": "refund-agent", "parameters": map[string]any{"amount_cents": 5000}, "permit": map[string]any{"arguments": args}}
+	var held struct {
+		Outcome   string `json:"outcome"`
+		Exception *struct {
+			ID string `json:"id"`
+		} `json:"exception"`
+	}
+	_ = json.Unmarshal(drivePost(t, h, "/v1/proposals/decide", body).Body.Bytes(), &held)
+	if held.Outcome != "owner_required" || held.Exception == nil {
+		t.Fatalf("held: %+v", held)
+	}
+	if _, err := store.ApproveOnce(ctx, tenantID, held.Exception.ID, "owner", time.Now()); err != nil {
+		t.Fatal(err)
+	}
+	released := decideAs(t, h, "op-big", "REFUND_ORDER", map[string]any{"amount_cents": 5000}, map[string]any{"arguments": args})
+	if released.Outcome != "allowed" || released.Permit == "" {
+		t.Fatalf("released: %+v", released)
+	}
+	if d := permitClaims(t, released.Permit, pub).Details[0]; d.Approval != held.Exception.ID {
+		t.Fatalf("the approved call's permit names %q, not the approval %q", d.Approval, held.Exception.ID)
+	}
+}

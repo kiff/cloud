@@ -80,6 +80,7 @@ var fr = Words{
 		OwnerAskSecondRefund: "ce paiement a déjà un remboursement, donc un deuxième attend une approbation",
 		OwnerAskNoRequestID:  "l'agent n'a indiqué aucune demande venant d'une app connectée, donc ce remboursement attend une approbation",
 		OwnerAskOther:        "chaque appel de cet outil attend une approbation",
+		OwnerAskEachCall:     "chaque appel de cet outil attend une approbation",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("l'appel n'indique aucun %s, et cette Card ne s'applique qu'aux %s qu'elle liste", param, param)

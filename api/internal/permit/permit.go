@@ -43,6 +43,11 @@ type Detail struct {
 	Op         string `json:"op"`
 	Card       string `json:"card"`
 	Decision   string `json:"decision"`
+	// Approval is the held call the owner approved, when this permit was
+	// minted from that approval; absent when a Card's room allowed it. A
+	// tool that must never run without its owner refuses a permit without
+	// one.
+	Approval string `json:"approval,omitempty"`
 }
 
 // Claims are the permit's JWT claims.

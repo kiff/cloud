@@ -36,13 +36,14 @@ var englishPages = map[string]TranslatedPage{
 var translations = map[string]map[string]TranslatedPage{}
 
 // registerTranslation adds one page in one language. It panics on a
-// language or a path the site doesn't have, or a page registered twice:
+// language or a path the site doesn't have (components.HasPage), or a
+// page registered twice:
 // each is a mistake in a language's own file, caught when the binary starts.
 func registerTranslation(lang, path string, page TranslatedPage) {
-	if lang == "en" || !components.IsSiteLanguage(lang) {
+	if lang == "en" || !components.IsPageLanguage(lang) {
 		panic("pages: not a translated site language: " + lang)
 	}
-	if !components.IsTranslatedPage(path) {
+	if !components.HasPage(lang, path) {
 		panic("pages: not a translated page: " + path)
 	}
 	if translations[lang] == nil {

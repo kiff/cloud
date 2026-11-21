@@ -1,6 +1,7 @@
 package gateway_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/kiff/cloud/gateway/internal/gateway"
@@ -36,5 +37,58 @@ func TestASealedMoneyToolAsksItsOwnerEveryCall(t *testing.T) {
 	key, _ = got.call["invocation"].(string)
 	if p := plain.api.params[key]; key == "" || p[gateway.OwnerAskParam] != nil {
 		t.Fatalf("a sealed call moving no money told KIFF %v", p)
+	}
+}
+
+// Invariant: an operation whose reviewed profile says ask_each_call asks the owner on every call, whatever its custody: a permit-bound tool (relay) is told kiff_owner_ask with the code each_call, so no Card's room pays a website's checkout without a person.
+// Category: authority
+// Attack: pay a small checkout through a relay tool, well inside the agent's Card, so no person sees it
+// Refused: the call's proposal carries kiff_owner_ask each_call, and KIFF holds it for the owner; the same tool without the flag asks nothing extra
+func TestAnAskEachCallToolAsksItsOwnerEveryCallEvenWithAPermit(t *testing.T) {
+	r := newRig(t)
+	pay := refundTool
+	pay.Mode, pay.Money, pay.AskEachCall = gateway.ModeRelay, true, true
+	r.gw.Catalog = catalog{pay}
+	got := r.call(t, "agent-key", amount(500, "op-each"))
+	key, _ := got.call["invocation"].(string)
+	if p := r.api.params[key]; key == "" || p[gateway.OwnerAskParam] != gateway.OwnerAskEachCall {
+		t.Fatalf("an ask_each_call tool told KIFF %v (%+v)", p, got)
+	}
+
+	plain := newRig(t)
+	relay := refundTool
+	relay.Mode, relay.Money = gateway.ModeRelay, true
+	plain.gw.Catalog = catalog{relay}
+	got = plain.call(t, "agent-key", amount(500, "op-relay"))
+	key, _ = got.call["invocation"].(string)
+	if p := plain.api.params[key]; key == "" || p[gateway.OwnerAskParam] != nil {
+		t.Fatalf("a relay money tool without the flag told KIFF %v", p)
+	}
+}
+
+// The catalog carries ask_each_call from the tool's approved profile, so the
+// call above asks: a catalog that dropped it would let a checkout through on
+// a Card's room.
+func TestTheCatalogCarriesAskEachCallFromTheProfile(t *testing.T) {
+	r := newRig(t)
+	ctx := context.Background()
+	if _, err := r.pool.Exec(ctx, `DELETE FROM gateway.tools WHERE tenant_id = 'tenant-ask';
+		DELETE FROM gateway.profiles WHERE tenant_id = 'tenant-ask';
+		INSERT INTO gateway.profiles (tenant_id, revision, profile, profile_sha256, words_sha256, device_id, signed_at, created_by) VALUES
+		('tenant-ask', 1, '{"operations":[{"tool":"pay","kind":"write","effect":"moves_money","ask_each_call":true},{"tool":"act","kind":"write","effect":"writes"}]}', 'p', 'w', 'd', now(), 'owner');
+		INSERT INTO gateway.tools (tenant_id, name, input_schema, upstream_url, upstream_tool, profile_revision) VALUES
+		('tenant-ask', 'pay', '{}', 'http://t/mcp', 'pay', 1), ('tenant-ask', 'act', '{}', 'http://t/mcp', 'act', 1)`); err != nil {
+		t.Fatal(err)
+	}
+	tools, err := gateway.PostgresCatalog{Pool: r.pool}.Tools(ctx, "tenant-ask")
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := map[string]bool{}
+	for _, tl := range tools {
+		got[tl.Name] = tl.AskEachCall
+	}
+	if len(got) != 2 || !got["pay"] || got["act"] {
+		t.Fatalf("ask_each_call from the catalog: %v", got)
 	}
 }

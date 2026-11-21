@@ -576,3 +576,66 @@ func TestAppSignIn_TheFormLoadsTheProvidersUIAndNeverShowsABlankPage(t *testing.
 		}
 	}
 }
+
+// The page's styles never reach into the provider's form: it draws inside
+// #sign-in, so a bare element rule (button, input, form, p, a, label) would
+// reshape its fields. A full-width "button" rule put the show-password
+// button over the password field (K5, 21 Nov).
+func TestAppSignIn_ThePagesStylesStayOutOfTheProvidersForm(t *testing.T) {
+	t.Parallel()
+	_, client := newAppAPI(t, http.StatusOK, "{}")
+	mux, _ := appSignIn(t, client, script{}, noon)
+	body := serve(mux, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil)).Body.String()
+	_, css, _ := strings.Cut(body, "<style>")
+	css, _, _ = strings.Cut(css, "</style>")
+	for _, rule := range strings.Split(css, "}") {
+		sel, _, ok := strings.Cut(rule, "{")
+		if !ok {
+			continue
+		}
+		if i := strings.LastIndex(sel, "*/"); i >= 0 {
+			sel = sel[i+2:]
+		}
+		for _, one := range strings.Split(sel, ",") {
+			one = strings.TrimSpace(one)
+			for _, bare := range []string{"button", "input", "form", "p", "a", "label", "div", "span"} {
+				if one == bare || strings.HasPrefix(one, bare+".") || strings.HasPrefix(one, bare+" ") || strings.HasPrefix(one, bare+":") || strings.HasPrefix(one, bare+"[") {
+					t.Errorf("the selector %q reaches into the provider's form", one)
+				}
+			}
+		}
+	}
+}
+
+// A page that stops (expired, failed, off) is never a dead end: it carries a
+// button back to the app, through the app's own redirect, in its language.
+func TestAppSignIn_AStoppedPageHasAButtonBackToTheApp(t *testing.T) {
+	t.Parallel()
+	for _, api := range []struct {
+		status int
+		body   string
+	}{
+		{http.StatusGone, `{"error":"this sign-in has expired; start again from the app"}`},
+		{http.StatusInternalServerError, `{}`},
+		{http.StatusNotFound, `404 page not found`},
+	} {
+		for _, lang := range []string{"en", "de", "fr", "es", "it", "pt", "nl", "pl"} {
+			_, client := newAppAPI(t, api.status, api.body)
+			mux, sessions := appSignIn(t, client, script{}, noon)
+			body := appPost(t, mux, sessions, "request="+appReq+"&answer=continue&ui_locales="+lang).Body.String()
+			w := words.AppSignInIn(lang)
+			if w.BackToApp == "" {
+				t.Fatalf("%s has no words for going back to the app", lang)
+			}
+			if !strings.Contains(body, `<a class="other" href="`+string(appBackToApp)+`">`+html.EscapeString(w.BackToApp)+`</a>`) {
+				t.Errorf("API %d, %s: the stopped page has no way back to the app", api.status, lang)
+			}
+		}
+	}
+	// Never on the form: there, the provider's buttons do it.
+	_, client := newAppAPI(t, http.StatusOK, "{}")
+	mux, _ := appSignIn(t, client, script{}, noon)
+	if form := serve(mux, httptest.NewRequest(http.MethodGet, "/sign-in/app?request="+appReq, nil)).Body.String(); strings.Contains(form, string(appBackToApp)) {
+		t.Error("the form shows the stopped page's button")
+	}
+}

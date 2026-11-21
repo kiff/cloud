@@ -15,7 +15,7 @@ func TestSupportComputerWaitsForADownload(t *testing.T) {
 	if anyDesktopDownload(DesktopApps()) {
 		t.Skip("a computer's app is released: §6 is live")
 	}
-	for _, lang := range append([]string{"en"}, TranslatedLanguages()...) {
+	for _, lang := range append([]string{"en"}, languagesWith("/support")...) {
 		if html := renderPage(t, lang, "/support"); strings.Contains(html, `id="computer"`) {
 			t.Errorf("/%s/support shows §6 before any computer's app can be downloaded", lang)
 		}
@@ -48,7 +48,7 @@ func TestSupportComputerTranslationsKeepTheEnglishSection(t *testing.T) {
 			t.Errorf("English §6 is missing the app's %q", want)
 		}
 	}
-	for _, lang := range TranslatedLanguages() {
+	for _, lang := range languagesWith("/support") {
 		c, ok := sections[lang]
 		if !ok {
 			t.Errorf("no §6 in %s", lang)

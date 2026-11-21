@@ -32,6 +32,11 @@ var StoreCountries = map[string][]string{
 		"AS", "GU", "MH", "MP", "PW", "PR", "VI",
 		"GF", "PF", "GP", "MQ", "YT", "NC", "RE", "BL", "MF", "PM", "WF",
 		"FO", "GL", "AX", "SJ",
+		// Wave 2, Group C (owner's yes pending): the 12 of the group Play offers.
+		// Play doesn't offer Guyana, St Vincent, Madagascar, Lesotho or Eswatini;
+		// Barbados waits on its scope question.
+		"BZ", "AG", "BS", "KN", "LC", "GM", "GN", "CG", "KM", "DJ",
+		"SC", "MU",
 	},
 	// The App Store, iOS and macOS, 21 Nov 2026: the EU, Iceland, Norway,
 	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
@@ -48,5 +53,10 @@ var StoreCountries = map[string][]string{
 		"BO", "DO", "GT", "HN", "PY", "MZ", "GW", "ST", "DM", "GD",
 		"TT", "FJ", "FM", "PW", "PG", "SB", "TO", "VU", "LR", "NA",
 		"SL", "PK", "SR", "BM", "KY", "VG", "AI", "MS", "TC",
+		// Wave 2, Group C (owner's yes pending): the 13 of the group with a
+		// storefront. None in Guinea, Comoros, Djibouti or Lesotho; Barbados
+		// waits on its scope question.
+		"BZ", "GY", "AG", "BS", "KN", "LC", "VC", "GM", "CG", "MG",
+		"SC", "MU", "SZ",
 	},
 }
