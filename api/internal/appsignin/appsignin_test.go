@@ -331,3 +331,61 @@ func TestAReplayWhileTheFirstUseMintsEndsWhatItMakes(t *testing.T) {
 		t.Fatal("Minted said a code no one replayed was used again")
 	}
 }
+
+// KIFF_APP_SIGNIN reads "on" and "test" only; anything else, a typo or a
+// stray case, is off, never on for everyone.
+func TestTheSwitchIsOffUnlessExactlyOnOrTest(t *testing.T) {
+	for v, want := range map[string][2]bool{
+		"on": {true, false}, " on ": {true, false}, "test": {true, true},
+		"": {false, false}, "off": {false, false}, "ON": {false, false}, "true": {false, false}, "tests": {false, false}, "1": {false, false},
+	} {
+		if on, test := appsignin.Switch(v); on != want[0] || test != want[1] {
+			t.Errorf("Switch(%q) = %v, %v; want %v, %v", v, on, test, want[0], want[1])
+		}
+	}
+}
+
+// "test": the routes are up, a listed tenant signs in as with "on", and any
+// other is sent back to the app at approve with unsupported_client and no
+// code, so the token route has nothing to redeem for it (and no consent or
+// session is ever made). An empty list refuses everyone.
+func TestTestModeLetsOnlyTheListedTenantsSignIn(t *testing.T) {
+	newTest := func(tenants ...string) *fixture {
+		f := &fixture{t: t, now: time.Date(2026, 11, 20, 12, 0, 0, 0, time.UTC)}
+		f.h = appsignin.New(true, page, appsignin.WithClock(func() time.Time { return f.now }), appsignin.WithOnlyTenants(tenants))
+		f.mux = http.NewServeMux()
+		f.h.RegisterAuthenticated(f.mux)
+		return f
+	}
+	refused := func(f *fixture, who auth.Identity) {
+		t.Helper()
+		code, loc := f.authorize(authorizeQuery(nil))
+		if code != http.StatusFound || loc.Scheme+"://"+loc.Host+loc.Path != page {
+			t.Fatalf("authorize in test mode: %d %v", code, loc)
+		}
+		status, out := f.call("/v1/auth/app/approve", &who, `{"request":"`+loc.Query().Get("request")+`"}`)
+		back, _ := url.Parse(out["redirect_to"])
+		if status != http.StatusOK || back.Query().Get("error") != "unsupported_client" || back.Query().Has("code") ||
+			back.Query().Get("state") != "state-0123456789abcdef" {
+			t.Fatalf("approve for %s: %d %v", who.Tenant, status, back)
+		}
+		if again, _ := f.call("/v1/auth/app/approve", &who, `{"request":"`+loc.Query().Get("request")+`"}`); again != http.StatusGone {
+			t.Fatalf("the refused request was kept: %d", again)
+		}
+	}
+
+	// Listed: the whole way, as with "on".
+	f := newTest("t_ana")
+	if who, err := f.h.Redeem(context.Background(), appsignin.ClientID, f.signIn(), verifier, appsignin.RedirectURI); err != nil || who.Tenant != "t_ana" {
+		t.Fatalf("a listed tenant: %+v %v", who, err)
+	}
+	// Not listed, even differing only in case: refused, no code to redeem.
+	for _, other := range []string{"t_bob", "T_ANA"} {
+		refused(f, auth.Identity{Subject: "user_" + other, Tenant: other, Email: "x@example.com", Method: auth.MethodSession})
+	}
+	if _, err := f.h.Redeem(context.Background(), appsignin.ClientID, "made-up", verifier, appsignin.RedirectURI); !errors.Is(err, appsignin.ErrBadGrant) {
+		t.Fatalf("redeem with no code minted: %v", err)
+	}
+	// An empty list refuses everyone, the tenant that was listed above too.
+	refused(newTest(), ana)
+}

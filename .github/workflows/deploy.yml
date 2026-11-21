@@ -114,6 +114,10 @@ jobs:
       KIFF_GOOGLE_PUSH_AUDIENCE: ${{ vars.KIFF_GOOGLE_PUSH_AUDIENCE }}
       KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT: ${{ secrets.KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT }}
       KIFF_GOOGLE_TEST_TENANTS: ${{ secrets.KIFF_GOOGLE_TEST_TENANTS }}
+      # Signing in inside the tafs apps: the repository variable KIFF_APP_SIGNIN is "on", or "test" for the tenants in
+      # the secret KIFF_APP_SIGNIN_TENANTS only; empty or anything else is off.
+      KIFF_APP_SIGNIN: ${{ vars.KIFF_APP_SIGNIN }}
+      KIFF_APP_SIGNIN_TENANTS: ${{ secrets.KIFF_APP_SIGNIN_TENANTS }}
       # kiff.dev's apps list from planque's proofs: the repository variable KIFF_APPS_PROVED=on turns it on.
       KIFF_APPS_PROVED: ${{ vars.KIFF_APPS_PROVED }}
       # kiff.dev's download page from the computers' published releases: KIFF_DESKTOP_RELEASES=on turns it on.
@@ -200,7 +204,7 @@ jobs:
       # masked: "-" means none, and masking it would star every hyphen in the log.
       - name: Mask each element of the list secrets
         run: |
-          for n in KIFF_STUB_SUBJECTS KIFF_APPLE_SANDBOX_TENANTS KIFF_GOOGLE_TEST_TENANTS KIFF_PROOF_TEST_TENANTS \
+          for n in KIFF_STUB_SUBJECTS KIFF_APPLE_SANDBOX_TENANTS KIFF_GOOGLE_TEST_TENANTS KIFF_APP_SIGNIN_TENANTS KIFF_PROOF_TEST_TENANTS \
             KIFF_PROOF_TEST_KEYS KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
             IFS=',' read -r -a parts <<< "${!n:-}"
             for p in "${parts[@]}"; do

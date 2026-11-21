@@ -73,7 +73,8 @@ const (
 	envCookieSecure  = "KIFF_COOKIE_SECURE"
 
 	// envAppSignIn turns on the tafs apps' sign-in page (/sign-in/app), with
-	// the API's own switch of the same name.
+	// the API's own switch of the same name: "on", or "test" (the API then
+	// lets only its listed tenants through); anything else is off.
 	envAppSignIn = "KIFF_APP_SIGNIN"
 
 	// envGatewayBaseURL is how the web reaches the KIFF MCP gateway for
@@ -394,9 +395,10 @@ func run() error {
 		authH := handlers.NewAuthHandler(provider, sessions, logger)
 		authH.Register(mux)
 		// /sign-in/app — the tafs apps' sign-in, in the app's sheet. Off
-		// unless KIFF_APP_SIGNIN is "on", the API's own switch: off, it
-		// says so and does nothing else.
-		appSignIn := strings.TrimSpace(os.Getenv(envAppSignIn)) == "on"
+		// unless KIFF_APP_SIGNIN is "on" or "test", the API's own switch: off,
+		// it says so and does nothing else. In "test" the page is up and the
+		// API's approve refuses any account it doesn't list.
+		appSignIn := appSignInOn(os.Getenv(envAppSignIn))
 		handlers.NewAppSignInHandler(appSignIn, sessionAPIClient, sessions, bearers, provider, logger).Register(mux)
 
 		// /dashboard surface — both the index and the action
@@ -796,4 +798,11 @@ func buildRegionGate(path string, logger *slog.Logger) (*region.Gate, error) {
 	}
 	logger.Info("region: table loaded", slog.Int("ranges", table.Len()), slog.String("list_effective", region.ListEffective))
 	return region.NewGate(table, region.SessionRoutes, handlers.RegionRefused, logger), nil
+}
+
+// appSignInOn reads KIFF_APP_SIGNIN as the API does: "on" and "test" serve the
+// page, anything else (empty, unknown, a typo) is off.
+func appSignInOn(v string) bool {
+	v = strings.TrimSpace(v)
+	return v == "on" || v == "test"
 }
