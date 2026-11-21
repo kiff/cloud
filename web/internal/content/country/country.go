@@ -41,6 +41,19 @@ var Served = map[string][]string{
 	"sv": {"en", "es"},
 }
 
+// Notice is a legal notice served from these drafts outside the "Your
+// country" index, such as Japan's seller notice: its path, and its
+// languages, English first.
+type Notice struct {
+	Path  string
+	Langs []string
+}
+
+// Notices are the notices served, by draft name ("jp-tokushoho" is
+// jp-tokushoho.<lang>.md). A notice joins once its draft has no drafting
+// mark left.
+var Notices = map[string]Notice{}
+
 // Names are each served country's name in English, for the index.
 var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador"}
 
@@ -58,6 +71,16 @@ func Get(country, lang string) (Section, bool, error) {
 		return Section{}, false, loadErr
 	}
 	s, ok := sections[country+"."+lang]
+	return s, ok, nil
+}
+
+// GetNotice is a notice in a language, if it's served.
+func GetNotice(name, lang string) (Section, bool, error) {
+	once.Do(load)
+	if loadErr != nil {
+		return Section{}, false, loadErr
+	}
+	s, ok := sections["notice:"+name+"."+lang]
 	return s, ok, nil
 }
 
@@ -91,6 +114,32 @@ func load() {
 			sections[c+"."+l] = Section{Country: c, Lang: l, Title: title, HTML: render(src)}
 		}
 	}
+	for name, n := range Notices {
+		for _, l := range n.Langs {
+			s, err := loadOne(name, l)
+			if err != nil {
+				loadErr = err
+				return
+			}
+			sections["notice:"+name+"."+l] = s
+		}
+	}
+}
+
+// loadOne reads one notice's copy, refusing one with a drafting mark left.
+func loadOne(name, lang string) (Section, error) {
+	src, err := files.ReadFile(name + "." + lang + ".md")
+	if err != nil {
+		return Section{}, fmt.Errorf("country: %s.%s: %w", name, lang, err)
+	}
+	if bytes.Contains(src, []byte("[owner]")) || bytes.Contains(src, []byte("[mac-local]")) {
+		return Section{}, fmt.Errorf("country: %s.%s still has a drafting mark", name, lang)
+	}
+	title := name
+	if m := heading.FindSubmatch(src); m != nil {
+		title = string(m[1])
+	}
+	return Section{Country: name, Lang: lang, Title: title, HTML: render(src)}, nil
 }
 
 // render turns a section into HTML with raw HTML off: anything that isn't

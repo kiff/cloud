@@ -41,6 +41,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/kiff/cloud/web/internal/content/country"
 	"log/slog"
 	"net/http"
 	"os"
@@ -335,6 +336,12 @@ func run() error {
 	mux.Handle("GET /privacy/countries", handlers.CountryIndex())
 	mux.Handle("GET /privacy/countries/{country}", handlers.CountrySection())
 	mux.Handle("GET /privacy/countries/{country}/{lang}", handlers.CountrySection())
+	// Legal notices served from the same drafts, such as Japan's seller
+	// notice (/legal/japan, /legal/japan/ja).
+	for name, n := range country.Notices {
+		mux.Handle("GET "+n.Path, handlers.LegalNotice(name))
+		mux.Handle("GET "+n.Path+"/{lang}", handlers.LegalNotice(name))
+	}
 	mux.Handle("GET /cookies", handlers.Cookies())
 	// The DPA lives at /legal/dpa; /dpa is the short form.
 	mux.Handle("GET /dpa", handlers.Redirect("/legal/dpa"))
