@@ -24,11 +24,15 @@ var SiteLanguages = []string{"en", "de", "fr", "es", "it", "pt", "nl", "pl"}
 var partialPages = map[string][]string{
 	"ko": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ja": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"et": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"lv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"el": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"lt": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Lithuanian: the same four
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -49,6 +53,10 @@ var languageNames = map[string]string{
 	"it": "Italiano", "pt": "Português", "nl": "Nederlands", "pl": "Polski",
 	"ko": "한국어",
 	"ja": "日本語",
+	"et": "Eesti",
+	"lv": "Latviešu",
+	"el": "Ελληνικά",
+	"lt": "Lietuvių",
 }
 
 // LanguageName is a site language's name in that language.
@@ -210,6 +218,10 @@ var translationNotices = map[string]string{
 	"pl": "To tłumaczenie ma charakter informacyjny. Wiążąca jest wersja angielska:",
 	"ko": "이 번역본은 참고용입니다. 영어 원문이 우선합니다:",
 	"ja": "これは参考のための翻訳です。英語版が優先します：",
+	"et": "See on teavitamiseks mõeldud tõlge. Kehtib ingliskeelne versioon:",
+	"lv": "Šis ir tulkojums uzziņai. Noteicošā ir versija angļu valodā:",
+	"el": "Αυτή είναι μετάφραση για ενημερωτικούς σκοπούς. Υπερισχύει η αγγλική έκδοση:",
+	"lt": "Tai vertimas, pateikiamas informacijai. Viršenybę turi versija anglų kalba:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -222,6 +234,10 @@ var inEnglish = map[string]string{
 	"pt": "(em inglês)", "nl": "(in het Engels)", "pl": "(po angielsku)",
 	"ko": "(영어)",
 	"ja": "（英語）",
+	"et": "(inglise keeles)",
+	"lv": "(angliski)",
+	"el": "(στα αγγλικά)",
+	"lt": "(anglų kalba)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

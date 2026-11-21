@@ -10,11 +10,11 @@ and its credits, sold in Japan through the App Store and Google Play.
 | Address | Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia |
 | Telephone | We disclose it without delay on request to legal@kiff.dev |
 | Email | legal@kiff.dev |
-| Prices | Shown on each item in the app, in yen, tax included: Solo (monthly subscription) and packs of credits. **[mac-local]** the yen prices once set |
+| Prices | Shown in yen, tax included, on each item in the app and in the App Store or Google Play before you buy: Solo (monthly subscription) and packs of credits |
 | Other costs | None from us. Your internet connection is at your own cost. |
 | Payment | Through the App Store (Apple) or Google Play (Google), with the payment methods they accept |
 | When you pay | Solo: at purchase, then at the start of each monthly period until you cancel. Credit packs: at purchase |
 | When you get it | Immediately after the purchase is confirmed |
-| Validity of credits | **[owner]** decision under the Payment Services Act: packs of credits valid for less than 6 months, or a notification under that Act |
+| Validity of credits | Packs of credits, and bonus credits, don't expire |
 | Cancellation | Solo can be cancelled at any time in your Apple or Google Play subscriptions; it runs to the end of the period you paid for and isn't renewed. Because credits and Solo are digital content supplied at once, there is no return after purchase, except as the law requires or under the store's refund terms. |
 | Operating environment | iPhone and iPad with a current iOS or iPadOS; Android phones with a current Android, through Google Play |

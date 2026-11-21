@@ -75,6 +75,28 @@ jobs:
           code=$?
           set -e
           [ "$code" = 2 ] || { echo "a missing DB_HOST answered $code, want 2"; exit 1; }
+          # KIFF's one secret alone: no old secret names at all, and the command still comes out
+          # (the role check sees only the one secret and the database's own).
+          (
+            unset CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN \
+              STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET PLANQUE_EVENT_SECRET_ARN \
+              PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET \
+              GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET
+            export KIFF_SECRET_ARN=kiff/placeholder-one-secret
+            bash scripts/deploy.sh --dry-run --git-sha=$sha > "$RUNNER_TEMP/bundle.txt"
+          )
+          grep -q 'KIFF_SECRET_ARN="kiff/placeholder-one-secret"' "$RUNNER_TEMP/bundle.txt"
+          ! grep -q 'placeholder-CLERK_SECRET_ARN' "$RUNNER_TEMP/bundle.txt"
+          echo "the one-secret dry run reached its command: $(wc -l < "$RUNNER_TEMP/bundle.txt") lines"
+          # The box's check that the one secret is exactly one JSON object, as rendered: one
+          # object passes; two in a row, an array, a string or broken JSON stop the deploy.
+          check=$(grep -o "jq -s -e '[^']*'" "$RUNNER_TEMP/bundle.txt" | head -1 | sed "s/^jq -s -e '//; s/'\$//")
+          [ -n "$check" ] || { echo "the one-object check isn't in the command"; exit 1; }
+          printf '%s' '{"session_secret":"a"}' | jq -s -e "$check" > /dev/null
+          for bad in '{"session_secret":"a"}{"session_secret":"b"}' '{"a":"x"} {}' '[{"a":"x"}]' '"x"' '{"a":'; do
+            if printf '%s' "$bad" | jq -s -e "$check" > /dev/null 2>&1; then echo "the check let through: $bad"; exit 1; fi
+          done
+          echo "the one-object check refuses a stream, an array, a string and broken JSON"
 
   deploy:
     needs: dry-run
@@ -166,6 +188,8 @@ jobs:
       PERMIT_KEY_SECRET: ${{ secrets.PERMIT_KEY_SECRET }}
       PERMIT_PUBLISHED_SECRET: ${{ secrets.PERMIT_PUBLISHED_SECRET }}
       GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET }}
+      # KIFF's one secret (deploy.sh): empty until it exists and the box may read it.
+      KIFF_SECRET_ARN: ${{ secrets.KIFF_SECRET_ARN }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -187,11 +211,16 @@ jobs:
             fi
           done
           exit "$fail"
-      # Before any credential: deploy.sh's 21 values, from `production`'s secrets.
+      # Before any credential: deploy.sh's values, from `production`'s secrets. With KIFF's one
+      # secret set, the secrets it holds need no name of their own (deploy.sh drops or keeps them).
       - name: Check the deploy values
         run: |
           fail=0
-          for n in INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET; do
+          need="INSTANCE_ID STAGING_BUCKET DB_HOST KIFF_ACME_EMAIL DB_SECRET_ARN KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS"
+          if [ -z "${KIFF_SECRET_ARN:-}" ] || [ "$KIFF_SECRET_ARN" = "-" ]; then
+            need="$need CLERK_SECRET_ARN SESSION_SECRET_ARN ANCHOR_WALLET_ARN WEB_DEMO_KEY_ARN RESEND_SECRET_ARN STRIPE_WEBHOOK_SECRET_ARN STRIPE_SECRET_KEY_ARN GATEWAY_KEYS_SECRET PLANQUE_EVENT_SECRET_ARN PROOF_STATE_TOKENS_ARN CLERK_WEBHOOK_SECRET_ARN PERMIT_KEY_SECRET PERMIT_PUBLISHED_SECRET GOOGLE_PLAY_SERVICE_ACCOUNT_SECRET"
+          fi
+          for n in $need; do
             if [ -z "${!n:-}" ]; then
               echo "::error::$n must be set as a secret of the production environment (\"-\" for off where deploy.sh allows it)"
               fail=1

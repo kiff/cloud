@@ -327,10 +327,16 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 	for lang, page := range map[string]string{
 		"ko": `<main><section id="a"><h2>요금</h2><p>2026년 11월 9일에 최대 €1,240.50, <a href="/ko/privacy#tafs">개인정보</a> 및 <code>x</code>.</p><ul><li>30일</li></ul></section></main>`,
 		"ja": `<main><section id="a"><h2>料金</h2><p>2026年11月9日に最大€1,240.50、<a href="/ja/privacy#tafs">プライバシー</a>と<code>x</code>。</p><ul><li>30日</li></ul></section></main>`,
+		"et": `<main><section id="a"><h2>Tasud</h2><p>Kuni 1 240,50 € 9. novembril 2026, vt <a href="/et/privacy#tafs">privaatsus</a> ja <code>x</code>.</p><ul><li>30 päeva</li></ul></section></main>`, // a month's name: no extra figure
 	} {
 		if a, b := multisetDiff(en.figures, shapeOf(page, lang).figures); len(a)+len(b) > 0 {
 			t.Errorf("%s date: figures %v %v", lang, a, b)
 		}
+	}
+	// Lithuanian names the month with a word ("2026 m. lapkričio 9 d."): only the year and the day are figures.
+	lt := shapeOf(`<main><section id="a"><h2>Mokesčiai</h2><p>2026 m. lapkričio 9 d. iki 1 240,50 €, žr. <a href="/lt/privacy#tafs">privatumą</a> ir <code>x</code>.</p><ul><li>30 dienų</li></ul></section></main>`, "lt")
+	if a, b := multisetDiff(en.figures, lt.figures); len(a)+len(b) > 0 {
+		t.Errorf("lt date: figures %v %v", a, b)
 	}
 	short := shapeOf(`<main><section id="a"><h2>Gebühren</h2><p>Bis zu 1.240 €.</p></section></main>`, "de")
 	if firstDiff(en.blocks, short.blocks) == "" {
