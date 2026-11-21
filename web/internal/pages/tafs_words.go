@@ -146,10 +146,9 @@ func (w tafsWords) legalServed(p string) bool {
 	return components.TranslationServed(w.lang(), page)
 }
 
-// priceLine is screen 8's line: Solo's price and credits, and the models.
+// priceLine is screen 8's line: Solo's price and credits, and the model (Coach and tafs both run on it).
 func (w tafsWords) priceLine() string {
-	return fmt.Sprintf(w.Price.Small, w.Cost.money(TafsSoloCents), w.Cost.number(TafsSoloCredits),
-		TafsWorkModel, strings.TrimPrefix(TafsCoachModel, "Claude "))
+	return fmt.Sprintf(w.Price.Small, w.Cost.money(TafsSoloCents), w.Cost.number(TafsSoloCredits), TafsWorkModel)
 }
 
 // topUp is the top-up tag's second line, with the smallest pack's price.
