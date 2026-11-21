@@ -103,3 +103,7 @@ var tafsCostLV = tafsCostWords{Lang: "lv"}
 // tafsCostEL writes the prices tafs's terms state in Greek: "12,50 €",
 // "1.500". Greek has no /tafs page, so it has no footer line of its own.
 var tafsCostEL = tafsCostWords{Lang: "el"}
+// tafsCostLT writes the prices tafs's terms state in Lithuanian: "12,50 €",
+// money's default, and the credits as they stand ("500"). Lithuanian has no
+// /tafs page, so it has no footer line of its own.
+var tafsCostLT = tafsCostWords{Lang: "lt"}

@@ -1,0 +1,68 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsLT is tafs's terms (/tafs/terms) in Lithuanian, at /lt/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one. Lithuanian has
+// the legal texts only, so a link to any other page goes to English and
+// says so. The app's labels are its Lithuanian strings („Paskyra“ →
+// „Ištrinti paskyrą“), as the Estonian, Latvian, Korean and Japanese pages
+// use their app's words.
+templ TafsTermsLT() {
+	@components.LayoutSiteWithMeta("tafs sąlygos", "tafs, KIFF programėlės, sąlygos: kas ją teikia, jūsų paskyra, ką daro taf ir kaip jį kontroliuojate, priimtinas naudojimas, mokesčiai, atsakomybė ir nutraukimas.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · sąlygos</p>
+				<h1>tafs sąlygos</h1>
+				<p class="legal-meta"><strong>Paskutinį kartą atnaujinta:</strong> 2026 m. lapkričio 21 d.</p>
+				<p class="legal-disclaimer">Šios sąlygos taikomos tafs, KIFF programėlei, skirtai iPhone, iPad, Android įrenginiams ir kompiuteriams, bei paslaugai, kuria ji grindžiama. tafs yra KIFF Cloud dalis, o šiame puslapyje pakartojama, ką apie ją nustato <a href="/lt/terms">KIFF paslaugų teikimo sąlygos</a>, nieko prie jų nepridedant. KIFF sąlygos taikomos viskam, ko neapima šis puslapis. Klausimai: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. Kas teikia tafs</h2>
+				<p>tafs teikia <strong>Kiff Agents OÜ</strong>, Estijos uždaroji akcinė bendrovė (registro kodas 17372313), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estija. Susikurdami paskyrą ar kitaip naudodamiesi tafs, sutinkate su šiomis sąlygomis ir KIFF sąlygomis. Jei sutinkate įmonės vardu, patvirtinate, kad turite teisę ją įpareigoti.</p>
+			</section>
+			<section id="account">
+				<h2>2. Jūsų paskyra</h2>
+				<p>Prie tafs prisijungiate naudodami KIFF paskyrą. Pateikite tikslią informaciją, saugokite savo prisijungimo duomenis paslaptyje; jūs atsakote už visą veiklą savo paskyroje ir už kiekvieną asmenį, kurį į ją įsileidžiate. Jums turi būti ne mažiau kaip 16 metų arba jūsų gyvenamosios vietos skaitmeninio sutikimo amžius, priklausomai nuo to, kuris yra didesnis. tafs galite naudotis tik iš šalies ar regiono, kuriame Anthropic teikia savo paslaugą, kaip <a href="https://www.anthropic.com/supported-countries">juos nurodo Anthropic</a>; negalite ja naudotis įmonei, kurios būstinė yra už šio sąrašo ribų esančioje šalyje ar regione arba kuri yra daugumos nuosavybės teise valdoma ar kontroliuojama įmonės, kurios būstinė yra tokioje šalyje ar regione; taip pat negalite ja naudotis, jei jums ar įmonei, kuriai ja naudojatės, taikomos Europos Sąjungos, Jungtinių Tautų ar Jungtinių Amerikos Valstijų sankcijos (KIFF sąlygų 4 punktas).</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. Ką daro taf</h2>
+				<p>tafs jūs patikite darbą taf: dirbtinio intelekto (AI) agentui, kuris dirba pagal tvarkaraštį su jūsų prijungtais įrankiais, jūsų jam išduotų KIFF Card ribose. Jo naudojamą AI modelį teikia Anthropic. Setup, tafs AI agentas, padeda jums prijungti įrankį ir nustatyti taf, bet pats nieko neprijungia: jūs prisijungiate prie paties įrankio teikėjo ir savo įrenginyje patvirtinate kiekvieną ryšį, įrankius, kuriuos taf gali naudoti, ir jo Card.</p>
+				<p>taf ataskaitas, žinutes ir atminties pastabas rašo AI modelis, todėl jos gali būti klaidingos. Prieš pasikliaudami, patikrinkite tai, kas svarbu. Viskas, ką taf rašo kam nors už jūsų įmonės ribų, nurodo, kad tai parašė AI agentas.</p>
+			</section>
+			<section id="control">
+				<h2>4. Jūsų kontrolė: Card ir patvirtinimai</h2>
+				<p>taf pasiekia jūsų įrankius tik per KIFF, kuri prieš išsiųsdama kiekvieną užklausą patikrina ją pagal taf Card. Užklausa jūsų išduotos Card ribose atliekama jūsų nurodymu. Užklausa už Card ribų sulaikoma arba atmetama, kaip nustato Card. Sulaikyta užklausa atliekama tik tada, kai ją patvirtina asmuo, kuriam jūsų paskyra leidžia atsakyti į sulaikytas užklausas.</p>
+				<p>Jūs pasirenkate kiekvieno taf darbą ir Card, atsakote į jo sulaikytas užklausas ir užtikrinate, kad turite teisę naudoti prijungtus įrankius ir paskyras. Galite sustabdyti vieną taf arba visus, pristabdyti taf, atšaukti bet kurią jo Card arba jį pašalinti. Nuo tos akimirkos, kai sustabdote taf ar atšaukiate Card, KIFF neleidžia jokios naujos šio taf ar pagal šią Card užklausos. Įrankio teikėjui jau išsiųsta užklausa vis tiek gali būti įvykdyta: mes sustabdome naujas užklausas, bet negalime atšaukti to, ką teikėjas jau padarė. Išsamiau – <a href="/lt/terms#tafs">KIFF sąlygų 3A punkte</a>.</p>
+				<p>Pagal ES dirbtinio intelekto aktą Kiff Agents OÜ yra tafs tiekėjas, o jūs – jo diegėjas. Naudokite tafs tik jo siūlomiems darbams, o ne tokiam naudojimui, kurį AI aktas draudžia arba priskiria didelės rizikos kategorijai, pavyzdžiui, sprendimams dėl asmens įdarbinimo, kredito ar prieigos prie esminių paslaugų.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. Priimtinas naudojimas</h2>
+				<p>Jūs, jūsų žmonės ir jūsų taf turite laikytis <a href="/acceptable-use">Priimtino naudojimo politikos</a> (anglų kalba). Agento veiksmas yra jūsų veiksmas. Be kita ko, negalite naudoti tafs įstatymams pažeisti, veikti sistemoje ar paskyroje, kurios naudoti neturite teisės, prijungti įrankio naudodami prisijungimą, kurio neturite teisės suteikti, siųsti šlamšto ar apeiti Card, limito ar sulaikymo. Esant patikimam pažeidimui, galime naudojimą nedelsiant sustabdyti.</p>
+			</section>
+			<section id="fees">
+				<h2>6. Mokesčiai</h2>
+				<p>Šio atnaujinimo metu Solo kainuoja { tafsCostLT.money(TafsSoloCents) } per mėnesį su PVM, su { tafsCostLT.number(TafsSoloCredits) } kreditų per mėnesį, ir parduodamas programėlėje per App Store arba Google Play. Programėlėje perkami kreditų paketai prasideda nuo { tafsCostLT.money(TafsPackCents[TafsSoloCredits]) } ir nenustoja galioti. Kiekvienas taf paleidimas naudoja kreditus už jo panaudotą AI. Coach ir tafs nustatymas įskaičiuoti į sąžiningo Coach naudojimo ribas. Tai kainos euro zonoje. Kitur App Store arba Google Play rodo kainą jūsų valiuta, su vietiniais mokesčiais arba be jų, kaip reikalauja tos šalies taisyklės, ir būtent tą kainą jūs mokate. Dabartinės kainos pateikiamos <a href="/pricing">kainų puslapyje</a> (anglų kalba); tafs taip pat yra KIFF Company plano dalis.</p>
+				<p>Bandomojo laikotarpio nėra. Programėlėje įsigytas Solo valdomas ir atšaukiamas jūsų Apple arba Google Play prenumeratose pagal tos parduotuvės mokėjimo, atnaujinimo ir pinigų grąžinimo sąlygas. Planas galioja iki apmokėto laikotarpio pabaigos. Jei esate vartotojas ES, galite atsisakyti pirkimo per 14 dienų nuo jo. Išsamiau – <a href="/lt/terms#fees">KIFF sąlygų 8 punkte</a>.</p>
+			</section>
+			<section id="liability">
+				<h2>7. Atsakomybė</h2>
+				<p>tafs teikiama „tokia, kokia yra“ ir „kiek prieinama“, išskyrus garantijas, nurodytas KIFF sąlygų 10 punkte. Kiek leidžia įstatymai, nė viena šalis neatsako už netiesioginę ar pasekminę žalą, o kiekvienos šalies bendra atsakomybė ribojama taip, kaip nustato <a href="/lt/terms#liability">KIFF sąlygų 12 punktas</a>. Niekas neriboja atsakomybės, kurios įstatymai neleidžia riboti.</p>
+			</section>
+			<section id="termination">
+				<h2>8. Nutraukimas</h2>
+				<p>Galite bet kada nustoti: ištrinkite savo paskyrą programėlėje, skiltyje „Paskyra“ → <em>Ištrinti paskyrą</em>. Pirmiausia eksportuokite savo pokalbius skiltyje „Paskyra“ → „Eksportuoti mano pokalbius“. Galime nutraukti jūsų naudojimąsi dėl esminio pažeidimo, kuris nepašalintas per trisdešimt dienų nuo pranešimo, arba nedelsiant dėl Priimtino naudojimo pažeidimo. Jūsų teisės pasitraukti ir pasiimti savo duomenis nustatytos <a href="/lt/terms#term">KIFF sąlygų 9 punkte</a>.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. Pakeitimai ir taikytina teisė</h2>
+				<p>Šias sąlygas keičiame taip, kaip KIFF sąlygos nustato savo pakeitimams (16 punktas). Joms taikoma Estijos Respublikos teisė, o ginčus nagrinėja Harju apskrities teismas (Harju Maakohus) Taline. Jei esate vartotojas kitoje ES valstybėje narėje, jums toliau taikomos privalomos jūsų gyvenamosios šalies vartotojų apsaugos taisyklės.</p>
+			</section>
+			<section id="contact">
+				<h2>10. Kontaktai</h2>
+				<p>Sutartiniai klausimai: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Pagalba dėl programėlės: <a href="mailto:support@kiff.dev">support@kiff.dev</a>. Privatumas: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>; kaip tafs tvarko asmens duomenis, aprašyta <a href="/lt/tafs/privacy">tafs privatumo politikoje</a>.</p>
+			</section>
+		</article>
+	}
+}

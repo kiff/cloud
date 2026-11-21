@@ -154,6 +154,7 @@ func TestTheSitemapNamesEveryLanguage(t *testing.T) {
 func TestATranslatedPathIsPublic(t *testing.T) {
 	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/et/tafs/privacy": true, "/et/support": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false} {
 	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/el/privacy": true, "/el/tafs/watch": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false} {
+	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/lt/privacy": true, "/lt/legal/dpa": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false} {
 		if got := isPublicPath(path); got != want {
 			t.Errorf("isPublicPath(%q) = %v, want %v", path, got, want)
 		}

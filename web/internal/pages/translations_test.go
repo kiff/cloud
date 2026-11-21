@@ -333,6 +333,11 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 			t.Errorf("%s date: figures %v %v", lang, a, b)
 		}
 	}
+	// Lithuanian names the month with a word ("2026 m. lapkričio 9 d."): only the year and the day are figures.
+	lt := shapeOf(`<main><section id="a"><h2>Mokesčiai</h2><p>2026 m. lapkričio 9 d. iki 1 240,50 €, žr. <a href="/lt/privacy#tafs">privatumą</a> ir <code>x</code>.</p><ul><li>30 dienų</li></ul></section></main>`, "lt")
+	if a, b := multisetDiff(en.figures, lt.figures); len(a)+len(b) > 0 {
+		t.Errorf("lt date: figures %v %v", a, b)
+	}
 	short := shapeOf(`<main><section id="a"><h2>Gebühren</h2><p>Bis zu 1.240 €.</p></section></main>`, "de")
 	if firstDiff(en.blocks, short.blocks) == "" {
 		t.Errorf("a dropped list wasn't seen")
