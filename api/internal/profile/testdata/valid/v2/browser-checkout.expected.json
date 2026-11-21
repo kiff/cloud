@@ -1,0 +1,54 @@
+{
+  "profile_sha256": "4cec26e8658bc9f09e0c975357d2f4f05d406ee583043cc6d2d3886cef8d7b89",
+  "words": {
+    "v": "kiff.words.v2",
+    "lines": [
+      {
+        "op": "browse_open",
+        "kind": "does",
+        "text": "Open a page: reads from shop.example, changes nothing."
+      },
+      {
+        "op": "browse_checkout",
+        "kind": "does",
+        "text": "Read a checkout: reads from shop.example, changes nothing."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "does",
+        "text": "Pay a checkout: moves money through shop.example. It pays out or charges."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "does",
+        "text": "Pay a checkout: every call waits for your approval, whatever a Card allows."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "scope",
+        "text": "Pay a checkout: a Card's \"Only for\" can name which page it acts on."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "counts",
+        "text": "Pay a checkout: counted in EUR, from what shop.example says the amount is, read as a decimal with up to 2 places."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "missing",
+        "text": "Pay a checkout: shop.example doesn't say back what it used, so KIFF counts what the taf asked for."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "missing",
+        "text": "Pay a checkout: if shop.example's answer is lost, you confirm whether it went through; until then it stays counted."
+      },
+      {
+        "op": "browse_pay",
+        "kind": "probation",
+        "text": "Pay a checkout: not tried with a test account, so you confirm its first 3 outcomes."
+      }
+    ]
+  },
+  "words_sha256": "9bcccf8015fed064146c3bf57e96c921e77a0ad653ba90fbdf5a502a8d898dca"
+}

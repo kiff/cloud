@@ -21,6 +21,19 @@ func TestProfileOpCarriesTheMarkerToTheVerifyRead(t *testing.T) {
 	}
 }
 
+// ask_each_call reaches the tool on a write, and never on a read.
+func TestProfileOpCarriesAskEachCallOnAWrite(t *testing.T) {
+	profile := []byte(`{"operations":[
+	 {"tool":"browse_pay","kind":"write","effect":"moves_money","ask_each_call":true},
+	 {"tool":"browse_open","kind":"read","ask_each_call":true},
+	 {"tool":"browse_act","kind":"write","effect":"writes"}]}`)
+	for tool, want := range map[string]bool{"browse_pay": true, "browse_open": false, "browse_act": false} {
+		if f, err := profileOp(profile, tool); err != nil || f.AskEachCall != want {
+			t.Errorf("%s: %+v %v", tool, f, err)
+		}
+	}
+}
+
 func TestMarkedInReadsTheElementWithTheMarker(t *testing.T) {
 	doc := map[string]any{"data": []any{
 		map[string]any{"amount": 2000, "metadata": map[string]any{}},
@@ -65,5 +78,21 @@ func TestOnlyAnUnboundMoneyToolAsksItsOwner(t *testing.T) {
 		if _, asks := p[OwnerAskParam]; err != nil || asks != tc.asks {
 			t.Errorf("%+v: params %v, %v", tc, p, err)
 		}
+	}
+}
+
+// A tool its profile holds on every call asks with each_call whatever its
+// custody; without the flag, only a sealed money tool asks.
+func TestOwnerAskFollowsAskEachCallInEveryCustody(t *testing.T) {
+	for _, mode := range []string{ModeSealed, ModeVerify, ModeRelay} {
+		if got := (Tool{Mode: mode, Money: true, AskEachCall: true}).ownerAsk(); got != OwnerAskEachCall {
+			t.Errorf("%s with ask_each_call: %q", mode, got)
+		}
+		if got := (Tool{Mode: mode, AskEachCall: true, ReadOnly: true}).ownerAsk(); got != "" {
+			t.Errorf("%s, a read: %q", mode, got)
+		}
+	}
+	if got := (Tool{Mode: ModeRelay, Money: true}).ownerAsk(); got != "" {
+		t.Errorf("a relay money tool without the flag: %q", got)
 	}
 }

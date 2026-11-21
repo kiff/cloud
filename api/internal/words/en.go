@@ -77,6 +77,7 @@ var en = Words{
 		OwnerAskSecondRefund: "this charge already has a refund, so a second one waits for approval",
 		OwnerAskNoRequestID:  "the agent named no request from a connected app, so this refund waits for approval",
 		OwnerAskOther:        "every call of this tool waits for approval",
+		OwnerAskEachCall:     "every call of this tool waits for approval",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("the call names no %s, and this Card only applies to the %s it lists", param, param)
