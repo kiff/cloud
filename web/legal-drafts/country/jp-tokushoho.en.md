@@ -6,7 +6,7 @@ and its credits, sold in Japan through the App Store and Google Play.
 | Item | Details |
 |---|---|
 | Seller | Kiff Agents OÜ (an Estonian private limited company, registry code 17372313) |
-| Person responsible | **[owner]** name of the management board member |
+| Person responsible | Gabriel Mauricio Sarmiento Arguello, Management board member (representative) |
 | Address | Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia |
 | Telephone | We disclose it without delay on request to legal@kiff.dev |
 | Email | legal@kiff.dev |

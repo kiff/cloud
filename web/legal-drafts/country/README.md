@@ -25,7 +25,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `ni.en.md`, `ni.es.md` | Nicaragua (Ley 787 de 2012), en and es | served (ruling B) |
 | `sm.en.md`, `sm.it.md` | San Marino (Legge 171/2018), en and it | served (ruling B) |
 | `cm.en.md`, `cm.fr.md` | Cameroon (Loi 2024/017), en and fr | served (ruling B) |
-| `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | draft: waits for **[owner]** (the responsible person's name, as the e-Business Register gives it). Credits: packs don't expire (owner, 21 Nov). Prices are the ones each item shows in yen at purchase |
+| `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | served at /legal/japan and /legal/japan/ja (owner, 21 Nov): the responsible person as the e-Business Register gives it; credits don't expire; prices as each item shows them in yen at purchase |
 | `mc.en.md`, `mc.fr.md` | Monaco (Loi 1.565), en and fr | served (ruling B); says no representative yet. Monaco opens only once the owner appoints one and its name and address replace that line |
 
 Also here: `../region.md`, the refusal words and the terms clause for "where KIFF is available", in 8 languages.

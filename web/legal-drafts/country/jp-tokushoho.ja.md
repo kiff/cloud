@@ -5,7 +5,7 @@
 | 項目 | 内容 |
 |---|---|
 | 販売業者 | Kiff Agents OÜ（エストニアの非公開有限会社、登録番号17372313） |
-| 運営責任者 | **[owner]** 取締役の氏名 |
+| 運営責任者 | 取締役（代表者） Gabriel Mauricio Sarmiento Arguello |
 | 所在地 | Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia |
 | 電話番号 | legal@kiff.devへのご請求があれば、遅滞なく開示します。 |
 | メールアドレス | legal@kiff.dev |

@@ -52,7 +52,9 @@ type Notice struct {
 // Notices are the notices served, by draft name ("jp-tokushoho" is
 // jp-tokushoho.<lang>.md). A notice joins once its draft has no drafting
 // mark left.
-var Notices = map[string]Notice{}
+var Notices = map[string]Notice{
+	"jp-tokushoho": {Path: "/legal/japan", Langs: []string{"en", "ja"}},
+}
 
 // Names are each served country's name in English, for the index.
 var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador"}
