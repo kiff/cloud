@@ -33,7 +33,7 @@ var tafsEN = tafsWords{
 	Why: tafsScreen{Big: "Automation should make a company stronger, not exposed.", Giant: "Not exposed.", Idx: "Why we exist",
 		Stickers: []string{"You stay in control", "Proof of everything", "Open code", "Privacy first"}},
 	Price: tafsScreen{Big: "Start small. Go up when you're busy.",
-		Small: "%s a month to start, with %s credits, VAT included. Runs on %s and %s.", Idx: "What it costs",
+		Small: "%s a month to start, with %s credits, VAT included. Runs on %s.", Idx: "What it costs",
 		Ring: "credits never expire · no surprise bills ·", Stickers: []string{"Top up", "from %s", "Heavy use", "~€160 / month"}},
 	Get: tafsScreen{Big: "On Google Play now.", Small: "Android: on Google Play in 33 countries and regions.", Giant: "get it.", Idx: "Get it",
 		Stickers: []string{"Get it on", "App Store, coming soon", "We believe in open code. Read it on GitHub.", "For your computer: macOS, Windows and Linux →"}},
