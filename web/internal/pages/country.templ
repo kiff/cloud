@@ -53,3 +53,23 @@ templ CountrySection(s country.Section, others []CountryLink) {
 		</article>
 	}
 }
+
+// LegalNotice is a legal notice (Japan's seller notice) in one language, with
+// its other languages linked.
+templ LegalNotice(s country.Section, others []CountryLink) {
+	@components.LayoutSiteWithMeta(s.Title, s.Title+" · Kiff Agents OÜ", "article", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose" lang={ s.Lang }>
+			if len(others) > 0 {
+				<p>
+					for i, o := range others {
+						if i > 0 {
+							{ " · " }
+						}
+						<a href={ templ.SafeURL(o.Path) } hreflang={ o.Lang } lang={ o.Lang }>{ o.Name }</a>
+					}
+				</p>
+			}
+			@templ.Raw(string(s.HTML))
+		</article>
+	}
+}
