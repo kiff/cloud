@@ -29,11 +29,12 @@ var partialPages = map[string][]string{
 	"el": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"lt": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Lithuanian: the same four
 	"cs": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Czech: the same four
+	"sk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -59,6 +60,7 @@ var languageNames = map[string]string{
 	"el": "Ελληνικά",
 	"lt": "Lietuvių",
 	"cs": "Čeština",
+	"sk": "Slovenčina",
 }
 
 // LanguageName is a site language's name in that language.
@@ -225,6 +227,7 @@ var translationNotices = map[string]string{
 	"el": "Αυτή είναι μετάφραση για ενημερωτικούς σκοπούς. Υπερισχύει η αγγλική έκδοση:",
 	"lt": "Tai vertimas, pateikiamas informacijai. Viršenybę turi versija anglų kalba:",
 	"cs": "Toto je překlad pro informaci. Rozhodující je anglická verze:",
+	"sk": "Toto je preklad na informačné účely. Rozhodujúce je anglické znenie:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -242,6 +245,7 @@ var inEnglish = map[string]string{
 	"el": "(στα αγγλικά)",
 	"lt": "(anglų kalba)",
 	"cs": "(anglicky)",
+	"sk": "(v angličtine)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

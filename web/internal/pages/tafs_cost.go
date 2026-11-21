@@ -116,3 +116,8 @@ var tafsCostLT = tafsCostWords{Lang: "lt"}
 // tafsCostCS writes the prices tafs's terms state in Czech: "12,50 €",
 // "1 500". Czech has no /tafs page, so it has no footer line of its own.
 var tafsCostCS = tafsCostWords{Lang: "cs"}
+
+// tafsCostSK writes the prices tafs's terms state in Slovak: "12,50 €",
+// money's default, and the credits as they stand ("500"). Slovak has no
+// /tafs page, so it has no footer line of its own.
+var tafsCostSK = tafsCostWords{Lang: "sk"}
