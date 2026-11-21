@@ -154,7 +154,7 @@ func privacyHeadKO() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">개인정보처리방침 · v0.1</p><h1>개인정보처리방침</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 십일월 21일. <strong>시행일:</strong> 2026년 오월 24일.</p><p class=\"legal-disclaimer\">이 방침은 KIFF Cloud가 웹사이트, 대시보드, API, 그리고 iPhone, iPad, Android와 컴퓨터용 tafs 앱에서 개인정보를 처리하는 방식을 설명합니다. 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">개인정보처리방침 · v0.1</p><h1>개인정보처리방침</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 11월 21일. <strong>시행일:</strong> 2026년 5월 24일.</p><p class=\"legal-disclaimer\">이 방침은 KIFF Cloud가 웹사이트, 대시보드, API, 그리고 iPhone, iPad, Android와 컴퓨터용 tafs 앱에서 개인정보를 처리하는 방식을 설명합니다. 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -602,7 +602,7 @@ func privacyContactKO() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 연락처</h2><p>개인정보 관련 문의와 권리 행사 요청: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Kiff Agents OÜ에 대한 공식 법적 통지: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, 또는 우편으로 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>민원을 위한 선임 감독기관: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 십일월 21일.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 연락처</h2><p>개인정보 관련 문의와 권리 행사 요청: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Kiff Agents OÜ에 대한 공식 법적 통지: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, 또는 우편으로 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>민원을 위한 선임 감독기관: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 11월 21일.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

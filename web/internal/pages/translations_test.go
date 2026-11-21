@@ -52,6 +52,13 @@ var blockTags = map[string]bool{
 	"details": true, "summary": true, "blockquote": true, "pre": true, "figure": true, "address": true,
 }
 
+// cjkDateRE and cjkMonthRE are a full date and a month with its year, as
+// Korean and Japanese write them (see shapeOf).
+var (
+	cjkDateRE  = regexp.MustCompile(`(\d{4})\s*[년年]\s*(\d{1,2})\s*[월月]\s*(\d{1,2})\s*[일日]`)
+	cjkMonthRE = regexp.MustCompile(`(\d{4})\s*[년年]\s*\d{1,2}\s*[월月]`)
+)
+
 // shape is what a page's translation must share with its English source.
 type shape struct {
 	ids     []string // every id, in order: the anchors people are sent to
@@ -99,6 +106,12 @@ func shapeOf(page, lang string) shape {
 	sort.Strings(s.links)
 	// Entities are decoded first: an escaped apostrophe (&#39;) is no figure.
 	text := html.UnescapeString(anyTagRE.ReplaceAllString(body, " "))
+	// A date in Korean or Japanese form ("2026년 11월 21일", "2026年11月21日")
+	// names its month with a figure, where English names it with a word
+	// ("21 November 2026"): read it as the English date's figures, the day and
+	// the year, so the month isn't an extra figure.
+	text = cjkDateRE.ReplaceAllString(text, "$3 $1")
+	text = cjkMonthRE.ReplaceAllString(text, "$1")
 	for _, f := range figureRE.FindAllString(text, -1) {
 		digits := strings.Map(func(r rune) rune {
 			if r >= '0' && r <= '9' {
@@ -309,6 +322,15 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 	}
 	if a, b := multisetDiff(en.figures, de.figures); len(a)+len(b) > 0 {
 		t.Errorf("figures: %v %v (en %v, de %v)", a, b, en.figures, de.figures)
+	}
+	// Korean and Japanese write a date's month as a figure: it reads as the English date.
+	for lang, page := range map[string]string{
+		"ko": `<main><section id="a"><h2>요금</h2><p>2026년 11월 9일에 최대 €1,240.50, <a href="/ko/privacy#tafs">개인정보</a> 및 <code>x</code>.</p><ul><li>30일</li></ul></section></main>`,
+		"ja": `<main><section id="a"><h2>料金</h2><p>2026年11月9日に最大€1,240.50、<a href="/ja/privacy#tafs">プライバシー</a>と<code>x</code>。</p><ul><li>30日</li></ul></section></main>`,
+	} {
+		if a, b := multisetDiff(en.figures, shapeOf(page, lang).figures); len(a)+len(b) > 0 {
+			t.Errorf("%s date: figures %v %v", lang, a, b)
+		}
 	}
 	short := shapeOf(`<main><section id="a"><h2>Gebühren</h2><p>Bis zu 1.240 €.</p></section></main>`, "de")
 	if firstDiff(en.blocks, short.blocks) == "" {
