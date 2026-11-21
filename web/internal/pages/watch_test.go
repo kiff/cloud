@@ -47,7 +47,7 @@ func TestEveryLanguageFillsTheWatchPage(t *testing.T) {
 		}
 		check(lang, reflect.ValueOf(watchEN), reflect.ValueOf(w))
 	}
-	for _, lang := range TranslatedLanguages() {
+	for _, lang := range languagesWith("/tafs/watch") {
 		if _, ok := watchLanguages[lang]; !ok {
 			t.Errorf("%s has no words for /tafs/watch", lang)
 		}

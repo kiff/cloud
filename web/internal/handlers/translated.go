@@ -12,12 +12,12 @@ type TranslatedRoute struct {
 	Lang, Page, Path string
 }
 
-// TranslatedRoutes lists every translated page that is served: each site
+// TranslatedRoutes lists every translated page that is served: each page
 // language other than English, each page it has, at "/<lang><page>".
 // English stays at its own path, served by the page's own handler.
 func TranslatedRoutes() []TranslatedRoute {
 	var out []TranslatedRoute
-	for _, lang := range components.SiteLanguages {
+	for _, lang := range components.PageLanguages {
 		if lang == "en" {
 			continue
 		}
@@ -58,7 +58,7 @@ func Translated(lang, page string, o OfferLinks) http.Handler {
 // hidden by a browser's cached redirect.
 func LanguageRootTargets() map[string]string {
 	out := map[string]string{}
-	for _, lang := range components.SiteLanguages {
+	for _, lang := range components.PageLanguages {
 		if lang == "en" {
 			continue
 		}

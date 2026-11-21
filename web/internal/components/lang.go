@@ -14,6 +14,22 @@ import (
 // indexes each language on its own, and a shared link keeps its language.
 var SiteLanguages = []string{"en", "de", "fr", "es", "it", "pt", "nl", "pl"}
 
+// partialPages are the languages that have some of the translated pages,
+// not all, and the pages each has. A link from one of them to any other
+// page goes to its English version, marked as English (InEnglish). They
+// are not site languages: the screens the apps open (RequestLanguage)
+// speak SiteLanguages only, so a browser in one of these languages still
+// gets them in English. Korean and Japanese have KIFF's and tafs's privacy
+// policies and terms.
+var partialPages = map[string][]string{
+	"ko": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ja": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+}
+
+// PageLanguages are every language a translated page can be in: the site
+// languages, then the languages that have some of the pages.
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja")
+
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
 // (/tafs/watch), how to reach a person (/support), tafs's own privacy policy
@@ -31,6 +47,8 @@ var TranslatedPages = []string{
 var languageNames = map[string]string{
 	"en": "English", "de": "Deutsch", "fr": "Français", "es": "Español",
 	"it": "Italiano", "pt": "Português", "nl": "Nederlands", "pl": "Polski",
+	"ko": "한국어",
+	"ja": "日本語",
 }
 
 // LanguageName is a site language's name in that language.
@@ -40,6 +58,34 @@ func LanguageName(lang string) string { return languageNames[lang] }
 func IsSiteLanguage(lang string) bool {
 	for _, l := range SiteLanguages {
 		if l == lang {
+			return true
+		}
+	}
+	return false
+}
+
+// IsPageLanguage reports whether lang is one of PageLanguages.
+func IsPageLanguage(lang string) bool {
+	for _, l := range PageLanguages {
+		if l == lang {
+			return true
+		}
+	}
+	return false
+}
+
+// HasPage reports whether page (unprefixed, no anchor) is a translated
+// page that lang has: every one for English and the site languages, the
+// listed ones for a language that has some (partialPages).
+func HasPage(lang, page string) bool {
+	if !IsTranslatedPage(page) {
+		return false
+	}
+	if lang == "en" || IsSiteLanguage(lang) {
+		return true
+	}
+	for _, p := range partialPages[lang] {
+		if p == page {
 			return true
 		}
 	}
@@ -59,14 +105,14 @@ func IsTranslatedPage(path string) bool {
 
 // LangPath is a translated page's path in a language: English as it is,
 // any other language under its code. A path that isn't a translated page
-// comes back unchanged, so a link to an English-only page stays English.
-// An anchor or query is kept.
+// comes back unchanged, so a link to an English-only page stays English,
+// and so does a page the language doesn't have. An anchor or query is kept.
 func LangPath(lang, path string) string {
 	page := path
 	if i := strings.IndexAny(page, "#?"); i >= 0 {
 		page = page[:i]
 	}
-	if lang == "en" || !IsSiteLanguage(lang) || !IsTranslatedPage(page) {
+	if lang == "en" || !HasPage(lang, page) {
 		return path
 	}
 	return "/" + lang + path
@@ -86,7 +132,7 @@ func SplitLangPath(path string) (lang, page string, ok bool) {
 		return "en", path, true
 	}
 	if len(path) > 4 && path[0] == '/' && path[3] == '/' {
-		if l := path[1:3]; l != "en" && IsSiteLanguage(l) && IsTranslatedPage(path[3:]) {
+		if l := path[1:3]; l != "en" && HasPage(l, path[3:]) {
 			return l, path[3:], true
 		}
 	}
@@ -137,9 +183,9 @@ var TranslationServed = func(lang, page string) bool { return true }
 // served, English first. A page that is served in English only has none:
 // there is nothing to choose between, so no row and no hreflang.
 func AlternatesOf(page string) []Alternate {
-	out := make([]Alternate, 0, len(SiteLanguages))
-	for _, l := range SiteLanguages {
-		if l != "en" && !TranslationServed(l, page) {
+	out := make([]Alternate, 0, len(PageLanguages))
+	for _, l := range PageLanguages {
+		if l != "en" && (!HasPage(l, page) || !TranslationServed(l, page)) {
 			continue
 		}
 		path := LangPath(l, page)
@@ -162,6 +208,8 @@ var translationNotices = map[string]string{
 	"pt": "Esta é uma tradução a título informativo. Prevalece a versão em inglês:",
 	"nl": "Dit is een vertaling ter informatie. De Engelse versie is leidend:",
 	"pl": "To tłumaczenie ma charakter informacyjny. Wiążąca jest wersja angielska:",
+	"ko": "이 번역본은 참고용입니다. 영어 원문이 우선합니다:",
+	"ja": "これは参考のための翻訳です。英語版が優先します：",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -172,6 +220,8 @@ func TranslationNoticeText(lang string) string { return translationNotices[lang]
 var inEnglish = map[string]string{
 	"de": "(auf Englisch)", "fr": "(en anglais)", "es": "(en inglés)", "it": "(in inglese)",
 	"pt": "(em inglês)", "nl": "(in het Engels)", "pl": "(po angielsku)",
+	"ko": "(영어)",
+	"ja": "（英語）",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
