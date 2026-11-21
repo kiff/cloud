@@ -17,6 +17,9 @@ func TestLangPath(t *testing.T) {
 		{"ja", "/privacy#delete-account", "/ja/privacy#delete-account"},
 		{"ja", "/tafs/privacy", "/ja/tafs/privacy"},
 		{"ja", "/subprocessors#composio", "/subprocessors#composio"}, // so has Japanese
+		{"et", "/terms#fees", "/et/terms#fees"},
+		{"et", "/tafs/privacy", "/et/tafs/privacy"},
+		{"et", "/legal/dpa", "/legal/dpa"}, // and Estonian
 	} {
 		if got := LangPath(c.lang, c.path); got != c.want {
 			t.Errorf("LangPath(%q, %q) = %q, want %q", c.lang, c.path, got, c.want)
@@ -38,6 +41,8 @@ func TestSplitLangPath(t *testing.T) {
 		{"/ko/cookies", "en", "/ko/cookies", false},
 		{"/ja/terms", "ja", "/terms", true},
 		{"/ja/tafs", "en", "/ja/tafs", false},
+		{"/et/tafs/terms", "et", "/tafs/terms", true},
+		{"/et/security", "en", "/et/security", false},
 		{"/pricing", "en", "/pricing", false},
 		{"/", "en", "/", false},
 	} {

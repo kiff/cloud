@@ -89,3 +89,7 @@ var tafsCostKO = tafsCostWords{Lang: "ko"}
 // tafsCostJA writes the prices tafs's terms state in Japanese. Japanese has
 // no /tafs page, so it has no footer line of its own.
 var tafsCostJA = tafsCostWords{Lang: "ja"}
+
+// tafsCostET writes the prices tafs's terms state in Estonian: "12,50 €".
+// Estonian has no /tafs page, so it has no footer line of its own.
+var tafsCostET = tafsCostWords{Lang: "et"}
