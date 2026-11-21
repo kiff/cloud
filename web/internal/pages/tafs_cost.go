@@ -66,6 +66,8 @@ func (w tafsCostWords) number(n int) string {
 		sep = "."
 	case "cs":
 		sep = " "
+	case "sl":
+		sep = "."
 	}
 	s := fmt.Sprint(n)
 	if sep == "" || len(s) <= 3 {
@@ -121,3 +123,7 @@ var tafsCostCS = tafsCostWords{Lang: "cs"}
 // money's default, and the credits as they stand ("500"). Slovak has no
 // /tafs page, so it has no footer line of its own.
 var tafsCostSK = tafsCostWords{Lang: "sk"}
+
+// tafsCostSL writes the prices tafs's terms state in Slovene: "12,50 €",
+// "1.500". Slovene has no /tafs page, so it has no footer line of its own.
+var tafsCostSL = tafsCostWords{Lang: "sl"}

@@ -58,6 +58,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lt": "matyti, redaguoti, kurti ir trinti visas jūsų Google Sheets skaičiuokles",
 			"cs": "zobrazit, upravit, vytvořit a smazat všechny vaše tabulky v Google Sheets",
 			"sk": "zobrazovať, upravovať, vytvárať a odstraňovať všetky vaše tabuľky v Google Sheets",
+			"sl": "ogled, urejanje, ustvarjanje in brisanje vseh vaših preglednic v Google Sheets",
 		}},
 	},
 	"Google Calendar": {
@@ -78,6 +79,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lt": "matyti jūsų kalendorių įvykius",
 			"cs": "zobrazit události ve vašich kalendářích",
 			"sk": "zobrazovať udalosti vo vašich kalendároch",
+			"sl": "ogled dogodkov v vaših koledarjih",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -96,6 +98,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lt": "matyti ir redaguoti jūsų kalendorių įvykius",
 			"cs": "zobrazit a upravit události ve vašich kalendářích",
 			"sk": "zobrazovať a upravovať udalosti vo vašich kalendároch",
+			"sl": "ogled in urejanje dogodkov v vaših koledarjih",
 		}},
 	},
 }
