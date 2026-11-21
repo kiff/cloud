@@ -20,6 +20,11 @@ new section. `{country}` is the country's name in the page's language.
 | nl | KIFF is niet beschikbaar waar je nu bent. We bieden het alleen aan in de landen en regio's waar Claude van Anthropic beschikbaar is. | KIFF is niet beschikbaar in dit land: {country}. We bieden het alleen aan in de landen en regio's waar Claude van Anthropic beschikbaar is. |
 | pl | KIFF nie jest dostępny tam, gdzie teraz jesteś. Oferujemy go tylko w krajach i regionach, w których dostępny jest Claude firmy Anthropic. | KIFF nie jest dostępny w tym kraju: {country}. Oferujemy go tylko w krajach i regionach, w których dostępny jest Claude firmy Anthropic. |
 | pt | O KIFF não está disponível onde se encontra neste momento. Só o disponibilizamos nos países e regiões onde o Claude da Anthropic está disponível. | O KIFF não está disponível neste país: {country}. Só o disponibilizamos nos países e regiões onde o Claude da Anthropic está disponível. |
+| ko | 지금 계신 곳에서는 KIFF를 이용할 수 없습니다. KIFF는 Anthropic의 Claude를 이용할 수 있는 국가와 지역에서만 제공됩니다. | (to come) |
+| ja | 現在地ではKIFFをご利用いただけません。KIFFは、AnthropicのClaudeが利用できる国と地域でのみ提供しています。 | (to come) |
+
+ko and ja are on the API's refusal only, the line the apps show. The web's refused page and the stated-country line
+follow once kiff.dev speaks them.
 
 The API's refusal keeps a stable `code` (`region_unsupported`) beside the words, so the apps never match on text.
 
