@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/kiff/cloud/web/internal/components"
 	"github.com/kiff/cloud/web/internal/content/country"
 	"github.com/kiff/cloud/web/internal/pages"
 )
@@ -19,7 +20,8 @@ func CountryIndex() http.Handler {
 			links = append(links, pages.CountryLink{Name: country.Names[c], Path: "/privacy/countries/" + c, Lang: "en"})
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_ = pages.CountryIndex(links).Render(r.Context(), w)
+		w.Header().Set("Content-Language", "en")
+		_ = pages.CountryIndex(links).Render(components.WithHTMLLanguage(r.Context(), "en"), w)
 	})
 }
 
@@ -57,7 +59,7 @@ func CountrySection() http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Content-Language", lang)
-		_ = pages.CountrySection(s, others).Render(r.Context(), w)
+		_ = pages.CountrySection(s, others).Render(components.WithHTMLLanguage(r.Context(), lang), w)
 	})
 }
 
@@ -97,6 +99,6 @@ func LegalNotice(name string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Content-Language", lang)
-		_ = pages.LegalNotice(s, others).Render(r.Context(), w)
+		_ = pages.LegalNotice(s, others).Render(components.WithHTMLLanguage(r.Context(), lang), w)
 	})
 }
