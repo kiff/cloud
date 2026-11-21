@@ -336,6 +336,11 @@ func TestTheShapeReaderSeesWhatMatters(t *testing.T) {
 			t.Errorf("%s date: figures %v %v", lang, a, b)
 		}
 	}
+	// Hungarian puts the year first and names the month ("2026. november 9."): the year and the day are the figures.
+	hu := shapeOf(`<main><section id="a"><h2>Díjak</h2><p>2026. november 9-én legfeljebb 1 240,50 €, lásd <a href="/hu/privacy#tafs">adatvédelem</a> és <code>x</code>.</p><ul><li>30 nap</li></ul></section></main>`, "hu")
+	if a, b := multisetDiff(en.figures, hu.figures); len(a)+len(b) > 0 {
+		t.Errorf("hu date: figures %v %v", a, b)
+	}
 	// Lithuanian names the month with a word ("2026 m. lapkričio 9 d."): only the year and the day are figures.
 	lt := shapeOf(`<main><section id="a"><h2>Mokesčiai</h2><p>2026 m. lapkričio 9 d. iki 1 240,50 €, žr. <a href="/lt/privacy#tafs">privatumą</a> ir <code>x</code>.</p><ul><li>30 dienų</li></ul></section></main>`, "lt")
 	if a, b := multisetDiff(en.figures, lt.figures); len(a)+len(b) > 0 {

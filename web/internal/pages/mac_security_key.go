@@ -28,6 +28,7 @@ var macSecurityKeyClause = map[string]string{
 	"cs": ", nebo na Macu bezpečnostním klíčem",
 	"sk": " alebo na Macu bezpečnostným kľúčom",
 	"sl": " ali na Macu z varnostnim ključem",
+	"hu": ", vagy Macen biztonsági kulccsal",
 }
 
 // macSecurityKey is the clause, or nothing while the switch is off.

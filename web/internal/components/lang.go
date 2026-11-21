@@ -31,11 +31,12 @@ var partialPages = map[string][]string{
 	"cs": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Czech: the same four
 	"sk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"sl": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Slovene: the same four
+	"hu": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Hungarian: the same four
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -63,6 +64,7 @@ var languageNames = map[string]string{
 	"cs": "Čeština",
 	"sk": "Slovenčina",
 	"sl": "Slovenščina",
+	"hu": "Magyar",
 }
 
 // LanguageName is a site language's name in that language.
@@ -231,6 +233,7 @@ var translationNotices = map[string]string{
 	"cs": "Toto je překlad pro informaci. Rozhodující je anglická verze:",
 	"sk": "Toto je preklad na informačné účely. Rozhodujúce je anglické znenie:",
 	"sl": "To je prevod, namenjen obveščanju. Prevlada angleška različica:",
+	"hu": "Ez egy tájékoztató jellegű fordítás. Az angol nyelvű változat az irányadó:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -250,6 +253,7 @@ var inEnglish = map[string]string{
 	"cs": "(anglicky)",
 	"sk": "(v angličtine)",
 	"sl": "(v angleščini)",
+	"hu": "(angolul)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

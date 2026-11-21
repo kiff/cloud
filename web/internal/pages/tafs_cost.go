@@ -127,3 +127,9 @@ var tafsCostSK = tafsCostWords{Lang: "sk"}
 // tafsCostSL writes the prices tafs's terms state in Slovene: "12,50 €",
 // "1.500". Slovene has no /tafs page, so it has no footer line of its own.
 var tafsCostSL = tafsCostWords{Lang: "sl"}
+
+// tafsCostHU writes the prices tafs's terms state in Hungarian: "12,50 €",
+// money's default, and the credits as they stand ("500"): Hungarian groups
+// no four-digit number. Hungarian has no /tafs page, so it has no footer
+// line of its own.
+var tafsCostHU = tafsCostWords{Lang: "hu"}
