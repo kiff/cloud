@@ -162,8 +162,8 @@ func TestEveryStoreCountryIsSupported(t *testing.T) {
 }
 
 func TestTheRefusalSpeaksTheRequestsLanguage(t *testing.T) {
-	if len(Here) != 8 {
-		t.Fatalf("%d languages, want 8", len(Here))
+	if len(Here) != 10 {
+		t.Fatalf("%d languages, want 10", len(Here))
 	}
 	for lang, line := range Here {
 		if strings.TrimSpace(line) == "" || !strings.Contains(line, "KIFF") {
@@ -174,8 +174,12 @@ func TestTheRefusalSpeaksTheRequestsLanguage(t *testing.T) {
 	for accept, want := range map[string]string{
 		"":                        "en",
 		"de-DE,de;q=0.9,en;q=0.8": "de",
-		"ja,pt-BR;q=0.5":          "pt",
-		"ko":                      "en",
+		"ja,pt-BR;q=0.5":          "ja",
+		"ko":                      "ko",
+		"ko-KR,ko;q=0.9,en;q=0.8": "ko",
+		"ja-JP":                   "ja",
+		"zh-CN,de;q=0.5":          "de",
+		"zh-TW":                   "en",
 		"fr;q=0,it;q=0.2":         "it",
 		"nl;q=nope,pl;q=0.1":      "pl",
 	} {
