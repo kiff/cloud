@@ -139,6 +139,9 @@ jobs:
       # Signing in inside the tafs apps: the repository variable KIFF_APP_SIGNIN is "on", or "test" for the tenants in
       # the secret KIFF_APP_SIGNIN_TENANTS only; empty or anything else is off.
       KIFF_APP_SIGNIN: ${{ vars.KIFF_APP_SIGNIN }}
+      # Signing in with a code sent by email, on the web: the variable KIFF_SIGNIN_CODE is "on"; anything else
+      # is off. The API needs its key too (signin_code_key in KIFF's one secret).
+      KIFF_SIGNIN_CODE: ${{ vars.KIFF_SIGNIN_CODE }}
       KIFF_APP_SIGNIN_TENANTS: ${{ secrets.KIFF_APP_SIGNIN_TENANTS }}
       # kiff.dev's apps list from planque's proofs: the repository variable KIFF_APPS_PROVED=on turns it on.
       KIFF_APPS_PROVED: ${{ vars.KIFF_APPS_PROVED }}
