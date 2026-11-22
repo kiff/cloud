@@ -50,6 +50,21 @@ func TestLangPath(t *testing.T) {
 		{"hr", "/terms#fees", "/hr/terms#fees"},
 		{"hr", "/tafs/privacy", "/hr/tafs/privacy"},
 		{"hr", "/security", "/security"}, // and Croatian
+		{"dz", "/terms#fees", "/dz/terms#fees"},
+		{"dz", "/tafs/privacy", "/dz/tafs/privacy"},
+		{"dz", "/security", "/security"}, // and Dzongkha
+		{"dv", "/terms#fees", "/dv/terms#fees"},
+		{"dv", "/tafs/privacy", "/dv/tafs/privacy"},
+		{"dv", "/security", "/security"}, // and Dhivehi
+		{"tg", "/terms#fees", "/tg/terms#fees"},
+		{"tg", "/tafs/privacy", "/tg/tafs/privacy"},
+		{"tg", "/security", "/security"}, // and Tajik
+		{"ta", "/terms#fees", "/ta/terms#fees"},
+		{"ta", "/tafs/privacy", "/ta/tafs/privacy"},
+		{"ta", "/security", "/security"}, // and Tamil
+		{"si", "/terms#fees", "/si/terms#fees"},
+		{"si", "/tafs/privacy", "/si/tafs/privacy"},
+		{"si", "/security", "/security"}, // and Sinhala
 		{"lo", "/terms#fees", "/lo/terms#fees"},
 		{"lo", "/tafs/privacy", "/lo/tafs/privacy"},
 		{"lo", "/security", "/security"}, // and Lao
@@ -150,6 +165,16 @@ func TestSplitLangPath(t *testing.T) {
 		{"/bg/cookies", "en", "/bg/cookies", false},
 		{"/hr/tafs/terms", "hr", "/tafs/terms", true},
 		{"/hr/support", "en", "/hr/support", false},
+		{"/dz/tafs/terms", "dz", "/tafs/terms", true},
+		{"/dz/support", "en", "/dz/support", false},
+		{"/dv/tafs/terms", "dv", "/tafs/terms", true},
+		{"/dv/support", "en", "/dv/support", false},
+		{"/tg/tafs/terms", "tg", "/tafs/terms", true},
+		{"/tg/support", "en", "/tg/support", false},
+		{"/ta/tafs/terms", "ta", "/tafs/terms", true},
+		{"/ta/support", "en", "/ta/support", false},
+		{"/si/tafs/terms", "si", "/tafs/terms", true},
+		{"/si/support", "en", "/si/support", false},
 		{"/lo/tafs/terms", "lo", "/tafs/terms", true},
 		{"/lo/support", "en", "/lo/support", false},
 		{"/km/tafs/terms", "km", "/tafs/terms", true},
