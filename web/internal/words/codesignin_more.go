@@ -255,7 +255,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Απενεργοποίηση",
 		SettingNotAvailable: "Η σύνδεση με κωδικό δεν είναι ακόμη διαθέσιμη.",
 		SettingSaved:        "Αποθηκεύτηκε. Σου στείλαμε email για την αλλαγή.",
-		SecondFactor:        "Συνδέεστε με δεύτερο βήμα, οπότε ένας κωδικός μόνος του δεν αρκεί. Συνδεθείτε με άλλον τρόπο.",
+		SecondFactor:        "Συνδέεσαι με δεύτερο βήμα, οπότε ένας κωδικός μόνος του δεν αρκεί. Συνδέσου με άλλον τρόπο.",
 	},
 	"et": {
 		Link:                "Saada mulle selle asemel kood e-postiga",
@@ -283,7 +283,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Lülita välja",
 		SettingNotAvailable: "Koodiga sisselogimine pole veel saadaval.",
 		SettingSaved:        "Salvestatud. Saatsime sulle muudatuse kohta e-kirja.",
-		SecondFactor:        "Logite sisse teise sammuga, seega ainult kood teid sisse ei logi. Logige sisse muul viisil.",
+		SecondFactor:        "Logid sisse teise sammuga, seega ainult kood sind sisse ei logi. Logi sisse muul viisil.",
 	},
 	"he": {
 		Link:                "שלחו לי במקום זאת קוד באימייל",
@@ -647,7 +647,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Исклучи",
 		SettingNotAvailable: "Најавата со код сѐ уште не е достапна.",
 		SettingSaved:        "Зачувано. Ти испративме е-порака за промената.",
-		SecondFactor:        "Се најавувате со втор чекор, па само код не може да ве најави. Најавете се на друг начин.",
+		SecondFactor:        "Се најавуваш со втор чекор, па само код не може да те најави. Најави се на друг начин.",
 	},
 	"mn": {
 		Link:                "Үүний оронд надад имэйлээр код илгээнэ үү",
@@ -731,7 +731,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Dezactivați",
 		SettingNotAvailable: "Conectarea cu cod nu este încă disponibilă.",
 		SettingSaved:        "Salvat. V-am trimis un e-mail despre schimbare.",
-		SecondFactor:        "Te conectezi cu un al doilea pas, așa că un cod singur nu te poate conecta. Conectează-te în alt mod.",
+		SecondFactor:        "Vă conectați cu un al doilea pas, așa că un cod singur nu vă poate conecta. Conectați-vă în alt mod.",
 	},
 	"si": {
 		Link:                "ඒ වෙනුවට මට ඊමේල් මගින් කේතයක් එවන්න",
@@ -871,7 +871,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Isključi",
 		SettingNotAvailable: "Prijava kodom još nije dostupna.",
 		SettingSaved:        "Sačuvano. Poslali smo vam e-poruku o promeni.",
-		SecondFactor:        "Пријављујете се другим кораком, па вас сам код не може пријавити. Пријавите се на други начин.",
+		SecondFactor:        "Prijavljujete se drugim korakom, pa vas sam kod ne može prijaviti. Prijavite se na drugi način.",
 	},
 	"ta": {
 		Link:                "இதற்குப் பதிலாக எனக்கு மின்னஞ்சலில் குறியீட்டை அனுப்புங்கள்",
