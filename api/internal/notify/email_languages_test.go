@@ -18,7 +18,7 @@ func TestEveryEmailReadsALanguageBeyondTheEight(t *testing.T) {
 	lines := words.EmailLines{}
 	for k, v := range words.EmailLinesEnglish() {
 		// The language's own lines: marked, and nothing English left in them.
-		lines[k] = "[" + tag + "] " + strings.ToUpper(v)
+		lines[k] = shout(tag, k, v)
 	}
 	words.EmailMore[tag] = lines
 	defer delete(words.EmailMore, tag)
@@ -144,7 +144,7 @@ func TestAnEmailIsLaidOutInTheLanguageItsWordsAreIn(t *testing.T) {
 	}
 	full := words.EmailLines{}
 	for k, v := range words.EmailLinesEnglish() {
-		full[k] = "[ar] " + strings.ToUpper(v)
+		full[k] = shout("ar", k, v)
 	}
 	words.EmailMore["ar"] = full
 	_, _, h, _ = renderHeld(held)
@@ -201,9 +201,9 @@ func TestAnAccountNoticeFollowsTheNoticesGroup(t *testing.T) {
 	core, notices := words.EmailLines{}, words.EmailLines{}
 	for k, v := range all {
 		if words.EmailGroupName(k) == "notices" {
-			notices[k] = "[" + tag + "] " + strings.ToUpper(v)
+			notices[k] = shout(tag, k, v)
 		} else {
-			core[k] = "[" + tag + "] " + strings.ToUpper(v)
+			core[k] = shout(tag, k, v)
 		}
 	}
 	defer delete(words.EmailMore, tag)
@@ -230,5 +230,59 @@ func TestAnAccountNoticeFollowsTheNoticesGroup(t *testing.T) {
 	}
 	if h := sent[len(sent)-1].HTML; !strings.Contains(h, `<html lang="fa" dir="rtl">`) || !strings.Contains(h, "[fa]") {
 		t.Errorf("with both groups the notice is the language's, right to left: %s", h)
+	}
+}
+
+// shout is a stand-in translation of one line: its words in capitals behind the language's tag, keeping the lines that
+// are not words (true or false, a money separator's name) and the plural lines' structure ("one=…|other=…").
+func shout(tag, k, v string) string {
+	if v == "true" || v == "false" || k == "Money.Thousands" || k == "Money.Gap" {
+		return v
+	}
+	if k == "CallCount" || k == "Ordinal" {
+		parts := strings.Split(v, "|")
+		for i, p := range parts {
+			cat, text, _ := strings.Cut(p, "=")
+			parts[i] = cat + "=[" + tag + "] " + strings.ToUpper(text)
+		}
+		return strings.Join(parts, "|")
+	}
+	return "[" + tag + "] " + strings.ToUpper(v)
+}
+
+// A Card warning is laid out in a language only when its sentence is in it, which is the cards lines' group: with the
+// emails' lines only, the whole email is English, left to right; with the cards lines too it is the language's, right to
+// left, its subject and button too.
+func TestACardWarningFollowsTheCardsGroup(t *testing.T) {
+	const tag = "fa"
+	var sent []resendRequest
+	n, srv := recordingResend(t, &sent)
+	defer srv.Close()
+	ctx := context.Background()
+	core, full := words.EmailLines{}, words.EmailLines{}
+	for k, v := range words.EmailLinesEnglish() {
+		full[k] = shout(tag, k, v)
+		if words.EmailGroupName(k) == "core" {
+			core[k] = full[k]
+		}
+	}
+	defer delete(words.EmailMore, tag)
+
+	words.EmailMore[tag] = core
+	words.ForgetEmailWords(tag)
+	if err := n.CardBudgetWarning(ctx, "a@example.com", "cw_1", "An English warning.", "https://app.kiff.dev/c", tag); err != nil {
+		t.Fatal(err)
+	}
+	if h := sent[len(sent)-1].HTML; !strings.Contains(h, `<html lang="en" dir="ltr">`) || strings.Contains(h, "[FA]") || strings.Contains(h, "[fa]") {
+		t.Errorf("with the emails' lines only the warning is English, left to right: %s", h)
+	}
+	words.EmailMore[tag] = full
+	words.ForgetEmailWords(tag)
+	if err := n.CardBudgetWarning(ctx, "a@example.com", "cw_2", "[fa] A WARNING.", "https://app.kiff.dev/c", tag); err != nil {
+		t.Fatal(err)
+	}
+	last := sent[len(sent)-1]
+	if !strings.Contains(last.HTML, `<html lang="fa" dir="rtl">`) || !strings.Contains(last.Subject, "[fa]") {
+		t.Errorf("with the cards lines the warning is the language's, right to left: %s %s", last.Subject, last.HTML)
 	}
 }

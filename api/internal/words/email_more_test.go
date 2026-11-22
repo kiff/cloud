@@ -64,7 +64,7 @@ func TestEveryLineAnEmailReadsIsInTheTable(t *testing.T) {
 // Built from the English templates, a language reads the same as English does.
 func TestTheEnglishTemplatesBuildEnglish(t *testing.T) {
 	var w Words = en
-	setEmailLines(&w, EmailLinesEnglish())
+	setEmailLines(&w, "en", EmailLinesEnglish())
 	if got, want := w.HeldIntro("A", "B", " C"), en.HeldIntro("A", "B", " C"); got != want {
 		t.Errorf("HeldIntro: %q, want %q", got, want)
 	}
@@ -201,13 +201,13 @@ func TestTheNoticesAreASecondGroupOfLines(t *testing.T) {
 	core := EmailLines{}
 	for k, v := range EmailLinesEnglish() {
 		if lineGroup(k) == groupCore {
-			core[k] = "[nn] " + strings.ToUpper(v)
+			core[k] = shout("nn", k, v)
 		}
 	}
 	notices := EmailLines{}
 	for k, v := range EmailLinesEnglish() {
 		if lineGroup(k) == groupNotices {
-			notices[k] = "[nn] " + strings.ToUpper(v)
+			notices[k] = shout("nn", k, v)
 		}
 	}
 	if len(notices) < 25 {
@@ -286,9 +286,9 @@ func TestANoticeIsWordedWhollyInOneLanguage(t *testing.T) {
 	core, notices := EmailLines{}, EmailLines{}
 	for k, v := range EmailLinesEnglish() {
 		if lineGroup(k) == groupNotices {
-			notices[k] = "[nn] " + strings.ToUpper(v)
+			notices[k] = shout("nn", k, v)
 		} else {
-			core[k] = "[nn] " + strings.ToUpper(v)
+			core[k] = shout("nn", k, v)
 		}
 	}
 	defer func() { delete(EmailMore, "nn"); forgetEmailWords("nn") }()
@@ -314,4 +314,21 @@ func TestANoticeIsWordedWhollyInOneLanguage(t *testing.T) {
 	if !strings.Contains(w.Role("approver"), "[nn]") || !strings.Contains(w.AnAdmin, "[nn]") || !strings.Contains(w.AuthoritySubject("r", "a"), "[nn]") {
 		t.Errorf("with both groups a notice is the language's throughout")
 	}
+}
+
+// shout is a stand-in translation of one line: its words in capitals behind the language's tag, keeping the lines that
+// are not words (true or false, a money separator's name) and the plural lines' structure ("one=…|other=…").
+func shout(tag, k, v string) string {
+	if v == "true" || v == "false" || k == "Money.Thousands" || k == "Money.Gap" {
+		return v
+	}
+	if k == "CallCount" || k == "Ordinal" {
+		parts := strings.Split(v, "|")
+		for i, p := range parts {
+			cat, text, _ := strings.Cut(p, "=")
+			parts[i] = cat + "=[" + tag + "] " + strings.ToUpper(text)
+		}
+		return strings.Join(parts, "|")
+	}
+	return "[" + tag + "] " + strings.ToUpper(v)
 }

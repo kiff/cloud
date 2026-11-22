@@ -74,3 +74,29 @@ func TestAWarningEmailIsInItsRecipientsLanguage(t *testing.T) {
 		t.Errorf("without the store: %s %q", mail.langs[3], mail.text[3])
 	}
 }
+
+// A person whose language has the cards lines' group (beyond the eight) gets the warning and its email in that
+// language; a language without them gets English, both, never the email in one and the sentence in the other.
+func TestAWarningEmailInALanguageBeyondTheEight(t *testing.T) {
+	const tag = "xq"
+	lines := words.EmailLines{}
+	for k, v := range words.EmailLinesEnglish() {
+		lines[k] = v
+	}
+	lines["WarnSpent"] = "XQ spent"
+	words.EmailMore[tag] = lines
+	defer func() { delete(words.EmailMore, tag); words.ForgetEmailWords(tag) }()
+	words.ForgetEmailWords(tag)
+	e := mandate.CardWarning{ID: "cw_1", TenantID: langTenant, CardID: "card-1", Kind: "spent", Used: 30, Ceiling: 30, Window: mandate.WindowCalendarDay}
+	if got := words.WarningReason(e, tag); !strings.HasPrefix(got, "XQ spent") {
+		t.Fatalf("the language's sentence: %q", got)
+	}
+	if words.CardLangFor(tag) != tag || words.CardLangFor("nn") != words.EN {
+		t.Errorf("the email's language follows the cards group: %q %q", words.CardLangFor(tag), words.CardLangFor("nn"))
+	}
+	delete(lines, "OutsideCard")
+	words.ForgetEmailWords(tag)
+	if words.CardLangFor(tag) != words.EN || strings.HasPrefix(words.WarningReason(e, tag), "XQ") {
+		t.Errorf("a part of the cards group reads English, email and sentence")
+	}
+}
