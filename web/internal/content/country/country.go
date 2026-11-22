@@ -40,6 +40,7 @@ var Served = map[string][]string{
 	"sm": {"en", "it"},
 	"sv": {"en", "es"},
 	"mr": {"en", "ar"},
+	"md": {"en", "ro"},
 	"lb": {"en", "ar"},
 	"jo": {"en", "ar"},
 	"om": {"en", "ar"},
@@ -71,7 +72,7 @@ var Notices = map[string]Notice{
 }
 
 // Names are each served country's name in English, for the index.
-var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador", "tr": "Türkiye", "id": "Indonesia", "th": "Thailand", "vn": "Vietnam", "tw": "Taiwan", "sa": "Saudi Arabia", "ae": "United Arab Emirates", "qa": "Qatar", "bh": "Bahrain", "eg": "Egypt", "om": "Oman", "jo": "Jordan", "lb": "Lebanon", "mr": "Mauritania"}
+var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador", "tr": "Türkiye", "id": "Indonesia", "th": "Thailand", "vn": "Vietnam", "tw": "Taiwan", "sa": "Saudi Arabia", "ae": "United Arab Emirates", "qa": "Qatar", "bh": "Bahrain", "eg": "Egypt", "om": "Oman", "jo": "Jordan", "lb": "Lebanon", "mr": "Mauritania", "md": "Moldova"}
 
 var (
 	once     sync.Once
