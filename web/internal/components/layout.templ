@@ -70,7 +70,7 @@ templ LayoutBare(title, description string, css ...string) {
 // paper-theme pages don't carry the dark-theme chrome.
 templ siteShell(title, description, ogDescription, ogType string, css ...string) {
 	<!DOCTYPE html>
-	<html lang={ HTMLLanguage(ctx) }>
+	<html lang={ LangTag(HTMLLanguage(ctx)) } { HTMLAttrs(ctx)... }>
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>

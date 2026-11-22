@@ -1,0 +1,65 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsVI is tafs's terms (/tafs/terms) in Vietnamese, at /vi/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Vietnamese has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ TafsTermsVI() {
+	@components.LayoutSiteWithMeta("Điều khoản tafs", "Điều khoản của tafs, ứng dụng của KIFF: ai cung cấp, tài khoản của bạn, một taf làm gì và bạn kiểm soát nó ra sao, sử dụng được chấp nhận, phí, trách nhiệm và chấm dứt.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · điều khoản</p>
+				<h1>Điều khoản tafs</h1>
+				<p class="legal-meta"><strong>Cập nhật lần cuối:</strong> 21 tháng mười một năm 2026.</p>
+				<p class="legal-disclaimer">Các điều khoản này áp dụng cho tafs, ứng dụng của KIFF trên iPhone, iPad, Android và máy tính, cùng dịch vụ đằng sau nó. tafs là một phần của KIFF Cloud, và trang này nhắc lại những gì <a href="/vi/terms">Điều khoản dịch vụ của KIFF</a> nói về nó, không thêm gì vào đó. Điều khoản của KIFF áp dụng cho mọi điều trang này không đề cập. Câu hỏi: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. Ai cung cấp tafs</h2>
+				<p>tafs do <strong>Kiff Agents OÜ</strong> cung cấp, một công ty trách nhiệm hữu hạn tư nhân tại Estonia (mã đăng ký 17372313), có địa chỉ tại Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Khi tạo tài khoản hoặc sử dụng tafs theo cách khác, bạn đồng ý với các điều khoản này và Điều khoản của KIFF. Nếu bạn chấp nhận thay mặt một công ty, bạn xác nhận rằng bạn có quyền ràng buộc công ty đó.</p>
+			</section>
+			<section id="account">
+				<h2>2. Tài khoản của bạn</h2>
+				<p>Bạn đăng nhập vào tafs bằng tài khoản KIFF. Hãy cung cấp thông tin chính xác, giữ bí mật thông tin đăng nhập, và bạn chịu trách nhiệm cho mọi hoạt động dưới tài khoản của bạn và cho mọi người bạn cho phép vào. Bạn phải từ 16 tuổi trở lên, hoặc đủ tuổi đồng ý kỹ thuật số nơi bạn sống, tùy mức nào cao hơn. Bạn chỉ được dùng tafs từ một quốc gia hoặc vùng mà Anthropic cung cấp dịch vụ của chính mình, như <a href="https://www.anthropic.com/supported-countries">Anthropic liệt kê</a>; không dùng cho một công ty có trụ sở chính tại, hoặc do một công ty có trụ sở chính tại, một quốc gia hoặc vùng ngoài danh sách đó sở hữu đa số hoặc kiểm soát; và không dùng nếu bạn, hoặc công ty bạn dùng cho, bị Liên minh châu Âu, Liên Hợp Quốc hoặc Hoa Kỳ trừng phạt (Điều khoản của KIFF, §4).</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. Một taf làm gì</h2>
+				<p>Trong tafs, bạn giao một công việc cho một taf: một tác nhân AI làm việc theo lịch với các công cụ bạn kết nối, bên trong các KIFF Card bạn phát hành cho nó. Anthropic cung cấp mô hình AI mà nó dùng. Setup, một tác nhân AI trong tafs, giúp bạn kết nối một công cụ và thiết lập một taf, nhưng không tự kết nối gì: bạn đăng nhập tại nhà cung cấp của chính công cụ đó, và phê duyệt trên thiết bị của bạn từng kết nối, các công cụ một taf được dùng, và Card của nó.</p>
+				<p>Báo cáo, tin nhắn và ghi chú bộ nhớ của một taf do một mô hình AI viết và có thể sai. Hãy kiểm tra điều quan trọng trước khi dựa vào nó. Bất cứ điều gì một taf viết cho người ngoài công ty bạn đều nói rằng một tác nhân AI đã viết nó.</p>
+			</section>
+			<section id="control">
+				<h2>4. Quyền kiểm soát của bạn: Card và phê duyệt</h2>
+				<p>Một taf chỉ tiếp cận công cụ của bạn qua KIFF, nơi kiểm tra mọi lệnh gọi theo các Card của taf đó trước khi gửi. Một lệnh gọi nằm trong một Card bạn đã phát hành được thực hiện theo chỉ dẫn của bạn. Một lệnh gọi nằm ngoài một Card bị giữ lại hoặc bị từ chối, như Card quy định. Một lệnh gọi bị giữ chỉ được thực hiện sau khi người mà tài khoản của bạn cho phép trả lời lệnh gọi bị giữ phê duyệt.</p>
+				<p>Bạn chọn công việc và Card của từng taf, trả lời các lệnh gọi bị giữ của nó, và đảm bảo bạn được phép dùng các công cụ và tài khoản bạn kết nối. Bạn có thể dừng một taf hoặc tất cả, tạm dừng một taf, thu hồi bất kỳ Card nào của nó, hoặc gỡ bỏ nó. Từ lúc bạn dừng một taf hoặc thu hồi một Card, KIFF không cho phép lệnh gọi mới nào của taf đó hoặc theo Card đó. Một yêu cầu đã gửi đến nhà cung cấp của một công cụ vẫn có thể hoàn tất: chúng tôi dừng các lệnh gọi mới, và không thể hoàn tác những gì nhà cung cấp đã làm. <a href="/vi/terms#tafs">Điều khoản của KIFF, §3A</a> có chi tiết.</p>
+				<p>Theo Đạo luật AI của EU, Kiff Agents OÜ là nhà cung cấp tafs và bạn là bên triển khai (deployer). Chỉ dùng tafs cho những công việc nó cung cấp, và không dùng cho bất kỳ mục đích nào mà Đạo luật AI cấm hoặc xếp vào rủi ro cao, chẳng hạn các quyết định về việc làm, tín dụng hoặc khả năng tiếp cận dịch vụ thiết yếu của một người.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. Sử dụng được chấp nhận</h2>
+				<p>Bạn, người của bạn và các taf của bạn phải tuân theo chính sách sau: <a href="/acceptable-use">Chính sách sử dụng được chấp nhận</a> (bằng tiếng Anh). Hành động của một tác nhân là hành động của bạn. Trong số những điều khác, bạn không được dùng tafs để vi phạm pháp luật, thao tác trên một hệ thống hoặc tài khoản bạn không được phép dùng, kết nối một công cụ bằng thông tin đăng nhập không thuộc quyền bạn trao, gửi thư rác, hoặc né một Card, một giới hạn hay một lệnh giữ. Chúng tôi có thể tạm ngưng ngay khi có vi phạm đáng tin cậy.</p>
+			</section>
+			<section id="fees">
+				<h2>6. Phí</h2>
+				<p>Tại thời điểm cập nhật này, Solo có giá { tafsCostVI.money(TafsSoloCents) } mỗi tháng, đã gồm VAT, kèm { tafsCostVI.number(TafsSoloCredits) } tín dụng mỗi tháng, bán trong ứng dụng qua App Store hoặc Google Play. Các gói tín dụng, mua trong ứng dụng, bắt đầu từ { tafsCostVI.money(TafsPackCents[TafsSoloCredits]) }; chúng không hết hạn. Mỗi lần chạy của một taf dùng tín dụng cho phần AI nó đã dùng. Coach, và việc thiết lập taf, được bao gồm trong mức sử dụng hợp lý của Coach. Đây là giá ở khu vực đồng euro. Ở nơi khác, App Store hoặc Google Play hiển thị giá theo tiền tệ của bạn, có hoặc không có thuế địa phương tùy quy định của nước đó, và đó là giá bạn trả. Giá hiện hành có trên <a href="/pricing">trang giá</a> (bằng tiếng Anh); tafs cũng là một phần của gói Company của KIFF.</p>
+				<p>Không có dùng thử. Solo mua trong ứng dụng được quản lý và hủy trong các gói đăng ký Apple hoặc Google Play của bạn, theo điều khoản của cửa hàng đó về thanh toán, gia hạn và hoàn tiền. Một gói kéo dài đến hết kỳ bạn đã trả. Nếu bạn là người tiêu dùng ở EU, bạn có thể rút lui trong vòng 14 ngày kể từ khi mua. <a href="/vi/terms#fees">Điều khoản của KIFF, §8</a> có chi tiết.</p>
+			</section>
+			<section id="liability">
+				<h2>7. Trách nhiệm</h2>
+				<p>tafs được cung cấp “nguyên trạng” và “theo khả năng sẵn có”, trừ các bảo đảm trong Điều khoản của KIFF (§10). Trong phạm vi pháp luật cho phép, không bên nào chịu trách nhiệm về thiệt hại gián tiếp hoặc hệ quả, và tổng trách nhiệm của mỗi bên bị giới hạn như <a href="/vi/terms#liability">Điều khoản của KIFF, §12</a> quy định. Không điều gì giới hạn trách nhiệm mà pháp luật không cho phép giới hạn.</p>
+			</section>
+			<section id="termination">
+				<h2>8. Chấm dứt</h2>
+				<p>Bạn có thể dừng bất cứ lúc nào: xóa tài khoản của bạn trong ứng dụng, tại Tài khoản → <em>Xóa tài khoản</em>. Hãy xuất các cuộc trò chuyện của bạn trước, từ Tài khoản → Xuất cuộc trò chuyện của tôi. Chúng tôi có thể chấm dứt việc bạn sử dụng vì vi phạm nghiêm trọng không được khắc phục trong ba mươi ngày kể từ thông báo, hoặc ngay lập tức vì vi phạm Sử dụng được chấp nhận. Quyền rời đi và mang dữ liệu theo của bạn nằm trong <a href="/vi/terms#term">Điều khoản của KIFF, §9</a>.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. Thay đổi và luật áp dụng</h2>
+				<p>Chúng tôi thay đổi các điều khoản này theo cách Điều khoản của KIFF nêu cho chính chúng (§16). Chúng chịu sự điều chỉnh của pháp luật Cộng hòa Estonia, và tranh chấp được đưa đến Tòa án quận Harju tại Tallinn. Nếu bạn là người tiêu dùng ở một quốc gia thành viên EU khác, các quy định bắt buộc về bảo vệ người tiêu dùng của quốc gia bạn vẫn áp dụng.</p>
+			</section>
+			<section id="contact">
+				<h2>10. Liên hệ</h2>
+				<p>Câu hỏi về hợp đồng: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Trợ giúp về ứng dụng: <a href="mailto:support@kiff.dev">support@kiff.dev</a>. Quyền riêng tư: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>; cách tafs xử lý dữ liệu cá nhân nằm trong <a href="/vi/tafs/privacy">Chính sách quyền riêng tư của tafs</a>.</p>
+			</section>
+		</article>
+	}
+}

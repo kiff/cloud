@@ -1,16 +1,17 @@
 package handlers
 
 import (
+	"github.com/kiff/cloud/web/internal/components"
 	"net/http"
 	"regexp"
 	"strings"
 	"testing"
 
-	"github.com/kiff/cloud/web/internal/components"
 	"github.com/kiff/cloud/web/internal/content/country"
 )
 
 var htmlLangRE = regexp.MustCompile(`<html lang="([^"]*)"`)
+var currentLangRE = regexp.MustCompile(`<span class="lang-row-current" lang="([^"]*)"`)
 
 // Every served legal page says its language twice, and the two agree: the
 // Content-Language header, and <html lang> (which screen readers and a
@@ -34,7 +35,7 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 			if l != "en" {
 				p += "/" + l
 			}
-			want[p] = l
+			want[p] = components.LangTag(l)
 		}
 	}
 	for name, n := range country.Notices {
@@ -45,13 +46,13 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 			if l != "en" {
 				p += "/" + l
 			}
-			want[p] = l
+			want[p] = components.LangTag(l)
 		}
 	}
 	// And every translated page, in its language.
 	for _, tr := range TranslatedRoutes() {
 		mux.Handle("GET "+tr.Path, Translated(tr.Lang, tr.Page, OfferLinks{}))
-		want[tr.Path] = tr.Lang
+		want[tr.Path] = components.LangTag(tr.Lang)
 	}
 	for path, lang := range want {
 		rec := getPage(t, mux, path)
@@ -66,11 +67,15 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 		if m == nil || m[1] != lang {
 			t.Errorf("%s: <html lang> %v, want %q", path, m, lang)
 		}
+		// The language row's current-language span says it the same way, so
+		// Traditional Chinese is never marked plain "zh".
+		if c := currentLangRE.FindStringSubmatch(rec.Body.String()); c != nil && c[1] != lang {
+			t.Errorf("%s: language row marks the current language %q, want %q", path, c[1], lang)
+		}
 	}
 	if len(want) < 20 || !strings.Contains(strings.Join(keys(want), " "), "/legal/japan/ja") {
 		t.Errorf("the test covers too few pages: %d", len(want))
 	}
-	_ = components.SiteBaseURL
 }
 
 func keys(m map[string]string) []string {

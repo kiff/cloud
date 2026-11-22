@@ -33,15 +33,15 @@ func TestATranslatedPageIsItsOwnURL(t *testing.T) {
 		if rec.Code != http.StatusOK {
 			t.Fatalf("%s: status %d", tr.Path, rec.Code)
 		}
-		if got := rec.Header().Get("Content-Language"); got != tr.Lang {
+		if got := rec.Header().Get("Content-Language"); got != components.LangTag(tr.Lang) {
 			t.Errorf("%s: Content-Language %q", tr.Path, got)
 		}
 		for _, want := range []string{
-			`<html lang="` + tr.Lang + `"`,
+			`<html lang="` + components.LangTag(tr.Lang) + `"`,
 			`<link rel="canonical" href="` + components.SiteBaseURL + tr.Path + `"`,
 			`<link rel="alternate" hreflang="en" href="` + components.SiteBaseURL + tr.Page + `"`,
 			`<link rel="alternate" hreflang="x-default" href="` + components.SiteBaseURL + tr.Page + `"`,
-			`<link rel="alternate" hreflang="` + tr.Lang + `" href="` + components.SiteBaseURL + tr.Path + `"`,
+			`<link rel="alternate" hreflang="` + components.LangTag(tr.Lang) + `" href="` + components.SiteBaseURL + tr.Path + `"`,
 			`<nav class="lang-row"`,
 		} {
 			if !strings.Contains(body, want) {
@@ -141,7 +141,7 @@ func TestTheSitemapNamesEveryLanguage(t *testing.T) {
 		if !strings.Contains(body, "<loc>"+components.SiteBaseURL+tr.Path+"</loc>") {
 			t.Errorf("the sitemap lacks %s", tr.Path)
 		}
-		if !strings.Contains(body, `<xhtml:link rel="alternate" hreflang="`+tr.Lang+`" href="`+components.SiteBaseURL+tr.Path+`"></xhtml:link>`) {
+		if !strings.Contains(body, `<xhtml:link rel="alternate" hreflang="`+components.LangTag(tr.Lang)+`" href="`+components.SiteBaseURL+tr.Path+`"></xhtml:link>`) {
 			t.Errorf("the sitemap names no %s alternate for %s", tr.Lang, tr.Page)
 		}
 	}
@@ -152,7 +152,7 @@ func TestTheSitemapNamesEveryLanguage(t *testing.T) {
 
 // The app host sends a translated page to kiff.dev, as it does the English one.
 func TestATranslatedPathIsPublic(t *testing.T) {
-	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/et/tafs/privacy": true, "/et/support": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false, "/el/privacy": true, "/el/tafs/watch": false, "/lt/privacy": true, "/lt/legal/dpa": false, "/cs/privacy": true, "/cs/tafs": false, "/sk/privacy": true, "/sk/tafs/watch": false, "/sl/privacy": true, "/sl/legal/dpa": false, "/hu/privacy": true, "/hu/cookies": false, "/ro/privacy": true, "/ro/tafs": false, "/bg/privacy": true, "/bg/support": false, "/hr/privacy": true, "/hr/tafs/watch": false} {
+	for path, want := range map[string]bool{"/de/privacy": true, "/pl/legal/dpa": true, "/ko/tafs/terms": true, "/ko/cookies": false, "/ja/privacy": true, "/ja/tafs": false, "/et/tafs/privacy": true, "/et/support": false, "/de/dashboard": false, "/xx/privacy": false, "/de": false, "/el/privacy": true, "/el/tafs/watch": false, "/lt/privacy": true, "/lt/legal/dpa": false, "/cs/privacy": true, "/cs/tafs": false, "/sk/privacy": true, "/sk/tafs/watch": false, "/sl/privacy": true, "/sl/legal/dpa": false, "/hu/privacy": true, "/hu/cookies": false, "/ro/privacy": true, "/ro/tafs": false, "/bg/privacy": true, "/bg/support": false, "/hr/privacy": true, "/hr/tafs/watch": false, "/tr/privacy": true, "/tr/support": false} {
 		if got := isPublicPath(path); got != want {
 			t.Errorf("isPublicPath(%q) = %v, want %v", path, got, want)
 		}

@@ -50,6 +50,24 @@ func TestLangPath(t *testing.T) {
 		{"hr", "/terms#fees", "/hr/terms#fees"},
 		{"hr", "/tafs/privacy", "/hr/tafs/privacy"},
 		{"hr", "/security", "/security"}, // and Croatian
+		{"ar", "/terms#fees", "/ar/terms#fees"},
+		{"ar", "/tafs/privacy", "/ar/tafs/privacy"},
+		{"ar", "/security", "/security"}, // and Arabic
+		{"zh", "/terms#fees", "/zh/terms#fees"},
+		{"zh", "/tafs/privacy", "/zh/tafs/privacy"},
+		{"zh", "/security", "/security"}, // and Traditional Chinese
+		{"th", "/terms#fees", "/th/terms#fees"},
+		{"th", "/tafs/privacy", "/th/tafs/privacy"},
+		{"th", "/security", "/security"}, // and Thai
+		{"vi", "/terms#fees", "/vi/terms#fees"},
+		{"vi", "/tafs/privacy", "/vi/tafs/privacy"},
+		{"vi", "/security", "/security"}, // and Vietnamese
+		{"id", "/terms#fees", "/id/terms#fees"},
+		{"id", "/tafs/privacy", "/id/tafs/privacy"},
+		{"id", "/security", "/security"}, // and Indonesian
+		{"tr", "/terms#fees", "/tr/terms#fees"},
+		{"tr", "/tafs/privacy", "/tr/tafs/privacy"},
+		{"tr", "/security", "/security"}, // and Turkish
 	} {
 		if got := LangPath(c.lang, c.path); got != c.want {
 			t.Errorf("LangPath(%q, %q) = %q, want %q", c.lang, c.path, got, c.want)
@@ -93,6 +111,18 @@ func TestSplitLangPath(t *testing.T) {
 		{"/bg/cookies", "en", "/bg/cookies", false},
 		{"/hr/tafs/terms", "hr", "/tafs/terms", true},
 		{"/hr/support", "en", "/hr/support", false},
+		{"/ar/tafs/terms", "ar", "/tafs/terms", true},
+		{"/ar/support", "en", "/ar/support", false},
+		{"/zh/tafs/terms", "zh", "/tafs/terms", true},
+		{"/zh/support", "en", "/zh/support", false},
+		{"/th/tafs/terms", "th", "/tafs/terms", true},
+		{"/th/support", "en", "/th/support", false},
+		{"/vi/tafs/terms", "vi", "/tafs/terms", true},
+		{"/vi/support", "en", "/vi/support", false},
+		{"/id/tafs/terms", "id", "/tafs/terms", true},
+		{"/id/support", "en", "/id/support", false},
+		{"/tr/tafs/terms", "tr", "/tafs/terms", true},
+		{"/tr/support", "en", "/tr/support", false},
 		{"/pricing", "en", "/pricing", false},
 		{"/", "en", "/", false},
 	} {

@@ -236,7 +236,7 @@ func TestTranslationsKeepTheEnglishPage(t *testing.T) {
 						t.Errorf("%d link(s) to %s, an English page: each is followed by %q", n, only, components.InEnglish(lang))
 					}
 				}
-				if !strings.Contains(html, `<html lang="`+lang+`"`) {
+				if !strings.Contains(html, `<html lang="`+components.LangTag(lang)+`"`) {
 					t.Errorf("the page isn't marked as %s", lang)
 				}
 				if !components.HasNoNotice(path) && !strings.Contains(html, components.TranslationNoticeText(lang)) {
