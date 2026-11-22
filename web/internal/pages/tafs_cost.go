@@ -41,7 +41,7 @@ type tafsCostWords struct {
 func (w tafsCostWords) money(cents int) string {
 	whole, frac := cents/100, cents%100
 	switch w.Lang {
-	case "en", "ko", "ja", "th", "zh", "ar":
+	case "en", "ko", "ja", "th", "zh", "ar", "he":
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
@@ -76,6 +76,8 @@ func (w tafsCostWords) number(n int) string {
 		sep = " "
 	case "hr":
 		sep = "."
+	case "he":
+		sep = ","
 	case "bn":
 		sep = "."
 	case "az":
@@ -213,3 +215,6 @@ var tafsCostAZ = tafsCostWords{Lang: "az"}
 
 // tafsCostBN writes the prices tafs's terms state in Bengali: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
 var tafsCostBN = tafsCostWords{Lang: "bn"}
+
+// tafsCostHE writes the prices tafs's terms state in Hebrew: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostHE = tafsCostWords{Lang: "he"}

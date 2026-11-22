@@ -9,16 +9,16 @@ import (
 	"github.com/kiff/cloud/web/internal/content/country"
 )
 
-// An Arabic page is marked right to left and in Arabic, on the document itself:
-// <html lang="ar" dir="rtl">. No other page carries a dir attribute, so no
+// An Arabic or Hebrew page is marked right to left and in its language, on the
+// document itself: <html lang="ar" dir="rtl">, <html lang="he" dir="rtl">. No other page carries a dir attribute, so no
 // left-to-right page's markup changes.
-func TestArabicPagesAreRightToLeft(t *testing.T) {
+func TestArabicAndHebrewPagesAreRightToLeft(t *testing.T) {
 	mux := http.NewServeMux()
 	mux.Handle("GET /privacy", Privacy())
 	for _, tr := range TranslatedRoutes() {
 		mux.Handle("GET "+tr.Path, Translated(tr.Lang, tr.Page, OfferLinks{}))
 	}
-	arabic := 0
+	arabic, hebrew := 0, 0
 	for _, tr := range TranslatedRoutes() {
 		rec := getPage(t, mux, tr.Path)
 		body := rec.Body.String()
@@ -29,6 +29,16 @@ func TestArabicPagesAreRightToLeft(t *testing.T) {
 				t.Errorf("%s: not <html lang=\"ar\" dir=\"rtl\">", tr.Path)
 			}
 			if got := rec.Header().Get("Content-Language"); got != "ar" {
+				t.Errorf("%s: Content-Language %q", tr.Path, got)
+			}
+			continue
+		}
+		if tr.Lang == "he" {
+			hebrew++
+			if !strings.Contains(body, `<html lang="he" dir="rtl"`) {
+				t.Errorf("%s: not <html lang=\"he\" dir=\"rtl\">", tr.Path)
+			}
+			if got := rec.Header().Get("Content-Language"); got != "he" {
 				t.Errorf("%s: Content-Language %q", tr.Path, got)
 			}
 			continue
@@ -59,10 +69,13 @@ func TestArabicPagesAreRightToLeft(t *testing.T) {
 	if arabic != 4 {
 		t.Errorf("Arabic has %d routes, want its four legal pages", arabic)
 	}
+	if hebrew != 4 {
+		t.Errorf("Hebrew has %d routes, want its four legal pages", hebrew)
+	}
 	if got := getPage(t, mux, "/privacy").Body.String(); strings.Contains(got, "dir=\"rtl\"") {
 		t.Error("the English Privacy page is marked right to left")
 	}
-	if !components.IsRightToLeft("ar") || components.IsRightToLeft("en") {
+	if !components.IsRightToLeft("ar") || !components.IsRightToLeft("he") || components.IsRightToLeft("en") {
 		t.Error("IsRightToLeft")
 	}
 }

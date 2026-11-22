@@ -47,6 +47,7 @@ var partialPages = map[string][]string{
 	"hy": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"az": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"bn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"he": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -63,8 +64,8 @@ func LangTag(lang string) string {
 	return lang
 }
 
-// IsRightToLeft reports a language written right to left (Arabic).
-func IsRightToLeft(lang string) bool { return lang == "ar" }
+// IsRightToLeft reports a language written right to left (Arabic, Hebrew).
+func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" }
 
 // HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
 // on a right-to-left page, none on any other, so no other page's markup changes.
@@ -77,7 +78,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -121,6 +122,7 @@ var languageNames = map[string]string{
 	"hy": "Հայերեն",
 	"az": "Azərbaycanca",
 	"bn": "বাংলা",
+	"he": "עברית",
 }
 
 // LanguageName is a site language's name in that language.
@@ -305,6 +307,7 @@ var translationNotices = map[string]string{
 	"hy": "Սա թարգմանություն է տեղեկատվության նպատակով։ Գործում է անգլերեն տարբերակը՝",
 	"az": "Bu, məlumat məqsədilə tərcümədir. İngilis dilindəki versiya qüvvədədir:",
 	"bn": "এটি তথ্যের জন্য একটি অনুবাদ। ইংরেজি সংস্করণই প্রযোজ্য:",
+	"he": "זהו תרגום למידע בלבד. הגרסה האנגלית היא הקובעת:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -340,6 +343,7 @@ var inEnglish = map[string]string{
 	"hy": "(անգլերեն)",
 	"az": "(ingiliscə)",
 	"bn": "(ইংরেজিতে)",
+	"he": "(באנגלית)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
