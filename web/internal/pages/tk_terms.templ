@@ -1,0 +1,313 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsTK is KIFF's Terms of Service (/terms) in Turkmen, at /tk/terms.
+// It is a translation of Terms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Turkmen has the legal
+// texts only, so a link to any other page goes to English and says so.
+// (Sections 8 to 21 are in tk_terms_more.templ.)
+templ TermsTK() {
+	@components.LayoutSite("KIFF — terms of service", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadTK()
+			@termsDefinitionsTK()
+			@termsAgreementTK()
+			@termsServiceTK()
+			@termsTafsTK()
+			@termsAccountTK()
+			@termsAcceptableUseTK()
+			@termsCustomerDataTK()
+			@termsConfidentialityTK()
+			@termsFeesTK()
+			@termsTermTK()
+			@termsWarrantiesTK()
+			@termsDisclaimerTK()
+			@termsLiabilityTK()
+			@termsIndemnityTK()
+			@termsSLATK()
+			@termsServiceModsTK()
+			@termsTermsModsTK()
+			@termsForceMajeureTK()
+			@termsGoverningLawTK()
+			@termsGeneralTK()
+			@termsContactTK()
+		</article>
+	}
+}
+
+templ termsHeadTK() {
+	<header class="legal-head">
+		<p class="legal-badge">Hyzmat şertleri · v0.1</p>
+		<h1>Hyzmat şertleri</h1>
+		<p class="legal-meta">
+			<strong>Soňky täzelenme:</strong> 2026-njy ýylyň 22-nji noýabry.
+			<strong>Güýje girýän senesi:</strong> 2026-njy ýylyň 24-nji maýy.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Näme üýtgedi:</strong> başga bir işewür sizi tanyşdyranda şertnamaňyzyň kim bilen bolýandygy (§2) we mikrokärhanalar (§8). Öň: Hyzmaty sebit, eýeçilik we sanksiýalar boýunça kimiň ulanyp biljekdigi (§4); Android-de tafs programmasy we
+			Google Play arkaly satyn alnan Solo (§1, §8). Ondan öň: tölegli
+			meýilnamalar (§3A, §8),
+			<a href="/legal/sla">hyzmat derejesi şertnamasy</a> (§14) we
+			gadagan ulanyşlaryň sanawy, ol indi
+			<a href="/acceptable-use">Rugsat berlen ulanyş syýasatynda</a> (§5) bar.
+		</p>
+		<p class="legal-disclaimer">
+			Bu şertler tafs-y goşmak bilen KIFF Cloud-yň ulanylyşyny düzgünleşdirýär. Şertnama
+			soraglary:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsTK() {
+	<section id="definitions">
+		<h2>1. Kesgitlemeler</h2>
+		<ul>
+			<li><strong>"Kiff Agents OÜ"</strong>, <strong>"biz"</strong>, <strong>"bize"</strong>, <strong>"biziň"</strong> — Hyzmaty hödürleýän Estoniýanyň çäklendirilen jogapkärçilikli hususy kompaniýasy. Hasaba alyş kody 17372313.</li>
+			<li><strong>"Müşderi"</strong>, <strong>"siz"</strong>, <strong>"siziň"</strong> — bu şertlere razylyk berýän fiziki ýa-da ýuridiki adam.</li>
+			<li><strong>"Ulanyjy"</strong> — Müşderiniň hasaby arkaly Hyzmata girmäge Müşderiniň ygtyýar berýän islendik şahsy.</li>
+			<li><strong>"Hyzmat"</strong> — KIFF Cloud önümi, şol sanda <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs we şol ýerde çap edýän resminamalarymyz, dolandyryş panellerimiz we API-lerimiz.</li>
+			<li><strong>"tafs"</strong> — iPhone, iPad, Android we kompýuterler (Mac, Windows we Linux) üçin tafs programmasy we onuň arkasyndaky hyzmat, şol sanda Setup we planque (§3A), onda Müşderi KIFF Card-laryň çäginde işleýän AI agentine iş tabşyrýar. <strong>"taf"</strong> şeýle bir agentdir.</li>
+			<li><strong>"Kärende"</strong> — Hyzmatyň içindäki, ýeke Müşderä degişli mantykly taýdan aýrylan iş meýdany.</li>
+			<li><strong>"Audit maglumatlary"</strong> — Hyzmatyň işleýiş arkaly Müşderiniň adyndan saklaýan wakalary, kararlary, hereketleri, tassyklamalary we resminamalary.</li>
+			<li><strong>"tafs maglumatlary"</strong> — tafs-yň Müşderiniň adyndan saklaýan zady: her taf-yň işlemeleri we söhbetdeşlikleri (Müşderiniň birikdirilen gurallarynyň oňa gaýtaran zady goşmak bilen), onuň hasabatlary, onuň ýat belliklerini we onuň duýduryşlary üçin hasaba alnan telefonlar.</li>
+			<li><strong>"Resminama"</strong> — Hyzmatyň her dolandyrylýan hereketi üçin berýän gol çekilen, wersiýaly karar ýazgysy.</li>
+			<li><strong>"Resminamalar"</strong> — bu Şertlerden salgylanylýan senelenen wersiýadaky tehniki Hyzmat resminamalary we howpsuzlyk çäreleri (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Ol strategik ak kitaby, marketing materiallaryny we aýratyn ygtyýarlandyrylan açyk çeşmeli çarçuwanyň resminamalaryny öz içine almaýar.</li>
+			<li><strong>"DPA"</strong> — <a href="/legal/dpa">/legal/dpa</a> salgysyndaky Maglumatlary işlemek şertnamasy, ol biziň işleýji tarapdaky gatnaşygymyzy düzgünleşdirýär.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementTK() {
+	<section id="agreement">
+		<h2>2. Şertnama</h2>
+		<p>
+			Bu şertler Hyzmaty ulanyşyňyzy düzgünleşdirýär. Hasap açmak,
+			API açaryny döretmek ýa-da Hyzmaty başga usulda ulanmak bilen
+			siz bu şertlere razylyk berýärsiňiz. Eger kompaniýanyň ýa-da başga ýuridiki
+			şahsyň adyndan kabul etseňiz, şol şahsy borçlandyrmaga ygtyýaryňyzyň bardygyny tassyklaýarsyňyz, we "siz"
+			hem-de "siziň" şol şahsa degişlidir.
+		</p>
+		<p>
+			Eger ösdüriji, hyzmatdaş ýa-da başga bir işewür sizi KIFF bilen tanyşdyran bolsa ýa-da ulanýan agentiňizi guran bolsa, Hyzmat boýunça şertnamaňyz bu şertler boýunça bilen göni biz bilendir we siz olary özüňiz kabul edýärsiňiz. Şol işewür biziň agentimiz däl: ol bu şertleri kabul edip, razylyk berip ýa-da siziň ýerinize töleg tassyklap bilmeýär, we ol Hyzmaty biziň üçin satmaýar.
+		</p>
+		<p>
+			Biz aýratyn aýratynlyklar (beta aýratynlyklary, üçünji tarap
+			integrasiýalary) üçin goşmaça şertleri çap edip bileris. Olar bu şertler bilen gapma-garşy bolanda,
+			şol aýratynlyk üçin goşmaça şertler esasy bolýar.
+		</p>
+	</section>
+}
+
+templ termsServiceTK() {
+	<section id="service">
+		<h2>3. Hyzmat</h2>
+		<p>
+			KIFF Cloud ygtyýar berlen hereketleri dolandyrmak üçin
+			ýerleşdirilen hyzmatdyr. Ol haýyşlary Müşderiniň sazlanan rugsatlary we Card-lary bilen deňeşdirýär, adam tassyklamasyny talap edip biler, we dolandyryş kararlaryny ýazýar.
+			Sazlanan integrasiýa baglylykda, KIFF ygtyýarly
+			haýyşy ugradýar ýa-da goralýan ulgamyň barlaýan
+			rugsadyny berýär. Birikdirilen ulgam esasy
+			hereketi ýerine ýetirýär.
+		</p>
+		<p>
+			Degişli tehniki özüni alyp barşy, subutnama, integrasiýa
+			talaplary we ýerine ýetiriş çäkleri bu Şertlerden salgylanylýan
+			senelenen Resminamalarda kesgitlenendir. Strategik
+			<a href="/whitepaper">ak kitap</a> (iňlis dilinde) KIFF-iň
+			ýörelgelerini we modelini düşündirýär; ol bu Şertler boýunça tehniki Resminamalar hökmünde goşulmaýar.
+		</p>
+		<p>
+			KIFF Cloud-yň dolandyryş hyzmaty agent çarçuwasy, iş akymy hereketlendirijisi, model gateway ýa-da dolandyrylýan agent platformasy <em>däldir</em>. Ol eýýäm ulanýan zadyňyz bilen bilelikde işleýär.
+			Aç-açan sanaw üçin baş sahypadaky <a href="/#not">"KIFF näme däl"</a> (iňlis dilinde)
+			bölümine serediň. tafs Hyzmatyň sizi üçin agentleri
+			işledýän ýeke-täk bölegidir, siziň berýän Card-laryňyzyň çäginde; §3A ony beýan edýär.
+		</p>
+		<p>
+			Açyk çeşmeli <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			çarçuwasy öz MIT ygtyýarnamasy bilen düzgünleşdirilýär we bu şertlerden daşarda.
+			Çarçuwany öz infrastrukturaňyzda işledeniňizde, Kiff Agents OÜ bilen şertnama
+			döredilmeýär.
+		</p>
+	</section>
+}
+
+templ termsTafsTK() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			tafs-da siz taf-a iş (meselem yzyna gaýtarmalar, hasap tölegi ýa-da
+			kart jedelleri) tabşyrýarsyňyz: ol siziň birikdirýän gurallaryňyz bilen, siziň onuň üçin berýän
+			KIFF Card-laryňyzyň çäginde, tertip boýunça işleýän AI agentidir. Her taf biziň agent işleýşimizde işleýär we
+			ol ulanýan AI modelini Anthropic üpjün edýär. Siz onuň saklanan çagyryşlaryna tafs programmasynda jogap berýärsiňiz.
+		</p>
+		<p>
+			<strong>Gurallaryňyzy birikdirmek.</strong> taf ýaly işleýän tafs-daky AI agenti Setup
+			gural birikdirmäge we iş üçin taf döretmäge kömek edýär. Ol özbaşdak
+			hiç zady birikdirmeýär. Siz guralyň öz üpjün edijisinde (meselem
+			Stripe) girýärsiňiz, we siz her
+			birikmäni, taf-yň ulanyp biljek gurallaryny we onuň Card-laryny öz enjamyňyzda tassyklaýarsyňyz. Şol girişden alnan
+			belgini biziň birikme hyzmatymyz planque saklaýar. Ol şifrlenen, diňe KIFF-iň karar beren çagyryşyny etmek üçin ulanylýar we hiç haçan taf-a berilmeýär. Guralyň birikmesini kesmek
+			belgini üpjün edijide ýatyrýar we ony pozýar.
+		</p>
+		<p>
+			<strong>Siziň Card-laryňyz siziň görkezmäňizdir.</strong> taf
+			siziň gurallaryňyza diňe KIFF arkaly ýetýär, KIFF her
+			çagyryşy ibermezden öň taf-yň Card-lary bilen deňeşdirýär. Siziň beren
+			Card-yňyzyň çäginde bolan çagyryş siziň görkezmäňiz boýunça ýerine ýetirilýär.
+			Card-yň çäginden daşardaky çagyryş Card-yň aýdyşy ýaly saklanýar ýa-da ret edilýär.
+			Saklanan çagyryş diňe hasabyňyzyň saklanan çagyryşlara jogap bermäge rugsat berýän adamy ony tassyklanyndan soň ýerine ýetirilýär. tafs programmasynda
+			jogap KIFF-iň barlaýan olaryň enjamyndan gol göterýär, we
+			resminama şol subutnamany saklaýar. Hasabyňyz KIFF-iň özünde hem
+			(dolandyryş paneli, onuň buýruk setiri guraly ýa-da şol ýerde ygtyýar berýän tassyklaýjyňyz) jogap berip biler;
+			şonda resminama kimiň we nähili jogap berendigini ýazýar.
+		</p>
+		<p>
+			<strong>Tölegler.</strong> taf siziň üçin bir töleg sahypasynda,
+			şol sahypada saklan kartyňyz ýa-da başga töleg usulyňyz bilen töleg edeninde, ony diňe Card-yň çäginde we siz
+			ol tölegi telefonyňyzda tassyklanyňyzdan soň edýär. Siziň tassyklamaňyz
+			şol ýeke tölegi siziň adyňyzdan ygtyýarlandyrýar. Sahypa we
+			onuň töleg üpjün edijisi ony işleýär. KIFF we planque siziň pulyňyzy hiç haçan
+			saklamaýar, kart maglumatlaryňyzy hiç haçan ýatda saklamaýar, we taf
+			hiç haçan kart belgisini ýazmaýar.
+		</p>
+		<p>
+			<strong>Sizde näme galýar.</strong> Her
+			taf-yň işini we Card-laryny siz saýlaýarsyňyz, onuň saklanan çagyryşlaryna jogap berýärsiňiz, we
+			birikdirýän gurallaryňyzy we hasaplaryňyzy ulanmaga hukugyňyzyň bardygyna göz ýetirýärsiňiz. taf-yň
+			hasabatlaryny, habarlaryny we ýat belliklerini AI
+			modeli ýazýar we olar ýalňyş bolup biler; oňa
+			daýanmazdan öň möhüm zatlary barlaň.
+		</p>
+		<p>
+			<strong>taf-y togtatmak.</strong> Siz bir taf-y ýa-da
+			hemmesini togtadyp, taf-y bes edip, onuň islendik Card-ny ýatyryp ýa-da
+			ony aýryp bilersiňiz. Siz taf-y togtadan ýa-da
+			Card-y ýatyran pursatyňyzdan başlap, KIFF onuň astynda täze çagyryşa rugsat bermeýär. tafs programmasy
+			taf-y togtadylan hökmünde diňe KIFF we planque ikisi hem togtatmany
+			tassyklanyndan soň görkezýär; şondan soň planque onuň
+			çagyryşlarynyň hiç birini iberemeýär, KIFF-iň ýaňy öň rugsat beren çagyryşyny hem. Guralyň üpjün edijisine
+			eýýäm iberilen haýyş entek tamamlanyp biler: biz
+			täze çagyryşlary togtadýarys, ýöne üpjün edijiniň eden zadyny yzyna gaýtaryp bilmeýäris.
+			KIFF-iň rugsatnamalaryny özi, planquesiz, barlaýan gural
+			KIFF-iň ýaňy öň beren rugsatnamasyny, iň köp 90 sekunt, henizem kabul edip biler. Togtadylan taf-y dowam etdirmek enjamyňyzda
+			siziň tassyklamaňyzy talap edýär, we togtatmadan öň saklanan ýa-da nobata goýlan hiç zat
+			ondan soň işlemeýär.
+		</p>
+		<p>
+			<strong>taf-y aýyrmak</strong> onuň tertibini togtadýar we onuň
+			işlemelerini, söhbetdeşliklerini, ýadyny we ulanan açaryny pozýar. Ondan öň hem, gurallaryňyzyň taf-a gaýtaran zady
+			diňe onuň işlemesi gutarýança saklanýar (söhbetdeşligiň diňe okan zady,
+			şifrlenen, indiki habarlary üçin: iň köp dört
+			sagat ulanylýar, soňra pozulýar), we onuň işlemeleri we söhbetdeşlikleri 30 gün. KIFF eden zadynyň resminamalaryny saklaýar.
+		</p>
+		<p>
+			<strong>ÝB-iň AI Kanuny.</strong> tafs üçin Kiff Agents OÜ
+			AI ulgamynyň üpjün edijisi, siz bolsa onuň ulanyjysysyňyz.
+			Biz taf-yň kompaniýaňyzdan daşardaky birine ýazýan zadynyň hemmesiniň AI agentiniň ýazandygyny
+			aýdýandygyna göz ýetirýäris. Siz tafs-y diňe
+			onuň hödürleýän işleri üçin ulanýarsyňyz, AI Kanunynyň
+			gadagan edýän ýa-da ýokary töwekgellik hasaplaýan ulanyşlary üçin ulanmaýarsyňyz, meselem
+			adamyň işi, karzy ýa-da zerur hyzmatlara elýeterliligi baradaky kararlar. Siz Card-laryňyzyň talap edýän adam tassyklamalaryny saklaýarsyňyz,
+			we tafs-y siziň üçin ulanýan adamlaryň
+			onuň näme edýändigini we çäklerini düşünýändigine göz ýetirýärsiňiz.
+		</p>
+		<p>
+			<strong>Çykdajylar.</strong> tafs KIFF meýilnamaňyzyň bir bölegidir
+			(§8): taf-yň her işlemesi ulanan AI-sy üçin kredit sarp edýär.
+			Coach we tafs-laryň gurulmagy Coach-yň
+			adalatly ulanyş çäginde goşulandyr.
+		</p>
+	</section>
+}
+
+templ termsAccountTK() {
+	<section id="account">
+		<h2>4. Hasaplar we giriş</h2>
+		<p>
+			Hyzmaty ulanmak üçin hasap açmalysyňyz. Siz takyk hasaba alyş maglumatlaryny
+			bermäge, giriş maglumatlaryňyzy gizlin saklamaga, we hasabyňyzdaky
+			ähli işjeňlige jogapkär bolmaga razylyk berýärsiňiz.
+		</p>
+		<p>
+			Ýaşyňyz azyndan 16 bolmaly ýa-da ýurisdiksiýaňyzdaky sanly
+			razylyk ýaşy, haýsy ýokary bolsa, şol bolmaly. Hyzmat
+			çagalara gönükdirilmedik.
+		</p>
+		<p>
+			Hyzmat diňe AI modelini üpjün edýän Anthropic-iň öz hyzmatyny hödürleýän ýurtlarynda we sebitlerinde hödürlenýär, <a href="https://www.anthropic.com/supported-countries">Anthropic olary sanap görkezýär</a>. Başga hiç ýerden ulanyp bilmersiňiz. Kompaniýa, baş edarasy şol sanawdan daşarda bir ýurtda ýa-da sebitde ýerleşýän bolsa, ýa-da paýynyň köp bölegi ýa-da gözegçiligi şol sanawdan daşarda baş edarasy ýerleşýän kompaniýanyň eýeçiliginde bolsa, ulanyjylary nirede bolsa-da, ulanyp bilmeýär. Siz ýa-da ulanýan kompaniýaňyz Ýewropa Bileleşiginiň, Birleşen Milletler Guramasynyň ýa-da Amerikanyň Birleşen Ştatlarynyň sanksiýalaryna sezewar bolsaňyz, ulanyp bilmersiňiz. Biz bu düzgüni bozýan hasaplary ret edýäris we bozýan hasaby togtadyp bileris.
+		</p>
+		<p>
+			Siz hasabyňyzda ygtyýar berýän her Ulanyjynyň
+			hereketlerine jogapkärsiňiz. Biz bu şertleriň ynamly bozulmagyny anyklasak, hasaby
+			maslahatly habarnama bilen togtadyp ýa-da girişi ýatyryp bileris. Rugsat berlen ulanyşyň bozulmalary üçin
+			(seret: §5) togtatma derrew bolup biler.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseTK() {
+	<section id="acceptable-use">
+		<h2>5. Rugsat berlen ulanyş</h2>
+		<p>
+			Siz, ulanyjylaryňyz we agentleriňiz
+			<a href="/acceptable-use">Rugsat berlen ulanyş syýasatyna</a> (iňlis dilinde) eýermelidirler. Ol
+			bu şertleriň bir bölegidir we Hyzmatyň näme üçin
+			ulanylyp bilinmejekdigini sanaýar.
+		</p>
+		<p>
+			Biz ynamly RUS bozulmasynda derrew togtadyp bileris.
+			Müşderiniň mazmunyna gözegçilik etmäge borçly däl, ýöne
+			ynamly habarlar boýunça hereket edip bileris.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataTK() {
+	<section id="customer-data">
+		<h2>6. Müşderi maglumatlary we mazmuny</h2>
+		<p>
+			Audit maglumatlaryňyz size degişlidir. Siz Kiff Agents OÜ-e
+			çäkli, ýeke-täk bolmadyk, patent tölegsiz, dünýä boýunça ygtyýarnama berýärsiňiz:
+			Audit maglumatlaryňyzy diňe sizi üçin Hyzmaty işletmek, saklamak
+			we kämilleşdirmek üçin zerur bolşy ýaly ýerleşdirmek, göçürmek, geçirmek, görkezmek we başga usulda işlemek.
+		</p>
+		<p>
+			Biz Audit maglumatlaryňyz we tafs maglumatlaryňyz üçin GDPR-iň 28-nji maddasy boýunça
+			<strong>işleýji</strong> hökmünde hereket edýäris;
+			<a href="/legal/dpa">DPA</a> şol gatnaşygy jikme-jik düzgünleşdirýär. Biz hasabyňyzyň
+			meta maglumatlary üçin <strong>dolandyryjy</strong> hökmünde hereket edýäris;
+			<a href="/tk/privacy">gizlinlik syýasaty</a> şol
+			gatnaşygy düzgünleşdirýär.
+		</p>
+		<p>
+			Siz iberýän maglumatlaryňyzy ibermek üçin ähli zerur hukuklaryňyzyň bardygyny,
+			we iberişiňiziň degişli kanunlara (maglumatlary goramak kanunlary we,
+			degişli bolan ýerinde, ÝB-iň AI Kanuny) laýykdygyny tassyklaýarsyňyz.
+		</p>
+	</section>
+}
+
+templ termsConfidentialityTK() {
+	<section id="confidentiality">
+		<h2>7. Gizlinlik</h2>
+		<p>
+			Her tarap beýleki tarapdan açyk bolmadyk maglumat alyp biler
+			("Gizlin maglumat"). Alýan tarap Gizlin maglumaty diňe
+			bu şertler boýunça borçlaryny ýerine ýetirmek we hukuklaryny ulanmak üçin zerur bolşy ýaly ulanar,
+			we ony öz gizlin
+			maglumaty üçin ulanýan ideg derejesinden az bolmadyk ideg bilen goraýar.
+		</p>
+		<p>
+			Gizlin maglumat (a) bozulmasyz açyk bolan ýa-da bolýan,
+			(b) alýan tarapa aç-açan bolmanka belli bolan,
+			(c) Gizlin maglumat ulanylmazdan özbaşdak işlenip düzülen, ýa-da (d) kanun boýunça aç-açan
+			bolmaly (kanun rugsat berýän ýerinde beýleki tarapa habar bilen)
+			maglumaty öz içine almaýar.
+		</p>
+	</section>
+}

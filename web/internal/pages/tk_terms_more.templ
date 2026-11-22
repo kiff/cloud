@@ -1,0 +1,388 @@
+package pages
+
+// The second half of TermsTK (/tk/terms): §8 to §20. See tk_terms.templ.
+
+templ termsFeesTK() {
+	<section id="fees">
+		<h2>8. Tölegler we töleg</h2>
+		<p>
+			<strong>Meýilnamalar.</strong> Her hasabyň bir meýilnamasy bar.
+			Häzirki bahalar <a href="/pricing">bahalar sahypasynda</a> (iňlis dilinde) görkezilýär; bu täzelenmäniň
+			wagtynda:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> bir adam üçin, tafs üçin, tafs programmasynda App Store ýa-da Google Play arkaly aýda €12.50 bahadan, GBS goşulan, aýda 500 kredit goşulan görnüşde satylýar.</li>
+			<li><strong>Company:</strong> her orun üçin aýda €10.50, her orun üçin aýda 500 kredit, umumy, we öz agentleriňiziň KIFF Cloud arkaly çagyryşlary üçin her orun üçin aýda 500 hereket, umumy.</li>
+			<li><strong>Şertnama:</strong> onuň sargyt görnüşindäki tölegler we şertler.</li>
+		</ul>
+		<p>
+			Orunlar hasabyň adminleri we redaktorlarydyr. Tassyklaýjylar we
+			görüjiler her meýilnamada mugtdyr. Company-da, goşulandan
+			artyk, bir kredit €0.01, bir hereket €0.02 durýar.
+			Goşulandan artyk kredit hasabyň belleýän aýlyk
+			çykdajy çägine çenli hasaba goýulýar (başlanda €50):
+			çäge ýetende, KIFF indiki döwür başlanýança ýa-da töleg dolandyrýan
+			kimdir biri ony ýokary galdyrýança hasabyň
+			taf-laryň täze işlemesini başlamaýar.
+		</p>
+		<p>
+			<strong>Kredit paketleri.</strong> Solo-da aýyň goşulan kredidinden
+			artyk kredit tafs programmasynda satyn alnan kredit
+			paketlerinden gelýär. Paket bir gezek satyn alynýar, möhleti
+			gutarmaýar we abuna däl; onuň kredidi aýyň goşulan kredidinden
+			soň ulanylýar, iň köne paket ilki. Tölegi doly yzyna gaýtarylan
+			paket galan kredidi bilen yzyna alynýar. Aýyň kredidi we
+			paketler ulanylanda, KIFF indiki döwür başlanýança ýa-da paket goşulýança hasabyň
+			taf-laryň täze işlemesini başlamaýar.
+			KIFF-iň hasaba goşýan bonus kredidiniň
+			hem möhleti gutarmaýar, paketler ýaly.
+		</p>
+		<p>
+			<strong>Näme hasaplanýar.</strong> <em>Kredit</em> taf-yň işlemesiniň ulanan
+			AI-sy üçin töleýär, bütin kredit bilen, her işleme bir gezek ýokaryk togalanýar we işleme gutarýanda bir gezek hasaplanýar. Çagyryşy KIFF-iň ret eden işlemesi hem AI-ny ulandy. Hiç haçan hasaplanmaýar:
+			Coach we taf-laryň gurulmagy, Coach-yň adalatly ulanyş çäginde; hiç zat ibermeýän täze wersiýanyň synagy; we biziň tarapymyzda
+			şowsuz bolan işleme. <em>Hereket</em> öz agentiňiziň KIFF Cloud arkaly bir zat ýerine ýetiren çagyryşydyr:
+			KIFF ony rugsat berdi, ol iberildi we gural
+			üstünlik habar berdi. Hereket hökmünde hiç haçan hasaplanmaýar: ret edilen, saklanyp soň ret edilen, togtatma bilen togtadylan,
+			nädogry, guralda şowsuz bolan ýa-da netijesi nämälim çagyryş,
+			we diňe okaýan çagyryş.
+		</p>
+		<p>
+			<strong>Synag ýok.</strong> Hasap ilkinji günden töleýär. Meýilnama başlamanka, KIFF onuň taf-laryndan hiç bir işleme başlamaýar,
+			Coach-yň gurmagyndan başga; hiç zat pozulmaýar.
+		</p>
+		<p>
+			<strong>Töleg we hasap-fakturalar.</strong> Meýilnama bir ýerde töleýär. kiff.dev-de satyn alnan meýilnama şol ýerde we onuň salgylanýan töleg portalynda satyn alynýar, üýtgedilýär we
+			ýatyrylýar, we onuň tölegleri Stripe tarapyndan işlenýär. tafs programmasynda satyn alnan Solo iPhone we iPad-de App Store arkaly, ýa-da
+			Android-de Google Play arkaly satylýar, we Apple
+			abunalaryňyzda ýa-da Google Play abunalaryňyzda, şol
+			dükanyň töleg, täzelenme we yzyna gaýtarma şertleri boýunça dolanylýar. Kredit
+			paketleri programmada satyn alynýar. Company
+			kiff.dev-de satyn alynýar. Tölegler aýlyk öňünden hasaba goýulýar;
+			goşulandan artyk ulanyş indiki hasap-faktura bilen hasaba goýulýar. Adamlaryň sanynyň üýtgemegi indiki
+			hasap-fakturadan başlap ulanylýar. Eger töleg şowsuz bolsa we düzedilmese,
+			meýilnama gutarýar we KIFF meýilnama saýlanýança hasabyň çagyryşlaryny
+			ret edýär.
+		</p>
+		<p>
+			<strong>Ýatyrmak.</strong> Siz islendik wagt töleg portalynda,
+			ýa-da programmada satyn alnan Solo üçin Apple abunalaryňyzda ýa-da Google Play abunalaryňyzda ýatyryp bilersiňiz. Meýilnama tölän
+			döwrüň ahyryna çenli dowam edýär we täzelenmeýär. Kanunyň talap edýänlerinden başga, eýýäm tölenen tölegler yzyna gaýtarylmaýar. Eger siz
+			ÝB-de sarp ediji bolsaňyz, satyn alandan soň 14 gün içinde
+			sebäp görkezmezden ýüz öwrüp bilersiňiz, we biz tölän zadyňyzdan meýilnamanyň eýýäm işlän günleriniň paýyny aýryp yzyna gaýtarýarys.
+			Solo satyn almalary App Store ýa-da Google Play arkaly, olaryň şertleri boýunça yzyna gaýtarylýar.
+		</p>
+		<p>
+			<strong>Mikrokärhanalar.</strong> Eger işiňizde 10-dan az adam bar we ýyllyk dolanyşygy ýa-da balans jemi iň köp €2 million bolsa, biz ony bu şertlerdäki kart bilen edilýän tölegler baradaky her düzgün üçin, Company goşmak bilen, sarp ediji hökmünde kabul edýäris.
+		</p>
+		<p>
+			<strong>GBS.</strong> Company-yň bahalary GBS-siz; Solo
+			we kredit paketleri App Store ýa-da Google
+			Play tarapyndan GBS goşulan satylýar. Kiff Agents OÜ
+			(GBS belgisi EE102924327) degişli ýerinde Estoniýanyň GBS-ni goşýar.
+			Estoniýadan daşardaky dogry GBS kesgitleme belgisi bolan Müşderä ÝB-iň işewür-işewüre satuwlary
+			ÝB-iň ters tölegi mehanizmi boýunça hasaba goýulýar.
+		</p>
+		<p>
+			<strong>Üýtgetmeler.</strong> Biz işjeň hasaplara bahanyň ýokarlanmagy barada azyndan
+			otuz günlik ýazmaça habarnama berýäris (§16). Bahanyň
+			peselmegi indiki hasap-fakturadan başlap ulanylýar.
+		</p>
+	</section>
+}
+
+templ termsTermTK() {
+	<section id="term">
+		<h2>9. Möhlet we ýatyrmak</h2>
+		<p>
+			Bu şertler Hyzmaty ilkinji gezek ulananyňyzda güýje girýär
+			we ýatyrylýança dowam edýär.
+		</p>
+		<p>
+			Siz islendik wagt hasabyňyzy pozmak bilen ýatyryp bilersiňiz.
+			Biz (a) ýazmaça habarnamadan soň otuz gün içinde düzedilmedik möhüm bozulma sebäpli, ýa-da (b) Rugsat berlen ulanyşyň bozulmalary ýa-da
+			töleg ukypsyzlygy ýagdaýlary sebäpli derrew ýatyryp bileris.
+		</p>
+		<p id="leaving">
+			<strong>Gitmek we maglumatlaryňyzy özüňiz bilen almak.</strong>
+			Siz maglumatlaryňyzy islendik wagt gurluşykly, maşyn okap bilýän
+			görnüşde eksport edip bilersiňiz: KIFF-de Sazlamalar → Maglumat hasabyňyzy, her wersiýa bilen Card-laryňyzy,
+			Ýazgyňyzdaky kararlary (iň soňky 10,000; has köp üçin bizden soraň), KIFF-iň rugsat beren her biriniň gol çekilen resminamasyny we
+			API açarlaryňyzyň jikme-jikliklerini (açarlaryň özlerini hiç haçan) öz içine alýan JSON faýly berýär. tafs programmasynda her kim öz
+			söhbetdeşliklerini, faýllaryny we bellikleriňizi Hasap →  Söhbetdeşliklerimi eksport etmek
+			bölüminden eksport edýär; gizlinlik syýasatynyň aýdyşy ýaly, söhbetdeşlikler her ýagdaýda otuz gün saklanýar. Hasabyňyzy pozmak Hyzmaty
+			derrew tamamlaýar, şonuň üçin ilki eksport ediň.
+		</p>
+		<p>
+			Siz ýerine başga üpjün edijä ýa-da öz ulgamyňyza geçmek üçin habarnama bilen gidip bilersiňiz,
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a> salgysyna ýazyp.
+			Biz hiç haçan iki aýdan köp habarnama talap etmeýäris: siziň habarnamaňyz
+			siziň saýlan senäňizde güýje girýär, ony iberenden iň köp iki
+			aý soň. Şol senäden başlap, otuz günlük geçiş
+			döwri gelýär, onda Hyzmat işlemegini dowam etdirýär, siz maglumatlaryňyzy eksport edýärsiňiz we işiňizi geçirýärsiňiz, we biz muny etmek üçin
+			maslahatly haýyşlara kömek edýäris. Geçiş
+			döwrüni bir gezek, zerur bolşy ýaly uzaldyp bilersiňiz. Eger
+			ony otuz günde tehniki taýdan tamamlap bilmesek, habarnamaňyzdan on dört iş
+			güni içinde size sebäpleri we ýedi aýdan köp bolmadyk täze döwri bilen habar berýäris.
+			Geçiş döwründen soň, maglumatlaryňyz eksport üçin azyndan
+			ýene otuz gün elýeterli galýar. Meýilnamanyň tölegleri geçiş döwri gutarýança adaty ýaly
+			dowam edýär. App Store ýa-da Google Play-da satyn alnan Solo
+			dükanda ýatyrylýar; geçiş we eksport döwürleri şol bir
+			usulda ulanylýar.
+		</p>
+		<p>
+			Biz gitmek, geçmek ýa-da maglumatlaryňyzy eksport etmek üçin töleg almaýarys. Bu bölüm ÝB Maglumat Kanunynyň (Düzgünnama (ÝB) 2023/2854) VI baby
+			boýunça geçmek hukuklaryny her
+			müşderä berýär.
+		</p>
+		<p>
+			Ýatyrylanda we islendik geçiş we eksport döwründen soň, biz Audit maglumatlaryňyzy, tafs maglumatlaryňyzy we
+			hasap meta maglumatlaryny
+			<a href="/tk/privacy#retention">gizlinlik syýasatyndaky</a> saklamak düzgünlerine laýyklykda pozýarys.
+		</p>
+		<p>
+			Tebigaty boýunça ýatyrylandan soň hem güýjünde galmaly bölümler
+			güýjünde galýar — gizlinlik, intellektual
+			eýeçilik, kompensasiýa, jogapkärçiligiň çäklendirilmegi,
+			jogapkärçilikden ýüz öwürmeler, ulanylýan kanun we hasaplanan tölegler şol sanda.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesTK() {
+	<section id="warranties">
+		<h2>10. Kepillikler</h2>
+		<p>
+			Her tarap bu şertlere girmäge we ýerine ýetirmäge hukugynyň we
+			ygtyýarynyň bardygyny tassyklaýar.
+		</p>
+		<p>
+			Biz Hyzmaty hünärmen usulda we Resminamalara düýpli laýyklykda
+			hödürlejekdigimize kepillik berýäris. Bu kepilligiň bozulmagy üçin ýeke-täk
+			çäräňiz, biziň saýlawymyz boýunça, täzeden ýerine ýetirmek ýa-da
+			bozulma döwri üçin täsir eden Hyzmata degişli tölegleriň proporsional
+			yzyna gaýtarylmagydyr.
+		</p>
+		<p>
+			Siz Hyzmaty ulanyşyňyzyň degişli kanuna we bu şertlere laýykdygyna
+			kepillik berýärsiňiz.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerTK() {
+	<section id="disclaimer">
+		<h2>11. Jogapkärçilikden ýüz öwürmek</h2>
+		<p>
+			§10-daky aç-açan kepillikleri çykmanda, Hyzmat
+			<strong>"bar bolşy ýaly" we "elýeterli bolşy ýaly"</strong> hödürlenýär. Kanunyň
+			rugsat berýän iň ýokary derejesinde, biz ähli beýleki
+			kepillikden, aç-açan, göz öňünde tutulýan ýa-da kanuny bolsun,
+			şol sanda söwdalyk ýaramlylyk, belli bir maksada laýyklyk, hukuk bozmazlyk we iş gatnaşygyndan ýa-da söwda ýörelgesinden
+			gelip çykýan islendik kepillikden ýüz öwürýäris.
+		</p>
+		<p>
+			Biz Hyzmatyň üznüksiz, ýalňyşsyz ýa-da zyýanly düzüjilerden azat
+			bolajakdygyna, ýa-da islendik maglumatyň ýitmejekdigine ýa-da zaýalanmajakdygyna kepillik bermeýäris. Maglumatlaryňyzyň ätiýaçlyk nusgasyny
+			almaga siz jogapkärsiňiz.
+		</p>
+	</section>
+}
+
+templ termsLiabilityTK() {
+	<section id="liability">
+		<h2>12. Jogapkärçiligiň çäklendirilmegi</h2>
+		<p>
+			Kanunyň rugsat berýän iň ýokary derejesinde, taraplaryň hiç biri
+			beýleki tarapa bu şertlerden ýa-da Hyzmatdan gelip çykýan ýa-da olara degişli
+			islendik gytaklaýyn, tötänleýin, netijeli, aýratyn, görelde ýa-da jeza zeper üçin,
+			ýitirilen peýda, ýitirilen girdeji, ýitirilen maglumatlar ýa-da
+			işiň togtamagy şol sanda, ol zeperiň mümkinligi barada
+			duýdurylsa-da, jogapkär bolmaz.
+		</p>
+		<p>
+			Her tarapyň bu şertlerden ýa-da olara degişli umumy
+			jogapkärçiligi (a) jogapkärçilige sebäp bolan wakadan öňki on iki aýda Müşderiniň
+			Kiff Agents OÜ-e töländen ýa-da tölenmeli tölegleriň, ýa-da (b) ýüz müň
+			ýewronyň (€100,000) uludygyndan geçmez.
+		</p>
+		<p>
+			Bu şertleriň hiç biri ýaramaz önümler üçin jogapkärçilik baradaky (ÝB) 2024/2853 Direktiwany
+			durmuşa geçirýän kanunlar boýunça ýaramaz önüm üçin jogapkärçilik,
+			ölüm, ýalňyşlyk sebäpli bolan şahsy zeper,
+			galplyk ýa-da bilkastlaýyn hereket üçin jogapkärçilik şol sanda, degişli kanun boýunça
+			çäklendirip ýa-da aýryp bolmaýan jogapkärçiligi çäklendirmeýär ýa-da aýyrmaýar.
+		</p>
+	</section>
+}
+
+templ termsIndemnityTK() {
+	<section id="indemnification">
+		<h2>13. Kompensasiýa</h2>
+		<p>
+			Biz sizi, biziň hödürleýşimiz we siziň bu şertlere laýyklykda ulanyşyňyz ýaly Hyzmatyň, şol üçünji tarapyň
+			intellektual eýeçilik hukuklaryny bozýandygy baradaky üçünji tarap talaplaryna garşy gorarys,
+			we şeýle talaplar üçin size garşy jemleýji berlen zeperi (ýa-da ylalaşylan
+			ylalaşyk möçberini) töläris.
+		</p>
+		<p>
+			Siz bizi (a) Müşderi maglumatlaryňyzdan ýa-da mazmunyňyzdan; (b) Hyzmaty bu şertleri (RUS şol sanda)
+			bozup ulanyşyňyzdan;
+			ýa-da (c) agyr bidüzgünligiňizden ýa-da bilkastlaýyn hereketiňizden gelip çykýan üçünji tarap talaplaryna garşy gorarsyňyz, we
+			şeýle talaplar üçin biziň garşymyza jemleýji berlen zeperi (ýa-da ylalaşylan
+			ylalaşyk möçberini) tölärsiňiz.
+		</p>
+		<p>
+			Kompensasiýa talaba çalt habarnama, gorag we ylalaşygyň
+			kompensasiýa berýän tarapyň ýeke-täk gözegçiligi we kompensasiýa alýan tarapyň
+			maslahatly hyzmatdaşlygy şerti bilen bolýar. Kompensasiýa berýän tarap kompensasiýa alýan tarap üçin borç
+			döredýän talaby razylyksyz ylalaşyp bilmeýär.
+		</p>
+	</section>
+}
+
+templ termsSLATK() {
+	<section id="sla">
+		<h2>14. Hyzmat derejesi borçnamasy</h2>
+		<p>
+			Tölegli meýilnamada <a href="/legal/sla">hyzmat derejesi
+			şertnamasy</a> (iňlis dilinde) biziň borçlanýan elýeterliligimizi, haýal ýa-da şowsuz haýyşyň nähili
+			hasaplanýandygyny, goldaw jogap wagtlarymyzy
+			we kemçilik bolanda hyzmat kreditlerini kesgitleýär. Ol bu şertleriň bir bölegidir.
+		</p>
+		<p>
+			Operasion tejribeler, hadysalara jogap we bozulma habarnamasy borçnamalary bu Şertlerden salgylanylýan senelenen
+			wersiýada resminamalaşdyrylan
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			<a href="/security">/security</a> (iňlis dilinde) häzirki
+			tejribeleri görkezýär.
+		</p>
+	</section>
+}
+
+templ termsServiceModsTK() {
+	<section id="service-mods">
+		<h2>15. Hyzmatyň üýtgedilmegi</h2>
+		<p>
+			Biz islendik wagt aýratynlyklary goşup, üýtgedip ýa-da aýryp bileris.
+			Işleýişiň düýpli azalmagy ýa-da resminamalaşdyrylan özüni alyp barşy bozýan API ýüzüniň
+			ýatyrylmagy işjeň müşderilere çap edilen ýatyrma tertibi bilen azyndan otuz gün öňünden
+			habar berilýär. Howpsuzlyga esaslanýan üýtgetmeler habarnamanyň özi töwekgellik döredýän ýerinde
+			habarnamasyz edilip bilner.
+		</p>
+	</section>
+}
+
+templ termsTermsModsTK() {
+	<section id="terms-mods">
+		<h2>16. Bu şertleriň üýtgedilmegi</h2>
+		<p>
+			Biz bu şertleri wagtal-wagtal üýtgedip bileris. Möhüm
+			üýtgetmeler email bilen we bu sahypadaky görnükli baner bilen azyndan otuz gün öňünden habar berilýär. Möhüm däl
+			üýtgetmeler (düşündirişler, salgylanmalar) täze
+			"soňky täzelenme" senesi bilen çap edilýär. Täzelenmäniň güýje girýän senesinden soň Hyzmaty
+			dowam ulanmagyňyz kabul etmegi aňladýar.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureTK() {
+	<section id="force-majeure">
+		<h2>17. Ýeňip geçip bolmaýan güýç</h2>
+		<p>
+			Taraplaryň hiç biri özüniň maslahatly gözegçiliginden daşardaky, şol sanda
+			tebigy hadysalar, uruş,
+			terrorçylyk, raýat bidüzgünçiligi, zähmet jedelleri, ýangyn,
+			tebigy betbagtçylyk, pandemiýa bilen baglanyşykly hökümet çäreleri,
+			internet ýa-da elektrik üzülmeleri, ýa-da aragatnaşyk
+			üpjün edijileriniň ýa-da üçünji tarap hosting infrastrukturasynyň hereketleri sebäpli bolan
+			ýerine ýetirmedäki islendik şowsuzlyk ýa-da gijikme üçin jogapkär däl.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawTK() {
+	<section id="governing-law">
+		<h2>18. Ulanylýan kanun we ýer</h2>
+		<p>
+			Bu şertler Estoniýa Respublikasynyň kanunlary bilen, onuň kanunlaryň
+			gapma-garşylygy düzgünlerine seretmezden, düzgünleşdirilýär.
+			Jedeller üçin aýratyn forum Tallindäki Harju etrap kazyýetidir.
+		</p>
+		<p>
+			Siz başga ÝB agza döwletinde ýaşaýan sarp ediji bolanyňyzda, öz ýurisdiksiýaňyzyň hökmany sarp edijini goramak
+			düzgünleri şertnama arkaly ýüz öwrüp bilmeýän hukuklaryňyzy berýän derejesinde
+			ulanylmagyny dowam etdirýär; bu bent sizi şol düzgünleriň goragyndan
+			mahrum etmeýär.
+		</p>
+	</section>
+}
+
+templ termsGeneralTK() {
+	<section id="general">
+		<h2>19. Umumy</h2>
+		<p>
+			<strong>Doly şertnama.</strong> Bu şertler gizlinlik syýasaty, DPA, islendik sargyt görnüşleri we
+			aç-açan goşulan islendik goşmaça şertler bilen bilelikde
+			olaryň mowzugy boýunça aramyzdaky doly şertnamadyr we
+			islendik öňki ýa-da bile bolan düşünişmäni çalyşýar.
+		</p>
+		<p>
+			<strong>Bölünip bilinýänlik.</strong> Eger bir düzgün
+			ýerine ýetirilip bilinmeýän diýlip tapylsa, galanlary güýjünde galýar.
+		</p>
+		<p>
+			<strong>Bermek.</strong> Siz bu şertleri biziň ýazmaça razylygymyzsyz
+			bölüp berip bilmersiňiz. Biz birleşme, satyn alyş ýa-da
+			ähli ýa-da düýpli bölegi emläkleriň satylmagy bilen baglylykda, size habar bilen, razylyksyz
+			berip bileris.
+		</p>
+		<p>
+			<strong>Ýüz öwürmek ýok.</strong> Islendik düzgüni berjaý etmezlik
+			ony soňra berjaý etmek hukugyndan ýüz öwürmeýär.
+		</p>
+		<p>
+			<strong>Habarnamalar.</strong> Kiff Agents OÜ-e habarnamalar
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a> salgysyna
+			ýa-da poçta arkaly Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Estoniýa salgysyna gidýär. Size habarnamalar hasabyňyz bilen baglanyşykly
+			email salgysyna ýa-da, eger bir salgy
+			beren bolsaňyz, belleýän resmi habarnamalar salgyňyza gidýär.
+		</p>
+		<p>
+			<strong>Garaşsyz potratçylar.</strong> Bu şertleriň hiç biri
+			hyzmatdaşlyk, agentlik, bilelikdäki kärhana
+			ýa-da zähmet gatnaşygyny döretmeýär.
+		</p>
+		<p>
+			<strong>Üçünji tarap peýdalanyjylary.</strong> Hiç biri ýok,
+			kompensasiýa berilýän filiallar aç-açan görkezilen
+			derejäni çykmanda.
+		</p>
+	</section>
+}
+
+templ termsContactTK() {
+	<section id="contact">
+		<h2>20. Biz bilen habarlaşyň</h2>
+		<p>
+			Täjirçilik we şertnama soraglary:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Önüm baradaky umumy soraglar:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Gizlinlik soraglary:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Howpsuzlyk habarlary:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Resminamanyň wersiýasy:</strong> v0.1.<br/>
+			<strong>Soňky täzelenme:</strong> 2026-njy ýylyň 22-nji noýabry.
+		</p>
+	</section>
+}
