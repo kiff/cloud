@@ -42,6 +42,7 @@ var partialPages = map[string][]string{
 	"zh": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ar": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"sr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sq": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -72,7 +73,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -111,6 +112,7 @@ var languageNames = map[string]string{
 	"zh": "繁體中文",
 	"ar": "العربية",
 	"sr": "Srpski",
+	"sq": "Shqip",
 }
 
 // LanguageName is a site language's name in that language.
@@ -290,6 +292,7 @@ var translationNotices = map[string]string{
 	"zh": "這是供參考的翻譯。以英文版本為準：",
 	"ar": "هذه ترجمة للاطلاع. النسخة الإنجليزية هي المعتمدة:",
 	"sr": "Ovo je prevod u informativne svrhe. Merodavna je engleska verzija:",
+	"sq": "Ky është një përkthim për qëllime informimi. Versioni në anglisht është ai që mbizotëron:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -320,6 +323,7 @@ var inEnglish = map[string]string{
 	"zh": "（英文）",
 	"ar": "(بالإنجليزية)",
 	"sr": "(na engleskom)",
+	"sq": "(në anglisht)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

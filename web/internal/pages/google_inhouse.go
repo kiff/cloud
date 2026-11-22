@@ -70,6 +70,7 @@ var googleAppScopes = map[string][]googleScope{
 			"zh": "檢視、編輯、建立與刪除您在 Google Sheets 中的所有試算表",
 			"ar": "عرض جميع جداول البيانات الخاصة بك في Google Sheets وتحريرها وإنشائها وحذفها",
 			"sr": "pregled, uređivanje, pravljenje i brisanje svih vaših tabela u Google Sheets",
+			"sq": "shikimin, redaktimin, krijimin dhe fshirjen e të gjitha fletëve tuaja të llogaritjes në Google Sheets",
 		}},
 	},
 	"Google Calendar": {
@@ -102,6 +103,7 @@ var googleAppScopes = map[string][]googleScope{
 			"zh": "檢視您行事曆上的事件",
 			"ar": "عرض الأحداث على تقويماتك",
 			"sr": "pregled događaja u vašim kalendarima",
+			"sq": "shikimin e ngjarjeve në kalendarët tuaj",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -132,6 +134,7 @@ var googleAppScopes = map[string][]googleScope{
 			"zh": "檢視與編輯您行事曆上的事件",
 			"ar": "عرض الأحداث على تقويماتك وتحريرها",
 			"sr": "pregled i uređivanje događaja u vašim kalendarima",
+			"sq": "shikimin dhe redaktimin e ngjarjeve në kalendarët tuaj",
 		}},
 	},
 }

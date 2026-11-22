@@ -50,6 +50,9 @@ func TestLangPath(t *testing.T) {
 		{"hr", "/terms#fees", "/hr/terms#fees"},
 		{"hr", "/tafs/privacy", "/hr/tafs/privacy"},
 		{"hr", "/security", "/security"}, // and Croatian
+		{"sq", "/terms#fees", "/sq/terms#fees"},
+		{"sq", "/tafs/privacy", "/sq/tafs/privacy"},
+		{"sq", "/security", "/security"}, // and Albanian
 		{"sr", "/terms#fees", "/sr/terms#fees"},
 		{"sr", "/tafs/privacy", "/sr/tafs/privacy"},
 		{"sr", "/security", "/security"}, // and Serbian
@@ -114,6 +117,8 @@ func TestSplitLangPath(t *testing.T) {
 		{"/bg/cookies", "en", "/bg/cookies", false},
 		{"/hr/tafs/terms", "hr", "/tafs/terms", true},
 		{"/hr/support", "en", "/hr/support", false},
+		{"/sq/tafs/terms", "sq", "/tafs/terms", true},
+		{"/sq/support", "en", "/sq/support", false},
 		{"/sr/tafs/terms", "sr", "/tafs/terms", true},
 		{"/sr/support", "en", "/sr/support", false},
 		{"/ar/tafs/terms", "ar", "/tafs/terms", true},
