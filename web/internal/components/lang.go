@@ -57,6 +57,7 @@ var partialPages = map[string][]string{
 	"si": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ta": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"tg": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ur": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"tk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"dv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"dz": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
@@ -76,8 +77,10 @@ func LangTag(lang string) string {
 	return lang
 }
 
-// IsRightToLeft reports a language written right to left (Arabic, Hebrew, Dhivehi).
-func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" || lang == "dv" }
+// IsRightToLeft reports a language written right to left (Arabic, Hebrew, Dhivehi, Urdu).
+func IsRightToLeft(lang string) bool {
+	return lang == "ar" || lang == "he" || lang == "dv" || lang == "ur"
+}
 
 // HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
 // on a right-to-left page, none on any other, so no other page's markup changes.
@@ -90,7 +93,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "tk", "dv", "dz")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "tk", "ur", "dv", "dz")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -145,6 +148,7 @@ var languageNames = map[string]string{
 	"ta": "தமிழ்",
 	"tg": "Тоҷикӣ",
 	"tk": "Türkmençe",
+	"ur": "اردو",
 	"dv": "ދިވެހި",
 	"dz": "རྫོང་ཁ",
 }
@@ -342,6 +346,7 @@ var translationNotices = map[string]string{
 	"ta": "இது தகவலுக்காக மட்டுமே உள்ள மொழிபெயர்ப்பு. ஆங்கிலப் பதிப்பே செல்லுபடியாகும்:",
 	"tg": "Ин тарҷума танҳо барои маълумот аст. Нусхаи англисӣ эътибор дорад:",
 	"tk": "Bu terjime diňe maglumat üçindir. Iňlisçe nusga esasy hasaplanýar:",
+	"ur": "یہ ترجمہ صرف معلومات کے لیے ہے۔ انگریزی نسخہ ہی معتبر ہے:",
 	"dv": "މިއީ މައުލޫމާތަށް ހަމައެކަނި ތަރުޖަމާއެކެވެ. އިނގިރޭސި ނުސްހާ ހިނގާނެއެވެ:",
 	"dz": "འདི་གནས་ཚུལ་གྱི་དོན་ལུ་རྐྱངམ་གཅིག་གི་འགྱུར་བཅོས་ཨིན། ཨིང་ལིཤ་ཐོན་རིམ་འདི་འཇུག:",
 }
@@ -390,6 +395,7 @@ var inEnglish = map[string]string{
 	"ta": "(ஆங்கிலத்தில்)",
 	"tg": "(бо забони англисӣ)",
 	"tk": "(iňlis dilinde)",
+	"ur": "(انگریزی میں)",
 	"dv": "(އިނގިރޭސިން)",
 	"dz": "(ཨིང་ཁའི་ནང་)",
 }
