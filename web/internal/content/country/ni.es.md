@@ -6,7 +6,7 @@ Esta sección se aplica si usas KIFF o tafs en Nicaragua. Añade lo que exige la
 
 ## 1. Qué tratamos, para qué y durante cuánto tiempo
 
-Qué tratamos, para qué y durante cuánto tiempo está en las secciones 4, 5 y 8 de cada política. En resumen: tu cuenta, tus dispositivos, lo que escribes a Coach y a tus tafs y lo que tus apps conectadas devuelven mientras trabaja un taf, los datos de facturación de un plan de pago y los registros de solicitudes. Borramos cada uno cuando termina su plazo o cuando borras tu cuenta.
+Qué tratamos, para qué y durante cuánto tiempo está en las secciones 4, 5 y 8 de la política de KIFF y en las secciones 4, 8 y 9 de la política de tafs. En resumen: tu cuenta, tus dispositivos, lo que escribes a Coach y a tus tafs y lo que tus apps conectadas devuelven mientras trabaja un taf, los datos de facturación de un plan de pago y los registros de solicitudes. Borramos cada uno cuando termina su plazo o cuando borras tu cuenta.
 
 ## 2. Transferencias fuera de Nicaragua
 

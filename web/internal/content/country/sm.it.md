@@ -6,7 +6,7 @@ Questa sezione si applica se usi KIFF o tafs nella Repubblica di San Marino. Agg
 
 ## 1. Cosa trattiamo, perché e per quanto tempo
 
-Cosa trattiamo, perché e per quanto tempo è indicato nelle sezioni 4, 5 e 8 di ciascuna informativa. In breve: il tuo account, i tuoi dispositivi, ciò che scrivi a Coach e ai tuoi taf e ciò che le tue app collegate restituiscono mentre un taf lavora, i dati di fatturazione di un piano a pagamento e i log delle richieste. Cancelliamo ciascun dato alla fine del suo periodo o quando cancelli il tuo account.
+Cosa trattiamo, perché e per quanto tempo è indicato nelle sezioni 4, 5 e 8 dell'informativa di KIFF e nelle sezioni 4, 8 e 9 di quella di tafs. In breve: il tuo account, i tuoi dispositivi, ciò che scrivi a Coach e ai tuoi taf e ciò che le tue app collegate restituiscono mentre un taf lavora, i dati di fatturazione di un piano a pagamento e i log delle richieste. Cancelliamo ciascun dato alla fine del suo periodo o quando cancelli il tuo account.
 
 ## 2. Trasferimenti fuori da San Marino
 

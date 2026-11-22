@@ -6,7 +6,7 @@ This section applies if you use KIFF or tafs in the Republic of San Marino. It a
 
 ## 1. What we process, why, and how long
 
-What we process, why, and for how long is in sections 4, 5 and 8 of each policy. In short: your account, your devices, what you write to Coach and your tafs and what your connected apps return while a taf works, billing details on a paid plan, and request logs. We delete each when its period ends, or when you delete your account.
+What we process, why, and for how long is in sections 4, 5 and 8 of KIFF's policy and sections 4, 8 and 9 of the tafs policy. In short: your account, your devices, what you write to Coach and your tafs and what your connected apps return while a taf works, billing details on a paid plan, and request logs. We delete each when its period ends, or when you delete your account.
 
 ## 2. Transfers outside San Marino
 

@@ -6,7 +6,7 @@ Cette section s'applique si vous utilisez KIFF ou tafs à Monaco. Elle ajoute ce
 
 ## 1. Ce que nous traitons, pourquoi et combien de temps
 
-Ce que nous traitons, pourquoi et combien de temps figure aux sections 4, 5 et 8 de chaque politique. En bref : votre compte, vos appareils, ce que vous écrivez à Coach et à vos tafs et ce que vos apps connectées renvoient pendant qu'un taf travaille, les données de facturation d'un forfait payant et les journaux de requêtes. Nous supprimons chacun à la fin de sa durée, ou quand vous supprimez votre compte.
+Ce que nous traitons, pourquoi et combien de temps figure aux sections 4, 5 et 8 de la politique de KIFF et aux sections 4, 8 et 9 de celle de tafs. En bref : votre compte, vos appareils, ce que vous écrivez à Coach et à vos tafs et ce que vos apps connectées renvoient pendant qu'un taf travaille, les données de facturation d'un forfait payant et les journaux de requêtes. Nous supprimons chacun à la fin de sa durée, ou quand vous supprimez votre compte.
 
 ## 2. Transferts hors Monaco
 

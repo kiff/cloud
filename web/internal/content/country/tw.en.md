@@ -10,7 +10,7 @@ Kiff Agents OÜ, a company in Estonia, is the data controller of your account an
 
 ## 2. What we tell you when we collect your data
 
-When we collect your data we tell you who we are, why we collect it, what kind of data it is, for how long and where it is used, who uses it and how, your rights, and what happens if you don't give it. Sections 1, 4, 5, 8, 9 and 10 of each policy do that.
+When we collect your data we tell you who we are, why we collect it, what kind of data it is, for how long and where it is used, who uses it and how, your rights, and what happens if you don't give it. Sections 1, 4, 5, 8 and 9 of KIFF's policy and sections 1, 4, 8, 9 and 10 of the tafs policy do that.
 
 ## 3. Transfers outside Taiwan
 

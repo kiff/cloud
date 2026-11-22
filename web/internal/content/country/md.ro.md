@@ -10,7 +10,7 @@ Kiff Agents OÜ, o companie din Estonia, este operatorul datelor contului și al
 
 ## 2. Ce prelucrăm și de ce
 
-Ce prelucrăm, de ce, pe ce temei juridic și cât timp se găsește în secțiunile 4, 5, 8 și 9 ale fiecărei politici. Vă prelucrăm datele pentru a vă gestiona contul și taf-urile, pentru a menține serviciul în siguranță și pentru a ne îndeplini obligațiile legale. Acolo unde temeiul este consimțământul, cum este cazul pentru IA din tafs, îl cerem separat, iar dumneavoastră îl puteți retrage din Cont.
+Ce prelucrăm, de ce, pe ce temei juridic și cât timp se găsește în secțiunile 4, 5 și 8 din politica KIFF și în secțiunile 4, 8 și 9 din politica tafs. Vă prelucrăm datele pentru a vă gestiona contul și taf-urile, pentru a menține serviciul în siguranță și pentru a ne îndeplini obligațiile legale. Acolo unde temeiul este consimțământul, cum este cazul pentru IA din tafs, îl cerem separat, iar dumneavoastră îl puteți retrage din Cont.
 
 ## 3. Transferuri în afara Republicii Moldova
 
@@ -26,7 +26,7 @@ KIFF și tafs nu sunt pentru persoane sub 16 ani.
 
 ## 6. Reprezentant
 
-**Reprezentant în Republica Moldova.** Un operator din afara Republicii Moldova care oferă servicii unor persoane din Republica Moldova desemnează în scris un reprezentant acolo, cu excepția cazului în care este stabilit într-un stat membru al Spațiului Economic European, așa cum citește legea ghidul Centrului Național. Kiff Agents OÜ este stabilită în Estonia, deci nu avem un reprezentant în Republica Moldova. Dacă aceasta se schimbă, vom numi unul aici.
+**Reprezentant în Republica Moldova.** Un operator din afara Republicii Moldova care oferă servicii unor persoane din Republica Moldova desemnează în scris un reprezentant acolo, cu excepția cazului în care este stabilit într-un stat membru al Spațiului Economic European, potrivit interpretării legii din ghidul Centrului Național. Kiff Agents OÜ este stabilită în Estonia, deci nu avem un reprezentant în Republica Moldova. Dacă aceasta se schimbă, vom numi unul aici.
 
 ## 7. Unde puteți depune o plângere
 

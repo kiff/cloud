@@ -10,7 +10,7 @@ Kiff Agents OÜ, a company in Estonia, is the data controller of your account an
 
 ## 2. What we process and why
 
-What we process, why, on what legal basis and for how long is in sections 4, 5, 8 and 9 of each policy. We process your data to run your account and your tafs, to keep the service secure, and to meet our legal duties. Where a consent is the basis, such as for the AI in tafs, we ask for it separately and you can withdraw it in Account.
+What we process, why, on what legal basis and for how long is in sections 4, 5 and 8 of KIFF's policy and sections 4, 8 and 9 of the tafs policy. We process your data to run your account and your tafs, to keep the service secure, and to meet our legal duties. Where a consent is the basis, such as for the AI in tafs, we ask for it separately and you can withdraw it in Account.
 
 ## 3. Transfers outside Lebanon
 
@@ -26,7 +26,7 @@ KIFF and tafs are not for anyone under 16.
 
 ## 6. Declaration
 
-**Declaration.** The law asks a person who processes personal data to declare it to the Ministry of Economy and Trade, unless the law exempts it, for example where the person has agreed in advance, or for a business's own clients' data within what it needs to run its activity. We process your data on the bases in sections 4, 5, 8 and 9 of each policy (to run your account and your tafs, to keep the service secure, and to meet our legal duties), and ask for consent separately where it is the basis, such as for the AI in tafs. We have made no declaration today. If the ministry asks for one, we will make it before KIFF and tafs are offered in Lebanon, and say so here.
+**Declaration.** The law asks a person who processes personal data to declare it to the Ministry of Economy and Trade, unless the law exempts it, for example where the person has agreed in advance, or for a business's own clients' data within what it needs to run its activity. We process your data on the bases in sections 4, 5 and 8 of KIFF's policy and sections 4, 8 and 9 of the tafs policy (to run your account and your tafs, to keep the service secure, and to meet our legal duties), and ask for consent separately where it is the basis, such as for the AI in tafs. We have made no declaration today. If the ministry asks for one, we will make it before KIFF and tafs are offered in Lebanon, and say so here.
 
 ## 7. Where to complain
 

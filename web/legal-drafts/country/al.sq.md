@@ -6,7 +6,7 @@ Ky seksion zbatohet nëse përdorni KIFF ose tafs në Shqipëri. Ai shton atë q
 
 ## 1. Çfarë përpunojmë, pse dhe për sa kohë
 
-Çfarë përpunojmë, pse dhe për sa kohë gjendet në seksionet 4, 5 dhe 8 të secilës politikë. Shkurt: llogarinë tuaj, pajisjet tuaja, atë që i shkruani Coach-it dhe tafs-ave tuaja dhe atë që kthejnë aplikacionet tuaja të lidhura ndërsa një taf punon, të dhënat e faturimit në një plan me pagesë dhe regjistrat e kërkesave. Çdo lloj e fshijmë kur mbaron afati i tij, ose kur fshini llogarinë.
+Çfarë përpunojmë, pse dhe për sa kohë gjendet në seksionet 4, 5 dhe 8 të politikës së KIFF dhe në seksionet 4, 8 dhe 9 të politikës së tafs. Shkurt: llogarinë tuaj, pajisjet tuaja, atë që i shkruani Coach-it dhe tafs-ave tuaja dhe atë që kthejnë aplikacionet tuaja të lidhura ndërsa një taf punon, të dhënat e faturimit në një plan me pagesë dhe regjistrat e kërkesave. Çdo lloj e fshijmë kur mbaron afati i tij, ose kur fshini llogarinë.
 
 ## 2. Transferime jashtë Shqipërisë
 

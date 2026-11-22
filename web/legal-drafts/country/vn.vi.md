@@ -10,7 +10,7 @@ Kiff Agents OÜ, một công ty tại Estonia, là bên kiểm soát dữ liệu
 
 ## 2. Chúng tôi xử lý gì và vì sao
 
-Chúng tôi xử lý gì, vì sao, trên cơ sở pháp lý nào và trong bao lâu nằm trong các mục 4, 5, 8 và 9 của mỗi chính sách. Chúng tôi xử lý dữ liệu của bạn để vận hành tài khoản và các taf của bạn, giữ an toàn cho dịch vụ và đáp ứng nghĩa vụ pháp lý. Chúng tôi xin sự đồng ý của bạn riêng biệt, bằng lời rõ ràng và cho từng mục đích, nơi sự đồng ý là cơ sở, như với AI trong tafs, và bạn có thể rút lại trong Tài khoản.
+Chúng tôi xử lý gì, vì sao, trên cơ sở pháp lý nào và trong bao lâu nằm trong các mục 4, 5 và 8 của chính sách KIFF và các mục 4, 8 và 9 của chính sách tafs. Chúng tôi xử lý dữ liệu của bạn để vận hành tài khoản và các taf của bạn, giữ an toàn cho dịch vụ và đáp ứng nghĩa vụ pháp lý. Chúng tôi xin sự đồng ý của bạn riêng biệt, bằng lời rõ ràng và cho từng mục đích, nơi sự đồng ý là cơ sở, như với AI trong tafs, và bạn có thể rút lại trong Tài khoản.
 
 ## 3. Chuyển giao ra ngoài Việt Nam
 
