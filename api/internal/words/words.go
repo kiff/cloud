@@ -147,6 +147,10 @@ func Of(l Lang) *Words {
 	if w, ok := catalogs[l]; ok {
 		return w
 	}
+	// A language beyond the eight that has the emails' lines (EmailMore).
+	if w, ok := emailWordsFor(l); ok {
+		return w
+	}
 	return catalogs[EN]
 }
 

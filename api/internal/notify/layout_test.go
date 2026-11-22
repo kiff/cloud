@@ -238,3 +238,20 @@ func TestTheFooterIsLeftToRightUntilItsLanguageIsWritten(t *testing.T) {
 		t.Errorf("an Arabic footer is right to left: %s", page)
 	}
 }
+
+// recordingResend is a notifier against a test server that records each email.
+func recordingResend(t *testing.T, sent *[]resendRequest) (*ResendNotifier, *httptest.Server) {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var got resendRequest
+		body, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(body, &got)
+		*sent = append(*sent, got)
+		w.WriteHeader(http.StatusOK)
+	}))
+	n, err := NewResendNotifier(ResendConfig{APIKey: testKey, From: "KIFF <hello@kiff.dev>", ReplyTo: "support@kiff.dev", Endpoint: srv.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return n, srv
+}
