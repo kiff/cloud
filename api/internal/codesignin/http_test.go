@@ -239,3 +239,31 @@ func TestAPhoneSessionReachesOnlyItsOwnPersonsSetting(t *testing.T) {
 		t.Errorf("a route outside the phone's list: %d %s", rec.Code, rec.Body)
 	}
 }
+
+// A view-only session (the extension's, or a computer with no approval key) reads the
+// setting but changes none: turning codes off or on is refused with view_only, and the
+// stored setting is untouched.
+func TestAViewOnlySessionReadsButChangesNoSetting(t *testing.T) {
+	r := newRig(t)
+	h := NewHandler(r.s, stepUp{ok: true}, nil)
+	ctx := context.Background()
+	view := phone("user_on")
+	view.ApprovalMode = auth.ApprovalModeView
+	if w := servePhone(h, http.MethodGet, "", view); w.Code != http.StatusOK {
+		t.Fatalf("a view-only session reads: %d %s", w.Code, w.Body)
+	}
+	for _, body := range []string{`{"email_code":false}`, `{"email_code":true}`} {
+		w := servePhone(h, http.MethodPut, body, view)
+		if w.Code != http.StatusForbidden || !strings.Contains(w.Body.String(), "view_only") {
+			t.Fatalf("view-only %s: %d %s", body, w.Code, w.Body)
+		}
+	}
+	if set, _ := r.store.Setting(ctx, "user_on"); !set.EmailCode {
+		t.Fatal("a view-only session changed the setting")
+	}
+	soft := phone("user_on")
+	soft.KeyStore = auth.KeyStoreSoftware
+	if w := servePhone(h, http.MethodPut, `{"email_code":false}`, soft); w.Code != http.StatusForbidden {
+		t.Fatalf("a software-key computer without a security key: %d", w.Code)
+	}
+}

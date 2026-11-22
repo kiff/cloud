@@ -173,6 +173,12 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
 		return
 	}
+	if id.ViewOnly() {
+		// A view-only session (the browser extension's, a computer without an approval key) changes
+		// no setting, neither on nor off: it reads, and the person changes it on their phone.
+		writeJSON(w, http.StatusForbidden, auth.ViewOnlyRefusal())
+		return
+	}
 	var b struct {
 		EmailCode *bool `json:"email_code"`
 	}
