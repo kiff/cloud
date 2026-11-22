@@ -257,6 +257,9 @@ func TestTheNoticesAreASecondGroupOfLines(t *testing.T) {
 	if strings.HasPrefix(Of("nn").Someone, "[nn]") || NoticeLangFor("nn") != EN {
 		t.Errorf("a half group is not used")
 	}
+	if !strings.HasPrefix(Of("nn").HeldReject, "[nn]") || EmailLangFor("nn") != "nn" {
+		t.Errorf("a half notices group doesn't take the complete core with it")
+	}
 
 	// Both: the notices read the language.
 	EmailMore["nn"] = with(core, notices)

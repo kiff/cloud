@@ -233,11 +233,11 @@ var (
 	moreWords = map[string]*Words{}
 )
 
-// emailWordsFor is English with lang's email lines laid over it, when lang has all of them: an entry with a
-// line missing is read as none, so an email is never half in a language and half in English.
+// emailWordsFor is English with lang's email lines laid over it, when lang has all of the core: an entry with a
+// core line missing is read as none, so an email is never half in a language and half in English.
 func emailWordsFor(lang Lang) (*Words, bool) {
 	lines, ok := EmailMore[string(lang)]
-	if !ok || len(EmailLinesProblems(lines)) > 0 {
+	if !ok || !groupComplete(lines, groupCore) {
 		return nil, false
 	}
 	moreMu.Lock()
@@ -393,3 +393,6 @@ func EmailNoticeLanguagesMissing() []string {
 	sort.Strings(out)
 	return out
 }
+
+// EmailGroupName is the group a line of the table is in: "core" or "notices".
+func EmailGroupName(key string) string { return lineGroup(key) }
