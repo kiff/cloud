@@ -158,8 +158,8 @@ func TestTheAllowanceAndBudgetEmailsAreGone(t *testing.T) {
 // them. A language is never half written.
 func TestTheAccountEmailsReadEnglishUntilALanguageIsWritten(t *testing.T) {
 	en := words.AccountEmailFor(words.EN)
-	if got := words.AccountEmailFor(words.FR); got != en {
-		t.Errorf("French has no lines yet and reads English: %+v", got)
+	if got := words.AccountEmailFor("yy"); got != en {
+		t.Errorf("a language with no lines yet reads English: %+v", got)
 	}
 	words.AccountEmails["xx"] = words.AccountEmail{SuspendedSubject: "s"}
 	defer delete(words.AccountEmails, "xx")
