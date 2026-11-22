@@ -76,6 +76,8 @@ func (w tafsCostWords) number(n int) string {
 		sep = " "
 	case "hr":
 		sep = "."
+	case "ka":
+		sep = "."
 	case "sq":
 		sep = "."
 	case "sr":
@@ -193,3 +195,6 @@ var tafsCostSR = tafsCostWords{Lang: "sr"}
 
 // tafsCostSQ writes the prices tafs's terms state in Albanian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
 var tafsCostSQ = tafsCostWords{Lang: "sq"}
+
+// tafsCostKA writes the prices tafs's terms state in Georgian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostKA = tafsCostWords{Lang: "ka"}
