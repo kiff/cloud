@@ -122,9 +122,9 @@ func languageRow() templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
-					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(a.Lang)
+					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(LangTag(a.Lang))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/lang.templ`, Line: 22, Col: 49}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/lang.templ`, Line: 22, Col: 58}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -137,7 +137,7 @@ func languageRow() templ.Component {
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/lang.templ`, Line: 22, Col: 80}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/lang.templ`, Line: 22, Col: 89}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {

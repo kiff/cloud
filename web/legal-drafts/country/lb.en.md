@@ -26,7 +26,7 @@ KIFF and tafs are not for anyone under 16.
 
 ## 6. Declaration
 
-**Declaration.** The law asks a person who processes personal data to declare it to the Ministry of Economy and Trade, unless the people concerned have consented. We process your data on your consent, which we ask for in the app and on sign-up. We have made no declaration today. If the ministry asks for one, we will make it before KIFF and tafs are offered in Lebanon, and say so here.
+**Declaration.** The law asks a person who processes personal data to declare it to the Ministry of Economy and Trade, unless the law exempts it, for example where the person has agreed in advance, or for a business's own clients' data within what it needs to run its activity. We process your data on the bases in sections 4, 5, 8 and 9 of each policy (to run your account and your tafs, to keep the service secure, and to meet our legal duties), and ask for consent separately where it is the basis, such as for the AI in tafs. We have made no declaration today. If the ministry asks for one, we will make it before KIFF and tafs are offered in Lebanon, and say so here.
 
 ## 7. Where to complain
 

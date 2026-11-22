@@ -18,7 +18,7 @@ KIFF dijalankan dari Estonia dan dihosting di Irlandia. Semua yang Anda kirim ke
 
 ## 4. Hak Anda
 
-Berdasarkan UU PDP, Anda dapat meminta informasi tentang cara dan alasan data Anda diproses, meminta untuk melihat dan mendapatkan salinannya, meminta kami memperbaikinya, meminta kami menghentikan pemrosesan, menghapus atau memusnahkannya, menarik persetujuan yang Anda berikan, keberatan atas keputusan yang diambil hanya melalui pemrosesan otomatis yang berakibat hukum bagi Anda, memintanya dalam bentuk yang dapat dipindahkan, dan menuntut ganti rugi atas pelanggaran undang-undang. Tulis ke privacy@kiff.dev. Kami menjawab dalam 3 hari kerja atas permintaan penarikan persetujuan dan dalam 30 hari atas permintaan lain.
+Berdasarkan UU PDP, Anda dapat meminta informasi tentang cara dan alasan data Anda diproses, meminta untuk melihat dan mendapatkan salinannya, meminta kami memperbaikinya, meminta kami menghentikan pemrosesan, menghapus atau memusnahkannya, menarik persetujuan yang Anda berikan, keberatan atas keputusan yang diambil hanya melalui pemrosesan otomatis yang berakibat hukum bagi Anda, memintanya dalam bentuk yang dapat dipindahkan, dan menuntut ganti rugi atas pelanggaran undang-undang. Tulis ke privacy@kiff.dev. Kami menghentikan pemrosesan paling lambat 3 × 24 jam sejak menerima permintaan penarikan persetujuan, dan menjawab permintaan lain dalam 30 hari.
 
 ## 5. Kegagalan pelindungan
 

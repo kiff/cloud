@@ -18,7 +18,7 @@ KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves In
 
 ## 4. Your rights
 
-Under UU PDP you can ask for information about how your data is processed and why, ask to see and to have a copy of it, ask us to correct it, ask us to stop processing, delete or destroy it, withdraw a consent you gave, object to a decision made only by automated processing that has legal effect on you, ask for it in a portable form, and seek redress for a breach of the law. Write to privacy@kiff.dev. We answer within 3 working days of a request to withdraw consent and within 30 days of any other request.
+Under UU PDP you can ask for information about how your data is processed and why, ask to see and to have a copy of it, ask us to correct it, ask us to stop processing, delete or destroy it, withdraw a consent you gave, object to a decision made only by automated processing that has legal effect on you, ask for it in a portable form, and seek redress for a breach of the law. Write to privacy@kiff.dev. We stop processing within 3 × 24 hours of receiving a request to withdraw consent, and we answer any other request within 30 days.
 
 ## 5. A breach
 

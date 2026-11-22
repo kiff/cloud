@@ -19,7 +19,7 @@ templ languageRow() {
 		<nav class="lang-row" aria-label="Languages">
 			for _, a := range alts {
 				if a.Lang == PageLanguage(ctx) {
-					<span class="lang-row-current" lang={ a.Lang } aria-current="page">{ a.Name }</span>
+					<span class="lang-row-current" lang={ LangTag(a.Lang) } aria-current="page">{ a.Name }</span>
 				} else {
 					<a href={ templ.SafeURL(a.Path) } lang={ LangTag(a.Lang) } hreflang={ LangTag(a.Lang) }>{ a.Name }</a>
 				}

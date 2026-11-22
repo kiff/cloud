@@ -18,7 +18,7 @@ KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Eg
 
 ## 4. Your rights
 
-You can ask to know what data we hold, to see it, to have it corrected, to restrict or stop its processing, to have it erased, to object to it, and to withdraw a consent you gave. Write to privacy@kiff.dev. We answer within 30 days.
+You can ask to know what data we hold, to see it, to have it corrected, to restrict or stop its processing, to have it erased, to object to it, and to withdraw a consent you gave. Write to privacy@kiff.dev. We answer within 30 days at the latest, and sooner where the law sets a shorter time.
 
 ## 5. Children
 

@@ -11,6 +11,7 @@ import (
 )
 
 var htmlLangRE = regexp.MustCompile(`<html lang="([^"]*)"`)
+var currentLangRE = regexp.MustCompile(`<span class="lang-row-current" lang="([^"]*)"`)
 
 // Every served legal page says its language twice, and the two agree: the
 // Content-Language header, and <html lang> (which screen readers and a
@@ -65,6 +66,11 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 		m := htmlLangRE.FindStringSubmatch(rec.Body.String())
 		if m == nil || m[1] != lang {
 			t.Errorf("%s: <html lang> %v, want %q", path, m, lang)
+		}
+		// The language row's current-language span says it the same way, so
+		// Traditional Chinese is never marked plain "zh".
+		if c := currentLangRE.FindStringSubmatch(rec.Body.String()); c != nil && c[1] != lang {
+			t.Errorf("%s: language row marks the current language %q, want %q", path, c[1], lang)
 		}
 	}
 	if len(want) < 20 || !strings.Contains(strings.Join(keys(want), " "), "/legal/japan/ja") {

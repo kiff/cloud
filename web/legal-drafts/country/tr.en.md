@@ -30,4 +30,4 @@ KIFF and tafs are not for anyone under 16.
 
 ## 7. Where to complain
 
-You can complain to the Personal Data Protection Board (Kişisel Verileri Koruma Kurulu), through the Personal Data Protection Authority (KVKK).
+First write to us at privacy@kiff.dev (Article 13 of the KVKK). If we refuse, your answer is inadequate or we don't answer within 30 days, you can complain to the Personal Data Protection Board (Kişisel Verileri Koruma Kurulu), through the Personal Data Protection Authority (KVKK), under Article 14: within 30 days of our answer, and in any case within 60 days of your request.

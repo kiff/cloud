@@ -30,4 +30,4 @@ KIFF ve tafs 16 yaşın altındakiler için değildir.
 
 ## 7. Nereye şikâyet edilir
 
-Kişisel Verileri Koruma Kurumu (KVKK) aracılığıyla Kişisel Verileri Koruma Kurulu'na şikâyette bulunabilirsiniz.
+Önce bize privacy@kiff.dev adresinden yazın (KVKK madde 13). Talebinizi reddedersek, cevabımızı yetersiz bulursanız veya 30 gün içinde cevap vermezsek, KVKK madde 14 uyarınca Kişisel Verileri Koruma Kurumu (KVKK) aracılığıyla Kişisel Verileri Koruma Kurulu'na şikâyette bulunabilirsiniz: cevabımızı öğrendiğiniz tarihten itibaren 30 gün içinde ve her halde talebinizden itibaren 60 gün içinde.
