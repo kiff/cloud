@@ -42,5 +42,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `lb.en.md`, `lb.ar.md` | Lebanon (Law 81/2018), en and ar | served with batch 3 (kiff/cloud#80) |
 | `mr.en.md`, `mr.ar.md` | Mauritania (Law 2017-020), en and ar | served with batch 3 (kiff/cloud#80) |
 | `md.en.md`, `md.ro.md` | Moldova (Law 195/2024), en and ro; says we have no representative (the EEA exemption, per the authority's guidance) | served with its own PR |
+| `rs.en.md`, `rs.sr.md` | Serbia (Law on Personal Data Protection, 87/2018), en and sr (Latin); says no representative yet | served with kiff/cloud's Serbia and Albania PR |
+| `al.en.md`, `al.sq.md` | Albania (Law 124/2024), en and sq; says no representative yet | served with kiff/cloud's Serbia and Albania PR |
 
 Also here: `../region.md`, the refusal words and the terms clause for "where KIFF is available", in 8 languages.
