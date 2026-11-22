@@ -37,7 +37,7 @@ templ CountryIndex(links []CountryLink) {
 // languages linked.
 templ CountrySection(s country.Section, others []CountryLink) {
 	@components.LayoutSiteWithMeta(s.Title+" · Your country", "What "+s.Title+"'s law adds to KIFF's and tafs's privacy policies.", "article", "", "css/prose.css") {
-		<article class="legal prose" lang={ s.Lang }>
+		<article class="legal prose" lang={ components.LangTag(s.Lang) }>
 			<p class="eyebrow"><a href="/privacy/countries">Your country</a></p>
 			if len(others) > 0 {
 				<p>
@@ -45,7 +45,7 @@ templ CountrySection(s country.Section, others []CountryLink) {
 						if i > 0 {
 							{ " · " }
 						}
-						<a href={ templ.SafeURL(o.Path) } hreflang={ o.Lang } lang={ o.Lang }>{ o.Name }</a>
+						<a href={ templ.SafeURL(o.Path) } hreflang={ components.LangTag(o.Lang) } lang={ components.LangTag(o.Lang) }>{ o.Name }</a>
 					}
 				</p>
 			}
@@ -58,14 +58,14 @@ templ CountrySection(s country.Section, others []CountryLink) {
 // its other languages linked.
 templ LegalNotice(s country.Section, others []CountryLink) {
 	@components.LayoutSiteWithMeta(s.Title, s.Title+" · Kiff Agents OÜ", "article", "", "css/prose.css", "css/legal.css") {
-		<article class="legal prose" lang={ s.Lang }>
+		<article class="legal prose" lang={ components.LangTag(s.Lang) }>
 			if len(others) > 0 {
 				<p>
 					for i, o := range others {
 						if i > 0 {
 							{ " · " }
 						}
-						<a href={ templ.SafeURL(o.Path) } hreflang={ o.Lang } lang={ o.Lang }>{ o.Name }</a>
+						<a href={ templ.SafeURL(o.Path) } hreflang={ components.LangTag(o.Lang) } lang={ components.LangTag(o.Lang) }>{ o.Name }</a>
 					}
 				</p>
 			}

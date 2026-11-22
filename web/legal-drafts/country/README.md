@@ -27,8 +27,19 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `cm.en.md`, `cm.fr.md` | Cameroon (Loi 2024/017), en and fr | served (ruling B) |
 | `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | served at /legal/japan and /legal/japan/ja (owner, 21 Nov): the responsible person as the e-Business Register gives it; credits don't expire; prices as each item shows them in yen at purchase |
 | `mc.en.md`, `mc.fr.md` | Monaco (Loi 1.565), en and fr | served (ruling B); says no representative yet. Monaco opens only once the owner appoints one and its name and address replace that line |
-| `tr.en.md`, `tr.tr.md` | Türkiye (KVKK 6698), en and tr | draft; says no representative yet |
-| `id.en.md`, `id.id.md` | Indonesia (UU PDP 27/2022), en and id | draft; says KIFF isn't registered as an electronic system yet |
-| `th.en.md`, `th.th.md` | Thailand (PDPA 2019), en and th | draft; says no representative yet |
+| `tr.en.md`, `tr.tr.md` | Türkiye (KVKK 6698), en and tr | served with batch 3 (kiff/cloud#80); says no representative yet |
+| `id.en.md`, `id.id.md` | Indonesia (UU PDP 27/2022), en and id | served with batch 3 (kiff/cloud#80); says KIFF isn't registered as an electronic system yet |
+| `th.en.md`, `th.th.md` | Thailand (PDPA 2019), en and th | served with batch 3 (kiff/cloud#80); says no representative yet |
+| `vn.en.md`, `vn.vi.md` | Vietnam (Decree 13/2023, Law on Personal Data Protection 2025), en and vi | served with batch 3 (kiff/cloud#80) |
+| `tw.en.md`, `tw.zh.md` | Taiwan (PDPA), en and zh (Traditional Chinese) | served with batch 3 (kiff/cloud#80) |
+| `sa.en.md`, `sa.ar.md` | Saudi Arabia (PDPL), en and ar; says no representative yet | served with batch 3 (kiff/cloud#80) |
+| `ae.en.md`, `ae.ar.md` | United Arab Emirates (Federal Decree-Law 45/2021), en and ar | served with batch 3 (kiff/cloud#80) |
+| `qa.en.md`, `qa.ar.md` | Qatar (Law 13/2016), en and ar | served with batch 3 (kiff/cloud#80) |
+| `bh.en.md`, `bh.ar.md` | Bahrain (Law 30/2018), en and ar | served with batch 3 (kiff/cloud#80) |
+| `eg.en.md`, `eg.ar.md` | Egypt (Law 151/2020), en and ar; says no transfer licence yet | served with batch 3 (kiff/cloud#80) |
+| `om.en.md`, `om.ar.md` | Oman (Royal Decree 6/2022), en and ar | served with batch 3 (kiff/cloud#80) |
+| `jo.en.md`, `jo.ar.md` | Jordan (Law 24/2023), en and ar | served with batch 3 (kiff/cloud#80) |
+| `lb.en.md`, `lb.ar.md` | Lebanon (Law 81/2018), en and ar | served with batch 3 (kiff/cloud#80) |
+| `mr.en.md`, `mr.ar.md` | Mauritania (Law 2017-020), en and ar | served with batch 3 (kiff/cloud#80) |
 
 Also here: `../region.md`, the refusal words and the terms clause for "where KIFF is available", in 8 languages.

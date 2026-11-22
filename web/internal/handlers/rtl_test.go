@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/country"
 )
 
 // An Arabic page is marked right to left and in Arabic, on the document itself:
@@ -35,6 +36,25 @@ func TestArabicPagesAreRightToLeft(t *testing.T) {
 		if strings.Contains(strings.SplitN(body, ">", 3)[1]+">", "dir=") && tr.Lang != "ar" {
 			t.Errorf("%s: a left-to-right page carries dir", tr.Path)
 		}
+	}
+	// The Arabic country sections are right to left too.
+	cm := http.NewServeMux()
+	cm.Handle("GET /privacy/countries/{country}/{lang}", CountrySection())
+	arc := 0
+	for c, langs := range country.Served {
+		for _, l := range langs {
+			if l != "ar" {
+				continue
+			}
+			arc++
+			body := getPage(t, cm, "/privacy/countries/"+c+"/ar").Body.String()
+			if !strings.Contains(body, `<html lang="ar" dir="rtl"`) {
+				t.Errorf("/privacy/countries/%s/ar: not right to left", c)
+			}
+		}
+	}
+	if arc < 9 {
+		t.Errorf("only %d Arabic country sections", arc)
 	}
 	if arabic != 4 {
 		t.Errorf("Arabic has %d routes, want its four legal pages", arabic)

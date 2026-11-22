@@ -34,7 +34,7 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 			if l != "en" {
 				p += "/" + l
 			}
-			want[p] = l
+			want[p] = components.LangTag(l)
 		}
 	}
 	for name, n := range country.Notices {
@@ -45,7 +45,7 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 			if l != "en" {
 				p += "/" + l
 			}
-			want[p] = l
+			want[p] = components.LangTag(l)
 		}
 	}
 	// And every translated page, in its language.
