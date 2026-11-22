@@ -290,3 +290,146 @@ func TestTheRecordMarksPaymentsAndTheirReports(t *testing.T) {
 		t.Errorf("the unreported payment: %+v", c.Receipt)
 	}
 }
+
+// failingHalts is a halt store that can't keep a halt.
+type failingHalts struct{ *halts.MemoryStore }
+
+func (failingHalts) Halt(context.Context, string, string, time.Time, string) (halts.Halt, bool, error) {
+	return halts.Halt{}, false, context.DeadlineExceeded
+}
+
+// keptReports remembers every report it is asked to keep.
+type keptReports struct {
+	*payreports.MemoryStore
+	asked []payreports.Report
+}
+
+func (k *keptReports) Report(ctx context.Context, rep payreports.Report) (payreports.Report, error) {
+	k.asked = append(k.asked, rep)
+	return k.MemoryStore.Report(ctx, rep)
+}
+
+// anotherCall answers every call read with a call other than the one asked.
+type anotherCall struct{ proposals.CallsReader }
+
+func (a anotherCall) ListCalls(ctx context.Context, tenant string, q proposals.CallQuery) (proposals.CallsPage, error) {
+	q.Proposal = "p-other"
+	return a.CallsReader.ListCalls(ctx, tenant, q)
+}
+
+// reportWith serves r's report route over other stores.
+func (r *reportRig) reportWith(t *testing.T, hs halts.Store, calls proposals.CallsReader, reports payreports.Store, trace string) (int, reportAnswer) {
+	t.Helper()
+	mux := http.NewServeMux()
+	handlers.NewPaymentReportsHandler(r.receipts, calls, r.tools, r.outcomes, reports, handlers.NewHaltsHandler(hs, r.planque, r.receipts, nil), nil).Register(mux)
+	rec := drivePost(t, withFakeIdentity(mux, haltAdmin()), "/v1/receipts/"+trace+"/report", nil)
+	var a reportAnswer
+	_ = json.NewDecoder(rec.Result().Body).Decode(&a)
+	return rec.Code, a
+}
+
+// A taf that couldn't be halted is never reported: the report exists only
+// for a taf KIFF halted.
+func TestAReportIsntKeptWhenItsTafCantBeHalted(t *testing.T) {
+	r := newReportRig(t)
+	trace := r.call(t, "t1", "p-pay", "refund-agent", "create_refund", true, tooloutcome.Done)
+	kept := &keptReports{MemoryStore: payreports.NewMemoryStore()}
+	code, a := r.reportWith(t, failingHalts{halts.NewMemoryStore()}, r.calls, kept, trace)
+	if code != http.StatusInternalServerError || !strings.Contains(a.Error, "nothing was reported") || len(kept.asked) != 0 {
+		t.Fatalf("%d %+v, kept %+v", code, a, kept.asked)
+	}
+}
+
+// A report names who made it.
+func TestAReportNamesWhoReportedIt(t *testing.T) {
+	r := newReportRig(t)
+	trace := r.call(t, "t1", "p-pay", "refund-agent", "create_refund", true, tooloutcome.Done)
+	kept := &keptReports{MemoryStore: payreports.NewMemoryStore()}
+	if code, a := r.reportWith(t, r.halts, r.calls, kept, trace); code != http.StatusOK {
+		t.Fatalf("%d %+v", code, a)
+	}
+	if len(kept.asked) != 1 || kept.asked[0].ReportedBy != "alice" || kept.asked[0].AgentID != "refund-agent" || kept.asked[0].ProposalID != "p-pay" {
+		t.Fatalf("kept %+v", kept.asked)
+	}
+}
+
+// An agent's identity or a key never reports, even one carrying a role
+// that manages Cards.
+func TestNoAgentNorKeyReportsAPayment(t *testing.T) {
+	r := newReportRig(t)
+	trace := r.call(t, "t1", "p-pay", "refund-agent", "create_refund", true, tooloutcome.Done)
+	admin := func(id auth.Identity) auth.Identity {
+		id.Subject, id.Tenant, id.MemberRole, id.Roles = "alice", "t1", membership.RoleAdmin, membership.IdentityRoles(membership.RoleAdmin)
+		return id
+	}
+	for name, id := range map[string]auth.Identity{
+		"an agent's identity":      admin(auth.Identity{Method: auth.MethodSession, AgentID: "refund-agent"}),
+		"a key, by its mark":       admin(auth.Identity{Method: auth.MethodSession, APIKey: true}),
+		"a key, by how it came in": admin(auth.Identity{Method: auth.MethodAPIKey}),
+	} {
+		if code, a := r.report(t, id, trace, nil); code != http.StatusForbidden {
+			t.Errorf("%s: %d %+v", name, code, a)
+		}
+	}
+	if r.halted(t, "t1", "refund-agent") {
+		t.Fatal("halted")
+	}
+	if got, _ := r.reports.Reported(context.Background(), "t1", []string{trace}); len(got) != 0 {
+		t.Fatalf("kept %v", got)
+	}
+}
+
+// Only a call KIFF allowed is a payment: a held or refused call through a
+// tool that moves money, receipt or not, is not_a_payment; so is a call
+// other than the one the receipt names, and a taf whose id isn't in its
+// normal form names none KIFF can halt.
+func TestOnlyTheAllowedCallItsReceiptNamesIsReported(t *testing.T) {
+	r := newReportRig(t)
+	at := time.Date(2026, 11, 22, 3, 0, 0, 0, time.UTC)
+	for pid, outcome := range map[string]string{"p-held": "owner_required", "p-blocked": "blocked"} {
+		r.calls.Append("t1", proposals.DecisionRow{ProposalID: pid, ActorID: "refund-agent", ActorVerified: true, ActionName: "create_refund",
+			Outcome: outcome, CreatedAt: at, ReceiptTraceID: "tr-" + pid})
+		if err := r.receipts.Save(context.Background(), receipt.Receipt{SchemaVersion: receipt.SchemaVersion, TraceID: "tr-" + pid, ProposalID: pid,
+			TenantID: "t1", EntityID: "ch_1", EntityType: "charge", ActionName: "create_refund", IssuedAt: at}); err != nil {
+			t.Fatal(err)
+		}
+		if code, a := r.report(t, haltAdmin(), "tr-"+pid, nil); code != http.StatusConflict || a.Error != "not_a_payment" {
+			t.Errorf("%s: %d %+v", pid, code, a)
+		}
+	}
+	unnormal := r.call(t, "t1", "p-spaced", " refund-agent ", "create_refund", true, tooloutcome.Done)
+	if code, a := r.report(t, haltAdmin(), unnormal, nil); code != http.StatusConflict || a.Error != "agent_unknown" {
+		t.Errorf("an id not in its normal form: %d %+v", code, a)
+	}
+	paid := r.call(t, "t1", "p-pay", "refund-agent", "create_refund", true, tooloutcome.Done)
+	r.call(t, "t1", "p-other", "refund-agent", "create_refund", true, tooloutcome.Done)
+	if code, a := r.reportWith(t, r.halts, anotherCall{r.calls}, r.reports, paid); code != http.StatusConflict || a.Error != "not_a_payment" {
+		t.Errorf("another call than the receipt's: %d %+v", code, a)
+	}
+	if r.halted(t, "t1", "refund-agent") {
+		t.Fatal("halted")
+	}
+	if got, _ := r.reports.Reported(context.Background(), "t1", []string{"tr-p-held", "tr-p-blocked", unnormal, paid}); len(got) != 0 {
+		t.Fatalf("kept %v", got)
+	}
+}
+
+// The Record shows a report only on a payment: a call that isn't one shows
+// none, whatever the store holds for its receipt.
+func TestTheRecordShowsAReportOnlyOnAPayment(t *testing.T) {
+	r := newReportRig(t)
+	msg := r.call(t, "t1", "p-msg", "desk-agent", "chat_postMessage", true, tooloutcome.Done)
+	if _, err := r.reports.Report(context.Background(), payreports.Report{TenantID: "t1", TraceID: msg, ProposalID: "p-msg", AgentID: "desk-agent",
+		ReportedAt: time.Now()}); err != nil {
+		t.Fatal(err)
+	}
+	rec := httptest.NewRecorder()
+	withFakeIdentity(r.mux, haltAdmin()).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/v1/me/activity", nil))
+	var out activityResp
+	if err := json.NewDecoder(rec.Body).Decode(&out); err != nil || len(out.Calls) != 1 {
+		t.Fatalf("activity: %d %v %+v", rec.Code, err, out)
+	}
+	if c := out.Calls[0]; c.Payment || c.Receipt == nil || c.Receipt.ReportedAt != nil {
+		t.Fatalf("a message shows a report: %+v %+v", c, c.Receipt)
+	}
+}
