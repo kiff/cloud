@@ -57,6 +57,7 @@ var partialPages = map[string][]string{
 	"si": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ta": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"tg": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"dv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -73,8 +74,8 @@ func LangTag(lang string) string {
 	return lang
 }
 
-// IsRightToLeft reports a language written right to left (Arabic, Hebrew).
-func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" }
+// IsRightToLeft reports a language written right to left (Arabic, Hebrew, Dhivehi).
+func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" || lang == "dv" }
 
 // HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
 // on a right-to-left page, none on any other, so no other page's markup changes.
@@ -87,7 +88,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "dv")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -141,6 +142,7 @@ var languageNames = map[string]string{
 	"si": "සිංහල",
 	"ta": "தமிழ்",
 	"tg": "Тоҷикӣ",
+	"dv": "ދިވެހި",
 }
 
 // LanguageName is a site language's name in that language.
@@ -335,6 +337,7 @@ var translationNotices = map[string]string{
 	"si": "මෙය තොරතුරු සඳහා පමණක් වන පරිවර්තනයකි. ඉංග්‍රීසි අනුවාදය බලපැවැත්වේ:",
 	"ta": "இது தகவலுக்காக மட்டுமே உள்ள மொழிபெயர்ப்பு. ஆங்கிலப் பதிப்பே செல்லுபடியாகும்:",
 	"tg": "Ин тарҷума танҳо барои маълумот аст. Нусхаи англисӣ эътибор дорад:",
+	"dv": "މިއީ މައުލޫމާތަށް ހަމައެކަނި ތަރުޖަމާއެކެވެ. އިނގިރޭސި ނުސްހާ ހިނގާނެއެވެ:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -380,6 +383,7 @@ var inEnglish = map[string]string{
 	"si": "(ඉංග්‍රීසියෙන්)",
 	"ta": "(ஆங்கிலத்தில்)",
 	"tg": "(бо забони англисӣ)",
+	"dv": "(އިނގިރޭސިން)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
