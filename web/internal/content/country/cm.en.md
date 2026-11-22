@@ -10,7 +10,7 @@ What we process, why, and for how long is in sections 4, 5 and 8 of KIFF's polic
 
 ## 2. Transfers outside Cameroon
 
-KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted in Ireland. Everything you send us leaves Cameroon. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of KIFF's policy says. The law requires prior authorisation for transfers abroad. We will ask the Personal Data Protection Authority for it as soon as the Authority accepts requests, and record the authorisation here.
+KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted by Amazon Web Services in Ireland. Everything you send us leaves Cameroon. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of KIFF's policy says. The law requires prior authorisation for transfers abroad. We will ask the Personal Data Protection Authority for it as soon as the Authority accepts requests, and record the authorisation here.
 
 ## 3. Your rights
 
