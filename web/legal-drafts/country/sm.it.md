@@ -10,7 +10,7 @@ Cosa trattiamo, perché e per quanto tempo è indicato nelle sezioni 4, 5 e 8 de
 
 ## 2. Trasferimenti fuori da San Marino
 
-KIFF è gestito da Kiff Agents OÜ, una società estone, ed è ospitato in Irlanda. Tutto ciò che ci invii esce da San Marino. Alcuni destinatari si trovano negli Stati Uniti: Clerk (accesso), Anthropic (i modelli di IA di Coach e di ogni taf), Stripe (pagamento di un piano a pagamento), Resend (avvisi via email), Apple e Google (notifiche e acquisti), Cloudflare e Google Workspace (posta a un indirizzo kiff.dev) e Composio (collegamenti gestiti). Ogni trasferimento è protetto dalle clausole contrattuali tipo della Commissione europea o dal Data Privacy Framework UE-USA, come indica la sezione 7 dell'informativa di KIFF.
+KIFF è gestito da Kiff Agents OÜ, una società estone, ed è ospitato da Amazon Web Services in Irlanda. Tutto ciò che ci invii esce da San Marino. Alcuni destinatari si trovano negli Stati Uniti: Clerk (accesso), Anthropic (i modelli di IA di Coach e di ogni taf), Stripe (pagamento di un piano a pagamento), Resend (avvisi via email), Apple e Google (notifiche e acquisti), Cloudflare e Google Workspace (posta a un indirizzo kiff.dev) e Composio (collegamenti gestiti). Ogni trasferimento è protetto dalle clausole contrattuali tipo della Commissione europea o dal Data Privacy Framework UE-USA, come indica la sezione 7 dell'informativa di KIFF.
 
 ## 3. I tuoi diritti
 
