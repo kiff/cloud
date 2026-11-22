@@ -26,7 +26,7 @@ KIFF ve tafs 16 yaşın altındakiler için değildir.
 
 ## 6. Temsilci ve sicil
 
-**Türkiye'de temsilci.** Türkiye dışındaki bir veri sorumlusu, muaf değilse, Türkiye'deki bir temsilci aracılığıyla Veri Sorumluları Sicili'ne (VERBİS) kaydolur. Bugün Türkiye'de bir temsilcimiz yok. KIFF ve tafs Türkiye'de sunulmadan önce, Kişisel Verileri Koruma Kurumu için ve Türkiye'deki kişiler için iletişim noktası olarak, birini burada adlandıracağız.
+**Türkiye'de temsilci.** Türkiye dışındaki bir veri sorumlusu, Türkiye'deki bir temsilci aracılığıyla Veri Sorumluları Sicili'ne (VERBİS) kaydolur. Bugün Türkiye'de bir temsilcimiz yok. KIFF ve tafs Türkiye'de sunulmadan önce, Kişisel Verileri Koruma Kurumu için ve Türkiye'deki kişiler için iletişim noktası olarak, birini burada adlandıracağız.
 
 ## 7. Nereye şikâyet edilir
 
