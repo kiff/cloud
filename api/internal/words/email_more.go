@@ -42,6 +42,74 @@ var emailLineNames = []string{
 	"WarnSubject", "WarnReview", "Months", "DayDot",
 }
 
+// noticeLineNames are the Words fields the account notices read, which handlers word before the notice goes to the
+// layout: a new approver, a relinked phone, a pack or a raise asked for, who joined, a Card changed, separation of duties
+// off. They are a second group of the table: a language may have the first (the emails drawn here) and not yet this one.
+var noticeLineNames = []string{
+	"NewApproverSubject", "NewApproverBody", "YourPhone", "RelinkSubject", "RelinkBody", "AMember", "AskReason",
+	"PackAskSubject", "PackAskBody", "PackAskHow", "RaiseAskSubject", "RaiseAskBody", "RaiseAskHow",
+	"AuthoritySubject", "AuthorityChanged", "AuthorityInvited", "CardChangeSubject", "CardChangeBody", "CardChangeCards",
+	"JoinedSubject", "JoinedSelf", "JoinedOther", "JoinedUnknown", "NoticeWhy", "SoDOffSubject", "SoDOffBody",
+	"Someone", "UnnamedAccount",
+}
+
+// Groups of lines. "core" is every email this package draws; "notices" is the account notices' sentences, written by
+// handlers, and needs "core". An entry is complete when core is, and has the notices when that group is too.
+const (
+	groupCore    = "core"
+	groupNotices = "notices"
+)
+
+func init() { emailLineNames = append(emailLineNames, noticeLineNames...) }
+
+// lineGroup is the group a line belongs to: its Words field name decides it.
+func lineGroup(key string) string {
+	name, _, _ := strings.Cut(key, ".")
+	for _, n := range noticeLineNames {
+		if n == name {
+			return groupNotices
+		}
+	}
+	return groupCore
+}
+
+// groupLines are the English lines of one group.
+func groupLines(group string) EmailLines {
+	out := EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		if lineGroup(k) == group {
+			out[k] = v
+		}
+	}
+	return out
+}
+
+// groupComplete says whether lines has every line of group, with the English one's parts.
+func groupComplete(lines EmailLines, group string) bool {
+	for k, en := range groupLines(group) {
+		got, ok := lines[k]
+		if !ok || strings.TrimSpace(got) == "" || strings.Join(placeholders(got), " ") != strings.Join(placeholders(en), " ") {
+			return false
+		}
+		if k == "Months" && len(strings.Split(got, "|")) != 12 {
+			return false
+		}
+	}
+	return true
+}
+
+// EmailGroupComplete says whether lang has every line of a group ("core" or "notices"); the eight have them all.
+func EmailGroupComplete(lang Lang, group string) bool {
+	if _, ok := catalogs[lang]; ok {
+		return true
+	}
+	lines, ok := EmailMore[string(lang)]
+	if !ok || !groupComplete(lines, groupCore) {
+		return false
+	}
+	return group == groupCore || groupComplete(lines, group)
+}
+
 // EmailLineNames are the names an EmailLines needs, with a map line's keys, sorted.
 func EmailLineNames() []string {
 	var out []string
@@ -132,7 +200,15 @@ func placeholders(s string) []string {
 func EmailLinesProblems(lines EmailLines) []string {
 	var out []string
 	english := EmailLinesEnglish()
+	given := map[string]bool{}
+	for name := range lines {
+		given[lineGroup(name)] = true
+	}
 	for name, en := range english {
+		// The core is required; the notices only once a line of them is given (a half group is a problem).
+		if g := lineGroup(name); g != groupCore && !given[g] {
+			continue
+		}
 		got, ok := lines[name]
 		switch {
 		case !ok || strings.TrimSpace(got) == "":
@@ -157,11 +233,11 @@ var (
 	moreWords = map[string]*Words{}
 )
 
-// emailWordsFor is English with lang's email lines laid over it, when lang has all of them: an entry with a
-// line missing is read as none, so an email is never half in a language and half in English.
+// emailWordsFor is English with lang's email lines laid over it, when lang has all of the core: an entry with a
+// core line missing is read as none, so an email is never half in a language and half in English.
 func emailWordsFor(lang Lang) (*Words, bool) {
 	lines, ok := EmailMore[string(lang)]
-	if !ok || len(EmailLinesProblems(lines)) > 0 {
+	if !ok || !groupComplete(lines, groupCore) {
 		return nil, false
 	}
 	moreMu.Lock()
@@ -170,7 +246,14 @@ func emailWordsFor(lang Lang) (*Words, bool) {
 		return w, true
 	}
 	w := en // a copy: English's own lines stay English
-	setEmailLines(&w, lines)
+	// Each group is laid over only when it is whole: the notices' sentences need the core as well.
+	use := EmailLines{}
+	for k, v := range lines {
+		if lineGroup(k) == groupCore || groupComplete(lines, groupNotices) {
+			use[k] = v
+		}
+	}
+	setEmailLines(&w, use)
 	moreWords[string(lang)] = &w
 	return &w, true
 }
@@ -289,3 +372,36 @@ func AccountEmailLang(l Lang) Lang {
 	}
 	return EN
 }
+
+// NoticeLangFor is the language of an account notice, whose sentences handlers word from Words: the eight, or a language
+// with the core lines and the notices' too, else English.
+func NoticeLangFor(l Lang) Lang {
+	if EmailGroupComplete(l, groupNotices) {
+		return l
+	}
+	return EN
+}
+
+// EmailNoticeLanguagesMissing are the languages that have the core lines and not yet the notices'.
+func EmailNoticeLanguagesMissing() []string {
+	var out []string
+	for tag := range CodeSignInEmailMore {
+		if !EmailGroupComplete(Lang(tag), groupNotices) {
+			out = append(out, tag)
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
+// EmailGroupName is the group a line of the table is in: "core" or "notices".
+func EmailGroupName(key string) string { return lineGroup(key) }
+
+// OfNotice is the words a handler words an account notice from: the language's when it has the notices' sentences
+// and the core they are filled with (a role's name, "an admin"), else English entirely, so a notice is never an English
+// sentence with another language's words inside it. AccountNotice lays the notice out in the same language
+// (NoticeLangFor).
+func OfNotice(l Lang) *Words { return Of(NoticeLangFor(l)) }
+
+// ForgetEmailWords drops what was built for a language, for tests that change EmailMore.
+func ForgetEmailWords(tag string) { forgetEmailWords(tag) }

@@ -186,3 +186,49 @@ func TestATranslatedHeldSentenceIsEscapedAndItsPartsAreBold(t *testing.T) {
 		}
 	}
 }
+
+// An account notice is laid out in a language only when the language has both groups of lines, the emails' and the
+// notices' sentences that handlers word it from: with the first only, an Arabic reader's notice is English left to
+// right; with both it is Arabic right to left, and its button is the language's.
+func TestAnAccountNoticeFollowsTheNoticesGroup(t *testing.T) {
+	const tag = "fa" // a right-to-left language the emails have no lines for
+	var sent []resendRequest
+	n, srv := recordingResend(t, &sent)
+	defer srv.Close()
+	ctx := context.Background()
+	notice := AccountNotice{Subject: "s", Body: "b", URL: "https://app.kiff.dev/people", Lang: tag}
+	all := words.EmailLinesEnglish()
+	core, notices := words.EmailLines{}, words.EmailLines{}
+	for k, v := range all {
+		if words.EmailGroupName(k) == "notices" {
+			notices[k] = "[" + tag + "] " + strings.ToUpper(v)
+		} else {
+			core[k] = "[" + tag + "] " + strings.ToUpper(v)
+		}
+	}
+	defer delete(words.EmailMore, tag)
+
+	words.EmailMore[tag] = core
+	words.ForgetEmailWords(tag)
+	if err := n.AccountNotice(ctx, "a@example.com", notice); err != nil {
+		t.Fatal(err)
+	}
+	if h := sent[len(sent)-1].HTML; !strings.Contains(h, `<html lang="en" dir="ltr">`) || strings.Contains(h, "[fa]") {
+		t.Errorf("with the emails' lines only the notice is English, left to right: %s", h)
+	}
+	full := words.EmailLines{}
+	for k, v := range core {
+		full[k] = v
+	}
+	for k, v := range notices {
+		full[k] = v
+	}
+	words.EmailMore[tag] = full
+	words.ForgetEmailWords(tag)
+	if err := n.AccountNotice(ctx, "a@example.com", notice); err != nil {
+		t.Fatal(err)
+	}
+	if h := sent[len(sent)-1].HTML; !strings.Contains(h, `<html lang="fa" dir="rtl">`) || !strings.Contains(h, "[fa]") {
+		t.Errorf("with both groups the notice is the language's, right to left: %s", h)
+	}
+}

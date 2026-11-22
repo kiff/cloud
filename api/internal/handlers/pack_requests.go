@@ -324,7 +324,7 @@ func (h *PackRequestsHandler) emailAdmins(t tenant.Tenant, req packs.Request, pa
 				continue
 			}
 			lang := personlang.Of(t, m.Subject)
-			subject, body := compose(words.Of(lang))
+			subject, body := compose(words.OfNotice(lang))
 			if err := h.mail.AccountNotice(ctx, to, notify.AccountNotice{Subject: subject, Body: body, Lang: lang}); err != nil {
 				h.logger.WarnContext(ctx, "pack requests: email failed", slog.String("tenant", t.ID), slog.String("err", err.Error()))
 			}

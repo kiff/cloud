@@ -82,8 +82,9 @@ func (r *ResendNotifier) MemberInvited(ctx context.Context, to string, inv Membe
 
 // AccountNotice implements MembershipNotifier.
 func (r *ResendNotifier) AccountNotice(ctx context.Context, to string, n AccountNotice) error {
-	// Its words are the caller's, from Words fields outside the emails' table: the eight, else English.
-	n.Lang = words.TextLang(n.Lang)
+	// Its words are the caller's (a handler's, from the notices' lines of the table): the eight, or a language that has
+	// them, else English.
+	n.Lang = words.NoticeLangFor(n.Lang)
 	text, m := n.Body, mail{Lang: n.Lang, Lead: n.Body}
 	if n.URL != "" {
 		text += " " + n.URL

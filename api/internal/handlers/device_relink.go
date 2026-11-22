@@ -273,7 +273,7 @@ func (h *DeviceAuthHandler) relinkNotice(ctx context.Context, tenantID, subject,
 			lang = personlang.Of(t, subject)
 		}
 	}
-	w := words.Of(lang)
+	w := words.OfNotice(lang)
 	phone := strings.TrimSpace(name)
 	if phone == "" {
 		phone = w.YourPhone

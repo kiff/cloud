@@ -858,7 +858,7 @@ func (h *MembersHandler) noticeRoles(ctx context.Context, tenantID, except strin
 			continue
 		}
 		lang := personlang.Of(t, m.Subject)
-		w := words.Of(lang)
+		w := words.OfNotice(lang)
 		account := label
 		if account == Unnamed || account == "" {
 			account = w.UnnamedAccount

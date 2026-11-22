@@ -30,6 +30,10 @@ func TestEveryLineAnEmailReadsIsInTheTable(t *testing.T) {
 	if err != nil || len(files) == 0 {
 		t.Skip("the notify package is not here")
 	}
+	// The handlers that word an account notice before it goes to the layout.
+	for _, h := range []string{"device_auth", "device_relink", "pack_requests", "members"} {
+		files = append(files, "../handlers/"+h+".go")
+	}
 	in := map[string]bool{}
 	for _, n := range emailLineNames {
 		in[n] = true
@@ -46,6 +50,10 @@ func TestEveryLineAnEmailReadsIsInTheTable(t *testing.T) {
 		}
 		for _, m := range re.FindAllStringSubmatch(string(src), -1) {
 			name := m[1]
+			// Handlers also read Words fields for the app's own screens: only the notice-building ones count.
+			if strings.Contains(f, "/handlers/") && !noticeHandlerReads(name) {
+				continue
+			}
 			if _, isField := typ.FieldByName(name); isField && !in[name] {
 				t.Errorf("%s reads Words.%s, which is not in the table of lines other languages have (emailLineNames)", filepath.Base(f), name)
 			}
@@ -173,5 +181,137 @@ func TestWriteEmailLinesEnglish(t *testing.T) {
 	}
 	if err := os.WriteFile(path, append(b, '\n'), 0o644); err != nil {
 		t.Fatal(err)
+	}
+}
+
+// noticeHandlerReads says whether a Words field read in a handler is one a notice is worded from: the notices'
+// names, by their prefixes. A handler's other reads are the apps' screens', not an email's.
+func noticeHandlerReads(name string) bool {
+	for _, p := range []string{"NewApprover", "Relink", "PackAsk", "RaiseAsk", "Authority", "CardChange", "Joined", "SoDOff", "AskReason", "NoticeWhy", "AMember", "Someone", "UnnamedAccount", "YourPhone", "AnAdmin"} {
+		if strings.HasPrefix(name, p) {
+			return true
+		}
+	}
+	return false
+}
+
+// The notices' lines are a second group: a language with the core and not the notices reads its emails in its own
+// words and its account notices in English; one with a part of the notices is a problem; one with both reads both.
+func TestTheNoticesAreASecondGroupOfLines(t *testing.T) {
+	core := EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		if lineGroup(k) == groupCore {
+			core[k] = "[nn] " + strings.ToUpper(v)
+		}
+	}
+	notices := EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		if lineGroup(k) == groupNotices {
+			notices[k] = "[nn] " + strings.ToUpper(v)
+		}
+	}
+	if len(notices) < 25 {
+		t.Fatalf("the notices group has %d lines", len(notices))
+	}
+	with := func(parts ...EmailLines) EmailLines {
+		out := EmailLines{}
+		for _, p := range parts {
+			for k, v := range p {
+				out[k] = v
+			}
+		}
+		return out
+	}
+	defer func() { delete(EmailMore, "nn"); forgetEmailWords("nn") }()
+
+	// The core alone is complete: its emails read the language, the notices read English.
+	EmailMore["nn"] = with(core)
+	forgetEmailWords("nn")
+	if p := EmailLinesProblems(EmailMore["nn"]); len(p) != 0 {
+		t.Fatalf("the core alone is a complete entry: %v", p)
+	}
+	if !EmailGroupComplete("nn", groupCore) || EmailGroupComplete("nn", groupNotices) {
+		t.Errorf("core complete, notices not")
+	}
+	if NoticeLangFor("nn") != EN || EmailLangFor("nn") != "nn" {
+		t.Errorf("an email in its words, a notice in English: %q %q", NoticeLangFor("nn"), EmailLangFor("nn"))
+	}
+	w := Of("nn")
+	if !strings.HasPrefix(w.HeldReject, "[nn]") || strings.HasPrefix(w.Someone, "[nn]") {
+		t.Errorf("the core is the language's and the notices' sentences are English: %q %q", w.HeldReject, w.Someone)
+	}
+
+	// A part of the notices is a problem and is not laid over.
+	half := with(core, EmailLines{"Someone": "[nn] SOMEONE"})
+	EmailMore["nn"] = half
+	forgetEmailWords("nn")
+	found := false
+	for _, p := range EmailLinesProblems(half) {
+		if strings.Contains(p, "JoinedSubject is missing") {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("a half group is reported: %v", EmailLinesProblems(half))
+	}
+	if strings.HasPrefix(Of("nn").Someone, "[nn]") || NoticeLangFor("nn") != EN {
+		t.Errorf("a half group is not used")
+	}
+	if !strings.HasPrefix(Of("nn").HeldReject, "[nn]") || EmailLangFor("nn") != "nn" {
+		t.Errorf("a half notices group doesn't take the complete core with it")
+	}
+
+	// Both: the notices read the language.
+	EmailMore["nn"] = with(core, notices)
+	forgetEmailWords("nn")
+	if p := EmailLinesProblems(EmailMore["nn"]); len(p) != 0 {
+		t.Fatalf("both groups: %v", p)
+	}
+	if NoticeLangFor("nn") != "nn" || !strings.HasPrefix(Of("nn").Someone, "[nn]") || !strings.HasPrefix(Of("nn").JoinedSubject("x"), "[nn]") {
+		t.Errorf("with both groups the notices read the language")
+	}
+
+	// The notices without the core are not used: they need it.
+	EmailMore["nn"] = with(notices)
+	forgetEmailWords("nn")
+	if _, ok := emailWordsFor("nn"); ok || NoticeLangFor("nn") != EN {
+		t.Errorf("notices without the core are not used")
+	}
+}
+
+// A notice's handler words it from OfNotice: with the core and not the notices, all of it is English (a role's name
+// and "an admin" too, never an English sentence with another language's words in it); with both, all of it is the
+// language's.
+func TestANoticeIsWordedWhollyInOneLanguage(t *testing.T) {
+	core, notices := EmailLines{}, EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		if lineGroup(k) == groupNotices {
+			notices[k] = "[nn] " + strings.ToUpper(v)
+		} else {
+			core[k] = "[nn] " + strings.ToUpper(v)
+		}
+	}
+	defer func() { delete(EmailMore, "nn"); forgetEmailWords("nn") }()
+	EmailMore["nn"] = core
+	forgetEmailWords("nn")
+	w := OfNotice("nn")
+	if strings.Contains(w.Role("approver"), "[nn]") || strings.Contains(w.AnAdmin, "[nn]") || strings.Contains(w.Someone, "[nn]") || strings.Contains(w.AuthoritySubject("r", "a"), "[nn]") {
+		t.Errorf("with the core only a notice is English throughout: role %q, an admin %q", w.Role("approver"), w.AnAdmin)
+	}
+	if !strings.Contains(Of("nn").Role("approver"), "[nn]") {
+		t.Errorf("the language's own emails keep their role names")
+	}
+	full := EmailLines{}
+	for k, v := range core {
+		full[k] = v
+	}
+	for k, v := range notices {
+		full[k] = v
+	}
+	EmailMore["nn"] = full
+	forgetEmailWords("nn")
+	w = OfNotice("nn")
+	if !strings.Contains(w.Role("approver"), "[nn]") || !strings.Contains(w.AnAdmin, "[nn]") || !strings.Contains(w.AuthoritySubject("r", "a"), "[nn]") {
+		t.Errorf("with both groups a notice is the language's throughout")
 	}
 }
