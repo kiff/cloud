@@ -61,7 +61,7 @@ func TafsPrivacyZH() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "。沒有 TPM 的 Windows PC 無法登入 tafs。KIFF 保存金鑰的公開部分、裝置的名稱與平台，以及新增與最後使用的時間，以便檢查您對被擱置呼叫的回覆及您對連線的核准。</li><li><strong>您的手錶：</strong>手錶不保存密碼或金鑰，只與您配對的手機溝通，且從不核准。在您允許 AI 之後，它僅以文字、透過手機，把您所說的話傳給 Coach 或您選擇的 taf。手錶自己的語音服務（Apple 或 Google 的）把您的話轉成該文字。在 Wear OS 上，若它在您說完之前停止，則由您手機自己的辨識器在手機上代為處理。手錶僅在有螢幕鎖定或密碼且已解鎖時，才能拒絕、停止或傳給 Coach 或 taf。您傳給 taf 的內容會進入該 taf 自己的對話，就像您在手機上寫的一樣。taf 的對話（含金額）只在對話開啟時顯示在手錶上，每次都透過手機讀取；手錶不保存其中任何內容。</li><li><strong>Apple Watch：</strong>它顯示您的 taf 及其頁面，但不保存。它只保存您的收件匣，存在鎖定時無法讀取的檔案中：每個被擱置的呼叫記為其 taf 的名稱與所要求的事，從不含金額，以及 Coach 對您從手錶傳送內容的回覆（文字）。若您在手錶上登出，它也會保存您已登出這件事，直到您在手錶上再次登入。除此之外，除非手錶有密碼，否則它什麼也不保存。收件匣會在您於手錶登出或您的 iPhone 登出時，或下次應用程式在沒有密碼的情況下開啟或關閉時消失。它不錄音，且它顯示的唯一通知是您 iPhone 的通知。</li><li><strong>Wear OS：</strong>它顯示您帳戶的電子郵件與今天的行事曆，但不保存。為了能立即開啟，它以加密方式保存等著您的事項數量，以及每個 taf 的名稱和它是否已停止或暫停：從不含金額、被擱置呼叫的細節或 taf 的對話。這些資料會在您登出、手錶鎖定或離開您的手腕時，以及 24 小時後清除。它保存您的收件匣，每一行是 taf 的名稱與它所說的話，從不含金額，以及一則留待稍後的訊息（文字）。在手錶或手機上登出，會清除全部。為了其磚（tile），它也保存等著您的事項數量，僅在手錶解鎖時顯示，並在您登出時，或下次磚在手錶鎖定或沒有螢幕鎖定的情況下顯示時清除。在您於手錶登出後，它會保存您已登出的記錄，直到您再次登入。收件匣也會在下次應用程式於手錶鎖定或沒有螢幕鎖定時開啟或關閉時消失。留待稍後的訊息會留著，直到您傳送或刪除，因為是您要求傳送它。若手錶的語音服務在您說完之前停止，手錶會把錄音傳給您的手機，由手機自己把它轉成文字，從不在伺服器上。錄音在文字回來或您取消後，於兩邊都會刪除，最長 2 分鐘。只有文字會繼續傳給 Coach 或您的 taf。taf 的結果可能留在手錶的通知中，直到您關閉它或在手錶上登出。</li><li><strong>通行金鑰（passkey）：</strong>當您在電腦上以通行金鑰核准，例如 Windows Hello 或安全金鑰，您的臉部、指紋或 PIN 留在電腦自己的系統中。KIFF 保存通行金鑰的公開金鑰、其 ID、一個計數器與一個名稱，從不保存任何機密內容，並拒絕同步到其他裝置的通行金鑰。</li><li><strong>通知：</strong>在手機、平板或執行 iPad 應用程式的 Mac 上，當您開啟通知時，我們保存裝置的推播權杖，連同您的 KIFF 個人 ID，以及應用程式所顯示的語言。通知經由 Apple 或 Google 送出，只帶哪個 taf 與它想要什麼，而在門的通知中，帶有來信者的名字或電子郵件地址：從不含金額或請求的細節。應用程式在裝置本身從 KIFF 加上這些內容，因此已解鎖手機的通知可顯示金額、商家或人。在已鎖定的 Android 手機上，它只顯示「taf 需要您」，已鎖定的 iPhone 也是如此，除非您已把其預覽設為一律顯示。在 Windows PC、Linux 電腦，或執行 macOS 12 應用程式的 Mac 上，通知由應用程式在執行時自行產生，沒有推播權杖，也不經過其他公司。在 Windows 與 Linux 上，通知顯示哪個 taf、它想做什麼、金額、原因與期限；在 macOS 12 應用程式上，當您開啟後，它們顯示 KIFF 對該呼叫的說法，而鎖定的螢幕顯示 Mac 預覽設定所允許的內容。在 Windows 上，通知預設關閉，直到您開啟，且在螢幕鎖定時只顯示「taf 需要您」。螢幕鎖定前已顯示的通知，其細節保留在 Windows 的通知清單中。在 Linux 上，通知預設開啟，直到您關閉，且鎖定的螢幕顯示什麼取決於您的桌面。</li><li><strong>語言：</strong>tafs 服務保存帳戶的語言（來自最後與 Coach 對話的人），最長三個月，讓 taf 的報告以該語言送達。</li><li><strong>您的工具：</strong>當您連接工具時，您在該工具自己的提供者處登入。對於 planque 自行登入的應用程式（如 Stripe）或您提供的金鑰，planque 為貴公司加密保存該權杖或金鑰。對於受管理的連線，planque 合作的連線服務 Composio 保存登入，而 planque 只保存連線的記錄與您核准的工具（見 <a href=\"#google\">Google 使用者資料</a>）。連線的記錄可包含所登入的帳戶（其名稱或電子郵件），讓應用程式能向您顯示是哪一個。KIFF 僅對 <a href=\"/subprocessors#composio\">/subprocessors</a> （英文） 所列的應用程式使用受管理的連線。</li><li><strong>您的 taf 的工作：</strong>每個 taf 的執行、對話、報告、記憶備註及其交付的檔案，以處理者身分保存。您帳戶中的每個人都能看到您的 taf 交付的檔案。</li><li><strong>購買：</strong>Solo 與額度包由 Apple 透過 App Store 販售，或由 Google 透過 Google Play 計費販售。它們告訴我們買了什麼、為哪個 KIFF 帳戶（一個隨機 ID）、何時，以及其交易或訂單參考編號。它們不會給我們您的 Apple ID 或 Google 帳戶、姓名、電子郵件地址或信用卡。</li></ul><p>應用程式沒有分析或廣告追蹤器。</p></section><section id=\"ai\"><h2>5. tafs 中的 AI</h2><p>tafs 為 Coach 與您的 taf 使用 Anthropic 的 Claude AI。在任何內容送往 AI 之前，應用程式會先詢問您。</p><ul><li>送往它的內容：您寫給 Coach 與您的 taf 的內容、您附加的檔案、您連接的應用程式在 taf 工作時回傳給它的內容，以及 Coach 在應用程式中協助您時螢幕上的內容。</li><li>永不送出的內容：您連接的應用程式所使用的密碼與金鑰，或您的指紋。</li><li>Anthropic 用它來回答，並保存最多 30 天。</li><li>在您允許之前不會送出任何內容。您可以在「帳戶」中撤回。</li></ul><p>當您撤回時，Coach 與您的 taf 會停止回覆您，而其執行依賴您同意的 taf 會暫停。<a href=\"/zh/privacy#ai-in-tafs\">KIFF 隱私權政策</a>有詳細說明。</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "。沒有 TPM 的 Windows PC 無法登入 tafs。KIFF 保存金鑰的公開部分、裝置的名稱與平台，以及新增與最後使用的時間，以便檢查您對被擱置呼叫的回覆及您對連線的核准。</li><li><strong>您的手錶：</strong>手錶不保存密碼或金鑰，只與您配對的手機溝通，且從不核准。在您允許 AI 之後，它僅以文字、透過手機，把您所說的話傳給 Coach 或您選擇的 taf。手錶自己的語音服務（Apple 或 Google 的）把您的話轉成該文字。在 Wear OS 上，若它在您說完之前停止，則由您手機自己的辨識器在手機上代為處理。手錶僅在有螢幕鎖定或密碼且已解鎖時，才能拒絕、停止或傳給 Coach 或 taf。您傳給 taf 的內容會進入該 taf 自己的對話，就像您在手機上寫的一樣。taf 的對話（含金額）只在對話開啟時顯示在手錶上，每次都透過手機讀取；手錶不保存其中任何內容。</li><li><strong>Apple Watch：</strong>它顯示您的 taf 及其頁面，但不保存。它只保存您的收件匣，存在鎖定時無法讀取的檔案中：每個被擱置的呼叫記為其 taf 的名稱與所要求的事，從不含金額，以及 Coach 對您從手錶傳送內容的回覆（文字）。若您在手錶上登出，它也會保存您已登出這件事，直到您在手錶上再次登入。除此之外，除非手錶有密碼，否則它什麼也不保存。收件匣會在您於手錶登出或您的 iPhone 登出時，或下次應用程式在沒有密碼的情況下開啟或關閉時消失。它不錄音，且它顯示的唯一通知是您 iPhone 的通知。</li><li><strong>Wear OS：</strong>它顯示您帳戶的電子郵件與今天的行事曆，但不保存。為了能立即開啟，它以加密方式保存等著您的事項數量，以及每個 taf 的名稱和它是否已停止或暫停：從不含金額、被擱置呼叫的細節或 taf 的對話。這些資料會在您登出、手錶鎖定或離開您的手腕時，以及 24 小時後清除。它保存您的收件匣，每一行是 taf 的名稱與它所說的話，從不含金額，以及一則留待稍後的訊息（文字）。在手錶或手機上登出，會清除全部。為了其磚（tile），它也保存等著您的事項數量，僅在手錶解鎖時顯示，並在您登出時，或下次磚在手錶鎖定或沒有螢幕鎖定的情況下顯示時清除。在您於手錶登出後，它會保存您已登出的記錄，直到您再次登入。收件匣也會在下次應用程式於手錶鎖定或沒有螢幕鎖定時開啟或關閉時消失。留待稍後的訊息會留著，直到您傳送或刪除，因為是您要求傳送它。若手錶的語音服務在您說完之前停止，手錶會把錄音傳給您的手機，由手機自己把它轉成文字，從不在伺服器上。錄音在文字回來或您取消後，於兩邊都會刪除，最長 2 分鐘。只有文字會繼續傳給 Coach 或您的 taf。taf 的結果可能留在手錶的通知中，直到您關閉它或在手錶上登出。</li><li><strong>通行金鑰（passkey）：</strong>當您在電腦上以通行金鑰核准，例如 Windows Hello 或安全金鑰，您的臉部、指紋或 PIN 留在電腦自己的系統中。KIFF 保存通行金鑰的公開金鑰、其 ID、一個計數器與一個名稱，從不保存任何機密內容，並拒絕同步到其他裝置的通行金鑰。</li><li><strong>通知：</strong>在手機、平板或執行 iPad 應用程式的 Mac 上，當您開啟通知時，我們保存裝置的推播權杖，連同您的 KIFF 個人 ID，以及應用程式所顯示的語言。通知經由 Apple 或 Google 送出，只帶哪個 taf 與它想要什麼，而在門的通知中，帶有來信者的名字或電子郵件地址：從不含金額或請求的細節。應用程式在裝置本身從 KIFF 加上這些內容，因此已解鎖手機的通知可顯示金額、商家或人。在已鎖定的 Android 手機上，它只顯示「taf 需要您」，已鎖定的 iPhone 也是如此，除非您已把其預覽設為一律顯示。在 Windows PC、Linux 電腦，或執行 macOS 12 應用程式的 Mac 上，通知由應用程式在執行時自行產生，沒有推播權杖，也不經過其他公司。在 Windows 與 Linux 上，通知顯示哪個 taf、它想做什麼、金額、原因與期限；在 macOS 12 應用程式上，當您開啟後，它們顯示 KIFF 對該呼叫的說法，而鎖定的螢幕顯示 Mac 預覽設定所允許的內容。在 Windows 上，通知預設關閉，直到您開啟，且在螢幕鎖定時只顯示「taf 需要您」。螢幕鎖定前已顯示的通知，其細節保留在 Windows 的通知清單中。在 Linux 上，通知預設開啟，直到您關閉，且鎖定的螢幕顯示什麼取決於您的桌面。</li><li><strong>語言：</strong>tafs 服務保存帳戶的語言（來自最後與 Coach 對話的人），最長三個月，讓 taf 的報告以該語言送達。</li><li><strong>您的工具：</strong>當您連接工具時，您在該工具自己的提供者處登入。對於 planque 自行登入的應用程式（如 Stripe）或您提供的金鑰，planque 為貴公司加密保存該權杖或金鑰。對於受管理的連線，planque 合作的連線服務 Composio 保存登入，而 planque 只保存連線的記錄與您核准的工具（見 <a href=\"#google\">Google 使用者資料</a>）。連線的記錄可包含所登入的帳戶（其名稱或電子郵件），讓應用程式能向您顯示是哪一個。KIFF 僅對 <a href=\"/subprocessors#composio\">/subprocessors</a> （英文） 所列的應用程式使用受管理的連線。</li><li><strong>您的瀏覽器（Chrome）：</strong>當您將 tafs 擴充功能與手機配對後，taf 可以在您配對的 Chrome 設定檔中工作，且僅限其連線所列的網站。它會在您看得到、可暫停或停止的分頁群組中開啟自己的分頁，而當您碰其中一個分頁時，它就會暫停。它以文字與表單欄位的形式讀取這些頁面，並移除密碼、卡片與代碼欄位，從不讀取您的其他分頁或其他網站，也不截圖。該文字會作為該次執行的一部分傳給我們的 AI 提供者，並像任何工具的結果一樣與該次執行一併保存。每一步都會連同網站與欄位名稱記入紀錄，從不記錄在機密欄位中輸入的內容。對於 taf 所做的每一項變更，KIFF 會保存變更前後的頁面（為已移除上述欄位的文字），最長 30 天，並在您中斷連線或刪除帳號時更早刪除。這些頁面可能顯示他人的資料，例如您的客戶；KIFF 為您處理這些資料，以處理者身分。擴充功能會在您的電腦上保存自己的金鑰，且若您選擇，還會保存經封存的登入資料，只有您在手機上的核准才能開啟，用於在該確切網站上填寫一次。KIFF 從不持有這些資料。您也可以從擴充功能的側邊欄與 Coach 交談；只有當您點選「分享此頁面」並讓 tafs 進入 Chrome 中的該網站時，Coach 才會看到頁面，而且只看到該頁面，以同樣方式讀取，作為您對話的一部分。取消配對或解除安裝擴充功能，會刪除擴充功能所保存的內容。未經您在手機上的核准，taf 從不付款，也不填寫經封存的登入資料。</li><li><strong>您的 taf 的工作：</strong>每個 taf 的執行、對話、報告、記憶備註及其交付的檔案，以處理者身分保存。您帳戶中的每個人都能看到您的 taf 交付的檔案。</li><li><strong>購買：</strong>Solo 與額度包由 Apple 透過 App Store 販售，或由 Google 透過 Google Play 計費販售。它們告訴我們買了什麼、為哪個 KIFF 帳戶（一個隨機 ID）、何時，以及其交易或訂單參考編號。它們不會給我們您的 Apple ID 或 Google 帳戶、姓名、電子郵件地址或信用卡。</li></ul><p>應用程式沒有分析或廣告追蹤器。</p></section><section id=\"ai\"><h2>5. tafs 中的 AI</h2><p>tafs 為 Coach 與您的 taf 使用 Anthropic 的 Claude AI。在任何內容送往 AI 之前，應用程式會先詢問您。</p><ul><li>送往它的內容：您寫給 Coach 與您的 taf 的內容、您附加的檔案、您連接的應用程式在 taf 工作時回傳給它的內容，以及 Coach 在應用程式中協助您時螢幕上的內容。</li><li>永不送出的內容：您連接的應用程式所使用的密碼與金鑰，或您的指紋。</li><li>Anthropic 用它來回答，並保存最多 30 天。</li><li>在您允許之前不會送出任何內容。您可以在「帳戶」中撤回。</li></ul><p>當您撤回時，Coach 與您的 taf 會停止回覆您，而其執行依賴您同意的 taf 會暫停。<a href=\"/zh/privacy#ai-in-tafs\">KIFF 隱私權政策</a>有詳細說明。</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -164,7 +164,7 @@ func tafsPrivacyGoogleZH() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 132, Col: 135}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 133, Col: 135}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -183,7 +183,7 @@ func tafsPrivacyGoogleZH() templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 135, Col: 106}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 136, Col: 106}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -257,7 +257,7 @@ func tafsPrivacyGoogleZH() templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 167, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 168, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -275,7 +275,7 @@ func tafsPrivacyGoogleZH() templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 170, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 171, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -288,7 +288,7 @@ func tafsPrivacyGoogleZH() templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 170, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/zh_tafs_privacy.templ`, Line: 171, Col: 46}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
