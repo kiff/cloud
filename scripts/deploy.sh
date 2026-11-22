@@ -87,7 +87,7 @@ DB_SECRET_ARN="${DB_SECRET_ARN:-}"
 # KIFF's one secret: a JSON of named values (clerk_secret_key, session_secret, anchor_private_key,
 # web_demo_key, resend_api_key, stripe_webhook_secret, stripe_secret_key, clerk_webhook_secret,
 # gateway_keys, permit_key, permit_published, planque_event_secret, proof_state_tokens,
-# proof_github_token, google_play_service_account), by its full ARN. Set: every value is read from it,
+# proof_github_token, google_play_service_account, signin_code_key), by its full ARN. Set: every value is read from it,
 # once: each field must be a non-empty string, a required name it lacks stops the deploy, and an
 # optional name it lacks is read from its own secret if that's still named, else off. Empty: each
 # value is read from its own secret below, as before. The database's own (DB_SECRET_ARN, RDS-managed
@@ -721,6 +721,10 @@ stripe_webhook_secret=\$(secret_value stripe_webhook_secret "\$STRIPE_WEBHOOK_SE
 stripe_secret_key=\$(secret_value stripe_secret_key "\$STRIPE_SECRET_KEY_ARN" optional)
 clerk_webhook_secret=""
 if [ -n "\$CLERK_WEBHOOK_SECRET_ARN" ] || [ -n "\$kiff_bundle" ]; then clerk_webhook_secret=\$(secret_value clerk_webhook_secret "\$CLERK_WEBHOOK_SECRET_ARN" optional); fi
+# The code sign-in key (KIFF_SIGNIN_CODE_KEY, 32 random bytes): only in the one secret, as
+# signin_code_key. Without it the API answers code sign-in as not available.
+signin_code_key=""
+if [ -n "\$kiff_bundle" ]; then signin_code_key=\$(secret_value signin_code_key "" optional); fi
 pricing_business_intake_url="\$KIFF_PRICING_BUSINESS_INTAKE_URL"
 gateway_keys=\$(secret_value gateway_keys "\$GATEWAY_KEYS_SECRET" required)
 permit_key=""
@@ -768,6 +772,7 @@ RESEND_API_KEY=\${resend_key}
 KIFF_STRIPE_WEBHOOK_SECRET=\${stripe_webhook_secret}
 KIFF_STRIPE_SECRET_KEY=\${stripe_secret_key}
 KIFF_CLERK_WEBHOOK_SECRET=\${clerk_webhook_secret}
+KIFF_SIGNIN_CODE_KEY=\${signin_code_key}
 KIFF_NOTIFY_FROM=\${KIFF_NOTIFY_FROM}
 KIFF_NOTIFY_REPLY_TO=\${KIFF_NOTIFY_REPLY_TO}
 KIFF_PHONE_ALERT_URLS=\${KIFF_PHONE_ALERT_URLS}
