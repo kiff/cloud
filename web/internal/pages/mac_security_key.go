@@ -55,6 +55,7 @@ var macSecurityKeyClause = map[string]string{
 	"ta": ", அல்லது Mac இல், பாதுகாப்பு விசையுடன்",
 	"tg": ", ё дар Mac бо калиди амният",
 	"dv": "، ނުވަތަ Mac އެއްގައި، ރައްކާތެރިކަމުގެ ކީއަކުން",
+	"dz": "། ཡང་ན་ Mac ནང་ ཉེན་སྲུང་ལྡེ་མིག་གིས་",
 }
 
 // macSecurityKey is the clause, or nothing while the switch is off.
