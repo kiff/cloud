@@ -225,12 +225,14 @@ func TestEveryEmailHasTheSameHeaderAndFooter(t *testing.T) {
 // The footer is in the email's language when that language has its footer; when it hasn't,
 // English reads left to right, never inside a right-to-left line.
 func TestTheFooterIsLeftToRightUntilItsLanguageIsWritten(t *testing.T) {
+	saved := words.EmailFooters["ar"]
+	delete(words.EmailFooters, "ar")
+	defer func() { words.EmailFooters["ar"] = saved }()
 	page, _ := renderLayout(mail{Lang: "ar", Lead: "x"})
 	if !strings.Contains(page, `<td dir="ltr" style="padding:12px 0 0;border-top`) {
 		t.Errorf("an Arabic email with the English footer sets it left to right: %s", page)
 	}
 	words.EmailFooters["ar"] = words.EmailFooter{Privacy: "p", Help: "h", NeverAsk: "n"}
-	defer delete(words.EmailFooters, "ar")
 	page, _ = renderLayout(mail{Lang: "ar", Lead: "x"})
 	if !strings.Contains(page, `<td dir="rtl" style="padding:12px 0 0;border-top`) || !strings.Contains(page, ">n<br>") {
 		t.Errorf("an Arabic footer is right to left: %s", page)
