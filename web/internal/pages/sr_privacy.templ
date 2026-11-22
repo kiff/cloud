@@ -111,6 +111,7 @@ templ privacyCategoriesSR() {
 		<ul>
 			<li>
 				<strong>Identifikatori naloga</strong> — vaš identifikator iz sistema za potvrdu identiteta (koji izdaje naš provajder identiteta) i adresa e-pošte kojom se prijavljujete. Čuvaju se u izvornom obliku; heširanje pri čuvanju je planirano.
+				Ako uključite prijavu kodom poslatim e-poštom (isključena je dok to ne učinite), KIFF čuva to podešavanje sa vašim ID-jem za prijavu i datumom promene. Kod koji vam šaljemo e-poštom čuva se samo kao ključani heš, dok se ne iskoristi ili ne prođe deset minuta. Da bismo ograničili zloupotrebe, do jednog dana čuvamo broj zahteva po ključanom hešu adrese koja je zatražila kod i IP adrese. Nakon prijave kodom to beležimo petnaest minuta, kako bi vas promene koje traže svežu prijavu zamolile da se prijavite drugačije.
 			</li>
 			<li>
 				<strong>Metapodaci zakupca</strong> — id zakupca, slug, prikazano ime, vreme kreiranja i jezik koji je aplikacija svake osobe poslednji put koristila, kako bi e-poruke koje KIFF šalje stizale na tom jeziku.

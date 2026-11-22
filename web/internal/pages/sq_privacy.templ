@@ -111,6 +111,7 @@ templ privacyCategoriesSQ() {
 		<ul>
 			<li>
 				<strong>Identifikuesit e llogarisë</strong> — subjekti juaj i vërtetimit (lëshuar nga ofruesi ynë i identitetit) dhe adresa e emailit me të cilën hyni. Ruhen siç janë sot; hashimi gjatë ruajtjes është planifikuar.
+				Nëse aktivizoni hyrjen me një kod të dërguar me email (është e çaktivizuar derisa ta aktivizoni), KIFF e ruan këtë cilësim me identifikuesin tuaj të hyrjes dhe datën e ndryshimit. Një kod që ju dërgojmë me email ruhet vetëm si hash me çelës, derisa të përdoret ose të kalojnë dhjetë minuta. Për të kufizuar abuzimin, ruajmë, deri në një ditë, një numërim kërkesash për hash me çelës të adresës që kërkoi dhe të adresës IP. Pasi të hyni me një kod, e shënojmë për një çerek ore, që ndryshimet që kërkojnë hyrje të freskët t'ju kërkojnë të hyni ndryshe.
 			</li>
 			<li>
 				<strong>Metadatat e qiramarrësit</strong> — id e qiramarrësit, slug, emri i shfaqur, koha e krijimit dhe gjuha që aplikacioni i çdo personi ka përdorur së fundi, që emailet që KIFF u dërgon të vijnë në atë gjuhë.

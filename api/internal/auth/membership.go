@@ -255,7 +255,27 @@ type StepUp struct {
 	// TrustAll accepts every session: the stub provider used in local
 	// runs has no sign-in to repeat. Never set with Clerk.
 	TrustAll bool
-	Now      func() time.Time
+	// CodeSignedIn is when the person last signed in with a code sent by
+	// email (codesignin), if recently. A session made after it isn't a
+	// recent sign-in: an email inbox alone never makes the changes that
+	// need one. Nil: no code sign-ins.
+	CodeSignedIn func(ctx context.Context, subject string) (time.Time, bool, error)
+	Now          func() time.Time
+}
+
+// codeSessionSlack is how long before a code sign-in a session may have
+// been made and still be taken for it: the provider's clock and KIFF's.
+const codeSessionSlack = 30 * time.Second
+
+// WithoutCodeCheck is s, letting sessions made by a code sign-in through:
+// for the apps' sheet, where approving the request is the sign-in itself.
+func (s *StepUp) WithoutCodeCheck() *StepUp {
+	if s == nil {
+		return nil
+	}
+	c := *s
+	c.CodeSignedIn = nil
+	return &c
 }
 
 // Check returns the age, in seconds, of the authentication the action
@@ -274,6 +294,9 @@ func (s *StepUp) Check(ctx context.Context, id Identity) (int, error) {
 	window := s.Window
 	if window <= 0 {
 		window = StepUpWindow
+	}
+	if err := s.notByCode(ctx, id); err != nil {
+		return 0, err
 	}
 	if id.FactorAge != nil {
 		if *id.FactorAge <= window {
@@ -298,6 +321,30 @@ func (s *StepUp) Check(ctx context.Context, id Identity) (int, error) {
 		return 0, ErrReauthRequired
 	}
 	return int(age.Seconds()), nil
+}
+
+// notByCode refuses a session that may have been made by a code sign-in: one
+// made after the person's latest, or one whose making KIFF can't read.
+func (s *StepUp) notByCode(ctx context.Context, id Identity) error {
+	if s.CodeSignedIn == nil {
+		return nil
+	}
+	at, ok, err := s.CodeSignedIn(ctx, id.Subject)
+	if err != nil {
+		return ErrReauthRequired
+	}
+	if !ok {
+		return nil
+	}
+	sid := strings.TrimSpace(id.Metadata["clerk_session_id"])
+	if s.SessionCreatedAt == nil || sid == "" {
+		return ErrReauthRequired
+	}
+	created, err := s.SessionCreatedAt(ctx, sid)
+	if err != nil || created.IsZero() || !created.Before(at.Add(-codeSessionSlack)) {
+		return ErrReauthRequired
+	}
+	return nil
 }
 
 // WriteReauthRequired renders the step-up refusal the dashboard turns

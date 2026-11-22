@@ -118,6 +118,12 @@ var cloudMetaErasedBySubject = []string{
 	// A device sign-in waiting for approval carries a person only for a
 	// re-link (the session's); gone when approved or within 10 minutes.
 	"device_sign_ins",
+	// Signing in with a code sent by email (codesignin): the person's
+	// setting, a code waiting (a keyed hash, ten minutes) and when they
+	// last signed in with one (a quarter of an hour).
+	"signin_settings",
+	"signin_codes",
+	"signin_code_uses",
 }
 
 // cloudMetaNotPerTenant hold no tenant's or person's data.
@@ -134,6 +140,7 @@ var cloudMetaNotPerTenant = map[string]string{
 	"pairing_refusals":               "sha256 of a pairing QR's nonce, the refused computer key's sha256 and a refusal code, kept until the QR's exp (at most 5 minutes) and swept a day later; no tenant column, no person, no key",
 	"proof_runs":                     "integration proofs' run summaries, of KIFF's own test tenants only (the ingest refuses any other), with no person and no secret; swept after 60 days (proofs)",
 	"proof_overrides":                "operators' holds and releases of an app's writes; no tenant column, no customer's data; swept after 60 days (proofs)",
+	"signin_counts":                  "code sign-in's rate limits: counts per keyed hash of an address, an IP address or a person, no tenant column, nothing readable; swept after a day (codesignin)",
 }
 
 // cloudMetaRetained are kept, with the reason.

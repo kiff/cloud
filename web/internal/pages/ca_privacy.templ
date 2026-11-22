@@ -111,6 +111,7 @@ templ privacyCategoriesCA() {
 		<ul>
 			<li>
 				<strong>Identificadors del compte</strong> — el vostre subjecte d'autenticació de procedència (emès pel nostre proveïdor d'identitat) i l'adreça electrònica amb què inicieu la sessió. Es guarden literalment avui; està previst el xifratge hash en repòs.
+				Si actives l'inici de sessió amb un codi enviat per correu (està desactivat llevat que l'activis), KIFF desa aquest ajust amb el teu identificador d'inici de sessió i la data del canvi. Un codi que t'enviem per correu només es desa com a hash amb clau, fins que s'usa o passen deu minuts. Per limitar els abusos, desem, fins a un dia, un recompte de sol·licituds per hash amb clau de l'adreça que ho ha demanat i de l'adreça IP. Després d'iniciar la sessió amb un codi, ho anotem durant un quart d'hora, perquè els canvis que necessiten un inici de sessió recent et demanin iniciar la sessió d'una altra manera.
 			</li>
 			<li>
 				<strong>Metadades del tenant</strong> — identificador del tenant, slug, nom visible, marca de temps de creació, i l'idioma que va utilitzar per últim cop l'aplicació de cada persona, perquè els correus que KIFF els envia arribin en aquest idioma.

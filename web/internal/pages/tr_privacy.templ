@@ -111,6 +111,7 @@ templ privacyCategoriesTR() {
 		<ul>
 			<li>
 				<strong>Hesap tanımlayıcıları</strong> — kimlik sağlayıcımız tarafından verilen üst akış kimlik doğrulama öznesi ve giriş yaptığınız e-posta adresi. Bugün olduğu gibi saklanır; saklama anında karma (hash) alınması planlanmaktadır.
+				E-postayla gönderilen kodla oturum açmayı açarsanız (siz açmadıkça kapalıdır), KIFF bu ayarı oturum açma kimliğiniz ve değişiklik tarihiyle birlikte saklar. Size e-postayla gönderdiğimiz kod, kullanılana ya da on dakika geçene kadar yalnızca anahtarlı bir özet olarak saklanır. Kötüye kullanımı sınırlamak için, kodu isteyen adresin ve IP adresinin anahtarlı özeti başına istek sayısını en çok bir gün saklarız. Kodla oturum açtıktan sonra bunu çeyrek saat boyunca not ederiz; böylece yakın zamanda oturum açmayı gerektiren değişiklikler sizden başka bir yolla oturum açmanızı ister.
 			</li>
 			<li>
 				<strong>Kiracı meta verileri</strong> — kiracı kimliği, slug, görünen ad, oluşturma zaman damgası ve her kişinin uygulamasının en son kullandığı dil; böylece KIFF'in onlara gönderdiği e-postalar o dilde gelir.
