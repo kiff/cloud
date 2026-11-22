@@ -157,10 +157,11 @@ var (
 	moreWords = map[string]*Words{}
 )
 
-// emailWordsFor is English with lang's email lines laid over it, when lang has them.
+// emailWordsFor is English with lang's email lines laid over it, when lang has all of them: an entry with a
+// line missing is read as none, so an email is never half in a language and half in English.
 func emailWordsFor(lang Lang) (*Words, bool) {
 	lines, ok := EmailMore[string(lang)]
-	if !ok {
+	if !ok || len(EmailLinesProblems(lines)) > 0 {
 		return nil, false
 	}
 	moreMu.Lock()
@@ -250,4 +251,41 @@ func EmailLanguagesMissing() []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// The language an email is really in. A person's language may be one of the 45 the emails speak, but an email
+// reads in it only as far as its words are written: the page's language, its direction and its footer follow the
+// words, so English is never laid out right to left.
+
+// TextLang is the language of words that are not in the emails' table (a notice a handler words from `Words`): the
+// eight, else English.
+func TextLang(l Lang) Lang {
+	if _, ok := catalogs[l]; ok {
+		return l
+	}
+	return EN
+}
+
+// EmailLangFor is the language of an email whose words are all in the table: the eight, or a language with every
+// line, else English.
+func EmailLangFor(l Lang) Lang {
+	if _, ok := catalogs[l]; ok {
+		return l
+	}
+	if _, ok := emailWordsFor(l); ok {
+		return l
+	}
+	return EN
+}
+
+// AccountEmailLang is the language of the suspended, reactivated and support emails: English, or a language with its
+// account lines (AccountEmails).
+func AccountEmailLang(l Lang) Lang {
+	if l == EN {
+		return EN
+	}
+	if _, ok := AccountEmails[string(l)]; ok {
+		return l
+	}
+	return EN
 }

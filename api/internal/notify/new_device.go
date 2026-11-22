@@ -186,6 +186,7 @@ func newDeviceMail(v newDeviceView, lang words.Lang, site string) mail {
 
 // renderNewDevice returns the subject, text and HTML of a new-device email.
 func renderNewDevice(d NewDevice) (subject, text, html string, err error) {
+	d.Lang = words.EmailLangFor(d.Lang) // the language its words are really in
 	if strings.TrimSpace(d.SessionsURL) == "" || strings.TrimSpace(d.SiteURL) == "" {
 		return "", "", "", fmt.Errorf("notify: a new-device email needs its sessions link and the site")
 	}

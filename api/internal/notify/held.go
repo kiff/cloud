@@ -73,6 +73,24 @@ type heldView struct {
 
 type heldAnswerLink struct{ Label, URL string }
 
+// Private-use marks stand where a sentence takes a part, so the sentence's own words can be escaped
+// before the (already escaped) parts are put in.
+const (
+	markA = "\uE000a\uE000"
+	markB = "\uE000b\uE000"
+	markC = "\uE000c\uE000"
+)
+
+// sentenceHTML is a sentence written with marks, as HTML: its own words escaped (a translation with "<" is text,
+// never markup), then each mark replaced by its part, which the caller has escaped.
+func sentenceHTML(sentence string, parts map[string]string) htmltemplate.HTML {
+	out := htmltemplate.HTMLEscapeString(sentence)
+	for mark, part := range parts {
+		out = strings.ReplaceAll(out, mark, part)
+	}
+	return htmltemplate.HTML(out) //nolint:gosec // the sentence is escaped and every part was escaped by the caller
+}
+
 func newHeldView(h HeldAction) heldView {
 	w := words.Of(h.Lang)
 	v := heldView{HeldAction: h, NothingDone: w.HeldNothingDone, Open: w.HeldOpen, Options: w.HeldOptions,
@@ -86,7 +104,7 @@ func newHeldView(h HeldAction) heldView {
 		// In people's words: who wants to do something outside its Card, then
 		// what, how much and why it is held, as rows.
 		v.Intro = w.HeldWants(h.Agent)
-		v.IntroHTML = htmltemplate.HTML(w.HeldWants("<strong>" + esc(h.Agent) + "</strong>")) //nolint:gosec // every part the agent chose is escaped
+		v.IntroHTML = sentenceHTML(w.HeldWants(markA), map[string]string{markA: "<strong>" + esc(h.Agent) + "</strong>"})
 		v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAction, Value: h.ActionWords})
 		if h.AmountText != "" {
 			v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAmount, Value: h.AmountText})
@@ -100,7 +118,8 @@ func newHeldView(h HeldAction) heldView {
 		v.Outside = nil
 	} else {
 		v.Intro = w.HeldIntro(h.Agent, h.Action, amount)
-		v.IntroHTML = htmltemplate.HTML(w.HeldIntro("<strong>"+esc(h.Agent)+"</strong>", "<strong>"+esc(h.Action)+"</strong>", esc(amount))) //nolint:gosec // every part the agent chose is escaped
+		v.IntroHTML = sentenceHTML(w.HeldIntro(markA, markB, markC), map[string]string{
+			markA: "<strong>" + esc(h.Agent) + "</strong>", markB: "<strong>" + esc(h.Action) + "</strong>", markC: esc(amount)})
 	}
 	if !h.ExpiresAt.IsZero() {
 		// When the hold stops waiting, in the account's zone and named.
@@ -164,6 +183,7 @@ func heldMail(v heldView) mail {
 
 // renderHeld returns the subject, text and HTML of a held-action email.
 func renderHeld(h HeldAction) (subject, text, html string, err error) {
+	h.Lang = words.EmailLangFor(h.Lang) // the language its words are really in
 	if strings.TrimSpace(h.ReviewURL) == "" {
 		return "", "", "", fmt.Errorf("notify: a held action needs its review link")
 	}

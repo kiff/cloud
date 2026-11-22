@@ -41,6 +41,7 @@ type AccountNotice struct {
 }
 
 func renderInvite(inv MemberInvite) (subject, text, htmlBody string) {
+	inv.Lang = words.EmailLangFor(inv.Lang) // the language its words are really in
 	w := words.Of(inv.Lang)
 	// The account's name is whatever its admins chose, so the email quotes
 	// it as theirs and never lets it read as the sender: an account named
@@ -81,6 +82,8 @@ func (r *ResendNotifier) MemberInvited(ctx context.Context, to string, inv Membe
 
 // AccountNotice implements MembershipNotifier.
 func (r *ResendNotifier) AccountNotice(ctx context.Context, to string, n AccountNotice) error {
+	// Its words are the caller's, from Words fields outside the emails' table: the eight, else English.
+	n.Lang = words.TextLang(n.Lang)
 	text, m := n.Body, mail{Lang: n.Lang, Lead: n.Body}
 	if n.URL != "" {
 		text += " " + n.URL
