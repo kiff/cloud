@@ -69,6 +69,7 @@ var googleAppScopes = map[string][]googleScope{
 			"th": "ดู แก้ไข สร้าง และลบสเปรดชีตทั้งหมดของคุณใน Google Sheets",
 			"zh": "檢視、編輯、建立與刪除您在 Google Sheets 中的所有試算表",
 			"ar": "عرض جميع جداول البيانات الخاصة بك في Google Sheets وتحريرها وإنشائها وحذفها",
+			"sr": "pregled, uređivanje, pravljenje i brisanje svih vaših tabela u Google Sheets",
 		}},
 	},
 	"Google Calendar": {
@@ -100,6 +101,7 @@ var googleAppScopes = map[string][]googleScope{
 			"th": "ดูเหตุการณ์ในปฏิทินของคุณ",
 			"zh": "檢視您行事曆上的事件",
 			"ar": "عرض الأحداث على تقويماتك",
+			"sr": "pregled događaja u vašim kalendarima",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -129,6 +131,7 @@ var googleAppScopes = map[string][]googleScope{
 			"th": "ดูและแก้ไขเหตุการณ์ในปฏิทินของคุณ",
 			"zh": "檢視與編輯您行事曆上的事件",
 			"ar": "عرض الأحداث على تقويماتك وتحريرها",
+			"sr": "pregled i uređivanje događaja u vašim kalendarima",
 		}},
 	},
 }
