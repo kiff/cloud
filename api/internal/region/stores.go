@@ -45,6 +45,9 @@ var StoreCountries = map[string][]string{
 		// Laos. Play doesn't offer Brunei.
 		"AE", "QA", "KW", "BH", "OM", "JO", "IQ", "TW", "BA", "NI",
 		"MN", "NP", "KH", "LA",
+		// Batch 6 (owner's yes, 22 Nov 2026): Sri Lanka, Tajikistan and the
+		// Maldives. Play doesn't offer Bhutan.
+		"LK", "TJ", "MV",
 	},
 	// The App Store, iOS and macOS, 21 Nov 2026: the EU, Iceland, Norway,
 	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
@@ -73,5 +76,8 @@ var StoreCountries = map[string][]string{
 		// Brunei (App Store only).
 		"AE", "QA", "KW", "BH", "OM", "JO", "IQ", "TW", "BA", "NI",
 		"MN", "NP", "KH", "LA", "BN",
+		// Batch 6 (owner's yes, 22 Nov 2026): the same 3 as Google Play, plus
+		// Bhutan (App Store only).
+		"LK", "TJ", "MV", "BT",
 	},
 }
