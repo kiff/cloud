@@ -7,7 +7,7 @@ import (
 
 // The tafs Chrome extension claims its view-only KIFF device (POST
 // /v1/pair/claim) from its service worker, with no host permission for
-// api.kiff.dev (kiff/tafs docs/chrome.md: none is asked at install), so Chrome
+// api.kiff.dev (none is asked at install), so Chrome
 // sends it as a CORS request, a preflight first. The claim carries no cookie
 // and no bearer: it's proved by the device key's signature over the pairing's
 // nonce, which the phone approved. So a browser is let read its answer from
