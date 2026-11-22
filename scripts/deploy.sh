@@ -333,6 +333,8 @@ KIFF_GOOGLE_TEST_TENANTS="${KIFF_GOOGLE_TEST_TENANTS:-}"
 # Signing in inside the tafs apps (API and web): "on", or "test" for KIFF_APP_SIGNIN_TENANTS only
 # (comma-separated tenants; empty refuses everyone). Empty or anything else is off.
 KIFF_APP_SIGNIN="${KIFF_APP_SIGNIN:-}"
+# Signing in with a code sent by email, on the web: "on", else off (the API needs signin_code_key too).
+KIFF_SIGNIN_CODE="${KIFF_SIGNIN_CODE:-}"
 KIFF_APP_SIGNIN_TENANTS="${KIFF_APP_SIGNIN_TENANTS:-}"
 
 # ─── the box, its database and the secrets it reads ─────────────
@@ -552,6 +554,7 @@ KIFF_GOOGLE_PUSH_AUDIENCE="${KIFF_GOOGLE_PUSH_AUDIENCE}"
 KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT="${KIFF_GOOGLE_PUSH_SERVICE_ACCOUNT}"
 KIFF_GOOGLE_TEST_TENANTS="${KIFF_GOOGLE_TEST_TENANTS}"
 KIFF_APP_SIGNIN="${KIFF_APP_SIGNIN}"
+KIFF_SIGNIN_CODE="${KIFF_SIGNIN_CODE}"
 KIFF_APP_SIGNIN_TENANTS="${KIFF_APP_SIGNIN_TENANTS}"
 AWS_REGION="${AWS_REGION}"
 
@@ -838,6 +841,7 @@ KIFF_APPS_PROVED=\${KIFF_APPS_PROVED}
 KIFF_DESKTOP_RELEASES=\${KIFF_DESKTOP_RELEASES}
 KIFF_DESKTOP_NOT_AVAILABLE=\${KIFF_DESKTOP_NOT_AVAILABLE}
 KIFF_APP_SIGNIN=\${KIFF_APP_SIGNIN}
+KIFF_SIGNIN_CODE=\${KIFF_SIGNIN_CODE}
 KIFF_REGION_TABLE=/opt/kiff/geo/country.csv.gz
 WEB_ENV
 chmod 0640 /etc/kiff/web.env
