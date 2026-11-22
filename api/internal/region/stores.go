@@ -40,6 +40,11 @@ var StoreCountries = map[string][]string{
 		// Wave 2, the owner's five (22 Nov 2026): the 3 Play offers. Play
 		// doesn't offer Barbados or Lesotho.
 		"SV", "CM", "SM",
+		// Wave 3 (owner's yes, 22 Nov 2026): the Gulf, Jordan, Iraq, Taiwan,
+		// Bosnia and Nicaragua, then batch 5's Mongolia, Nepal, Cambodia and
+		// Laos. Play doesn't offer Brunei.
+		"AE", "QA", "KW", "BH", "OM", "JO", "IQ", "TW", "BA", "NI",
+		"MN", "NP", "KH", "LA",
 	},
 	// The App Store, iOS and macOS, 21 Nov 2026: the EU, Iceland, Norway,
 	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
@@ -64,5 +69,9 @@ var StoreCountries = map[string][]string{
 		// Wave 2, the owner's five (22 Nov 2026): the 3 with a storefront.
 		// None in San Marino or Lesotho.
 		"SV", "CM", "BB",
+		// Wave 3 (owner's yes, 22 Nov 2026): the same 14 as Google Play, plus
+		// Brunei (App Store only).
+		"AE", "QA", "KW", "BH", "OM", "JO", "IQ", "TW", "BA", "NI",
+		"MN", "NP", "KH", "LA", "BN",
 	},
 }
