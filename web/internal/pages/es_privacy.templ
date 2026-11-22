@@ -154,6 +154,7 @@ templ privacyCategoriesES() {
 				proveedor de identidad) y la dirección de correo con la
 				que inicias sesión. Hoy se almacenan tal cual; está
 				previsto guardarlos como hash en reposo.
+				Si activas el inicio de sesión con un código enviado por correo (está desactivado salvo que lo actives), KIFF guarda ese ajuste con tu identificador de inicio de sesión y la fecha del cambio. Un código que te enviamos por correo se guarda solo como un hash con clave, hasta que se use o pasen diez minutos. Para limitar los abusos, guardamos, hasta un día, un recuento de solicitudes por hash con clave de la dirección que las hizo y de la dirección IP. Después de iniciar sesión con un código, lo anotamos durante un cuarto de hora, para que los cambios que necesitan un inicio de sesión reciente te pidan iniciar sesión de otra forma.
 			</li>
 			<li>
 				<strong>Metadatos del inquilino</strong>: el
