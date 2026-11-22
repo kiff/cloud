@@ -1,0 +1,406 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// PrivacyID is KIFF's privacy policy (/privacy) in Indonesian, at /id/privacy.
+// It is a translation of Privacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Indonesian has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ PrivacyID() {
+	@components.LayoutSite("KIFF — privacy policy", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@privacyHeadID()
+			@privacyWhoWeAreID()
+			@privacyScopeID()
+			@privacyRolesID()
+			@privacyCategoriesID()
+			@privacyLawfulBasesID()
+			@privacySubprocessorsID()
+			@privacyTransfersID()
+			@privacyRetentionID()
+			@privacyRightsID()
+			@privacyCookiesID()
+			@privacySecurityID()
+			@privacyChildrenID()
+			@privacyAutomatedID()
+			@privacyChangesID()
+			@privacyContactID()
+		</article>
+	}
+}
+
+templ privacyHeadID() {
+	<header class="legal-head">
+		<p class="legal-badge">Kebijakan privasi · v0.1</p>
+		<h1>Kebijakan Privasi</h1>
+		<p class="legal-meta">
+			<strong>Terakhir diperbarui:</strong> 21 November 2026. <strong>Berlaku sejak:</strong> 24 Mei 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Kebijakan ini menjelaskan cara KIFF Cloud memproses data pribadi di seluruh situs web, dasbor, API, dan aplikasi tafs untuk iPhone, iPad, Android, dan komputer. Pertanyaan: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ privacyWhoWeAreID() {
+	<section id="who-we-are">
+		<h2>1. Siapa kami</h2>
+		<p>
+			KIFF Cloud dioperasikan oleh <strong>Kiff Agents OÜ</strong>, perseroan terbatas swasta yang didirikan di Estonia. Informasi registri:
+		</p>
+		<ul>
+			<li><strong>Kode registri:</strong> 17372313 (Register Bisnis Elektronik Estonia)</li>
+			<li><strong>Nomor PPN:</strong> EE102924327</li>
+			<li><strong>Alamat terdaftar:</strong> Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia</li>
+			<li><strong>Kontak privasi:</strong> <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a></li>
+			<li><strong>Pemberitahuan hukum formal:</strong> <a href="mailto:legal@kiff.dev">legal@kiff.dev</a></li>
+		</ul>
+		<p>
+			Karena Kiff Agents OÜ berkedudukan di Uni Eropa, Peraturan Perlindungan Data Umum Uni Eropa (<abbr title="Peraturan Perlindungan Data Umum">GDPR</abbr>) berlaku langsung untuk pemrosesan kami. Kami tidak memerlukan Perwakilan UE berdasarkan Pasal 27.
+		</p>
+	</section>
+}
+
+templ privacyScopeID() {
+	<section id="scope">
+		<h2>2. Cakupan kebijakan ini</h2>
+		<p>
+			Kebijakan ini mencakup data pribadi yang kami proses saat Anda berinteraksi dengan:
+		</p>
+		<ul>
+			<li><a href="https://kiff.dev"><code>kiff.dev</code></a> — situs pemasaran kami, halaman kebijakan ini, dan permukaan penampil tanda terima publik.</li>
+			<li><a href="https://app.kiff.dev"><code>app.kiff.dev</code></a> — dasbor kami yang terautentikasi.</li>
+			<li><a href="https://api.kiff.dev"><code>api.kiff.dev</code></a> — API HTTP kami.</li>
+			<li id="tafs"><strong>tafs</strong> — aplikasi kami untuk iPhone, iPad, Android, dan komputer (Mac, Windows, dan Linux), serta layanan di baliknya (termasuk Setup, yang menghubungkan alat sebuah perusahaan, dan planque, yang menyimpan koneksi itu), tempat sebuah perusahaan menyerahkan pekerjaan kepada agen AI yang bekerja di dalam KIFF Card.</li>
+		</ul>
+		<p>
+			Kebijakan ini <em>tidak</em> mencakup kerangka kerja sumber terbuka <code>kiff/kiff</code> yang dapat Anda jalankan sendiri. Saat Anda menjalankan kerangka kerja itu di infrastruktur Anda sendiri, Anda adalah pengendali data apa pun yang diprosesnya, dan Kiff Agents OÜ tidak terlibat dalam pemrosesan itu.
+		</p>
+	</section>
+}
+
+templ privacyRolesID() {
+	<section id="roles">
+		<h2>3. Peran kami berdasarkan GDPR</h2>
+		<p>
+			Kami bertindak dalam dua kapasitas tergantung datanya:
+		</p>
+		<ul>
+			<li>
+				<strong>Pengendali data</strong> untuk metadata akun dan login, data penagihan (saat penagihan aktif), komunikasi pemasaran yang Anda setujui, dan telemetri operasional layanan kami sendiri.
+			</li>
+			<li>
+				<strong>Prosesor data</strong> untuk data audit, catatan tindakan, tanda terima keputusan, dan konten lain yang mengalir melalui runtime atas nama pelanggan kami, dan untuk apa yang disimpan tafs bagi mereka (proses, percakapan, laporan, catatan memori setiap taf dan berkas yang diserahkannya). Pelanggan (para tenant) adalah pengendali data itu; mereka menginstruksikan kami melalui pengaturan akun dan konfigurasi domain. Perjanjian Pemrosesan Data (<abbr title="Perjanjian Pemrosesan Data">DPA</abbr>) mengatur hubungan itu; lihat <a href="/legal/dpa">templat DPA</a> (dalam bahasa Inggris) untuk ketentuan yang dipublikasikan.
+			</li>
+		</ul>
+		<p>
+			Kebijakan ini terutama membahas pemrosesan kami sebagai pengendali. Di tempat kami menyebut data sisi prosesor, DPA adalah dokumen yang lebih spesifik.
+		</p>
+	</section>
+}
+
+templ privacyCategoriesID() {
+	<section id="categories">
+		<h2>4. Kategori data pribadi yang kami proses</h2>
+		<p>
+			Kategori di bawah ini selaras dengan inventaris teknis di <a href="/security#data-we-process">/security#data-we-process</a> (dalam bahasa Inggris). Jika keduanya berbeda, halaman teknis adalah sumber kebenaran dan kami memperbarui bagian ini agar sesuai.
+		</p>
+		<ul>
+			<li>
+				<strong>Pengenal akun</strong> — subjek autentikasi hulu Anda (diterbitkan oleh penyedia identitas kami) dan alamat email yang Anda pakai untuk masuk. Saat ini disimpan apa adanya; hashing saat disimpan direncanakan.
+			</li>
+			<li>
+				<strong>Metadata tenant</strong> — ID tenant, slug, nama tampilan, cap waktu pembuatan, dan bahasa yang terakhir dipakai aplikasi tiap orang, agar email yang dikirim KIFF kepada mereka datang dalam bahasa itu.
+			</li>
+			<li>
+				<strong>Kredensial API</strong> — catatan kunci API yang buram (kami menyimpan hash, tidak pernah teks biasa).
+			</li>
+			<li>
+				<strong>Data cookie sesi</strong> — cookie sesi bertanda tangan HMAC yang ditetapkan setelah masuk. Lihat bagian cookie di bawah.
+			</li>
+			<li>
+				<strong>Metadata permintaan HTTP</strong> — alamat IP, user agent, path permintaan, status respons, latensi. Disimpan di log akses reverse proxy kami selama jangka retensi terbatas untuk keamanan dan pencegahan penyalahgunaan.
+			</li>
+			<li>
+				<strong>Konten yang dikendalikan tenant</strong> — data <code>parameters</code>, <code>actor</code>, dan <code>entity</code> yang Anda kirim ke runtime. Kami menyimpannya <em>sebagai prosesor</em> atas nama pelanggan; pelanggan bertanggung jawab atas apa yang sampai ke jaringan. Konfigurasi redaksi per domain direncanakan.
+			</li>
+			<li>
+				<strong>Komunikasi</strong> — email yang Anda kirim ke kotak surat dukungan, penjualan, keamanan, atau privasi kami.
+			</li>
+			<li>
+				<strong>Aplikasi tafs</strong> — Anda masuk ke tafs dengan akun KIFF Anda. Di ponsel atau tablet, aplikasi menyimpan sesi Anda di Keychain perangkat (di Android, penyimpanan terenkripsinya). Di komputer, sesi disimpan tersegel untuk akun pengguna Anda: di PC Windows dengan perlindungan data bawaan Windows, di Linux di keyring Anda, di Mac di Keychain-nya. Sesi sebuah komputer berlangsung hingga 90 hari. aplikasi membuat kunci penandatanganan yang tidak pernah meninggalkan perangkat: di Secure Enclave iPhone, iPad, atau Mac, di Keystore perangkat Android, atau di TPM PC Windows. Di Linux, dan di Mac tanpa Secure Enclave, kuncinya adalah kunci perangkat lunak yang disimpan di keyring atau Keychain Anda, dan komputer itu dapat menunjukkan apa yang menunggu Anda tetapi tidak dapat menyetujuinya; Anda menyetujui di ponsel Anda{ macSecurityKey("id") }. PC Windows tanpa TPM tidak dapat masuk ke tafs. KIFF menyimpan separuh publik kunci itu, nama dan platform perangkat, serta kapan perangkat ditambahkan dan terakhir dipakai, agar dapat memeriksa jawaban Anda atas panggilan yang ditahan dan persetujuan Anda atas koneksi. Jika Anda menyetujui dengan passkey di komputer, seperti Windows Hello atau kunci keamanan, wajah, sidik jari, atau PIN Anda tetap berada di sistem komputer itu sendiri; KIFF menyimpan kunci publik passkey, ID-nya, sebuah penghitung, dan sebuah nama, tidak pernah sesuatu yang rahasia, dan menolak passkey yang disinkronkan ke perangkat lain. Jika Anda menyalakan notifikasi di ponsel, tablet, atau Mac yang menjalankan aplikasi iPad, kami menyimpan token push perangkat bersama ID orang KIFF Anda, dan bahasa yang ditampilkan aplikasi, agar notifikasinya datang dalam bahasa itu. Layanan tafs juga menyimpan bahasa akun, dari siapa pun yang terakhir bercakap dengan Coach, hingga tiga bulan, agar laporan sebuah taf datang dalam bahasa itu. Notifikasi ponsel melewati Apple atau Google hanya dengan taf mana dan apa yang diinginkannya, dan dalam notifikasi sebuah pintu, nama atau alamat email orang yang menulis: tidak pernah jumlah uang atau rincian sebuah permintaan. Aplikasi menambahkan hal-hal itu di perangkat itu sendiri, dari KIFF, sehingga notifikasi ponsel yang tidak terkunci dapat menampilkan jumlah uang, pedagang, atau orang. Di ponsel Android yang terkunci, ia hanya menampilkan “Sebuah taf membutuhkan Anda”, dan di iPhone yang terkunci juga begitu, kecuali Anda mengatur pratinjaunya agar selalu tampil.  <strong>Jam tangan Anda:</strong> jam tangan tidak menyimpan kata sandi atau kunci, hanya berkomunikasi dengan ponsel yang dipasangkan, dan tidak pernah menyetujui. Jam tangan mengirim apa yang Anda ucapkan ke Coach, atau ke taf yang Anda pilih, hanya sebagai teks, melalui ponsel, setelah Anda mengizinkan AI. Layanan ucapan milik jam tangan itu sendiri, milik Apple atau Google, mengubah kata-kata Anda menjadi teks itu. Di Wear OS, jika berhenti sebelum Anda selesai, pengenal suara ponsel Anda sendiri yang melakukannya, di ponsel. Jam tangan hanya dapat menolak, menghentikan, atau mengirim ke Coach atau sebuah taf selama memiliki kunci layar atau kode sandi dan sedang terbuka. Apa yang Anda kirim ke sebuah taf masuk ke percakapan taf itu sendiri, seolah-olah Anda menulisnya di ponsel. Percakapan sebuah taf, termasuk jumlah uang, tampil di jam tangan hanya selama terbuka, dibaca melalui ponsel setiap kali; jam tangan tidak menyimpannya sedikit pun. <strong>Apple Watch:</strong> menampilkan taf Anda dan halamannya tanpa menyimpannya. Ia hanya menyimpan Kotak Masuk Anda, dalam berkas yang tidak dapat dibacanya saat terkunci: setiap panggilan yang ditahan berupa nama taf-nya dan apa yang diminta, tidak pernah jumlah uang, dan balasan Coach atas apa yang Anda kirim dari jam tangan, sebagai teks. Jika Anda keluar di jam tangan, ia juga menyimpan bahwa Anda melakukannya, sampai Anda masuk lagi di jam tangan. Selain itu, ia tidak menyimpan apa pun kecuali jam tangan memiliki kode sandi. Kotak Masuk hilang saat Anda keluar di jam tangan atau iPhone Anda keluar, atau saat aplikasi berikutnya dibuka atau ditutup tanpa kode sandi. Ia tidak membuat rekaman, dan satu-satunya notifikasi yang ditampilkannya adalah milik iPhone Anda. <strong>Wear OS:</strong> menampilkan email akun Anda dan kalender hari ini tanpa menyimpannya. Agar terbuka seketika, ia menyimpan, terenkripsi, jumlah hal yang menunggu Anda, serta nama setiap taf dan apakah dihentikan atau dijeda: tidak pernah jumlah uang, rincian panggilan yang ditahan, atau percakapan sebuah taf. Itu dihapus saat Anda keluar, saat jam tangan terkunci atau dilepas dari pergelangan tangan, dan setelah 24 jam. Ia menyimpan Kotak Masuk Anda, yang setiap barisnya adalah nama sebuah taf dan apa yang dikatakannya, tidak pernah jumlah uang, dan satu pesan yang disimpan untuk nanti, sebagai teks. Keluar, di jam tangan atau di ponsel, menghapus semuanya. Untuk ubinnya (tile), ia juga menyimpan jumlah hal yang menunggu Anda, ditampilkan hanya saat jam tangan terbuka, dan dihapus saat Anda keluar, atau saat ubin berikutnya tampil ketika jam tangan terkunci atau tidak punya kunci layar. Setelah Anda keluar di jam tangan, ia menyimpan catatan bahwa Anda melakukannya, sampai Anda masuk lagi. Kotak Masuk juga hilang saat aplikasi berikutnya dibuka atau ditutup ketika jam tangan terkunci atau tidak punya kunci layar. Pesan yang disimpan untuk nanti tetap ada sampai Anda mengirim atau menghapusnya, karena Anda memintanya dikirim. Jika layanan ucapan jam tangan berhenti sebelum Anda selesai, jam tangan mengirim rekaman ke ponsel Anda, yang mengubahnya menjadi teks di ponsel itu sendiri, tidak pernah di server. Rekaman dihapus di keduanya, setelah teks kembali atau Anda membatalkan, dan paling lama setelah 2 menit. Hanya teksnya yang diteruskan ke Coach atau taf Anda. Hasil sebuah taf dapat tetap ada di notifikasi jam tangan sampai Anda menutupnya atau keluar di jam tangan. Di PC Windows, komputer Linux, atau Mac dengan aplikasi macOS 12, notifikasi dibuat oleh aplikasi itu sendiri selama berjalan, tanpa token push dan tanpa melalui perusahaan lain. Di Windows dan Linux notifikasi menampilkan taf mana, apa yang ingin dilakukannya, jumlahnya, alasannya, dan sampai kapan; di aplikasi macOS 12 notifikasi menampilkan kata-kata KIFF untuk panggilan itu, setelah Anda menyalakannya, dan layar terkunci menampilkan apa yang diizinkan pengaturan pratinjau Mac. Di Windows notifikasi mati sampai Anda menyalakannya, dan hanya menampilkan “Sebuah taf membutuhkan Anda” saat layar terkunci. Notifikasi yang tampil sebelum layar terkunci menyimpan rinciannya di daftar notifikasi Windows. Di Linux notifikasi menyala sampai Anda mematikannya, dan apa yang ditampilkan layar terkunci bergantung pada desktop Anda. saat Anda menghubungkan sebuah alat, Anda masuk di penyedia alat itu sendiri. Untuk aplikasi yang dimasuki planque sendiri, seperti Stripe, atau kunci yang Anda berikan, planque menyimpan token atau kunci itu untuk perusahaan Anda, terenkripsi. Untuk koneksi terkelola, Composio, layanan koneksi yang bekerja sama dengan planque, menyimpan login, dan planque hanya menyimpan catatan koneksi dan alat yang Anda setujui (semuanya sebagai prosesor, lihat di bawah). Catatan sebuah koneksi dapat memuat akun yang dimasukinya (nama atau emailnya), agar aplikasi dapat menunjukkan akun yang mana. KIFF menggunakan koneksi terkelola hanya untuk aplikasi yang disebut di <a href="/subprocessors#composio">/subprocessors</a> (dalam bahasa Inggris). Aplikasi tidak memiliki pelacak analitik atau iklan.
+			</li>
+			<li>
+				<strong>Pembelian App Store</strong> — saat Anda membeli Solo atau paket kredit di tafs, Apple menjualnya kepada Anda: Apple adalah penjual resmi, menerima pembayaran, dan menyimpan rincian pembayaran Anda. Apple memberi tahu kami apa yang dibeli, untuk akun KIFF mana (ID acak yang dilekatkan aplikasi pada pembelian), kapan, ID transaksi Apple, dan untuk Solo kapan periode berakhir atau diperpanjang. Kami memakainya untuk menambahkan kredit atau paket ke akun Anda. Apple tidak memberi kami Apple ID, nama, alamat email, atau kartu Anda.
+			</li>
+			<li>
+				<strong>Pembelian Google Play</strong> — di Android, pembelian yang sama melalui penagihan Google Play: Google menerima pembayaran dan menyimpan rincian pembayaran Anda. Google memberi tahu kami apa yang dibeli, untuk akun KIFF mana (ID acak yang sama), kapan, token dan ID pesanan pembelian, dan untuk Solo kapan periode berakhir atau diperpanjang, dan kami memakainya dengan cara yang sama. Google tidak memberi kami akun Google, nama, alamat email, atau kartu Anda.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyLawfulBasesID() {
+	<section id="lawful-bases">
+		<h2>5. Dasar hukum pemrosesan</h2>
+		<p>
+			Berdasarkan Pasal 6 GDPR, kami mengandalkan dasar hukum berikut:
+		</p>
+		<ul>
+			<li>
+				<strong>Pelaksanaan kontrak</strong> (Pasal 6(1)(b)) — untuk pembuatan akun, autentikasi, menjalankan runtime atas nama Anda, penagihan (saat aktif), dan permukaan layanan inti.
+			</li>
+			<li>
+				<strong>Kepentingan yang sah</strong> (Pasal 6(1)(f)) — untuk keamanan, pencegahan penipuan, deteksi penyalahgunaan, telemetri operasional, dan melindungi layanan. Kami menimbang kepentingan kami terhadap hak Anda dan akan memberi tahu atas permintaan apa hasil uji penimbangan itu.
+			</li>
+			<li>
+				<strong>Persetujuan</strong> (Pasal 6(1)(a)) — untuk AI di aplikasi tafs: apa yang dikirim ke model AI yang menjalankan Coach dan taf Anda, sebagaimana dijelaskan <a href="#ai-in-tafs">di bawah</a>. Tidak ada yang dikirim sampai Anda mengizinkan, dan Anda dapat menarik izin di Akun. Persetujuan juga yang akan kami minta sebelum cookie analitik apa pun, komunikasi pemasaran opsional, atau pemrosesan baru yang secara material memperluas pemakaian data Anda. Kami tidak menjalankan analitik, iklan, atau pelacakan non-esensial.
+			</li>
+			<li>
+				<strong>Kewajiban hukum</strong> (Pasal 6(1)(c)) — untuk catatan pajak (Undang-Undang Akuntansi Estonia §12, 7 tahun), tanggapan atas permintaan otoritas yang sah, dan retensi yang diwajibkan aturan anti pencucian uang jika berlaku.
+			</li>
+		</ul>
+		<h3 id="ai-in-tafs">AI di aplikasi tafs</h3>
+		<p>Aplikasi tafs bertanya kepada Anda sebelum apa pun dikirim ke AI, dengan kata-kata ini:</p>
+		<ul>
+			<li>tafs menggunakan AI Claude milik Anthropic untuk Coach dan taf Anda.</li>
+			<li>Coach dan taf Anda adalah agen AI: apa yang mereka tulis dihasilkan oleh AI dan bisa keliru. Pesan yang dikirim sebuah taf ke luar perusahaan Anda menyatakan bahwa itu ditulis oleh agen AI.</li>
+			<li>Yang dikirim ke sana: apa yang Anda tulis kepada Coach dan taf Anda, berkas yang Anda lampirkan, apa yang dikembalikan aplikasi yang Anda hubungkan kepada sebuah taf saat bekerja, dan apa yang ada di layar Anda saat Coach membantu Anda di aplikasi.</li>
+			<li>Yang tidak pernah dikirim: kata sandi dan kunci yang dipakai aplikasi yang Anda hubungkan, atau sidik jari Anda.</li>
+			<li>Anthropic menggunakannya untuk menjawab dan menyimpannya hingga 30 hari.</li>
+			<li>Tidak ada yang dikirim sampai Anda mengizinkan. Anda dapat menarik izin di Akun.</li>
+		</ul>
+		<p>Sebuah taf yang berjalan tanpa siapa pun di tempat saat itu (sesuai jadwalnya, atau saat sesuatu masuk) bertumpu pada persetujuan orang yang membuatnya atau mengambil alihnya, atau jika tidak, orang pertama yang mengelola taf akun itu dan mengizinkannya.</p>
+		<p><strong>Saat Anda menarik izin,</strong> Coach dan taf Anda berhenti menjawab Anda. Sebuah taf yang prosesnya bertumpu pada persetujuan Anda dijeda: jadwalnya berhenti, dan apa yang masuk menunggu. Ia berlanjut setelah persetujuan diberikan lagi, atau seseorang yang mengelola taf akun itu mengambil alihnya dengan persetujuannya sendiri. Menarik izin tidak mengubah apa yang dikirim sebelumnya.</p>
+		<p>Anthropic tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris), dengan tempat ia memproses dan kapan ia dapat menyimpan data lebih lama.</p>
+	</section>
+}
+
+templ privacySubprocessorsID() {
+	<section id="sub-processors">
+		<h2>6. Sub-prosesor</h2>
+		<p>Kami tidak menjual data pribadi Anda, dan tidak membagikannya untuk periklanan.</p>
+		<p>
+			Kami melibatkan sekumpulan kecil vendor untuk menyampaikan layanan. Daftar resmi terkini ada di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris); halaman itu diperbarui dalam 30 hari setelah perubahan apa pun. Kami mewajibkan setiap sub-prosesor memberikan perlindungan yang setara dengan milik kami melalui perjanjian tertulis, termasuk Klausul Kontrak Standar UE jika data pribadi meninggalkan UE.
+		</p>
+		<p>
+			Penambahan atau penggantian sub-prosesor yang material dan memengaruhi data pribadi diberitahukan kepada pelanggan aktif sebelumnya, dengan hak untuk keberatan.
+		</p>
+	</section>
+}
+
+templ privacyTransfersID() {
+	<section id="transfers">
+		<h2>7. Transfer internasional</h2>
+		<p>
+			Sebagian sub-prosesor kami berkedudukan di luar Wilayah Ekonomi Eropa, terutama di Amerika Serikat. Untuk setiap transfer semacam itu kami mengandalkan setidaknya satu dari perlindungan berikut:
+		</p>
+		<ul>
+			<li>
+				<strong>Kerangka Privasi Data UE–AS</strong> — untuk sub-prosesor AS yang tersertifikasi pada Kerangka itu. Keputusan kecukupan berlaku sejak pertengahan 2023; kami memantau setiap perubahan statusnya.
+			</li>
+			<li>
+				<strong>Klausul Kontrak Standar</strong> — modul 2 (pengendali ke prosesor) untuk sub-prosesor langsung kami dan modul 3 (prosesor ke sub-prosesor) jika berlaku prosesor berantai. Kami memakai SCC 2021 yang disetujui Komisi.
+			</li>
+			<li>
+				<strong>Langkah tambahan</strong> — jika penilaian risiko menunjukkan perlunya perlindungan tambahan (enkripsi saat transit dan saat disimpan, pencatatan akses, minimisasi data).
+			</li>
+		</ul>
+		<p>
+			Anda dapat meminta instrumen transfer tertentu yang berlaku untuk sub-prosesor tertentu dengan mengirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href="/privacy/countries">Negara Anda</a> (dalam bahasa Inggris).</p>
+	</section>
+}
+
+templ privacyRetentionID() {
+	<section id="retention">
+		<h2>8. Retensi</h2>
+		<p>
+			Kami menyimpan data pribadi selama periode terpendek yang sesuai dengan tujuan kami memprosesnya dan kewajiban hukum yang berlaku.
+		</p>
+		<ul>
+			<li>
+				<strong>Metadata akun dan login</strong> — sampai akun dihapus. Di aplikasi tafs, pemilik menghapusnya di Akun → <em>Hapus akun</em>. Akun yang dibuat di web dihapus dengan mengirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>, dalam jangka satu bulan menurut Pasal 12(3) GDPR. Bagaimanapun, kunci akun berhenti seketika. Jika dihapus di aplikasi tafs, tidak dapat dibatalkan: percakapan, catatan, dan koneksi tafs-nya dihapus seketika, dan apa yang disimpan KIFF dihapus dalam 30 hari. Jika dihapus di web, kami menyimpan datanya selama masa tenggang 30 hari, kalau-kalau pemilik ingin mendapatkannya kembali, lalu menghapusnya.
+			</li>
+			<li>
+				<strong>Catatan kunci API</strong> — sampai akun dihapus, termasuk setelah sebuah kunci dicabut. Kunci yang termasuk koneksi login agen dihapus bersama koneksi itu, 30 hari setelah koneksi berakhir.
+			</li>
+			<li>
+				<strong>Cookie sesi</strong> — sampai kedaluwarsa (24 jam secara default) atau sampai Anda keluar.
+			</li>
+			<li>
+				<strong>Log akses reverse-proxy</strong> — hingga 90 hari, lalu diagregasi atau dihapus.
+			</li>
+			<li>
+				<strong>Log layanan</strong> — apa yang dicatat layanan KIFF dan planque saat berjalan: galat, dan permintaan, yang dapat menyebut sebuah akun, seseorang, atau sebuah agen. 30 hari, lalu dihapus.
+			</li>
+			<li>
+				<strong>Cadangan</strong> — basis data KIFF dicadangkan setiap hari, terenkripsi, dan setiap cadangan disimpan 7 hari, sehingga catatan yang dihapus hilang dari cadangan dalam 7 hari. Penyimpanan tafs dan planque menyimpan salinan titik-waktu terenkripsi selama 35 hari, hanya dipakai untuk memulihkan penyimpanan setelah kegagalan, sehingga catatan yang dihapus hilang dari sana dalam 35 hari.
+			</li>
+			<li>
+				<strong>Data audit tenant</strong> — disimpan sebagai prosesor sesuai konfigurasi tenant pelanggan. Default: disimpan selama masa hidup tenant; dihapus saat tenant dihapus. Lihat <a href="/security#deletion">/security#deletion</a> (dalam bahasa Inggris).
+			</li>
+			<li>
+				<strong>Panggilan melalui gateway KIFF</strong> — argumen sebuah panggilan sampai dikirim, ditolak, atau gagal, lalu dihapus; hasil alat selama 24 jam, lalu dihapus. Catatan keputusan dan hash argumen disimpan sebagai data audit tenant. Lihat <a href="/security#data-kept">/security#data-kept</a> (dalam bahasa Inggris).
+			</li>
+			<li>
+				<strong>Penggunaan</strong> — untuk setiap panggilan melalui gateway, setelah selesai: agen mana yang membuatnya, alatnya, dan apakah dihitung sebagai tindakan atau gratis (dan mengapa). Untuk setiap proses sebuah taf atau Coach, setelah selesai: taf-nya, kapan, kredit yang dipakai AI-nya, dan apakah dihitung atau mengapa tidak. Sampai akun dihapus; apa yang dilaporkan ke pemroses pembayaran kami untuk penagihan disimpan bersama catatan penagihan.
+			</li>
+			<li>
+				<strong>Koneksi login agen</strong> — agen mana, nama aplikasi, siapa yang mengizinkan, kapan, dan pemakaian terakhirnya: selama koneksi aktif, lalu 30 hari setelah berakhir (tetap terdaftar di dasbor selama waktu itu), lalu dihapus bersama token dan kunci API-nya. Semuanya dihapus bersama akun.
+			</li>
+			<li>
+				<strong>tafs</strong> — token push sebuah perangkat sampai Anda keluar dari aplikasi, menghapus perangkat, atau Apple atau Google melaporkan token itu hilang. Kunci publik, nama, platform, dan tanggal sebuah perangkat selama Anda memakainya; setelah Anda mengeluarkannya, ia ditandai dihapus dan disimpan sampai akun dihapus, agar KIFF dapat menolak jawaban terlambat darinya dan menunjukkan perangkat mana yang menandatangani jawaban sebelumnya. Kunci publik, ID, dan nama sebuah passkey disimpan seperti milik perangkatnya. Sebuah komputer menyimpan sesinya hingga 90 hari, atau sampai Anda keluar. Apa yang disimpan tafs untuk perusahaan Anda disimpan sebagai prosesor: proses dan percakapan sebuah taf, dengan ringkasan percakapan (dan milik Setup), selama 30 hari, apa yang dikembalikan alat Anda hanya sampai sebuah proses berakhir (dalam percakapan, apa yang hanya dibaca disimpan terenkripsi untuk pesan berikutnya, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari), dan catatan memorinya sampai taf dihapus; berkas yang diserahkannya 30 hari sejak proses yang membuatnya, lalu dihapus otomatis dalam satu hari, atau lebih cepat jika seseorang di akun Anda menghapusnya; token atau kunci sebuah koneksi di planque, atau login koneksi terkelola di Composio, sampai Anda memutusnya (jika koneksi Anda yang lain boleh memakai akun yang sama di vendor itu, disimpan tidak dipakai sampai koneksi itu juga diputus), dan catatan persetujuannya sampai akun berakhir; lihat <a href="/legal/dpa#annex-4">Lampiran 4 DPA</a> (dalam bahasa Inggris).
+			</li>
+			<li>
+				<strong>Catatan penagihan</strong> — 7 tahun sejak akhir tahun keuangan (Undang-Undang Akuntansi Estonia §12).
+			</li>
+			<li>
+				<strong>Pembelian App Store dan Google Play</strong> — apa yang diberitahukan Apple atau Google kepada kami tentang setiap pembelian tetap berada di akun Anda sampai akun dihapus. Laporan penjualan dan pembayaran mereka, yang kami simpan sebagai catatan penagihan selama 7 tahun, tidak menyebut nama Anda.
+			</li>
+			<li>
+				<strong>Korespondensi dukungan</strong> — 3 tahun sejak interaksi terakhir, lalu dihapus.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyRightsID() {
+	<section id="rights">
+		<h2>9. Hak Anda</h2>
+		<p>
+			Berdasarkan GDPR, Anda memiliki hak berikut terkait data pribadi Anda:
+		</p>
+		<ul>
+			<li><strong>Akses</strong> (Pasal 15) — konfirmasi apakah kami memproses data Anda, dan salinannya.</li>
+			<li><strong>Rektifikasi</strong> (Pasal 16) — koreksi data yang tidak akurat atau tidak lengkap.</li>
+			<li><strong>Penghapusan</strong> (Pasal 17) — penghapusan data Anda, dengan pengecualian retensi menurut hukum.</li>
+			<li><strong>Pembatasan</strong> (Pasal 18) — menghentikan sementara pemrosesan selama sengketa diselesaikan.</li>
+			<li><strong>Portabilitas</strong> (Pasal 20) — ekspor data yang Anda berikan dalam format yang dapat dibaca mesin.</li>
+			<li><strong>Keberatan</strong> (Pasal 21) — terhadap pemrosesan berdasarkan kepentingan yang sah; kami berhenti kecuali dapat menunjukkan alasan yang lebih kuat.</li>
+			<li><strong>Menarik persetujuan</strong> (Pasal 7(3)) — untuk pemrosesan apa pun yang berdasarkan persetujuan, seperti AI di aplikasi tafs (di Akun, seperti <a href="#ai-in-tafs">di atas</a>). Penarikan tidak memengaruhi pemrosesan sah sebelumnya.</li>
+		</ul>
+		<p>
+			Untuk menggunakan hak mana pun di atas, kirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. Kami menanggapi dalam satu bulan menurut Pasal 12(3); kami dapat memperpanjang hingga dua bulan lagi untuk permintaan yang rumit dan akan memberi tahu Anda jika melakukannya.
+		</p>
+		<h3 id="export-chats">Percakapan tafs Anda sendiri</h3>
+		<p>
+			Di aplikasi tafs, Akun → Ekspor percakapan saya mengunduh percakapan Anda sendiri dengan setiap taf, termasuk Coach, nama berkas yang Anda lampirkan, dan catatan Anda sendiri, sebagai berkas yang dapat dibaca dan sebagai JSON. Hanya Anda yang dapat mengekspornya: admin atau pemilik akun tidak bisa, dan ekspor akun KIFF tidak menyertakannya.
+		</p>
+		<h3 id="delete-account">Menghapus akun tafs Anda</h3>
+		<p>
+			tafs adalah aplikasi KIFF. Untuk menghapus akun tafs Anda dan datanya:
+		</p>
+		<ol>
+			<li>Buka aplikasi tafs dan masuk.</li>
+			<li>Masuk ke Akun, lalu ketuk <em>Hapus akun</em>.</li>
+			<li>Konfirmasi. Menghapus akun tidak dapat dibatalkan.</li>
+		</ol>
+		<p>
+			<em>Hapus akun</em> tampil bagi siapa pun yang boleh menghapus akun perusahaan, biasanya pemiliknya. Jika Anda tidak melihatnya, atau tidak lagi memiliki aplikasi, kirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> dari alamat yang Anda pakai untuk masuk, dan kami menghapus data Anda dalam satu bulan.
+		</p>
+		<p>
+			Apa yang dihapus: kunci akun berhenti seketika. Taf, percakapan, catatan, berkas terlampir, dan koneksinya dihapus seketika, dan dari salinan titik-waktunya dalam 35 hari. Apa yang disimpan KIFF untuk akun dihapus dalam 30 hari, dan dari cadangan dalam 7 hari setelah itu. Log layanan yang menyebut akun hilang dalam 30 hari. Data audit tenant dihapus bersama tenant. Lihat <a href="#retention">Retensi</a> untuk setiap jenis data.
+		</p>
+		<p id="delete-data">
+			Untuk menghapus sebagian data Anda dan mempertahankan akun: di aplikasi, hapus sebuah percakapan, dan pesan serta berkas terlampirnya ikut terhapus; hapus sebuah taf, dan percakapan, catatan, dan koneksinya ikut terhapus. Untuk hal lain, kirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> dan sebutkan apa yang dihapus. Kami melakukannya dalam satu bulan.
+		</p>
+		<p>
+			Anda berhak mengajukan keluhan kepada otoritas pengawas. Otoritas pengawas utama kami adalah <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Inspektorat Perlindungan Data Estonia (Andmekaitse Inspektsioon)</a>. Anda juga dapat mengajukan keluhan kepada otoritas pengawas di negara anggota tempat Anda tinggal.
+		</p>
+		<p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href="/privacy/countries">Negara Anda</a> (dalam bahasa Inggris).</p>
+	</section>
+}
+
+templ privacyCookiesID() {
+	<section id="cookies">
+		<h2>10. Cookie</h2>
+		<p>
+			Kami menetapkan tiga cookie, semuanya sangat diperlukan, pihak pertama, dikirim hanya melalui HTTPS, dan tidak dapat dibaca oleh skrip di halaman. Berdasarkan aturan ePrivacy UE, cookie itu tidak memerlukan persetujuan; kami mendaftarnya agar Anda tahu keberadaannya. <a href="/cookies">Kebijakan cookie</a> (dalam bahasa Inggris) memuat rinciannya.
+		</p>
+		<ul>
+			<li>
+				<strong><code>kiff_session</code></strong> — menjaga Anda tetap masuk. Cookie sesi bertanda tangan yang membawa ID login, email, dan nama Anda, serta kredensial yang dipakai dasbor untuk Anda. Ditetapkan untuk <code>.kiff.dev</code>. Berlaku 24 jam, atau sampai Anda keluar.
+			</li>
+			<li>
+				<strong><code>kiff_flash</code></strong> — membawa pesan sekali pakai ke halaman berikutnya, seperti “kunci Anda dibuat”. Bertanda tangan; kunci baru tidak pernah ada di dalamnya. Ditetapkan untuk <code>.kiff.dev</code>. Dihapus saat halaman berikutnya membacanya, dan paling lama 5 menit.
+			</li>
+			<li>
+				<strong><code>kiff_cb_attempts</code></strong> — menghitung berapa kali halaman login dimuat ulang, agar login yang berputar dihentikan. Dikirim hanya ke halaman itu. Berlaku 5 menit, dan dihapus saat login dimulai atau berhasil.
+			</li>
+		</ul>
+		<p>
+			Kami tidak memakai cookie analitik, cookie iklan, atau pelacak pihak ketiga apa pun. Jika kelak kami menambahkannya, kami akan menampilkan spanduk persetujuan sebelum cookie ditetapkan, sesuai ePrivacy dan panduan EDPB 2023 tentang teknologi pelacakan.
+		</p>
+		<p>
+			Jika Anda masuk melalui Clerk (sub-prosesor autentikasi kami), Clerk juga menetapkan cookie di domain frontend miliknya (<code>clerk.kiff.dev</code>). Cookie itu diperlukan agar Clerk mengenali Anda sepanjang alur login dan diatur oleh kebijakan privasi Clerk selain kebijakan kami. Lihat daftar sub-prosesor untuk rinciannya.
+		</p>
+	</section>
+}
+
+templ privacySecurityID() {
+	<section id="security">
+		<h2>11. Keamanan</h2>
+		<p>
+			Langkah keamanan teknis dan organisasi kami didokumentasikan di <a href="/security">/security</a> (dalam bahasa Inggris). Termasuk isolasi tenant di lapisan basis data, TLS 1.2+ saat transit, enkripsi saat disimpan melalui bawaan penyedia terkelola, dan kontrol akses berdasarkan prinsip hak istimewa terkecil.
+		</p>
+		<p>
+			Kami memberi tahu pelanggan yang terdampak tentang pelanggaran data pribadi tanpa penundaan yang tidak semestinya dan dalam 72 jam sejak konfirmasi, sesuai Pasal 33 GDPR. Pemberitahuan memuat sifat pelanggaran, kategori dan perkiraan jumlah subjek data dan catatan yang bersangkutan, kemungkinan akibatnya, dan langkah yang diambil atau diusulkan.
+		</p>
+	</section>
+}
+
+templ privacyChildrenID() {
+	<section id="children">
+		<h2>12. Anak-anak</h2>
+		<p>
+			KIFF Cloud adalah produk infrastruktur pengembang yang tidak ditujukan untuk anak-anak. Kami tidak dengan sengaja mengumpulkan data pribadi dari anak di bawah 16 tahun. Jika Anda yakin seorang anak telah memberikan data pribadi kepada kami, hubungi <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> dan kami akan menghapusnya.
+		</p>
+	</section>
+}
+
+templ privacyAutomatedID() {
+	<section id="automated">
+		<h2>13. Pengambilan keputusan otomatis</h2>
+		<p>
+			Runtime KIFF Cloud membuat keputusan kebijakan yang deterministik atas data yang dikirim pelanggan kami. Itu bukan keputusan tentang Anda yang menimbulkan akibat hukum atau akibat signifikan serupa dalam arti Pasal 22 GDPR; itu adalah keputusan tentang tindakan pelanggan (pengembalian dana, pesanan, pesan, dan sebagainya) yang dijalankan berdasarkan kebijakan pelanggan sendiri.
+		</p>
+		<p>
+			Pelanggan yang memakai KIFF Cloud untuk membuat keputusan yang memengaruhi pengguna akhir mereka sendiri bertanggung jawab sendiri atas kepatuhan Pasal 22. Tanda terima tata kelola kami dirancang untuk memberi pelanggan itu jejak audit yang mereka butuhkan untuk menunjukkan pengawasan manusia, tetapi kewajiban hukum untuk menyediakan pengawasan itu ada pada pelanggan.
+		</p>
+	</section>
+}
+
+templ privacyChangesID() {
+	<section id="changes">
+		<h2>14. Perubahan pada kebijakan ini</h2>
+		<p>
+			Kami dapat memperbarui kebijakan ini dari waktu ke waktu. Perubahan material diberitahukan melalui email kepada pelanggan aktif dan melalui spanduk yang menonjol di halaman ini selama paling sedikit 30 hari. Perubahan non-material diposting dengan tanggal “terakhir diperbarui” yang baru.
+		</p>
+	</section>
+}
+
+templ privacyContactID() {
+	<section id="contact">
+		<h2>15. Hubungi kami</h2>
+		<p>
+			Pertanyaan privasi dan permintaan hak: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p>
+			Pemberitahuan hukum formal kepada Kiff Agents OÜ: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>, atau melalui pos ke Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.
+		</p>
+		<p>
+			Otoritas pengawas utama untuk keluhan: <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Inspektorat Perlindungan Data Estonia (Andmekaitse Inspektsioon)</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versi dokumen:</strong> v0.1.<br/> <strong>Terakhir diperbarui:</strong> 21 November 2026.
+		</p>
+	</section>
+}

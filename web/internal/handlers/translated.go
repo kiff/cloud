@@ -40,7 +40,7 @@ func Translated(lang, page string, o OfferLinks) http.Handler {
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Content-Language", lang)
+		w.Header().Set("Content-Language", components.LangTag(lang))
 		ctx := r.Context()
 		if page == "/tafs/download" {
 			// Its order depends on the device, so a cache must keep each apart.

@@ -39,6 +39,20 @@ var Served = map[string][]string{
 	"ni": {"en", "es"},
 	"sm": {"en", "it"},
 	"sv": {"en", "es"},
+	"mr": {"en", "ar"},
+	"lb": {"en", "ar"},
+	"jo": {"en", "ar"},
+	"om": {"en", "ar"},
+	"eg": {"en", "ar"},
+	"bh": {"en", "ar"},
+	"qa": {"en", "ar"},
+	"ae": {"en", "ar"},
+	"sa": {"en", "ar"},
+	"tw": {"en", "zh"},
+	"vn": {"en", "vi"},
+	"th": {"en", "th"},
+	"id": {"en", "id"},
+	"tr": {"en", "tr"},
 }
 
 // Notice is a legal notice served from these drafts outside the "Your
@@ -57,7 +71,7 @@ var Notices = map[string]Notice{
 }
 
 // Names are each served country's name in English, for the index.
-var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador"}
+var Names = map[string]string{"cm": "Cameroon", "kr": "Korea", "mc": "Monaco", "ni": "Nicaragua", "sm": "San Marino", "sv": "El Salvador", "tr": "Türkiye", "id": "Indonesia", "th": "Thailand", "vn": "Vietnam", "tw": "Taiwan", "sa": "Saudi Arabia", "ae": "United Arab Emirates", "qa": "Qatar", "bh": "Bahrain", "eg": "Egypt", "om": "Oman", "jo": "Jordan", "lb": "Lebanon", "mr": "Mauritania"}
 
 var (
 	once     sync.Once

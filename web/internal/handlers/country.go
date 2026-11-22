@@ -4,12 +4,13 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/kiff/cloud/web/internal/components"
 	"github.com/kiff/cloud/web/internal/content/country"
 	"github.com/kiff/cloud/web/internal/pages"
 )
 
 // languageNames are each section language's name in itself.
-var countryLanguageNames = map[string]string{"en": "English", "ko": "한국어", "ja": "日本語", "fr": "Français", "es": "Español", "it": "Italiano"}
+var countryLanguageNames = map[string]string{"en": "English", "ko": "한국어", "ja": "日本語", "fr": "Français", "es": "Español", "it": "Italiano", "tr": "Türkçe", "id": "Bahasa Indonesia", "th": "ไทย", "vi": "Tiếng Việt", "zh": "繁體中文", "ar": "العربية"}
 
 // CountryIndex serves /privacy/countries: the countries with a section.
 func CountryIndex() http.Handler {
@@ -19,7 +20,8 @@ func CountryIndex() http.Handler {
 			links = append(links, pages.CountryLink{Name: country.Names[c], Path: "/privacy/countries/" + c, Lang: "en"})
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_ = pages.CountryIndex(links).Render(r.Context(), w)
+		w.Header().Set("Content-Language", "en")
+		_ = pages.CountryIndex(links).Render(components.WithHTMLLanguage(r.Context(), "en"), w)
 	})
 }
 
@@ -56,8 +58,8 @@ func CountrySection() http.Handler {
 			others = append(others, pages.CountryLink{Name: countryLanguageNames[l], Path: p, Lang: l})
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Content-Language", lang)
-		_ = pages.CountrySection(s, others).Render(r.Context(), w)
+		w.Header().Set("Content-Language", components.LangTag(lang))
+		_ = pages.CountrySection(s, others).Render(components.WithHTMLLanguage(r.Context(), lang), w)
 	})
 }
 
@@ -96,7 +98,7 @@ func LegalNotice(name string) http.Handler {
 			others = append(others, pages.CountryLink{Name: countryLanguageNames[l], Path: p, Lang: l})
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Content-Language", lang)
-		_ = pages.LegalNotice(s, others).Render(r.Context(), w)
+		w.Header().Set("Content-Language", components.LangTag(lang))
+		_ = pages.LegalNotice(s, others).Render(components.WithHTMLLanguage(r.Context(), lang), w)
 	})
 }

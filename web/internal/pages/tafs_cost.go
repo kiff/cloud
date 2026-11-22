@@ -41,10 +41,12 @@ type tafsCostWords struct {
 func (w tafsCostWords) money(cents int) string {
 	whole, frac := cents/100, cents%100
 	switch w.Lang {
-	case "en", "ko", "ja":
+	case "en", "ko", "ja", "th", "zh", "ar":
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
+	case "id":
+		return fmt.Sprintf("€%s,%02d", w.number(whole), frac)
 	}
 	return fmt.Sprintf("%s,%02d €", w.number(whole), frac)
 }
@@ -73,6 +75,18 @@ func (w tafsCostWords) number(n int) string {
 	case "bg":
 		sep = " "
 	case "hr":
+		sep = "."
+	case "ar":
+		sep = ","
+	case "zh":
+		sep = ","
+	case "th":
+		sep = ","
+	case "vi":
+		sep = "."
+	case "id":
+		sep = "."
+	case "tr":
 		sep = "."
 	}
 	s := fmt.Sprint(n)
@@ -151,3 +165,21 @@ var tafsCostBG = tafsCostWords{Lang: "bg"}
 // tafsCostHR writes the prices tafs's terms state in Croatian: "12,50 €",
 // "1.500". Croatian has no /tafs page, so it has no footer line of its own.
 var tafsCostHR = tafsCostWords{Lang: "hr"}
+
+// tafsCostTR writes the prices tafs's terms state in Turkish: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostTR = tafsCostWords{Lang: "tr"}
+
+// tafsCostID writes the prices tafs's terms state in Indonesian: "€12,50", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostID = tafsCostWords{Lang: "id"}
+
+// tafsCostVI writes the prices tafs's terms state in Vietnamese: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostVI = tafsCostWords{Lang: "vi"}
+
+// tafsCostTH writes the prices tafs's terms state in Thai: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostTH = tafsCostWords{Lang: "th"}
+
+// tafsCostZH writes the prices tafs's terms state in Traditional Chinese: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostZH = tafsCostWords{Lang: "zh"}
+
+// tafsCostAR writes the prices tafs's terms state in Arabic: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostAR = tafsCostWords{Lang: "ar"}

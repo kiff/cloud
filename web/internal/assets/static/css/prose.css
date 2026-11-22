@@ -192,3 +192,26 @@
 /* gomarkdown emits <h*> ids when AutoHeadingIDs is enabled.
    Keep anchor jumps clear of the sticky topbar. */
 .prose [id] { scroll-margin-top: 5rem; }
+
+/* Right to left (Arabic): the side a list, a quote and a column starts on
+ * follows the text. Only [dir="rtl"] pages are touched. */
+[dir="rtl"] .prose ul,
+[dir="rtl"] .prose ol {
+  padding-left: 0;
+  padding-right: var(--size-5);
+}
+
+[dir="rtl"] .prose blockquote {
+  border-left: 0;
+  border-right: 3px solid var(--rule);
+}
+
+[dir="rtl"] .prose th,
+[dir="rtl"] .prose td {
+  text-align: right;
+}
+
+[dir="rtl"] .prose-copy-btn {
+  right: auto;
+  left: var(--size-3, 0.75rem);
+}

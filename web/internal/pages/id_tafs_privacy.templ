@@ -1,0 +1,225 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsPrivacyID is tafs's privacy policy (/tafs/privacy) in Indonesian, at /id/tafs/privacy.
+// It is a translation of TafsPrivacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Indonesian has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ TafsPrivacyID() {
+	@components.LayoutSiteWithMeta("kebijakan privasi tafs", "Cara tafs, aplikasi KIFF, menangani data pribadi, termasuk data yang diterimanya dari Google saat Anda menghubungkan akun Google Anda.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · kebijakan privasi</p>
+				<h1>Kebijakan Privasi tafs</h1>
+				<p class="legal-meta"><strong>Terakhir diperbarui:</strong> 21 November 2026.</p>
+				<p class="legal-disclaimer">Kebijakan ini menjelaskan cara tafs, aplikasi KIFF untuk iPhone, iPad, Android, dan komputer, menangani data pribadi. tafs adalah bagian dari KIFF Cloud, sehingga <a href="/id/privacy">Kebijakan Privasi KIFF</a> juga berlaku untuknya, dan untuk hal apa pun yang tidak dicakup halaman ini. Pertanyaan: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.</p>
+			</header>
+			<section id="who-we-are">
+				<h2>1. Siapa kami</h2>
+				<p>tafs disediakan oleh <strong>Kiff Agents OÜ</strong>, perseroan terbatas swasta yang didirikan di Estonia (kode registri 17372313, nomor PPN EE102924327), beralamat di Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Peraturan Perlindungan Data Umum Uni Eropa (GDPR) berlaku untuk pemrosesan kami.</p>
+			</section>
+			<section id="scope">
+				<h2>2. Cakupan kebijakan ini</h2>
+				<p>Aplikasi tafs untuk iPhone, iPad, Android, dan komputer (Mac, Windows, dan Linux), serta layanan di baliknya, termasuk Setup, yang menghubungkan alat sebuah perusahaan, dan planque, yang menyimpan koneksi itu. Di tafs, sebuah perusahaan menyerahkan pekerjaan kepada agen AI, sebuah taf, yang bekerja di dalam KIFF Card.</p>
+			</section>
+			<section id="roles">
+				<h2>3. Peran kami</h2>
+				<p>Kami adalah <strong>pengendali data</strong> untuk akun dan data masuk Anda, serta data operasional layanan kami sendiri. Kami bertindak sebagai <strong>prosesor data</strong>, atas nama perusahaan Anda, untuk apa yang disimpan tafs untuknya: proses, percakapan, laporan, catatan memori setiap taf, dan berkas yang diserahkannya. Perusahaan Anda adalah pengendali data itu, dan <a href="/legal/dpa">DPA</a> (dalam bahasa Inggris) mengatur hubungan tersebut.</p>
+			</section>
+			<section id="data">
+				<h2>4. Apa yang dikumpulkan tafs</h2>
+				<ul>
+					<li><strong>Akun Anda:</strong> Anda masuk ke tafs dengan akun KIFF Anda. Di ponsel atau tablet, aplikasi menyimpan sesi Anda di Keychain perangkat (di Android, penyimpanan terenkripsinya). Di komputer, sesi disimpan tersegel untuk akun pengguna Anda: di PC Windows dengan perlindungan data bawaan Windows, di Linux di keyring Anda, di Mac di Keychain-nya. Sesi sebuah komputer berlangsung hingga 90 hari.</li>
+					<li><strong>Perangkat Anda:</strong> aplikasi membuat kunci penandatanganan yang tidak pernah meninggalkan perangkat: di Secure Enclave iPhone, iPad, atau Mac, di Keystore perangkat Android, atau di TPM PC Windows. Di Linux, dan di Mac tanpa Secure Enclave, kuncinya adalah kunci perangkat lunak yang disimpan di keyring atau Keychain Anda, dan komputer itu dapat menunjukkan apa yang menunggu Anda tetapi tidak dapat menyetujuinya; Anda menyetujui di ponsel Anda{ macSecurityKey("id") }. PC Windows tanpa TPM tidak dapat masuk ke tafs. KIFF menyimpan separuh publik kunci itu, nama dan platform perangkat, serta kapan perangkat ditambahkan dan terakhir dipakai, agar dapat memeriksa jawaban Anda atas panggilan yang ditahan dan persetujuan Anda atas koneksi.</li>
+					<li><strong>Jam tangan Anda:</strong> jam tangan tidak menyimpan kata sandi atau kunci, hanya berkomunikasi dengan ponsel yang dipasangkan, dan tidak pernah menyetujui. Jam tangan mengirim apa yang Anda ucapkan ke Coach, atau ke taf yang Anda pilih, hanya sebagai teks, melalui ponsel, setelah Anda mengizinkan AI. Layanan ucapan milik jam tangan itu sendiri, milik Apple atau Google, mengubah kata-kata Anda menjadi teks itu. Di Wear OS, jika berhenti sebelum Anda selesai, pengenal suara ponsel Anda sendiri yang melakukannya, di ponsel. Jam tangan hanya dapat menolak, menghentikan, atau mengirim ke Coach atau sebuah taf selama memiliki kunci layar atau kode sandi dan sedang terbuka. Apa yang Anda kirim ke sebuah taf masuk ke percakapan taf itu sendiri, seolah-olah Anda menulisnya di ponsel. Percakapan sebuah taf, termasuk jumlah uang, tampil di jam tangan hanya selama terbuka, dibaca melalui ponsel setiap kali; jam tangan tidak menyimpannya sedikit pun.</li>
+					<li><strong>Apple Watch:</strong> menampilkan taf Anda dan halamannya tanpa menyimpannya. Ia hanya menyimpan Kotak Masuk Anda, dalam berkas yang tidak dapat dibacanya saat terkunci: setiap panggilan yang ditahan berupa nama taf-nya dan apa yang diminta, tidak pernah jumlah uang, dan balasan Coach atas apa yang Anda kirim dari jam tangan, sebagai teks. Jika Anda keluar di jam tangan, ia juga menyimpan bahwa Anda melakukannya, sampai Anda masuk lagi di jam tangan. Selain itu, ia tidak menyimpan apa pun kecuali jam tangan memiliki kode sandi. Kotak Masuk hilang saat Anda keluar di jam tangan atau iPhone Anda keluar, atau saat aplikasi berikutnya dibuka atau ditutup tanpa kode sandi. Ia tidak membuat rekaman, dan satu-satunya notifikasi yang ditampilkannya adalah milik iPhone Anda.</li>
+					<li><strong>Wear OS:</strong> menampilkan email akun Anda dan kalender hari ini tanpa menyimpannya. Agar terbuka seketika, ia menyimpan, terenkripsi, jumlah hal yang menunggu Anda, serta nama setiap taf dan apakah dihentikan atau dijeda: tidak pernah jumlah uang, rincian panggilan yang ditahan, atau percakapan sebuah taf. Itu dihapus saat Anda keluar, saat jam tangan terkunci atau dilepas dari pergelangan tangan, dan setelah 24 jam. Ia menyimpan Kotak Masuk Anda, yang setiap barisnya adalah nama sebuah taf dan apa yang dikatakannya, tidak pernah jumlah uang, dan satu pesan yang disimpan untuk nanti, sebagai teks. Keluar, di jam tangan atau di ponsel, menghapus semuanya. Untuk ubinnya (tile), ia juga menyimpan jumlah hal yang menunggu Anda, ditampilkan hanya saat jam tangan terbuka, dan dihapus saat Anda keluar, atau saat ubin berikutnya tampil ketika jam tangan terkunci atau tidak punya kunci layar. Setelah Anda keluar di jam tangan, ia menyimpan catatan bahwa Anda melakukannya, sampai Anda masuk lagi. Kotak Masuk juga hilang saat aplikasi berikutnya dibuka atau ditutup ketika jam tangan terkunci atau tidak punya kunci layar. Pesan yang disimpan untuk nanti tetap ada sampai Anda mengirim atau menghapusnya, karena Anda memintanya dikirim. Jika layanan ucapan jam tangan berhenti sebelum Anda selesai, jam tangan mengirim rekaman ke ponsel Anda, yang mengubahnya menjadi teks di ponsel itu sendiri, tidak pernah di server. Rekaman dihapus di keduanya, setelah teks kembali atau Anda membatalkan, dan paling lama setelah 2 menit. Hanya teksnya yang diteruskan ke Coach atau taf Anda. Hasil sebuah taf dapat tetap ada di notifikasi jam tangan sampai Anda menutupnya atau keluar di jam tangan.</li>
+					<li><strong>Passkey:</strong> saat Anda menyetujui dengan passkey di komputer, seperti Windows Hello atau kunci keamanan, wajah, sidik jari, atau PIN Anda tetap berada di sistem komputer itu sendiri. KIFF menyimpan kunci publik passkey, ID-nya, sebuah penghitung, dan sebuah nama, tidak pernah sesuatu yang rahasia, dan menolak passkey yang disinkronkan ke perangkat lain.</li>
+					<li><strong>Notifikasi:</strong> di ponsel, tablet, atau Mac yang menjalankan aplikasi iPad, saat Anda menyalakannya, kami menyimpan token push perangkat bersama ID orang KIFF Anda, dan bahasa yang ditampilkan aplikasi. Notifikasi melewati Apple atau Google hanya dengan taf mana dan apa yang diinginkannya, dan dalam notifikasi sebuah pintu, nama atau alamat email orang yang menulis: tidak pernah jumlah uang atau rincian sebuah permintaan. Aplikasi menambahkan hal-hal itu di perangkat itu sendiri, dari KIFF, sehingga notifikasi ponsel yang tidak terkunci dapat menampilkan jumlah uang, pedagang, atau orang. Di ponsel Android yang terkunci, ia hanya menampilkan “Sebuah taf membutuhkan Anda”, dan di iPhone yang terkunci juga begitu, kecuali Anda mengatur pratinjaunya agar selalu tampil. Di PC Windows, komputer Linux, atau Mac dengan aplikasi macOS 12, notifikasi dibuat oleh aplikasi itu sendiri selama berjalan, tanpa token push dan tanpa melalui perusahaan lain. Di Windows dan Linux notifikasi menampilkan taf mana, apa yang ingin dilakukannya, jumlahnya, alasannya, dan sampai kapan; di aplikasi macOS 12 notifikasi menampilkan kata-kata KIFF untuk panggilan itu, setelah Anda menyalakannya, dan layar terkunci menampilkan apa yang diizinkan pengaturan pratinjau Mac. Di Windows notifikasi mati sampai Anda menyalakannya, dan hanya menampilkan “Sebuah taf membutuhkan Anda” saat layar terkunci. Notifikasi yang tampil sebelum layar terkunci menyimpan rinciannya di daftar notifikasi Windows. Di Linux notifikasi menyala sampai Anda mematikannya, dan apa yang ditampilkan layar terkunci bergantung pada desktop Anda.</li>
+					<li><strong>Bahasa:</strong> layanan tafs menyimpan bahasa akun, dari siapa pun yang terakhir bercakap dengan Coach, hingga tiga bulan, agar laporan sebuah taf datang dalam bahasa itu.</li>
+					<li><strong>Alat Anda:</strong> saat Anda menghubungkan sebuah alat, Anda masuk di penyedia alat itu sendiri. Untuk aplikasi yang dimasuki planque sendiri, seperti Stripe, atau kunci yang Anda berikan, planque menyimpan token atau kunci itu untuk perusahaan Anda, terenkripsi. Untuk koneksi terkelola, Composio, layanan koneksi yang bekerja sama dengan planque, menyimpan login, dan planque hanya menyimpan catatan koneksi dan alat yang Anda setujui (lihat <a href="#google">Data pengguna Google</a>). Catatan sebuah koneksi dapat memuat akun yang dimasukinya (nama atau emailnya), agar aplikasi dapat menunjukkan akun yang mana. KIFF menggunakan koneksi terkelola hanya untuk aplikasi yang disebut di <a href="/subprocessors#composio">/subprocessors</a> (dalam bahasa Inggris).</li>
+					<li><strong>Pekerjaan taf Anda:</strong> proses, percakapan, laporan, catatan memori setiap taf dan berkas yang diserahkannya, disimpan sebagai prosesor. Siapa pun di akun Anda dapat melihat berkas yang diserahkan taf Anda.</li>
+					<li><strong>Pembelian:</strong> Solo dan paket kredit dijual oleh Apple melalui App Store, atau oleh Google melalui penagihan Google Play. Mereka memberi tahu kami apa yang dibeli, untuk akun KIFF mana (ID acak), kapan, dan referensi transaksi atau pesanannya. Mereka tidak memberi kami Apple ID atau akun Google, nama, alamat email, atau kartu Anda.</li>
+				</ul>
+				<p>Aplikasi tidak memiliki pelacak analitik atau iklan.</p>
+			</section>
+			<section id="ai">
+				<h2>5. AI di tafs</h2>
+				<p>tafs menggunakan AI Claude milik Anthropic untuk Coach dan taf Anda. Aplikasi bertanya kepada Anda sebelum apa pun dikirim ke sana.</p>
+				<ul>
+					<li>Yang dikirim ke sana: apa yang Anda tulis kepada Coach dan taf Anda, berkas yang Anda lampirkan, apa yang dikembalikan aplikasi yang Anda hubungkan kepada sebuah taf saat bekerja, dan apa yang ada di layar Anda saat Coach membantu Anda di aplikasi.</li>
+					<li>Yang tidak pernah dikirim: kata sandi dan kunci yang dipakai aplikasi yang Anda hubungkan, atau sidik jari Anda.</li>
+					<li>Anthropic menggunakannya untuk menjawab dan menyimpannya hingga 30 hari.</li>
+					<li>Tidak ada yang dikirim sampai Anda mengizinkan. Anda dapat menarik izin di Akun.</li>
+				</ul>
+				<p>Saat Anda menarik izin, Coach dan taf Anda berhenti menjawab Anda, dan sebuah taf yang prosesnya bertumpu pada persetujuan Anda dijeda. <a href="/id/privacy#ai-in-tafs">Kebijakan Privasi KIFF</a> memuat rinciannya.</p>
+			</section>
+			@tafsPrivacyGoogleID()
+			<section id="sharing">
+				<h2>7. Siapa lagi yang menerima data</h2>
+				<p>Kami tidak menjual data pribadi Anda, dan tidak membagikannya untuk periklanan.</p>
+				<p>Untuk tafs, kami memakai perusahaan-perusahaan ini: Amazon Web Services (hosting, termasuk penyimpanan tafs dan koneksi planque), Clerk (login untuk akun KIFF), Anthropic (model AI), Composio (login koneksi terkelola, dan panggilan yang diminta planque untuk dilakukannya), Apple (notifikasi push), Google (notifikasi push di Android, dan penagihan Google Play), dan Resend (pintu email sebuah taf). Daftar resmi terkini, dengan apa yang disentuh masing-masing dan di mana, ada di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris).</p>
+				<p>Sebagian dari mereka berada di luar Wilayah Ekonomi Eropa, terutama di Amerika Serikat. <a href="/id/privacy#transfers">Kebijakan Privasi KIFF</a> menjelaskan bagaimana transfer itu diamankan.</p>
+				<p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href="/privacy/countries">Negara Anda</a> (dalam bahasa Inggris).</p>
+			</section>
+			<section id="retention">
+				<h2>8. Berapa lama kami menyimpannya</h2>
+				<ul>
+					<li>Apa yang dikembalikan alat Anda kepada sebuah taf: hanya sampai proses selesai. Dalam sebuah percakapan, apa yang hanya dibacanya disimpan terenkripsi untuk pesan berikutnya, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari.</li>
+					<li>Proses dan percakapan sebuah taf, dengan ringkasan percakapan: 30 hari. Catatan memorinya: sampai taf dihapus.</li>
+					<li>Catatan singkat Coach untuk jawaban berikutnya, seperti mengapa sebuah koneksi tidak dapat dibuat dalam percakapan, atau bahwa sebuah Card disetujui: sampai jawaban itu mengambilnya, paling lama 7 hari; setelah itu, sebagai bagian dari percakapan itu, selama percakapan disimpan. Sebuah salinan disimpan 24 jam agar pesan yang dikirim ulang mendapat catatan yang sama. Catatan sebuah percakapan hanya dipakai dalam percakapan itu.</li>
+					<li>Berkas yang Anda lampirkan dalam percakapan: bersama pesan tempat berkas dilampirkan, 30 hari, atau lebih cepat jika percakapan dihapus, dan bagaimanapun dalam 38 hari. Berkas yang tidak dipakai pesan mana pun dihapus sekitar satu jam setelah Anda mengunggahnya. Menghapus akun Anda menghapusnya.</li>
+					<li>Berkas yang diserahkan taf Anda: 30 hari sejak proses membuatnya, lalu dihapus otomatis dalam satu hari. Siapa pun di akun Anda dapat menghapusnya lebih cepat dengan Hapus sekarang: berkasnya sendiri hilang seketika, tanpa salinan tersisa; nama, ukuran, serta taf dan proses yang membuatnya dapat tetap ada di salinan titik-waktu terenkripsi penyimpanan tafs hingga 35 hari, hanya dipakai untuk memulihkannya setelah kegagalan. Menghapus sebuah taf atau akun Anda menghapus berkasnya. Membagikan berkas mengirim berkas itu sendiri, dan salinan yang Anda bagikan tetap berada di aplikasi tempat Anda membagikannya. Untuk mengunduh berkas, kami membuat tautan bagi anggota akun Anda yang sedang masuk yang berhenti berfungsi setelah satu menit; kami tidak membuat tautan lain ke berkas itu.</li>
+					<li>Apa yang dikembalikan sebuah alat, dalam catatan planque untuk setiap panggilan: 24 jam. Setelah itu, catatan hanya menyimpan apakah panggilan dikirim, sehingga tidak pernah dikirim dua kali.</li>
+					<li>Token atau kunci sebuah koneksi di planque, atau login koneksi terkelola di Composio: sampai Anda memutusnya. Jika koneksi Anda yang lain boleh memakai akun yang sama di vendor itu, ia disimpan, tidak dipakai, sampai koneksi itu juga diputus, lalu dicabut. Catatan persetujuannya: sampai akun berakhir.</li>
+					<li>Token push sebuah perangkat: sampai Anda keluar dari aplikasi, menghapus perangkat, atau Apple atau Google melaporkan token itu hilang. Kunci publik, nama, platform, dan tanggal sebuah perangkat: selama Anda memakainya; setelah Anda mengeluarkannya, ia ditandai dihapus dan disimpan sampai akun dihapus, agar KIFF dapat menolak jawaban terlambat darinya dan menunjukkan perangkat mana yang menandatangani jawaban sebelumnya. Kunci publik, ID, dan nama sebuah passkey: seperti milik perangkatnya. Sesi sebuah komputer: hingga 90 hari, atau sampai Anda keluar.</li>
+					<li>Akun Anda: sampai dihapus. Log layanan: 30 hari. Penyimpanan tafs dan planque menyimpan salinan titik-waktu terenkripsi selama 35 hari, hanya dipakai untuk memulihkan penyimpanan setelah kegagalan.</li>
+				</ul>
+				<p>Semua yang lain ada di <a href="/id/privacy#retention">bagian Retensi KIFF</a>.</p>
+			</section>
+			<section id="lawful-bases">
+				<h2>9. Dasar hukum</h2>
+				<p>Pelaksanaan kontrak, untuk menjalankan akun dan taf Anda. Kepentingan yang sah, untuk keamanan, pencegahan penipuan, dan deteksi penyalahgunaan. Persetujuan, untuk AI di tafs (<a href="#ai">bagian 5</a>). Kewajiban hukum, untuk catatan pajak. <a href="/id/privacy#lawful-bases">Kebijakan Privasi KIFF</a> memuat rinciannya.</p>
+			</section>
+			<section id="rights">
+				<h2>10. Hak Anda</h2>
+				<p>Berdasarkan GDPR, Anda dapat meminta akses ke data Anda, koreksi, penghapusan, pembatasan, atau salinan yang dapat dipindahkan, menolak pemrosesan berdasarkan kepentingan yang sah, dan menarik persetujuan. Kirim email ke <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>; kami menanggapi dalam satu bulan. Di aplikasi, Akun → Ekspor percakapan saya mengunduh percakapan dan catatan Anda sendiri.</p>
+				<p>Untuk menghapus akun tafs Anda, buka aplikasi, masuk ke Akun dan ketuk <em>Hapus akun</em>, lalu konfirmasi. Tindakan ini tidak dapat dibatalkan. <a href="/id/privacy#delete-account">Kebijakan Privasi KIFF</a> menjelaskan apa yang dihapus dan kapan, dan cara meminta lewat email.</p>
+				<p>Anda dapat mengajukan keluhan kepada <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Inspektorat Perlindungan Data Estonia (Andmekaitse Inspektsioon)</a>, atau kepada otoritas pengawas di tempat Anda tinggal.</p>
+				<p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href="/privacy/countries">Negara Anda</a> (dalam bahasa Inggris).</p>
+			</section>
+			<section id="more">
+				<h2>11. Keamanan, anak-anak, dan perubahan</h2>
+				<p>Langkah keamanan kami ada di <a href="/security">/security</a> (dalam bahasa Inggris). tafs tidak ditujukan untuk anak-anak, dan kami tidak dengan sengaja mengumpulkan data pribadi dari anak di bawah 16 tahun. Kami mengubah kebijakan ini dengan cara yang dinyatakan <a href="/id/privacy#changes">Kebijakan Privasi KIFF</a> untuk kebijakannya sendiri.</p>
+			</section>
+			<section id="contact">
+				<h2>12. Kontak</h2>
+				<p>Pertanyaan dan permintaan privasi: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. Pemberitahuan hukum formal: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Ketentuan aplikasi sendiri ada di <a href="/id/tafs/terms">/tafs/terms</a>.</p>
+			</section>
+		</article>
+	}
+}
+
+// tafsPrivacyGoogle is what tafs does with the data it receives from Google,
+// for Google's review of tafs's sign-in, with the Limited Use statement in
+// Google's own words.
+templ tafsPrivacyGoogleID() {
+	<section id="google">
+		<h2>6. Data pengguna Google</h2>
+		if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
+			<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Google Sheets atau Google Calendar yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>
+		} else {
+			<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Gmail Anda, atau ke Google Calendar atau Google Sheets yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>
+		}
+		<ul>
+			if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
+				<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu: spreadsheet yang dijaganya tetap mutakhir, atau acara di kalender yang diurusnya. Ia mengubahnya hanya jika Card taf itu mengizinkan, dan apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>
+			} else {
+				<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu. Di Gmail Anda, ia membaca pesan dan utas Anda untuk menemukan yang perlu dijawab, dan menulis draf; ia mengirim email hanya jika Card taf itu mengizinkan. Di Google Calendar dan Google Sheets, ia membaca acara di kalender yang diurusnya, atau spreadsheet yang dijaganya tetap mutakhir, dan mengubahnya hanya jika Card taf itu mengizinkan.
+					if googleListed("Google Tasks") {
+						Di Google Tasks, ia membaca daftar tugas yang diurusnya, dan menambah, menyelesaikan, memindahkan, atau menghapus tugas hanya jika Card taf itu mengizinkan.
+					}
+					Apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>
+			}
+			<li><strong>Mengapa:</strong> hanya untuk mengerjakan pekerjaan yang Anda siapkan untuk taf itu, dan untuk menunjukkan akun Google mana yang terhubung dengannya: alamat emailnya, disimpan bersama koneksi sampai Anda memutusnya.</li>
+			if len(googleManaged()) > 0 || len(googleInHouse("id")) > 0 {
+				<li>
+					<strong>Bagaimana setiap aplikasi Google terhubung:</strong>
+					<ul>
+						if len(googleManaged()) > 0 {
+							<li>Melalui mitra login kami, yang tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris): { appList(googleManaged()) }.</li>
+						}
+						if len(googleInHouse("id")) > 0 {
+							<li>Melalui login Google milik tafs sendiri, tanpa perusahaan lain di tengah: { appList(googleInHouseNames()) }.</li>
+						}
+					</ul>
+					if googleBoth() {
+						Aplikasi yang disebut di keduanya terhubung dengan salah satu cara, tergantung akun Anda. Halaman login Google sendiri menunjukkan yang mana yang Anda izinkan.
+					}
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan.
+					<ul>
+						<li><strong>Melalui mitra login kami:</strong> tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li>
+						<li><strong>Melalui login Google milik tafs sendiri:</strong> login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("id")) > 0 {
+				<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. Login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li>
+			} else {
+				<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li>
+			}
+			<li><strong>Bagaimana sebuah taf memakainya:</strong> sebuah taf hanya memakai alat yang disetujui pada Card-nya. Setiap panggilan diperiksa terhadap izin untuk alat dan argumen yang tepat itu sebelum apa pun dikirim, dan panggilan di luar akses yang Anda berikan ditolak. Tindakan mana yang meminta persetujuan Anda setiap kali ditetapkan di Card.</li>
+			if len(googleInHouse("id")) > 0 {
+				<li>
+					if googleBoth() {
+						<strong>Akses yang diminta login Google milik tafs sendiri:</strong>
+					} else {
+						<strong>Akses yang diminta tafs:</strong>
+					}
+					<ul>
+						for _, a := range googleInHouse("id") {
+							<li>
+								{ a.Name }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
+					</ul>
+					Seberapa pun yang diizinkan sebuah login, taf hanya memakai alat yang ada di Card-nya.
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Siapa yang menyimpan login Anda:</strong>
+					<ul>
+						<li><strong>Melalui mitra login kami:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>
+						<li><strong>Melalui login Google milik tafs sendiri:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("id")) > 0 {
+				<li><strong>Siapa yang menyimpan login Anda:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>
+			} else {
+				<li><strong>Siapa yang menyimpan login Anda:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href="#ai">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya.
+					<ul>
+						<li><strong>Melalui mitra login kami:</strong> data itu juga melewati mitra login kami, yang membuat setiap panggilan.</li>
+						<li><strong>Melalui login Google milik tafs sendiri:</strong> planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda.</li>
+					</ul>
+					Keduanya tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris).
+				</li>
+			} else if len(googleInHouse("id")) > 0 {
+				<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href="#ai">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda. Penyedia model AI tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris).</li>
+			} else {
+				<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href="#ai">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. Data itu juga melewati mitra login kami, yang membuat setiap panggilan. Keduanya tercantum di <a href="/subprocessors">/subprocessors</a> (dalam bahasa Inggris).</li>
+			}
+			<li><strong>Pelatihan AI:</strong> data pengguna Google tidak dipakai untuk melatih model AI.</li>
+			<li><strong>Gambar:</strong> tafs tidak membuat atau mengedit gambar atau video: AI-nya menulis teks. tafs tidak pernah memakai API Google atau data pengguna Google untuk membuat, mengedit, atau membagikan gambar intim siapa pun (citra intim non-konsensual, NCII), atau gambar lain apa pun dari seseorang.</li>
+			if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
+				<li><strong>Berapa lama, dan di mana:</strong> spreadsheet dan acara Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href="#retention">Berapa lama kami menyimpannya</a>).</li>
+			} else {
+				<li><strong>Berapa lama, dan di mana:</strong> draf, acara, dan spreadsheet Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href="#retention">Berapa lama kami menyimpannya</a>).</li>
+			}
+			<li>
+				<strong>Menghentikannya:</strong>
+				<ul>
+					<li>Putuskan Google di aplikasi, di Hubungkan aplikasi atau di tab Card milik taf itu. Alat Google-nya berhenti seketika, dan tafs meminta Google mencabut login itu seketika; itu mungkin selesai sedikit lebih lambat.</li>
+					<li>Hapus sebuah taf, dan koneksinya berakhir bersamanya. Login Google yang masih dipakai taf Anda yang lain tetap ada sampai yang terakhir hilang.</li>
+					<li>Cabut akses tafs kapan saja di Akun Google Anda, di <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>. Taf Anda berhenti menjangkau Google, dan aplikasi memberi tahu Anda bahwa koneksi Google telah keluar.</li>
+					<li>Hapus akun Anda: taf, percakapan, catatan, berkas, dan koneksinya dihapus seketika, dan dari salinan titik-waktunya dalam 35 hari, dan token Google-nya dicabut sejauh diizinkan Google.</li>
+				</ul>
+			</li>
+		</ul>
+		<p lang="en">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+	</section>
+}

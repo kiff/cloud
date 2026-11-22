@@ -141,9 +141,9 @@ func CountrySection(s country.Section, others []CountryLink) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(s.Lang)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(s.Lang))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 40, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 40, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -184,9 +184,9 @@ func CountrySection(s country.Section, others []CountryLink) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var10 string
-					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(o.Lang)
+					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(o.Lang))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 57}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 77}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 					if templ_7745c5c3_Err != nil {
@@ -197,9 +197,9 @@ func CountrySection(s country.Section, others []CountryLink) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(o.Lang)
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(o.Lang))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 73}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 113}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -212,7 +212,7 @@ func CountrySection(s country.Section, others []CountryLink) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(o.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 84}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 48, Col: 124}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -286,9 +286,9 @@ func LegalNotice(s country.Section, others []CountryLink) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.Lang)
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(s.Lang))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 61, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 61, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -329,9 +329,9 @@ func LegalNotice(s country.Section, others []CountryLink) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var18 string
-					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(o.Lang)
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(o.Lang))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 57}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 77}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -342,9 +342,9 @@ func LegalNotice(s country.Section, others []CountryLink) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(o.Lang)
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(components.LangTag(o.Lang))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 73}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 113}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 					if templ_7745c5c3_Err != nil {
@@ -357,7 +357,7 @@ func LegalNotice(s country.Section, others []CountryLink) templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(o.Name)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 84}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/country.templ`, Line: 68, Col: 124}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
