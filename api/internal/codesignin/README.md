@@ -14,6 +14,7 @@ A person can sign in with a six-digit code sent to their email, **if they turned
 
 - **It's per person** (the provider's user), whatever accounts they're in.
 - **Turning it on needs a recent sign-in** (`auth.StepUp`, as approving does): `403 reauth_required` otherwise. That sign-in must not itself be a code sign-in.
+- **A person with a second factor can't turn it on:** `409 second_factor`. A code never stands in for a second factor.
   - A device session (the apps' own) never passes the step-up check. So an app opens KIFF's Settings › Sign-in page in its sheet to turn codes on, and can turn them off itself.
 - **Turning it off** needs nothing more, and drops any code still waiting.
 - **Each change emails every verified address of the person**: "code sign-in was turned on / off".
@@ -29,9 +30,10 @@ These are the web's routes, from the box only. A call from anywhere else gets 40
     - **a code** to a person with codes on, when the address is one of their **verified** addresses;
     - **"code sign-in isn't on, here's how to turn it on"** to a person with it off;
     - **nothing** to an address no one has verified.
-- **`POST /v1/auth/code/verify`** `{email, flow, code, ip}` → `200 {"ticket"}`, `400 code_wrong`, `429 slow_down` or `503`.
+- **`POST /v1/auth/code/verify`** `{email, flow, code, ip}` → `200 {"ticket"}`, `400 code_wrong`, `403 second_factor`, `429 slow_down` or `503`.
   - The code is matched against the browser's `flow` (the web's sealed cookie), so it works only in the browser that asked for it.
   - The ticket is for the person KIFF recorded with the code. Before minting it, KIFF checks again that the address is still that person's verified one and that codes are still on.
+  - **A person with a second factor gets no ticket:** `403 second_factor`, even with the right code, in case they added one after turning codes on. The page tells them to sign in another way.
 
 **A code:**
 - six random digits;
@@ -50,6 +52,10 @@ These are the web's routes, from the box only. A call from anywhere else gets 40
 | wrong codes per **person** | 5 an hour, 20 a day; a new code doesn't reset them, and past them every code of the person ends |
 
 A send past a limit answers the same and sends nothing. The refusal is logged with an 8-character hash, never the address.
+
+**What the limits trade:**
+- **Wrong codes count per person,** so a stranger who knows someone's address can use up that person's tries and keep them from signing in with a code for an hour, or a day. They can still sign in any other way. Counting per browser instead would let one person's codes be guessed from many browsers, so the lockout is the price of that.
+- **The "isn't on" email goes to anyone's verified address on request,** at most 3 an hour and 10 a day per address. It's the nuisance bound: no code is in it, and it says how to turn codes on, not that someone tried.
 
 ## A code sign-in is not a recent sign-in
 
