@@ -85,6 +85,11 @@ type CallRow struct {
 	// Receipt is the call's receipt and whether KIFF has signed it yet;
 	// nil when it has none. Set by the activity handler.
 	Receipt *CallReceipt `json:"receipt,omitempty"`
+	// Payment is true when the call is a payment its owner may report:
+	// its tool moves money by its owner-approved profile, KIFF allowed it,
+	// and the tool neither refused it nor was it left unsent. Set by the
+	// activity handler.
+	Payment bool `json:"payment,omitempty"`
 	// The call in the reader's words, so no app writes its own
 	// Set by the activity handler: Name is its
 	// tool as people read it; Kind is done, approved, not_done, sending,
@@ -117,6 +122,9 @@ type CallAnswer struct {
 type CallReceipt struct {
 	TraceID string `json:"trace_id"`
 	Status  string `json:"status"`
+	// ReportedAt is when its payment was reported as unexpected
+	// (payreports); nil when it wasn't.
+	ReportedAt *time.Time `json:"reported_at,omitempty"`
 }
 
 // CallCounts are how many calls each filter shows, for the same actor.

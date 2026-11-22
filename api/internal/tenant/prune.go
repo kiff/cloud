@@ -133,7 +133,10 @@ var cloudMetaPruned = []pruneStep{
 	{"task_pack_requests", `DELETE FROM cloud_meta.task_pack_requests WHERE tenant_id = $1 AND created_at < $2
 		AND (status <> 'open' OR expires_at < $2)`},
 	// Records.
-	{"receipts", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2`},
+	// A reported payment's receipt stays, and its report with it.
+	{"receipts", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2
+		AND NOT EXISTS (SELECT 1 FROM cloud_meta.payment_reports p
+			WHERE p.tenant_id = cloud_meta.receipts.tenant_id AND p.trace_id = cloud_meta.receipts.trace_id)`},
 	{"permit_bindings", `DELETE FROM cloud_meta.permit_bindings WHERE tenant_id = $1 AND created_at < $2`},
 	{"alert_deliveries", `DELETE FROM cloud_meta.alert_deliveries WHERE tenant_id = $1 AND attempted_at < $2`},
 	{"alert_retries", `DELETE FROM cloud_meta.alert_retries WHERE tenant_id = $1 AND created_at < $2`},
@@ -186,6 +189,7 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"guard_connections":              "the guards connected; their observations are pruned",
 	"guard_decision_cursors":         "how far each guard has reconciled",
 	"halts":                          "each agent's halt, on or off; a resumed one's time refuses permits from before it",
+	"payment_reports":                "a payment its owner reported as unexpected: kept with its receipt",
 	"mandate_draws":                  "what a live Card has drawn, its accounting; goes with its Card",
 	"mandate_holders":                "goes with its Card",
 	"mandate_revisions":              "goes with its Card",

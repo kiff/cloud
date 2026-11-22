@@ -16,6 +16,7 @@ import (
 	"github.com/kiff/cloud/api/internal/evidence"
 	"github.com/kiff/cloud/api/internal/halts"
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/payreports"
 	"github.com/kiff/cloud/api/internal/posture"
 	"github.com/kiff/cloud/api/internal/proposals"
 	"github.com/kiff/cloud/api/internal/receipt"
@@ -49,6 +50,7 @@ type ControlsHandler struct {
 	holds      HeldCallExceptions              // optional; how held calls were answered (kiff/tafs#167)
 	answers    HoldAnswers                     // optional; who answered them, and from which phone
 	halts      halts.Store                     // optional; the owner's halts and resumes, on the Record
+	reports    payreports.Store                // optional; which payments were reported, on the Record
 	ownUse     *OwnUse                         // optional; what of the Record each person reads
 	logger     *slog.Logger
 }
@@ -57,6 +59,12 @@ type ControlsHandler struct {
 // account. Nil: everyone reads all of it.
 func WithControlsOwnUse(o *OwnUse) ControlsOption {
 	return func(h *ControlsHandler) { h.ownUse = o }
+}
+
+// WithControlsPaymentReports shows on the Record which payments were
+// reported as unexpected.
+func WithControlsPaymentReports(s payreports.Store) ControlsOption {
+	return func(h *ControlsHandler) { h.reports = s }
 }
 
 // WithControlsHalts puts the owner's halts and resumes on the Record.
