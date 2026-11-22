@@ -9,7 +9,7 @@
 // customer-safe copy lives here, in one place, and can never
 // accidentally include an internal operator note.
 //
-// Every email is drawn by one layout (layout.go, docs/email.md) from the
+// Every email is drawn by one layout (layout.go, the email design guide) from the
 // person's own words (internal/words), in their language.
 package notify
 

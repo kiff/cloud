@@ -312,7 +312,7 @@ KIFF_PRUNE_AFTER="${KIFF_PRUNE_AFTER:-48h}"
 # Customer email notifications. The RESEND_API_KEY itself is
 # resolved server-side from Secrets Manager (RESEND_SECRET_ARN), never
 # rendered into the SSM payload. From/Reply-To are non-secret config.
-KIFF_NOTIFY_FROM="${KIFF_NOTIFY_FROM:-KIFF Operations <ops@kiff.dev>}"
+KIFF_NOTIFY_FROM="${KIFF_NOTIFY_FROM:-KIFF <hello@kiff.dev>}"
 KIFF_NOTIFY_REPLY_TO="${KIFF_NOTIFY_REPLY_TO:-support@kiff.dev}"
 
 # App backends a phone may register as its account's held-call alert

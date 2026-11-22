@@ -11,7 +11,7 @@ import (
 
 // TestWriteEmailSamples writes one HTML file per email and language into the
 // directory named by KIFF_EMAIL_SAMPLES, to look at them in a browser or
-// screenshot them for docs/email/. It does nothing when the variable is unset.
+// screenshot them for the email design guide. It does nothing when the variable is unset.
 func TestWriteEmailSamples(t *testing.T) {
 	dir := os.Getenv("KIFF_EMAIL_SAMPLES")
 	if dir == "" {
