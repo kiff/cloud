@@ -25,9 +25,9 @@ type Handler struct {
 	svc    *Service
 	stepUp StepUp
 	logger *slog.Logger
-	// internal reports whether a call comes from the box (the web); tests
+	// fromBox reports whether a call comes from the box (the web); tests
 	// set it.
-	internal func(r *http.Request) bool
+	fromBox func(r *http.Request) bool
 }
 
 // NewHandler wires the routes; svc may be nil.
@@ -35,7 +35,7 @@ func NewHandler(svc *Service, stepUp StepUp, logger *slog.Logger) *Handler {
 	if logger == nil {
 		logger = slog.Default()
 	}
-	return &Handler{svc: svc, stepUp: stepUp, logger: logger, internal: func(r *http.Request) bool {
+	return &Handler{svc: svc, stepUp: stepUp, logger: logger, fromBox: func(r *http.Request) bool {
 		_, in := region.ClientAddr(r)
 		return in
 	}}
@@ -73,7 +73,7 @@ func (h *Handler) web(w http.ResponseWriter, r *http.Request, into any) bool {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
 		return false
 	}
-	if h.svc == nil || !h.internal(r) {
+	if h.svc == nil || !h.fromBox(r) {
 		http.NotFound(w, r)
 		return false
 	}

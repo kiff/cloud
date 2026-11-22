@@ -38,13 +38,13 @@ func serveCode(h *Handler, method, path, body string, id *auth.Identity) *httpte
 func TestTheWebsRoutesAnswerOnlyTheBoxAndTheSame(t *testing.T) {
 	r := newRig(t)
 	h := NewHandler(r.s, stepUp{}, nil)
-	h.internal = func(*http.Request) bool { return false }
+	h.fromBox = func(*http.Request) bool { return false }
 	for _, p := range []string{"/v1/auth/code/send", "/v1/auth/code/verify"} {
 		if rec := serveCode(h, "POST", p, `{"email":"on@example.com","flow":"f","code":"123456"}`, nil); rec.Code != http.StatusNotFound {
 			t.Errorf("%s from outside: %d", p, rec.Code)
 		}
 	}
-	h.internal = func(*http.Request) bool { return true }
+	h.fromBox = func(*http.Request) bool { return true }
 	var bodies []string
 	for _, a := range []string{"on@example.com", "off@example.com", "nobody@example.com"} {
 		rec := serveCode(h, "POST", "/v1/auth/code/send", `{"email":"`+a+`","flow":"f-`+a+`","ip":"198.51.100.7","lang":"de"}`, nil)
@@ -116,7 +116,7 @@ func TestTurningCodesOnNeedsARecentSignIn(t *testing.T) {
 func TestTheWebsRoutesRefuseACredential(t *testing.T) {
 	r := newRig(t)
 	h := NewHandler(r.s, stepUp{}, nil)
-	h.internal = func(*http.Request) bool { return true }
+	h.fromBox = func(*http.Request) bool { return true }
 	mux := http.NewServeMux()
 	h.RegisterWeb(mux)
 	req := httptest.NewRequest("POST", "/v1/auth/code/send", strings.NewReader(`{"email":"on@example.com","flow":"f"}`))

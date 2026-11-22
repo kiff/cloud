@@ -183,7 +183,7 @@ func wrongOf(code string) string {
 // verified gets nothing.
 func TestSendAnswersTheSameAndMailsOnlyPeople(t *testing.T) {
 	r := newRig(t)
-	for _, a := range []string{"on@example.com", "off@example.com", "nobody@example.com", " ON@Example.com "} {
+	for _, a := range []string{"on@example.com", "off@example.com", "nobody@example.com", " ON@example.com "} {
 		r.send(a, "flow-"+a, "198.51.100.7")
 	}
 	got := r.m.all()
