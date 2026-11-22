@@ -41,21 +41,31 @@ var partialPages = map[string][]string{
 	"th": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"zh": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ar": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sq": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ka": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"hy": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"az": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"bn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"he": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
 // code, except Traditional Chinese, whose path is /zh and whose tag says
-// which script it is ("zh-Hant"), for <html lang>, hreflang and
+// which script it is ("zh-Hant"), and Serbian, written in Latin script ("sr-Latn"), for <html lang>, hreflang and
 // Content-Language.
 func LangTag(lang string) string {
-	if lang == "zh" {
+	switch lang {
+	case "zh":
 		return "zh-Hant"
+	case "sr":
+		return "sr-Latn"
 	}
 	return lang
 }
 
-// IsRightToLeft reports a language written right to left (Arabic).
-func IsRightToLeft(lang string) bool { return lang == "ar" }
+// IsRightToLeft reports a language written right to left (Arabic, Hebrew).
+func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" }
 
 // HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
 // on a right-to-left page, none on any other, so no other page's markup changes.
@@ -68,7 +78,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -106,6 +116,13 @@ var languageNames = map[string]string{
 	"th": "ไทย",
 	"zh": "繁體中文",
 	"ar": "العربية",
+	"sr": "Srpski",
+	"sq": "Shqip",
+	"ka": "ქართული",
+	"hy": "Հայերեն",
+	"az": "Azərbaycanca",
+	"bn": "বাংলা",
+	"he": "עברית",
 }
 
 // LanguageName is a site language's name in that language.
@@ -284,6 +301,13 @@ var translationNotices = map[string]string{
 	"th": "นี่คือคำแปลเพื่อให้ข้อมูล ฉบับภาษาอังกฤษเป็นฉบับที่มีผลบังคับ:",
 	"zh": "這是供參考的翻譯。以英文版本為準：",
 	"ar": "هذه ترجمة للاطلاع. النسخة الإنجليزية هي المعتمدة:",
+	"sr": "Ovo je prevod u informativne svrhe. Merodavna je engleska verzija:",
+	"sq": "Ky është një përkthim për qëllime informimi. Versioni në anglisht është ai që mbizotëron:",
+	"ka": "ეს არის თარგმანი ინფორმაციის მიზნით. ძალაშია ინგლისური ვერსია:",
+	"hy": "Սա թարգմանություն է տեղեկատվության նպատակով։ Գործում է անգլերեն տարբերակը՝",
+	"az": "Bu, məlumat məqsədilə tərcümədir. İngilis dilindəki versiya qüvvədədir:",
+	"bn": "এটি তথ্যের জন্য একটি অনুবাদ। ইংরেজি সংস্করণই প্রযোজ্য:",
+	"he": "זהו תרגום למידע בלבד. הגרסה האנגלית היא הקובעת:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -313,6 +337,13 @@ var inEnglish = map[string]string{
 	"th": "(ภาษาอังกฤษ)",
 	"zh": "（英文）",
 	"ar": "(بالإنجليزية)",
+	"sr": "(na engleskom)",
+	"sq": "(në anglisht)",
+	"ka": "(ინგლისურად)",
+	"hy": "(անգլերեն)",
+	"az": "(ingiliscə)",
+	"bn": "(ইংরেজিতে)",
+	"he": "(באנגלית)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
