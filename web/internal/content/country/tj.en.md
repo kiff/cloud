@@ -10,7 +10,7 @@ Kiff Agents OÜ, a company in Estonia, is the data controller of your account an
 
 ## 2. Transfers outside Tajikistan
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Tajikistan. Some recipients are in the United States, as section 7 of each policy lists. The law lets personal data go abroad to a country that gives adequate protection, and otherwise with the person's consent or under a treaty that Tajikistan recognises. We transfer your data on the safeguards section 7 of KIFF's policy names. Where the law asks for your consent to a transfer, creating an account and using KIFF or tafs is your agreement to your data being processed in Estonia, Ireland and the United States, and you can withdraw it by deleting your account or writing to privacy@kiff.dev.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Tajikistan. Some recipients are in the United States, as section 7 of each policy lists. The law lets personal data go abroad to a country that gives adequate protection, and otherwise with the person's consent or under a treaty that Tajikistan recognises. We transfer your data on the safeguards section 7 of KIFF's policy names.
 
 ## 3. Your rights
 
