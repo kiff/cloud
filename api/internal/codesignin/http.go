@@ -180,6 +180,13 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "message": `the body is {"email_code": true|false}`})
 		return
 	}
+	if *b.EmailCode && len(id.DeviceKey) > 0 {
+		// A phone's or computer's own session (a device key) only turns codes off. Turning them on
+		// needs a recent sign-in that is not a code sign-in, which a device session never has: it is
+		// done at kiff.dev, Settings › Sign-in.
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "turn_on_at_kiff", "message": "turning on signing in with a code is done at kiff.dev, in Settings › Sign-in, after a recent sign-in"})
+		return
+	}
 	if *b.EmailCode {
 		if h.svc == nil {
 			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "not_available", "message": "signing in with a code isn't available"})

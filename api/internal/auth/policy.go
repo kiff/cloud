@@ -304,6 +304,11 @@ var PhoneSessionRules = []string{
 	"GET /v1/me/devices",
 	"DELETE /v1/me/devices/{id}",
 	"GET /v1/me/passkeys",
+	// The person's own code sign-in setting (codesignin): the phone reads it and turns it
+	// off (an off only ever removes a way in, and the person is told by email). Turning it
+	// on is refused to a device session by the handler: that needs a recent sign-in at kiff.dev.
+	"GET /v1/me/sign-in",
+	"PUT /v1/me/sign-in",
 	// The open approval window, with KIFF's words for the next tap (kiff/tafs#494).
 	"GET /v1/me/window",
 	"GET /v1/me/agent-drafts",
