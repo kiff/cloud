@@ -415,4 +415,3 @@ func TestReceiptsHandler_StepWordsInALanguageBeyondTheEight(t *testing.T) {
 		t.Fatalf("Catalan: %#v, want %q", got.StepWords, want)
 	}
 }
-
