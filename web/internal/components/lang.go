@@ -54,6 +54,7 @@ var partialPages = map[string][]string{
 	"ne": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"km": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"lo": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"si": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -84,7 +85,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -135,6 +136,7 @@ var languageNames = map[string]string{
 	"ne": "नेपाली",
 	"km": "ខ្មែរ",
 	"lo": "ລາວ",
+	"si": "සිංහල",
 }
 
 // LanguageName is a site language's name in that language.
@@ -326,6 +328,7 @@ var translationNotices = map[string]string{
 	"ne": "यो जानकारीका लागि मात्र अनुवाद हो। अङ्ग्रेजी संस्करण नै मान्य हुन्छ:",
 	"km": "នេះជាការបកប្រែសម្រាប់ព័ត៌មានតែប៉ុណ្ណោះ។ ជំនាន់ភាសាអង់គ្លេសជាអាទិភាព៖",
 	"lo": "ນີ້ເປັນການແປເພື່ອເປັນຂໍ້ມູນເທົ່ານັ້ນ. ສະບັບພາສາອັງກິດມີຜົນບັງຄັບ:",
+	"si": "මෙය තොරතුරු සඳහා පමණක් වන පරිවර්තනයකි. ඉංග්‍රීසි අනුවාදය බලපැවැත්වේ:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -368,6 +371,7 @@ var inEnglish = map[string]string{
 	"ne": "(अङ्ग्रेजीमा)",
 	"km": "(ជាភាសាអង់គ្លេស)",
 	"lo": "(ເປັນພາສາອັງກິດ)",
+	"si": "(ඉංග්‍රීසියෙන්)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

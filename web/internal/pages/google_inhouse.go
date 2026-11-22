@@ -82,6 +82,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ne": "Google Sheets मा आफ्ना सबै स्प्रेडसिट हेर्न, सम्पादन गर्न, बनाउन र मेट्न",
 			"km": "មើល កែសម្រួល បង្កើត និងលុបសៀវភៅបញ្ជីទាំងអស់របស់អ្នកក្នុង Google Sheets",
 			"lo": "ເບິ່ງ, ແກ້ໄຂ, ສ້າງ ແລະ ລຶບຕາຕະລາງ Google Sheets ທັງໝົດຂອງທ່ານ",
+			"si": "ඔබේ සියලුම Google Sheets පැතුරුම්පත් බැලීම, සංස්කරණය, සෑදීම සහ මැකීම",
 		}},
 	},
 	"Google Calendar": {
@@ -126,6 +127,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ne": "आफ्ना क्यालेन्डरका घटनाहरू हेर्न",
 			"km": "មើលព្រឹត្តិការណ៍នៅលើប្រតិទិនរបស់អ្នក",
 			"lo": "ເບິ່ງເຫດການໃນປະຕິທິນຂອງທ່ານ",
+			"si": "ඔබේ දිනදර්ශනවල සිදුවීම් බැලීම",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -168,6 +170,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ne": "आफ्ना क्यालेन्डरका घटनाहरू हेर्न र सम्पादन गर्न",
 			"km": "មើល និងកែសម្រួលព្រឹត្តិការណ៍នៅលើប្រតិទិនរបស់អ្នក",
 			"lo": "ເບິ່ງ ແລະ ແກ້ໄຂເຫດການໃນປະຕິທິນຂອງທ່ານ",
+			"si": "ඔබේ දිනදර්ශනවල සිදුවීම් බැලීම සහ සංස්කරණය",
 		}},
 	},
 }
