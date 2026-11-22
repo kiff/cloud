@@ -8,7 +8,7 @@ import (
 	"github.com/kiff/cloud/api/internal/words"
 )
 
-// Every email KIFF sends is one `mail` drawn by `layout` (docs/email.md): the
+// Every email KIFF sends is one `mail` drawn by `layout` (the email design guide): the
 // same header, the same order of parts, the same buttons and footer, so a
 // person knows a KIFF email at a glance and a new email is a list of parts,
 // not a new page of HTML. The words are the caller's, in the person's

@@ -3,7 +3,7 @@ package words
 // EmailFooter is the three lines every KIFF email ends with, beside the
 // company's name and address (which are not translated): where to read the
 // Privacy page, where to get help, and that KIFF never asks for a password or a
-// code. The footer is mandatory on every email (docs/email.md).
+// code. The footer is mandatory on every email (the email design guide).
 //
 // English is the source. EmailFooters holds the other languages, keyed by the
 // primary language tag, as legal-i18n writes them; a language with no entry reads
