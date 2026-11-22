@@ -154,7 +154,7 @@ func privacyHeadEL() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Πολιτική απορρήτου · v0.1</p><h1>Πολιτική Απορρήτου</h1><p class=\"legal-meta\"><strong>Τελευταία ενημέρωση:</strong> 21 Νοεμβρίου 2026. <strong>Ημερομηνία έναρξης ισχύος:</strong> 24 Μαΐου 2026.</p><p class=\"legal-disclaimer\">Η πολιτική αυτή εξηγεί πώς το KIFF Cloud επεξεργάζεται προσωπικά δεδομένα στον ιστότοπο, στον πίνακα ελέγχου, στο API και στην εφαρμογή tafs για iPhone, iPad, Android και υπολογιστές. Ερωτήσεις: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Πολιτική απορρήτου · v0.1</p><h1>Πολιτική Απορρήτου</h1><p class=\"legal-meta\"><strong>Τελευταία ενημέρωση:</strong> 22 Νοεμβρίου 2026. <strong>Ημερομηνία έναρξης ισχύος:</strong> 24 Μαΐου 2026.</p><p class=\"legal-disclaimer\">Η πολιτική αυτή εξηγεί πώς το KIFF Cloud επεξεργάζεται προσωπικά δεδομένα στον ιστότοπο, στον πίνακα ελέγχου, στο API και στην εφαρμογή tafs για iPhone, iPad, Android και υπολογιστές. Ερωτήσεις: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -602,7 +602,7 @@ func privacyContactEL() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Επικοινωνία</h2><p>Ερωτήματα απορρήτου και αιτήματα άσκησης δικαιωμάτων: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Επίσημες νομικές ειδοποιήσεις προς την Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> ή ταχυδρομικά στη διεύθυνση Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Εσθονία.</p><p>Επικεφαλής εποπτική αρχή για καταγγελίες: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Εσθονική Επιθεώρηση Προστασίας Δεδομένων (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Έκδοση εγγράφου:</strong> v0.1.<br><strong>Τελευταία ενημέρωση:</strong> 21 Νοεμβρίου 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Επικοινωνία</h2><p>Ερωτήματα απορρήτου και αιτήματα άσκησης δικαιωμάτων: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Επίσημες νομικές ειδοποιήσεις προς την Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> ή ταχυδρομικά στη διεύθυνση Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Εσθονία.</p><p>Επικεφαλής εποπτική αρχή για καταγγελίες: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Εσθονική Επιθεώρηση Προστασίας Δεδομένων (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Έκδοση εγγράφου:</strong> v0.1.<br><strong>Τελευταία ενημέρωση:</strong> 22 Νοεμβρίου 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

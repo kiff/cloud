@@ -108,7 +108,7 @@ func shapeOf(page, lang string) shape {
 	text := html.UnescapeString(anyTagRE.ReplaceAllString(body, " "))
 	// A date in Korean or Japanese form ("2026년 11월 21일", "2026年11月21日")
 	// names its month with a figure, where English names it with a word
-	// ("21 November 2026"): read it as the English date's figures, the day and
+	// ("22 November 2026"): read it as the English date's figures, the day and
 	// the year, so the month isn't an extra figure.
 	text = cjkDateRE.ReplaceAllString(text, "$3 $1")
 	text = cjkMonthRE.ReplaceAllString(text, "$1")

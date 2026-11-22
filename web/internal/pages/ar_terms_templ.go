@@ -177,7 +177,7 @@ func termsHeadAR() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">شروط الخدمة · v0.1</p><h1>شروط الخدمة</h1><p class=\"legal-meta\"><strong>آخر تحديث:</strong> 21 نوفمبر 2026. <strong>تاريخ السريان:</strong> 24 مايو 2026.</p><p class=\"legal-disclaimer\"><strong>ما الذي تغيّر:</strong> الطرف الذي يرتبط به عقدك حين تعرّفك شركة أخرى إلينا (§2)، والمنشآت متناهية الصغر (§8). وقبل ذلك: من يجوز له استخدام الخدمة بحسب المنطقة والملكية والعقوبات (§4)؛ وتطبيق tafs على Android، وSolo المشترى عبر Google Play (§1، §8). وقبل ذلك: الخطط المدفوعة (§3A، §8)، و<a href=\"/legal/sla\">اتفاقية مستوى الخدمة</a> (بالإنجليزية) (§14)، وقائمة الاستخدامات المحظورة، التي صارت الآن في <a href=\"/acceptable-use\">سياسة الاستخدام المقبول</a> (بالإنجليزية) (§5).</p><p class=\"legal-disclaimer\">تحكم هذه الشروط استخدام KIFF Cloud، بما في ذلك tafs. للأسئلة التعاقدية: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">شروط الخدمة · v0.1</p><h1>شروط الخدمة</h1><p class=\"legal-meta\"><strong>آخر تحديث:</strong> 22 نوفمبر 2026. <strong>تاريخ السريان:</strong> 24 مايو 2026.</p><p class=\"legal-disclaimer\"><strong>ما الذي تغيّر:</strong> الطرف الذي يرتبط به عقدك حين تعرّفك شركة أخرى إلينا (§2)، والمنشآت متناهية الصغر (§8). وقبل ذلك: من يجوز له استخدام الخدمة بحسب المنطقة والملكية والعقوبات (§4)؛ وتطبيق tafs على Android، وSolo المشترى عبر Google Play (§1، §8). وقبل ذلك: الخطط المدفوعة (§3A، §8)، و<a href=\"/legal/sla\">اتفاقية مستوى الخدمة</a> (بالإنجليزية) (§14)، وقائمة الاستخدامات المحظورة، التي صارت الآن في <a href=\"/acceptable-use\">سياسة الاستخدام المقبول</a> (بالإنجليزية) (§5).</p><p class=\"legal-disclaimer\">تحكم هذه الشروط استخدام KIFF Cloud، بما في ذلك tafs. للأسئلة التعاقدية: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -786,7 +786,7 @@ func termsContactAR() templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. تواصل معنا</h2><p>الأسئلة التجارية والتعاقدية: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p><p>أسئلة عامة عن المنتج: <a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>. أسئلة الخصوصية: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. الإفصاحات الأمنية: <a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>.</p><hr><p class=\"legal-footnote\"><strong>إصدار الوثيقة:</strong> v0.1.<br><strong>آخر تحديث:</strong> 21 نوفمبر 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. تواصل معنا</h2><p>الأسئلة التجارية والتعاقدية: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p><p>أسئلة عامة عن المنتج: <a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>. أسئلة الخصوصية: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. الإفصاحات الأمنية: <a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>.</p><hr><p class=\"legal-footnote\"><strong>إصدار الوثيقة:</strong> v0.1.<br><strong>آخر تحديث:</strong> 22 نوفمبر 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

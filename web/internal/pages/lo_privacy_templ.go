@@ -153,7 +153,7 @@ func privacyHeadLO() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ · v0.1</p><h1>ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</h1><p class=\"legal-meta\"><strong>ອັບເດດຄັ້ງຫຼ້າສຸດ:</strong> 21 ພະຈິກ 2026. <strong>ມີຜົນບັງຄັບໃຊ້ຕັ້ງແຕ່:</strong> 24 ພຶດສະພາ 2026.</p><p class=\"legal-disclaimer\">ນະໂຍບາຍນີ້ອະທິບາຍວ່າ KIFF Cloud ປະມວນຜົນຂໍ້ມູນສ່ວນຕົວແນວໃດຜ່ານເວັບໄຊ, ແດຊບອດ, API ແລະ ແອັບ tafs ສຳລັບ iPhone, iPad, Android ແລະ ຄອມພິວເຕີ. ຄຳຖາມ: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ · v0.1</p><h1>ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</h1><p class=\"legal-meta\"><strong>ອັບເດດຄັ້ງຫຼ້າສຸດ:</strong> 22 ພະຈິກ 2026. <strong>ມີຜົນບັງຄັບໃຊ້ຕັ້ງແຕ່:</strong> 24 ພຶດສະພາ 2026.</p><p class=\"legal-disclaimer\">ນະໂຍບາຍນີ້ອະທິບາຍວ່າ KIFF Cloud ປະມວນຜົນຂໍ້ມູນສ່ວນຕົວແນວໃດຜ່ານເວັບໄຊ, ແດຊບອດ, API ແລະ ແອັບ tafs ສຳລັບ iPhone, iPad, Android ແລະ ຄອມພິວເຕີ. ຄຳຖາມ: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -601,7 +601,7 @@ func privacyContactLO() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. ຕິດຕໍ່ພວກເຮົາ</h2><p>ຄຳຖາມກ່ຽວກັບຄວາມເປັນສ່ວນຕົວ ແລະ ຄຳຂໍໃຊ້ສິດ: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>ແຈ້ງການທາງກົດໝາຍຢ່າງເປັນທາງການຫາ Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, ຫຼື ທາງໄປສະນີໄປທີ່ Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, ເອສໂຕເນຍ.</p><p>ເຈົ້າໜ້າທີ່ກຳກັບດູແລນຳໜ້າສຳລັບການຮ້ອງທຸກ: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">ສຳນັກງານກວດກາການປົກປ້ອງຂໍ້ມູນເອສໂຕເນຍ (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>ເວີຊັນເອກະສານ:</strong> v0.1.<br><strong>ອັບເດດຄັ້ງຫຼ້າສຸດ:</strong> 21 ພະຈິກ 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. ຕິດຕໍ່ພວກເຮົາ</h2><p>ຄຳຖາມກ່ຽວກັບຄວາມເປັນສ່ວນຕົວ ແລະ ຄຳຂໍໃຊ້ສິດ: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>ແຈ້ງການທາງກົດໝາຍຢ່າງເປັນທາງການຫາ Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, ຫຼື ທາງໄປສະນີໄປທີ່ Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, ເອສໂຕເນຍ.</p><p>ເຈົ້າໜ້າທີ່ກຳກັບດູແລນຳໜ້າສຳລັບການຮ້ອງທຸກ: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">ສຳນັກງານກວດກາການປົກປ້ອງຂໍ້ມູນເອສໂຕເນຍ (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>ເວີຊັນເອກະສານ:</strong> v0.1.<br><strong>ອັບເດດຄັ້ງຫຼ້າສຸດ:</strong> 22 ພະຈິກ 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

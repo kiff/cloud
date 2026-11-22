@@ -153,7 +153,7 @@ func privacyHeadZH() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">隱私權政策 · v0.1</p><h1>隱私權政策</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 21 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\">本政策說明 KIFF Cloud 如何在網站、儀表板、API 及適用於 iPhone、iPad、Android 與電腦的 tafs 應用程式上處理個人資料。問題請洽：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">隱私權政策 · v0.1</p><h1>隱私權政策</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 22 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\">本政策說明 KIFF Cloud 如何在網站、儀表板、API 及適用於 iPhone、iPad、Android 與電腦的 tafs 應用程式上處理個人資料。問題請洽：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -601,7 +601,7 @@ func privacyContactZH() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 聯絡我們</h2><p>隱私問題與權利請求：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p><p>寄給 Kiff Agents OÜ 的正式法律通知：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>，或郵寄至 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。</p><p>申訴的主要監管機關：<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 21 日。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 聯絡我們</h2><p>隱私問題與權利請求：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p><p>寄給 Kiff Agents OÜ 的正式法律通知：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>，或郵寄至 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。</p><p>申訴的主要監管機關：<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 22 日。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

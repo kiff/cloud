@@ -153,7 +153,7 @@ func privacyHeadHY() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Գաղտնիության քաղաքականություն · v0.1</p><h1>Գաղտնիության քաղաքականություն</h1><p class=\"legal-meta\"><strong>Վերջին թարմացում՝</strong> 2026 թվականի նոյեմբերի 21։ <strong>Ուժի մեջ մտնելու ամսաթիվ՝</strong> 2026 թվականի մայիսի 24։</p><p class=\"legal-disclaimer\">Այս քաղաքականությունը բացատրում է, թե ինչպես է KIFF Cloud-ը մշակում անձնական տվյալները կայքում, վահանակում, API-ում և tafs հավելվածում iPhone-ի, iPad-ի, Android-ի և համակարգիչների համար։ Հարցեր՝ <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>։</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Գաղտնիության քաղաքականություն · v0.1</p><h1>Գաղտնիության քաղաքականություն</h1><p class=\"legal-meta\"><strong>Վերջին թարմացում՝</strong> 2026 թվականի նոյեմբերի 22։ <strong>Ուժի մեջ մտնելու ամսաթիվ՝</strong> 2026 թվականի մայիսի 24։</p><p class=\"legal-disclaimer\">Այս քաղաքականությունը բացատրում է, թե ինչպես է KIFF Cloud-ը մշակում անձնական տվյալները կայքում, վահանակում, API-ում և tafs հավելվածում iPhone-ի, iPad-ի, Android-ի և համակարգիչների համար։ Հարցեր՝ <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>։</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -601,7 +601,7 @@ func privacyContactHY() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Կապվեք մեզ հետ</h2><p>Գաղտնիության հարցեր և իրավունքների հարցումներ՝ <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>։</p><p>Պաշտոնական իրավական ծանուցումներ Kiff Agents OÜ-ին՝ <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> կամ փոստով՝ Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Էստոնիա։</p><p>Առաջատար վերահսկող մարմին բողոքների համար՝ <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Էստոնիայի տվյալների պաշտպանության տեսչություն (Andmekaitse Inspektsioon)</a>։</p><hr><p class=\"legal-footnote\"><strong>Փաստաթղթի տարբերակ՝</strong> v0.1։<br><strong>Վերջին թարմացում՝</strong> 2026 թվականի նոյեմբերի 21։</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Կապվեք մեզ հետ</h2><p>Գաղտնիության հարցեր և իրավունքների հարցումներ՝ <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>։</p><p>Պաշտոնական իրավական ծանուցումներ Kiff Agents OÜ-ին՝ <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> կամ փոստով՝ Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Էստոնիա։</p><p>Առաջատար վերահսկող մարմին բողոքների համար՝ <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Էստոնիայի տվյալների պաշտպանության տեսչություն (Andmekaitse Inspektsioon)</a>։</p><hr><p class=\"legal-footnote\"><strong>Փաստաթղթի տարբերակ՝</strong> v0.1։<br><strong>Վերջին թարմացում՝</strong> 2026 թվականի նոյեմբերի 22։</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

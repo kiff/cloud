@@ -152,7 +152,7 @@ func privacyHeadHU() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Adatvédelmi szabályzat · v0.1</p><h1>Adatvédelmi szabályzat</h1><p class=\"legal-meta\"><strong>Utolsó frissítés:</strong> 2026. november 21. <strong>Hatálybalépés dátuma:</strong> 2026. május 24.</p><p class=\"legal-disclaimer\">Ez a szabályzat elmagyarázza, hogyan kezeli a KIFF Cloud a személyes adatokat a weboldalon, az irányítópulton, az API-ban és az iPhone-ra, iPadre, Androidra és számítógépre készült tafs alkalmazásban. Kérdések: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Adatvédelmi szabályzat · v0.1</p><h1>Adatvédelmi szabályzat</h1><p class=\"legal-meta\"><strong>Utolsó frissítés:</strong> 2026. november 22. <strong>Hatálybalépés dátuma:</strong> 2026. május 24.</p><p class=\"legal-disclaimer\">Ez a szabályzat elmagyarázza, hogyan kezeli a KIFF Cloud a személyes adatokat a weboldalon, az irányítópulton, az API-ban és az iPhone-ra, iPadre, Androidra és számítógépre készült tafs alkalmazásban. Kérdések: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -600,7 +600,7 @@ func privacyContactHU() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kapcsolat</h2><p>Adatvédelmi kérdések és a jogok gyakorlására irányuló kérelmek: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Hivatalos jogi értesítések a Kiff Agents OÜ részére: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, vagy postán: Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Észtország.</p><p>Panaszok esetén a fő felügyeleti hatóság: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">észt adatvédelmi felügyelet (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Dokumentumverzió:</strong> v0.1.<br><strong>Utolsó frissítés:</strong> 2026. november 21.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kapcsolat</h2><p>Adatvédelmi kérdések és a jogok gyakorlására irányuló kérelmek: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Hivatalos jogi értesítések a Kiff Agents OÜ részére: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, vagy postán: Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Észtország.</p><p>Panaszok esetén a fő felügyeleti hatóság: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">észt adatvédelmi felügyelet (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Dokumentumverzió:</strong> v0.1.<br><strong>Utolsó frissítés:</strong> 2026. november 22.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -177,7 +177,7 @@ func termsHeadZH() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">服務條款 · v0.1</p><h1>服務條款</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 21 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\"><strong>有何變更：</strong>當另一家企業向您引介時，您的契約對象是誰（§2），以及微型企業（§8）。更早之前：誰可依地區、所有權與制裁使用本服務（§4）；Android 上的 tafs 應用程式，以及透過 Google Play 購買的 Solo（§1、§8）。再之前：付費方案（§3A、§8）、<a href=\"/legal/sla\">服務水準協議</a> （英文）（§14），以及禁止使用的清單，現已載於<a href=\"/acceptable-use\">可接受使用政策</a> （英文）（§5）。</p><p class=\"legal-disclaimer\">本條款規範 KIFF Cloud（包括 tafs）的使用。合約問題請洽：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>。</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">服務條款 · v0.1</p><h1>服務條款</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 22 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\"><strong>有何變更：</strong>當另一家企業向您引介時，您的契約對象是誰（§2），以及微型企業（§8）。更早之前：誰可依地區、所有權與制裁使用本服務（§4）；Android 上的 tafs 應用程式，以及透過 Google Play 購買的 Solo（§1、§8）。再之前：付費方案（§3A、§8）、<a href=\"/legal/sla\">服務水準協議</a> （英文）（§14），以及禁止使用的清單，現已載於<a href=\"/acceptable-use\">可接受使用政策</a> （英文）（§5）。</p><p class=\"legal-disclaimer\">本條款規範 KIFF Cloud（包括 tafs）的使用。合約問題請洽：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>。</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -786,7 +786,7 @@ func termsContactZH() templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. 聯絡我們</h2><p>商務與合約問題：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>。</p><p>一般產品問題：<a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>。隱私問題：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。安全揭露：<a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 21 日。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. 聯絡我們</h2><p>商務與合約問題：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>。</p><p>一般產品問題：<a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>。隱私問題：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。安全揭露：<a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 22 日。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

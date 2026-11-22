@@ -152,7 +152,7 @@ func privacyHeadSL() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Pravilnik o zasebnosti · v0.1</p><h1>Pravilnik o zasebnosti</h1><p class=\"legal-meta\"><strong>Zadnja posodobitev:</strong> 21. novembra 2026. <strong>Datum začetka veljavnosti:</strong> 24. maja 2026.</p><p class=\"legal-disclaimer\">Ta pravilnik pojasnjuje, kako KIFF Cloud obdeluje osebne podatke na spletnem mestu, v nadzorni plošči, v API-ju in v aplikaciji tafs za iPhone, iPad, Android in računalnike. Vprašanja: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Pravilnik o zasebnosti · v0.1</p><h1>Pravilnik o zasebnosti</h1><p class=\"legal-meta\"><strong>Zadnja posodobitev:</strong> 22. novembra 2026. <strong>Datum začetka veljavnosti:</strong> 24. maja 2026.</p><p class=\"legal-disclaimer\">Ta pravilnik pojasnjuje, kako KIFF Cloud obdeluje osebne podatke na spletnem mestu, v nadzorni plošči, v API-ju in v aplikaciji tafs za iPhone, iPad, Android in računalnike. Vprašanja: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -600,7 +600,7 @@ func privacyContactSL() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kontakt</h2><p>Vprašanja o zasebnosti in zahteve za uveljavljanje pravic: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Uradna pravna obvestila za Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> ali po pošti na Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonija.</p><p>Vodilni nadzorni organ za pritožbe: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">estonski inšpektorat za varstvo podatkov (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Različica dokumenta:</strong> v0.1.<br><strong>Zadnja posodobitev:</strong> 21. novembra 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kontakt</h2><p>Vprašanja o zasebnosti in zahteve za uveljavljanje pravic: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Uradna pravna obvestila za Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> ali po pošti na Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonija.</p><p>Vodilni nadzorni organ za pritožbe: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">estonski inšpektorat za varstvo podatkov (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Različica dokumenta:</strong> v0.1.<br><strong>Zadnja posodobitev:</strong> 22. novembra 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

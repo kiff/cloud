@@ -177,7 +177,7 @@ func termsHeadKO() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">서비스 약관 · v0.1</p><h1>서비스 약관</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 11월 21일. <strong>시행일:</strong> 2026년 5월 24일.</p><p class=\"legal-disclaimer\"><strong>변경 사항:</strong> 다른 회사가 귀하를 소개한 경우의 계약 상대방(§2) 및 초소형 기업(§8). 그 이전: 지역, 소유 구조, 제재에 따라 서비스를 이용할 수 있는 자(§4); Android용 tafs 앱과 Google Play를 통해 구매하는 Solo(§1, §8). 그보다 앞서: 유료 요금제(§3A, §8), <a href=\"/legal/sla\">서비스 수준 계약</a>(영어)(§14), 그리고 현재는 <a href=\"/acceptable-use\">허용되는 이용 정책</a>(영어)에 있는 금지된 이용 목록(§5).</p><p class=\"legal-disclaimer\">이 약관은 tafs를 포함한 KIFF Cloud의 이용에 적용됩니다. 계약 관련 문의: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">서비스 약관 · v0.1</p><h1>서비스 약관</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 11월 22일. <strong>시행일:</strong> 2026년 5월 24일.</p><p class=\"legal-disclaimer\"><strong>변경 사항:</strong> 다른 회사가 귀하를 소개한 경우의 계약 상대방(§2) 및 초소형 기업(§8). 그 이전: 지역, 소유 구조, 제재에 따라 서비스를 이용할 수 있는 자(§4); Android용 tafs 앱과 Google Play를 통해 구매하는 Solo(§1, §8). 그보다 앞서: 유료 요금제(§3A, §8), <a href=\"/legal/sla\">서비스 수준 계약</a>(영어)(§14), 그리고 현재는 <a href=\"/acceptable-use\">허용되는 이용 정책</a>(영어)에 있는 금지된 이용 목록(§5).</p><p class=\"legal-disclaimer\">이 약관은 tafs를 포함한 KIFF Cloud의 이용에 적용됩니다. 계약 관련 문의: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -786,7 +786,7 @@ func termsContactKO() templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. 연락처</h2><p>영업 및 계약 관련 문의: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p><p>일반 제품 문의: <a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>. 개인정보 관련 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. 보안 취약점 신고: <a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 11월 21일.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section id=\"contact\"><h2>20. 연락처</h2><p>영업 및 계약 관련 문의: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>.</p><p>일반 제품 문의: <a href=\"mailto:hello@kiff.dev\">hello@kiff.dev</a>. 개인정보 관련 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. 보안 취약점 신고: <a href=\"mailto:security@kiff.dev\">security@kiff.dev</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 11월 22일.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

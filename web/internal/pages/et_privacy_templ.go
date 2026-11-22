@@ -154,7 +154,7 @@ func privacyHeadET() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Privaatsuspoliitika · v0.1</p><h1>Privaatsuspoliitika</h1><p class=\"legal-meta\"><strong>Viimati uuendatud:</strong> 21. november 2026. <strong>Jõustumise kuupäev:</strong> 24. mai 2026.</p><p class=\"legal-disclaimer\">See poliitika selgitab, kuidas KIFF Cloud töötleb isikuandmeid veebisaidil, töölaual, API-s ja rakenduses tafs iPhone'ile, iPadile, Androidile ja arvutitele. Küsimused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Privaatsuspoliitika · v0.1</p><h1>Privaatsuspoliitika</h1><p class=\"legal-meta\"><strong>Viimati uuendatud:</strong> 22. november 2026. <strong>Jõustumise kuupäev:</strong> 24. mai 2026.</p><p class=\"legal-disclaimer\">See poliitika selgitab, kuidas KIFF Cloud töötleb isikuandmeid veebisaidil, töölaual, API-s ja rakenduses tafs iPhone'ile, iPadile, Androidile ja arvutitele. Küsimused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -602,7 +602,7 @@ func privacyContactET() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kontakt</h2><p>Privaatsusküsimused ja õiguste kasutamise taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Ametlikud õiguslikud teated Kiff Agents OÜ-le: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> või posti teel aadressil Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Eesti.</p><p>Juhtiv järelevalveasutus kaebuste esitamiseks: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioon</a>.</p><hr><p class=\"legal-footnote\"><strong>Dokumendi versioon:</strong> v0.1.<br><strong>Viimati uuendatud:</strong> 21. november 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Kontakt</h2><p>Privaatsusküsimused ja õiguste kasutamise taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Ametlikud õiguslikud teated Kiff Agents OÜ-le: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a> või posti teel aadressil Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Eesti.</p><p>Juhtiv järelevalveasutus kaebuste esitamiseks: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioon</a>.</p><hr><p class=\"legal-footnote\"><strong>Dokumendi versioon:</strong> v0.1.<br><strong>Viimati uuendatud:</strong> 22. november 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

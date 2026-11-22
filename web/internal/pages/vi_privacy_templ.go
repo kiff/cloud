@@ -153,7 +153,7 @@ func privacyHeadVI() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Chính sách quyền riêng tư · v0.1</p><h1>Chính sách quyền riêng tư</h1><p class=\"legal-meta\"><strong>Cập nhật lần cuối:</strong> 21 tháng mười một năm 2026. <strong>Ngày có hiệu lực:</strong> 24 tháng Năm năm 2026.</p><p class=\"legal-disclaimer\">Chính sách này giải thích cách KIFF Cloud xử lý dữ liệu cá nhân trên trang web, bảng điều khiển, API và ứng dụng tafs trên iPhone, iPad, Android và máy tính. Câu hỏi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">Chính sách quyền riêng tư · v0.1</p><h1>Chính sách quyền riêng tư</h1><p class=\"legal-meta\"><strong>Cập nhật lần cuối:</strong> 22 tháng mười một năm 2026. <strong>Ngày có hiệu lực:</strong> 24 tháng Năm năm 2026.</p><p class=\"legal-disclaimer\">Chính sách này giải thích cách KIFF Cloud xử lý dữ liệu cá nhân trên trang web, bảng điều khiển, API và ứng dụng tafs trên iPhone, iPad, Android và máy tính. Câu hỏi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -601,7 +601,7 @@ func privacyContactVI() templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Liên hệ với chúng tôi</h2><p>Câu hỏi về quyền riêng tư và yêu cầu về quyền: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Thông báo pháp lý chính thức gửi Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, hoặc qua đường bưu điện đến Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>Cơ quan giám sát chính cho các khiếu nại: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Cơ quan Thanh tra Bảo vệ Dữ liệu Estonia (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Phiên bản tài liệu:</strong> v0.1.<br><strong>Cập nhật lần cuối:</strong> 21 tháng mười một năm 2026.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. Liên hệ với chúng tôi</h2><p>Câu hỏi về quyền riêng tư và yêu cầu về quyền: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Thông báo pháp lý chính thức gửi Kiff Agents OÜ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, hoặc qua đường bưu điện đến Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>Cơ quan giám sát chính cho các khiếu nại: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Cơ quan Thanh tra Bảo vệ Dữ liệu Estonia (Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>Phiên bản tài liệu:</strong> v0.1.<br><strong>Cập nhật lần cuối:</strong> 22 tháng mười một năm 2026.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
