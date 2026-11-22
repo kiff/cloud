@@ -468,3 +468,38 @@ func TestTheProvidersTokenMustBeThePersons(t *testing.T) {
 		t.Fatalf("the person's token: %q %v", tok, err)
 	}
 }
+
+// panicOnce is a mailer whose first code email panics, as a bug in rendering
+// one would.
+type panicOnce struct {
+	*mailer
+	mu    sync.Mutex
+	fired bool
+}
+
+func (p *panicOnce) SignInCode(ctx context.Context, to, code string, l words.Lang, a Asked) error {
+	p.mu.Lock()
+	first := !p.fired
+	p.fired = true
+	p.mu.Unlock()
+	if first {
+		panic("render")
+	}
+	return p.mailer.SignInCode(ctx, to, code, l, a)
+}
+
+// A panic in one background send is logged and dropped; the next send still
+// goes, and the process stays up.
+func TestAPanickingSendJobIsDroppedNotFatal(t *testing.T) {
+	r := newRig(t)
+	r.s.Mail = &panicOnce{mailer: r.m}
+	r.send("on@example.com", "flow-1", "198.51.100.7")
+	r.send("on@example.com", "flow-2", "198.51.100.8")
+	got := r.m.all()
+	if len(got) != 1 || got[0].kind != "code" {
+		t.Fatalf("the second send should go after the first panicked: %+v", got)
+	}
+	if !strings.Contains(r.logs.String(), "send job panicked; dropped") {
+		t.Errorf("the panic is not logged:\n%s", r.logs.String())
+	}
+}
