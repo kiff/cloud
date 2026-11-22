@@ -17,4 +17,4 @@ and its credits, sold in Japan through the App Store and Google Play.
 | When you get it | Immediately after the purchase is confirmed |
 | Validity of credits | Packs of credits, and bonus credits, don't expire |
 | Cancellation | Solo can be cancelled at any time in your Apple or Google Play subscriptions; it runs to the end of the period you paid for and isn't renewed. Because credits and Solo are digital content supplied at once, there is no return after purchase, except as the law requires or under the store's refund terms. |
-| Operating environment | iPhone and iPad with a current iOS or iPadOS; Android phones with a current Android, through Google Play |
+| Operating environment | iPhone and iPad with iOS or iPadOS 16 or later; Android phones with Android 11 or later, through Google Play |

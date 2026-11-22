@@ -83,7 +83,7 @@ func (w tafsCostWords) number(n int) string {
 	case "dv":
 		sep = ","
 	case "tg":
-		sep = " "
+		sep = "\u00a0"
 	case "ta":
 		sep = ","
 	case "si":
