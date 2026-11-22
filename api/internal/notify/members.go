@@ -63,7 +63,8 @@ func renderInvite(inv MemberInvite) (subject, text, htmlBody string) {
 	intro := w.InviteIntro(by, account, w.Role(inv.Role), what)
 	expiry := ""
 	if !inv.ExpiresAt.IsZero() {
-		expiry = " " + w.InviteExpires(w.DateTime(inv.ExpiresAt))
+		// An invitation reaches someone with no account zone yet: UTC, named, as the sign-in codes say it.
+		expiry = " " + w.InviteExpires(w.DateTimeIn(inv.ExpiresAt, time.UTC)+" (UTC)")
 	}
 	text = intro + " " + w.InviteAccept(inv.AcceptURL) + expiry + " " + w.InviteIgnore
 	htmlBody, _ = renderLayout(mail{Lang: inv.Lang, Title: subject, Lead: intro,

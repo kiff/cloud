@@ -1878,6 +1878,8 @@ func newRouter(deps routerDeps) http.Handler {
 	// (events / entities / approvals). Mounted only when a runtime
 	// resolver was wired (production has one; the integration
 	// test in main_test.go can pass nil to skip).
+	// The proposals handler, so the mandates handler can later say a held call in words.
+	var proposalsHandler *handlers.ProposalsHandler
 	if deps.tenantRuntime != nil {
 		runtimeHandler := handlers.NewTenantRuntimeHandler(deps.tenantRuntime, "/v1", deps.logger)
 		// So a management review from the tenant-wide queue reaches the
@@ -2020,7 +2022,8 @@ func newRouter(deps routerDeps) http.Handler {
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))
 		}
-		handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...).Register(authed)
+		proposalsHandler = handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...)
+		proposalsHandler.Register(authed)
 
 		// Tenant-wide list-pending-approvals.
 		// Sits beside the framework's approval-review surface (the
@@ -2128,6 +2131,10 @@ func newRouter(deps routerDeps) http.Handler {
 		mandatesHandler.Register(authed)
 		mandatesHandler.RegisterExternalApprover(mux)
 		mandatesHandler.RegisterAgentDraftClaim(mux)
+		// The held-action email says the call as the apps do.
+		if proposalsHandler != nil {
+			proposalsHandler.SetHeldWords(mandatesHandler)
+		}
 	}
 
 	handlers.NewAgentsHandler(deps.agentStore,

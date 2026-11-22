@@ -48,6 +48,13 @@ func TestWriteEmailSamples(t *testing.T) {
 		write(l+"-new-device", h, err)
 		held := heldForTest()
 		held.Lang = lang
+		held.Agent = "Refund bot"
+		held.Zone, _ = time.LoadLocation("Europe/Paris")
+		if lang == words.FR {
+			held.ActionWords, held.AmountText, held.Reason = "Rembourser un paiement", "47,00 €", "47,00 € dépasse la limite de 40,00 € pour un appel"
+		} else {
+			held.ActionWords, held.AmountText, held.Reason = "Refund a payment", "€47.00", "€47.00 is over the €40.00 limit for one call"
+		}
 		_, _, h, err = renderHeld(held)
 		write(l+"-held", h, err)
 		_, _, h2 := renderInvite(MemberInvite{Account: "Acme", Role: "admin", InvitedBy: "", AcceptURL: "https://app.kiff.dev/invite/abc", ExpiresAt: at.Add(72 * time.Hour), Lang: lang})

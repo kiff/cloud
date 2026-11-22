@@ -54,6 +54,18 @@ func WithProposalsHoldEmail(owners OwnerEmailResolver, notifier notify.Notifier,
 	}
 }
 
+// WithProposalsHeldWords makes the held-action email speak in people's words:
+// the action as it is said in the apps, the amount in the person's currency
+// format, and why it is held, from the hold's own view. Without it, or when a
+// hold cannot be read, the email says the action and amount as they were asked.
+func WithProposalsHeldWords(src HeldWordsSource) ProposalsOption {
+	return func(h *ProposalsHandler) { h.heldWords = src }
+}
+
+// SetHeldWords is WithProposalsHeldWords for a source built after the handler,
+// at start-up, before the first request.
+func (h *ProposalsHandler) SetHeldWords(src HeldWordsSource) { h.heldWords = src }
+
 // notifyHeld emails the owner about an action just held for them. Best
 // effort and detached: a send never delays or changes the decision.
 func (h *ProposalsHandler) notifyHeld(tenantID string, prop kiffproposal.ActionProposal, d mandate.Decision) {
@@ -111,6 +123,12 @@ func (h *ProposalsHandler) notifyHeld(tenantID string, prop kiffproposal.ActionP
 		for _, to := range recipients {
 			// Each in their own language: the one their app last showed them.
 			held.Lang = personlang.Of(account, to.Subject)
+			held.Zone = accountZone(account)
+			if h.heldWords != nil {
+				if w, ok := h.heldWords.HeldCallWords(ctx, tenantID, d.ExceptionID, held.Lang); ok {
+					held.ActionWords, held.AmountText, held.Reason = w.Action, w.Amount, w.Reason
+				}
+			}
 			if err := h.holdNotifier.ActionHeld(ctx, to.Email, held); err != nil {
 				logger.ErrorContext(ctx, "proposals: held-action email failed",
 					slog.String("tenant", tenantID), slog.String("exception", d.ExceptionID), slog.String("err", err.Error()))
@@ -156,4 +174,12 @@ func quotedOrNone(v string) string {
 		return "(none sent)"
 	}
 	return strconv.Quote(v)
+}
+
+// accountZone is the account's own time zone, UTC when it has none or it can't be loaded.
+func accountZone(t tenant.Tenant) *time.Location {
+	if loc, err := time.LoadLocation(tenant.TimeZoneFor(t)); err == nil {
+		return loc
+	}
+	return time.UTC
 }

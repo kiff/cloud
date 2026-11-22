@@ -269,3 +269,77 @@ func (s *subjectOwners) Email(context.Context, string) (string, error) {
 func (s *subjectOwners) HoldRecipientsWithSubjects(context.Context, string) ([]owneremail.Recipient, error) {
 	return s.recipients, nil
 }
+
+// stubHeldWords says a hold in the words of the language asked, as the apps do.
+type stubHeldWords struct {
+	ok    bool
+	langs []words.Lang
+}
+
+func (s *stubHeldWords) HeldCallWords(_ context.Context, tenantID, exceptionID string, lang words.Lang) (HeldCallWords, bool) {
+	s.langs = append(s.langs, lang)
+	if !s.ok || exceptionID != "exc-1" || tenantID == "" {
+		return HeldCallWords{}, false
+	}
+	return HeldCallWords{Action: "Refund a payment (" + string(lang) + ")", Amount: "€47.00", Reason: "€47.00 is over the €40.00 limit for one call"}, true
+}
+
+// The held-action email speaks people's words: what each app's Needs you says, read in the
+// recipient's own language, and the hold's end in the account's zone. When the hold cannot be read the
+// email says what it can from the proposal, as before.
+func TestHeldActionEmailSpeaksPeoplesWords(t *testing.T) {
+	at := time.Date(2026, 9, 12, 12, 10, 0, 0, time.UTC)
+	held := mandate.Decision{Outcome: mandate.OutcomeOwnerRequired, ExceptionID: "exc-1", ExceptionExpiresAt: &at, NewlyHeld: true,
+		Breaches: []mandate.Breach{{MandateID: "card-r", Outcome: mandate.OutcomePerActionExceeded,
+			Quantity: mandate.Quantity{Kind: mandate.KindSum, Parameter: "amount_eur"}, Limit: 500, Draw: 4700}}}
+	id := keyBoundTo("agent-1")
+	id.Tenant = "01J9Z3Q8M5W7K2T4R6Y8A0C1D2"
+	store := tenant.NewMemoryStore()
+	if err := store.Create(context.Background(), tenant.Tenant{ID: id.Tenant, Slug: "eval", Status: tenant.StatusActive}); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.SetMetadata(context.Background(), id.Tenant, tenant.MetadataKeyTimeZone, "Europe/Paris"); err != nil {
+		t.Fatal(err)
+	}
+	rec := &personlang.Recorder{Tenants: store, Go: func(f func()) { f() }}
+	rec.Note(id.Tenant, "ana", words.FR)
+	send := func(src HeldWordsSource) *recordingNotifier {
+		notifier := &recordingNotifier{}
+		h := &ProposalsHandler{mandates: &stubMandates{decision: held}, logger: testLogger(), tenants: noRuntime{}}
+		WithProposalsHoldEmail(&fixedOwner{email: "owner@example.com"}, notifier, "https://app.kiff.dev/")(h)
+		WithProposalsTenantStore(store)(h)
+		if src != nil {
+			WithProposalsHeldWords(src)(h)
+		}
+		h.dispatch = func(f func()) { f() }
+		h.mandateRefusal(context.Background(), id, propForTest("agent-1"), domain.Spec{}, "PAID")
+		return notifier
+	}
+
+	src := &stubHeldWords{ok: true}
+	n := send(src)
+	if len(n.held) != 1 {
+		t.Fatalf("%d emails", len(n.held))
+	}
+	h := n.held[0]
+	if h.ActionWords == "" || h.AmountText != "€47.00" || !strings.Contains(h.Reason, "over the") {
+		t.Errorf("the email has no words for the call: %+v", h)
+	}
+	if h.Zone == nil || h.Zone.String() != "Europe/Paris" {
+		t.Errorf("the hold's end is in the account's zone: %v", h.Zone)
+	}
+	if len(src.langs) != 1 || src.langs[0] != h.Lang {
+		t.Errorf("the words are read in the recipient's language: asked %v, email %q", src.langs, h.Lang)
+	}
+
+	// A hold that cannot be read: the email goes, in the identifiers, as before.
+	n = send(&stubHeldWords{ok: false})
+	if len(n.held) != 1 || n.held[0].ActionWords != "" || n.held[0].Action == "" {
+		t.Errorf("unreadable hold: %+v", n.held)
+	}
+	// No source wired: the same.
+	n = send(nil)
+	if len(n.held) != 1 || n.held[0].ActionWords != "" {
+		t.Errorf("no source: %+v", n.held)
+	}
+}

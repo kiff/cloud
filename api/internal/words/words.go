@@ -218,6 +218,12 @@ type Words struct {
 	HeldExpires                                         func(when string) string
 	HeldNoApprove, HeldButtonsNote                      string
 	HeldApproveOnce, HeldChangeCard, HeldReject         string
+	// HeldWants opens the email that speaks the call in people's words
+	// (agent comes escaped when the email is HTML); the rows say what it does
+	// (the action in words), how much (the amount in the person's currency
+	// format) and why it is held.
+	HeldWants                                func(agent string) string
+	HeldRowAction, HeldRowAmount, HeldRowWhy string
 
 	// A Card warning's reason (mandate.CardWarning), composed in the
 	// reader's language from its kind, its share used and its window, and

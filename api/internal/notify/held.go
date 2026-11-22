@@ -38,6 +38,15 @@ type HeldAction struct {
 	NextSteps []string
 	// Lang is the recipient's language (personlang); English when empty.
 	Lang words.Lang
+	// ActionWords, AmountText and Reason are the call in the person's
+	// words, as the apps' Needs you says it (handlers/held_email_words.go):
+	// "Refund a payment", "€47.00", "€47.00 is over the €40 limit for one
+	// call". Empty when KIFF could not read
+	// them; the email then says the action and amount as they were asked
+	// (Action, Amount, Outside). Zone is the account's time zone, for when the
+	// hold stops waiting; UTC when nil.
+	ActionWords, AmountText, Reason string
+	Zone                            *time.Location
 }
 
 // The answers offered in the email, with the Card's next steps between
@@ -50,6 +59,7 @@ type heldView struct {
 	Answers []heldAnswerLink
 	// The email's sentences in the recipient's language (internal/words):
 	// Intro and Intro HTML say who wants what; the rest are as worded.
+	Rows        []newDeviceRow
 	Intro       string
 	IntroHTML   htmltemplate.HTML
 	NothingDone string
@@ -71,11 +81,30 @@ func newHeldView(h HeldAction) heldView {
 	if h.Amount != "" {
 		amount = " " + h.Amount
 	}
-	v.Intro = w.HeldIntro(h.Agent, h.Action, amount)
 	esc := htmltemplate.HTMLEscapeString
-	v.IntroHTML = htmltemplate.HTML(w.HeldIntro("<strong>"+esc(h.Agent)+"</strong>", "<strong>"+esc(h.Action)+"</strong>", esc(amount))) //nolint:gosec // every part the agent chose is escaped
+	if h.ActionWords != "" {
+		// In people's words: who wants to do something outside its Card, then
+		// what, how much and why it is held, as rows.
+		v.Intro = w.HeldWants(h.Agent)
+		v.IntroHTML = htmltemplate.HTML(w.HeldWants("<strong>" + esc(h.Agent) + "</strong>")) //nolint:gosec // every part the agent chose is escaped
+		v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAction, Value: h.ActionWords})
+		if h.AmountText != "" {
+			v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAmount, Value: h.AmountText})
+		}
+		if h.Reason != "" {
+			v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowWhy, Value: h.Reason})
+		}
+		for i := range v.Rows {
+			v.Rows[i].Line = w.NewDeviceRow(v.Rows[i].Label, v.Rows[i].Value)
+		}
+		v.Outside = nil
+	} else {
+		v.Intro = w.HeldIntro(h.Agent, h.Action, amount)
+		v.IntroHTML = htmltemplate.HTML(w.HeldIntro("<strong>"+esc(h.Agent)+"</strong>", "<strong>"+esc(h.Action)+"</strong>", esc(amount))) //nolint:gosec // every part the agent chose is escaped
+	}
 	if !h.ExpiresAt.IsZero() {
-		v.Expires = w.HeldExpires(w.DateTime(h.ExpiresAt))
+		// When the hold stops waiting, in the account's zone and named.
+		v.Expires = w.HeldExpires(w.DateTimeIn(h.ExpiresAt, h.Zone) + " (" + zoneName(w, h.Zone) + ")")
 	}
 	var steps []string
 	for _, s := range h.NextSteps {
@@ -104,7 +133,8 @@ func nextStepLabel(step string) string {
 }
 
 var heldText = texttemplate.Must(texttemplate.New("held").Parse(`{{.Intro}}
-{{range .Outside}}
+{{range .Rows}}
+{{.Line}}{{end}}{{range .Outside}}
 - {{.}}{{end}}
 
 {{.NothingDone}} {{.Open}}
@@ -124,7 +154,7 @@ func heldMail(v heldView) mail {
 	if v.Expires != "" {
 		paras += " " + v.Expires
 	}
-	m := mail{Lang: v.Lang, LeadHTML: v.IntroHTML, List: v.Outside, Paras: []string{paras},
+	m := mail{Lang: v.Lang, LeadHTML: v.IntroHTML, Rows: v.Rows, List: v.Outside, Paras: []string{paras},
 		Small: []string{v.ButtonsNote + " " + v.NoApprove}}
 	for _, a := range v.Answers {
 		m.Buttons = append(m.Buttons, mailButton{Label: a.Label, URL: a.URL})
