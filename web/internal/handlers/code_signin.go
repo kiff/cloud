@@ -231,6 +231,10 @@ func (h *CodeSignInHandler) verify(w http.ResponseWriter, r *http.Request) {
 		v.Problem = v.W.SlowDown
 		h.render(w, r, http.StatusTooManyRequests, v)
 		return
+	case errors.Is(err, apiclient.ErrCodeSecondFactor):
+		v.Step, v.Problem = "email", v.W.SecondFactor
+		h.render(w, r, http.StatusForbidden, v)
+		return
 	case errors.Is(err, apiclient.ErrCodeOff):
 		v.Step = "off"
 		h.render(w, r, http.StatusNotFound, v)
@@ -539,6 +543,9 @@ func (h *SignInSettingHandler) set(w http.ResponseWriter, r *http.Request) {
 		lang := appSignInLang(r)
 		v := settingView{Lang: lang, W: words.CodeSignInIn(lang), On: !on, Available: !errors.Is(err, apiclient.ErrCodeOff)}
 		v.Problem = v.W.Unavailable
+		if errors.Is(err, apiclient.ErrCodeSecondFactor) {
+			v.Problem = v.W.SecondFactor
+		}
 		h.render(w, r, v)
 	}
 }

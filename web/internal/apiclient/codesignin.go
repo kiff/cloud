@@ -24,6 +24,9 @@ var (
 	// ErrCodeOff: KIFF has code sign-in off (no key), or the call didn't
 	// come from the box.
 	ErrCodeOff = errors.New("apiclient: code sign-in is off")
+	// ErrCodeSecondFactor: the person signs in with a second factor, which
+	// a code never stands in for.
+	ErrCodeSecondFactor = errors.New("apiclient: the person signs in with a second factor")
 )
 
 // CodeAsk is a browser asking for a code: its flow (the web's sealed
@@ -83,6 +86,8 @@ func (c *Client) codeCall(ctx context.Context, path string, in map[string]string
 		return body, nil
 	case http.StatusTooManyRequests:
 		return nil, ErrCodeSlowDown
+	case http.StatusForbidden:
+		return nil, ErrCodeSecondFactor
 	case http.StatusNotFound:
 		return nil, ErrCodeOff
 	case http.StatusBadRequest:
@@ -132,6 +137,8 @@ func (c *Client) SetSignInCode(ctx context.Context, bearer string, on bool) (Sig
 		return out, ErrReauthRequired
 	case resp.StatusCode == http.StatusServiceUnavailable:
 		return out, ErrCodeOff
+	case resp.StatusCode == http.StatusConflict && strings.Contains(string(body), "second_factor"):
+		return out, ErrCodeSecondFactor
 	}
 	return out, fmt.Errorf("apiclient: PUT /v1/me/sign-in: status %d", resp.StatusCode)
 }

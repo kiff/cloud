@@ -35,6 +35,8 @@ type CodeSignIn struct {
 	TurnOff             string
 	SettingNotAvailable string
 	SettingSaved        string
+	// SecondFactor: the person signs in with a second factor.
+	SecondFactor string
 }
 
 // Sent is the line after asking for a code, the same for every address.
@@ -67,6 +69,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Turn off",
 		SettingNotAvailable: "Signing in with a code isn’t available yet.",
 		SettingSaved:        "Saved. We emailed you about the change.",
+		SecondFactor:        "You sign in with a second step, so a code can’t sign you in on its own. Sign in another way.",
 	},
 	"de": {
 		Link:                "Stattdessen einen Code per E-Mail",
@@ -94,6 +97,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Ausschalten",
 		SettingNotAvailable: "Die Anmeldung mit Code ist noch nicht verfügbar.",
 		SettingSaved:        "Gespeichert. Wir haben dir eine E-Mail zur Änderung geschickt.",
+		SecondFactor:        "Du meldest dich mit einem zweiten Schritt an, deshalb reicht ein Code allein nicht. Melde dich anders an.",
 	},
 	"fr": {
 		Link:                "Recevoir plutôt un code par e-mail",
@@ -121,6 +125,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Désactiver",
 		SettingNotAvailable: "La connexion par code n’est pas encore disponible.",
 		SettingSaved:        "Enregistré. Nous vous avons écrit au sujet de ce changement.",
+		SecondFactor:        "Vous vous connectez avec une seconde étape : un code seul ne peut pas vous connecter. Connectez-vous autrement.",
 	},
 	"es": {
 		Link:                "Recibir un código por correo",
@@ -148,6 +153,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Desactivar",
 		SettingNotAvailable: "El inicio de sesión con código aún no está disponible.",
 		SettingSaved:        "Guardado. Te escribimos sobre el cambio.",
+		SecondFactor:        "Inicias sesión con un segundo paso, así que un código solo no basta. Inicia sesión de otra forma.",
 	},
 	"it": {
 		Link:                "Ricevi invece un codice per email",
@@ -175,6 +181,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Disattiva",
 		SettingNotAvailable: "L’accesso con un codice non è ancora disponibile.",
 		SettingSaved:        "Salvato. Ti abbiamo scritto riguardo alla modifica.",
+		SecondFactor:        "Accedi con un secondo passaggio, quindi un codice da solo non basta. Accedi in un altro modo.",
 	},
 	"pt": {
 		Link:                "Receber antes um código por email",
@@ -202,6 +209,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Desativar",
 		SettingNotAvailable: "O início de sessão com código ainda não está disponível.",
 		SettingSaved:        "Guardado. Enviámos-lhe um email sobre a alteração.",
+		SecondFactor:        "Inicia sessão com um segundo passo, por isso um código sozinho não chega. Inicie sessão de outra forma.",
 	},
 	"nl": {
 		Link:                "Liever een code per e-mail",
@@ -229,6 +237,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Uitzetten",
 		SettingNotAvailable: "Inloggen met een code is nog niet beschikbaar.",
 		SettingSaved:        "Opgeslagen. We hebben je over de wijziging gemaild.",
+		SecondFactor:        "Je logt in met een tweede stap, dus een code alleen is niet genoeg. Log op een andere manier in.",
 	},
 	"pl": {
 		Link:                "Zamiast tego wyślij mi kod e-mailem",
@@ -256,6 +265,7 @@ var codeSignIn = map[string]CodeSignIn{
 		TurnOff:             "Wyłącz",
 		SettingNotAvailable: "Logowanie kodem nie jest jeszcze dostępne.",
 		SettingSaved:        "Zapisano. Wysłaliśmy Ci e-mail o tej zmianie.",
+		SecondFactor:        "Logujesz się z drugim krokiem, więc sam kod nie wystarczy. Zaloguj się w inny sposób.",
 	},
 }
 
