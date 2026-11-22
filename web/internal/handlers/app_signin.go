@@ -46,7 +46,12 @@ const (
 	appSignInFormTTL = 10 * time.Minute
 	// appRedirectPrefix is where the API may send the sheet: the app's own
 	// redirect (appsignin.RedirectURI), nowhere else.
-	appRedirectPrefix = "dev.kiff.tafs:/oauth?"
+	appRedirectPrefix = appScheme + "/oauth?"
+	// appScheme is the apps' return scheme, the same on every platform. The
+	// page's form-action allows it, and only it, beside the page itself:
+	// "Continue as" is a form whose answer redirects to the app, and a
+	// browser holds a form's redirect to form-action too.
+	appScheme = "dev.kiff.tafs:"
 	// appBackToApp is where "Back to the app" sends the sheet when there's
 	// nothing left to do here: the app's own redirect, as a cancel. The
 	// request is spent or unknown, so there's no state to send; the app
@@ -381,7 +386,10 @@ func (h *AppSignInHandler) render(w http.ResponseWriter, r *http.Request, status
 
 // appSignInCSP is the page's policy: its own script by nonce, the provider's
 // script, requests and pictures from its frontend host and the hosts its
-// bot and fraud checks use (the provider's documented list), and no framing.
+// bot and fraud checks use (the provider's documented list), no framing, and
+// forms that go only to this site or, by its redirect, back to the app
+// (appScheme). The server sends a form's answer to the app only at
+// appRedirectPrefix.
 func appSignInCSP(frontendAPI, nonce string) string {
 	script, connect := "'self' 'nonce-"+nonce+"'", "'self'"
 	if frontendAPI != "" {
@@ -392,7 +400,7 @@ func appSignInCSP(frontendAPI, nonce string) string {
 	return "default-src 'none'; script-src " + script + "; connect-src " + connect +
 		"; img-src 'self' https://img.clerk.com; style-src 'self' 'unsafe-inline'; font-src 'self'" +
 		"; frame-src https://challenges.cloudflare.com https://*.protect.clerk.com; worker-src 'self' blob:" +
-		"; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+		"; frame-ancestors 'none'; base-uri 'none'; form-action 'self' " + appScheme
 }
 
 // newNonce is a fresh CSP nonce, one per page.
