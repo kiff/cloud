@@ -209,6 +209,7 @@ func TestAnAccountNoticeFollowsTheNoticesGroup(t *testing.T) {
 	defer delete(words.EmailMore, tag)
 
 	words.EmailMore[tag] = core
+	words.ForgetEmailWords(tag)
 	if err := n.AccountNotice(ctx, "a@example.com", notice); err != nil {
 		t.Fatal(err)
 	}
@@ -223,6 +224,7 @@ func TestAnAccountNoticeFollowsTheNoticesGroup(t *testing.T) {
 		full[k] = v
 	}
 	words.EmailMore[tag] = full
+	words.ForgetEmailWords(tag)
 	if err := n.AccountNotice(ctx, "a@example.com", notice); err != nil {
 		t.Fatal(err)
 	}

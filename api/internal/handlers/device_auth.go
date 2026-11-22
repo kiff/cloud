@@ -999,7 +999,7 @@ func (h *DeviceAuthHandler) newApproverNotice(ctx context.Context, tenantID, sub
 			lang = personlang.Of(t, subject)
 		}
 	}
-	w := words.Of(lang)
+	w := words.OfNotice(lang)
 	phone := strings.TrimSpace(name)
 	if phone == "" {
 		phone = w.YourPhone

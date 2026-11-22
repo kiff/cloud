@@ -396,3 +396,12 @@ func EmailNoticeLanguagesMissing() []string {
 
 // EmailGroupName is the group a line of the table is in: "core" or "notices".
 func EmailGroupName(key string) string { return lineGroup(key) }
+
+// OfNotice is the words a handler words an account notice from: the language's when it has the notices' sentences
+// and the core they are filled with (a role's name, "an admin"), else English entirely, so a notice is never an English
+// sentence with another language's words inside it. AccountNotice lays the notice out in the same language
+// (NoticeLangFor).
+func OfNotice(l Lang) *Words { return Of(NoticeLangFor(l)) }
+
+// ForgetEmailWords drops what was built for a language, for tests that change EmailMore.
+func ForgetEmailWords(tag string) { forgetEmailWords(tag) }

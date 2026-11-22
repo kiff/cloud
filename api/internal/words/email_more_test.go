@@ -278,3 +278,40 @@ func TestTheNoticesAreASecondGroupOfLines(t *testing.T) {
 		t.Errorf("notices without the core are not used")
 	}
 }
+
+// A notice's handler words it from OfNotice: with the core and not the notices, all of it is English (a role's name
+// and "an admin" too, never an English sentence with another language's words in it); with both, all of it is the
+// language's.
+func TestANoticeIsWordedWhollyInOneLanguage(t *testing.T) {
+	core, notices := EmailLines{}, EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		if lineGroup(k) == groupNotices {
+			notices[k] = "[nn] " + strings.ToUpper(v)
+		} else {
+			core[k] = "[nn] " + strings.ToUpper(v)
+		}
+	}
+	defer func() { delete(EmailMore, "nn"); forgetEmailWords("nn") }()
+	EmailMore["nn"] = core
+	forgetEmailWords("nn")
+	w := OfNotice("nn")
+	if strings.Contains(w.Role("approver"), "[nn]") || strings.Contains(w.AnAdmin, "[nn]") || strings.Contains(w.Someone, "[nn]") || strings.Contains(w.AuthoritySubject("r", "a"), "[nn]") {
+		t.Errorf("with the core only a notice is English throughout: role %q, an admin %q", w.Role("approver"), w.AnAdmin)
+	}
+	if !strings.Contains(Of("nn").Role("approver"), "[nn]") {
+		t.Errorf("the language's own emails keep their role names")
+	}
+	full := EmailLines{}
+	for k, v := range core {
+		full[k] = v
+	}
+	for k, v := range notices {
+		full[k] = v
+	}
+	EmailMore["nn"] = full
+	forgetEmailWords("nn")
+	w = OfNotice("nn")
+	if !strings.Contains(w.Role("approver"), "[nn]") || !strings.Contains(w.AnAdmin, "[nn]") || !strings.Contains(w.AuthoritySubject("r", "a"), "[nn]") {
+		t.Errorf("with both groups a notice is the language's throughout")
+	}
+}
