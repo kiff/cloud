@@ -329,7 +329,10 @@ func (h *DeviceAuthHandler) RegisterPublic(mux *http.ServeMux) {
 		mux.HandleFunc("GET /v1/auth/app/terms", h.app.Terms)
 	}
 	if h.pairings != nil && h.devices != nil {
-		mux.HandleFunc("POST /v1/pair/claim", h.claimPairing)
+		mux.HandleFunc("POST /v1/pair/claim", extensionCORS(h.claimPairing))
+		// The tafs Chrome extension claims its view-only device from its own
+		// origin, so Chrome asks first (extension_cors.go).
+		mux.HandleFunc("OPTIONS /v1/pair/claim", extensionPreflight)
 	}
 }
 
