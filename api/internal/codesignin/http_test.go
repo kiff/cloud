@@ -141,3 +141,129 @@ func TestTurningCodesOnIsRefusedWithASecondFactor(t *testing.T) {
 		t.Fatal("turned on anyway")
 	}
 }
+
+// servePhone calls the person's setting as a phone's session does: through
+// the real route policy, with a device key in the identity.
+func servePhone(h *Handler, method, body string, id auth.Identity) *httptest.ResponseRecorder {
+	mux := http.NewServeMux()
+	h.RegisterAuthenticated(mux)
+	req := httptest.NewRequest(method, "/v1/me/sign-in", strings.NewReader(body))
+	req = req.WithContext(auth.WithIdentity(req.Context(), id))
+	rec := httptest.NewRecorder()
+	auth.DefaultRoutePolicy().Wrap(mux).ServeHTTP(rec, req)
+	return rec
+}
+
+func phone(subject string) auth.Identity {
+	return auth.Identity{Subject: subject, Method: auth.MethodDeveloper, DeviceKey: []byte("phone-key"), DeviceSessionID: "sess-phone"}
+}
+
+// A phone's session reads the person's own setting and turns codes off, and the
+// person is told by email; it never turns them on (that needs a recent sign-in
+// at kiff.dev, and a phone's session has none), even where a recent sign-in
+// would pass. It touches only its own person's setting.
+func TestAPhoneSessionReadsAndTurnsCodesOffButNeverOn(t *testing.T) {
+	r := newRig(t)
+	// A recent sign-in that would pass: the refusal is the device session's, not the check's.
+	h := NewHandler(r.s, stepUp{ok: true}, nil)
+	ctx := context.Background()
+
+	// Read: codes are on for user_on, off for user_off.
+	if rec := servePhone(h, "GET", "", phone("user_on")); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"email_code":true`) {
+		t.Fatalf("a phone's read: %d %s", rec.Code, rec.Body)
+	}
+	if rec := servePhone(h, "GET", "", phone("user_off")); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"email_code":false`) {
+		t.Fatalf("a phone's read of its own off: %d %s", rec.Code, rec.Body)
+	}
+
+	// Turning on from a phone: refused with the reason, and nothing changed.
+	rec := servePhone(h, "PUT", `{"email_code":true}`, phone("user_off"))
+	if rec.Code != http.StatusForbidden || !strings.Contains(rec.Body.String(), "turn_on_at_kiff") || !strings.Contains(rec.Body.String(), "kiff.dev") {
+		t.Fatalf("a phone turning codes on: %d %s", rec.Code, rec.Body)
+	}
+	if set, _ := r.store.Setting(ctx, "user_off"); set.EmailCode {
+		t.Fatal("a phone turned codes on")
+	}
+	if len(r.m.all()) != 0 {
+		t.Fatalf("a refused turn-on sent mail: %v", r.m.all())
+	}
+
+	// Turning off from a phone works, and the person is told.
+	if rec := servePhone(h, "PUT", `{"email_code":false}`, phone("user_on")); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"email_code":false`) {
+		t.Fatalf("a phone turning codes off: %d %s", rec.Code, rec.Body)
+	}
+	<-r.done
+	if set, _ := r.store.Setting(ctx, "user_on"); set.EmailCode {
+		t.Fatal("codes are still on after a phone turned them off")
+	}
+	told := false
+	for _, m := range r.m.all() {
+		if m.kind == "changed" && !m.on && m.to == "on@example.com" {
+			told = true
+		}
+	}
+	if !told {
+		t.Fatalf("the person was not told codes were turned off: %v", r.m.all())
+	}
+}
+
+// A phone's session is its own person's: another person's setting is out of
+// its reach, a session without a person gets nothing, and the phone's other
+// limits are unchanged.
+func TestAPhoneSessionReachesOnlyItsOwnPersonsSetting(t *testing.T) {
+	r := newRig(t)
+	h := NewHandler(r.s, stepUp{ok: true}, nil)
+	ctx := context.Background()
+	// user_off's phone turns codes off: user_on's codes stay on.
+	if rec := servePhone(h, "PUT", `{"email_code":false}`, phone("user_off")); rec.Code != http.StatusOK {
+		t.Fatalf("off for its own person: %d %s", rec.Code, rec.Body)
+	}
+	if set, _ := r.store.Setting(ctx, "user_on"); !set.EmailCode {
+		t.Fatal("another person's phone turned this person's codes off")
+	}
+	// No person in the session: nothing is read or changed.
+	for _, c := range [][2]string{{"GET", ""}, {"PUT", `{"email_code":false}`}} {
+		if rec := servePhone(h, c[0], c[1], phone("")); rec.Code != http.StatusUnauthorized {
+			t.Errorf("%s from a phone session with no person: %d %s", c[0], rec.Code, rec.Body)
+		}
+	}
+	// What else the phone's session reaches is unchanged: a route outside its list is still refused.
+	mux := http.NewServeMux()
+	h.RegisterAuthenticated(mux)
+	mux.HandleFunc("POST /v1/me/approver-grants", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
+	req := httptest.NewRequest("POST", "/v1/me/approver-grants", strings.NewReader(`{}`))
+	req = req.WithContext(auth.WithIdentity(req.Context(), phone("user_on")))
+	rec := httptest.NewRecorder()
+	auth.DefaultRoutePolicy().Wrap(mux).ServeHTTP(rec, req)
+	if rec.Code != http.StatusForbidden || !strings.Contains(rec.Body.String(), "phone_session_forbidden") {
+		t.Errorf("a route outside the phone's list: %d %s", rec.Code, rec.Body)
+	}
+}
+
+// A view-only session (the extension's, or a computer with no approval key) reads the
+// setting but changes none: turning codes off or on is refused with view_only, and the
+// stored setting is untouched.
+func TestAViewOnlySessionReadsButChangesNoSetting(t *testing.T) {
+	r := newRig(t)
+	h := NewHandler(r.s, stepUp{ok: true}, nil)
+	ctx := context.Background()
+	view := phone("user_on")
+	view.ApprovalMode = auth.ApprovalModeView
+	if w := servePhone(h, http.MethodGet, "", view); w.Code != http.StatusOK {
+		t.Fatalf("a view-only session reads: %d %s", w.Code, w.Body)
+	}
+	for _, body := range []string{`{"email_code":false}`, `{"email_code":true}`} {
+		w := servePhone(h, http.MethodPut, body, view)
+		if w.Code != http.StatusForbidden || !strings.Contains(w.Body.String(), "view_only") {
+			t.Fatalf("view-only %s: %d %s", body, w.Code, w.Body)
+		}
+	}
+	if set, _ := r.store.Setting(ctx, "user_on"); !set.EmailCode {
+		t.Fatal("a view-only session changed the setting")
+	}
+	soft := phone("user_on")
+	soft.KeyStore = auth.KeyStoreSoftware
+	if w := servePhone(h, http.MethodPut, `{"email_code":false}`, soft); w.Code != http.StatusForbidden {
+		t.Fatalf("a software-key computer without a security key: %d", w.Code)
+	}
+}

@@ -16,6 +16,7 @@ A person can sign in with a six-digit code sent to their email, **if they turned
 - **Turning it on needs a recent sign-in** (`auth.StepUp`, as approving does): `403 reauth_required` otherwise. That sign-in must not itself be a code sign-in.
 - **A person with a second factor can't turn it on:** `409 second_factor`. A code never stands in for a second factor.
   - A device session (the apps' own) never passes the step-up check. So an app opens KIFF's Settings › Sign-in page in its sheet to turn codes on, and can turn them off itself.
+  - **A phone's session** (one with a device key) reaches `GET` and `PUT /v1/me/sign-in` (they are in `auth.PhoneSessionRules`): it reads its own person's setting and turns codes **off**, and the person is told by email. A `PUT {"email_code": true}` from a device session is refused with `403 turn_on_at_kiff` ("turning on … is done at kiff.dev, in Settings › Sign-in, after a recent sign-in"). The setting is the session's own person's; it never names another. A **view-only** session (`Identity.ViewOnly()`: the browser extension's, or a computer with a software key and no security key of its own) reads the setting but changes none: `PUT` is refused `403 view_only`, on or off.
 - **Turning it off** needs nothing more, and drops any code still waiting.
 - **Each change emails every verified address of the person**: "code sign-in was turned on / off".
 - `available` is false when KIFF can't send codes (no `KIFF_SIGNIN_CODE_KEY`). Turning it on then answers `503 not_available`.
