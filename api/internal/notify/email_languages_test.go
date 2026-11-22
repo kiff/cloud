@@ -67,6 +67,14 @@ func TestEveryEmailReadsALanguageBeyondTheEight(t *testing.T) {
 // footer follow the words, so English is never laid out right to left. A person whose language is Arabic gets
 // every email in English, left to right, until that email's words are written.
 func TestAnEmailIsLaidOutInTheLanguageItsWordsAreIn(t *testing.T) {
+	// Arabic has its real lines now; the test needs it as a language with none yet.
+	realMore, realAccount, realFooter := words.EmailMore["ar"], words.AccountEmails["ar"], words.EmailFooters["ar"]
+	delete(words.EmailMore, "ar")
+	delete(words.AccountEmails, "ar")
+	delete(words.EmailFooters, "ar")
+	defer func() {
+		words.EmailMore["ar"], words.AccountEmails["ar"], words.EmailFooters["ar"] = realMore, realAccount, realFooter
+	}()
 	var sent []resendRequest
 	n, srv := recordingResend(t, &sent)
 	defer srv.Close()
