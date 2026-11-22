@@ -125,6 +125,7 @@ func (h *ControlsHandler) activity(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	h.withAnswers(r.Context(), id.Tenant, id.ActorID(), rows)
+	h.withPayments(r.Context(), id.Tenant, rows)
 	// Why a call wasn't sent, in the reader's words (kiff/tafs#138).
 	lang := replyLanguage(r)
 	for i := range rows {
@@ -261,4 +262,49 @@ func holdAnswerFor(decision string) string {
 		return "reject"
 	}
 	return "approve-once"
+}
+
+// withPayments marks the calls that are payments, and their receipts once
+// reported ("Report this payment"). Best effort, as the tool
+// outcomes: a call whose profile can't be read isn't marked, so no button
+// offers a report KIFF would refuse.
+func (h *ControlsHandler) withPayments(ctx context.Context, tenantID string, rows []proposals.CallRow) {
+	p, ok := h.titles.(GatewayToolProfiles)
+	if !ok || p == nil {
+		return
+	}
+	var profiles map[string][]byte
+	var traces []string
+	for i := range rows {
+		row := &rows[i]
+		if row.Outcome != "allowed" || row.Receipt == nil || (row.ToolOutcome != nil && !paid(*row.ToolOutcome)) {
+			continue
+		}
+		if profiles == nil {
+			var err error
+			if profiles, err = p.ToolProfiles(ctx, tenantID); err != nil {
+				h.logger.WarnContext(ctx, "activity: profiles unreadable", slog.String("tenant", tenantID), slog.String("err", err.Error()))
+				return
+			}
+		}
+		if movesMoney(profiles, row.ActionName) {
+			row.Payment = true
+			traces = append(traces, row.Receipt.TraceID)
+		}
+	}
+	if h.reports == nil || len(traces) == 0 {
+		return
+	}
+	reported, err := h.reports.Reported(ctx, tenantID, traces)
+	if err != nil {
+		h.logger.WarnContext(ctx, "activity: payment reports unreadable", slog.String("tenant", tenantID), slog.String("err", err.Error()))
+		return
+	}
+	for i := range rows {
+		if rc := rows[i].Receipt; rc != nil && rows[i].Payment {
+			if at, ok := reported[rc.TraceID]; ok {
+				rc.ReportedAt = &at
+			}
+		}
+	}
 }

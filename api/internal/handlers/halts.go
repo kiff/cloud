@@ -145,27 +145,51 @@ func (h *HaltsHandler) halt(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	at := h.now().UTC().Truncate(time.Microsecond) // as Postgres keeps it, so planque's ack matches
-	by := issuerOf(id)
-	got, began, err := h.store.Halt(r.Context(), id.Tenant, agent, at, by)
+	trace, err := h.haltNow(r.Context(), id.Tenant, agent, issuerOf(id))
 	if err != nil {
-		h.logger.ErrorContext(r.Context(), "halts: halt failed", slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "the halt could not be stored"})
 		return
 	}
+	h.answer(w, r, id.Tenant, agent, trace)
+}
+
+// haltNow halts agent (or the account) for by, as the halt route does: it
+// holds once stored, the account's approval windows end, planque is asked
+// to confirm, and a halt begun now goes on the Record with its receipt,
+// whose id it returns ("" when it held already). A payment's report halts
+// its taf through here too.
+func (h *HaltsHandler) haltNow(ctx context.Context, tenant, agent, by string) (string, error) {
+	at := h.now().UTC().Truncate(time.Microsecond) // as Postgres keeps it, so planque's ack matches
+	got, began, err := h.store.Halt(ctx, tenant, agent, at, by)
+	if err != nil {
+		h.logger.ErrorContext(ctx, "halts: halt failed", slog.String("tenant", tenant), slog.String("err", err.Error()))
+		return "", err
+	}
 	var trace string
 	if began {
-		trace = h.log(r.Context(), id.Tenant, agent, halts.KindHalt, got.HaltedAt, by)
+		trace = h.log(ctx, tenant, agent, halts.KindHalt, got.HaltedAt, by)
 	}
 	// A halt ends the account's approval windows, whether it began now or
 	// holds already: a Close or a routine call racing it never reopens one.
 	if h.windows != nil {
-		if _, err := h.windows.CloseAll(r.Context(), auth.WindowMatch{Tenant: id.Tenant}, at, auth.WindowClosedByHalt); err != nil {
-			h.logger.WarnContext(r.Context(), "halts: closing the account's approval windows failed", slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
+		if _, err := h.windows.CloseAll(ctx, auth.WindowMatch{Tenant: tenant}, at, auth.WindowClosedByHalt); err != nil {
+			h.logger.WarnContext(ctx, "halts: closing the account's approval windows failed", slog.String("tenant", tenant), slog.String("err", err.Error()))
 		}
 	}
-	h.confirm(r.Context(), id.Tenant, agent, got)
-	h.answer(w, r, id.Tenant, agent, trace)
+	h.confirm(ctx, tenant, agent, got)
+	return trace, nil
+}
+
+// view is where agent stands now, with trace, the receipt of what this
+// request did.
+func (h *HaltsHandler) view(ctx context.Context, tenant, agent, trace string) (haltView, error) {
+	e, err := halts.For(ctx, h.store, tenant, agent)
+	if err != nil {
+		return haltView{}, err
+	}
+	v := viewHalt(agent, e)
+	v.Receipt = trace
+	return v, nil
 }
 
 func (h *HaltsHandler) resume(w http.ResponseWriter, r *http.Request) {
@@ -211,13 +235,11 @@ func (h *HaltsHandler) get(w http.ResponseWriter, r *http.Request) {
 // answer writes where agent stands now, with trace, the receipt of what
 // this request did.
 func (h *HaltsHandler) answer(w http.ResponseWriter, r *http.Request, tenant, agent, trace string) {
-	e, err := halts.For(r.Context(), h.store, tenant, agent)
+	v, err := h.view(r.Context(), tenant, agent, trace)
 	if err != nil {
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "the halt could not be read"})
 		return
 	}
-	v := viewHalt(agent, e)
-	v.Receipt = trace
 	writeJSON(w, http.StatusOK, v)
 }
 

@@ -41,6 +41,14 @@ type pruneStep struct {
 	sql   string
 }
 
+// pruneKeptBy are the steps whose statement reads another cloud_meta table
+// whose rows keep some of the step's (keptBy): a database without that
+// table keeps none by it, and bare runs in the step's place.
+var pruneKeptBy = map[string]struct{ keptBy, bare string }{
+	// A reported payment's receipt stays (payreports).
+	"receipts": {"payment_reports", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2`},
+}
+
 // endedCards are the account's Cards revoked, expired or archived before
 // the cutoff.
 const endedCards = `SELECT id FROM cloud_meta.mandates WHERE tenant_id = $1
@@ -133,7 +141,10 @@ var cloudMetaPruned = []pruneStep{
 	{"task_pack_requests", `DELETE FROM cloud_meta.task_pack_requests WHERE tenant_id = $1 AND created_at < $2
 		AND (status <> 'open' OR expires_at < $2)`},
 	// Records.
-	{"receipts", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2`},
+	// A reported payment's receipt stays, and its report with it.
+	{"receipts", `DELETE FROM cloud_meta.receipts WHERE tenant_id = $1 AND created_at < $2
+		AND NOT EXISTS (SELECT 1 FROM cloud_meta.payment_reports p
+			WHERE p.tenant_id = cloud_meta.receipts.tenant_id AND p.trace_id = cloud_meta.receipts.trace_id)`},
 	{"permit_bindings", `DELETE FROM cloud_meta.permit_bindings WHERE tenant_id = $1 AND created_at < $2`},
 	{"alert_deliveries", `DELETE FROM cloud_meta.alert_deliveries WHERE tenant_id = $1 AND attempted_at < $2`},
 	{"alert_retries", `DELETE FROM cloud_meta.alert_retries WHERE tenant_id = $1 AND created_at < $2`},
@@ -186,6 +197,7 @@ var cloudMetaKeptOnPrune = map[string]string{
 	"guard_connections":              "the guards connected; their observations are pruned",
 	"guard_decision_cursors":         "how far each guard has reconciled",
 	"halts":                          "each agent's halt, on or off; a resumed one's time refuses permits from before it",
+	"payment_reports":                "a payment its owner reported as unexpected: kept with its receipt",
 	"mandate_draws":                  "what a live Card has drawn, its accounting; goes with its Card",
 	"mandate_holders":                "goes with its Card",
 	"mandate_revisions":              "goes with its Card",
@@ -311,7 +323,17 @@ func (p *Provisioner) Prune(ctx context.Context, tenantID string, age time.Durat
 			if !ok {
 				continue
 			}
-			tag, err := tx.Exec(ctx, s.sql, args...)
+			sql := s.sql
+			if k, ok := pruneKeptBy[s.table]; ok && schema == MetaSchema {
+				kept, err := exists(MetaSchema, k.keptBy)
+				if err != nil {
+					return fmt.Errorf("prune %s.%s: %w", schema, s.table, err)
+				}
+				if !kept {
+					sql = k.bare
+				}
+			}
+			tag, err := tx.Exec(ctx, sql, args...)
 			if err != nil {
 				return fmt.Errorf("prune %s.%s: %w", schema, s.table, err)
 			}
