@@ -82,3 +82,47 @@ func TestOnlyAnExtensionsOriginReadsTheClaim(t *testing.T) {
 		}
 	}
 }
+
+// The extension's sign-out ends its device session with its bearer from the
+// same origin, so Chrome asks first, with no bearer: the preflight is answered
+// outside the auth middleware, and the logout itself stays behind it, its
+// answer readable by the extension.
+func TestOnlyAnExtensionsOriginReadsTheLogout(t *testing.T) {
+	const ext = "chrome-extension://abcdefghijklmnopabcdefghijklmnop"
+	r := newPairRig(t)
+	pre := httptest.NewRequest(http.MethodOptions, "/v1/auth/device/logout", nil)
+	pre.Header.Set("Origin", ext)
+	pre.Header.Set("Access-Control-Request-Method", "POST")
+	pre.Header.Set("Access-Control-Request-Headers", "authorization,content-type")
+	w := httptest.NewRecorder()
+	r.pub.ServeHTTP(w, pre)
+	if w.Code != http.StatusNoContent || w.Header().Get("Access-Control-Allow-Origin") != ext ||
+		w.Header().Get("Access-Control-Allow-Methods") != "POST" || w.Header().Get("Access-Control-Allow-Headers") != "authorization, content-type" ||
+		w.Header().Get("Access-Control-Allow-Credentials") != "" || !strings.Contains(strings.Join(w.Header().Values("Vary"), ","), "Origin") {
+		t.Fatalf("the preflight: %d %v", w.Code, w.Header())
+	}
+
+	logout := func(origin string) *httptest.ResponseRecorder {
+		q := httptest.NewRequest(http.MethodPost, "/v1/auth/device/logout", strings.NewReader("{}"))
+		q.Header.Set("Origin", origin)
+		w := httptest.NewRecorder()
+		withFakeIdentity(r.authed, r.phone).ServeHTTP(w, q)
+		return w
+	}
+	if w := logout(ext); w.Code != http.StatusNoContent || w.Header().Get("Access-Control-Allow-Origin") != ext ||
+		w.Header().Get("Access-Control-Allow-Credentials") != "" {
+		t.Fatalf("the logout from the extension: %d %v", w.Code, w.Header())
+	}
+	for _, origin := range []string{"https://evil.example", "chrome-extension://abcdefghijklmnopabcdefghijklmnop.evil.example", "null"} {
+		if w := logout(origin); w.Header().Get("Access-Control-Allow-Origin") != "" {
+			t.Errorf("origin %q: Allow-Origin %q", origin, w.Header().Get("Access-Control-Allow-Origin"))
+		}
+		q := httptest.NewRequest(http.MethodOptions, "/v1/auth/device/logout", nil)
+		q.Header.Set("Origin", origin)
+		w := httptest.NewRecorder()
+		r.pub.ServeHTTP(w, q)
+		if w.Header().Get("Access-Control-Allow-Origin") != "" || w.Header().Get("Access-Control-Allow-Methods") != "" {
+			t.Errorf("origin %q: preflight %v", origin, w.Header())
+		}
+	}
+}
