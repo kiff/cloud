@@ -114,9 +114,13 @@ var it = Words{
 	HeldApproveOnce: "Approva una volta",
 	HeldChangeCard:  "Modifica la Card per consentirlo",
 	HeldReject:      "Rifiuta",
-	WarnSpent:       "Questo totale della Card è esaurito.",
-	WarnBurst:       "Una nuova Card ha superato la sua soglia di picco all'inizio di questo periodo.",
-	WarnRunway:      "Al ritmo recente, questo totale della Card si sta esaurendo.",
+	HeldWants: func(agent string) string {
+		return fmt.Sprintf("%s vuole fare qualcosa che esce dalla sua Card:", agent)
+	},
+	HeldRowAction: "Azione", HeldRowAmount: "Importo", HeldRowWhy: "Perché è trattenuta",
+	WarnSpent:  "Questo totale della Card è esaurito.",
+	WarnBurst:  "Una nuova Card ha superato la sua soglia di picco all'inizio di questo periodo.",
+	WarnRunway: "Al ritmo recente, questo totale della Card si sta esaurendo.",
 	WarnUnusual: func(ratio string) string {
 		return "L'utilizzo recente è " + ratio + " volte la sua media equivalente su sette giorni."
 	},

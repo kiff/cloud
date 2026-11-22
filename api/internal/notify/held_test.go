@@ -45,7 +45,7 @@ func TestResend_ActionHeld(t *testing.T) {
 		t.Fatalf("to %v, subject %q", got.To, got.Subject)
 	}
 	for _, s := range []string{"refund-agent wants to issue_refund 4700 amount_eur", "card-refunds allows up to 500 amount_eur per action",
-		"https://app.kiff.dev/needs-you/exc-1", "1 Oct 2026 12:10 UTC", "Nothing can be approved from this email."} {
+		"https://app.kiff.dev/needs-you/exc-1", "1 Oct 2026, 12:10 (UTC)", "Nothing can be approved from this email."} {
 		if !strings.Contains(got.Text, s) {
 			t.Errorf("text lacks %q:\n%s", s, got.Text)
 		}
@@ -129,7 +129,7 @@ func TestHeldEmailInTheRecipientsLanguage(t *testing.T) {
 	if subject != "Dein Agent wartet auf deine Antwort" {
 		t.Errorf("subject %q", subject)
 	}
-	for _, s := range []string{"möchte issue_refund 4700 amount_eur ausführen", "Es wurde nichts ausgeführt.", "1. Okt. 2026 12:10 UTC",
+	for _, s := range []string{"möchte issue_refund 4700 amount_eur ausführen", "Es wurde nichts ausgeführt.", "1. Okt. 2026, 12:10 (UTC)",
 		"Über diese E-Mail kann nichts genehmigt werden."} {
 		if !strings.Contains(text, s) {
 			t.Errorf("text lacks %q:\n%s", s, text)
@@ -142,5 +142,60 @@ func TestHeldEmailInTheRecipientsLanguage(t *testing.T) {
 	}
 	if strings.Contains(html, "<b>x</b>") {
 		t.Error("the agent's name wasn't escaped")
+	}
+}
+
+// With the call in people's words the email says who wants to do something outside its
+// Card, then a table: the action in words, the amount as the person reads money, why it is
+// held. No identifier, no unit name, and the hold's end in the
+// account's zone, named.
+func TestHeldEmailInPeoplesWords(t *testing.T) {
+	h := heldForTest()
+	h.Agent = "Refund bot"
+	h.ActionWords, h.AmountText = "Refund a payment", "€47.00"
+	h.Reason = "€47.00 is over the €40.00 limit for one call"
+	paris, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		t.Fatal(err)
+	}
+	h.Zone = paris
+	_, text, html, err := renderHeld(h)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{
+		"Refund bot wants to do something outside its Card:",
+		"Action: Refund a payment", "Amount: €47.00", "Why it's held: €47.00 is over the €40.00 limit for one call",
+		"1 Oct 2026, 14:10 (Paris time)",
+	} {
+		if !strings.Contains(text, want) {
+			t.Errorf("text lacks %q:\n%s", want, text)
+		}
+	}
+	for _, raw := range []string{"issue_refund", "amount_eur", "card-refunds allows"} {
+		if strings.Contains(text, raw) || strings.Contains(html, raw) {
+			t.Errorf("the email says %q, an identifier or a unit:\n%s", raw, text)
+		}
+	}
+	for _, want := range []string{"<strong>Refund bot</strong>", "<td width=", "€47.00", "1 Oct 2026, 14:10 (Paris time)"} {
+		if !strings.Contains(html, want) {
+			t.Errorf("html lacks %q:\n%s", want, html)
+		}
+	}
+	// The words KIFF built from the agent's arguments are escaped.
+	h.Reason = `<img src=x onerror=alert(1)>`
+	h.ActionWords = `<script>x</script>`
+	_, _, html, _ = renderHeld(h)
+	if strings.Contains(html, "<img src=x") || strings.Contains(html, "<script>x") {
+		t.Errorf("unescaped: %s", html)
+	}
+	// In French, with its own labels and the French amount.
+	h = heldForTest()
+	h.Lang, h.ActionWords, h.AmountText = words.FR, "Rembourser un paiement", "47,00 €"
+	_, text, _, _ = renderHeld(h)
+	for _, want := range []string{"veut faire quelque chose qui sort de sa Card :", "Action demandée : Rembourser un paiement", "Montant : 47,00 €"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("french text lacks %q:\n%s", want, text)
+		}
 	}
 }

@@ -104,11 +104,15 @@ var en = Words{
 	HeldExpires: func(when string) string {
 		return "If nobody answers by " + when + ", it is refused and the agent has to ask again."
 	},
-	HeldNoApprove:    "Nothing can be approved from this email.",
-	HeldButtonsNote:  "Each button opens this action in KIFF, where you sign in and confirm your answer.",
-	HeldApproveOnce:  "Approve once",
-	HeldChangeCard:   "Change the Card to allow it",
-	HeldReject:       "Reject",
+	HeldNoApprove:   "Nothing can be approved from this email.",
+	HeldButtonsNote: "Each button opens this action in KIFF, where you sign in and confirm your answer.",
+	HeldApproveOnce: "Approve once",
+	HeldChangeCard:  "Change the Card to allow it",
+	HeldReject:      "Reject",
+	HeldWants: func(agent string) string {
+		return fmt.Sprintf("%s wants to do something outside its Card:", agent)
+	},
+	HeldRowAction: "Action", HeldRowAmount: "Amount", HeldRowWhy: "Why it's held",
 	WarnSpent:        "This Card total is spent.",
 	WarnBurst:        "A new Card used more than its burst threshold at the start of this window.",
 	WarnRunway:       "At the recent rate, this Card total is approaching exhaustion.",
