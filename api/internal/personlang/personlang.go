@@ -49,16 +49,16 @@ type Tenants interface {
 func Of(t tenant.Tenant, subject string) words.Lang {
 	people, last := read(t)
 	if l, ok := people[subject]; ok {
-		return words.Parse(l)
+		return words.EmailLang(l)
 	}
-	return words.Parse(last)
+	return words.EmailLang(last)
 }
 
 // Account is the account's last language, for an address that is no one
 // person's (a warning email to a team inbox); English until one is seen.
 func Account(t tenant.Tenant) words.Lang {
 	_, last := read(t)
-	return words.Parse(last)
+	return words.EmailLang(last)
 }
 
 func read(t tenant.Tenant) (map[string]string, string) {
@@ -104,7 +104,7 @@ func (r *Recorder) Wrap(next http.Handler) http.Handler {
 		if err != nil || id.APIKey || id.Method == auth.MethodAPIKey || id.Subject == "" || id.Tenant == "" {
 			return
 		}
-		r.Note(id.Tenant, id.Subject, words.FromHeader(header))
+		r.Note(id.Tenant, id.Subject, words.EmailLangFromHeader(header))
 	})
 }
 

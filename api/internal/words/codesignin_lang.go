@@ -63,3 +63,11 @@ func CodeLangFromHeader(header string) Lang {
 	}
 	return best
 }
+
+// EmailLang is a language tag as the Lang the emails speak: one of the eight, or one of the more
+// languages (CodeSignInEmailMore, EmailMore), else English. The same languages the code sign-in
+// emails speak, so a person reads every KIFF email in the one language.
+func EmailLang(tag string) Lang { return CodeLang(tag) }
+
+// EmailLangFromHeader is the emails' language for an Accept-Language header.
+func EmailLangFromHeader(header string) Lang { return CodeLangFromHeader(header) }

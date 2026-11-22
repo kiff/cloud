@@ -154,3 +154,33 @@ func (c *clobbering) SetMetadata(ctx context.Context, id, key string, value any)
 	}
 	return nil
 }
+
+// A person's language is kept as the emails speak it, not only as one of the eight: an Arabic app's emails
+// come in Arabic when the emails have it, an unknown language reads English, and what the eight kept before
+// still reads the same.
+func TestRecorderKeepsALanguageBeyondTheEight(t *testing.T) {
+	store := tenant.NewMemoryStore()
+	if err := store.Create(context.Background(), tenant.Tenant{ID: tid, Slug: "acme"}); err != nil {
+		t.Fatal(err)
+	}
+	r := &Recorder{Tenants: store, Go: func(f func()) { f() }}
+	h := r.Wrap(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	id := auth.Identity{Subject: "ana", Tenant: tid, Method: auth.MethodDeveloper}
+	send := func(header string) {
+		req := httptest.NewRequest(http.MethodGet, "/v1/me", nil)
+		req.Header.Set("Accept-Language", header)
+		h.ServeHTTP(httptest.NewRecorder(), req.WithContext(auth.WithIdentity(req.Context(), id)))
+	}
+	send("ar-EG,ar;q=0.9,en;q=0.5")
+	if got := Of(get(t, store), "ana"); got != "ar" {
+		t.Errorf("an Arabic app's person reads %q", got)
+	}
+	send("xx-YY")
+	if got := Of(get(t, store), "ana"); got != words.EN {
+		t.Errorf("a language the emails don't speak reads %q", got)
+	}
+	send("de-DE")
+	if got := Of(get(t, store), "ana"); got != words.DE {
+		t.Errorf("one of the eight still reads %q", got)
+	}
+}

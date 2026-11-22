@@ -42,10 +42,11 @@ The language and direction are the person's: `lang` on the page, and `dir="rtl"`
 Today:
 
 - the **code sign-in** emails are written in the eight languages of `words` and in 37 more (`words.CodeSignInEmailMore`);
-- **new device, invitations, account notices, held action and the Card budget warning** are written in the eight; any other language reads English, because the person's language is read as one of the eight (`words.Parse`);
-- **suspended, reactivated and support-ticket update** (`words.AccountEmail`) read English until a language has its lines in `words.AccountEmails`.
+- **every other email** (new device, invitations, account notices, held action, the Card budget warning) reads the person's language the same way: the eight in `words`, and the 37 more from **`words.EmailMore`**, which holds one `EmailLines` per language (a line per `Words` field the emails read, with `{0}`, `{1}` for the parts a sentence fills in). `words.Of(lang)` is English with a language's lines laid over it, so no email's code changes when a language is added. A language with no entry reads English, never half of each: `words.EmailLinesProblems` names a missing line, an extra one, or a line whose parts are not the English one's, and a test fails on an incomplete entry. `words.EmailLanguagesMissing()` is the list still to write;
+- **suspended, reactivated and support-ticket update** (`words.AccountEmail`) and **the footer** (`words.EmailFooter`) are in `words.AccountEmails` and `words.EmailFooters`, by language tag; English until a language has them. An English footer is set left to right inside a right-to-left email;
+- the person's language is kept as the emails speak it (`personlang`: the eight and the 37, from the app's Accept-Language), so an Arabic app's emails come in Arabic once `EmailMore["ar"]` is written.
 
-The footer's three lines are in `words.EmailFooters`; a language without them reads English, and the layout then sets the footer left to right whatever the email's direction is. The decision is **every email in every shipped language**. What that needs besides the translations is the person's full language tag, not one of the eight, carried to the email, and a table of the other languages' lines for each email as the code emails have. Until then a language without lines reads English, never a half-written email.
+To write a language: `KIFF_EMAIL_LINES=/tmp/en.json go test ./internal/words -run TestWriteEmailLinesEnglish` writes the English lines as templates; translate each value (keep every `{n}`), add the language to `EmailMore` in `words/email_more_<tag>.go`, its account and footer lines to `AccountEmails` and `EmailFooters`, and run `go test ./internal/words ./internal/notify`. The reason text a held-action email carries (why it is held) is still read in one of the eight (`replyLanguage`), English for the others.
 
 ## Adding or changing an email
 
