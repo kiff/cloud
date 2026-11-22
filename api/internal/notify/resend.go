@@ -87,12 +87,14 @@ func NewResendNotifier(cfg ResendConfig) (*ResendNotifier, error) {
 
 // TenantSuspended implements Notifier.
 func (r *ResendNotifier) TenantSuspended(ctx context.Context, to string, lang words.Lang) error {
+	lang = words.AccountEmailLang(lang)
 	e := words.AccountEmailFor(lang)
 	return r.sendMail(ctx, to, e.SuspendedSubject, e.SuspendedBody, "", mail{Lang: lang, Lead: e.SuspendedBody})
 }
 
 // TenantUnsuspended implements Notifier.
 func (r *ResendNotifier) TenantUnsuspended(ctx context.Context, to string, lang words.Lang) error {
+	lang = words.AccountEmailLang(lang)
 	e := words.AccountEmailFor(lang)
 	return r.sendMail(ctx, to, e.UnsuspendedSubject, e.UnsuspendedBody, "", mail{Lang: lang, Lead: e.UnsuspendedBody})
 }
@@ -103,6 +105,7 @@ func (r *ResendNotifier) TenantUnsuspended(ctx context.Context, to string, lang 
 // it in the anchor regardless, so there is no injection surface even if
 // the id shape ever changes.
 func (r *ResendNotifier) SupportTicketUpdated(ctx context.Context, to, ticketURL string, lang words.Lang) error {
+	lang = words.AccountEmailLang(lang)
 	e := words.AccountEmailFor(lang)
 	text := e.SupportBody + " " + ticketURL
 	return r.sendMail(ctx, to, e.SupportSubject, text, "", mail{Lang: lang, Lead: e.SupportBody,
