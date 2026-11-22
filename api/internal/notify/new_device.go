@@ -60,7 +60,7 @@ type newDeviceRow struct{ Label, Value, Line string }
 type newDeviceView struct {
 	SessionsURL                                    string
 	Subject, Intro, PlaceNote, WasYou, NotYou, Why string
-	Sessions, Brand, KIFFLogo, TafsLogo            string
+	Sessions, Brand                                string
 	Rows                                           []newDeviceRow
 }
 
@@ -120,13 +120,11 @@ func (d NewDevice) place() string {
 
 func newNewDeviceView(d NewDevice) newDeviceView {
 	w := words.Of(d.Lang)
-	site := strings.TrimRight(d.SiteURL, "/")
 	v := newDeviceView{SessionsURL: d.SessionsURL, Subject: w.NewDeviceSubject, Intro: w.NewDeviceIntro,
 		WasYou: w.NewDeviceWasYou, NotYou: w.NewDeviceNotYouSignOut, Sessions: w.NewDeviceSessions, Why: w.NewDeviceWhy,
-		Brand: "KIFF", KIFFLogo: site + "/static/img/logo/kiff-logo-transparent-512.png"}
+		Brand: "KIFF"}
 	if d.Tafs {
 		v.Subject, v.Intro, v.Brand = w.NewDeviceSubjectTafs, w.NewDeviceIntroTafs, TafsByKIFF
-		v.TafsLogo = site + "/static/img/tafs/tafs-icon-512.png"
 	}
 	if d.Password {
 		v.NotYou = w.NewDeviceNotYou
@@ -177,18 +175,13 @@ var newDeviceText = texttemplate.Must(texttemplate.New("new-device").Parse(`{{.I
 — {{.Brand}}
 `))
 
-// newDeviceMail is the email on the shared layout (layout.go): the tafs
-// logo, when there is one, before KIFF's.
-func newDeviceMail(v newDeviceView, lang words.Lang) mail {
-	m := mail{Lang: lang, Brand: v.Brand, Lead: v.Intro, Rows: v.Rows, Note: v.PlaceNote,
+// newDeviceMail is the email on the shared layout (layout.go); the layout draws
+// the logos.
+func newDeviceMail(v newDeviceView, lang words.Lang, site string) mail {
+	return mail{Lang: lang, Brand: v.Brand, Site: site, Lead: v.Intro, Rows: v.Rows, Note: v.PlaceNote,
 		Paras:   []string{v.WasYou, v.NotYou},
 		Buttons: []mailButton{{Label: v.Sessions, URL: v.SessionsURL}},
 		Small:   []string{v.Why}}
-	if v.TafsLogo != "" {
-		m.Logos = append(m.Logos, v.TafsLogo)
-	}
-	m.Logos = append(m.Logos, v.KIFFLogo)
-	return m
 }
 
 // renderNewDevice returns the subject, text and HTML of a new-device email.
@@ -201,7 +194,7 @@ func renderNewDevice(d NewDevice) (subject, text, html string, err error) {
 	if err := newDeviceText.Execute(&t, v); err != nil {
 		return "", "", "", err
 	}
-	m := newDeviceMail(v, d.Lang)
+	m := newDeviceMail(v, d.Lang, d.SiteURL)
 	m.Title = v.Subject
 	page, err := renderLayout(m)
 	if err != nil {

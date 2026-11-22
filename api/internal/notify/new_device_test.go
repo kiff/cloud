@@ -118,7 +118,8 @@ func TestNewDeviceEmailLeavesOutWhatIsntKnown(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(text, "Sign-in method: Google") || strings.Contains(text, "password") || strings.Contains(html, "password") ||
+	if !strings.Contains(text, "Sign-in method: Google") || strings.Contains(text, "password") ||
+		strings.Contains(strings.ReplaceAll(html, "KIFF will never ask for your password or code.", ""), "password") ||
 		!strings.Contains(text, en.NewDeviceNotYouSignOut) {
 		t.Errorf("Google:\n%s", text)
 	}

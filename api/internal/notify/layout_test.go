@@ -19,7 +19,7 @@ func TestTheLayoutEscapesEveryPart(t *testing.T) {
 	const evil = `<script>alert(1)</script>"><img src=x>`
 	page, err := renderLayout(mail{Lang: words.EN, Title: evil, Brand: evil, Lead: evil, Code: evil, Paras: []string{evil}, Warn: evil,
 		List: []string{evil}, Rows: []newDeviceRow{{Label: evil, Value: evil}}, Note: evil,
-		Buttons: []mailButton{{Label: evil, URL: `https://kiff.dev/x?a="><script>`}}, Small: []string{evil}, Logos: []string{`https://kiff.dev/"><i>`}})
+		Buttons: []mailButton{{Label: evil, URL: `https://kiff.dev/x?a="><script>`}}, Small: []string{evil}, Site: `https://kiff.dev/"><i>`})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,15 +64,11 @@ func TestTheLayoutHasOnePrimaryButtonAndOneFooter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if n := strings.Count(page, "background:#1a1a1a;color:#ffffff"); n != 1 {
+	if n := strings.Count(page, "background:"+brandAmber); n != 1 {
 		t.Errorf("%d primary buttons, want 1", n)
 	}
-	if !strings.Contains(page, "KIFF · kiff.dev") || strings.Contains(page, "KIFF Operations") {
-		t.Errorf("the footer is KIFF · kiff.dev: %s", page)
-	}
-	tafs, _ := renderLayout(mail{Lang: words.EN, Brand: TafsByKIFF, Lead: "x"})
-	if !strings.Contains(tafs, TafsByKIFF+" · kiff.dev") {
-		t.Errorf("the tafs brand is the footer's too")
+	if strings.Contains(page, "color:#ffffff") {
+		t.Errorf("the button's text is dark on the amber, never white")
 	}
 }
 
@@ -125,7 +121,7 @@ func TestEveryEmailIsOnTheLayoutAndSaysAccount(t *testing.T) {
 		if e.From != "KIFF <hello@kiff.dev>" || e.ReplyTo != "support@kiff.dev" {
 			t.Errorf("%s: from %q reply-to %q", name, e.From, e.ReplyTo)
 		}
-		if !strings.Contains(e.HTML, ` · kiff.dev</td>`) || !strings.Contains(e.HTML, `<html lang="en" dir="ltr">`) {
+		if !strings.Contains(e.HTML, companyName+" · "+companyAddress) || !strings.Contains(e.HTML, `<html lang="en" dir="ltr">`) {
 			t.Errorf("%s: not drawn by the layout: %s", name, e.HTML)
 		}
 		if !strings.Contains(e.HTML, "<title>"+htmlEscape(e.Subject)+"</title>") {
@@ -186,5 +182,57 @@ func TestTheLayoutIsolatesEachRowsValue(t *testing.T) {
 	}
 	if !strings.Contains(page, "<bdi>10 Nov 2026, 20:34 (UTC)</bdi>") {
 		t.Errorf("the value is not isolated: %s", page)
+	}
+}
+
+// Every email has the same header, the same footer, in the same order: the KIFF mark at
+// the same size and hosted on kiff.dev, one amber rule, then at the end the never-ask
+// line, the Privacy and Help links, and the company with its registered address.
+func TestEveryEmailHasTheSameHeaderAndFooter(t *testing.T) {
+	for _, brand := range []string{"KIFF", TafsByKIFF} {
+		page, err := renderLayout(mail{Lang: words.EN, Brand: brand, Lead: "x"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n := strings.Count(page, `width="28" height="28"`); (brand == "KIFF" && n != 1) || (brand == TafsByKIFF && n != 2) {
+			t.Errorf("%s: %d logos at the one size", brand, n)
+		}
+		for _, want := range []string{
+			`src="https://kiff.dev/static/img/logo/kiff-logo-transparent-512.png"`,
+			"border-bottom:3px solid " + brandAmber,
+			"KIFF will never ask for your password or code.",
+			`>Privacy</a>`, `>Help</a>`, "Kiff Agents OÜ", "Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia",
+		} {
+			if !strings.Contains(page, want) {
+				t.Errorf("%s: the page lacks %q", brand, want)
+			}
+		}
+		if (brand == TafsByKIFF) != strings.Contains(page, "/static/img/tafs/tafs-icon-512.png") {
+			t.Errorf("%s: the tafs mark is for tafs by KIFF alone", brand)
+		}
+		if (brand == TafsByKIFF) != strings.Contains(page, `href="https://kiff.dev/tafs/privacy"`) {
+			t.Errorf("%s: tafs by KIFF links the tafs Privacy page, KIFF its own", brand)
+		}
+		if brand == "KIFF" && !strings.Contains(page, `href="https://kiff.dev/privacy"`) || !strings.Contains(page, `href="https://kiff.dev/support"`) {
+			t.Errorf("%s: the Privacy and Help links", brand)
+		}
+		if strings.Index(page, "kiff-logo-transparent") > strings.Index(page, "KIFF will never ask") {
+			t.Errorf("%s: the header comes before the footer", brand)
+		}
+	}
+}
+
+// The footer is in the email's language when that language has its footer; when it hasn't,
+// English reads left to right, never inside a right-to-left line.
+func TestTheFooterIsLeftToRightUntilItsLanguageIsWritten(t *testing.T) {
+	page, _ := renderLayout(mail{Lang: "ar", Lead: "x"})
+	if !strings.Contains(page, `<td dir="ltr" style="padding:12px 0 0;border-top`) {
+		t.Errorf("an Arabic email with the English footer sets it left to right: %s", page)
+	}
+	words.EmailFooters["ar"] = words.EmailFooter{Privacy: "p", Help: "h", NeverAsk: "n"}
+	defer delete(words.EmailFooters, "ar")
+	page, _ = renderLayout(mail{Lang: "ar", Lead: "x"})
+	if !strings.Contains(page, `<td dir="rtl" style="padding:12px 0 0;border-top`) || !strings.Contains(page, ">n<br>") {
+		t.Errorf("an Arabic footer is right to left: %s", page)
 	}
 }

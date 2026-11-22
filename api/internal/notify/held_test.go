@@ -70,7 +70,7 @@ func TestHeldEmailEscapesWhatTheAgentChose(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(html, "<script>") || strings.Contains(html, "<img") {
+	if strings.Contains(html, "<script>") || strings.Contains(html, "<img src=x") {
 		t.Fatalf("unescaped agent input:\n%s", html)
 	}
 	h.ReviewURL = ""

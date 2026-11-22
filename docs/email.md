@@ -6,7 +6,7 @@ Every email KIFF sends is drawn by one layout (`api/internal/notify/layout.go`) 
 
 From **KIFF `<hello@kiff.dev>`**, reply-to `support@kiff.dev`. (Both are set in `api/cmd/api/main.go`; `KIFF_NOTIFY_FROM` and `KIFF_NOTIFY_REPLY_TO` override them.) The mail's own name is the brand: "KIFF", or "tafs by KIFF" for a sign-in through the tafs app.
 
-One column, 560 px at most, tables and inline styles, no script, no web font, no tracking. In order, and each part is optional:
+One column, 560 px at most, tables and inline styles, no script, no web font, no tracking. **The header is the same on every email:** the KIFF mark (28 px, hosted on kiff.dev, `static/img/logo/kiff-logo-transparent-512.png`; tafs by KIFF has the tafs mark before it) next to the name, and **one amber rule** under it. The amber is kiff.dev's own (`--k-amber`, `#ff9a1a`); it is also the button to press, with dark text on it, never white. **The footer is mandatory on every email**, in this order: "KIFF will never ask for your password or code.", the Privacy and Help links (tafs by KIFF links the tafs Privacy page), and Kiff Agents OÜ with its registered address. In order, and each part is optional:
 
 | Part | What it is |
 |---|---|
@@ -20,7 +20,7 @@ One column, 560 px at most, tables and inline styles, no script, no web font, no
 | Note | a small line under the table |
 | Buttons | links drawn as buttons; **the first is the one to press**, the rest are outlines |
 | Small print | why you got this, what to do if it wasn't you |
-| Footer | `KIFF · kiff.dev`, always |
+| Footer | never-ask line, Privacy and Help, the company and its address: always |
 
 Screenshots, in English, French and Arabic (`docs/email/sheet-en.png`, `sheet-fr.png`, `sheet-ar.png`). The Arabic sheet shows the three code sign-in emails, the only ones written in Arabic today; its dates are still English (see "Languages").
 
@@ -44,7 +44,7 @@ Today:
 - **new device, invitations, account notices, held action and the Card budget warning** are written in the eight; any other language reads English, because the person's language is read as one of the eight (`words.Parse`);
 - **suspended, reactivated and support-ticket update** (`words.AccountEmail`) read English until a language has its lines in `words.AccountEmails`.
 
-The decision is **every email in every shipped language**. What that needs besides the translations is the person's full language tag, not one of the eight, carried to the email, and a table of the other languages' lines for each email as the code emails have. Until then a language without lines reads English, never a half-written email.
+The footer's three lines are in `words.EmailFooters`; a language without them reads English, and the layout then sets the footer left to right whatever the email's direction is. The decision is **every email in every shipped language**. What that needs besides the translations is the person's full language tag, not one of the eight, carried to the email, and a table of the other languages' lines for each email as the code emails have. Until then a language without lines reads English, never a half-written email.
 
 ## Adding or changing an email
 
