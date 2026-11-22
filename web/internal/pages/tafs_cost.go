@@ -41,12 +41,14 @@ type tafsCostWords struct {
 func (w tafsCostWords) money(cents int) string {
 	whole, frac := cents/100, cents%100
 	switch w.Lang {
-	case "en", "ko", "ja", "th", "zh", "ar", "he", "mn", "ne", "lo":
+	case "en", "ko", "ja", "th", "zh", "ar", "he", "mn", "ne":
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
-	case "id":
+	case "id", "lo":
 		return fmt.Sprintf("€%s,%02d", w.number(whole), frac)
+	case "km":
+		return fmt.Sprintf("%s.%02d€", w.number(whole), frac)
 	}
 	return fmt.Sprintf("%s,%02d €", w.number(whole), frac)
 }
@@ -77,9 +79,9 @@ func (w tafsCostWords) number(n int) string {
 	case "hr":
 		sep = "."
 	case "lo":
-		sep = ","
-	case "km":
 		sep = "."
+	case "km":
+		sep = ","
 	case "ne":
 		sep = ","
 	case "mn":
@@ -243,8 +245,8 @@ var tafsCostMN = tafsCostWords{Lang: "mn"}
 // tafsCostNE writes the prices tafs's terms state in Nepali: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
 var tafsCostNE = tafsCostWords{Lang: "ne"}
 
-// tafsCostKM writes the prices tafs's terms state in Khmer: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+// tafsCostKM writes the prices tafs's terms state in Khmer: "12.50€", "1,500". It has no /tafs page, so no footer line of its own.
 var tafsCostKM = tafsCostWords{Lang: "km"}
 
-// tafsCostLO writes the prices tafs's terms state in Lao: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+// tafsCostLO writes the prices tafs's terms state in Lao: "€12,50", "1.500". It has no /tafs page, so no footer line of its own.
 var tafsCostLO = tafsCostWords{Lang: "lo"}
