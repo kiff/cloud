@@ -14,7 +14,7 @@ Ce prelucrăm, de ce, pe ce temei juridic și cât timp se găsește în secțiu
 
 ## 3. Transferuri în afara Republicii Moldova
 
-KIFF este condus din Estonia și găzduit în Irlanda. Tot ce ne trimiteți părăsește Republica Moldova. Unii destinatari se află în Statele Unite, după cum enumeră secțiunea 7 a fiecărei politici. Legea permite transferul datelor cu caracter personal în străinătate către o țară care oferă un nivel adecvat de protecție, din care fac parte statele membre ale Uniunii Europene, sau pe baza unor garanții, cum este contractul standard al Centrului Național pentru Protecția Datelor cu Caracter Personal. Vă transferăm datele pe baza garanțiilor pe care le numește secțiunea 7 a fiecărei politici și păstrăm contractele care le dovedesc.
+KIFF este condus din Estonia și găzduit în Irlanda. Tot ce ne trimiteți părăsește Republica Moldova. Unii destinatari se află în Statele Unite, după cum enumeră secțiunea 7 a fiecărei politici. Legea permite transferul datelor cu caracter personal în străinătate către o țară care oferă un nivel adecvat de protecție, din care fac parte statele membre ale Uniunii Europene, sau pe baza unor garanții, cum este contractul standard al Centrului Național pentru Protecția Datelor cu Caracter Personal. Vă transferăm datele pe baza garanțiilor pe care le numește secțiunea 7 a politicii KIFF și păstrăm contractele care le dovedesc.
 
 ## 4. Drepturile dumneavoastră
 

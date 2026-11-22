@@ -10,7 +10,7 @@ Qué tratamos, para qué y durante cuánto tiempo está en las secciones 4, 5 y 
 
 ## 2. Transferencias fuera de El Salvador
 
-KIFF lo gestiona Kiff Agents OÜ, una empresa de Estonia, y está alojado en Irlanda. Todo lo que nos envías sale de El Salvador. Algunos destinatarios están en Estados Unidos: Clerk (inicio de sesión), Anthropic (los modelos de IA de Coach y de cada taf), Stripe (pago de un plan de pago), Resend (avisos por correo), Apple y Google (alertas y compras), Cloudflare y Google Workspace (correo a una dirección de kiff.dev) y Composio (conexiones gestionadas). Cada transferencia está protegida por las cláusulas contractuales tipo de la Comisión Europea o por el Marco de Privacidad de Datos UE-EE. UU., como dice la sección 7 de cada política.
+KIFF lo gestiona Kiff Agents OÜ, una empresa de Estonia, y está alojado en Irlanda. Todo lo que nos envías sale de El Salvador. Algunos destinatarios están en Estados Unidos: Clerk (inicio de sesión), Anthropic (los modelos de IA de Coach y de cada taf), Stripe (pago de un plan de pago), Resend (avisos por correo), Apple y Google (alertas y compras), Cloudflare y Google Workspace (correo a una dirección de kiff.dev) y Composio (conexiones gestionadas). Cada transferencia está protegida por las cláusulas contractuales tipo de la Comisión Europea o por el Marco de Privacidad de Datos UE-EE. UU., como dice la sección 7 de la política de KIFF.
 
 ## 3. Tus derechos
 

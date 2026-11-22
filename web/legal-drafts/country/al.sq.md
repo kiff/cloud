@@ -10,7 +10,7 @@ Ky seksion zbatohet nëse përdorni KIFF ose tafs në Shqipëri. Ai shton atë q
 
 ## 2. Transferime jashtë Shqipërisë
 
-KIFF drejtohet nga Kiff Agents OÜ, një shoqëri në Estoni, dhe strehohet në Irlandë. Gjithçka që na dërgoni del nga Shqipëria. Disa marrës janë në Shtetet e Bashkuara: Clerk (hyrja), Anthropic (modelet e AI pas Coach-it dhe çdo taf), Stripe (pagesa në një plan me pagesë), Resend (njoftime me email), Apple dhe Google (njoftime push dhe blerje), Cloudflare dhe Google Workspace (posta drejt një adrese kiff.dev) dhe Composio (lidhje të menaxhuara). Çdo transferim mbrohet nga klauzolat kontraktuale standarde të Komisionit Evropian ose nga Kuadri i Privatësisë së të Dhënave BE–SHBA, siç thotë seksioni 7 i secilës politikë.
+KIFF drejtohet nga Kiff Agents OÜ, një shoqëri në Estoni, dhe strehohet në Irlandë. Gjithçka që na dërgoni del nga Shqipëria. Disa marrës janë në Shtetet e Bashkuara: Clerk (hyrja), Anthropic (modelet e AI pas Coach-it dhe çdo taf), Stripe (pagesa në një plan me pagesë), Resend (njoftime me email), Apple dhe Google (njoftime push dhe blerje), Cloudflare dhe Google Workspace (posta drejt një adrese kiff.dev) dhe Composio (lidhje të menaxhuara). Çdo transferim mbrohet nga klauzolat kontraktuale standarde të Komisionit Evropian ose nga Kuadri i Privatësisë së të Dhënave BE–SHBA, siç thotë seksioni 7 i politikës së KIFF.
 
 ## 3. Të drejtat tuaja
 

@@ -14,7 +14,7 @@ Apa yang kami proses, mengapa, atas dasar hukum apa, dan berapa lama ada di bagi
 
 ## 3. Transfer ke luar Indonesia
 
-KIFF dijalankan dari Estonia dan dihosting di Irlandia. Semua yang Anda kirim kepada kami meninggalkan Indonesia. Sebagian penerima berada di Amerika Serikat, sebagaimana didaftarkan bagian 7 setiap kebijakan. Setiap transfer bertumpu pada perlindungan yang disebut bagian 7 setiap kebijakan.
+KIFF dijalankan dari Estonia dan dihosting di Irlandia. Semua yang Anda kirim kepada kami meninggalkan Indonesia. Sebagian penerima berada di Amerika Serikat, sebagaimana didaftarkan bagian 7 setiap kebijakan. Setiap transfer bertumpu pada perlindungan yang disebut bagian 7 kebijakan KIFF.
 
 ## 4. Hak Anda
 

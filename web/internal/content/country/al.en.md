@@ -10,7 +10,7 @@ What we process, why, and for how long is in sections 4, 5 and 8 of KIFF's polic
 
 ## 2. Transfers outside Albania
 
-KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted in Ireland. Everything you send us leaves Albania. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of each policy says.
+KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted in Ireland. Everything you send us leaves Albania. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of KIFF's policy says.
 
 ## 3. Your rights
 

@@ -14,7 +14,7 @@ What we process, why, on what legal basis and for how long is in sections 4, 5 a
 
 ## 3. Transfers outside Moldova
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Moldova. Some recipients are in the United States, as section 7 of each policy lists. The law lets personal data go abroad to a country that gives adequate protection, which includes the member states of the European Union, or on safeguards such as the standard contract of the National Centre for Personal Data Protection. We transfer your data on the safeguards section 7 of each policy names, and we keep the contracts that show them.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Moldova. Some recipients are in the United States, as section 7 of each policy lists. The law lets personal data go abroad to a country that gives adequate protection, which includes the member states of the European Union, or on safeguards such as the standard contract of the National Centre for Personal Data Protection. We transfer your data on the safeguards section 7 of KIFF's policy names, and we keep the contracts that show them.
 
 ## 4. Your rights
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -120,6 +119,9 @@ func TestCountrySectionCitationsMatchThePolicyHeadings(t *testing.T) {
 					default:
 						classes = []string{tafs[n]}
 					}
+					if which == "each" && n == 7 && (strings.Contains(strings.ToLower(sentence), "safeguard") || strings.Contains(strings.ToLower(sentence), "contractual clauses")) {
+						t.Errorf("%s: %q cites section 7 of each policy for safeguards, but only KIFF's section 7 names them (tafs's lists recipients and points to it)", c, sentence)
+					}
 					if !allowed[classes[0]] {
 						t.Errorf("%s: %q cites section %d (%q) where it means one of %v", c, sentence, n, classes[0], allowed)
 					}
@@ -143,8 +145,9 @@ func TestCountrySectionCitationsMatchThePolicyHeadings(t *testing.T) {
 	}
 }
 
-// policyNumbers is the sorted list of small whole numbers in a section's
-// text, which includes the section numbers it cites. A number inside a
+// policyNumbers is the list, in reading order, of small whole numbers in a
+// section's text, which includes the section numbers it cites. A translation
+// keeps the English sentence order, so a swapped pair of lists shows. A number inside a
 // longer figure ("1.500", "2026") is not counted.
 func policyNumbers(html string) string {
 	text := tagRE.ReplaceAllString(html, " ")
@@ -164,7 +167,6 @@ func policyNumbers(html string) string {
 		n, _ := strconv.Atoi(text[a:b])
 		nums = append(nums, n)
 	}
-	sort.Ints(nums)
 	out := make([]string, len(nums))
 	for i, n := range nums {
 		out[i] = strconv.Itoa(n)

@@ -14,7 +14,7 @@ Chúng tôi xử lý gì, vì sao, trên cơ sở pháp lý nào và trong bao l
 
 ## 3. Chuyển giao ra ngoài Việt Nam
 
-KIFF được vận hành từ Estonia và lưu trữ tại Ireland. Mọi thứ bạn gửi cho chúng tôi rời khỏi Việt Nam. Một số bên nhận ở Hoa Kỳ, như mục 7 của mỗi chính sách liệt kê. Mỗi lần chuyển giao dựa trên các biện pháp bảo vệ mà mục 7 của mỗi chính sách nêu.
+KIFF được vận hành từ Estonia và lưu trữ tại Ireland. Mọi thứ bạn gửi cho chúng tôi rời khỏi Việt Nam. Một số bên nhận ở Hoa Kỳ, như mục 7 của mỗi chính sách liệt kê. Mỗi lần chuyển giao dựa trên các biện pháp bảo vệ mà mục 7 của chính sách KIFF nêu.
 
 ## 4. Quyền của bạn
 

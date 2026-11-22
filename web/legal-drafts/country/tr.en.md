@@ -14,7 +14,7 @@ What we process, why, on what legal basis and for how long is in sections 4, 5 a
 
 ## 3. Transfers outside Türkiye
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Türkiye. Some recipients are in the United States, as section 7 of each policy lists. Under Article 9 of the KVKK a transfer abroad needs an adequacy decision, appropriate safeguards (for example a standard contract that the Authority is told of), or one of the exceptional cases, such as your explicit consent. We transfer your data on the safeguards section 7 of each policy names, and we keep the contracts that show them.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Türkiye. Some recipients are in the United States, as section 7 of each policy lists. Under Article 9 of the KVKK a transfer abroad needs an adequacy decision, appropriate safeguards (for example a standard contract that the Authority is told of), or one of the exceptional cases, such as your explicit consent. We transfer your data on the safeguards section 7 of KIFF's policy names, and we keep the contracts that show them.
 
 ## 4. Your rights
 

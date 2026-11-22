@@ -14,7 +14,7 @@ Neyi, neden, hangi hukuki dayanakla ve ne kadar süre işlediğimiz KIFF politik
 
 ## 3. Türkiye dışına aktarımlar
 
-KIFF Estonya'dan işletilir ve İrlanda'da barındırılır. Bize gönderdiğiniz her şey Türkiye'den çıkar. Her politikanın 7. bölümünün listelediği gibi, alıcılardan bazıları Amerika Birleşik Devletleri'ndedir. KVKK'nın 9. maddesi uyarınca yurt dışına aktarım için bir yeterlilik kararı, uygun güvenceler (örneğin Kurum'a bildirilen bir standart sözleşme) veya istisnai hallerden biri, örneğin açık rızanız gerekir. Verilerinizi her politikanın 7. bölümünde adı geçen güvencelere dayanarak aktarırız ve bunları gösteren sözleşmeleri saklarız.
+KIFF Estonya'dan işletilir ve İrlanda'da barındırılır. Bize gönderdiğiniz her şey Türkiye'den çıkar. Her politikanın 7. bölümünün listelediği gibi, alıcılardan bazıları Amerika Birleşik Devletleri'ndedir. KVKK'nın 9. maddesi uyarınca yurt dışına aktarım için bir yeterlilik kararı, uygun güvenceler (örneğin Kurum'a bildirilen bir standart sözleşme) veya istisnai hallerden biri, örneğin açık rızanız gerekir. Verilerinizi KIFF politikasının 7. bölümünde adı geçen güvencelere dayanarak aktarırız ve bunları gösteren sözleşmeleri saklarız.
 
 ## 4. Haklarınız
 

@@ -14,7 +14,7 @@ What we process, why, on what legal basis and for how long is in sections 4, 5 a
 
 ## 3. Transfers outside Jordan
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Jordan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of each policy names.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Jordan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of KIFF's policy names.
 
 ## 4. Your rights
 
@@ -26,7 +26,7 @@ KIFF and tafs are not for anyone under 16.
 
 ## 6. Transfers and breach
 
-**Transfers and breach.** Data may leave Jordan on the safeguards the law asks for, which section 7 of each policy names. If a breach of personal data could harm you, we tell the authority and you without delay.
+**Transfers and breach.** Data may leave Jordan on the safeguards the law asks for, which section 7 of KIFF's policy names. If a breach of personal data could harm you, we tell the authority and you without delay.
 
 ## 7. Where to complain
 

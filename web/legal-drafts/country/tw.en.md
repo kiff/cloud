@@ -14,7 +14,7 @@ When we collect your data we tell you who we are, why we collect it, what kind o
 
 ## 3. Transfers outside Taiwan
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Taiwan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of each policy names. The authority in charge may restrict a transfer of personal data abroad, and we follow any such order.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Taiwan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of KIFF's policy names. The authority in charge may restrict a transfer of personal data abroad, and we follow any such order.
 
 ## 4. Your rights
 

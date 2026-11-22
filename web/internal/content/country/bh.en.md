@@ -14,7 +14,7 @@ What we process, why, on what legal basis and for how long is in sections 4, 5 a
 
 ## 3. Transfers outside Bahrain
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Bahrain. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of each policy names.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Bahrain. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of KIFF's policy names.
 
 ## 4. Your rights
 
@@ -26,7 +26,7 @@ KIFF and tafs are not for anyone under 16.
 
 ## 6. Transfers
 
-**Transfers.** Data may leave Bahrain only to a country the authority has approved, or with the authority's authorisation. Where Bahraini law asks for that, we rely on the standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of each policy says, and on the authority's authorisation if it is needed.
+**Transfers.** Data may leave Bahrain only to a country the authority has approved, or with the authority's authorisation. Where Bahraini law asks for that, we rely on the standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of KIFF's policy says, and on the authority's authorisation if it is needed.
 
 ## 7. Where to complain
 

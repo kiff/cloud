@@ -10,7 +10,7 @@ Ovaj odeljak se primenjuje ako koristite KIFF ili tafs u Srbiji. On dodaje ono �
 
 ## 2. Prenosi van Srbije
 
-KIFF vodi Kiff Agents OÜ, kompanija u Estoniji, a hostovan je u Irskoj. Sve što nam pošaljete napušta Srbiju. Neki primaoci su u Sjedinjenim Državama: Clerk (prijava), Anthropic (AI modeli iza Coach-a i svakog taf), Stripe (plaćanje na plaćenom planu), Resend (obaveštenja e-poštom), Apple i Google (push obaveštenja i kupovine), Cloudflare i Google Workspace (pošta na kiff.dev adresu) i Composio (upravljane veze). Svaki prenos štite standardne ugovorne klauzule Evropske komisije ili okvir EU–SAD za zaštitu podataka, kako kaže odeljak 7 svake politike.
+KIFF vodi Kiff Agents OÜ, kompanija u Estoniji, a hostovan je u Irskoj. Sve što nam pošaljete napušta Srbiju. Neki primaoci su u Sjedinjenim Državama: Clerk (prijava), Anthropic (AI modeli iza Coach-a i svakog taf), Stripe (plaćanje na plaćenom planu), Resend (obaveštenja e-poštom), Apple i Google (push obaveštenja i kupovine), Cloudflare i Google Workspace (pošta na kiff.dev adresu) i Composio (upravljane veze). Svaki prenos štite standardne ugovorne klauzule Evropske komisije ili okvir EU–SAD za zaštitu podataka, kako kaže odeljak 7 politike KIFF-a.
 
 ## 3. Vaša prava
 
