@@ -50,6 +50,7 @@ var partialPages = map[string][]string{
 	"he": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ca": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"mk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"mn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -80,7 +81,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -127,6 +128,7 @@ var languageNames = map[string]string{
 	"he": "עברית",
 	"ca": "Català",
 	"mk": "Македонски",
+	"mn": "Монгол",
 }
 
 // LanguageName is a site language's name in that language.
@@ -314,6 +316,7 @@ var translationNotices = map[string]string{
 	"he": "זהו תרגום למידע בלבד. הגרסה האנגלית היא הקובעת:",
 	"ca": "Aquesta és una traducció a títol informatiu. Preval la versió anglesa:",
 	"mk": "Ова е превод само за информација. Англиската верзија е меродавна:",
+	"mn": "Энэ нь зөвхөн мэдээллийн зорилготой орчуулга юм. Англи хувилбар үйлчилнэ:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -352,6 +355,7 @@ var inEnglish = map[string]string{
 	"he": "(באנגלית)",
 	"ca": "(en anglès)",
 	"mk": "(на англиски)",
+	"mn": "(англиар)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
