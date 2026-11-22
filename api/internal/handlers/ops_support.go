@@ -11,8 +11,10 @@ import (
 	"time"
 
 	"github.com/kiff/cloud/api/internal/auth"
+	"github.com/kiff/cloud/api/internal/personlang"
 	"github.com/kiff/cloud/api/internal/support"
 	"github.com/kiff/cloud/api/internal/tenant"
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // Operator support-ticket triage. Cross-tenant by design —
@@ -173,7 +175,13 @@ func (h *OpsHandler) notifySupportUpdate(t support.Ticket) {
 	h.dispatch(func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 		defer cancel()
-		if err := h.notifier.SupportTicketUpdated(ctx, to, link); err != nil {
+		// The submitter's own language on their account; English when it
+		// isn't known.
+		lang := words.EN
+		if tn, err := h.tenants.Get(ctx, t.TenantID); err == nil {
+			lang = personlang.Of(tn, t.AuthorSubject)
+		}
+		if err := h.notifier.SupportTicketUpdated(ctx, to, link, lang); err != nil {
 			h.logger.ErrorContext(ctx, "ops support: close-the-loop email failed",
 				slog.String("ticket", t.ID), slog.String("err", err.Error()))
 			return

@@ -13,6 +13,7 @@ import (
 	"github.com/kiff/cloud/api/internal/receipt"
 	"github.com/kiff/cloud/api/internal/tenant"
 	"github.com/kiff/cloud/api/internal/usage"
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // recordingNotifier records the recipients it was asked to email. Note
@@ -40,7 +41,7 @@ func (n *recordingNotifier) ActionHeld(_ context.Context, to string, h notify.He
 	return nil
 }
 
-func (n *recordingNotifier) TenantSuspended(_ context.Context, to string) error {
+func (n *recordingNotifier) TenantSuspended(_ context.Context, to string, _ words.Lang) error {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	n.suspended = append(n.suspended, to)
@@ -50,7 +51,7 @@ func (n *recordingNotifier) TenantSuspended(_ context.Context, to string) error 
 	return nil
 }
 
-func (n *recordingNotifier) TenantUnsuspended(_ context.Context, to string) error {
+func (n *recordingNotifier) TenantUnsuspended(_ context.Context, to string, _ words.Lang) error {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	n.unsuspended = append(n.unsuspended, to)
@@ -60,13 +61,7 @@ func (n *recordingNotifier) TenantUnsuspended(_ context.Context, to string) erro
 	return nil
 }
 
-func (n *recordingNotifier) AllowanceThresholdReached(context.Context, string, int, int, int) error {
-	return nil
-}
-
-func (n *recordingNotifier) BudgetReached(context.Context, string, int, int) error { return nil }
-
-func (n *recordingNotifier) SupportTicketUpdated(_ context.Context, to, ticketURL string) error {
+func (n *recordingNotifier) SupportTicketUpdated(_ context.Context, to, ticketURL string, _ words.Lang) error {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	n.support = append(n.support, to)

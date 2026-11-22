@@ -15,6 +15,6 @@ func (r *ResendNotifier) CardBudgetWarning(ctx context.Context, to, eventID, tex
 	h := sha256.Sum256([]byte(to))
 	key := "card-warning/" + eventID + "/" + hex.EncodeToString(h[:16])
 	w := words.Of(lang)
-	return r.sendHTMLWithKey(ctx, to, w.WarnSubject, text+" "+cardURL,
-		htmlBodyLink(text, cardURL, w.WarnReview), key)
+	return r.sendMail(ctx, to, w.WarnSubject, text+" "+cardURL, key,
+		mail{Lang: lang, Lead: text, Buttons: []mailButton{{Label: w.WarnReview, URL: cardURL}}})
 }

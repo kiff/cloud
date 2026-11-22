@@ -14,7 +14,9 @@ import (
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/operatoraudit"
 	"github.com/kiff/cloud/api/internal/packs"
+	"github.com/kiff/cloud/api/internal/personlang"
 	"github.com/kiff/cloud/api/internal/tenant"
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // Control-plane mutations. Every mutation here:
@@ -197,12 +199,18 @@ func (h *OpsHandler) notifyOwner(tenantID, action string) {
 				slog.String("reason", err.Error()))
 			return
 		}
+		// The account's own language, as its people last used KIFF; English
+		// when it isn't known or the account can't be read.
+		lang := words.EN
+		if t, err := h.tenants.Get(ctx, tenantID); err == nil {
+			lang = personlang.Account(t)
+		}
 		var sendErr error
 		switch action {
 		case operatoraudit.ActionSuspend:
-			sendErr = h.notifier.TenantSuspended(ctx, email)
+			sendErr = h.notifier.TenantSuspended(ctx, email, lang)
 		case operatoraudit.ActionUnsuspend:
-			sendErr = h.notifier.TenantUnsuspended(ctx, email)
+			sendErr = h.notifier.TenantUnsuspended(ctx, email, lang)
 		default:
 			return
 		}

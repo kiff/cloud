@@ -332,8 +332,8 @@ const (
 	// Customer email notifications via Resend. When
 	// envResendAPIKey is set, suspend/unsuspend send a customer email;
 	// unset → no-op notifier (control actions run identically). From /
-	// reply-to are configurable; defaults are the KIFF Operations
-	// sender on the Resend-verified kiff.dev domain.
+	// reply-to are configurable; defaults are KIFF <hello@kiff.dev>, reply-to support@kiff.dev,
+	// on the Resend-verified kiff.dev domain.
 	envResendAPIKey  = "RESEND_API_KEY"
 	envNotifyFrom    = "KIFF_NOTIFY_FROM"
 	envNotifyReplyTo = "KIFF_NOTIFY_REPLY_TO"
@@ -1130,7 +1130,7 @@ func run() error {
 	if key := strings.TrimSpace(os.Getenv(envResendAPIKey)); key != "" {
 		from := strings.TrimSpace(os.Getenv(envNotifyFrom))
 		if from == "" {
-			from = "KIFF Operations <ops@kiff.dev>"
+			from = "KIFF <hello@kiff.dev>"
 		}
 		replyTo := strings.TrimSpace(os.Getenv(envNotifyReplyTo))
 		if replyTo == "" {

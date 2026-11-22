@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // resendEndpoint is the Resend transactional email API. Overridable in
@@ -20,7 +22,7 @@ const resendEndpoint = "https://api.resend.com/emails"
 type ResendConfig struct {
 	// APIKey is the Resend API key (re_...). Required.
 	APIKey string
-	// From is the sender, e.g. "KIFF Operations <ops@kiff.dev>".
+	// From is the sender, e.g. "KIFF <hello@kiff.dev>".
 	// Required; must be on a Resend-verified domain.
 	From string
 	// ReplyTo is the Reply-To address, e.g. "support@kiff.dev".
@@ -84,56 +86,27 @@ func NewResendNotifier(cfg ResendConfig) (*ResendNotifier, error) {
 }
 
 // TenantSuspended implements Notifier.
-func (r *ResendNotifier) TenantSuspended(ctx context.Context, to string) error {
-	return r.send(ctx, to, subjectSuspended, bodySuspended)
+func (r *ResendNotifier) TenantSuspended(ctx context.Context, to string, lang words.Lang) error {
+	e := words.AccountEmailFor(lang)
+	return r.sendMail(ctx, to, e.SuspendedSubject, e.SuspendedBody, "", mail{Lang: lang, Lead: e.SuspendedBody})
 }
 
 // TenantUnsuspended implements Notifier.
-func (r *ResendNotifier) TenantUnsuspended(ctx context.Context, to string) error {
-	return r.send(ctx, to, subjectUnsuspended, bodyUnsuspended)
-}
-
-// AllowanceThresholdReached implements Notifier. The subject/body are
-// built from the threshold and counts; only integers are interpolated
-// (no HTML metacharacters), so htmlBody concatenation stays injection-
-// safe. The copy is reassuring, not alarming: service is not
-// interrupted.
-func (r *ResendNotifier) AllowanceThresholdReached(ctx context.Context, to string, pct, used, limit int) error {
-	var subject string
-	if pct >= 100 {
-		subject = "You've reached your KIFF Cloud monthly allowance"
-	} else {
-		subject = "You're approaching your KIFF Cloud monthly allowance"
-	}
-	body := fmt.Sprintf(
-		"Your KIFF Cloud workspace has used %d of its %d included governed operations this month (%d%%). "+
-			"Your service is not affected — operations continue as normal. "+
-			"If you expect to run well beyond the included allowance, reply to this email and we'll help you size a plan. ",
-		used, limit, pct)
-	return r.send(ctx, to, subject, body)
-}
-
-// BudgetReached implements Notifier. Informational only (a budget
-// never gates the runtime); only integers are interpolated.
-func (r *ResendNotifier) BudgetReached(ctx context.Context, to string, used, budget int) error {
-	subject := "You've reached the usage budget you set for KIFF Cloud"
-	body := fmt.Sprintf(
-		"Your KIFF Cloud workspace has reached the monthly budget you set: %d of %d governed operations. "+
-			"This is the alert you asked for — your service is not affected and operations continue. "+
-			"Adjust or remove the budget any time from your workspace settings. ",
-		used, budget)
-	return r.send(ctx, to, subject, body)
+func (r *ResendNotifier) TenantUnsuspended(ctx context.Context, to string, lang words.Lang) error {
+	e := words.AccountEmailFor(lang)
+	return r.sendMail(ctx, to, e.UnsuspendedSubject, e.UnsuspendedBody, "", mail{Lang: lang, Lead: e.UnsuspendedBody})
 }
 
 // SupportTicketUpdated implements Notifier. Close-the-loop only: the
 // email links back to the in-app thread and carries NO ticket content.
-// ticketURL is our own link (app base + ticket id) and is HTML-escaped
-// in the anchor regardless, so there is no injection surface even if
+// ticketURL is our own link (app base + ticket id); the layout escapes
+// it in the anchor regardless, so there is no injection surface even if
 // the id shape ever changes.
-func (r *ResendNotifier) SupportTicketUpdated(ctx context.Context, to, ticketURL string) error {
-	text := bodySupportUpdated + " View it here: " + ticketURL
-	html := htmlBodyLink(bodySupportUpdated, ticketURL, "View your ticket")
-	return r.sendHTML(ctx, to, subjectSupportUpdated, text, html)
+func (r *ResendNotifier) SupportTicketUpdated(ctx context.Context, to, ticketURL string, lang words.Lang) error {
+	e := words.AccountEmailFor(lang)
+	text := e.SupportBody + " " + ticketURL
+	return r.sendMail(ctx, to, e.SupportSubject, text, "", mail{Lang: lang, Lead: e.SupportBody,
+		Buttons: []mailButton{{Label: e.SupportView, URL: ticketURL}}})
 }
 
 type resendRequest struct {
@@ -145,12 +118,17 @@ type resendRequest struct {
 	Text    string   `json:"text"`
 }
 
-// send POSTs one email with the default HTML wrapper around text,
-// retrying transient failures with a short backoff. It never logs or
-// returns the API key; errors carry only the status and Resend's error
-// text.
-func (r *ResendNotifier) send(ctx context.Context, to, subject, text string) error {
-	return r.sendHTML(ctx, to, subject, text, htmlBody(text))
+// sendMail draws m with the shared layout and POSTs the email, retrying
+// transient failures with a short backoff. It never logs or returns the
+// API key; errors carry only the status and Resend's error text. key is
+// the provider's idempotency key, none when empty.
+func (r *ResendNotifier) sendMail(ctx context.Context, to, subject, text, key string, m mail) error {
+	m.Title = subject
+	page, err := renderLayout(m)
+	if err != nil {
+		return err
+	}
+	return r.sendHTMLWithKey(ctx, to, subject, text, page, key)
 }
 
 // sendHTML POSTs one email with an explicit HTML body (for messages
