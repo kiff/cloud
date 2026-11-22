@@ -2,6 +2,7 @@ package cardwords
 
 import (
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/kiff/cloud/api/internal/words"
@@ -249,6 +250,51 @@ func TestLinesInALanguage(t *testing.T) {
 	for n, want := range map[int64]string{1: "1 wywołanie dziennie", 3: "3 wywołania dziennie", 5: "5 wywołań dziennie", 12: "12 wywołań dziennie", 22: "22 wywołania dziennie"} {
 		if got, _ := Calls(n, "calendar_day", pl); got != want {
 			t.Errorf("pl Calls(%d) = %q, want %q", n, got, want)
+		}
+	}
+}
+
+// An amount, written in every language that has its words, reads back as the amount: with the language's own marks
+// taken out (its currency, its gap, its thousands separator, its decimal mark) 1,234,567.89 is digits 123456789.
+func TestAnAmountReadsBackInEveryLanguage(t *testing.T) {
+	langs := []words.Lang{words.EN, words.DE, words.FR, words.ES, words.IT, words.PT, words.NL, words.PL}
+	for tag := range words.EmailMore {
+		langs = append(langs, words.Lang(tag))
+	}
+	for _, l := range langs {
+		w := words.Of(l)
+		mark := "."
+		if w.DecimalComma {
+			mark = ","
+		}
+		if w.Money.Thousands == mark {
+			t.Errorf("%s: the thousands separator %q is the decimal mark", l, mark)
+		}
+		got := Money(123456789, "points", 2, w)
+		rest := strings.TrimSpace(strings.ReplaceAll(got, "points", ""))
+		i := strings.LastIndex(rest, mark)
+		if i < 0 {
+			t.Errorf("%s: %q has no decimal mark %q", l, got, mark)
+			continue
+		}
+		whole, frac := rest[:i], rest[i+len(mark):]
+		if w.Money.Thousands != "" {
+			whole = strings.ReplaceAll(whole, w.Money.Thousands, "")
+		}
+		whole = strings.TrimSpace(strings.ReplaceAll(whole, " ", ""))
+		if whole+frac != "123456789" || len(frac) != 2 {
+			t.Errorf("%s: %q reads back as %q.%q, want 1234567.89", l, got, whole, frac)
+		}
+		// A currency's symbol and gap come out the same way.
+		eur := Money(123456789, "EUR", 2, w)
+		digits := strings.Map(func(r rune) rune {
+			if r >= '0' && r <= '9' {
+				return r
+			}
+			return -1
+		}, eur)
+		if digits != "123456789" || !strings.Contains(eur, "€") {
+			t.Errorf("%s: %q is not the amount in euros", l, eur)
 		}
 	}
 }
