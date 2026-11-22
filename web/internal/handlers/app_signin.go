@@ -83,6 +83,15 @@ type AppSignInHandler struct {
 	script   SignInScript
 	logger   *slog.Logger
 	now      func() time.Time
+	// code is signing in with a code sent by email: its link sits under
+	// the form when it's on.
+	code *CodeSignInHandler
+}
+
+// WithCodeSignIn shows the link to a code under the form when code is on.
+func (h *AppSignInHandler) WithCodeSignIn(code *CodeSignInHandler) *AppSignInHandler {
+	h.code = code
+	return h
 }
 
 // NewAppSignInHandler wires the page; on is KIFF_APP_SIGNIN. provider's
@@ -125,6 +134,9 @@ type appSignInView struct {
 	// Nonce lets the page's own script run under its CSP; ScriptVersion and
 	// UIVersion are the provider's core and UI scripts' pinned versions.
 	Nonce, ScriptVersion, UIVersion string
+	// CodeLink is signing in with a code sent by email, for this request,
+	// and CodeWords its link's words; empty when it's off.
+	CodeLink, CodeWords string
 }
 
 func (h *AppSignInHandler) show(w http.ResponseWriter, r *http.Request) {
@@ -207,6 +219,9 @@ func (h *AppSignInHandler) showForm(w http.ResponseWriter, r *http.Request, v ap
 	v.Form = true
 	v.FrontendAPI, v.PublishableKey, v.ScriptVersion, v.UIVersion = h.script.FrontendAPI(), h.script.PublishableKey(), providerScriptVersion, providerUIVersion
 	v.Hint = hint
+	if link := h.code.CodeLink(back, v.Lang); link != "" {
+		v.CodeLink, v.CodeWords = link, words.CodeSignInIn(v.Lang).Link
+	}
 	// The provider sends the browser to the callback, which mints KIFF's
 	// session and comes back here.
 	v.Done = "/sign-in/callback?next=" + url.QueryEscape(back)
@@ -448,6 +463,7 @@ var appSignInPage = template.Must(template.New("appSignIn").Parse(`<!doctype htm
   {{else if .Form}}
   <p>{{.W.Lead}}</p>
   <div id="sign-in"></div>
+  {{if .CodeLink}}<a class="other" id="email-code-link" href="{{.CodeLink}}">{{.CodeWords}}</a>{{end}}
   <div id="not-loaded" hidden>
     <p role="alert">{{.W.NotLoaded}}</p>
     <button class="go" type="button" id="try-again">{{.W.TryAgain}}</button>

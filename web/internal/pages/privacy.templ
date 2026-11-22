@@ -172,6 +172,15 @@ templ privacyCategories() {
 				authentication subject (issued by our identity
 				provider) and the email address you sign in with.
 				Stored verbatim today; hashed-at-rest is planned.
+				If you turn on sign-in with a code sent by email (it is
+				off unless you do), KIFF keeps that setting with your
+				sign-in id and the date you changed it. A code we email
+				you is kept only as a keyed hash, until it is used or ten
+				minutes pass. To limit abuse, we keep, for up to a day, a
+				count of requests per keyed hash of the address that asked
+				and of the IP address. After you sign in with a code, we
+				note it for a quarter of an hour, so that changes needing a
+				recent sign-in ask you to sign in another way.
 			</li>
 			<li>
 				<strong>Tenant metadata</strong> — tenant id, slug,

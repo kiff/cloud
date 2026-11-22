@@ -782,6 +782,9 @@ var DefaultRules = map[string]membership.Capability{
 	// Signing in inside the tafs apps: the person's own session.
 	"POST /v1/auth/app/approve": membership.CapPersonal,
 	"POST /v1/auth/app/deny":    membership.CapPersonal,
+	// Signing in with a code sent by email: the person's own setting.
+	"GET /v1/me/sign-in": membership.CapPersonal,
+	"PUT /v1/me/sign-in": membership.CapPersonal,
 	// Connect links: admins and editors.
 	"POST /v1/me/agents/{id}/connect-links":    membership.CapToolsConnect,
 	"POST /v1/oauth/connect-links/{id}/revoke": membership.CapToolsConnect,
