@@ -33,15 +33,15 @@ func TestATranslatedPageIsItsOwnURL(t *testing.T) {
 		if rec.Code != http.StatusOK {
 			t.Fatalf("%s: status %d", tr.Path, rec.Code)
 		}
-		if got := rec.Header().Get("Content-Language"); got != tr.Lang {
+		if got := rec.Header().Get("Content-Language"); got != components.LangTag(tr.Lang) {
 			t.Errorf("%s: Content-Language %q", tr.Path, got)
 		}
 		for _, want := range []string{
-			`<html lang="` + tr.Lang + `"`,
+			`<html lang="` + components.LangTag(tr.Lang) + `"`,
 			`<link rel="canonical" href="` + components.SiteBaseURL + tr.Path + `"`,
 			`<link rel="alternate" hreflang="en" href="` + components.SiteBaseURL + tr.Page + `"`,
 			`<link rel="alternate" hreflang="x-default" href="` + components.SiteBaseURL + tr.Page + `"`,
-			`<link rel="alternate" hreflang="` + tr.Lang + `" href="` + components.SiteBaseURL + tr.Path + `"`,
+			`<link rel="alternate" hreflang="` + components.LangTag(tr.Lang) + `" href="` + components.SiteBaseURL + tr.Path + `"`,
 			`<nav class="lang-row"`,
 		} {
 			if !strings.Contains(body, want) {
@@ -141,7 +141,7 @@ func TestTheSitemapNamesEveryLanguage(t *testing.T) {
 		if !strings.Contains(body, "<loc>"+components.SiteBaseURL+tr.Path+"</loc>") {
 			t.Errorf("the sitemap lacks %s", tr.Path)
 		}
-		if !strings.Contains(body, `<xhtml:link rel="alternate" hreflang="`+tr.Lang+`" href="`+components.SiteBaseURL+tr.Path+`"></xhtml:link>`) {
+		if !strings.Contains(body, `<xhtml:link rel="alternate" hreflang="`+components.LangTag(tr.Lang)+`" href="`+components.SiteBaseURL+tr.Path+`"></xhtml:link>`) {
 			t.Errorf("the sitemap names no %s alternate for %s", tr.Lang, tr.Page)
 		}
 	}

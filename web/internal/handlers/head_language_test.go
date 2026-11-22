@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/kiff/cloud/web/internal/components"
 	"net/http"
 	"regexp"
 	"strings"
@@ -50,7 +51,7 @@ func TestEveryServedLegalPageSaysItsLanguage(t *testing.T) {
 	// And every translated page, in its language.
 	for _, tr := range TranslatedRoutes() {
 		mux.Handle("GET "+tr.Path, Translated(tr.Lang, tr.Page, OfferLinks{}))
-		want[tr.Path] = tr.Lang
+		want[tr.Path] = components.LangTag(tr.Lang)
 	}
 	for path, lang := range want {
 		rec := getPage(t, mux, path)

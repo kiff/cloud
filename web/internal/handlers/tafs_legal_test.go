@@ -147,7 +147,7 @@ func TestTafsLegalPagesInEveryLanguage(t *testing.T) {
 			}
 			body := strings.ReplaceAll(rec.Body.String(), "&#39;", "'")
 			for _, want := range []string{
-				`<html lang="` + lang + `"`, `<p class="translation-notice">`, components.TranslationNoticeText(lang),
+				`<html lang="` + components.LangTag(lang) + `"`, `<p class="translation-notice">`, components.TranslationNoticeText(lang),
 				`<a href="` + page + `" lang="en" hreflang="en">kiff.dev` + page + `</a>`,
 				`<link rel="alternate" hreflang="x-default" href="` + components.SiteBaseURL + page + `"`,
 				"Kiff Agents OÜ", "17372313", "Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416",
