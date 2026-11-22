@@ -395,10 +395,18 @@ func TestAppSignIn_IsNeverFramedAndRunsOnlyItsOwnAndThePinnedScript(t *testing.T
 		if rec.Header().Get("X-Frame-Options") != "DENY" || !strings.Contains(csp, "frame-ancestors 'none'") {
 			t.Errorf("%s can be framed: %q", name, csp)
 		}
-		for _, want := range []string{"default-src 'none'", "form-action 'self'", "base-uri 'none'"} {
+		for _, want := range []string{"default-src 'none'", "base-uri 'none'"} {
 			if !strings.Contains(csp, want) {
 				t.Errorf("%s: CSP misses %q", name, want)
 			}
+		}
+		// Forms go to this site, or by the answer's redirect to the app's
+		// own scheme: exactly that, nothing wider (K5: "Continue as" was
+		// held at form-action 'self').
+		_, formAction, _ := strings.Cut(csp, "form-action ")
+		formAction, _, _ = strings.Cut(formAction, ";")
+		if formAction != "'self' dev.kiff.tafs:" {
+			t.Errorf("%s: form-action is %q, not the site and the app's scheme", name, formAction)
 		}
 		scriptSrc, _, _ := strings.Cut(strings.SplitN(csp, "script-src", 2)[1], ";")
 		if strings.Contains(scriptSrc, "unsafe-inline") || strings.Contains(scriptSrc, "unsafe-eval") {
