@@ -278,7 +278,8 @@ type PasskeyApproval struct {
 //  1. the credential is the account's, kept, not removed, and the person's;
 //  2. a computer's own passkey was registered with this session's device, and
 //     only counts for it; one registered for the account (no device) counts
-//     for any of the person's passkey-only sessions;
+//     for any of the person's passkey-only sessions, except one whose device
+//     key is in software (SoftwareKeyPasskey), which counts only its own;
 //  3. its assertion verifies for message (UV, rpIdHash, challenge, signature,
 //     counter: VerifyAssertion);
 //  4. a computer's own passkey is not synced: BE and BS are both 0. An
@@ -308,6 +309,11 @@ func VerifyOwnPasskey(ctx context.Context, store PasskeyStore, rp RelyingParty, 
 	}
 	own := key.DeviceID != ""
 	if own && key.DeviceID != id.DeviceID {
+		return PasskeyApproval{}, ErrPasskeyDevice
+	}
+	// A computer whose device key is in software approves only with the
+	// security key its pairing registered for it, never an account passkey.
+	if !own && id.SoftwareKeyPasskey() {
 		return PasskeyApproval{}, ErrPasskeyDevice
 	}
 	ok, _, err := VerifyAssertion(rp, key.Passkey, id.Tenant, a, message)
@@ -343,6 +349,11 @@ func VerifyRequestPasskey(ctx context.Context, store PasskeyStore, rp RelyingPar
 	message := requestMessage(id.Tenant, method, uri, bodySHA256, h.At)
 	own := ""
 	if h.With != "" {
+		// A software-key computer's security key approves one request at a
+		// time.
+		if id.SoftwareKeyPasskey() {
+			return PasskeyApproval{}, nil, ErrPasskeyHeader
+		}
 		sum := sha256.Sum256(message)
 		own = hex.EncodeToString(sum[:])
 		if own == h.With {

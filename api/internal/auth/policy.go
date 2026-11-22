@@ -899,6 +899,13 @@ func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Id
 				writeJSON(w, http.StatusForbidden, ViewOnlyRefusal())
 				return SignedWith{}, true, false
 			}
+			// A software-key computer approves only with its security key's
+			// fresh assertion: its device key never names a window or signs
+			// two requests as one.
+			if id.SoftwareKeyPasskey() && (signatureWindowNamed(header) || SignedTogether(header)) {
+				writeJSON(w, http.StatusForbidden, softwareKeyRefusal())
+				return SignedWith{}, true, false
+			}
 			// A session that approves with its device's own passkey: what grants
 			// authority counts only with that passkey's assertion, never a window
 			// or its device key; the rest is signed by the device key as usual.

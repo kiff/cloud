@@ -1049,6 +1049,13 @@ func (h *DeviceAuthHandler) approvalKey(w http.ResponseWriter, r *http.Request) 
 	if id.ViewOnly() && !h.firstKeyAllowed(w, r, id) {
 		return
 	}
+	// A software-keyed computer that paired its security key approves with
+	// that key alone: an approval key would be in software, like its device
+	// key.
+	if id.SoftwareKeyPasskey() {
+		writeJSON(w, http.StatusForbidden, auth.SecurityKeyOnlyRefusal())
+		return
+	}
 	var req struct {
 		PublicKey string `json:"public_key"`
 	}
