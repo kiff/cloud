@@ -10,6 +10,7 @@ import (
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/payreports"
 	"github.com/kiff/cloud/api/internal/receipt"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
@@ -27,6 +28,7 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 	for name, apply := range map[string]func(context.Context, *pgxpool.Pool) error{
 		"keys": auth.ApplyAPIKeysSchema, "subjects": tenant.ApplySubjectTenantsSchema,
 		"mandate": mandate.ApplySchema, "receipt": receipt.ApplySchema, "controls": domain.ApplyTenantControlsSchema,
+		"payment reports": payreports.ApplySchema,
 	} {
 		if err := apply(ctx, pool); err != nil {
 			t.Fatalf("apply %s: %v", name, err)
@@ -91,10 +93,13 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		exec(`INSERT INTO cloud_meta.billable_runs (tenant_id, run_id, agent_id, started_at, ended_at, cost_micro_usd, counted, settled_at)
 			VALUES ($1, 'run-owed', 'agent-a', $2, $2, 1, TRUE, NULL), ($1, 'run-settled', 'agent-a', $2, $2, 1, TRUE, $2),
 			       ($1, 'run-free', 'agent-a', $2, $2, 1, FALSE, NULL)`, id, old)
-		for trace, at := range map[string]time.Time{"tr-old": old, "tr-new": recent} {
+		for trace, at := range map[string]time.Time{"tr-old": old, "tr-new": recent, "tr-reported": old} {
 			exec(`INSERT INTO cloud_meta.receipts (tenant_id, trace_id, schema_version, entity_id, entity_type, action_name, issued_at, causal_chain_hash, body, created_at)
 				VALUES ($1, $2, '1', 'e', 'Order', 'REFUND', $3, 'h', '{}', $3)`, id, trace, at)
 		}
+		// An old payment its owner reported: its receipt stays.
+		exec(`INSERT INTO cloud_meta.payment_reports (tenant_id, trace_id, proposal_id, agent_id, reported_at)
+			VALUES ($1, 'tr-reported', 'p-reported', 'agent-a', $2)`, id, old)
 		// In the account's schema: op-old is done; op-mixed has a recent
 		// decision; op-waiting has an approval still pending.
 		for _, row := range []struct {
@@ -122,7 +127,7 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if n := count(`SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1`, a.ID); n != 2 || dry.Total() == 0 {
+	if n := count(`SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1`, a.ID); n != 3 || dry.Total() == 0 {
 		t.Fatalf("a dry run: %d receipts left, counted %v", n, dry)
 	}
 	got, err := prov.Prune(ctx, a.ID, 48*time.Hour, now, false)
@@ -152,6 +157,8 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		{"the live key", `SELECT count(*) FROM cloud_meta.api_keys WHERE id = $1 || '-live'`, 1},
 		{"the old receipt", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-old'`, 0},
 		{"the new receipt", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-new'`, 1},
+		{"the old receipt of a reported payment", `SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1 AND trace_id = 'tr-reported'`, 1},
+		{"its report", `SELECT count(*) FROM cloud_meta.payment_reports WHERE tenant_id = $1`, 1},
 		{"the owner", `SELECT count(*) FROM cloud_meta.subject_tenants WHERE tenant_id = $1`, 1},
 		{"a run still owed", `SELECT count(*) FROM cloud_meta.billable_runs WHERE tenant_id = $1 AND run_id = 'run-owed'`, 1},
 		{"the settled and free runs", `SELECT count(*) FROM cloud_meta.billable_runs WHERE tenant_id = $1 AND run_id <> 'run-owed'`, 0},
@@ -165,7 +172,7 @@ func TestPruneKeepsTheAccountGoing(t *testing.T) {
 		}
 	}
 	// The other account is untouched.
-	if n := count(`SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1`, b.ID); n != 2 {
+	if n := count(`SELECT count(*) FROM cloud_meta.receipts WHERE tenant_id = $1`, b.ID); n != 3 {
 		t.Errorf("the other account lost receipts: %d left", n)
 	}
 	if n := count(`SELECT count(*) FROM ` + schemaB + `.kiff_events`); n != 3 {

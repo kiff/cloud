@@ -328,6 +328,8 @@ var PhoneSessionRules = []string{
 	"POST /v1/resume",
 	"GET /v1/agents/{id}/halt",
 	"GET /v1/halt",
+	// Reporting a payment halts its taf, so it is one tap like a halt.
+	"POST /v1/receipts/{trace_id}/report",
 	"POST /v1/auth/device/logout",
 }
 
@@ -827,10 +829,12 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/agents/self/archive":          membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/confirm": membership.CapCardsManage,
 	// The owner's halt and resume.
-	"POST /v1/agents/{id}/halt":             membership.CapCardsManage,
-	"POST /v1/halt":                         membership.CapCardsManage,
-	"POST /v1/agents/{id}/resume":           membership.CapCardsManage,
-	"POST /v1/resume":                       membership.CapCardsManage,
+	"POST /v1/agents/{id}/halt":   membership.CapCardsManage,
+	"POST /v1/halt":               membership.CapCardsManage,
+	"POST /v1/agents/{id}/resume": membership.CapCardsManage,
+	"POST /v1/resume":             membership.CapCardsManage,
+	// Reporting a payment halts its taf: the halt's capability.
+	"POST /v1/receipts/{trace_id}/report":   membership.CapCardsManage,
 	"DELETE /v1/me/agent-drafts/{id}":       membership.CapCardsManage,
 	"DELETE /v1/me/agent-drafts/{id}/trial": membership.CapCardsManage,
 	// This public route authenticates only the draft's claim secret.

@@ -74,7 +74,8 @@ var cloudMetaErased = []string{
 	"approval_devices", // After the sessions that name them
 	"support_tickets",  // its messages are deleted first, through ticket_id
 	// The database copy. Anchored hashes stay on chain, unlinkable once
-	// the salt is destroyed.
+	// the salt is destroyed. A reported payment's report goes with it.
+	"payment_reports",
 	"receipts",
 	"operator_alerts",
 	// The account's people, invitations (email addresses),
