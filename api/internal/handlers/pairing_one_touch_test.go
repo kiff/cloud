@@ -15,7 +15,7 @@ import (
 	"github.com/kiff/cloud/api/internal/auth"
 )
 
-// One fingerprint pairs a Chrome (kiff/tafs docs/chrome.md, "Pairing"): a
+// One fingerprint pairs a Chrome (the tafs Chrome contract's "Pairing"): a
 // phone whose key signs once per prompt signs the extension's view-only
 // device here (POST /v1/me/pairings) and planque's confirm of the Chrome
 // together, under one kiff.requests.v1 signature by its approval key. KIFF
