@@ -111,6 +111,7 @@ templ privacyCategoriesID() {
 		<ul>
 			<li>
 				<strong>Pengenal akun</strong> — subjek autentikasi hulu Anda (diterbitkan oleh penyedia identitas kami) dan alamat email yang Anda pakai untuk masuk. Saat ini disimpan apa adanya; hashing saat disimpan direncanakan.
+				Jika Anda mengaktifkan masuk dengan kode yang dikirim lewat email (nonaktif kecuali Anda mengaktifkannya), KIFF menyimpan pengaturan itu bersama ID masuk Anda dan tanggal perubahan. Kode yang kami kirim lewat email hanya disimpan sebagai hash berkunci, sampai dipakai atau sepuluh menit berlalu. Untuk membatasi penyalahgunaan, kami menyimpan, hingga sehari, hitungan permintaan per hash berkunci dari alamat yang meminta dan alamat IP. Setelah Anda masuk dengan kode, kami mencatatnya selama seperempat jam, agar perubahan yang memerlukan proses masuk baru meminta Anda masuk dengan cara lain.
 			</li>
 			<li>
 				<strong>Metadata tenant</strong> — ID tenant, slug, nama tampilan, cap waktu pembuatan, dan bahasa yang terakhir dipakai aplikasi tiap orang, agar email yang dikirim KIFF kepada mereka datang dalam bahasa itu.

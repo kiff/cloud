@@ -151,6 +151,7 @@ templ privacyCategoriesHU() {
 				identitásszolgáltatónk állít ki), és az e-mail-cím,
 				amellyel bejelentkezik. Ma eredeti formájukban tároljuk
 				őket; a hash-elt tárolás tervben van.
+				Ha bekapcsolja az e-mailben küldött kóddal való bejelentkezést (kikapcsolva marad, amíg ezt nem teszi), a KIFF eltárolja ezt a beállítást a bejelentkezési azonosítójával és a módosítás dátumával. Az e-mailben küldött kódot csak kulcsolt hashként tároljuk, amíg fel nem használják, vagy tíz perc el nem telik. A visszaélések korlátozására legfeljebb egy napig tároljuk a kérések számát a kódot kérő cím és az IP-cím kulcsolt hashe szerint. A kóddal való bejelentkezés után ezt negyedórára feljegyezzük, hogy a friss bejelentkezést igénylő módosítások másik módon kérjék a bejelentkezést.
 			</li>
 			<li>
 				<strong>Bérlői metaadatok</strong> — bérlőazonosító,

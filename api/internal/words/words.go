@@ -258,9 +258,31 @@ type Words struct {
 	// by its kind. Each language sets them in newdevice_<lang>.go.
 	DeviceNames
 
+	// The emails about signing in with a code sent by email
+	// (notify/code_sign_in.go). Each language sets them in
+	// codesignin_<lang>.go.
+	CodeSignInEmail
+
 	// A receipt's steps, by their code (receipt.StepWords), beside the
 	// signed English. Each language sets them in receiptsteps_<lang>.go.
 	ReceiptSteps
+}
+
+// CodeSignInEmail is the lines of the three code sign-in emails: the code;
+// "signing in with a code isn't on" for a person who has it off; and the
+// notice that the setting changed. The asked-for details (when, browser,
+// place) are the request's, the place the network's guess.
+type CodeSignInEmail struct {
+	// The code. CodeIntro sits above the code, CodeValid under it.
+	CodeSubject, CodeIntro, CodeValid, CodeNeverShare, CodeNotYou string
+	// The request's details' labels.
+	CodeAskedWhen, CodeAskedBrowser, CodeAskedPlace string
+	// Signing in with a code isn't on: how to turn it on.
+	CodeOffSubject, CodeOffIntro, CodeOffHow, CodeOffNotYou string
+	// The setting was turned on or off.
+	CodeTurnedOnSubject, CodeTurnedOnIntro, CodeTurnedOffSubject, CodeTurnedOffIntro, CodeChangedNotYou string
+	// CodeWhy is the footer of the two emails a request sends.
+	CodeWhy string
 }
 
 // ReceiptSteps are the words for a receipt's steps, by their stable code

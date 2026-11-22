@@ -20,6 +20,15 @@ type AuthHandler struct {
 	provider auth.Provider
 	sessions *session.Manager
 	logger   *slog.Logger
+	// code, when on, serves /sign-in as KIFF's page with the provider's
+	// form and the link to a code sent by email.
+	code *CodeSignInHandler
+}
+
+// WithCodeSignIn serves /sign-in through code's page when it's on.
+func (h *AuthHandler) WithCodeSignIn(code *CodeSignInHandler) *AuthHandler {
+	h.code = code
+	return h
 }
 
 // NewAuthHandler wires the provider + session manager. logger
@@ -184,6 +193,9 @@ func (h *AuthHandler) signInForm(w http.ResponseWriter, r *http.Request) {
 	clearCallbackAttempts(w, h.sessions.CookieSecure())
 	if _, err := h.sessions.Read(r); err == nil {
 		http.Redirect(w, r, redirectTarget(r), http.StatusFound)
+		return
+	}
+	if h.code != nil && h.code.SignInPage(w, r) {
 		return
 	}
 	h.provider.SignInForm(w, r)

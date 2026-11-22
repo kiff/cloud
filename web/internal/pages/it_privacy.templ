@@ -152,6 +152,7 @@ templ privacyCategoriesIT() {
 				fornitore di identità) e l'indirizzo email con cui
 				accedi. Oggi sono conservati così come sono; è prevista
 				la conservazione sotto forma di hash.
+				Se attivi l’accesso con un codice inviato per e-mail (è disattivato finché non lo attivi), KIFF conserva questa impostazione con il tuo identificativo di accesso e la data della modifica. Un codice che ti inviamo per e-mail è conservato solo come hash con chiave, finché non viene usato o passano dieci minuti. Per limitare gli abusi, conserviamo, fino a un giorno, un conteggio delle richieste per hash con chiave dell’indirizzo che le ha fatte e dell’indirizzo IP. Dopo un accesso con un codice, lo annotiamo per un quarto d’ora, così le modifiche che richiedono un accesso recente ti chiedono di accedere in un altro modo.
 			</li>
 			<li>
 				<strong>Metadati del tenant</strong> — id del tenant,
