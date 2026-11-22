@@ -55,7 +55,7 @@ templ subprocessorsListES() {
 					<tr id="aws">
 						<td>Amazon Web Services</td>
 						<td>Alojamiento: los servidores, la base de datos y sus copias de seguridad, la gestión de claves, los secretos y la supervisión. Para tafs, su propio almacén y las conexiones de planque</td>
-						<td>Todo lo que KIFF guarda: las cuentas y las personas que inician sesión, las Cards, las decisiones, los recibos y los logs. Para tafs, las ejecuciones, los chats, las notas de memoria y los tokens de conexión (cifrados)</td>
+						<td>Todo lo que KIFF guarda: las cuentas y las personas que inician sesión, las Cards, las decisiones, los recibos y los logs. Para tafs, las ejecuciones, los chats, las notas de memoria y los tokens de conexión (cifrados) y, cuando se activan las capturas de Chrome, la imagen tomada antes de un paso de Chrome, sellada y guardada como máximo 30 días</td>
 						<td>Irlanda (eu-west-1): KIFF Cloud, el servicio de tafs, las ejecuciones, los chats y las llamadas al modelo de tafs, y planque, con todo lo que almacenan. Irlanda también sirve las demos públicas de KIFF y los vídeos del sitio. Lo único que hay en Estados Unidos (us-east-1) son los certificados que CloudFront exige allí, que no contienen datos de clientes</td>
 					</tr>
 					<tr id="clerk">
@@ -72,8 +72,8 @@ templ subprocessorsListES() {
 					</tr>
 					<tr id="resend">
 						<td>Resend</td>
-						<td>Correo: los avisos de llamadas retenidas y de advertencias de una Card, los avisos de uso y de la cuenta, y las respuestas de soporte. Para tafs, la puerta de correo de un taf: el correo que la gente le envía y sus respuestas</td>
-						<td>La dirección de correo del destinatario y el aviso. Un aviso de llamada retenida nombra el agente, la acción, su importe y la Card de la que queda fuera. Para una puerta de correo, los mensajes, sus remitentes y sus archivos adjuntos</td>
+						<td>Correo: los avisos de llamadas retenidas y de advertencias de una Card, los avisos de uso y de la cuenta, el código de inicio de sesión, los avisos de un dispositivo nuevo y las respuestas de soporte. Para tafs, la puerta de correo de un taf: el correo que la gente le envía y sus respuestas</td>
+						<td>La dirección de correo del destinatario y el aviso. Un aviso de llamada retenida nombra el agente, la acción, su importe y la Card de la que queda fuera. Un correo con el código de inicio de sesión lleva el código, la hora y el navegador y el país desde los que se pidió; un aviso de dispositivo nuevo nombra el dispositivo, su navegador, cómo inició sesión, la hora y una estimación de la ciudad y el país. Para una puerta de correo, los mensajes, sus remitentes y sus archivos adjuntos</td>
 						<td>Estados Unidos</td>
 					</tr>
 					<tr id="cloudflare">
