@@ -11,6 +11,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/clerk/clerk-sdk-go/v2"
+	"github.com/clerk/clerk-sdk-go/v2/signintoken"
+
 	"github.com/kiff/cloud/api/internal/words"
 )
 
@@ -22,6 +25,13 @@ type people struct {
 	extra    map[string][]string
 	tickets  []string
 	fail     error
+	two      map[string]bool
+}
+
+func (p *people) SecondFactor(_ context.Context, s string) (bool, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.two[s], nil
 }
 
 func (p *people) ByVerifiedEmail(_ context.Context, a string) (string, bool, error) {
@@ -363,5 +373,98 @@ func TestTheKeyMustBeLongEnough(t *testing.T) {
 	}
 	if k, err := ParseKey(""); err != nil || k != nil {
 		t.Error("unset is no key")
+	}
+}
+
+// Wrong tries count per person, across all their addresses: five on one
+// address end the codes sent to another.
+func TestWrongTriesCountPerPersonAcrossAddresses(t *testing.T) {
+	r := newRig(t)
+	r.p.verified["second@example.com"] = "user_on"
+	r.send("on@example.com", "flow-a", "198.51.100.7")
+	code := r.lastCode("on@example.com")
+	for i := 0; i < wrongHour; i++ {
+		_, _ = r.verify("on@example.com", "flow-a", wrongOf(code), "198.51.100.7")
+	}
+	r.send("second@example.com", "flow-b", "198.51.100.8")
+	other := r.lastCode("second@example.com")
+	if _, err := r.verify("second@example.com", "flow-b", other, "198.51.100.8"); !errors.Is(err, ErrWrong) {
+		t.Fatalf("the person's other address got fresh tries: %v", err)
+	}
+}
+
+// Past the wrong-try limit, every code of the person is dropped.
+func TestPastTheLimitThePersonsCodesAreDropped(t *testing.T) {
+	r := newRig(t)
+	r.send("on@example.com", "flow-a", "198.51.100.7")
+	r.send("on@example.com", "flow-b", "198.51.100.7")
+	code := r.lastCode("on@example.com")
+	if r.store.Codes() != 2 {
+		t.Fatalf("codes before: %d", r.store.Codes())
+	}
+	for i := 0; i < wrongHour; i++ {
+		_, _ = r.verify("on@example.com", "flow-b", wrongOf(code), "198.51.100.7")
+	}
+	if n := r.store.Codes(); n != 0 {
+		t.Fatalf("codes left past the limit: %d", n)
+	}
+}
+
+// Codes turned off after the send refuse the code, even when the code is
+// still in the store.
+func TestCodesTurnedOffAfterTheSendRefuseIt(t *testing.T) {
+	r := newRig(t)
+	r.send("on@example.com", "flow-a", "198.51.100.7")
+	code := r.lastCode("on@example.com")
+	if err := r.store.SetSetting(context.Background(), "user_on", Setting{EmailCode: false, ChangedAt: r.now}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := r.verify("on@example.com", "flow-a", code, "198.51.100.7"); !errors.Is(err, ErrWrong) || len(r.p.tickets) != 0 {
+		t.Fatalf("codes off: %v, tickets %v", err, r.p.tickets)
+	}
+}
+
+// failNote can't record a code sign-in.
+type failNote struct{ *Memory }
+
+func (failNote) NoteSignIn(context.Context, string, time.Time) error { return errors.New("down") }
+
+// The code sign-in is noted before the token exists: if it can't be, no
+// token is made.
+func TestNoTicketWithoutTheNote(t *testing.T) {
+	r := newRig(t)
+	r.s.Store = failNote{r.store}
+	r.send("on@example.com", "flow-a", "198.51.100.7")
+	code := r.lastCode("on@example.com")
+	if _, err := r.verify("on@example.com", "flow-a", code, "198.51.100.7"); !errors.Is(err, ErrUnavailable) || len(r.p.tickets) != 0 {
+		t.Fatalf("a token without the note: %v, tickets %v", err, r.p.tickets)
+	}
+}
+
+// A code never stands in for a second factor: a person with one gets no
+// token.
+func TestASecondFactorIsNeverSkipped(t *testing.T) {
+	r := newRig(t)
+	r.p.two = map[string]bool{"user_on": true}
+	r.send("on@example.com", "flow-a", "198.51.100.7")
+	code := r.lastCode("on@example.com")
+	if _, err := r.verify("on@example.com", "flow-a", code, "198.51.100.7"); !errors.Is(err, ErrSecondFactor) || len(r.p.tickets) != 0 {
+		t.Fatalf("second factor: %v, tickets %v", err, r.p.tickets)
+	}
+}
+
+// The provider's token must be for the matched person.
+func TestTheProvidersTokenMustBeThePersons(t *testing.T) {
+	c := &ClerkPeople{token: func(context.Context, *signintoken.CreateParams) (*clerk.SignInToken, error) {
+		return &clerk.SignInToken{UserID: "user_other", Token: "tok"}, nil
+	}}
+	if tok, err := c.Ticket(context.Background(), "user_on", TicketTTL); err == nil || tok != "" {
+		t.Fatalf("a token for someone else: %q %v", tok, err)
+	}
+	c.token = func(_ context.Context, p *signintoken.CreateParams) (*clerk.SignInToken, error) {
+		return &clerk.SignInToken{UserID: *p.UserID, Token: "tok"}, nil
+	}
+	if tok, err := c.Ticket(context.Background(), "user_on", TicketTTL); err != nil || tok != "tok" {
+		t.Fatalf("the person's token: %q %v", tok, err)
 	}
 }

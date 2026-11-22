@@ -127,3 +127,17 @@ func TestTheWebsRoutesRefuseACredential(t *testing.T) {
 		t.Fatalf("with a credential: %d", rec.Code)
 	}
 }
+
+// Turning codes on is refused to a person with a second factor.
+func TestTurningCodesOnIsRefusedWithASecondFactor(t *testing.T) {
+	r := newRig(t)
+	r.p.two = map[string]bool{"user_off": true}
+	h := NewHandler(r.s, stepUp{ok: true}, nil)
+	rec := serveCode(h, "PUT", "/v1/me/sign-in", `{"email_code":true}`, &auth.Identity{Subject: "user_off", Method: auth.MethodSession})
+	if rec.Code != http.StatusConflict || !strings.Contains(rec.Body.String(), "second_factor") {
+		t.Fatalf("on with a second factor: %d %s", rec.Code, rec.Body)
+	}
+	if set, _ := r.store.Setting(context.Background(), "user_off"); set.EmailCode {
+		t.Fatal("turned on anyway")
+	}
+}

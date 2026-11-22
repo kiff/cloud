@@ -64,6 +64,9 @@ var (
 	ErrUnavailable = errors.New("codesignin: unavailable")
 	// ErrBadRequest: the request isn't one (an address that isn't one).
 	ErrBadRequest = errors.New("codesignin: bad request")
+	// ErrSecondFactor: the person signs in with a second factor, which a
+	// code never stands in for.
+	ErrSecondFactor = errors.New("codesignin: the person signs in with a second factor")
 )
 
 // People is the sign-in provider's side.
@@ -75,6 +78,11 @@ type People interface {
 	VerifiedEmails(ctx context.Context, subject string) ([]string, error)
 	// Ticket is a one-time sign-in token for the person, living ttl.
 	Ticket(ctx context.Context, subject string, ttl time.Duration) (string, error)
+	// SecondFactor reports whether the person signs in with a second
+	// factor. A code never stands in for one, so such a person can't use
+	// codes: whether the provider's token would skip it isn't KIFF's to
+	// rely on.
+	SecondFactor(ctx context.Context, subject string) (bool, error)
 }
 
 // Asked is where a request came from, for the email: the browser and the
@@ -431,6 +439,12 @@ func (s *Service) Verify(ctx context.Context, r VerifyRequest) (string, error) {
 	}
 	if !found || subject != c.Subject {
 		return "", ErrWrong
+	}
+	// A second factor is never skipped: such a person signs in another way.
+	if two, err := s.People.SecondFactor(ctx, c.Subject); err != nil {
+		return "", ErrUnavailable
+	} else if two {
+		return "", ErrSecondFactor
 	}
 	// Noted before the token exists: a session it makes is never a recent
 	// sign-in for the changes that need one.

@@ -78,6 +78,15 @@ func (c *ClerkPeople) VerifiedEmails(ctx context.Context, subject string) ([]str
 	return verified(u), nil
 }
 
+// SecondFactor reports whether the person has a second factor on.
+func (c *ClerkPeople) SecondFactor(ctx context.Context, subject string) (bool, error) {
+	u, err := c.get(ctx, subject)
+	if err != nil {
+		return false, fmt.Errorf("codesignin: clerk get user: %w", err)
+	}
+	return u == nil || u.TwoFactorEnabled, nil
+}
+
 // Ticket is a one-time sign-in token for the person.
 func (c *ClerkPeople) Ticket(ctx context.Context, subject string, ttl time.Duration) (string, error) {
 	secs := int64(ttl.Seconds())

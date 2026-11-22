@@ -122,6 +122,8 @@ func (h *Handler) verify(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusTooManyRequests, map[string]string{"error": "slow_down"})
 	case errors.Is(err, ErrWrong):
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "code_wrong"})
+	case errors.Is(err, ErrSecondFactor):
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "second_factor"})
 	default:
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "unavailable"})
 	}
@@ -190,6 +192,14 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		}
 		if _, err := h.stepUp.Check(r.Context(), id); err != nil {
 			auth.WriteReauthRequired(w)
+			return
+		}
+		// A code never stands in for a second factor.
+		if two, err := h.svc.People.SecondFactor(r.Context(), id.Subject); err != nil {
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "unavailable"})
+			return
+		} else if two {
+			writeJSON(w, http.StatusConflict, map[string]string{"error": "second_factor", "message": "signing in with a code isn't available to a person who signs in with a second factor"})
 			return
 		}
 	}
