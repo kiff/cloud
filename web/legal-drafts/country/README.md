@@ -28,6 +28,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | served at /legal/japan and /legal/japan/ja (owner, 21 Nov): the responsible person as the e-Business Register gives it; credits don't expire; prices as each item shows them in yen at purchase |
 | `mc.en.md`, `mc.fr.md` | Monaco (Loi 1.565), en and fr | served (ruling B); says no representative yet. Monaco opens only once the owner appoints one and its name and address replace that line |
 | `tr.en.md`, `tr.tr.md` | Türkiye (KVKK 6698), en and tr | served with batch 3 (kiff/cloud#80); says no representative yet |
+| `bn.en.md` | Brunei (Personal Data Protection Order 2025), English only (English meets the rule); the transfer basis for Estonia, Ireland and the United States | served with batch 5 |
 | `id.en.md`, `id.id.md` | Indonesia (UU PDP 27/2022), en and id | served with batch 3 (kiff/cloud#80); says KIFF isn't registered as an electronic system yet |
 | `th.en.md`, `th.th.md` | Thailand (PDPA 2019), en and th | served with batch 3 (kiff/cloud#80); says no representative yet |
 | `vn.en.md`, `vn.vi.md` | Vietnam (Decree 13/2023, Law on Personal Data Protection 2025), en and vi | served with batch 3 (kiff/cloud#80) |
