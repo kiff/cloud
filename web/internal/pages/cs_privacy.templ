@@ -1,0 +1,742 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// PrivacyCS is the privacy policy (/privacy) in Czech, at /cs/privacy.
+// It is a translation of Privacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one. Czech has
+// the legal texts only, so a link to any other page goes to English and
+// says so.
+templ PrivacyCS() {
+	@components.LayoutSite("KIFF — zásady ochrany osobních údajů", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@privacyHeadCS()
+			@privacyWhoWeAreCS()
+			@privacyScopeCS()
+			@privacyRolesCS()
+			@privacyCategoriesCS()
+			@privacyLawfulBasesCS()
+			@privacySubprocessorsCS()
+			@privacyTransfersCS()
+			@privacyRetentionCS()
+			@privacyRightsCS()
+			@privacyCookiesCS()
+			@privacySecurityCS()
+			@privacyChildrenCS()
+			@privacyAutomatedCS()
+			@privacyChangesCS()
+			@privacyContactCS()
+		</article>
+	}
+}
+
+templ privacyHeadCS() {
+	<header class="legal-head">
+		<p class="legal-badge">Zásady ochrany osobních údajů · v0.1</p>
+		<h1>Zásady ochrany osobních údajů</h1>
+		<p class="legal-meta">
+			<strong>Poslední aktualizace:</strong> 22. listopadu 2026.
+			<strong>Datum účinnosti:</strong> 24. května 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Tyto zásady vysvětlují, jak KIFF Cloud zpracovává osobní
+			údaje na webu, v ovládacím panelu, v API a v aplikaci tafs
+			pro iPhone, iPad, Android a počítače. Dotazy:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ privacyWhoWeAreCS() {
+	<section id="who-we-are">
+		<h2>1. Kdo jsme</h2>
+		<p>
+			KIFF Cloud provozuje <strong>Kiff Agents OÜ</strong>,
+			společnost s ručením omezeným založená v Estonsku.
+			Údaje z rejstříku:
+		</p>
+		<ul>
+			<li><strong>Registrační kód:</strong> 17372313 (estonský obchodní rejstřík e-Business Register)</li>
+			<li><strong>DIČ pro DPH:</strong> EE102924327</li>
+			<li><strong>Sídlo:</strong> Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonsko</li>
+			<li><strong>Kontakt pro ochranu osobních údajů:</strong> <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a></li>
+			<li><strong>Formální právní oznámení:</strong> <a href="mailto:legal@kiff.dev">legal@kiff.dev</a></li>
+		</ul>
+		<p>
+			Protože je Kiff Agents OÜ usazena v Evropské unii, vztahuje
+			se na naše zpracování přímo obecné nařízení EU o ochraně
+			osobních údajů
+			(<abbr title="General Data Protection Regulation">GDPR</abbr>).
+			Nepotřebujeme zástupce v EU podle článku 27.
+		</p>
+	</section>
+}
+
+templ privacyScopeCS() {
+	<section id="scope">
+		<h2>2. Rozsah těchto zásad</h2>
+		<p>
+			Tyto zásady se vztahují na osobní údaje, které zpracováváme,
+			když používáte:
+		</p>
+		<ul>
+			<li><a href="https://kiff.dev"><code>kiff.dev</code></a> — náš marketingový web, tuto stránku se zásadami a veřejné zobrazení potvrzení.</li>
+			<li><a href="https://app.kiff.dev"><code>app.kiff.dev</code></a> — náš ovládací panel, který vyžaduje přihlášení.</li>
+			<li><a href="https://api.kiff.dev"><code>api.kiff.dev</code></a> — naše HTTP API.</li>
+			<li id="tafs"><strong>tafs</strong> — naši aplikaci pro iPhone, iPad, Android a počítače (Mac, Windows a Linux) a službu za ní (včetně Setupu, který připojuje nástroje společnosti, a planque, který tato připojení uchovává), v níž společnost svěří úlohu AI agentovi, který pracuje v mezích KIFF Cards.</li>
+		</ul>
+		<p>
+			Tyto zásady se <em>nevztahují</em> na open-source framework
+			<code>kiff/kiff</code>, který můžete provozovat sami.
+			Když framework provozujete na vlastní infrastruktuře, jste
+			správcem všech údajů, které zpracovává, a Kiff Agents OÜ se
+			na tomto zpracování nepodílí.
+		</p>
+	</section>
+}
+
+templ privacyRolesCS() {
+	<section id="roles">
+		<h2>3. Naše role podle GDPR</h2>
+		<p>
+			Podle druhu údajů vystupujeme ve dvou rolích:
+		</p>
+		<ul>
+			<li>
+				<strong>Správce</strong> u metadat účtu a přihlášení,
+				fakturačních údajů (je-li fakturace aktivní),
+				marketingových sdělení, k jejichž odběru se přihlásíte,
+				a provozní telemetrie naší vlastní služby.
+			</li>
+			<li>
+				<strong>Zpracovatel</strong> u auditních údajů, záznamů
+				o akcích, potvrzení rozhodnutí a dalšího obsahu, který
+				prochází běhovým prostředím jménem našich zákazníků,
+				a u toho, co pro ně uchovává tafs (běhy každého tafu, chaty, hlášení, poznámky v paměti a soubory, které dodávají).
+				Správci těchto údajů jsou zákazníci (tenanti); dávají
+				nám pokyny prostřednictvím nastavení svého účtu
+				a konfigurace domény. Tento vztah upravuje smlouva
+				o zpracování osobních údajů
+				(<abbr title="Data Processing Agreement">DPA</abbr>);
+				zveřejněné podmínky najdete ve
+				<a href="/legal/dpa">vzoru DPA</a> (anglicky).
+			</li>
+		</ul>
+		<p>
+			Tyto zásady se zabývají především zpracováním, při němž
+			jsme správcem. Tam, kde zmiňujeme údaje, u nichž jsme
+			zpracovatelem, je konkrétnějším dokumentem DPA.
+		</p>
+	</section>
+}
+
+templ privacyCategoriesCS() {
+	<section id="categories">
+		<h2>4. Kategorie osobních údajů, které zpracováváme</h2>
+		<p>
+			Níže uvedené kategorie odpovídají technickému přehledu na
+			<a href="/security#data-we-process">/security#data-we-process</a> (anglicky).
+			Pokud se obě stránky liší, rozhoduje technická stránka
+			a tento oddíl upravíme tak, aby jí odpovídal.
+		</p>
+		<ul>
+			<li>
+				<strong>Identifikátory účtu</strong> — váš identifikátor
+				u upstreamového ověřování (vydaný naším poskytovatelem
+				identity) a e-mailová adresa, kterou se přihlašujete.
+				Dnes se ukládají v původní podobě; ukládání v hashované
+				podobě se plánuje.
+				Pokud zapnete přihlašování kódem poslaným e-mailem (je vypnuté, dokud to neuděláte), KIFF uchovává toto nastavení s vaším přihlašovacím ID a datem změny. Kód, který vám pošleme e-mailem, se uchovává jen jako klíčovaný otisk, dokud se nepoužije nebo neuplyne deset minut. Abychom omezili zneužití, uchováváme až jeden den počet požadavků podle klíčovaného otisku adresy, která o kód požádala, a IP adresy. Po přihlášení kódem si to poznamenáme na čtvrt hodiny, aby vás změny vyžadující čerstvé přihlášení vyzvaly k přihlášení jiným způsobem.
+			</li>
+			<li>
+				<strong>Metadata tenanta</strong> — ID tenanta, slug,
+				zobrazovaný název, časové razítko vytvoření a jazyk,
+				který naposledy používala aplikace každé osoby, aby
+				e-maily, které jí KIFF posílá, chodily v tomto jazyce.
+			</li>
+			<li>
+				<strong>Přístupové údaje k API</strong> — neprůhledné
+				záznamy klíčů API (ukládáme hashe, nikdy prostý text).
+			</li>
+			<li>
+				<strong>Údaje relační cookie</strong> — relační cookie
+				podepsaná pomocí HMAC, nastavená po přihlášení. Viz
+				oddíl o cookies níže.
+			</li>
+			<li>
+				<strong>Metadata požadavků HTTP</strong> — IP adresa,
+				user agent, cesta požadavku, stav odpovědi, latence.
+				Uchovávají se v přístupových protokolech naší reverzní
+				proxy po omezenou dobu kvůli bezpečnosti a prevenci
+				zneužití.
+			</li>
+			<li>
+				<strong>Obsah řízený tenantem</strong> — údaje
+				<code>parameters</code>, <code>actor</code>
+				a <code>entity</code>, které posíláte do běhového
+				prostředí. Uchováváme je <em>jako zpracovatel</em>
+				jménem zákazníka; za to, co se odešle, odpovídá
+				zákazník. Konfigurace začerňování pro jednotlivé domény
+				se plánuje.
+			</li>
+			<li>
+				<strong>Komunikace</strong> — e-maily, které posíláte
+				do našich schránek podpory, obchodu, bezpečnosti nebo
+				ochrany osobních údajů.
+			</li>
+			<li>
+				<strong>Aplikace tafs</strong> — do tafs se přihlašujete
+				svým účtem KIFF. Na telefonu nebo tabletu aplikace
+				uchovává vaši relaci v Klíčence zařízení (v Androidu
+				v jeho šifrovaném úložišti). Na počítači ji uchovává
+				zapečetěnou pro váš uživatelský účet: na počítači
+				s Windows pomocí vlastní ochrany dat Windows, v Linuxu
+				ve vašem svazku klíčů, na Macu v jeho Klíčence. Relace na
+				počítači trvá až 90 dní.
+				Aplikace vytvoří podpisový klíč, který nikdy neopustí
+				zařízení: v Secure Enclave iPhonu, iPadu nebo Macu,
+				v Keystore zařízení s Androidem nebo v TPM počítače
+				s Windows. V Linuxu a na Macu bez Secure Enclave je
+				klíč softwarový klíč uložený ve vašem svazku klíčů nebo
+				Klíčence a takový počítač může zobrazit, co na vás
+				čeká, ale nemůže to schválit; schvalujete na telefonu{ macSecurityKey("cs") }. Počítač s Windows
+				bez TPM se do tafs přihlásit nemůže. KIFF uchovává veřejnou polovinu klíče, název
+				a platformu zařízení a kdy bylo přidáno a naposledy
+				použito, aby mohl ověřovat vaše odpovědi na zadržená
+				volání a vaše schválení připojení. Pokud schvalujete
+				přístupovým klíčem na počítači, například
+				Windows Hello nebo bezpečnostním klíčem, váš obličej,
+				otisk prstu nebo PIN zůstává ve vlastním systému
+				počítače; KIFF uchovává veřejný klíč přístupového klíče, jeho ID,
+				čítač a název, nikdy nic tajného, a odmítne přístupový klíč,
+				který se synchronizuje do jiných zařízení. Pokud zapnete
+				upozornění na telefonu, tabletu nebo Macu s aplikací
+				pro iPad, uchováváme push token zařízení s vaším ID osoby
+				v KIFF a jazyk, který aplikace zobrazovala, aby jeho
+				upozornění chodila v tomto jazyce. Služba tafs také
+				uchovává jazyk účtu, podle toho, kdo naposledy chatoval
+				s Coachem, nejdéle tři měsíce, aby hlášení tafu chodila
+				v tomto jazyce. Upozornění telefonu prochází přes Apple
+				nebo Google pouze s tím, o který taf jde a co chce,
+				a v upozornění dveří se jménem nebo e-mailovou adresou
+				toho, kdo napsal: nikdy s částkou nebo podrobnostmi
+				požadavku. Ty doplní aplikace přímo v zařízení, od KIFF,
+				takže upozornění na odemčeném telefonu může zobrazit
+				částku, obchodníka nebo osobu. Na zamčeném telefonu
+				s Androidem zobrazí pouze „Taf vás potřebuje“ a na
+				zamčeném iPhonu také, pokud jste nenastavili, aby se
+				jeho náhledy zobrazovaly vždy. <strong>Vaše hodinky:</strong> hodinky neuchovávají žádné heslo ani klíč, komunikují pouze s vaším spárovaným telefonem a nikdy nic neschvalují. To, co řeknete Coachovi nebo tafu, který jste zvolili, posílají pouze jako text, přes telefon, a to až poté, co povolíte AI. Vaše slova na tento text převádí vlastní služba rozpoznávání řeči hodinek, od Applu nebo Googlu. Pokud ve Wear OS skončí dřív, než domluvíte, udělá to místo ní vlastní rozpoznávač vašeho telefonu, přímo v telefonu. Odmítnout, zastavit nebo poslat něco Coachovi či tafu mohou hodinky pouze tehdy, když mají zámek obrazovky nebo kód a jsou odemčené. To, co pošlete tafu, se dostane do vlastního chatu tohoto tafu, jako byste to napsali na telefonu. Chat tafu, včetně částek, se na hodinkách zobrazuje jen po dobu, kdy je otevřený, a pokaždé se načítá přes telefon; hodinky z něj nic neuchovávají. <strong>Apple Watch:</strong> zobrazují vaše tafy a jejich stránky, aniž by je uchovávaly. Uchovávají pouze vaši schránku Doručené, v souboru, který nemohou číst, když jsou zamčené: každé zadržené volání jako název jeho tafu a to, o co žádá, nikdy částku, a odpovědi Coache na to, co jste poslali z hodinek, jako text. Pokud se na hodinkách odhlásíte, uchovávají také to, že jste to udělali, dokud se na hodinkách znovu nepřihlásíte. Kromě toho neuchovávají nic, pokud hodinky nemají kód. Schránka Doručené zmizí, když se odhlásíte na hodinkách nebo se odhlásí váš iPhone, nebo až se aplikace příště otevře nebo zavře bez kódu. Nepořizují žádný záznam a jediná upozornění, která zobrazují, jsou upozornění vašeho iPhonu. <strong>Wear OS:</strong> zobrazují e-mail vašeho účtu a dnešní kalendář, aniž by je uchovávaly. Aby se otevřely okamžitě, uchovávají šifrovaně počet toho, co na vás čeká, a název každého tafu a to, zda je zastavený nebo pozastavený: nikdy částku, podrobnosti zadrženého volání ani chat tafu. To se vymaže, když se odhlásíte, když se hodinky zamknou nebo je sundáte ze zápěstí, a po 24 hodinách. Uchovávají vaši schránku Doručené, kde je každý řádek název tafu a to, co říká, nikdy částka, a jednu zprávu odloženou na později, jako text. Odhlášení, na hodinkách nebo na telefonu, to vše vymaže. Pro svou dlaždici uchovávají také počet toho, co na vás čeká, zobrazený jen tehdy, když jsou hodinky odemčené, a vymazaný, když se odhlásíte, nebo až se dlaždice příště zobrazí, když jsou hodinky zamčené nebo nemají zámek obrazovky. Po odhlášení na hodinkách si uchovají poznámku, že jste to udělali, dokud se znovu nepřihlásíte. Schránka Doručené zmizí také, až se aplikace příště otevře nebo zavře, když jsou hodinky zamčené nebo nemají zámek obrazovky. Zpráva odložená na později zůstává, dokud ji neodešlete nebo nesmažete, protože jste požádali o její odeslání. Pokud služba rozpoznávání řeči hodinek skončí dřív, než domluvíte, hodinky pošlou nahrávku do vašeho telefonu, který ji převede na text přímo v telefonu, nikdy na serveru. Nahrávka se smaže na obou zařízeních, jakmile se text vrátí nebo akci zrušíte, a nejpozději po 2 minutách. Coachovi nebo vašemu tafu pokračuje pouze text. Výsledek tafu může zůstat v upozorněních hodinek, dokud ho nezavřete nebo se na hodinkách neodhlásíte. Na počítači s Windows,
+				počítači s Linuxem nebo Macu s aplikací pro macOS 12
+				vytváří upozornění sama aplikace, dokud běží, bez push
+				tokenu a bez jakékoli jiné společnosti. Ve Windows
+				a Linuxu zobrazují, o který taf jde, co chce udělat,
+				částku, proč a do kdy; v aplikaci pro macOS 12 zobrazují
+				slova KIFF pro dané volání, jakmile je zapnete, a zamčená
+				obrazovka zobrazí to, co dovolí nastavení náhledů Macu.
+				Ve Windows jsou vypnutá,
+				dokud je nezapnete, a když je obrazovka zamčená,
+				zobrazují pouze „Taf vás potřebuje“. Upozornění zobrazené
+				předtím, než se obrazovka zamkla, si své podrobnosti
+				ponechá v seznamu oznámení Windows. V Linuxu jsou
+				zapnutá, dokud je nevypnete, a co zobrazí zamčená
+				obrazovka, závisí na vašem prostředí plochy. Když
+				připojujete nástroj, přihlašujete se u jeho vlastního poskytovatele. U aplikace, do které se planque přihlašuje sám, například Stripe, nebo u klíče, který zadáte, uchovává planque tento token nebo klíč pro vaši společnost šifrovaně; u spravovaného připojení drží přihlášení Composio, služba pro připojení, se kterou planque spolupracuje, a planque uchovává pouze záznam o připojení a nástroje, které jste schválili (vše jako zpracovatel, viz níže). Pokud spárujete rozšíření tafs, může taf také číst stránky webů, které povolíte, a jednat na nich, ve vašem vlastním Chrome (jako zpracovatel; <a href="/cs/tafs/privacy">stránka Zásady ochrany osobních údajů tafs</a> říká, co se čte, co se uchovává a jak dlouho). Záznam o připojení může obsahovat účet, ke kterému je přihlášeno (jeho jméno nebo e-mail), aby vám aplikace mohla ukázat, o který jde. KIFF používá spravovaná připojení pouze pro aplikace uvedené na <a href="/subprocessors#composio">/subprocessors</a> (anglicky). Aplikace neobsahuje žádné analytické ani
+				reklamní sledovací nástroje.
+			</li>
+			<li>
+				<strong>Nákupy v App Storu</strong> — když si v tafs koupíte
+				Solo nebo balíček kreditů, prodává vám je Apple: Apple je
+				prodávajícím, přijímá platbu a uchovává vaše platební
+				údaje. Apple nám sdělí, co bylo zakoupeno, pro který
+				účet KIFF (náhodné ID, které aplikace připojí k nákupu),
+				kdy, ID transakce u Applu a u Solo, kdy období končí
+				nebo se obnovuje. Používáme to k připsání kreditů nebo
+				tarifu na váš účet. Apple nám nesděluje vaše Apple ID,
+				jméno, e-mailovou adresu ani kartu.
+			</li>
+			<li>
+				<strong>Nákupy v Google Play</strong> — v Androidu
+				procházejí stejné nákupy fakturací Google Play:
+				Google přijímá platbu a uchovává vaše platební
+				údaje. Google nám sdělí, co bylo zakoupeno, pro který
+				účet KIFF (totéž náhodné ID), kdy, token a ID objednávky
+				nákupu a u Solo, kdy období končí nebo se obnovuje,
+				a používáme to stejným způsobem.
+				Google nám nesděluje váš účet Google, jméno,
+				e-mailovou adresu ani kartu.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyLawfulBasesCS() {
+	<section id="lawful-bases">
+		<h2>5. Právní základy zpracování</h2>
+		<p>
+			Podle článku 6 GDPR se opíráme o tyto právní
+			základy:
+		</p>
+		<ul>
+			<li>
+				<strong>Plnění smlouvy</strong> (čl.
+				6 odst. 1 písm. b)) — pro založení účtu, ověřování,
+				provoz běhového prostředí vaším jménem, fakturaci (je-li
+				aktivní) a hlavní části služby.
+			</li>
+			<li>
+				<strong>Oprávněné zájmy</strong> (čl. 6 odst. 1 písm. f))
+				— pro bezpečnost, prevenci podvodů, odhalování zneužití,
+				provozní telemetrii a ochranu služby.
+				Své zájmy poměřujeme s vašimi právy a na požádání vám
+				sdělíme, k jakému výsledku tento test vyváženosti
+				vedl.
+			</li>
+			<li>
+				<strong>Souhlas</strong> (čl. 6 odst. 1 písm. a)) — pro AI v aplikaci tafs: co se posílá modelu AI, který pohání Coache a vaše tafy, jak je popsáno <a href="#ai-in-tafs">níže</a>. Nic se neodešle, dokud to nepovolíte, a souhlas můžete odvolat v Účtu. O souhlas bychom vás požádali také před jakýmikoli analytickými cookies, volitelnými marketingovými sděleními nebo novým zpracováním, které podstatně rozšiřuje naše využití vašich údajů. Neprovozujeme žádnou analytiku, žádnou reklamu a žádné nepodstatné sledování.
+			</li>
+			<li>
+				<strong>Právní povinnost</strong> (čl. 6 odst. 1 písm. c))
+				— pro daňové záznamy (estonský zákon o účetnictví §12, 7
+				let), odpovědi na zákonné žádosti orgánů a uchovávání
+				vyžadované předpisy proti praní peněz, pokud se
+				uplatní.
+			</li>
+		</ul>
+		<h3 id="ai-in-tafs">AI v aplikaci tafs</h3>
+		<p>Aplikace tafs se vás zeptá dřív, než cokoli odejde do AI, těmito slovy:</p>
+		<ul>
+			<li>tafs používá pro Coache a vaše tafy AI Claude od společnosti Anthropic.</li>
+			<li>Coach a vaše tafy jsou AI agenti: to, co píšou, generuje AI a může to být chybné. Zpráva, kterou taf pošle mimo vaši společnost, uvádí, že ji napsal AI agent.</li>
+			<li>Co se do ní posílá: co píšete Coachovi a svým tafům, soubory, které přiložíte, co vaše připojené aplikace vracejí tafu během práce, a co je na vaší obrazovce, když vám Coach v aplikaci pomáhá.</li>
+			<li>Co se nikdy neposílá: hesla a klíče, které používají vaše připojené aplikace, ani váš otisk prstu.</li>
+			<li>Anthropic to používá k odpovědi a uchovává to nejdéle 30 dní.</li>
+			<li>Nic se neodešle, dokud to nepovolíte. Souhlas můžete odvolat v Účtu.</li>
+		</ul>
+		<p>Taf, který běží, aniž by u toho v tu chvíli někdo byl (podle svého plánu nebo když něco přijde), se opírá o souhlas osoby, která ho vytvořila nebo převzala, jinak o souhlas první osoby, která spravuje tafy účtu a povolí ho.</p>
+		<p><strong>Když souhlas odvoláte,</strong> Coach a vaše tafy vám přestanou odpovídat. Taf, jehož běhy se opírají o váš souhlas, se pozastaví: jeho plány se zastaví a to, co přijde, čeká. Pokračuje, jakmile je souhlas znovu udělen nebo ho svým vlastním souhlasem převezme někdo, kdo spravuje tafy účtu. Odvolání nemění nic na tom, co bylo odesláno dříve.</p>
+		<p>Anthropic je uveden na <a href="/subprocessors">/subprocessors</a> (anglicky), spolu s tím, kde údaje zpracovává a kdy je může uchovávat déle.</p>
+	</section>
+}
+
+templ privacySubprocessorsCS() {
+	<section id="sub-processors">
+		<h2>6. Dílčí zpracovatelé</h2>
+		<p>Vaše osobní údaje neprodáváme a nesdílíme je pro reklamu.</p>
+		<p>
+			K poskytování služby využíváme malý okruh dodavatelů.
+			Oficiální aktuální seznam je na
+			<a href="/subprocessors">/subprocessors</a> (anglicky);
+			tato stránka se aktualizuje do 30 dní od každé změny.
+			Od každého dílčího zpracovatele požadujeme na základě
+			písemných smluv ochranu rovnocennou té naší, včetně
+			standardních smluvních doložek EU, pokud osobní údaje
+			opouštějí EU.
+		</p>
+		<p>
+			O podstatném přidání nebo nahrazení dílčích zpracovatelů,
+			které se týká osobních údajů, informujeme aktivní
+			zákazníky předem, s právem vznést námitku.
+		</p>
+	</section>
+}
+
+templ privacyTransfersCS() {
+	<section id="transfers">
+		<h2>7. Mezinárodní předávání</h2>
+		<p>
+			Někteří z našich dílčích zpracovatelů jsou usazeni mimo
+			Evropský hospodářský prostor, především ve Spojených
+			státech. Pro každé takové předání se opíráme alespoň
+			o jednu z těchto záruk:
+		</p>
+		<ul>
+			<li>
+				<strong>Rámec ochrany údajů EU–USA</strong> — pro
+				dílčí zpracovatele v USA, kteří získali certifikaci podle
+				tohoto rámce. Rozhodnutí o odpovídající ochraně platí od
+				poloviny roku 2023; sledujeme jakoukoli změnu jeho stavu.
+			</li>
+			<li>
+				<strong>Standardní smluvní doložky</strong> —
+				modul 2 (správce–zpracovatel) pro naše přímé dílčí
+				zpracovatele a modul 3 (zpracovatel–dílčí zpracovatel)
+				tam, kde jde o řetězec zpracovatelů. Používáme doložky
+				schválené Komisí v roce 2021.
+			</li>
+			<li>
+				<strong>Doplňková opatření</strong> — tam, kde posouzení
+				rizik ukazuje, že jsou na místě další záruky (šifrování
+				při přenosu i při uložení, protokolování přístupu,
+				minimalizace údajů).
+			</li>
+		</ul>
+		<p>
+			Konkrétní nástroj předávání použitelný na daného dílčího
+			zpracovatele si můžete vyžádat e-mailem na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p><strong>Vaše země.</strong> Zákony některých zemí vyžadují víc, než říkají tyto zásady. Co doplňují, v angličtině a v jazyce dané země, najdete na stránce <a href="/privacy/countries">Vaše země</a>.</p>
+	</section>
+}
+
+templ privacyRetentionCS() {
+	<section id="retention">
+		<h2>8. Uchovávání</h2>
+		<p>
+			Osobní údaje uchováváme po nejkratší dobu, která odpovídá
+			účelům, pro něž je zpracováváme, a případné použitelné
+			právní povinnosti.
+		</p>
+		<ul>
+			<li>
+				<strong>Metadata účtu a přihlášení</strong> —
+				do smazání účtu. V aplikaci tafs ho vlastník smaže
+				v Účet → <em>Smazat
+				účet</em>. Účet vytvořený na webu se smaže
+				na základě e-mailu na
+				<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>,
+				v měsíční lhůtě podle čl. 12 odst. 3 GDPR.
+				V obou případech klíče účtu okamžitě přestanou fungovat.
+				Smazání v aplikaci tafs nelze vrátit zpět: chaty, poznámky
+				a připojení jeho tafs se okamžitě vymažou a to, co
+				uchovává KIFF, se vymaže do 30 dní. Při smazání na
+				webu uchováváme jeho údaje po ochrannou lhůtu 30 dní,
+				kdyby je vlastník chtěl zpět, a pak je vymažeme.
+			</li>
+			<li>
+				<strong>Záznamy klíčů API</strong> — do smazání účtu,
+				i poté, co je klíč odvolán. Klíč, který patří
+				k připojení agenta přes přihlášení, se smaže spolu
+				s tímto připojením, 30 dní po jeho skončení.
+			</li>
+			<li>
+				<strong>Relační cookies</strong> — do vypršení platnosti
+				(ve výchozím nastavení 24 hodin) nebo do odhlášení.
+			</li>
+			<li>
+				<strong>Přístupové protokoly reverzní proxy</strong> — nejdéle 90
+				dní, poté se agregují nebo smažou.
+			</li>
+			<li>
+				<strong>Protokoly služeb</strong> — co služby KIFF
+				a planque zaznamenávají za běhu: chyby a požadavky,
+				které mohou uvádět účet, osobu nebo agenta. 30
+				dní, poté se smažou.
+			</li>
+			<li>
+				<strong>Zálohy</strong> — databáze KIFF se zálohuje
+				denně, šifrovaně, a každá záloha se uchovává 7 dní,
+				takže smazaný záznam z nich zmizí do 7 dní.
+				Úložiště tafs a planque uchovávají šifrované kopie
+				k určitému okamžiku po dobu 35 dní, které slouží pouze
+				k obnovení úložiště po selhání, takže smazaný záznam
+				z nich zmizí do 35 dní.
+			</li>
+			<li>
+				<strong>Auditní údaje tenanta</strong> — uchovávané jako
+				zpracovatel podle konfigurace tenanta zákazníka. Výchozí
+				nastavení: uchovávají se po celou dobu existence tenanta;
+				smažou se se smazáním tenanta. Viz
+				<a href="/security#deletion">/security#deletion</a> (anglicky).
+			</li>
+			<li>
+				<strong>Volání přes bránu KIFF</strong> — argumenty
+				volání do jeho odeslání, odmítnutí nebo selhání,
+				poté se smažou; výsledek nástroje po dobu 24 hodin, poté
+				se smaže. Záznam o rozhodnutí a hash
+				argumentů se uchovávají jako auditní údaje tenanta. Viz
+				<a href="/security#data-kept">/security#data-kept</a> (anglicky).
+			</li>
+			<li>
+				<strong>Využití</strong> — u každého volání přes
+				bránu, jakmile skončí: který agent ho provedl, nástroj
+				a zda se počítalo jako akce, nebo bylo zdarma (a
+				proč). U každého běhu tafu nebo Coache, jakmile skončí:
+				taf, kdy, kredity, které jeho AI spotřebovala, a zda se
+				započítaly, nebo proč ne. Do smazání účtu; to, co se
+				hlásí našemu zpracovateli plateb pro fakturaci, se
+				uchovává spolu s fakturačními záznamy.
+			</li>
+			<li>
+				<strong>Připojení agentů přes přihlášení</strong> — který
+				agent, název aplikace, kdo ho povolil, kdy a jeho
+				poslední použití: po dobu, kdy je připojení aktivní, pak
+				30 dní po jeho skončení (po tuto dobu zůstává uvedeno
+				v ovládacím panelu), poté se smaže spolu s jeho tokeny
+				a klíčem API. Vše se smaže spolu s účtem.
+			</li>
+			<li>
+				<strong>tafs</strong> — push token zařízení, dokud se
+				z aplikace neodhlásíte, zařízení neodeberete nebo Apple či
+				Google neoznámí, že token zanikl. Veřejný klíč zařízení,
+				název, platformu a data po dobu, kdy ho používáte; jakmile
+				ho odhlásíte, označí se jako odebrané a uchovává se do
+				smazání účtu, aby KIFF mohl odmítnout jeho opožděnou
+				odpověď a ukázat, které zařízení podepsalo dřívější.
+				Veřejný klíč, ID a název přístupového klíče se uchovávají jako údaje
+				jeho zařízení. Počítač uchovává svou relaci nejdéle
+				90 dní nebo do odhlášení. To, co tafs uchovává pro
+				vaši společnost, se uchovává jako zpracovatel: běhy
+				a chaty tafu, se souhrnem chatu (a Setupu), po dobu 30 dní,
+				to, co vracejí vaše nástroje, jen do skončení běhu (v chatu
+				se to, co pouze četl, uchovává šifrovaně pro jeho další
+				zprávy, používá se, dokud chat není hodinu nečinný,
+				a nejdéle čtyři hodiny po načtení, poté se automaticky
+				smaže, během několika dní), a jeho poznámky v paměti
+				do odebrání
+				tafu; soubory, které dodá, 30 dní od běhu, který je vytvořil, poté se automaticky smažou do jednoho dne, nebo dříve, pokud některý z nich smaže někdo z vašeho účtu; token nebo klíč připojení v planque, nebo přihlášení spravovaného připojení u Composia, dokud připojení neodpojíte (pokud stejný účet u daného dodavatele může používat jiné z vašich připojení, uchovává se nepoužívaný, dokud neodpojíte i to), a záznam o jeho schváleních
+				do zániku účtu; viz
+				<a href="/legal/dpa#annex-4">přílohu 4 k DPA</a> (anglicky).
+			</li>
+			<li>
+				<strong>Fakturační záznamy</strong> — 7 let od
+				konce účetního období (estonský zákon o účetnictví
+				§12).
+			</li>
+			<li>
+				<strong>Nákupy v App Storu a Google Play</strong> —
+				to, co nám Apple nebo Google sdělili o každém nákupu,
+				zůstává ve vašem účtu do smazání účtu. Jejich
+				přehledy prodejů a výplat, které uchováváme jako
+				fakturační záznamy po dobu 7 let, vás neuvádějí.
+			</li>
+			<li>
+				<strong>Korespondence s podporou</strong> — 3 roky
+				od poslední interakce, poté se smaže.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyRightsCS() {
+	<section id="rights">
+		<h2>9. Vaše práva</h2>
+		<p>
+			Podle GDPR máte ve vztahu ke svým osobním údajům tato
+			práva:
+		</p>
+		<ul>
+			<li><strong>Přístup</strong> (článek 15) — potvrzení, zda vaše údaje zpracováváme, a jejich kopie.</li>
+			<li><strong>Oprava</strong> (článek 16) — oprava nepřesných nebo neúplných údajů.</li>
+			<li><strong>Výmaz</strong> (článek 17) — smazání vašich údajů, s výhradou výjimek pro zákonné uchovávání.</li>
+			<li><strong>Omezení</strong> (článek 18) — pozastavení zpracování, dokud se spor nevyřeší.</li>
+			<li><strong>Přenositelnost</strong> (článek 20) — strojově čitelný export údajů, které jste poskytli.</li>
+			<li><strong>Námitka</strong> (článek 21) — proti zpracování na základě oprávněných zájmů; přestaneme, pokud neprokážeme závažné důvody, které převažují.</li>
+			<li><strong>Odvolání souhlasu</strong> (čl. 7 odst. 3) — u jakéhokoli zpracování založeného na souhlasu, například AI v aplikaci tafs (v Účtu, jak je uvedeno <a href="#ai-in-tafs">výše</a>). Odvolání nemá vliv na předchozí zákonné zpracování.</li>
+		</ul>
+		<p>
+			Kterékoli z těchto práv uplatníte e-mailem na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Odpovíme do jednoho měsíce podle čl. 12 odst. 3; u složitých
+			žádostí můžeme lhůtu prodloužit až o další dva měsíce
+			a v takovém případě vám to sdělíme.
+		</p>
+		<h3 id="export-chats">Vaše vlastní chaty v tafs</h3>
+		<p>
+			V aplikaci tafs volba Účet →  Exportovat mé chaty
+			stáhne vaše vlastní chaty s každým tafem, včetně chatů
+			s Coachem, názvy souborů, které jste přiložili, a vaše
+			vlastní poznámky, jako čitelný soubor a jako JSON. Exportovat
+			je můžete jen vy: správce ani vlastník účtu to nemůže
+			a export účtu od KIFF je neobsahuje.
+		</p>
+		<h3 id="delete-account">Smazání vašeho účtu tafs</h3>
+		<p>
+			tafs je aplikace společnosti KIFF. Smazání účtu tafs
+			a jeho údajů:
+		</p>
+		<ol>
+			<li>Otevřete aplikaci tafs a přihlaste se.</li>
+			<li>Přejděte do Účtu a klepněte na <em>Smazat účet</em>.</li>
+			<li>Potvrďte. Smazání účtu nelze vrátit zpět.</li>
+		</ol>
+		<p>
+			<em>Smazat účet</em> se zobrazuje tomu, kdo smí smazat
+			účet společnosti, obvykle jejímu vlastníkovi. Pokud tuto
+			volbu nevidíte nebo už aplikaci nemáte, napište na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			z adresy, kterou se přihlašujete, a vaše údaje smažeme
+			do jednoho měsíce.
+		</p>
+		<p>
+			Co se smaže: klíče účtu okamžitě přestanou fungovat. Jeho
+			tafy, chaty, poznámky, přiložené soubory a připojení se
+			okamžitě vymažou, a z jejich kopií k určitému okamžiku do
+			35 dní. To, co KIFF pro účet uchovává, se
+			vymaže do 30 dní a ze záloh do 7 dní
+			poté. Protokoly služeb, které účet uvádějí, zmizí
+			do 30 dní. Auditní údaje tenanta se smažou spolu
+			s tenantem. Pro každý druh údajů viz <a href="#retention">Uchovávání</a>.
+		</p>
+		<p id="delete-data">
+			Smazání části údajů se zachováním účtu: v
+			aplikaci smažte chat a jeho zprávy a přiložené
+			soubory zmizí s ním; odeberte taf a jeho chaty, poznámky
+			a připojení zmizí s ním. U čehokoli jiného napište na
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			a uveďte, co smazat. Uděláme to do jednoho měsíce.
+		</p>
+		<p>
+			Máte právo podat stížnost u
+			dozorového úřadu. Naším vedoucím dozorovým úřadem
+			je
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">estonský Inspektorát ochrany údajů (Andmekaitse Inspektsioon)</a>.
+			Stížnost můžete podat také u dozorového úřadu
+			členského státu, ve kterém máte bydliště.
+		</p>
+		<p><strong>Vaše země.</strong> Zákony některých zemí vyžadují víc, než říkají tyto zásady. Co doplňují, v angličtině a v jazyce dané země, najdete na stránce <a href="/privacy/countries">Vaše země</a>.</p>
+	</section>
+}
+
+templ privacyCookiesCS() {
+	<section id="cookies">
+		<h2>10. Cookies</h2>
+		<p>
+			Nastavujeme tři cookies, všechny nezbytně nutné, vlastní,
+			posílané pouze přes HTTPS a nečitelné pro skripty na stránce.
+			Podle pravidel EU pro ePrivacy nevyžadují souhlas;
+			uvádíme je, abyste o nich věděli. Podrobnosti obsahují
+			<a href="/cookies">zásady používání cookies</a> (anglicky).
+		</p>
+		<ul>
+			<li>
+				<strong><code>kiff_session</code></strong> — udržuje vás
+				přihlášené. Podepsaná relační cookie nesoucí ID vašeho
+				přihlášení, e-mail a jméno a přístupový údaj, který
+				za vás používá ovládací panel. Nastavená pro <code>.kiff.dev</code>.
+				Platí 24 hodin nebo do odhlášení.
+			</li>
+			<li>
+				<strong><code>kiff_flash</code></strong> — přenáší
+				jednorázovou zprávu na další stránku, například „váš klíč
+				byl vytvořen“. Podepsaná; nový klíč v ní nikdy není.
+				Nastavená pro <code>.kiff.dev</code>. Smaže se, když ji
+				další stránka přečte, a nejpozději po 5 minutách.
+			</li>
+			<li>
+				<strong><code>kiff_cb_attempts</code></strong> — počítá, jak
+				často se přihlašovací stránka znovu načetla, aby se
+				přihlášení, které se zacyklí, zastavilo. Posílá se pouze
+				na tuto stránku. Platí 5
+				minut a vymaže se, když přihlášení začne nebo uspěje.
+			</li>
+		</ul>
+		<p>
+			Nepoužíváme analytické cookies, reklamní cookies ani
+			žádné sledovací nástroje třetích stran. Pokud bychom
+			nějaké někdy přidali, zobrazíme před nastavením cookie
+			lištu se souhlasem, v souladu s ePrivacy a pokyny EDPB
+			z roku 2023 k technologiím sledování.
+		</p>
+		<p>
+			Pokud se přihlašujete přes Clerk (našeho dílčího
+			zpracovatele pro ověřování), nastavuje Clerk také cookies
+			na své vlastní frontendové doméně (<code>clerk.kiff.dev</code>). Tyto
+			cookies jsou nezbytné, aby vás Clerk rozpoznal v průběhu
+			svého přihlašovacího postupu, a řídí se zásadami ochrany
+			osobních údajů Clerku i našimi. Podrobnosti najdete
+			v seznamu dílčích zpracovatelů.
+		</p>
+	</section>
+}
+
+templ privacySecurityCS() {
+	<section id="security">
+		<h2>11. Bezpečnost</h2>
+		<p>
+			Naše technická a organizační bezpečnostní opatření jsou
+			popsána na <a href="/security">/security</a> (anglicky). Patří
+			mezi ně oddělení tenantů na úrovni databáze,
+			TLS 1.2+ při přenosu, šifrování při uložení pomocí
+			výchozího nastavení spravovaného poskytovatele a řízení
+			přístupu podle principu nejnižších oprávnění.
+		</p>
+		<p>
+			O porušení zabezpečení osobních údajů informujeme dotčené
+			zákazníky bez zbytečného odkladu a do 72 hodin od jeho
+			potvrzení, v souladu s článkem 33 GDPR. Oznámení obsahuje
+			povahu porušení, kategorie a přibližný počet dotčených
+			subjektů údajů a záznamů, pravděpodobné důsledky
+			a přijatá nebo navrhovaná opatření.
+		</p>
+	</section>
+}
+
+templ privacyChildrenCS() {
+	<section id="children">
+		<h2>12. Děti</h2>
+		<p>
+			KIFF Cloud je produkt vývojářské infrastruktury, který
+			není určen dětem. Vědomě neshromažďujeme osobní údaje
+			dětí mladších 16 let. Pokud se domníváte, že nám dítě
+			poskytlo osobní údaje, kontaktujte
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>
+			a údaje smažeme.
+		</p>
+	</section>
+}
+
+templ privacyAutomatedCS() {
+	<section id="automated">
+		<h2>13. Automatizované rozhodování</h2>
+		<p>
+			Běhové prostředí KIFF Cloud přijímá deterministická
+			rozhodnutí podle pravidel nad údaji, které posílají naši
+			zákazníci. Nejde o rozhodnutí o vás, která by měla právní
+			nebo obdobně významné účinky ve smyslu článku 22 GDPR; jde
+			o rozhodnutí o akcích zákazníka (refundace, objednávky,
+			zprávy a podobně) prováděných podle vlastních pravidel
+			zákazníka.
+		</p>
+		<p>
+			Zákazníci, kteří používají KIFF Cloud k rozhodování
+			ovlivňujícímu jejich vlastní koncové uživatele, sami
+			odpovídají za dodržení článku 22. Naše potvrzení o řízení
+			jsou navržena tak, aby těmto zákazníkům poskytla auditní
+			stopu, kterou potřebují k prokázání lidského dohledu, ale
+			právní povinnost tento dohled zajistit nese
+			zákazník.
+		</p>
+	</section>
+}
+
+templ privacyChangesCS() {
+	<section id="changes">
+		<h2>14. Změny těchto zásad</h2>
+		<p>
+			Tyto zásady můžeme čas od času aktualizovat. O podstatných
+			změnách informujeme aktivní zákazníky e-mailem
+			a výrazným bannerem na této stránce po dobu nejméně 30 dní.
+			Nepodstatné změny zveřejňujeme s novým datem
+			„poslední aktualizace“.
+		</p>
+	</section>
+}
+
+templ privacyContactCS() {
+	<section id="contact">
+		<h2>15. Kontaktujte nás</h2>
+		<p>
+			Dotazy k ochraně osobních údajů a žádosti o uplatnění práv:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p>
+			Formální právní oznámení pro Kiff Agents OÜ:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			nebo poštou na adresu Tööstuse tn 75-71, Põhja-Tallinna linnaosa,
+			Tallinn 10416, Estonsko.
+		</p>
+		<p>
+			Vedoucí dozorový úřad pro stížnosti:
+			<a href="https://www.aki.ee/en" target="_blank" rel="noopener">estonský Inspektorát ochrany údajů (Andmekaitse Inspektsioon)</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Verze dokumentu:</strong> v0.1.<br/>
+			<strong>Poslední aktualizace:</strong> 22. listopadu 2026.
+		</p>
+	</section>
+}

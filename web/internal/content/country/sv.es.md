@@ -6,11 +6,11 @@ Esta sección se aplica si usas KIFF o tafs en El Salvador. Añade lo que exige 
 
 ## 1. Qué tratamos, para qué y durante cuánto tiempo
 
-Qué tratamos, para qué y durante cuánto tiempo está en las secciones 4, 5 y 8 de cada política. En resumen: tu cuenta, tus dispositivos, lo que escribes a Coach y a tus tafs y lo que tus apps conectadas devuelven mientras trabaja un taf, los datos de facturación de un plan de pago y los registros de solicitudes. Borramos cada uno cuando termina su plazo o cuando borras tu cuenta.
+Qué tratamos, para qué y durante cuánto tiempo está en las secciones 4, 5 y 8 de la política de KIFF y en las secciones 4, 8 y 9 de la política de tafs. En resumen: tu cuenta, tus dispositivos, lo que escribes a Coach y a tus tafs y lo que tus apps conectadas devuelven mientras trabaja un taf, los datos de facturación de un plan de pago y los registros de solicitudes. Borramos cada uno cuando termina su plazo o cuando borras tu cuenta.
 
 ## 2. Transferencias fuera de El Salvador
 
-KIFF lo gestiona Kiff Agents OÜ, una empresa de Estonia, y está alojado por Amazon Web Services en Irlanda. Todo lo que nos envías sale de El Salvador. Algunos destinatarios están en Estados Unidos: Clerk (inicio de sesión), Anthropic (los modelos de IA de Coach y de cada taf), Stripe (pago de un plan de pago), Resend (avisos por correo), Apple y Google (alertas y compras), Cloudflare y Google Workspace (correo a una dirección de kiff.dev) y Composio (conexiones gestionadas). Cada transferencia está protegida por las cláusulas contractuales tipo de la Comisión Europea o por el Marco de Privacidad de Datos UE-EE. UU., como dice la sección 7 de cada política.
+KIFF lo gestiona Kiff Agents OÜ, una empresa de Estonia, y está alojado por Amazon Web Services en Irlanda. Todo lo que nos envías sale de El Salvador. Algunos destinatarios están en Estados Unidos: Clerk (inicio de sesión), Anthropic (los modelos de IA de Coach y de cada taf), Stripe (pago de un plan de pago), Resend (avisos por correo), Apple y Google (alertas y compras), Cloudflare y Google Workspace (correo a una dirección de kiff.dev) y Composio (conexiones gestionadas). Cada transferencia está protegida por las cláusulas contractuales tipo de la Comisión Europea o por el Marco de Privacidad de Datos UE-EE. UU., como dice la sección 7 de la política de KIFF.
 
 ## 3. Tus derechos
 

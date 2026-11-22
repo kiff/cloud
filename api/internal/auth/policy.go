@@ -304,6 +304,11 @@ var PhoneSessionRules = []string{
 	"GET /v1/me/devices",
 	"DELETE /v1/me/devices/{id}",
 	"GET /v1/me/passkeys",
+	// The person's own code sign-in setting (codesignin): the phone reads it and turns it
+	// off (an off only ever removes a way in, and the person is told by email). Turning it
+	// on is refused to a device session by the handler: that needs a recent sign-in at kiff.dev.
+	"GET /v1/me/sign-in",
+	"PUT /v1/me/sign-in",
 	// The open approval window, with KIFF's words for the next tap (kiff/tafs#494).
 	"GET /v1/me/window",
 	"GET /v1/me/agent-drafts",
@@ -328,6 +333,8 @@ var PhoneSessionRules = []string{
 	"POST /v1/resume",
 	"GET /v1/agents/{id}/halt",
 	"GET /v1/halt",
+	// Reporting a payment halts its taf, so it is one tap like a halt.
+	"POST /v1/receipts/{trace_id}/report",
 	"POST /v1/auth/device/logout",
 }
 
@@ -780,6 +787,9 @@ var DefaultRules = map[string]membership.Capability{
 	// Signing in inside the tafs apps: the person's own session.
 	"POST /v1/auth/app/approve": membership.CapPersonal,
 	"POST /v1/auth/app/deny":    membership.CapPersonal,
+	// Signing in with a code sent by email: the person's own setting.
+	"GET /v1/me/sign-in": membership.CapPersonal,
+	"PUT /v1/me/sign-in": membership.CapPersonal,
 	// Connect links: admins and editors.
 	"POST /v1/me/agents/{id}/connect-links":    membership.CapToolsConnect,
 	"POST /v1/oauth/connect-links/{id}/revoke": membership.CapToolsConnect,
@@ -827,10 +837,12 @@ var DefaultRules = map[string]membership.Capability{
 	"POST /v1/agents/self/archive":          membership.CapRead,
 	"POST /v1/me/agent-drafts/{id}/confirm": membership.CapCardsManage,
 	// The owner's halt and resume.
-	"POST /v1/agents/{id}/halt":             membership.CapCardsManage,
-	"POST /v1/halt":                         membership.CapCardsManage,
-	"POST /v1/agents/{id}/resume":           membership.CapCardsManage,
-	"POST /v1/resume":                       membership.CapCardsManage,
+	"POST /v1/agents/{id}/halt":   membership.CapCardsManage,
+	"POST /v1/halt":               membership.CapCardsManage,
+	"POST /v1/agents/{id}/resume": membership.CapCardsManage,
+	"POST /v1/resume":             membership.CapCardsManage,
+	// Reporting a payment halts its taf: the halt's capability.
+	"POST /v1/receipts/{trace_id}/report":   membership.CapCardsManage,
 	"DELETE /v1/me/agent-drafts/{id}":       membership.CapCardsManage,
 	"DELETE /v1/me/agent-drafts/{id}/trial": membership.CapCardsManage,
 	// This public route authenticates only the draft's claim secret.
@@ -890,6 +902,13 @@ func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Id
 			header := r.Header.Get(DeviceSignatureHeader)
 			if id.ViewOnly() && (p.approvalRoute(r) || signatureWindowNamed(header) || SignedTogether(header)) {
 				writeJSON(w, http.StatusForbidden, ViewOnlyRefusal())
+				return SignedWith{}, true, false
+			}
+			// A software-key computer approves only with its security key's
+			// fresh assertion: its device key never names a window or signs
+			// two requests as one.
+			if id.SoftwareKeyPasskey() && (signatureWindowNamed(header) || SignedTogether(header)) {
+				writeJSON(w, http.StatusForbidden, softwareKeyRefusal())
 				return SignedWith{}, true, false
 			}
 			// A session that approves with its device's own passkey: what grants

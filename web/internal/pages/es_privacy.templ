@@ -36,7 +36,7 @@ templ privacyHeadES() {
 		<p class="legal-badge">Política de privacidad · v0.1</p>
 		<h1>Política de privacidad</h1>
 		<p class="legal-meta">
-			<strong>Última actualización:</strong> 21 de noviembre de 2026.
+			<strong>Última actualización:</strong> 22 de noviembre de 2026.
 			<strong>Fecha de entrada en vigor:</strong> 24 de mayo de 2026.
 		</p>
 		<p class="legal-disclaimer">
@@ -154,6 +154,7 @@ templ privacyCategoriesES() {
 				proveedor de identidad) y la dirección de correo con la
 				que inicias sesión. Hoy se almacenan tal cual; está
 				previsto guardarlos como hash en reposo.
+				Si activas el inicio de sesión con un código enviado por correo (está desactivado salvo que lo actives), KIFF guarda ese ajuste con tu identificador de inicio de sesión y la fecha del cambio. Un código que te enviamos por correo se guarda solo como un hash con clave, hasta que se use o pasen diez minutos. Para limitar los abusos, guardamos, hasta un día, un recuento de solicitudes por hash con clave de la dirección que las hizo y de la dirección IP. Después de iniciar sesión con un código, lo anotamos durante un cuarto de hora, para que los cambios que necesitan un inicio de sesión reciente te pidan iniciar sesión de otra forma.
 			</li>
 			<li>
 				<strong>Metadatos del inquilino</strong>: el
@@ -256,7 +257,7 @@ templ privacyCategoriesES() {
 				notificaciones de Windows. En Linux están activadas
 				hasta que las desactivas, y lo que muestra una pantalla
 				bloqueada depende de tu escritorio. Cuando conectas una
-				app, inicias sesión en el propio proveedor de la app. En una app en la que planque inicia sesión por sí mismo, como Stripe, o con una clave que das tú, planque guarda ese token o esa clave para tu empresa, cifrados; en una conexión gestionada, Composio, el servicio de conexiones con el que trabaja planque, guarda el inicio de sesión, y planque guarda solo el registro de la conexión y las herramientas que aprobaste (todo como encargado del tratamiento, ver más abajo). El registro de una conexión puede incluir la cuenta con la que se inició sesión (su nombre o su correo), para que la app pueda mostrarte cuál es. KIFF usa conexiones gestionadas solo para las apps que figuran en <a href="/es/subprocessors#composio">/subprocessors</a>. La app
+				app, inicias sesión en el propio proveedor de la app. En una app en la que planque inicia sesión por sí mismo, como Stripe, o con una clave que das tú, planque guarda ese token o esa clave para tu empresa, cifrados; en una conexión gestionada, Composio, el servicio de conexiones con el que trabaja planque, guarda el inicio de sesión, y planque guarda solo el registro de la conexión y las herramientas que aprobaste (todo como encargado del tratamiento, ver más abajo). Si vinculas la extensión de tafs, un taf también puede leer y actuar en las páginas de los sitios que permitas, en tu propio Chrome (como encargado del tratamiento; la <a href="/es/tafs/privacy">privacidad de tafs</a> dice qué se lee, qué se guarda y durante cuánto tiempo). El registro de una conexión puede incluir la cuenta con la que se inició sesión (su nombre o su correo), para que la app pueda mostrarte cuál es. KIFF usa conexiones gestionadas solo para las apps que figuran en <a href="/es/subprocessors#composio">/subprocessors</a>. La app
 				de tafs no tiene rastreadores de analítica ni de publicidad.
 			</li>
 			<li>
@@ -784,7 +785,7 @@ templ privacyContactES() {
 
 		<p class="legal-footnote">
 			<strong>Versión del documento:</strong> v0.1.<br/>
-			<strong>Última actualización:</strong> 21 de noviembre de 2026.
+			<strong>Última actualización:</strong> 22 de noviembre de 2026.
 		</p>
 	</section>
 }

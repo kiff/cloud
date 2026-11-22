@@ -34,6 +34,35 @@ func TestEachServedSectionIsItsDraft(t *testing.T) {
 	}
 }
 
+// A served notice is its approved draft, byte for byte, at a /legal path.
+func TestEachServedNoticeIsItsDraft(t *testing.T) {
+	for name, n := range Notices {
+		if len(n.Langs) == 0 || n.Langs[0] != "en" {
+			t.Errorf("%s: English comes first, got %v", name, n.Langs)
+		}
+		if !strings.HasPrefix(n.Path, "/legal/") {
+			t.Errorf("%s is served at %q, outside /legal", name, n.Path)
+		}
+		for _, l := range n.Langs {
+			file := name + "." + l + ".md"
+			served, err := files.ReadFile(file)
+			if err != nil {
+				t.Fatal(err)
+			}
+			draft, err := os.ReadFile(filepath.Join("../../../legal-drafts/country", file))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(served) != string(draft) {
+				t.Errorf("%s differs from web/legal-drafts/country/%s; copy the approved draft over", file, file)
+			}
+			if _, ok, err := GetNotice(name, l); err != nil || !ok {
+				t.Errorf("%s %s: %v %v", name, l, ok, err)
+			}
+		}
+	}
+}
+
 func TestKoreaRendersInBothLanguages(t *testing.T) {
 	en, ok, err := Get("kr", "en")
 	if err != nil || !ok {

@@ -128,7 +128,7 @@ func sitemapAlternates(url string) []sitemapLink {
 	}
 	var out []sitemapLink
 	for _, a := range components.AlternatesOf(page) {
-		out = append(out, sitemapLink{Rel: "alternate", HrefLang: a.Lang, Href: a.URL})
+		out = append(out, sitemapLink{Rel: "alternate", HrefLang: components.LangTag(a.Lang), Href: a.URL})
 		if a.Lang == "en" {
 			out = append(out, sitemapLink{Rel: "alternate", HrefLang: "x-default", Href: a.URL})
 		}

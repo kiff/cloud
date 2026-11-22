@@ -1,0 +1,226 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsPrivacyTR is tafs's privacy policy (/tafs/privacy) in Turkish, at /tr/tafs/privacy.
+// It is a translation of TafsPrivacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Turkish has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ TafsPrivacyTR() {
+	@components.LayoutSiteWithMeta("tafs gizlilik politikası", "KIFF'in uygulaması tafs'ın kişisel verileri nasıl işlediği; Google hesabınızı bağladığınızda Google'dan aldığı veriler dahil.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · gizlilik politikası</p>
+				<h1>tafs Gizlilik Politikası</h1>
+				<p class="legal-meta"><strong>Son güncelleme:</strong> 22 Kasım 2026.</p>
+				<p class="legal-disclaimer">Bu politika, KIFF'in iPhone, iPad, Android ve bilgisayarlar için uygulaması tafs'ın kişisel verileri nasıl işlediğini açıklar. tafs, KIFF Cloud'un bir parçasıdır; bu nedenle <a href="/tr/privacy">KIFF Gizlilik Politikası</a> ona ve bu sayfanın kapsamadığı her konuya da uygulanır. Sorularınız için: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.</p>
+			</header>
+			<section id="who-we-are">
+				<h2>1. Biz kimiz</h2>
+				<p>tafs, Estonya'da kurulmuş özel sorumlu bir şirket olan <strong>Kiff Agents OÜ</strong> (sicil kodu 17372313, KDV numarası EE102924327) tarafından, Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonya adresinden sunulur. İşlememize AB Genel Veri Koruma Tüzüğü (GDPR) uygulanır.</p>
+			</section>
+			<section id="scope">
+				<h2>2. Bu politikanın kapsamı</h2>
+				<p>iPhone, iPad, Android ve bilgisayarlar (Mac, Windows ve Linux) için tafs uygulaması ve arkasındaki hizmet; bir şirketin araçlarını bağlayan Setup ve bu bağlantıları tutan planque dahil. tafs'ta bir şirket, KIFF Card'ları içinde çalışan bir yapay zekâ ajanına, yani bir taf'a iş verir.</p>
+			</section>
+			<section id="roles">
+				<h2>3. Rollerimiz</h2>
+				<p>Hesabınızın ve giriş verilerinizin, ayrıca kendi hizmetimizin operasyonel verilerinin <strong>veri sorumlusuyuz</strong>. tafs'ın şirketiniz adına tuttuğu verilerde, yani her taf'ın çalıştırmalarında, sohbetlerinde, raporlarında, hafıza notlarında ve teslim ettiği dosyalarda <strong>veri işleyen</strong> olarak hareket ederiz. Bu verilerin veri sorumlusu şirketinizdir ve bu ilişkiyi <a href="/legal/dpa">DPA</a> (İngilizce) düzenler.</p>
+			</section>
+			<section id="data">
+				<h2>4. tafs neleri toplar</h2>
+				<ul>
+					<li><strong>Hesabınız:</strong> tafs'a KIFF hesabınızla giriş yaparsınız. Bir telefonda veya tabletta uygulama oturumunuzu cihazın Anahtar Zinciri'nde (Keychain) tutar (Android'de şifreli depolamasında). Bir bilgisayarda oturumu kullanıcı hesabınıza göre mühürlenmiş olarak tutar: Windows'ta Windows'un kendi veri korumasıyla, Linux'ta anahtar halkanızda, Mac'te Anahtar Zinciri'nde. Bir bilgisayarın oturumu en fazla 90 gün sürer.</li>
+					<li><strong>Cihazınız:</strong> uygulama, cihazdan asla ayrılmayan bir imzalama anahtarı üretir: bir iPhone, iPad veya Mac'in Secure Enclave'inde, bir Android cihazın Keystore'unda ya da bir Windows bilgisayarın TPM'inde. Linux'ta ve Secure Enclave'i olmayan bir Mac'te anahtar, anahtar halkanızda veya Anahtar Zinciri'nde tutulan bir yazılım anahtarıdır ve o bilgisayar sizi bekleyenleri gösterebilir ama onaylayamaz; telefonunuzdan onaylarsınız{ macSecurityKey("tr") }. TPM'i olmayan bir Windows bilgisayar tafs'a giriş yapamaz. KIFF, bekletilen çağrılara verdiğiniz yanıtları ve bağlantı onaylarınızı denetleyebilmek için anahtarın açık yarısını, cihazın adını ve platformunu, ne zaman eklendiğini ve en son ne zaman kullanıldığını tutar.</li>
+					<li><strong>Saatiniz:</strong> bir saat parola veya anahtar tutmaz, yalnızca eşleştirilmiş telefonunuzla konuşur ve asla onay vermez. Coach'a veya seçtiğiniz taf'a söylediklerinizi, yapay zekâya izin verdikten sonra, yalnızca metin olarak, telefon üzerinden gönderir. Sözlerinizi o metne saatin kendi konuşma hizmeti, Apple'ınki veya Google'ınki, dönüştürür. Wear OS'ta, siz bitirmeden durursa, bunu bunun yerine telefonunuzun kendi tanıyıcısı telefonda yapar. Saat, yalnızca ekran kilidi veya parolası varsa ve kilidi açıksa reddedebilir, durdurabilir veya Coach'a ya da bir taf'a gönderebilir. Bir taf'a gönderdiğiniz şey, telefonunuzda yazmışsınız gibi o taf'ın kendi sohbetine girer. Bir taf'ın sohbeti, tutarlar dahil, saatte yalnızca açıkken görünür; her seferinde telefon üzerinden okunur, saat bunların hiçbirini tutmaz.</li>
+					<li><strong>Apple Watch:</strong> taf'larınızı ve sayfalarını tutmadan gösterir. Yalnızca Gelen Kutunuzu, kilitliyken okuyamayacağı bir dosyada tutar: bekletilen her çağrıyı taf'ının adı ve ne istediği olarak, asla bir tutar olarak değil, ve Coach'un saatten gönderdiklerinize yanıtlarını metin olarak. Saatte oturumu kapatırsanız, saatte yeniden giriş yapana kadar bunu yaptığınızı da tutar. Bunun dışında, saatin bir parolası yoksa hiçbir şey tutmaz. Gelen Kutusu, saatte oturumu kapattığınızda veya iPhone'unuzun oturumu kapandığında ya da uygulama bir sonraki kez parolasız açıldığında veya kapandığında gider. Hiçbir kayıt yapmaz ve gösterdiği tek bildirimler iPhone'unuzunkilerdir.</li>
+					<li><strong>Wear OS:</strong> hesabınızın e-postasını ve bugünün takvimini tutmadan gösterir. Hemen açılabilmesi için, sizi bekleyenlerin sayısını ve her taf'ın adını ve durdurulmuş ya da duraklatılmış olup olmadığını şifreli olarak tutar: asla bir tutarı, bekletilen bir çağrının ayrıntılarını veya bir taf'ın sohbetini değil. Bu, oturumu kapattığınızda, saat kilitlendiğinde veya bileğinizden çıkarıldığında ve 24 saat sonra temizlenir. Her satırın bir taf'ın adı ve ne dediği olduğu Gelen Kutunuzu, asla bir tutar değil, ve daha sonrası için tutulan bir mesajı metin olarak tutar. Saatte veya telefonda oturumu kapatmak hepsini temizler. Kutucuğu (tile) için ayrıca sizi bekleyenlerin sayısını tutar; yalnızca saatin kilidi açıkken gösterilir ve oturumu kapattığınızda veya kutucuğun saat kilitliyken ya da ekran kilidi yokken bir sonraki gösterilişinde temizlenir. Saatte oturumu kapattıktan sonra, yeniden giriş yapana kadar bunu yaptığınıza dair bir not tutar. Gelen Kutusu ayrıca, uygulama saat kilitliyken veya ekran kilidi yokken bir sonraki açıldığında ya da kapandığında da gider. Daha sonrası için tutulan bir mesaj, gönderilmesini istediğiniz için siz gönderene veya silene kadar kalır. Saatin konuşma hizmeti siz bitirmeden durursa, saat kaydı telefonunuza gönderir; telefon bunu metne asla bir sunucuda değil, telefonun kendisinde dönüştürür. Kayıt, metin geri geldiğinde veya vazgeçtiğinizde ve en geç 2 dakika sonra her ikisinde de silinir. Coach'a veya taf'ınıza yalnızca metin iletilir. Bir taf'ın sonucu, siz kapatana veya saatte oturumu kapatana kadar saatin bildirimlerinde kalabilir.</li>
+					<li><strong>Geçiş anahtarları (passkey):</strong> bilgisayarınızda bir geçiş anahtarıyla, örneğin Windows Hello veya bir güvenlik anahtarıyla onayladığınızda, yüzünüz, parmak iziniz veya PIN'iniz bilgisayarın kendi sisteminde kalır. KIFF, geçiş anahtarının açık anahtarını, kimliğini, bir sayacı ve bir adı tutar; asla gizli hiçbir şeyi tutmaz ve diğer cihazlara senkronize olan bir geçiş anahtarını reddeder.</li>
+					<li><strong>Bildirimler:</strong> bir telefonda, tabletta veya iPad uygulamasını çalıştıran bir Mac'te, bunları açtığınızda, cihazın anlık bildirim jetonunu KIFF kişi kimliğinizle ve uygulamanın gösterdiği dille birlikte tutarız. Bir bildirim Apple veya Google üzerinden yalnızca hangi taf'ın ve ne istediğinin bilgisiyle, bir kapının bildiriminde ise yazan kişinin adı veya e-posta adresiyle gider: asla bir tutar veya bir isteğin ayrıntılarıyla değil. Uygulama bunları cihazın kendisinde, KIFF'ten ekler; böylece kilidi açık bir telefonun bildirimi bir tutarı, bir tüccarı veya bir kişiyi gösterebilir. Kilitli bir Android telefonda yalnızca “Bir taf'ın size ihtiyacı var” gösterir, kilitli bir iPhone'da da öyledir; ön izlemelerini her zaman gösterecek şekilde ayarlamadıysanız. Bir Windows bilgisayarda, bir Linux bilgisayarda veya macOS 12 uygulamalı bir Mac'te bildirimleri uygulamanın kendisi çalışırken oluşturur; anlık bildirim jetonu yoktur ve başka hiçbir şirket üzerinden geçmez. Windows'ta ve Linux'ta hangi taf'ın, ne yapmak istediğini, tutarı, nedenini ve ne zamana kadar olduğunu gösterirler; macOS 12 uygulamasında bunları açtığınızda çağrı için KIFF'in sözlerini gösterirler ve kilitli bir ekran Mac'in ön izleme ayarının izin verdiğini gösterir. Windows'ta siz açana kadar kapalıdırlar ve ekran kilitliyken yalnızca “Bir taf'ın size ihtiyacı var” gösterirler. Ekran kilitlenmeden önce gösterilmiş olan biri, ayrıntılarını Windows'un bildirim listesinde tutar. Linux'ta siz kapatana kadar açıktırlar ve kilitli bir ekranın ne gösterdiği masaüstünüze bağlıdır.</li>
+					<li><strong>Dil:</strong> tafs hizmeti, hesabın dilini, Coach ile en son kimin sohbet ettiğine göre, en fazla üç ay tutar; böylece bir taf'ın raporları o dilde gelir.</li>
+					<li><strong>Araçlarınız:</strong> bir aracı bağladığınızda, araca kendi sağlayıcısında giriş yaparsınız. planque'in kendisinin giriş yaptığı bir uygulama için, örneğin Stripe için, veya verdiğiniz bir anahtar için, planque o jetonu veya anahtarı şirketiniz için şifreli olarak tutar. Yönetilen bir bağlantı için, planque'in birlikte çalıştığı bağlantı hizmeti Composio girişi tutar ve planque yalnızca bağlantının kaydını ve onayladığınız araçları tutar (bkz. <a href="#google">Google kullanıcı verileri</a>). Bir bağlantının kaydı, uygulamanın size hangisi olduğunu gösterebilmesi için giriş yapılan hesabı (adını veya e-postasını) içerebilir. KIFF, yönetilen bağlantıları yalnızca <a href="/subprocessors#composio">/subprocessors</a> (İngilizce) sayfasında adı geçen uygulamalar için kullanır.</li>
+					<li><strong>Tarayıcınız (Chrome):</strong> tafs uzantısını telefonunuzla eşleştirdiğinizde, bir taf eşleştirdiğiniz Chrome profilinde, yalnızca bağlantısının listelediği sitelerde çalışabilir. Görebileceğiniz, duraklatabileceğiniz veya durdurabileceğiniz bir sekme grubunda kendi sekmelerini açar ve siz bunlardan birine dokunduğunuzda duraklar. O sayfaları metin ve form alanları olarak okur; parola, kart ve kod alanları çıkarılır, diğer sekmelerinizi veya diğer siteleri asla okumaz. Bu metin, çalıştırmanın bir parçası olarak yapay zekâ sağlayıcımıza gider ve herhangi bir aracın sonucu gibi çalıştırmayla birlikte tutulur. Her adım, sitesi ve alanın adıyla Kayıt'a işlenir; gizli bir alana yazılan şey asla işlenmez. Bir taf'ın yaptığı her değişiklik için KIFF, sayfanın öncesini ve sonrasını, o alanlar çıkarılmış metin olarak en fazla 30 gün tutar; bağlantıyı kestiğinizde veya hesabınızı sildiğinizde daha erken siler. Bu sayfalar başkalarının bilgilerini, örneğin müşterilerinizin bilgilerini gösterebilir; KIFF bunları sizin için, veri işleyen olarak işler. Uzantı kendi anahtarını bilgisayarınızda tutar ve siz isterseniz, yalnızca telefonunuzdaki onayınızın açabileceği şekilde mühürlenmiş giriş bilgilerini, o tam sitede tek bir doldurma için tutar. KIFF bunları asla tutmaz. Coach ile uzantının yan panelinden de konuşabilirsiniz; Coach bir sayfayı yalnızca siz “Share this page”'e tıklayıp tafs'ın o siteye Chrome'da girmesine izin verdiğinizde görür ve o zaman da yalnızca o sayfayı, aynı şekilde okunmuş olarak, sohbetinizin bir parçası olarak görür. Eşleştirmeyi kaldırmak veya uzantıyı kaldırmak, uzantının tuttuklarını siler. Bir taf, telefonunuzdaki onayınız olmadan asla ödeme yapmaz veya mühürlü bir girişi doldurmaz. Eylemde bulunan her adım (bir tıklama, yazma, gönderme), onayladığınız adım dahil, kayıt amacıyla sayfanın eylemden hemen önce alınmış bir ekran görüntüsünü de saklar; yalnızca okuduğu bir sayfa için asla, banka, cüzdan, parola yöneticisi, ödeme, sağlık veya devlet sitelerinde asla ve parola, kart ve kod alanları ile kayıtlı girişlerinizden yazılan her şey görüntü alınmadan önce gizlenir. Kart numarası veya anahtar gibi görünen metin de karartılır, ancak başka bir biçimde yazılmış bir şey yine de görünebilir. Ekran görüntüleri, o adıma bağlı olarak şifreli depolamada 30 gün saklanır, ardından otomatik olarak silinir ya da bağlantıyı kestiğinizde, bu Chrome'un eşleşmesini kaldırdığınızda veya hesabınızı sildiğinizde daha erken silinir ve yapay zekâ sağlayıcımıza asla gitmez. Her birini tafın Etkinlik bölümünde kendi adımının altında görürsünüz.</li>
+					<li><strong>taf'larınızın işi:</strong> her taf'ın çalıştırmaları, sohbetleri, raporları, hafıza notları ve teslim ettiği dosyalar, veri işleyen olarak tutulur. Hesabınızdaki herkes taf'larınızın teslim ettiği dosyaları görebilir.</li>
+					<li><strong>Satın almalar:</strong> Solo ve kredi paketleri Apple tarafından App Store üzerinden veya Google tarafından Google Play faturalandırması üzerinden satılır. Bize ne satın alındığını, hangi KIFF hesabı için (rastgele bir kimlik), ne zaman ve işlem veya sipariş referanslarını bildirirler. Bize Apple Kimliğinizi veya Google hesabınızı, adınızı, e-posta adresinizi ya da kartınızı vermezler.</li>
+				</ul>
+				<p>Uygulamada analiz veya reklam izleyicileri yoktur.</p>
+			</section>
+			<section id="ai">
+				<h2>5. tafs'taki yapay zekâ</h2>
+				<p>tafs, Coach ve taf'larınız için Anthropic'in Claude yapay zekâsını kullanır. Ona herhangi bir şey gitmeden önce uygulama size sorar.</p>
+				<ul>
+					<li>Ona gönderilenler: Coach'a ve taf'larınıza yazdıklarınız, eklediğiniz dosyalar, bağladığınız uygulamaların bir taf çalışırken ona döndürdükleri ve Coach uygulamada size yardım ederken ekranınızda olanlar.</li>
+					<li>Asla gönderilmeyenler: bağladığınız uygulamaların kullandığı parolalar ve anahtarlar veya parmak iziniz.</li>
+					<li>Anthropic bunu yanıt vermek için kullanır ve en fazla 30 gün saklar.</li>
+					<li>Siz izin verene kadar hiçbir şey gönderilmez. Hesap bölümünden izninizi geri çekebilirsiniz.</li>
+				</ul>
+				<p>İzninizi geri çektiğinizde Coach ve taf'larınız size yanıt vermeyi bırakır ve çalıştırmaları onayınıza dayanan bir taf duraklar. Ayrıntılar <a href="/tr/privacy#ai-in-tafs">KIFF Gizlilik Politikası</a> bölümündedir.</p>
+			</section>
+			@tafsPrivacyGoogleTR()
+			<section id="sharing">
+				<h2>7. Verileri başka kimler alır</h2>
+				<p>Kişisel verilerinizi satmayız ve reklam için paylaşmayız.</p>
+				<p>tafs için şu şirketleri kullanırız: Amazon Web Services (barındırma; tafs'ın deposu ve planque'in bağlantıları dahil), Clerk (KIFF hesapları için giriş), Anthropic (yapay zekâ modeli), Composio (yönetilen bağlantıların girişleri ve planque'in ondan yapmasını istediği çağrılar), Apple (anlık bildirimler), Google (Android'de anlık bildirimler ve Google Play faturalandırması) ve Resend (bir taf'ın e-posta kapısı). Her birinin neye dokunduğunu ve nerede olduğunu gösteren resmî, güncel liste <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasındadır.</p>
+				<p>Bunlardan bazıları, çoğunlukla Amerika Birleşik Devletleri'nde olmak üzere, Avrupa Ekonomik Alanı dışındadır. Bu aktarımların nasıl güvence altına alındığını <a href="/tr/privacy#transfers">KIFF Gizlilik Politikası</a> anlatır.</p>
+				<p><strong>Ülkeniz.</strong> Bazı ülkelerin yasaları bu politikanın söylediğinden fazlasını ister. Bunların eklediklerini, İngilizce ve ülkenin dilinde, <a href="/privacy/countries">Ülkeniz</a> (İngilizce) sayfasında bulabilirsiniz.</p>
+			</section>
+			<section id="retention">
+				<h2>8. Ne kadar süre saklarız</h2>
+				<ul>
+					<li>Araçlarınızın bir taf'a döndürdüğü: yalnızca çalıştırma bitene kadar. Bir sohbette, yalnızca okuduğu şey sonraki mesajları için şifreli olarak saklanır; sohbet bir saat boşta kalana kadar ve okumadan en fazla dört saat sonrasına kadar kullanılır, sonra birkaç gün içinde otomatik olarak silinir.</li>
+					<li>Bir taf'ın çalıştırmaları ve sohbetleri, bir sohbetin özetiyle birlikte: 30 gün. Hafıza notları: taf kaldırılana kadar.</li>
+					<li>Coach'un sonraki yanıtı için kısa notları, örneğin bir sohbette bir bağlantının neden kurulamadığı veya bir Card'ın onaylandığı: yanıt bunları alana kadar, en fazla 7 gün; ondan sonra, o sohbetin parçası olarak, sohbet tutulduğu sürece. Yeniden gönderilen bir mesajın aynı notu alması için bir kopya 24 saat tutulur. Bir sohbetin notu yalnızca o sohbette kullanılır.</li>
+					<li>Bir sohbete eklediğiniz dosyalar: eklendikleri mesajla birlikte, 30 gün veya sohbet kaldırılırsa daha erken ve her durumda 38 gün içinde. Hiçbir mesajın kullanmadığı bir dosya, yüklemenizden yaklaşık bir saat sonra kaldırılır. Hesabınızı silmek bunları siler.</li>
+					<li>taf'larınızın teslim ettiği dosyalar: çalıştırmanın onları oluşturduğu andan itibaren 30 gün, sonra bir gün içinde otomatik olarak silinir. Hesabınızdaki herkes birini Şimdi sil ile daha erken silebilir: dosyanın kendisi hemen gider, hiçbir kopya tutulmaz; adı, boyutu ve onu üreten taf ile çalıştırma, tafs'ın deposunun şifreli belirli an kopyalarında 35 güne kadar kalabilir ve yalnızca bir arızadan sonra geri yüklemek için kullanılır. Bir taf'ı kaldırmak veya hesabınızı silmek dosyalarını siler. Bir dosyayı paylaşmak dosyanın kendisini gönderir ve paylaştığınız kopya, paylaştığınız uygulamada kalır. Bir dosyayı indirmek için, hesabınızda oturum açmış bir üye için bir dakika sonra çalışmayı bırakan bir bağlantı oluştururuz; ona başka hiçbir bağlantı oluşturmayız.</li>
+					<li>Bir aracın döndürdüğü, planque'in her çağrı kaydında: 24 saat. Ondan sonra kayıt yalnızca çağrının gönderilip gönderilmediğini tutar; böylece asla iki kez gönderilmez.</li>
+					<li>planque'teki bir bağlantının jetonu veya anahtarı ya da Composio'daki yönetilen bir bağlantının girişi: siz bağlantıyı kesene kadar. Diğer bağlantılarınızdan biri o satıcıdaki aynı hesabı kullanabiliyorsa, kullanılmadan, o da kesilene kadar tutulur, sonra iptal edilir. Onaylarının kaydı: hesap sona erene kadar.</li>
+					<li>Bir cihazın anlık bildirim jetonu: uygulamadan çıkış yapana, cihazı kaldırana veya Apple ya da Google jetonun gittiğini bildirene kadar. Bir cihazın açık anahtarı, adı, platformu ve tarihleri: onu kullandığınız sürece; çıkış yaptırdığınızda kaldırılmış olarak işaretlenir ve hesap silinene kadar tutulur; böylece KIFF ondan gelen geç bir yanıtı reddedebilir ve daha önceki bir yanıtı hangi cihazın imzaladığını gösterebilir. Bir geçiş anahtarının açık anahtarı, kimliği ve adı: cihazınınki gibi. Bir bilgisayarın oturumu: en fazla 90 gün veya siz çıkış yapana kadar.</li>
+					<li>Hesabınız: silinene kadar. Hizmet günlükleri: 30 gün. tafs ve planque'in depoları, şifreli belirli an kopyalarını 35 gün tutar ve bunlar yalnızca bir arızadan sonra bir depoyu geri yüklemek için kullanılır.</li>
+				</ul>
+				<p>Geri kalan her şey <a href="/tr/privacy#retention">KIFF'in Saklama bölümündedir</a>.</p>
+			</section>
+			<section id="lawful-bases">
+				<h2>9. Hukuki dayanaklar</h2>
+				<p>Hesabınızı ve taf'larınızı işletmek için sözleşmenin ifası. Güvenlik, dolandırıcılığın önlenmesi ve kötüye kullanımın tespiti için meşru menfaatler. tafs'taki yapay zekâ için açık rıza (<a href="#ai">bölüm 5</a>). Vergi kayıtları için hukuki yükümlülük. Ayrıntılar <a href="/tr/privacy#lawful-bases">KIFF Gizlilik Politikası</a> bölümündedir.</p>
+			</section>
+			<section id="rights">
+				<h2>10. Haklarınız</h2>
+				<p>GDPR uyarınca verilerinize erişim, düzeltme, silme, kısıtlama veya taşınabilir bir kopya talep edebilir, meşru menfaatlere dayanan işlemeye itiraz edebilir ve rızanızı geri çekebilirsiniz. <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> adresine e-posta gönderin; bir ay içinde yanıt veririz. Uygulamada Hesap → Sohbetlerimi dışa aktar, kendi sohbetlerinizi ve notlarınızı indirir.</p>
+				<p>tafs hesabınızı silmek için uygulamayı açın, Hesap'a gidin ve <em>Hesabı sil</em>'e dokunun, sonra onaylayın. Geri alınamaz. Nelerin ne zaman silindiğini ve e-postayla nasıl talep edeceğinizi <a href="/tr/privacy#delete-account">KIFF Gizlilik Politikası</a> anlatır.</p>
+				<p><a href="https://www.aki.ee/en" target="_blank" rel="noopener">Estonya Veri Koruma Müfettişliği'ne (Andmekaitse Inspektsioon)</a> veya yaşadığınız yerdeki denetim otoritesine şikâyette bulunabilirsiniz.</p>
+				<p><strong>Ülkeniz.</strong> Bazı ülkelerin yasaları bu politikanın söylediğinden fazlasını ister. Bunların eklediklerini, İngilizce ve ülkenin dilinde, <a href="/privacy/countries">Ülkeniz</a> (İngilizce) sayfasında bulabilirsiniz.</p>
+			</section>
+			<section id="more">
+				<h2>11. Güvenlik, çocuklar ve değişiklikler</h2>
+				<p>Güvenlik önlemlerimiz <a href="/security">/security</a> (İngilizce) sayfasındadır. tafs çocuklara yönelik değildir ve 16 yaşın altındaki çocuklardan bilerek kişisel veri toplamayız. Bu politikayı, <a href="/tr/privacy#changes">KIFF Gizlilik Politikası</a>'nın kendisi için söylediği şekilde değiştiririz.</p>
+			</section>
+			<section id="contact">
+				<h2>12. İletişim</h2>
+				<p>Gizlilik soruları ve talepleri: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. Resmî hukuki bildirimler: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Uygulamanın kendi koşulları şurada: <a href="/tr/tafs/terms">/tafs/terms</a>.</p>
+			</section>
+		</article>
+	}
+}
+
+// tafsPrivacyGoogle is what tafs does with the data it receives from Google,
+// for Google's review of tafs's sign-in, with the Limited Use statement in
+// Google's own words.
+templ tafsPrivacyGoogleTR() {
+	<section id="google">
+		<h2>6. Google kullanıcı verileri</h2>
+		if len(googleManaged()) == 0 && len(googleInHouse("tr")) > 0 {
+			<p>İstediğinizde tafs, bir taf'ı Google hesabınıza bağlar; örneğin işinin kullandığı Google Sheets'e veya Google Calendar'a, uygulamanın Uygulamaları bağla bölümünde. Bu bölüm, tafs'ın Google'dan aldığı verilerle ne yaptığını anlatır.</p>
+		} else {
+			<p>İstediğinizde tafs, bir taf'ı Google hesabınıza bağlar; örneğin Gmail'inize veya işinin kullandığı Google Calendar'a ya da Google Sheets'e, uygulamanın Uygulamaları bağla bölümünde. Bu bölüm, tafs'ın Google'dan aldığı verilerle ne yaptığını anlatır.</p>
+		}
+		<ul>
+			if len(googleManaged()) == 0 && len(googleInHouse("tr")) > 0 {
+				<li><strong>Neleri okur ve yazar:</strong> taf'ın işinin gerektirdiklerini: güncel tuttuğu e-tabloları veya baktığı takvimlerdeki etkinlikleri. Bunları yalnızca taf'ın Card'ının izin verdiği yerde değiştirir ve Card'ın sınırlarını aşan her şey onayınızı bekler.</li>
+			} else {
+				<li><strong>Neleri okur ve yazar:</strong> taf'ın işinin gerektirdiklerini. Gmail'inizde, yanıt gerektirenleri bulmak için iletilerinizi ve konuşmalarınızı okur ve taslaklar yazar; yalnızca taf'ın Card'ının izin verdiği yerde e-posta gönderir. Google Calendar'da ve Google Sheets'te baktığı takvimlerdeki etkinlikleri veya güncel tuttuğu e-tabloları okur ve yalnızca taf'ın Card'ının izin verdiği yerde değiştirir.
+					if googleListed("Google Tasks") {
+						Google Tasks'te baktığı görev listelerini okur ve görevleri yalnızca taf'ın Card'ının izin verdiği yerde ekler, tamamlar, taşır veya siler.
+					}
+					Card'ın sınırlarını aşan her şey onayınızı bekler.</li>
+			}
+			<li><strong>Neden:</strong> yalnızca o taf için kurduğunuz işi yapmak ve bağlı olduğu Google hesabını size göstermek için: bağlantıyla birlikte, siz bağlantıyı kesene kadar tutulan e-posta adresi.</li>
+			if len(googleManaged()) > 0 || len(googleInHouse("tr")) > 0 {
+				<li>
+					<strong>Her Google uygulaması nasıl bağlanır:</strong>
+					<ul>
+						if len(googleManaged()) > 0 {
+							<li><a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenen giriş ortağımız üzerinden: { appList(googleManaged()) }.</li>
+						}
+						if len(googleInHouse("tr")) > 0 {
+							<li>araya başka bir şirket girmeden, tafs'ın kendi Google girişi üzerinden: { appList(googleInHouseNames()) }.</li>
+						}
+					</ul>
+					if googleBoth() {
+						Her iki başlık altında adı geçen bir uygulama, hesabınıza bağlı olarak bir yoldan ya da diğerinden bağlanır. Google'ın kendi giriş sayfası hangisine izin verdiğinizi gösterir.
+					}
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Neye izin verirsiniz:</strong> Google'ın kendi sayfasında giriş yapar ve neye izin vereceğinizi seçersiniz.
+					<ul>
+						<li><strong>Giriş ortağımız üzerinden:</strong> tafs yalnızca taf'ın araçlarının gerektirdiği erişimi ister. Bu daha dar erişim mümkün değilse uygulamanın olağan erişimini ister ve giriş yapmadan önce bunu söyler. Olağan erişim, taf'ın kullanmadığı kişisel verileri de kapsıyorsa tafs bağlanmaz.</li>
+						<li><strong>tafs'ın kendi Google girişi üzerinden:</strong> giriş, taf yalnızca okusa bile, o uygulama için aşağıda listelenen erişimin tamamını bir kerede ister.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("tr")) > 0 {
+				<li><strong>Neye izin verirsiniz:</strong> Google'ın kendi sayfasında giriş yapar ve neye izin vereceğinizi seçersiniz. Giriş, taf yalnızca okusa bile, o uygulama için aşağıda listelenen erişimin tamamını bir kerede ister.</li>
+			} else {
+				<li><strong>Neye izin verirsiniz:</strong> Google'ın kendi sayfasında giriş yapar ve neye izin vereceğinizi seçersiniz. tafs yalnızca taf'ın araçlarının gerektirdiği erişimi ister. Bu daha dar erişim mümkün değilse uygulamanın olağan erişimini ister ve giriş yapmadan önce bunu söyler. Olağan erişim, taf'ın kullanmadığı kişisel verileri de kapsıyorsa tafs bağlanmaz.</li>
+			}
+			<li><strong>Bir taf bunu nasıl kullanır:</strong> bir taf yalnızca Card'ında onaylanan araçları kullanır. Her çağrı, herhangi bir şey gönderilmeden önce tam o araç ve o argümanlar için bir izne karşı denetlenir ve verdiğiniz erişimin dışındaki bir çağrı reddedilir. Hangi eylemlerin her seferinde onayınızı istediği Card'da belirlenir.</li>
+			if len(googleInHouse("tr")) > 0 {
+				<li>
+					if googleBoth() {
+						<strong>tafs'ın kendi Google girişinin istediği erişim:</strong>
+					} else {
+						<strong>tafs'ın istediği erişim:</strong>
+					}
+					<ul>
+						for _, a := range googleInHouse("tr") {
+							<li>
+								{ a.Name }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
+					</ul>
+					Bir giriş ne kadar izin verirse versin, taf yalnızca Card'ındaki araçları kullanır.
+				</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Girişinizi kim tutar:</strong>
+					<ul>
+						<li><strong>Giriş ortağımız üzerinden:</strong> Google girişiniz, <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenen giriş ortağımız tarafından tutulur ve bir taf'a veya planque'e asla verilmez. Ne taf ne de tafs parolanızı veya Google jetonlarınızı görür. Aynı erişime ihtiyaç duyan başka bir taf'ınız girişi yeniden kullanır ve her taf yalnızca kendisi için onayladığınız araçları kullanır.</li>
+						<li><strong>tafs'ın kendi Google girişi üzerinden:</strong> tafs'ın kendi bağlantı hizmeti planque, Google jetonunuzu şirketiniz için Avrupa Birliği'nde (İrlanda) AWS KMS ile şifreli olarak tutar ve yalnızca taf'ın Card'ının izin verdiği bir çağrıyı yapmak için kullanır. Asla bir taf'a verilmez; ne taf ne de yapay zekâ modeli parolanızı veya Google jetonlarınızı görür. Aynı erişime ihtiyaç duyan başka bir taf'ınız girişi yeniden kullanır ve her taf yalnızca kendisi için onayladığınız araçları kullanır.</li>
+					</ul>
+				</li>
+			} else if len(googleInHouse("tr")) > 0 {
+				<li><strong>Girişinizi kim tutar:</strong> tafs'ın kendi bağlantı hizmeti planque, Google jetonunuzu şirketiniz için Avrupa Birliği'nde (İrlanda) AWS KMS ile şifreli olarak tutar ve yalnızca taf'ın Card'ının izin verdiği bir çağrıyı yapmak için kullanır. Asla bir taf'a verilmez; ne taf ne de yapay zekâ modeli parolanızı veya Google jetonlarınızı görür. Aynı erişime ihtiyaç duyan başka bir taf'ınız girişi yeniden kullanır ve her taf yalnızca kendisi için onayladığınız araçları kullanır.</li>
+			} else {
+				<li><strong>Girişinizi kim tutar:</strong> Google girişiniz, <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenen giriş ortağımız tarafından tutulur ve bir taf'a veya planque'e asla verilmez. Ne taf ne de tafs parolanızı veya Google jetonlarınızı görür. Aynı erişime ihtiyaç duyan başka bir taf'ınız girişi yeniden kullanır ve her taf yalnızca kendisi için onayladığınız araçları kullanır.</li>
+			}
+			if googleBoth() {
+				<li>
+					<strong>Başka kimler alır:</strong> bir taf'ın Google'dan okuduğu, yalnızca siz izin verdikten sonra, taf'ı çalıştıran yapay zekâ modeline gider (bkz. <a href="#ai">tafs'taki yapay zekâ</a>); model sağlayıcısının koşulları uyarınca en fazla 30 gün saklanır.
+					<ul>
+						<li><strong>Giriş ortağımız üzerinden:</strong> her çağrıyı yapan giriş ortağımızdan da geçer.</li>
+						<li><strong>tafs'ın kendi Google girişi üzerinden:</strong> planque Google'ı kendisi çağırır; böylece çağrıyı başka hiçbir şirket yapmaz ve girişinizi tutmaz.</li>
+					</ul>
+					İkisi de <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenmiştir.
+				</li>
+			} else if len(googleInHouse("tr")) > 0 {
+				<li><strong>Başka kimler alır:</strong> bir taf'ın Google'dan okuduğu, yalnızca siz izin verdikten sonra, taf'ı çalıştıran yapay zekâ modeline gider (bkz. <a href="#ai">tafs'taki yapay zekâ</a>); model sağlayıcısının koşulları uyarınca en fazla 30 gün saklanır. planque Google'ı kendisi çağırır; böylece çağrıyı başka hiçbir şirket yapmaz ve girişinizi tutmaz. Yapay zekâ modelinin sağlayıcısı <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenmiştir.</li>
+			} else {
+				<li><strong>Başka kimler alır:</strong> bir taf'ın Google'dan okuduğu, yalnızca siz izin verdikten sonra, taf'ı çalıştıran yapay zekâ modeline gider (bkz. <a href="#ai">tafs'taki yapay zekâ</a>); model sağlayıcısının koşulları uyarınca en fazla 30 gün saklanır. Ayrıca her çağrıyı yapan giriş ortağımızdan da geçer. İkisi de <a href="/subprocessors">/subprocessors</a> (İngilizce) sayfasında listelenmiştir.</li>
+			}
+			<li><strong>Yapay zekâ eğitimi:</strong> Google kullanıcı verileri yapay zekâ modellerini eğitmek için kullanılmaz.</li>
+			<li><strong>Görseller:</strong> tafs görsel veya video oluşturmaz ya da düzenlemez: yapay zekâsı metin yazar. Google API'lerini veya Google kullanıcı verilerini asla kimsenin mahrem görsellerini (rızasız mahrem görüntüler, NCII) ya da bir kişinin başka herhangi bir görselini oluşturmak, düzenlemek veya paylaşmak için kullanmaz.</li>
+			if len(googleManaged()) == 0 && len(googleInHouse("tr")) > 0 {
+				<li><strong>Ne kadar süre ve nerede:</strong> e-tablolarınız ve etkinlikleriniz Google hesabınızda kalır. tafs'ın kendi deposunda bir aracın döndürdüğü yalnızca taf'ın çalıştırması bitene kadar saklanır. Her çağrıyı ileten planque, Google'ın döndürdüğünü 24 saat tutar; böylece tekrarlanan bir çağrı aynı yanıtı alır ve asla iki kez gönderilmez; ondan sonra yalnızca çağrının gönderilip gönderilmediğini tutar. Bir sohbette, yalnızca okunan şey şifreli olarak saklanır; sohbet bir saat boşta kalana kadar ve okumadan en fazla dört saat sonrasına kadar kullanılır, sonra birkaç gün içinde otomatik olarak silinir. Bir çalıştırmanın kaydı ve sohbeti 30 gün, bir taf'ın notları ise taf'ı kaldırana kadar saklanır (bkz. <a href="#retention">Ne kadar süre saklarız</a>).</li>
+			} else {
+				<li><strong>Ne kadar süre ve nerede:</strong> taslaklarınız, etkinlikleriniz ve e-tablolarınız Google hesabınızda kalır. tafs'ın kendi deposunda bir aracın döndürdüğü yalnızca taf'ın çalıştırması bitene kadar saklanır. Her çağrıyı ileten planque, Google'ın döndürdüğünü 24 saat tutar; böylece tekrarlanan bir çağrı aynı yanıtı alır ve asla iki kez gönderilmez; ondan sonra yalnızca çağrının gönderilip gönderilmediğini tutar. Bir sohbette, yalnızca okunan şey şifreli olarak saklanır; sohbet bir saat boşta kalana kadar ve okumadan en fazla dört saat sonrasına kadar kullanılır, sonra birkaç gün içinde otomatik olarak silinir. Bir çalıştırmanın kaydı ve sohbeti 30 gün, bir taf'ın notları ise taf'ı kaldırana kadar saklanır (bkz. <a href="#retention">Ne kadar süre saklarız</a>).</li>
+			}
+			<li>
+				<strong>Durdurmak:</strong>
+				<ul>
+					<li>Uygulamada Google bağlantısını, Uygulamaları bağla bölümünde veya taf'ın Card sekmesinde kesin. Google araçları hemen durur ve tafs Google'dan girişi hemen iptal etmesini ister; bu biraz sonra tamamlanabilir.</li>
+					<li>Bir taf'ı kaldırın, bağlantıları da onunla birlikte sona erer. Başka bir taf'ınızın hâlâ kullandığı bir Google girişi, sonuncusu gidene kadar kalır.</li>
+					<li>tafs'ın erişimini istediğiniz zaman Google Hesabınızda, <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a> adresinde kaldırın. taf'larınız Google'a ulaşmayı bırakır ve uygulama Google bağlantısının oturumunun kapatıldığını söyler.</li>
+					<li>Hesabınızı silin: taf'ları, sohbetleri, notları, dosyaları ve bağlantıları hemen silinir, belirli an kopyalarından 35 gün içinde silinir ve Google jetonları, Google'ın izin verdiği yerde iptal edilir.</li>
+				</ul>
+			</li>
+		</ul>
+		<p lang="en">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+	</section>
+}

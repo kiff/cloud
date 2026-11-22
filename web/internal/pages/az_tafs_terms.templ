@@ -1,0 +1,65 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsAZ is tafs's terms (/tafs/terms) in Azerbaijani, at /az/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Azerbaijani has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ TafsTermsAZ() {
+	@components.LayoutSiteWithMeta("tafs şərtləri", "tafs, KIFF-in tətbiqi üçün şərtlər: onu kim təqdim edir, hesabınız, taf-ın nə etdiyi və onu necə idarə etməyiniz, məqbul istifadə, haqlar, məsuliyyət və xitam.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · şərtlər</p>
+				<h1>tafs şərtləri</h1>
+				<p class="legal-meta"><strong>Son yenilənmə:</strong> 22 noyabr 2026.</p>
+				<p class="legal-disclaimer">Bu şərtlər tafs, KIFF-in iPhone, iPad, Android və kompüterlər üçün tətbiqi və onun arxasındakı xidmət üçündür. tafs KIFF Cloud-un bir hissəsidir və bu səhifə <a href="/az/terms">KIFF-in Xidmət Şərtlərinin</a> onun haqqında dediklərini, onlara heç nə əlavə etmədən təkrarlayır. KIFF-in Şərtləri bu səhifənin əhatə etmədiyi hər şeyə tətbiq olunur. Suallar: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. tafs-ı kim təqdim edir</h2>
+				<p>tafs-ı Estoniyada məhdud məsuliyyətli xüsusi şirkət olan <strong>Kiff Agents OÜ</strong> (reyestr kodu 17372313), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya ünvanında təqdim edir. Hesab yaratmaqla və ya tafs-dan başqa cür istifadə etməklə bu şərtlərlə və KIFF-in Şərtləri ilə razılaşırsınız. Şirkət üçün qəbul edirsinizsə, onu bağlaya biləcəyinizi təsdiqləyirsiniz.</p>
+			</section>
+			<section id="account">
+				<h2>2. Hesabınız</h2>
+				<p>tafs-a KIFF hesabı ilə daxil olursunuz. Dəqiq məlumat verin, etimadnamələrinizi məxfi saxlayın və hesabınız altındakı bütün fəaliyyətə və içəri buraxdığınız hər şəxsə görə cavabdehsiniz. Ən azı 16 yaşında və ya yaşadığınız yerdə rəqəmsal razılıq yaşında olmalısınız, hansı daha yüksəkdirsə. tafs-dan yalnız Anthropic-in öz xidmətini təklif etdiyi ölkədən və ya regiondan istifadə edə bilərsiniz, <a href="https://www.anthropic.com/supported-countries">Anthropic-in sadaladığı kimi</a>; qərargahı, və ya çoxluğuna sahib olan və ya nəzarət edən şirkətin qərargahı həmin siyahıdan kənarda olan ölkə və ya regionda olan şirkət üçün deyil; və siz və ya onu istifadə etdiyiniz şirkət Avropa İttifaqının, Birləşmiş Millətlər Təşkilatının və ya Birləşmiş Ştatların sanksiyalarına məruz qalırsa deyil (KIFF-in Şərtləri, §4).</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. Taf nə edir</h2>
+				<p>tafs-da işi taf-a həvalə edirsiniz: qoşduğunuz alətlərlə cədvəl üzrə işləyən AI agenti, onun üçün buraxdığınız KIFF Card-ları daxilində. İstifadə etdiyi AI modelini Anthropic təmin edir. Setup, tafs-da AI agenti, alət qoşmağa və taf qurmağa kömək edir, lakin özü heç nə qoşmur: alətin öz provayderində daxil olursunuz və cihazınızda hər əlaqəni, taf-ın istifadə edə biləcəyi alətləri və onun Card-larını təsdiq edirsiniz.</p>
+				<p>Taf-ın hesabatları, mesajları və yaddaş qeydləri AI modeli tərəfindən yazılır və səhv ola bilər. Etibar etməzdən əvvəl vacib olanı yoxlayın. Taf-ın şirkətinizdən kənarda kiməsə yazdığı hər şey AI agentinin yazdığını bildirir.</p>
+			</section>
+			<section id="control">
+				<h2>4. İdarəniz: Card və təsdiqlər</h2>
+				<p>Taf alətlərinizə yalnız KIFF vasitəsilə çatır, KIFF hər zəngi göndərilməzdən əvvəl taf-ın Card-ları ilə yoxlayır. Buraxdığınız Card daxilindəki zəng sizin göstərişinizlə edilir. Card-dan kənardakı zəng Card-ın dediyi kimi saxlanılır və ya rədd edilir. Saxlanılmış zəng yalnız hesabınızın saxlanılmış zənglərə cavab verməyə icazə verdiyi şəxs təsdiq etdikdən sonra edilir.</p>
+				<p>Hər taf-ın işini və Card-larını siz seçirsiniz, onun saxlanılmış zənglərinə cavab verirsiniz və qoşduğunuz alət və hesablardan istifadə etmək hüququnuzun olduğundan əmin olursunuz. Bir taf-ı və ya hamısını dayandıra (halt), taf-ı fasilə verdirə, onun hər hansı Card-ını ləğv edə və ya onu silə bilərsiniz. Taf-ı dayandırdığınız və ya Card-ı ləğv etdiyiniz andan KIFF həmin taf-ın və ya həmin Card-ın altında yeni zəngə icazə vermir. Alətin provayderinə artıq göndərilmiş sorğu hələ də tamamlana bilər: yeni zəngləri dayandırırıq və provayderin artıq etdiyini geri qaytara bilmərik. <a href="/az/terms#tafs">KIFF-in Şərtləri, §3A</a> təfərrüatlara malikdir. Taf ödəniş səhifəsində həmin saytda saxladığınız üsulla ödəniş edəndə, bunu yalnız Card daxilində və həmin ödənişi telefonunuzda təsdiqlədikdən sonra edir; sayt və onun ödəniş provayderi onu emal edir, KIFF və planque isə heç vaxt pulunuzu saxlamır, kart məlumatlarınızı heç vaxt yaddaşda saxlamır və taf heç vaxt kart nömrəsi yazmır.</p>
+				<p>Aİ AI Aktına əsasən Kiff Agents OÜ tafs-ın provayderidir, siz isə onun deployer-isiniz. tafs-dan yalnız təklif etdiyi işlər üçün istifadə edin, AI Aktının qadağan etdiyi və ya yüksək riskli saydığı hər hansı istifadə üçün deyil, məsələn şəxsin işə qəbulu, krediti və ya vacib xidmətlərə girişi barədə qərarlar.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. Məqbul istifadə</h2>
+				<p>Siz, insanlarınız və taf-larınız <a href="/acceptable-use">Məqbul İstifadə Siyasətinə</a> (ingiliscə) əməl etməlisiniz. Agentin fəaliyyəti sizin fəaliyyətinizdir. Digərləri ilə yanaşı, tafs-dan qanunu pozmaq, istifadə etmək səlahiyyətiniz olmayan sistem və ya hesab üzərində hərəkət etmək, verməyə hüququnuz olmayan girişlə alət qoşmaq, spam göndərmək və ya Card-ı, limiti və ya saxlamanı keçmək üçün istifadə edə bilməzsiniz. Etibarlı pozuntuda dərhal dayandıra bilərik.</p>
+			</section>
+			<section id="fees">
+				<h2>6. Haqlar</h2>
+				<p>Bu yenilənmə zamanı Solo ayda { tafsCostAZ.money(TafsSoloCents) }, ƏDV daxil olmaqla, ayda { tafsCostAZ.number(TafsSoloCredits) } kreditlə, tətbiqdə App Store və ya Google Play vasitəsilə satılır. Tətbiqdə alınan kredit paketləri { tafsCostAZ.money(TafsPackCents[TafsSoloCredits]) } məbləğindən başlayır; müddəti bitmir. Taf-ın hər icrası istifadə etdiyi AI üçün kreditlərdən istifadə edir. Coach və taf-ların qurulması Coach-un ədalətli istifadəsi çərçivəsində daxildir. Bunlar avro zonasındakı qiymətlərdir. Başqa yerdə App Store və ya Google Play qiyməti sizin valyutanızda, həmin ölkənin qaydalarının tələb etdiyi kimi yerli vergi ilə və ya onsuz göstərir və ödədiyiniz qiymət budur. Cari qiymətlər <a href="/pricing">qiymət səhifəsindədir</a> (ingiliscə); tafs həm də KIFF-in Company planının bir hissəsidir.</p>
+				<p>Sınaq yoxdur. Tətbiqdə alınan Solo Apple və ya Google Play abunələrinizdə, həmin mağazanın ödəniş, yenilənmə və geri qaytarma şərtləri ilə idarə olunur və ləğv edilir. Plan ödədiyiniz dövrün sonuna qədər davam edir. Aİ-də istehlakçısınızsa, alışdan 14 gün ərzində imtina edə bilərsiniz. <a href="/az/terms#fees">KIFF-in Şərtləri, §8</a> təfərrüatlara malikdir.</p>
+			</section>
+			<section id="liability">
+				<h2>7. Məsuliyyət</h2>
+				<p>tafs, KIFF-in Şərtlərindəki zəmanətlər (§10) istisna olmaqla, „olduğu kimi“ və „mövcud olduğu kimi“ təqdim edilir. Qanunun icazə verdiyi dərəcədə heç bir tərəf dolayı və ya nəticə zərərlərinə görə məsuliyyət daşımır və hər tərəfin ümumi məsuliyyəti <a href="/az/terms#liability">KIFF-in Şərtləri, §12</a>-nin dediyi kimi məhdudlaşdırılır. Heç nə qanunun məhdudlaşdırmağa icazə vermədiyi məsuliyyəti məhdudlaşdırmır.</p>
+			</section>
+			<section id="termination">
+				<h2>8. Xitam</h2>
+				<p>İstənilən vaxt dayana bilərsiniz: tətbiqdə hesabınızı silin, Hesab → <em>Hesabı sil</em>. Əvvəlcə söhbətlərinizi ixrac edin, Hesab → Söhbətlərimi ixrac et. Bildirişdən otuz gün ərzində aradan qaldırılmamış əhəmiyyətli pozuntuya görə və ya Məqbul İstifadə pozuntusuna görə dərhal istifadənizə xitam verə bilərik. Ayrılmaq və məlumatlarınızı özünüzlə aparmaq hüquqlarınız <a href="/az/terms#term">KIFF-in Şərtləri, §9</a>-dadır.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. Dəyişikliklər və tətbiq olunan hüquq</h2>
+				<p>Bu şərtləri KIFF-in Şərtlərinin öz şərtləri üçün dediyi kimi dəyişirik (§16). Onlar Estoniya Respublikasının qanunları ilə tənzimlənir və mübahisələr Tallində Harju Dairə Məhkəməsinə gedir. Aİ-nin başqa üzv dövlətində istehlakçısınızsa, ölkənizin məcburi istehlakçı müdafiəsi qaydaları hələ də tətbiq olunur.</p>
+			</section>
+			<section id="contact">
+				<h2>10. Əlaqə</h2>
+				<p>Müqavilə sualları: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Tətbiqlə bağlı kömək: <a href="mailto:support@kiff.dev">support@kiff.dev</a>. Məxfilik: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>, və tafs-ın şəxsi məlumatlarla necə rəftar etdiyi <a href="/az/tafs/privacy">tafs Məxfilik Siyasətindədir</a>.</p>
+			</section>
+		</article>
+	}
+}

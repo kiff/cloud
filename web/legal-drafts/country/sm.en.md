@@ -6,11 +6,11 @@ This section applies if you use KIFF or tafs in the Republic of San Marino. It a
 
 ## 1. What we process, why, and how long
 
-What we process, why, and for how long is in sections 4, 5 and 8 of each policy. In short: your account, your devices, what you write to Coach and your tafs and what your connected apps return while a taf works, billing details on a paid plan, and request logs. We delete each when its period ends, or when you delete your account.
+What we process, why, and for how long is in sections 4, 5 and 8 of KIFF's policy and sections 4, 8 and 9 of the tafs policy. In short: your account, your devices, what you write to Coach and your tafs and what your connected apps return while a taf works, billing details on a paid plan, and request logs. We delete each when its period ends, or when you delete your account.
 
 ## 2. Transfers outside San Marino
 
-KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted by Amazon Web Services in Ireland. Everything you send us leaves San Marino. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of each policy says.
+KIFF is run by Kiff Agents OÜ, a company in Estonia, and hosted by Amazon Web Services in Ireland. Everything you send us leaves San Marino. Some recipients are in the United States: Clerk (sign-in), Anthropic (the AI models behind Coach and each taf), Stripe (payment on a paid plan), Resend (email notices), Apple and Google (push alerts and purchases), Cloudflare and Google Workspace (mail to a kiff.dev address) and Composio (managed connections). Each transfer is protected by the European Commission's standard contractual clauses or the EU-US Data Privacy Framework, as section 7 of KIFF's policy says.
 
 ## 3. Your rights
 

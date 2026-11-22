@@ -59,6 +59,7 @@ import (
 	"github.com/kiff/cloud/api/internal/billing"
 	"github.com/kiff/cloud/api/internal/callabout"
 	"github.com/kiff/cloud/api/internal/cardwarnings"
+	"github.com/kiff/cloud/api/internal/codesignin"
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/executors"
 	"github.com/kiff/cloud/api/internal/guard"
@@ -76,6 +77,7 @@ import (
 	"github.com/kiff/cloud/api/internal/operatoraudit"
 	"github.com/kiff/cloud/api/internal/owneremail"
 	"github.com/kiff/cloud/api/internal/packs"
+	"github.com/kiff/cloud/api/internal/payreports"
 	"github.com/kiff/cloud/api/internal/permit"
 	"github.com/kiff/cloud/api/internal/personlang"
 	"github.com/kiff/cloud/api/internal/playstore"
@@ -138,6 +140,11 @@ const (
 	// envAppSignInTenants is the comma-separated tenants "test" lets sign in
 	// (a production secret: it names accounts). Empty refuses everyone.
 	envAppSignInTenants = "KIFF_APP_SIGNIN_TENANTS"
+
+	// envSignInCodeKey is the key of signing in with a code sent by email
+	// (codesignin): 32 random bytes, hex or base64, used for nothing else.
+	// Unset, codes are off: no one can turn them on.
+	envSignInCodeKey = "KIFF_SIGNIN_CODE_KEY"
 	// envAppTermsVersion is the tafs terms in force; a terms change sets it.
 	envAppTermsVersion = "KIFF_APP_TERMS_VERSION"
 	// envAndroidApps names the Android apps allowed to make and use kiff.dev's
@@ -511,6 +518,14 @@ func run() error {
 			return fmt.Errorf("apply halts: %w", err)
 		}
 		haltStore = halts.NewPostgresStore(pool)
+	}
+	// The payments their owners reported, which halt their tafs.
+	var payReports payreports.Store = payreports.NewMemoryStore()
+	if pool != nil {
+		if err := payreports.ApplySchema(ctx, pool); err != nil {
+			return fmt.Errorf("apply payment reports: %w", err)
+		}
+		payReports = payreports.NewPostgresStore(pool)
 	}
 	var mandateStore mandate.Store
 	if pool != nil {
@@ -1158,6 +1173,31 @@ func run() error {
 		}
 	}
 
+	// Signing in with a code sent by email (codesignin): needs its key, the
+	// database, Resend and the sign-in provider, else it's off and no one
+	// can turn it on.
+	stepUp := buildStepUp(providerName)
+	var codeSignIn *codesignin.Service
+	codeKey, err := codesignin.ParseKey(os.Getenv(envSignInCodeKey))
+	if err != nil {
+		return err
+	}
+	mailer, isMailer := customerNotifier.(codesignin.Mailer)
+	switch {
+	case codeKey == nil:
+		logger.Info("code sign-in: off (KIFF_SIGNIN_CODE_KEY unset)")
+	case pool == nil || !isMailer || customerNotifier == nil || providerName != auth.ProviderClerk:
+		logger.Info("code sign-in: off (needs Postgres, Resend and the sign-in provider)")
+	default:
+		codeSignIn, err = codesignin.New(codeKey, codesignin.NewPostgres(pool), codesignin.NewClerkPeople(), mailer, logger)
+		if err != nil {
+			return err
+		}
+		// A session made by a code sign-in is never a recent sign-in.
+		stepUp.CodeSignedIn = codeSignIn.SignedInWithCode
+		logger.Info("code sign-in: on")
+	}
+
 	if warningStore, ok := mandateStore.(*mandate.PostgresStore); ok && attentionStore != nil {
 		worker := &cardwarnings.Worker{Store: warningStore, Attention: attentionStore,
 			Recipients: ownerResolver, Targets: alertStore, Sink: alert.NewHTTPSink(allowPrivateWebhooks),
@@ -1206,6 +1246,7 @@ func run() error {
 		apiKeyStore:          apiKeyStore,
 		agentDrafts:          agentDrafts,
 		halts:                haltStore,
+		payReports:           payReports,
 		planques:             planquesFor(splitCSV(os.Getenv(envPlanqueURLs)), permitIssuer),
 		devSessionStore:      devSessionStore,
 		deviceStore:          deviceStore,
@@ -1280,7 +1321,8 @@ func run() error {
 		ownerEmail:           ownerResolver,
 		customerNotifier:     customerNotifier,
 		memberStore:          memberStore,
-		stepUp:               buildStepUp(providerName),
+		stepUp:               stepUp,
+		codeSignIn:           codeSignIn,
 		broker:               broker,
 		logger:               logger,
 	})
@@ -1333,8 +1375,10 @@ type routerDeps struct {
 	agentDrafts    agentdrafts.Store
 	// halts are the owner's halts, and planques the planques that confirm
 	// them.
-	halts           halts.Store
-	planques        halts.Confirmer
+	halts    halts.Store
+	planques halts.Confirmer
+	// payReports are the payments reported as unexpected; each halts its taf.
+	payReports      payreports.Store
 	devSessionStore auth.DeveloperSessionStore
 	// deviceStore keeps the devices people approve with. Nil: a
 	// phone's key stays on its session alone, as before.
@@ -1431,9 +1475,11 @@ type routerDeps struct {
 	proofTestTenants    []string
 	proofTenantsRefused bool
 
-	ownerEmail       *owneremail.Resolver
-	memberStore      membership.Store
-	stepUp           *auth.StepUp
+	ownerEmail  *owneremail.Resolver
+	memberStore membership.Store
+	stepUp      *auth.StepUp
+	// codeSignIn is signing in with a code sent by email; nil when off.
+	codeSignIn       *codesignin.Service
 	customerNotifier notify.Notifier
 	broker           *stream.Broker
 	logger           *slog.Logger
@@ -1629,6 +1675,11 @@ func newRouter(deps routerDeps) http.Handler {
 	if appSignIn != nil {
 		appSignIn.RegisterAuthenticated(authed)
 	}
+	// Signing in with a code sent by email: the web's two routes (from the
+	// box only, before anyone is signed in) and the person's setting.
+	codeH := codesignin.NewHandler(deps.codeSignIn, deps.stepUp, deps.logger)
+	codeH.RegisterWeb(mux)
+	codeH.RegisterAuthenticated(authed)
 
 	// The people on an account: /v1/tenant/* behind the auth
 	// middleware and the route policy, and the routes a person uses
@@ -1816,6 +1867,8 @@ func newRouter(deps routerDeps) http.Handler {
 				handlers.WithControlsHoldAnswers(holdExceptions(deps), holdAnswers(deps)),
 				// The owner's halts and resumes on the Record.
 				handlers.WithControlsHalts(deps.halts),
+				// Which payments were reported, on their receipts.
+				handlers.WithControlsPaymentReports(deps.payReports),
 				handlers.WithControlsOwnUse(ownUse),
 			).Register(authed)
 		}
@@ -1956,7 +2009,13 @@ func newRouter(deps routerDeps) http.Handler {
 		// asked before it.
 		if deps.halts != nil {
 			propOpts = append(propOpts, handlers.WithProposalsHalts(deps.halts))
-			handlers.NewHaltsHandler(deps.halts, deps.planques, deps.receiptStore, deps.logger).WithWindows(deps.windows).Register(authed)
+			haltsHandler := handlers.NewHaltsHandler(deps.halts, deps.planques, deps.receiptStore, deps.logger).WithWindows(deps.windows)
+			haltsHandler.Register(authed)
+			// "Report this payment": halts the payment's taf, through the same halt.
+			if calls := callsReader(deps.decisionsReader); calls != nil && deps.payReports != nil && deps.receiptStore != nil && deps.pool != nil {
+				handlers.NewPaymentReportsHandler(deps.receiptStore, calls, tooloutcome.NewPostgres(deps.pool), toolOutcomes(deps),
+					deps.payReports, haltsHandler, deps.logger).Register(authed)
+			}
 		}
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))
@@ -2369,6 +2428,10 @@ func openPool(ctx context.Context, url string, logger *slog.Logger) (*pgxpool.Po
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply app_terms_consents: %w", err)
 	}
+	if err := codesignin.ApplySchema(dialCtx, pool); err != nil {
+		pool.Close()
+		return nil, nil, fmt.Errorf("apply code sign-in: %w", err)
+	}
 	if err := auth.ApplyPairingsSchema(dialCtx, pool); err != nil {
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply pairings: %w", err)
@@ -2515,7 +2578,9 @@ func buildAppSignIn(deps routerDeps) *appsignin.Handler {
 		opts = append(opts, appsignin.WithOnlyTenants(splitList(os.Getenv(envAppSignInTenants))))
 	}
 	if deps.stepUp != nil {
-		opts = append(opts, appsignin.WithStepUp(deps.stepUp))
+		// The sheet's approve is the sign-in itself, so a code sign-in made
+		// for this request passes it (codesignin README).
+		opts = append(opts, appsignin.WithStepUp(deps.stepUp.WithoutCodeCheck()))
 	}
 	return appsignin.New(on, strings.TrimRight(deps.appBaseURL, "/")+"/sign-in/app", opts...)
 }
@@ -3386,7 +3451,7 @@ func startSweepExpired(ctx context.Context, pool *pgxpool.Pool, logger *slog.Log
 	pairings := auth.NewPostgresPairingStore(pool)
 	if os.Getenv(envClerkSecret) != "" {
 		// Erasure also deletes the sign-in of each person it leaves with no account.
-		prov.WithIdentityEraser(owneremail.NewClerkIdentityEraser())
+		prov.WithIdentityEraser(codesignin.Eraser{Store: codesignin.NewPostgres(pool), Next: owneremail.NewClerkIdentityEraser()})
 	}
 	go func() {
 		wait := 10 * time.Minute

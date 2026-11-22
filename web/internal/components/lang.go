@@ -28,11 +28,68 @@ var partialPages = map[string][]string{
 	"lv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"el": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"lt": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Lithuanian: the same four
+	"cs": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Czech: the same four
+	"sk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sl": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Slovene: the same four
+	"hu": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Hungarian: the same four
+	"ro": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Romanian: the same four
+	"bg": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Bulgarian: the same four
+	"hr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"}, // Croatian: the same four
+	"tr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"id": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"vi": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"th": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"zh": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ar": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sr": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"sq": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ka": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"hy": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"az": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"bn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"he": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ca": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"mk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"mn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ne": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"km": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"lo": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"si": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ta": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"tg": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"dv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"dz": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+}
+
+// LangTag is the BCP 47 tag a language's pages are marked with: its path
+// code, except Traditional Chinese, whose path is /zh and whose tag says
+// which script it is ("zh-Hant"), and Serbian, written in Latin script ("sr-Latn"), for <html lang>, hreflang and
+// Content-Language.
+func LangTag(lang string) string {
+	switch lang {
+	case "zh":
+		return "zh-Hant"
+	case "sr":
+		return "sr-Latn"
+	}
+	return lang
+}
+
+// IsRightToLeft reports a language written right to left (Arabic, Hebrew, Dhivehi).
+func IsRightToLeft(lang string) bool { return lang == "ar" || lang == "he" || lang == "dv" }
+
+// HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
+// on a right-to-left page, none on any other, so no other page's markup changes.
+func HTMLAttrs(ctx context.Context) templ.Attributes {
+	if IsRightToLeft(HTMLLanguage(ctx)) {
+		return templ.Attributes{"dir": "rtl"}
+	}
+	return nil
 }
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "dv", "dz")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -57,6 +114,37 @@ var languageNames = map[string]string{
 	"lv": "Latviešu",
 	"el": "Ελληνικά",
 	"lt": "Lietuvių",
+	"cs": "Čeština",
+	"sk": "Slovenčina",
+	"sl": "Slovenščina",
+	"hu": "Magyar",
+	"ro": "Română",
+	"bg": "Български",
+	"hr": "Hrvatski",
+	"tr": "Türkçe",
+	"id": "Bahasa Indonesia",
+	"vi": "Tiếng Việt",
+	"th": "ไทย",
+	"zh": "繁體中文",
+	"ar": "العربية",
+	"sr": "Srpski",
+	"sq": "Shqip",
+	"ka": "ქართული",
+	"hy": "Հայերեն",
+	"az": "Azərbaycanca",
+	"bn": "বাংলা",
+	"he": "עברית",
+	"ca": "Català",
+	"mk": "Македонски",
+	"mn": "Монгол",
+	"ne": "नेपाली",
+	"km": "ខ្មែរ",
+	"lo": "ລາວ",
+	"si": "සිංහල",
+	"ta": "தமிழ்",
+	"tg": "Тоҷикӣ",
+	"dv": "ދިވެހި",
+	"dz": "རྫོང་ཁ",
 }
 
 // LanguageName is a site language's name in that language.
@@ -222,6 +310,37 @@ var translationNotices = map[string]string{
 	"lv": "Šis ir tulkojums uzziņai. Noteicošā ir versija angļu valodā:",
 	"el": "Αυτή είναι μετάφραση για ενημερωτικούς σκοπούς. Υπερισχύει η αγγλική έκδοση:",
 	"lt": "Tai vertimas, pateikiamas informacijai. Viršenybę turi versija anglų kalba:",
+	"cs": "Toto je překlad pro informaci. Rozhodující je anglická verze:",
+	"sk": "Toto je preklad na informačné účely. Rozhodujúce je anglické znenie:",
+	"sl": "To je prevod, namenjen obveščanju. Prevlada angleška različica:",
+	"hu": "Ez egy tájékoztató jellegű fordítás. Az angol nyelvű változat az irányadó:",
+	"ro": "Aceasta este o traducere cu titlu informativ. Prevalează versiunea în limba engleză:",
+	"bg": "Това е превод с информационна цел. Меродавна е версията на английски език:",
+	"hr": "Ovo je prijevod u informativne svrhe. Mjerodavna je engleska verzija:",
+	"tr": "Bu, bilgilendirme amaçlı bir çeviridir. İngilizce sürüm esastır:",
+	"id": "Ini adalah terjemahan untuk informasi. Versi bahasa Inggris yang berlaku:",
+	"vi": "Đây là bản dịch để tham khảo. Bản tiếng Anh là bản có hiệu lực:",
+	"th": "นี่คือคำแปลเพื่อให้ข้อมูล ฉบับภาษาอังกฤษเป็นฉบับที่มีผลบังคับ:",
+	"zh": "這是供參考的翻譯。以英文版本為準：",
+	"ar": "هذه ترجمة للاطلاع. النسخة الإنجليزية هي المعتمدة:",
+	"sr": "Ovo je prevod u informativne svrhe. Merodavna je engleska verzija:",
+	"sq": "Ky është një përkthim për qëllime informimi. Versioni në anglisht është ai që mbizotëron:",
+	"ka": "ეს არის თარგმანი ინფორმაციის მიზნით. ძალაშია ინგლისური ვერსია:",
+	"hy": "Սա թարգմանություն է տեղեկատվության նպատակով։ Գործում է անգլերեն տարբերակը՝",
+	"az": "Bu, məlumat məqsədilə tərcümədir. İngilis dilindəki versiya qüvvədədir:",
+	"bn": "এটি তথ্যের জন্য একটি অনুবাদ। ইংরেজি সংস্করণই প্রযোজ্য:",
+	"he": "זהו תרגום למידע בלבד. הגרסה האנגלית היא הקובעת:",
+	"ca": "Aquesta és una traducció a títol informatiu. Preval la versió anglesa:",
+	"mk": "Ова е превод само за информација. Англиската верзија е меродавна:",
+	"mn": "Энэ нь зөвхөн мэдээллийн зорилготой орчуулга юм. Англи хувилбар үйлчилнэ:",
+	"ne": "यो जानकारीका लागि मात्र अनुवाद हो। अङ्ग्रेजी संस्करण नै मान्य हुन्छ:",
+	"km": "នេះជាការបកប្រែសម្រាប់ព័ត៌មានតែប៉ុណ្ណោះ។ ជំនាន់ភាសាអង់គ្លេសជាអាទិភាព៖",
+	"lo": "ນີ້ເປັນການແປເພື່ອເປັນຂໍ້ມູນເທົ່ານັ້ນ. ສະບັບພາສາອັງກິດມີຜົນບັງຄັບ:",
+	"si": "මෙය තොරතුරු සඳහා පමණක් වන පරිවර්තනයකි. ඉංග්‍රීසි අනුවාදය බලපැවැත්වේ:",
+	"ta": "இது தகவலுக்காக மட்டுமே உள்ள மொழிபெயர்ப்பு. ஆங்கிலப் பதிப்பே செல்லுபடியாகும்:",
+	"tg": "Ин тарҷума танҳо барои маълумот аст. Нусхаи англисӣ эътибор дорад:",
+	"dv": "މިއީ މައުލޫމާތަށް ހަމައެކަނި ތަރުޖަމާއެކެވެ. އިނގިރޭސި ނުސްހާ ހިނގާނެއެވެ:",
+	"dz": "འདི་གནས་ཚུལ་གྱི་དོན་ལུ་རྐྱངམ་གཅིག་གི་འགྱུར་བཅོས་ཨིན། ཨིང་ལིཤ་ཐོན་རིམ་འདི་འཇུག:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -238,6 +357,37 @@ var inEnglish = map[string]string{
 	"lv": "(angliski)",
 	"el": "(στα αγγλικά)",
 	"lt": "(anglų kalba)",
+	"cs": "(anglicky)",
+	"sk": "(v angličtine)",
+	"sl": "(v angleščini)",
+	"hu": "(angolul)",
+	"ro": "(în engleză)",
+	"bg": "(на английски)",
+	"hr": "(na engleskom)",
+	"tr": "(İngilizce)",
+	"id": "(dalam bahasa Inggris)",
+	"vi": "(bằng tiếng Anh)",
+	"th": "(ภาษาอังกฤษ)",
+	"zh": "（英文）",
+	"ar": "(بالإنجليزية)",
+	"sr": "(na engleskom)",
+	"sq": "(në anglisht)",
+	"ka": "(ინგლისურად)",
+	"hy": "(անգլերեն)",
+	"az": "(ingiliscə)",
+	"bn": "(ইংরেজিতে)",
+	"he": "(באנגלית)",
+	"ca": "(en anglès)",
+	"mk": "(на англиски)",
+	"mn": "(англиар)",
+	"ne": "(अङ्ग्रेजीमा)",
+	"km": "(ជាភាសាអង់គ្លេស)",
+	"lo": "(ເປັນພາສາອັງກິດ)",
+	"si": "(ඉංග්‍රීසියෙන්)",
+	"ta": "(ஆங்கிலத்தில்)",
+	"tg": "(бо забони англисӣ)",
+	"dv": "(އިނގިރޭސިން)",
+	"dz": "(ཨིང་ཁའི་ནང་)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

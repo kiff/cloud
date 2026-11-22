@@ -1,0 +1,418 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsAZ is KIFF's terms (/terms) in Azerbaijani, at /az/terms.
+// It is a translation of Terms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Azerbaijani has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ TermsAZ() {
+	@components.LayoutSite("KIFF — terms of service", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadAZ()
+			@termsDefinitionsAZ()
+			@termsAgreementAZ()
+			@termsServiceAZ()
+			@termsTafsAZ()
+			@termsAccountAZ()
+			@termsAcceptableUseAZ()
+			@termsCustomerDataAZ()
+			@termsConfidentialityAZ()
+			@termsFeesAZ()
+			@termsTermAZ()
+			@termsWarrantiesAZ()
+			@termsDisclaimerAZ()
+			@termsLiabilityAZ()
+			@termsIndemnityAZ()
+			@termsSLAAZ()
+			@termsServiceModsAZ()
+			@termsTermsModsAZ()
+			@termsForceMajeureAZ()
+			@termsGoverningLawAZ()
+			@termsGeneralAZ()
+			@termsContactAZ()
+		</article>
+	}
+}
+
+templ termsHeadAZ() {
+	<header class="legal-head">
+		<p class="legal-badge">Xidmət şərtləri · v0.1</p>
+		<h1>Xidmət şərtləri</h1>
+		<p class="legal-meta">
+			<strong>Son yenilənmə:</strong> 22 noyabr 2026. <strong>Qüvvəyə minmə tarixi:</strong> 24 may 2026.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Nə dəyişdi:</strong> başqa bir biznes sizi təqdim etdikdə müqaviləniz kimlə olur (§2) və mikromüəssisələr (§8). Əvvəl: Xidmətdən kimin istifadə edə biləcəyi, region, mülkiyyət və sanksiyalara görə (§4); Android-də tafs tətbiqi və Google Play ilə alınan Solo (§1, §8). Ondan əvvəl: pullu planlar (§3A, §8), <a href="/legal/sla">xidmət səviyyəsi sazişi</a> (ingiliscə) (§14) və qadağan olunmuş istifadələr siyahısı, indi <a href="/acceptable-use">Məqbul İstifadə Siyasətində</a> (ingiliscə) yerləşir (§5).
+		</p>
+		<p class="legal-disclaimer">
+			Bu şərtlər KIFF Cloud-un, o cümlədən tafs-ın istifadəsini tənzimləyir. Müqavilə sualları: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsAZ() {
+	<section id="definitions">
+		<h2>1. Təriflər</h2>
+		<ul>
+			<li><strong>„Kiff Agents OÜ“</strong>, <strong>„biz“</strong>, <strong>„bizə“</strong>, <strong>„bizim“</strong> — Xidməti təqdim edən Estoniya məhdud məsuliyyətli xüsusi şirkəti. Reyestr kodu 17372313.</li>
+			<li><strong>„Müştəri“</strong>, <strong>„siz“</strong>, <strong>„sizin“</strong> — bu şərtlərlə razılaşan fiziki və ya hüquqi şəxs.</li>
+			<li><strong>„İstifadəçi“</strong> — Müştərinin Müştəri hesabı vasitəsilə Xidmətə daxil olmasına icazə verdiyi hər hansı fərd.</li>
+			<li><strong>„Xidmət“</strong> — <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs və orada dərc etdiyimiz sənədlər, idarə panelləri və API-lər daxil olmaqla KIFF Cloud məhsulu.</li>
+			<li><strong>„tafs“</strong> — iPhone, iPad, Android və kompüterlər (Mac, Windows və Linux) üçün tafs tətbiqi və onun arxasındakı xidmət, Setup və planque daxil olmaqla (§3A), burada Müştəri işi KIFF Card-ları daxilində işləyən AI agentinə həvalə edir. <strong>„taf“</strong> belə bir agentdir.</li>
+			<li><strong>„Tenant“</strong> — Xidmətin daxilində tək Müştəriyə məxsus məntiqi olaraq təcrid edilmiş iş sahəsi.</li>
+			<li><strong>„Audit məlumatları“</strong> — Xidmətin runtime vasitəsilə Müştərinin adından saxladığı hadisələr, qərarlar, fəaliyyətlər, təsdiqlər və qəbzlər.</li>
+			<li><strong>„tafs məlumatları“</strong> — tafs-ın Müştərinin adından saxladığı: hər taf-ın icraları və söhbətləri (Müştərinin qoşulmuş alətlərinin ona qaytardıqları daxil olmaqla), onun hesabatları, yaddaş qeydləri və onun bildirişləri üçün qeydiyyatdan keçmiş telefonlar.</li>
+			<li><strong>„Qəbz“</strong> — Xidmətin hər idarə olunan fəaliyyət üçün buraxdığı imzalanmış, versiyalı qərar qeydi.</li>
+			<li><strong>„Sənədlər“</strong> — bu Şərtlərdən bağlanmış tarixli redaksiyadakı Xidmətin texniki sənədləri və təhlükəsizlik tədbirləri (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Strateji ağ kitabı, marketinq materiallarını və ayrıca lisenziyalaşdırılmış açıq mənbəli çərçivənin sənədlərini istisna edir.</li>
+			<li><strong>„DPA“</strong> — emal edən tərəfdən münasibətimizi tənzimləyən <a href="/legal/dpa">/legal/dpa</a> (ingiliscə) ünvanındakı Məlumatların Emalı Sazişi.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementAZ() {
+	<section id="agreement">
+		<h2>2. Saziş</h2>
+		<p>
+			Bu şərtlər Xidmətdən istifadənizi tənzimləyir. Hesab yaratmaqla, API açarı yaratmaqla və ya Xidmətdən başqa cür istifadə etməklə bu şərtlərlə razılaşırsınız. Şirkət və ya digər hüquqi şəxs adından qəbul edirsinizsə, həmin şəxsi bağlamaq səlahiyyətinizin olduğunu bəyan edirsiniz və „siz“ və „sizin“ həmin şəxsə aiddir.
+		</p>
+		<p>
+			Əgər tərtibatçı, tərəfdaş və ya başqa biznes sizi KIFF ilə tanış edibsə və ya istifadə etdiyiniz agenti qurubsa, Xidmət üzrə müqaviləniz birbaşa bizimlədir, bu şərtlərlə və siz onları özünüz qəbul edirsiniz. Həmin biznes bizim agentimiz deyil: bu şərtləri qəbul edə, sizin üçün razılıq verə və ya ödənişi təsdiq edə bilməz və Xidməti bizim üçün satmır.
+		</p>
+		<p>
+			Xüsusi funksiyalar (beta funksiyalar, üçüncü tərəf inteqrasiyaları) üçün əlavə şərtlər dərc edə bilərik. Onlar bu şərtlərlə ziddiyyət təşkil etdikdə, əlavə şərtlər həmin funksiya üçün üstünlük təşkil edir.
+		</p>
+	</section>
+}
+
+templ termsServiceAZ() {
+	<section id="service">
+		<h2>3. Xidmət</h2>
+		<p>
+			KIFF Cloud həvalə edilmiş fəaliyyətlərin idarə olunması üçün hostinq olunan xidmətdir. O, sorğuları Müştərinin konfiqurasiya edilmiş icazələri və Card-ları ilə qiymətləndirir, insan təsdiqi tələb edə bilər və idarəetmə qərarlarını qeyd edir. Konfiqurasiya edilmiş inteqrasiyadan asılı olaraq KIFF icazə verilmiş sorğunu ötürür və ya qorunan sistemin yoxladığı icazə verir. Qoşulmuş sistem əsas fəaliyyəti yerinə yetirir.
+		</p>
+		<p>
+			Tətbiq olunan texniki davranış, sübutlar, inteqrasiya tələbləri və icra məhdudiyyətləri bu Şərtlərdən bağlanmış tarixli Sənədlərdə göstərilib. Strateji <a href="/whitepaper">ağ kitab</a> (ingiliscə) KIFF-in prinsiplərini və modelini izah edir; o, bu Şərtlər üzrə texniki Sənəd kimi daxil edilmir.
+		</p>
+		<p>
+			KIFF Cloud-un idarəetmə xidməti agent çərçivəsi, iş axını mühərriki, model gateway-i və ya idarə olunan agent platforması <em>deyil</em>. O, artıq istifadə etdiyiniz hər şeylə birləşir. Aydın siyahı üçün ana səhifədəki <a href="/#not">„KIFF nə deyil“</a> (ingiliscə) bölməsinə baxın. tafs Xidmətin sizin üçün agentləri işlədən yeganə hissəsidir, buraxdığınız Card-lar daxilində; §3A onu təsvir edir.
+		</p>
+		<p>
+			<a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a> açıq mənbəli çərçivəsi öz MIT lisenziyası ilə tənzimlənir və bu şərtlərdən kənardadır. Çərçivəni öz infrastrukturunuzda işlətdiyiniz zaman Kiff Agents OÜ ilə müqavilə yaranmır.
+		</p>
+	</section>
+}
+
+templ termsTafsAZ() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			tafs-da işi (məsələn geri ödəmələr, qəbzlərin ödənişi və ya kart mübahisələri) taf-a həvalə edirsiniz: qoşduğunuz alətlərlə cədvəl üzrə işləyən AI agenti, onun üçün buraxdığınız KIFF Card-ları daxilində. Hər taf bizim agent runtime-ımızda işləyir və onun istifadə etdiyi AI modelini Anthropic təmin edir. Onun saxlanılmış zənglərinə tafs tətbiqində cavab verirsiniz.
+		</p>
+		<p>
+			<strong>Alətlərinizin qoşulması.</strong> Setup, tafs-da taf kimi işləyən AI agenti, alət qoşmağa və iş üçün taf qurmağa kömək edir. Özü heç nə qoşmur. Alətin öz provayderində daxil olursunuz (məsələn Stripe) və cihazınızda hər əlaqəni, taf-ın istifadə edə biləcəyi alətləri və onun Card-larını təsdiq edirsiniz. Həmin girişin token-ini planque, əlaqə xidmətimiz, saxlayır. O, şifrələnib, yalnız KIFF-in qərar verdiyi zəngi etmək üçün istifadə olunur və heç vaxt taf-a verilmir. Alətin ayrılması token-i provayderdə ləğv edir və silir.
+		</p>
+		<p>
+			<strong>Card-larınız sizin göstərişlərinizdir.</strong> Taf alətlərinizə yalnız KIFF vasitəsilə çatır, KIFF hər zəngi göndərilməzdən əvvəl taf-ın Card-ları ilə yoxlayır. Buraxdığınız Card daxilindəki zəng sizin göstərişinizlə edilir. Card-dan kənardakı zəng Card-ın dediyi kimi saxlanılır və ya rədd edilir. Saxlanılmış zəng yalnız hesabınızın saxlanılmış zənglərə cavab verməyə icazə verdiyi şəxs təsdiq etdikdən sonra edilir. tafs tətbiqində cavab onların cihazından KIFF-in yoxladığı imza daşıyır və qəbz həmin sübutu saxlayır. Hesabınız KIFF-in özündə də cavab verə bilər (idarə paneli, onun komanda sətri aləti və ya orada səlahiyyətləndirdiyiniz təsdiqləyici); qəbz bu halda kimin və necə cavab verdiyini qeyd edir.
+		</p>
+		<p>
+			<strong>Ödənişlər.</strong> Taf sizin əvəzinizə saytın ödəniş səhifəsində, həmin saytda saxladığınız kartla və ya başqa ödəniş üsulu ilə ödəniş edəndə, bunu yalnız Card daxilində və həmin ödənişi telefonunuzda təsdiqlədikdən sonra edir. Təsdiqiniz yalnız həmin bir ödənişə sizin adınızdan səlahiyyət verir. Sayt və onun ödəniş provayderi onu emal edir. KIFF və planque heç vaxt pulunuzu saxlamır, kart məlumatlarınızı heç vaxt yaddaşda saxlamır və taf heç vaxt kart nömrəsi yazmır.
+		</p>
+		<p>
+			<strong>Sizdə nə qalır.</strong> Hər taf-ın işini və Card-larını siz seçirsiniz, onun saxlanılmış zənglərinə cavab verirsiniz və qoşduğunuz alət və hesablardan istifadə etmək hüququnuzun olduğundan əmin olursunuz. Taf-ın hesabatları, mesajları və yaddaş qeydləri AI modeli tərəfindən yazılır və səhv ola bilər; etibar etməzdən əvvəl vacib olanı yoxlayın.
+		</p>
+		<p>
+			<strong>Taf-ın dayandırılması.</strong> Bir taf-ı və ya hamısını dayandıra (halt), taf-ı fasilə verdirə, onun hər hansı Card-ını ləğv edə və ya onu silə bilərsiniz. Taf-ı dayandırdığınız və ya Card-ı ləğv etdiyiniz andan KIFF onun altında yeni zəngə icazə vermir. tafs tətbiqi taf-ı yalnız KIFF və planque hər ikisi dayandırmanı təsdiq etdikdən sonra dayandırılmış göstərir; o vaxtdan planque onun heç bir zəngini göndərmir, KIFF-in bir az əvvəl icazə verdiyi də daxil olmaqla. Alətin provayderinə artıq göndərilmiş sorğu hələ də tamamlana bilər: yeni zəngləri dayandırırıq və provayderin artıq etdiyini geri qaytara bilmərik. KIFF-in icazələrini planque olmadan özü yoxlayan alət KIFF-in bir az əvvəl verdiyi icazəni ən çoxu 90 saniyə hələ qəbul edə bilər. Dayandırılmış taf-ın bərpası cihazınızda təsdiqinizi tələb edir və dayandırmadan əvvəl saxlanılmış və ya növbəyə qoyulmuş heç nə ondan sonra icra olunmur.
+		</p>
+		<p>
+			<strong>Taf-ın silinməsi</strong> onun cədvəlini dayandırır və icralarını, söhbətlərini, yaddaşını və istifadə etdiyi açarı silir. Bundan əvvəl də alətlərinizin taf-a qaytardıqları yalnız onun icrası bitənə qədər saxlanılır (söhbətin yalnız oxuduğu, şifrələnmiş, sonrakı mesajları üçün: ən çoxu dörd saat istifadə olunur, sonra silinir) və icraları və söhbətləri 30 gün. KIFF etdiyinin qəbzlərini saxlayır.
+		</p>
+		<p>
+			<strong>Aİ AI Aktı.</strong> tafs üçün Kiff Agents OÜ AI sisteminin provayderidir, siz isə onun deployer-isiniz. Taf-ın şirkətinizdən kənarda kiməsə yazdığı hər şeyin AI agentinin yazdığını bildirməsini təmin edirik. tafs-dan yalnız təklif etdiyi işlər üçün istifadə edirsiniz, AI Aktının qadağan etdiyi və ya yüksək riskli saydığı hər hansı istifadə üçün deyil, məsələn şəxsin işə qəbulu, krediti və ya vacib xidmətlərə girişi barədə qərarlar. Card-larınızın tələb etdiyi insan təsdiqlərini saxlayırsınız və tafs-dan sizin üçün istifadə edən insanların onun nə etdiyini və məhdudiyyətlərini başa düşməsini təmin edirsiniz.
+		</p>
+		<p>
+			<strong>Xərclər.</strong> tafs KIFF planınızın bir hissəsidir (§8): taf-ın hər icrası istifadə etdiyi AI üçün kreditlərdən istifadə edir. Coach və taf-ların qurulması Coach-un ədalətli istifadəsi çərçivəsində daxildir.
+		</p>
+	</section>
+}
+
+templ termsAccountAZ() {
+	<section id="account">
+		<h2>4. Hesablar və giriş</h2>
+		<p>
+			Xidmətdən istifadə etmək üçün hesab yaratmalısınız. Dəqiq qeydiyyat məlumatı verməyə, etimadnamələrinizi məxfi saxlamağa və hesabınız altındakı bütün fəaliyyətə cavabdeh olmağa razılaşırsınız.
+		</p>
+		<p>
+			Ən azı 16 yaşında və ya yurisdiksiyanızdakı rəqəmsal razılıq yaşında olmalısınız, hansı daha yüksəkdirsə. Xidmət uşaqlara yönəlməyib.
+		</p>
+		<p>
+			Xidmət yalnız öz AI modelini təmin edən Anthropic-in öz xidmətini təklif etdiyi ölkələrdə və regionlarda təklif olunur, <a href="https://www.anthropic.com/supported-countries">Anthropic-in sadaladığı kimi</a>. Ondan başqa yerdən istifadə edə bilməzsiniz. Şirkət, qərargahı, və ya onun çoxluğuna sahib olan və ya nəzarət edən şirkətin qərargahı həmin siyahıdan kənarda olan ölkə və ya regionda yerləşirsə, istifadəçiləri harada olursa olsun, ondan istifadə edə bilməz. Siz və ya onu istifadə etdiyiniz şirkət Avropa İttifaqının, Birləşmiş Millətlər Təşkilatının və ya Birləşmiş Ştatların sanksiyalarına məruz qalırsa, istifadə edə bilməzsiniz. Bu qaydanı pozan hesabları rədd edirik və pozan hesabı dayandıra bilərik.
+		</p>
+		<p>
+			Hesabınızda səlahiyyətləndirdiyiniz hər İstifadəçinin hərəkətlərinə cavabdehsiniz. Bu şərtlərin etibarlı pozuntusunu aşkar etsək, əsaslı bildirişlə hesabı dayandıra və ya girişi ləğv edə bilərik. Məqbul İstifadə pozuntuları üçün (bax §5) dayandırma dərhal ola bilər.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseAZ() {
+	<section id="acceptable-use">
+		<h2>5. Məqbul istifadə</h2>
+		<p>
+			Siz, istifadəçiləriniz və agentləriniz <a href="/acceptable-use">Məqbul İstifadə Siyasətinə</a> (ingiliscə) əməl etməlisiniz. O, bu şərtlərin bir hissəsidir və Xidmətdən nə üçün istifadə oluna bilməyəcəyini sadalayır.
+		</p>
+		<p>
+			AUP-un etibarlı pozuntusuna görə dərhal dayandıra bilərik. Müştəri məzmununu izləməyə borclu deyilik, lakin etibarlı hesabatlar əsasında hərəkət edə bilərik.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataAZ() {
+	<section id="customer-data">
+		<h2>6. Müştəri məlumatları və məzmunu</h2>
+		<p>
+			Audit məlumatlarınıza siz sahibsiniz. Kiff Agents OÜ-yə Audit məlumatlarınızı yalnız sizin üçün Xidməti işlətmək, saxlamaq və təkmilləşdirmək üçün zəruri qədər hostinq etmək, kopyalamaq, ötürmək, göstərmək və başqa cür emal etmək üçün məhdud, qeyri-eksklüziv, royaltisiz, dünya miqyaslı lisenziya verirsiniz.
+		</p>
+		<p>
+			Audit məlumatlarınız və tafs məlumatlarınız üçün GDPR-in 28-ci maddəsi üzrə <strong>emal edən</strong> kimi çıxış edirik; <a href="/legal/dpa">DPA</a> (ingiliscə) bu münasibəti ətraflı tənzimləyir. Hesab metaməlumatlarınız üçün <strong>nəzarətçi</strong> kimi çıxış edirik; <a href="/az/privacy">məxfilik siyasəti</a> bu münasibəti tənzimləyir.
+		</p>
+		<p>
+			Təqdim etdiyiniz məlumatları təqdim etmək üçün bütün zəruri hüquqlara malik olduğunuzu və təqdimatın tətbiq olunan qanunlara (məlumatların müdafiəsi qanunları və tətbiq olunduqda Aİ AI Aktı daxil olmaqla) uyğun olduğunu bəyan edirsiniz.
+		</p>
+	</section>
+}
+
+templ termsConfidentialityAZ() {
+	<section id="confidentiality">
+		<h2>7. Məxfilik</h2>
+		<p>
+			Hər tərəf digərindən qeyri-ictimai məlumat ala bilər („Məxfi məlumat“). Alan tərəf Məxfi məlumatdan yalnız bu şərtlər üzrə öhdəliklərini yerinə yetirmək və hüquqlarını həyata keçirmək üçün zəruri qədər istifadə edəcək və onu ən azı öz məxfi məlumatı üçün istifadə etdiyi qayğı ilə qoruyacaq.
+		</p>
+		<p>
+			Məxfi məlumata (a) pozuntu olmadan ictimai əlçatan olan və ya olan, (b) açıqlamadan əvvəl alan tərəfə məlum olan, (c) Məxfi məlumatdan istifadə etmədən müstəqil işlənib hazırlanan və ya (d) qanunla açıqlanmalı olan (icazə verildikdə digər tərəfə bildirişlə) məlumat daxil deyil.
+		</p>
+	</section>
+}
+
+templ termsFeesAZ() {
+	<section id="fees">
+		<h2>8. Haqqlar və ödəniş</h2>
+		<p>
+			<strong>Planlar.</strong> Hər hesabın bir planı var. Cari qiymətlər <a href="/pricing">qiymət səhifəsindədir</a> (ingiliscə); bu yenilənmə zamanı:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> bir nəfər, tafs üçün, tafs tətbiqində App Store və ya Google Play vasitəsilə ayda 12,50 € ƏDV daxil olmaqla satılır, ayda 500 daxil edilmiş kreditlə.</li>
+			<li><strong>Company:</strong> hər yer üçün ayda 10,50 €, hər yer üçün ayda 500 kredit, birləşdirilmiş, və KIFF Cloud vasitəsilə öz agentlərinizin zəngləri üçün hər yer üçün ayda 500 fəaliyyət, birləşdirilmiş.</li>
+			<li><strong>Saziş:</strong> onun sifariş formasındakı haqlar və şərtlər.</li>
+		</ul>
+		<p>
+			Yerlər hesabın administratorları və redaktorlarıdır. Təsdiqləyicilər və baxanlar hər planda pulsuzdur. Company-də, daxil edilmişdən artıq, kredit 0,01 €, fəaliyyət isə 0,02 € dəyərindədir. Daxil edilmişdən artıq kreditlər hesabın təyin etdiyi aylıq xərc limitinə qədər faktura olunur (başlanğıcda 50 €): limitdə KIFF növbəti dövr başlayana qədər və ya faktura idarə edən kimsə onu qaldırana qədər hesabın taf-larının yeni icrasına başlamır.
+		</p>
+		<p>
+			<strong>Kredit paketləri.</strong> Solo-da ayın daxil edilmiş kreditlərindən artıq kreditlər tafs tətbiqində alınan kredit paketlərindən gəlir. Paket bir dəfə alınır, müddəti bitmir və abunə deyil; onun kreditləri ayın daxil edilmişlərindən sonra istifadə olunur, ən köhnə paket birinci. Ödənişi tam geri qaytarılan paket qalan kreditləri ilə geri alınır. Ayın kreditləri və paketlər istifadə olunduqda KIFF növbəti dövr başlayana qədər və ya paket əlavə olunana qədər hesabın taf-larının yeni icrasına başlamır. KIFF-in hesaba əlavə etdiyi bonus kreditlərin də müddəti, paketlər kimi, bitmir.
+		</p>
+		<p>
+			<strong>Nə sayılır.</strong> <em>Kredit</em> taf-ın icrasının istifadə etdiyi AI üçün ödəyir, tam kreditlərlə, hər icra üçün bir dəfə yuxarı yuvarlaqlaşdırılır və icra bitəndə bir dəfə sayılır. Zəngini KIFF-in rədd etdiyi icra yenə də AI-ından istifadə etdi. Heç vaxt sayılmır: Coach və taf-ların qurulması, Coach-un ədalətli istifadəsi çərçivəsində; heç nə göndərməyən yeni versiyanın sınağı; və bizim tərəfdə uğursuz olan icra. <em>Fəaliyyət</em> KIFF Cloud vasitəsilə öz agentinizin nəyisə yerinə yetirən zəngidir: KIFF icazə verdi, göndərildi və alət uğur bildirdi. Heç vaxt fəaliyyət kimi sayılmır: rədd edilən, saxlanılıb sonra rədd edilən, dayandırma (halt) ilə dayandırılan, etibarsız, alətdə uğursuz olan və ya nəticəsi məlum olmayan zəng və yalnız oxuyan zəng.
+		</p>
+		<p>
+			<strong>Sınaq yoxdur.</strong> Hesab ilk gündən ödəyir. Plan başlamazdan əvvəl KIFF onun taf-larının heç bir icrasını başlatmır, Coach-un qurulmasından başqa; heç nə silinmir.
+		</p>
+		<p>
+			<strong>Ödəniş və fakturalar.</strong> Plan bir yerdə faktura olunur. kiff.dev-də alınan plan orada və onun bağlandığı faktura portalında alınır, dəyişdirilir və ləğv edilir və ödənişlərini Stripe emal edir. tafs tətbiqində alınan Solo iPhone və iPad-də App Store, ya da Android-də Google Play vasitəsilə satılır və Apple və ya Google Play abunələrinizdə, həmin mağazanın ödəniş, yenilənmə və geri qaytarma şərtləri ilə idarə olunur. Kredit paketləri tətbiqdə alınır. Company kiff.dev-də alınır. Haqlar aylıq əvvəlcədən faktura olunur; daxil edilmişdən artıq istifadə növbəti faktura ilə faktura olunur. İnsanların sayındakı dəyişiklik növbəti fakturadan tətbiq olunur. Ödəniş uğursuz olarsa və düzəldilməzsə, plan başa çatır və plan seçilənə qədər KIFF hesabın zənglərini rədd edir.
+		</p>
+		<p>
+			<strong>Ləğv.</strong> İstənilən vaxt faktura portalında, ya da tətbiqdə alınan Solo üçün Apple və ya Google Play abunələrinizdə ləğv edə bilərsiniz. Plan ödədiyiniz dövrün sonuna qədər davam edir və yenilənmir. Qanunun tələb etdiyi hallar istisna olmaqla, artıq ödənilmiş haqlar geri qaytarılmır. Aİ-də istehlakçısınızsa, alışdan 14 gün ərzində səbəb göstərmədən imtina edə bilərsiniz və biz ödədiyinizi, planın artıq keçən günlərinin payını çıxmaqla, geri qaytarırıq. Solo alışları App Store və ya Google Play vasitəsilə, onların şərtləri ilə geri qaytarılır.
+		</p>
+		<p>
+			<strong>Mikromüəssisələr.</strong> Biznesinizdə 10 nəfərdən az işçi və illik dövriyyə və ya balans cəmi ən çoxu 2 milyon € olarsa, Company daxil olmaqla kartla ödənişlərə dair bu şərtlərin hər qaydası üçün onu istehlakçı kimi qəbul edirik.
+		</p>
+		<p>
+			<strong>ƏDV.</strong> Company-nin qiymətlərinə ƏDV daxil deyil; Solo və kredit paketləri App Store və ya Google Play tərəfindən ƏDV daxil olmaqla satılır. Kiff Agents OÜ (ƏDV nömrəsi EE102924327) tətbiq olunduğu yerdə Estoniya ƏDV-ni əlavə edir. Estoniyadan kənardakı etibarlı ƏDV identifikasiya nömrəsi olan Müştəriyə Aİ biznesdən-biznesə satışlar Aİ əks ödəniş mexanizmi ilə faktura olunur.
+		</p>
+		<p>
+			<strong>Dəyişikliklər.</strong> Aktiv hesablara qiymət artımı barədə ən azı otuz gün əvvəl yazılı bildiriş veririk (§16). Qiymət endirimi növbəti fakturadan tətbiq olunur.
+		</p>
+	</section>
+}
+
+templ termsTermAZ() {
+	<section id="term">
+		<h2>9. Müddət və xitam</h2>
+		<p>
+			Bu şərtlər Xidmətdən ilk dəfə istifadə etdiyiniz zaman qüvvəyə minir və xitam verilənə qədər davam edir.
+		</p>
+		<p>
+			İstənilən vaxt hesabınızı silməklə xitam verə bilərsiniz. Biz (a) yazılı bildirişdən otuz gün ərzində aradan qaldırılmamış əhəmiyyətli pozuntuya görə və ya (b) Məqbul İstifadə pozuntuları və ya müflisləşmə halları üçün dərhal xitam verə bilərik.
+		</p>
+		<p id="leaving">
+			<strong>Ayrılmaq və məlumatlarınızı özünüzlə aparmaq.</strong> Məlumatlarınızı istənilən vaxt strukturlaşdırılmış, maşınla oxuna bilən formatda ixrac edə bilərsiniz: KIFF-də Parametrlər → Məlumatlar hesabınız, hər versiya ilə Card-larınız, Qeydinizdəki qərarlar (son 10 000; daha çoxunu bizdən istəyin), KIFF-in icazə verdiyi hər birinin imzalanmış qəbzi və API açarlarınızın təfərrüatları (açarların özü heç vaxt) olan JSON faylı verir. tafs tətbiqində hər şəxs öz söhbətlərini, fayllarını və qeydlərini Hesab → Söhbətlərimi ixrac et bölməsindən ixrac edir; söhbətlər məxfilik siyasətinin dediyi kimi hər halda otuz gün saxlanılır. Hesabınızın silinməsi Xidməti dərhal başa çatdırır, ona görə əvvəlcə ixrac edin.
+		</p>
+		<p>
+			Əvəzində başqa provayderə və ya öz sistemlərinizə keçmək üçün bildirişlə ayrıla bilərsiniz, <a href="mailto:support@kiff.dev">support@kiff.dev</a> ünvanına yazmaqla. Heç vaxt iki aydan çox bildiriş tələb etmirik: bildirişiniz seçdiyiniz tarixdə, göndərdikdən sonra ən gec iki ay ərzində qüvvəyə minir. O tarixdən otuz günlük keçid dövrü gəlir, bu müddətdə Xidmət işləməyə davam edir, siz məlumatlarınızı ixrac edir və işinizi köçürürsünüz və biz bunun üçün əsaslı sorğulara kömək edirik. Keçid dövrünü bir dəfə lazım olduğu qədər uzada bilərsiniz. Otuz gündə texniki cəhətdən tamamlaya bilməsək, bildirişinizdən on dörd iş günü ərzində, səbəblər və yeddi aydan çox olmayan yeni dövrlə bildiririk. Keçid dövründən sonra məlumatlarınız ixrac üçün ən azı daha otuz gün əlçatan qalır. Planın haqları keçid dövrü bitənə qədər adi qaydada davam edir. App Store və ya Google Play-də alınan Solo mağazada ləğv edilir; keçid və ixrac dövrləri eyni şəkildə tətbiq olunur.
+		</p>
+		<p>
+			Ayrılma, keçid və ya məlumatlarınızı ixrac üçün pul almırıq. Bu bölmə hər müştəriyə Aİ Məlumat Aktının (Qayda (Aİ) 2023/2854) VI Fəslinin keçid hüquqlarını verir.
+		</p>
+		<p>
+			Xitamda və hər hansı keçid və ixrac dövründən sonra Audit məlumatlarınızı, tafs məlumatlarınızı və hesab metaməlumatlarınızı <a href="/az/privacy#retention">məxfilik siyasətindəki</a> saxlama qaydalarına uyğun silirik.
+		</p>
+		<p>
+			Təbiətinə görə xitamdan sonra qalmalı olan bölmələr qalır — məxfilik, əqli mülkiyyət, əvəzin ödənilməsi, məsuliyyətin məhdudlaşdırılması, imtinalar, tətbiq olunan hüquq və hər hansı yığılmış haqlar daxil olmaqla.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesAZ() {
+	<section id="warranties">
+		<h2>10. Zəmanətlər</h2>
+		<p>
+			Hər tərəf bu şərtləri bağlamaq və yerinə yetirmək hüququ və səlahiyyəti olduğunu bəyan edir.
+		</p>
+		<p>
+			Xidməti peşəkar şəkildə və Sənədlərə əsaslı uyğunluqda təqdim edəcəyimizə zəmanət veririk. Bu zəmanətin pozulması üçün yeganə vasitəniz, bizim seçimimizlə, yenidən icra və ya pozuntu dövrü üçün təsirə məruz qalan Xidmətə aid haqların mütənasib geri qaytarılmasıdır.
+		</p>
+		<p>
+			Xidmətdən istifadənizin tətbiq olunan qanuna və bu şərtlərə uyğun olduğuna zəmanət verirsiniz.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerAZ() {
+	<section id="disclaimer">
+		<h2>11. İmtina</h2>
+		<p>
+			§10-dakı açıq zəmanətlərdən başqa, Xidmət <strong>„olduğu kimi“ və „mövcud olduğu kimi“</strong> təqdim edilir. Qanunun icazə verdiyi maksimum dərəcədə bütün digər zəmanətlərdən, açıq, nəzərdə tutulan və ya qanuni, o cümlədən satıla bilənlik, müəyyən məqsəd üçün yararlılıq, pozmama və işgüzar təcrübədən və ya ticarət adətindən yaranan hər hansı zəmanətdən imtina edirik.
+		</p>
+		<p>
+			Xidmətin fasiləsiz, xətasız və ya zərərli komponentlərdən azad olacağına və ya hər hansı məlumatın itməyəcəyinə və ya zədələnməyəcəyinə zəmanət vermirik. Məlumatlarınızın ehtiyat nüsxələrinə siz cavabdehsiniz.
+		</p>
+	</section>
+}
+
+templ termsLiabilityAZ() {
+	<section id="liability">
+		<h2>12. Məsuliyyətin məhdudlaşdırılması</h2>
+		<p>
+			Qanunun icazə verdiyi maksimum dərəcədə heç bir tərəf digər tərəfin qarşısında bu şərtlərdən və ya Xidmətdən irəli gələn və ya onlarla bağlı olan hər hansı dolayı, təsadüfi, nəticə, xüsusi, nümunəvi və ya cəza xarakterli zərərə, o cümlədən itirilmiş mənfəət, itirilmiş gəlir, itirilmiş məlumat və ya biznesin kəsilməsinə görə məsuliyyət daşımır, hətta belə zərərin mümkünlüyü barədə xəbərdar edilsə belə.
+		</p>
+		<p>
+			Hər tərəfin bu şərtlərdən irəli gələn və ya onlarla bağlı ümumi məsuliyyəti (a) məsuliyyətə səbəb olan hadisədən əvvəlki on iki ayda Müştərinin Kiff Agents OÜ-yə ödədiyi və ya ödəməli olduğu haqlar və ya (b) yüz min avro (100 000 €) məbləğlərindən böyüyünü aşmayacaq.
+		</p>
+		<p>
+			Bu şərtlərdə heç nə tətbiq olunan hüquqa əsasən məhdudlaşdırıla və ya istisna edilə bilməyən məsuliyyəti, o cümlədən ölümə, səhlənkarlıqdan irəli gələn bədən xəsarətinə, fırıldaqçılığa və ya qəsdən pis rəftara görə məsuliyyəti və qüsurlu məhsullara görə məsuliyyət haqqında (Aİ) 2024/2853 Direktivini həyata keçirən qanunlar üzrə qüsurlu məhsula görə məsuliyyəti məhdudlaşdırmır və istisna etmir.
+		</p>
+	</section>
+}
+
+templ termsIndemnityAZ() {
+	<section id="indemnification">
+		<h2>13. Əvəzin ödənilməsi</h2>
+		<p>
+			Xidmətin, bizim tərəfimizdən təqdim olunduğu və sizin tərəfinizdən bu şərtlərə uyğun istifadə edildiyi kimi, həmin üçüncü tərəfin əqli mülkiyyət hüquqlarını pozduğuna dair üçüncü tərəf iddialarına qarşı sizi müdafiə edəcəyik və belə iddialara görə sizin əleyhinizə yekun qərarla verilmiş zərəri (və ya razılaşdırılmış barışıq məbləğini) ödəyəcəyik.
+		</p>
+		<p>
+			Siz (a) Müştəri məlumatlarınızdan və ya məzmunundan; (b) Xidmətdən bu şərtləri (AUP daxil olmaqla) pozaraq istifadənizdən; və ya (c) kobud səhlənkarlığınızdan və ya qəsdən pis rəftarınızdan irəli gələn üçüncü tərəf iddialarına qarşı bizi müdafiə edəcəksiniz və belə iddialara görə bizim əleyhimizə yekun qərarla verilmiş zərəri (və ya razılaşdırılmış barışıq məbləğini) ödəyəcəksiniz.
+		</p>
+		<p>
+			Əvəzin ödənilməsi iddia barədə təcili bildirişdən, müdafiə və barışığın əvəz ödəyən tərəfindən müstəsna idarə olunmasından və əvəz alan tərəfin əsaslı əməkdaşlığından asılıdır. Əvəz ödəyən tərəf əvəz alan tərəfə öhdəliklər qoyan iddia üzrə razılıq olmadan barışa bilməz.
+		</p>
+	</section>
+}
+
+templ termsSLAAZ() {
+	<section id="sla">
+		<h2>14. Xidmət səviyyəsi öhdəliyi</h2>
+		<p>
+			Pullu planda <a href="/legal/sla">xidmət səviyyəsi sazişi</a> (ingiliscə) öhdəlik götürdüyümüz əlçatanlığı, yavaş və ya uğursuz sorğunun necə sayıldığını, dəstəyin cavab müddətlərini və geridə qaldıqda xidmət kreditlərini müəyyən edir. O, bu şərtlərin bir hissəsidir.
+		</p>
+		<p>
+			Əməliyyat təcrübələri, insidentlərə reaksiya və pozuntu bildirişi öhdəlikləri bu Şərtlərdən bağlanmış tarixli redaksiyada sənədləşdirilib (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>); <a href="/security">/security</a> (ingiliscə) cari təcrübələri göstərir.
+		</p>
+	</section>
+}
+
+templ termsServiceModsAZ() {
+	<section id="service-mods">
+		<h2>15. Xidmətdə dəyişikliklər</h2>
+		<p>
+			İstənilən vaxt funksiyalar əlavə edə, dəyişdirə və ya silə bilərik. Funksionallığın əhəmiyyətli azaldılması və ya sənədləşdirilmiş davranışı pozan API səthinin ləğvi barədə aktiv müştərilərə ən azı otuz gün əvvəl, dərc edilmiş ləğv cədvəli ilə bildirilir. Təhlükəsizliklə bağlı dəyişikliklər bildirişin özü risk yaradacağı hallarda bildiriş olmadan edilə bilər.
+		</p>
+	</section>
+}
+
+templ termsTermsModsAZ() {
+	<section id="terms-mods">
+		<h2>16. Bu şərtlərdə dəyişikliklər</h2>
+		<p>
+			Bu şərtləri vaxtaşırı dəyişdirə bilərik. Əhəmiyyətli dəyişikliklər e-poçtla və bu səhifədə nəzərə çarpan banner ilə ən azı otuz gün əvvəl bildirilir. Əhəmiyyətsiz dəyişikliklər (aydınlaşdırmalar, istinadlar) yeni „son yenilənmə“ tarixi ilə dərc olunur. Yenilənmənin qüvvəyə minmə tarixindən sonra Xidmətdən istifadəni davam etdirməyiniz qəbul sayılır.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureAZ() {
+	<section id="force-majeure">
+		<h2>17. Fors-major</h2>
+		<p>
+			Heç bir tərəf, öz əsaslı nəzarətindən kənar hallar, o cümlədən qüvvələr, müharibə, terrorizm, vətəndaş iğtişaşları, əmək mübahisələri, yanğın, təbii fəlakət, pandemiya ilə bağlı hökumət tədbirləri, internet və ya enerji kəsintiləri və ya telekom provayderlərinin və ya üçüncü tərəf hostinq infrastrukturunun hərəkətləri nəticəsində yaranan dərəcədə icranın hər hansı pozulmasına və ya gecikməsinə görə məsuliyyət daşımır.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawAZ() {
+	<section id="governing-law">
+		<h2>18. Tətbiq olunan hüquq və yurisdiksiya</h2>
+		<p>
+			Bu şərtlər Estoniya Respublikasının qanunları ilə, onun kolliziya qaydalarına baxmayaraq tənzimlənir. Mübahisələr üçün eksklüziv forum Tallində Harju Dairə Məhkəməsidir.
+		</p>
+		<p>
+			Siz Aİ-nin başqa üzv dövlətində yaşayan istehlakçı olduqda, yaşadığınız yurisdiksiyanın məcburi istehlakçı müdafiəsi qaydaları müqavilə ilə imtina edə bilməyəcəyiniz hüquqlar verdiyi dərəcədə tətbiq olunmaqda davam edir; bu bənd sizi həmin qaydaların müdafiəsindən məhrum etmir.
+		</p>
+	</section>
+}
+
+templ termsGeneralAZ() {
+	<section id="general">
+		<h2>19. Ümumi müddəalar</h2>
+		<p>
+			<strong>Tam saziş.</strong> Bu şərtlər məxfilik siyasəti, DPA, hər hansı sifariş forması və açıq şəkildə daxil edilmiş hər hansı əlavə şərtlərlə birlikdə, mövzuları üzrə aramızdakı tam sazişdir və hər hansı əvvəlki və ya eyni vaxtlı razılaşmanı əvəz edir.
+		</p>
+		<p>
+			<strong>Ayrılma.</strong> Müddəa icra olunmaz hesab edilərsə, qalanları qüvvədə qalır.
+		</p>
+		<p>
+			<strong>Güzəşt.</strong> Bu şərtləri yazılı razılığımız olmadan güzəşt edə bilməzsiniz. Biz birləşmə, ələ keçirmə və ya bütün və ya demək olar ki, bütün aktivlərimizin satışı ilə bağlı razılıq olmadan, sizə bildirişlə güzəşt edə bilərik.
+		</p>
+		<p>
+			<strong>İmtina etməmə.</strong> Hər hansı müddəanın icra edilməməsi onu sonradan icra etmək hüququndan imtina demək deyil.
+		</p>
+		<p>
+			<strong>Bildirişlər.</strong> Kiff Agents OÜ-yə bildirişlər <a href="mailto:legal@kiff.dev">legal@kiff.dev</a> ünvanına və ya poçtla Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya ünvanına göndərilir. Sizə bildirişlər hesabınızla əlaqəli e-poçta və ya təqdim etmisinizsə, təyin etdiyiniz hüquqi bildirişlər ünvanına göndərilir.
+		</p>
+		<p>
+			<strong>Müstəqil podratçılar.</strong> Bu şərtlərdə heç nə tərəfdaşlıq, agentlik, birgə müəssisə və ya əmək münasibəti yaratmır.
+		</p>
+		<p>
+			<strong>Üçüncü tərəf benefisiarları.</strong> Yoxdur, əvəz alan əlaqəli şəxslər açıq şəkildə müəyyən olunduğu dərəcə istisna olmaqla.
+		</p>
+	</section>
+}
+
+templ termsContactAZ() {
+	<section id="contact">
+		<h2>20. Bizimlə əlaqə</h2>
+		<p>
+			Kommersiya və müqavilə sualları: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Ümumi məhsul sualları: <a href="mailto:hello@kiff.dev">hello@kiff.dev</a>. Məxfilik sualları: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>. Təhlükəsizlik bildirişləri: <a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Sənəd versiyası:</strong> v0.1.<br/> <strong>Son yenilənmə:</strong> 22 noyabr 2026.
+		</p>
+	</section>
+}

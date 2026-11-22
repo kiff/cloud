@@ -41,7 +41,7 @@ func TestGetReceiptRawBearer(t *testing.T) {
 		}
 	}))
 	defer srv.Close()
-	c, err := apiclient.NewSessionAware(srv.URL, 0)
+	c, err := apiclient.NewSessionAwareWithTransport(srv.URL, 0, srv.Client().Transport)
 	if err != nil {
 		t.Fatal(err)
 	}

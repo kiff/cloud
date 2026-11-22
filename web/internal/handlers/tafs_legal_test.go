@@ -38,7 +38,7 @@ func tafsLegalPage(t *testing.T, h http.Handler, path, updated string) string {
 // review reads, the Limited Use statement word for word, and both links.
 func TestTafsPrivacy(t *testing.T) {
 	t.Parallel()
-	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "21 November 2026")
+	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "22 November 2026")
 	start := strings.Index(body, `<section id="google">`)
 	if start < 0 {
 		t.Fatal("no #google section")
@@ -92,7 +92,7 @@ func TestTafsPrivacy(t *testing.T) {
 // /tafs/terms: tafs's terms, which restate KIFF's and defer to them.
 func TestTafsTerms(t *testing.T) {
 	t.Parallel()
-	body := tafsLegalPage(t, TafsTerms(), "/tafs/terms", "21 November 2026")
+	body := tafsLegalPage(t, TafsTerms(), "/tafs/terms", "22 November 2026")
 	for _, s := range []string{
 		"KIFF's Terms apply to anything this page doesn't cover.", `href="/terms"`, `href="/acceptable-use"`,
 		`id="control"`, `id="fees"`, `id="liability"`, `id="governing-law"`, "€12.50", "€11.49", "Harju County Court",
@@ -147,7 +147,7 @@ func TestTafsLegalPagesInEveryLanguage(t *testing.T) {
 			}
 			body := strings.ReplaceAll(rec.Body.String(), "&#39;", "'")
 			for _, want := range []string{
-				`<html lang="` + lang + `"`, `<p class="translation-notice">`, components.TranslationNoticeText(lang),
+				`<html lang="` + components.LangTag(lang) + `"`, `<p class="translation-notice">`, components.TranslationNoticeText(lang),
 				`<a href="` + page + `" lang="en" hreflang="en">kiff.dev` + page + `</a>`,
 				`<link rel="alternate" hreflang="x-default" href="` + components.SiteBaseURL + page + `"`,
 				"Kiff Agents OÜ", "17372313", "Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416",

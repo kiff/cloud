@@ -39,7 +39,9 @@ func TestASoftwareKeyedComputerPairsAsAViewDevice(t *testing.T) {
 	for name, spoil := range map[string]func(q map[string]any){
 		"key_store tpm":        func(q map[string]any) { q["key_store"] = "tpm" },
 		"with an approval key": func(q map[string]any) { q["approval_pub"] = b64url(r.pcApprovalDER) },
-		"with a credential": func(q map[string]any) {
+		// A credential comes only with kind passkey: a security key (software_security_key_test.go).
+		"with a credential, kind hello": func(q map[string]any) {
+			q["kind"] = "hello"
 			q["credential"] = map[string]string{"id": b64url([]byte("cred")), "public_key": b64url(r.pcApprovalDER)}
 		},
 		"a phone": func(q map[string]any) {

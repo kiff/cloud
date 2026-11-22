@@ -41,6 +41,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/kiff/cloud/web/internal/content/country"
 	"log/slog"
 	"net/http"
 	"os"
@@ -76,6 +77,11 @@ const (
 	// the API's own switch of the same name: "on", or "test" (the API then
 	// lets only its listed tenants through); anything else is off.
 	envAppSignIn = "KIFF_APP_SIGNIN"
+
+	// envSignInCode shows signing in with a code sent by email ("on"): the
+	// link under the sign-in form and /sign-in/code. It goes on once the
+	// API has KIFF_SIGNIN_CODE_KEY; anything else is off.
+	envSignInCode = "KIFF_SIGNIN_CODE"
 
 	// envGatewayBaseURL is how the web reaches the KIFF MCP gateway for
 	// /tools; empty leaves /tools saying it is not available.
@@ -198,6 +204,10 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+// codeGate is the region gate, for the country a code email names; set
+// once it's built.
+var codeGate *region.Gate
 
 func run() error {
 	addr := flag.String("addr", ":8081", "listen address")
@@ -335,6 +345,12 @@ func run() error {
 	mux.Handle("GET /privacy/countries", handlers.CountryIndex())
 	mux.Handle("GET /privacy/countries/{country}", handlers.CountrySection())
 	mux.Handle("GET /privacy/countries/{country}/{lang}", handlers.CountrySection())
+	// Legal notices served from the same drafts, such as Japan's seller
+	// notice (/legal/japan, /legal/japan/ja).
+	for name, n := range country.Notices {
+		mux.Handle("GET "+n.Path, handlers.LegalNotice(name))
+		mux.Handle("GET "+n.Path+"/{lang}", handlers.LegalNotice(name))
+	}
 	mux.Handle("GET /cookies", handlers.Cookies())
 	// The DPA lives at /legal/dpa; /dpa is the short form.
 	mux.Handle("GET /dpa", handlers.Redirect("/legal/dpa"))
@@ -392,14 +408,26 @@ func run() error {
 	mux.Handle("GET /static/", assets.Handler())
 
 	if provider != nil && sessions != nil {
-		authH := handlers.NewAuthHandler(provider, sessions, logger)
+		// Signing in with a code sent by email: the link under both sign-in
+		// forms and /sign-in/code, when KIFF_SIGNIN_CODE is "on". The email
+		// names the caller's country as the region gate reads it.
+		codeH := handlers.NewCodeSignInHandler(strings.TrimSpace(os.Getenv(envSignInCode)) == "on", sessionAPIClient, sessions, provider,
+			func(r *http.Request) string {
+				if codeGate == nil {
+					return ""
+				}
+				c, _ := codeGate.Allowed(r)
+				return c
+			}, logger)
+		codeH.Register(mux)
+		authH := handlers.NewAuthHandler(provider, sessions, logger).WithCodeSignIn(codeH)
 		authH.Register(mux)
 		// /sign-in/app — the tafs apps' sign-in, in the app's sheet. Off
 		// unless KIFF_APP_SIGNIN is "on" or "test", the API's own switch: off,
 		// it says so and does nothing else. In "test" the page is up and the
 		// API's approve refuses any account it doesn't list.
 		appSignIn := appSignInOn(os.Getenv(envAppSignIn))
-		handlers.NewAppSignInHandler(appSignIn, sessionAPIClient, sessions, bearers, provider, logger).Register(mux)
+		handlers.NewAppSignInHandler(appSignIn, sessionAPIClient, sessions, bearers, provider, logger).WithCodeSignIn(codeH).Register(mux)
 
 		// /dashboard surface — both the index and the action
 		// handlers (key mint, template apply, send event,
@@ -435,6 +463,8 @@ func run() error {
 		// sign-in (carrying the code in ?next) and returns here to
 		// approve.
 		handlers.NewDeviceApproveHandler(sessionAPIClient, sessions, bearers, logger).Register(dashboardMux)
+		// Settings › Sign-in: signing in with a code sent by email, on or off.
+		handlers.NewSignInSettingHandler(sessionAPIClient, bearers, logger).Register(dashboardMux)
 
 		// /oauth/consent — an app asks to connect an agent to the KIFF
 		// gateway. Gated like /auth/device.
@@ -514,6 +544,7 @@ func run() error {
 	}
 
 	regionGate, err := buildRegionGate(os.Getenv(envRegionTable), logger)
+	codeGate = regionGate
 	if err != nil {
 		return err
 	}

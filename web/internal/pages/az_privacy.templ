@@ -1,0 +1,407 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// PrivacyAZ is KIFF's privacy policy (/privacy) in Azerbaijani, at /az/privacy.
+// It is a translation of Privacy: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Azerbaijani has the legal
+// texts only, so a link to any other page goes to English and says so.
+templ PrivacyAZ() {
+	@components.LayoutSite("KIFF — privacy policy", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@privacyHeadAZ()
+			@privacyWhoWeAreAZ()
+			@privacyScopeAZ()
+			@privacyRolesAZ()
+			@privacyCategoriesAZ()
+			@privacyLawfulBasesAZ()
+			@privacySubprocessorsAZ()
+			@privacyTransfersAZ()
+			@privacyRetentionAZ()
+			@privacyRightsAZ()
+			@privacyCookiesAZ()
+			@privacySecurityAZ()
+			@privacyChildrenAZ()
+			@privacyAutomatedAZ()
+			@privacyChangesAZ()
+			@privacyContactAZ()
+		</article>
+	}
+}
+
+templ privacyHeadAZ() {
+	<header class="legal-head">
+		<p class="legal-badge">Məxfilik siyasəti · v0.1</p>
+		<h1>Məxfilik siyasəti</h1>
+		<p class="legal-meta">
+			<strong>Son yenilənmə:</strong> 22 noyabr 2026. <strong>Qüvvəyə minmə tarixi:</strong> 24 may 2026.
+		</p>
+		<p class="legal-disclaimer">
+			Bu siyasət KIFF Cloud-un vebsaytda, idarə panelində, API-də və iPhone, iPad, Android və kompüterlər üçün tafs tətbiqində şəxsi məlumatları necə emal etdiyini izah edir. Suallar: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ privacyWhoWeAreAZ() {
+	<section id="who-we-are">
+		<h2>1. Biz kimik</h2>
+		<p>
+			KIFF Cloud-u Estoniyada təsis edilmiş məhdud məsuliyyətli xüsusi şirkət olan <strong>Kiff Agents OÜ</strong> idarə edir. Reyestr məlumatları:
+		</p>
+		<ul>
+			<li><strong>Reyestr kodu:</strong> 17372313 (Estoniyanın e-Business Register)</li>
+			<li><strong>ƏDV nömrəsi:</strong> EE102924327</li>
+			<li><strong>Qeydiyyat ünvanı:</strong> Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya</li>
+			<li><strong>Məxfilik üzrə əlaqə:</strong> <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a></li>
+			<li><strong>Rəsmi hüquqi bildirişlər:</strong> <a href="mailto:legal@kiff.dev">legal@kiff.dev</a></li>
+		</ul>
+		<p>
+			Kiff Agents OÜ Avropa İttifaqında təsis edildiyi üçün Avropa İttifaqının Ümumi Məlumatların Müdafiəsi Qaydası (<abbr title="General Data Protection Regulation">GDPR</abbr>) emalımıza birbaşa tətbiq olunur. 27-ci maddə üzrə Aİ nümayəndəsi tələb etmirik.
+		</p>
+	</section>
+}
+
+templ privacyScopeAZ() {
+	<section id="scope">
+		<h2>2. Bu siyasətin əhatə dairəsi</h2>
+		<p>
+			Bu siyasət aşağıdakılarla qarşılıqlı əlaqədə olduğunuz zaman emal etdiyimiz şəxsi məlumatları əhatə edir:
+		</p>
+		<ul>
+			<li><a href="https://kiff.dev"><code>kiff.dev</code></a> — marketinq saytımız, bu siyasət səhifəsi və qəbzlərin ictimai göstərilmə səthi.</li>
+			<li><a href="https://app.kiff.dev"><code>app.kiff.dev</code></a> — autentifikasiya olunmuş idarə panelimiz.</li>
+			<li><a href="https://api.kiff.dev"><code>api.kiff.dev</code></a> — HTTP API-miz.</li>
+			<li id="tafs"><strong>tafs</strong> — iPhone, iPad, Android və kompüterlər (Mac, Windows və Linux) üçün tətbiqimiz və onun arxasındakı xidmət (şirkətin alətlərini birləşdirən Setup və bu əlaqələri saxlayan planque daxil olmaqla), burada şirkət işi KIFF Card-ları daxilində işləyən AI agentinə həvalə edir.</li>
+		</ul>
+		<p>
+			Bu siyasət özünüz işlədə biləcəyiniz <code>kiff/kiff</code> açıq mənbəli çərçivəni <em>əhatə etmir</em>. Çərçivəni öz infrastrukturunuzda işlətdiyiniz zaman onun emal etdiyi hər hansı məlumatın nəzarətçisi sizsiniz və Kiff Agents OÜ bu emalda iştirak etmir.
+		</p>
+	</section>
+}
+
+templ privacyRolesAZ() {
+	<section id="roles">
+		<h2>3. GDPR üzrə rollarımız</h2>
+		<p>
+			Məlumatlardan asılı olaraq iki rolda çıxış edirik:
+		</p>
+		<ul>
+			<li>
+				<strong>Nəzarətçi</strong> hesab və giriş metaməlumatları, faktura məlumatları (faktura aktiv olduqda), razılıq verdiyiniz marketinq mesajları və xidmətimizin əməliyyat telemetriyası üçün.
+			</li>
+			<li>
+				<strong>Emal edən</strong> audit məlumatları, fəaliyyət qeydləri, qərar qəbzləri və müştərilərimiz adından runtime-dan keçən digər məzmun üçün, həmçinin tafs-ın onlar üçün saxladığı məlumatlar üçün (hər taf-ın icraları, söhbətləri, hesabatları, yaddaş qeydləri və təqdim etdiyi fayllar). Müştərilər (tenantlar) həmin məlumatların nəzarətçisidir; onlar hesab parametrləri və domen konfiqurasiyası vasitəsilə bizə göstəriş verirlər. Məlumatların Emalı Sazişi (<abbr title="Data Processing Agreement">DPA</abbr>) bu münasibəti tənzimləyir; dərc olunmuş şərtlər üçün <a href="/legal/dpa">DPA şablonuna</a> (ingiliscə) baxın.
+			</li>
+		</ul>
+		<p>
+			Bu siyasət ilk növbədə nəzarətçi tərəfindəki emalımıza aid edir. Emal edən tərəfdəki məlumatları qeyd etdikdə DPA daha konkret sənəddir.
+		</p>
+	</section>
+}
+
+templ privacyCategoriesAZ() {
+	<section id="categories">
+		<h2>4. Emal etdiyimiz şəxsi məlumat kateqoriyaları</h2>
+		<p>
+			Aşağıdakı kateqoriyalar <a href="/security#data-we-process">/security#data-we-process</a> (ingiliscə) ünvanındakı texniki inventarla uyğunlaşdırılıb. İkisi fərqləndikdə texniki səhifə həqiqət mənbəyidir və biz bu bölməni uyğunlaşdırmaq üçün yeniləyirik.
+		</p>
+		<ul>
+			<li>
+				<strong>Hesab identifikatorları</strong> — autentifikasiya subyektiniz (identiklik provayderimiz tərəfindən verilir) və daxil olduğunuz e-poçt ünvanı. Bu gün olduğu kimi saxlanılır; saxlanılarkən heşləmə planlaşdırılıb.
+				E-poçtla göndərilən kodla girişi aktiv etsəniz (siz aktiv etməyincə söndürülüb), KIFF bu ayarı giriş identifikatorunuz və dəyişiklik tarixi ilə birlikdə saxlayır. Sizə e-poçtla göndərdiyimiz kod yalnız açarlı heş kimi, istifadə olunana və ya on dəqiqə keçənə qədər saxlanılır. Sui-istifadəni məhdudlaşdırmaq üçün, bir günə qədər, kodu istəyən ünvanın və IP ünvanının açarlı heşi üzrə sorğu sayını saxlayırıq. Kodla daxil olduqdan sonra bunu rübü saat qeyd edirik ki, təzə giriş tələb edən dəyişikliklər sizdən başqa üsulla daxil olmağı xahiş etsin.
+			</li>
+			<li>
+				<strong>Tenant metaməlumatları</strong> — tenant id, slug, göstərilən ad, yaradılma vaxtı və hər şəxsin tətbiqinin son istifadə etdiyi dil, beləliklə KIFF-in göndərdiyi e-məktublar həmin dildə gəlir.
+			</li>
+			<li>
+				<strong>API etimadnamələri</strong> — qeyri-şəffaf API açar qeydləri (heşləri saxlayırıq, heç vaxt açıq mətni).
+			</li>
+			<li>
+				<strong>Sessiya kuki məlumatları</strong> — girişdən sonra təyin edilən HMAC ilə imzalanmış sessiya kuki-si. Aşağıdakı kuki bölməsinə baxın.
+			</li>
+			<li>
+				<strong>HTTP sorğusu metaməlumatları</strong> — IP ünvanı, istifadəçi agenti, sorğu yolu, cavab statusu, gecikmə. Təhlükəsizlik və sui-istifadənin qarşısının alınması üçün əks proksimizin giriş jurnallarında məhdud saxlama müddəti ərzində saxlanılır.
+			</li>
+			<li>
+				<strong>Tenant tərəfindən idarə olunan məzmun</strong> — runtime-a göndərdiyiniz <code>parameters</code>, <code>actor</code> və <code>entity</code> məlumatları. Bunu müştərinin adından <em>emal edən kimi</em> saxlayırıq; şəbəkəyə çıxan şeyə müştəri cavabdehdir. Domen üzrə redaksiya planlaşdırılıb.
+			</li>
+			<li>
+				<strong>Kommunikasiyalar</strong> — dəstək, satış, təhlükəsizlik və ya məxfilik poçt qutularımıza göndərdiyiniz e-məktublar.
+			</li>
+			<li>
+				<strong>tafs tətbiqi</strong> — tafs-a KIFF hesabınızla daxil olursunuz. Telefon və ya planşetdə tətbiq sessiyanızı cihazın Keychain-ində saxlayır (Android-də onun şifrələnmiş yaddaşında). Kompüterdə onu istifadəçi hesabınız üçün möhürlənmiş saxlayır: Windows PC-də Windows-un öz məlumat müdafiəsi ilə, Linux-da keyring-də, Mac-də Keychain-də. Kompüter sessiyası 90 günə qədər davam edir. Tətbiq cihazı heç vaxt tərk etməyən imza açarı yaradır: iPhone, iPad və ya Mac-in Secure Enclave-ində, Android cihazının Keystore-unda və ya Windows PC-nin TPM-ində. Linux-da və Secure Enclave olmayan Mac-də açar keyring-də və ya Keychain-də saxlanılan proqram açarıdır və həmin kompüter sizi nəyin gözlədiyini göstərə bilər, lakin təsdiq edə bilməz; telefonunuzda təsdiq edirsiniz{ macSecurityKey("az") }. TPM olmayan Windows PC tafs-a daxil ola bilməz. KIFF açarın açıq yarısını, cihazın adını və platformasını, nə vaxt əlavə edildiyini və son dəfə nə vaxt istifadə edildiyini saxlayır ki, saxlanılmış zənglərə cavablarınızı və əlaqələrə təsdiqlərinizi yoxlaya bilsin. Kompüterdə passkey ilə, məsələn Windows Hello və ya təhlükəsizlik açarı ilə təsdiq etsəniz, üzünüz, barmaq izi və ya PIN-iniz kompüterin öz sistemində qalır; KIFF passkey-in açıq açarını, id-sini, sayğacı və adı saxlayır, heç vaxt gizli heç nə və digər cihazlarla sinxronlaşan passkey-i rədd edir. Telefonda, planşetdə və ya iPad tətbiqini işlədən Mac-də bildirişləri aktivləşdirsəniz, cihazın push token-ini KIFF şəxs id-niz və tətbiqin göstərdiyi dillə saxlayırıq ki, bildirişləri həmin dildə gəlsin. tafs xidməti həmçinin hesabın dilini, Coach ilə sonuncu söhbət edəndən üç aya qədər saxlayır ki, taf-ın hesabatları həmin dildə gəlsin. Telefonun bildirişi Apple və ya Google vasitəsilə yalnız hansı taf-ın nə istədiyi ilə keçir, qapı bildirişində isə yazanın adı və ya e-poçt ünvanı ilə: heç vaxt məbləğ və ya sorğunun təfərrüatları ilə. Tətbiq onları KIFF-dən cihazın özündə əlavə edir, ona görə kilidi açılmış telefonun bildirişi məbləğ, tacir və ya şəxs göstərə bilər. Kilidli Android telefonunda yalnız „Taf-a sizə ehtiyac var“ göstərir, kilidli iPhone-da da eyni, əgər önizləmələrin həmişə göstərilməsini təyin etməmisinizsə. <strong>Saatınız:</strong> saat parol və ya açar saxlamır, yalnız cütləşdirilmiş telefonunuzla danışır və heç vaxt təsdiq etmir. Dediyinizi Coach-a və ya seçdiyiniz taf-a yalnız mətn kimi, telefon vasitəsilə göndərir, AI-a icazə verdikdən sonra. Saatın öz nitq xidməti, Apple-ın və ya Google-ın, sözlərinizi həmin mətnə çevirir. Wear OS-də, siz bitirməmiş dayanarsa, bunu telefonunuzun öz tanıyıcısı telefonda edir. Rədd edə, dayandıra və ya Coach-a, ya da taf-a göndərə bilər, yalnız ekran kilidi və ya kodu olduqda və kilidi açılmış olduqda. Taf-a göndərdiyiniz şey, sanki telefonda yazmısınız kimi, həmin taf-ın öz söhbətinə düşür. Taf-ın söhbəti, məbləğlər daxil olmaqla, saatda yalnız açıq olduqda görünür, hər dəfə telefon vasitəsilə oxunur; saat ondan heç nə saxlamır. <strong>Apple Watch:</strong> taf-larınızı və onların səhifələrini saxlamadan göstərir. Yalnız Gələnlər qutunuzu saxlayır, kilidli olduqda oxuya bilmədiyi faylda: hər saxlanılmış zəng öz taf-ının adı və nə istədiyi kimi, heç vaxt məbləğ, və saatdan göndərdiklərinizə Coach-ın cavabları, mətn kimi. Saatda çıxış etsəniz, çıxdığınızı da saxlayır, saatda yenidən daxil olana qədər. Bundan başqa saatda kod yoxdursa heç nə saxlamır. Gələnlər qutusu saatda çıxdıqda və ya iPhone-unuz çıxdıqda, ya da tətbiq kodsuz növbəti dəfə açılanda və ya bağlananda silinir. Heç bir yazı etmir və göstərdiyi yeganə bildirişlər iPhone-unuzunkudur. <strong>Wear OS:</strong> hesabınızın e-poçtunu və bugünkü təqvimi saxlamadan göstərir. Dərhal açılması üçün, şifrələnmiş şəkildə, sizi gözləyənlərin sayını və hər taf-ın adını, dayandırılıb, ya fasilədədir: heç vaxt məbləğ, saxlanılmış zəngin təfərrüatları və ya taf-ın söhbəti. Bu, çıxış etdikdə, saat kilidləndikdə və ya biləkdən çıxarıldıqda və 24 saatdan sonra təmizlənir. Gələnlər qutunuzu saxlayır, burada hər sətir taf-ın adı və dediyidir, heç vaxt məbləğ, və sonraya saxlanılmış bir mesaj, mətn kimi. Saatda və ya telefonda çıxış hamısını təmizləyir. Plitəsi üçün sizi gözləyənlərin sayını da saxlayır, yalnız saatın kilidi açılmış olduqda göstərilir və çıxış etdikdə və ya plitə saat kilidli və ya ekran kilidi olmayanda göründüyü növbəti dəfə təmizlənir. Saatda çıxış etdikdən sonra çıxdığınıza dair qeyd saxlayır, yenidən daxil olana qədər. Gələnlər qutusu tətbiq saat kilidli və ya ekran kilidi olmayanda növbəti dəfə açılanda və ya bağlananda da silinir. Sonraya saxlanılmış mesaj siz göndərənə və ya silənə qədər qalır, çünki göndərilməsini siz istəmisiniz. Saatın nitq xidməti siz bitirməmiş dayanarsa, saat yazını telefonunuza göndərir, o da onu telefonun özündə, heç vaxt serverdə, mətnə çevirir. Yazı mətn qayıdan və ya ləğv edən kimi hər ikisində silinir və ən çox 2 dəqiqədən sonra. Yalnız mətn Coach-a və ya taf-ınıza davam edir. Taf-ın nəticəsi siz onu rədd edənə və ya saatda çıxana qədər saatın bildirişlərində qala bilər. Windows PC-də, Linux kompüterində və ya macOS 12 tətbiqi olan Mac-də bildirişləri tətbiq özü işləyərkən yaradır, push token olmadan və başqa şirkət vasitəsilə olmadan. Windows və Linux-da hansı taf-ın, nə etmək istədiyini, məbləği, niyə və nə vaxta qədər göstərirlər; macOS 12 tətbiqində aktivləşdirdikdən sonra KIFF-in zəng üçün sözlərini göstərirlər, kilidli ekran isə Mac-in önizləmə parametrinin icazə verdiyini göstərir. Windows-da aktivləşdirənə qədər söndürülüdür və ekran kilidli olarkən yalnız „Taf-a sizə ehtiyac var“ göstərir. Ekran kilidlənməzdən əvvəl göstərilən bildiriş təfərrüatlarını Windows-un bildiriş siyahısında saxlayır. Linux-da söndürənə qədər aktivdir və kilidli ekranın göstərdiyi masaüstünüzdən asılıdır. Alət birləşdirdikdə alətin öz provayderində daxil olursunuz. planque-in özü daxil olduğu tətbiq, məsələn Stripe, və ya verdiyiniz açar üçün, planque həmin token-i və ya açarı şirkətiniz üçün şifrələnmiş saxlayır; idarə olunan əlaqə üçün, Composio, planque-in işlədiyi əlaqə xidməti, girişi saxlayır, planque isə yalnız əlaqənin qeydini və təsdiq etdiyiniz alətləri saxlayır (hamısı emal edən kimi, aşağıya baxın). tafs əlavəsini cütləşdirsəniz, taf icazə verdiyiniz saytların səhifələrini öz Chrome-unuzda oxuya və onlarda fəaliyyət göstərə də bilər (emal edən qismində; nələrin oxunduğunu, nələrin saxlanıldığını və nə qədər müddətə saxlanıldığını <a href="/az/tafs/privacy">tafs Məxfilik səhifəsi</a> bildirir). Əlaqənin qeydi daxil olunan hesabı (adı və ya e-poçtu) ehtiva edə bilər ki, tətbiq sizə hansı olduğunu göstərə bilsin. KIFF idarə olunan əlaqələrdən yalnız <a href="/subprocessors#composio">/subprocessors</a> (ingiliscə) ünvanında adı çəkilən tətbiqlər üçün istifadə edir. Tətbiqin analitika və ya reklam izləyiciləri yoxdur.
+			</li>
+			<li>
+				<strong>App Store alışları</strong> — tafs-da Solo və ya kredit paketi aldıqda, onu sizə Apple satır: Apple qeydiyyatlı satıcıdır, ödənişi alır və ödəniş məlumatlarınızı saxlayır. Apple bizə nə alındığını, hansı KIFF hesabı üçün (tətbiqin alışa əlavə etdiyi təsadüfi id), nə vaxt, Apple-ın əməliyyat id-sini və Solo üçün dövrün nə vaxt bitdiyini və ya yeniləndiyini bildirir. Bunu kreditləri və ya planı hesabınıza əlavə etmək üçün istifadə edirik. Apple bizə Apple ID-nizi, adınızı, e-poçt ünvanınızı və ya kartınızı vermir.
+			</li>
+			<li>
+				<strong>Google Play alışları</strong> — Android-də eyni alışlar Google Play-in faktura sistemi vasitəsilə keçir: Google ödənişi alır və ödəniş məlumatlarınızı saxlayır. Google bizə nə alındığını, hansı KIFF hesabı üçün (eyni təsadüfi id), nə vaxt, alışın token-ini və sifariş id-sini və Solo üçün dövrün nə vaxt bitdiyini və ya yeniləndiyini bildirir, biz də bundan eyni cür istifadə edirik. Google bizə Google hesabınızı, adınızı, e-poçt ünvanınızı və ya kartınızı vermir.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyLawfulBasesAZ() {
+	<section id="lawful-bases">
+		<h2>5. Emal üçün hüquqi əsaslar</h2>
+		<p>
+			GDPR-in 6-cı maddəsinə əsasən aşağıdakı hüquqi əsaslara istinad edirik:
+		</p>
+		<ul>
+			<li>
+				<strong>Müqavilənin icrası</strong> (6(1)(b) maddəsi) — hesabın yaradılması, autentifikasiya, runtime-ın adınızdan işləməsi, faktura (aktiv olduqda) və əsas xidmət səthləri üçün.
+			</li>
+			<li>
+				<strong>Qanuni maraqlar</strong> (6(1)(f) maddəsi) — təhlükəsizlik, fırıldaqçılığın qarşısının alınması, sui-istifadənin aşkarlanması, əməliyyat telemetriyası və xidmətin qorunması üçün. Maraqlarımızı hüquqlarınızla tarazlaşdırırıq və tələb etdikdə həmin tarazlıq testinin nə verdiyini deyəcəyik.
+			</li>
+			<li>
+				<strong>Razılıq</strong> (6(1)(a) maddəsi) — tafs tətbiqindəki AI üçün: Coach-u və taf-larınızı işlədən AI modelinə nə göndərilir, <a href="#ai-in-tafs">aşağıda</a> təsvir edildiyi kimi. İcazə verməyincə heç nə göndərilmir və Hesabda geri götürə bilərsiniz. Razılıq həm də hər hansı analitik kuki-dən, könüllü marketinq mesajlarından və ya məlumatlarınızdan istifadəmizi əhəmiyyətli dərəcədə genişləndirən yeni emaldan əvvəl istəyəcəyimiz şeydir. Analitika, reklam və vacib olmayan izləmə aparmırıq.
+			</li>
+			<li>
+				<strong>Hüquqi öhdəlik</strong> (6(1)(c) maddəsi) — vergi qeydləri (Estoniya Mühasibat Uçotu Qanunu §12, 7 il), qanuni orqan sorğularına cavablar və tətbiq olunduğu hallarda pul yuyulmasına qarşı qaydaların tələb etdiyi saxlama üçün.
+			</li>
+		</ul>
+		<h3 id="ai-in-tafs">tafs tətbiqindəki AI</h3>
+		<p>tafs tətbiqi hər hansı şey AI-a göndərilməzdən əvvəl sizdən soruşur, bu sözlərlə:</p>
+		<ul>
+			<li>tafs Coach və taf-larınız üçün Anthropic-in Claude AI-ından istifadə edir.</li>
+			<li>Coach və taf-larınız AI agentləridir: yazdıqları AI tərəfindən yaradılır və səhv ola bilər. Taf-ın şirkətinizdən kənara göndərdiyi mesaj onun AI agenti tərəfindən yazıldığını bildirir.</li>
+			<li>Ona nə göndərilir: Coach-a və taf-larınıza yazdıqlarınız, əlavə etdiyiniz fayllar, qoşulmuş tətbiqlərinizin taf-a işləyərkən qaytardıqları və Coach tətbiqdə sizə kömək edərkən ekranınızda olanlar.</li>
+			<li>Heç vaxt nə göndərilmir: qoşulmuş tətbiqlərinizin istifadə etdiyi parollar və açarlar və ya barmaq iziniz.</li>
+			<li>Anthropic ondan cavab vermək üçün istifadə edir və 30 günə qədər saxlayır.</li>
+			<li>İcazə verməyincə heç nə göndərilmir. Hesabda geri götürə bilərsiniz.</li>
+		</ul>
+		<p>O anda orada heç kim olmadan işləyən taf (öz cədvəli ilə və ya nəsə gələndə) onu yaradan və ya öz üzərinə götürən şəxsin razılığına, yoxsa hesabın taf-larını idarə edən və icazə verən ilk şəxsin razılığına əsaslanır.</p>
+		<p><strong>Geri götürdükdə,</strong> Coach və taf-larınız sizə cavab verməyi dayandırır. İcraları razılığınıza əsaslanan taf fasilə verir: cədvəlləri dayanır və gələnlər gözləyir. Razılıq yenidən verildikdə və ya hesabın taf-larını idarə edən kimsə onu öz razılığı ilə öz üzərinə götürdükdə davam edir. Geri götürmə əvvəl göndərilənləri dəyişmir.</p>
+		<p>Anthropic <a href="/subprocessors">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb, harada emal etdiyi və məlumatları nə vaxt daha uzun saxlaya biləcəyi ilə birlikdə.</p>
+	</section>
+}
+
+templ privacySubprocessorsAZ() {
+	<section id="sub-processors">
+		<h2>6. Alt emal edənlər</h2>
+		<p>Şəxsi məlumatlarınızı satmırıq və reklam üçün paylaşmırıq.</p>
+		<p>
+			Xidməti göstərmək üçün kiçik bir təchizatçı qrupu cəlb edirik. Rəsmi, cari siyahı <a href="/subprocessors">/subprocessors</a> (ingiliscə) ünvanındadır; həmin səhifə hər hansı dəyişiklikdən sonra 30 gün ərzində yenilənir. Hər alt emal edəndən yazılı müqavilələrlə bizimkinə bərabər müdafiə tələb edirik, şəxsi məlumatlar Aİ-dən kənara çıxdıqda Aİ Standart Müqavilə Bəndləri daxil olmaqla.
+		</p>
+		<p>
+			Şəxsi məlumatlara təsir edən alt emal edənlərin əhəmiyyətli əlavə edilməsi və ya əvəz edilməsi barədə aktiv müştərilərə əvvəlcədən, etiraz hüququ ilə bildirilir.
+		</p>
+	</section>
+}
+
+templ privacyTransfersAZ() {
+	<section id="transfers">
+		<h2>7. Beynəlxalq ötürmələr</h2>
+		<p>
+			Alt emal edənlərimizin bəziləri Avropa İqtisadi Zonasından kənarda, əsasən Birləşmiş Ştatlarda təsis edilib. Hər belə ötürmə üçün aşağıdakı təminatlardan ən azı birinə əsaslanırıq:
+		</p>
+		<ul>
+			<li>
+				<strong>Aİ–ABŞ Məlumat Məxfiliyi Çərçivəsi</strong> — Çərçivəni sertifikatlaşdırmış ABŞ alt emal edənləri üçün. 2023-cü ilin ortasından qüvvədə olan adekvatlıq qərarı; statusundakı hər hansı dəyişikliyi izləyirik.
+			</li>
+			<li>
+				<strong>Standart Müqavilə Bəndləri</strong> — birbaşa alt emal edənlərimiz üçün modul 2 (nəzarətçi–emal edən) və zəncirvari emal edənlər tətbiq olunduqda modul 3 (emal edən–alt emal edən). Komissiyanın təsdiq etdiyi 2021 SCC-lərdən istifadə edirik.
+			</li>
+			<li>
+				<strong>Əlavə tədbirlər</strong> — risk qiymətləndirilməsi əlavə təminatların əsaslı olduğunu göstərdikdə (ötürülmə və saxlama zamanı şifrələmə, giriş jurnalı, məlumatların minimallaşdırılması).
+			</li>
+		</ul>
+		<p>
+			Müəyyən alt emal edənə tətbiq olunan ötürmə alətini <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına e-məktub göndərərək tələb edə bilərsiniz.
+		</p>
+		<p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href="/privacy/countries">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p>
+	</section>
+}
+
+templ privacyRetentionAZ() {
+	<section id="retention">
+		<h2>8. Saxlama</h2>
+		<p>
+			Şəxsi məlumatları onları emal etdiyimiz məqsədlərə və hər hansı tətbiq olunan hüquqi öhdəliyə uyğun ən qısa müddət ərzində saxlayırıq.
+		</p>
+		<ul>
+			<li>
+				<strong>Hesab və giriş metaməlumatları</strong> — hesab silinənə qədər. tafs tətbiqində sahibi onu Hesab → <em>Hesabı sil</em> bölməsində silir. Vebdə yaradılmış hesab <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına e-məktub göndərməklə, GDPR-in 12(3) maddəsinin bir aylıq müddəti ərzində silinir. Hər halda hesabın açarları dərhal dayanır. tafs tətbiqində silinərsə, geri qaytarıla bilməz: onun taf söhbətləri, qeydləri və əlaqələri dərhal silinir, KIFF-in saxladıqları isə 30 gün ərzində silinir. Vebdə silinərsə, sahibi onu geri istəyərsə deyə məlumatlarını 30 günlük möhlət müddəti saxlayırıq, sonra silirik.
+			</li>
+			<li>
+				<strong>API açar qeydləri</strong> — hesab silinənə qədər, açarın ləğvindən sonra da. Agent giriş əlaqəsinə aid açar həmin əlaqə ilə birlikdə, onun bitməsindən 30 gün sonra silinir.
+			</li>
+			<li>
+				<strong>Sessiya kuki-ləri</strong> — müddətin bitməsinə (defolt olaraq 24 saat) və ya çıxışınıza qədər.
+			</li>
+			<li>
+				<strong>Əks proksi giriş jurnalları</strong> — 90 günə qədər, sonra aqreqasiya olunur və ya silinir.
+			</li>
+			<li>
+				<strong>Xidmət jurnalları</strong> — KIFF-in xidmətlərinin və planque-in işləyərkən qeyd etdikləri: səhvlər və sorğular, hesabı, şəxsi və ya agenti adlandıra bilər. 30 gün, sonra silinir.
+			</li>
+			<li>
+				<strong>Ehtiyat nüsxələr</strong> — KIFF-in verilənlər bazası hər gün şifrələnmiş şəkildə ehtiyat nüsxələnir və hər nüsxə 7 gün saxlanılır, ona görə silinmiş qeyd onlardan 7 gün ərzində yox olur. tafs və planque-in anbarları 35 gün şifrələnmiş zamanla nüsxələr saxlayır, yalnız nasazlıqdan sonra anbarı bərpa etmək üçün istifadə olunur, ona görə silinmiş qeyd onlardan 35 gün ərzində yox olur.
+			</li>
+			<li>
+				<strong>Tenant audit məlumatları</strong> — müştərinin tenant konfiqurasiyasına əsasən emal edən kimi saxlanılır. Defolt: tenantın ömrü boyu saxlanılır; tenant silindikdə silinir. <a href="/security#deletion">/security#deletion</a> (ingiliscə) səhifəsinə baxın.
+			</li>
+			<li>
+				<strong>KIFF gateway vasitəsilə zənglər</strong> — zəngin arqumentləri göndərilənə, rədd edilənə və ya uğursuz olanadək, sonra silinir; alətin nəticəsi 24 saat, sonra silinir. Qərar qeydi və arqumentlərin heşi tenant audit məlumatları kimi saxlanılır. <a href="/security#data-kept">/security#data-kept</a> (ingiliscə) səhifəsinə baxın.
+			</li>
+			<li>
+				<strong>İstifadə</strong> — gateway vasitəsilə hər zəng üçün, bitdikdə: hansı agent edib, alət və fəaliyyət kimi sayılıb, yoxsa pulsuz olub (və niyə). Taf-ın və ya Coach-un hər icrası üçün, bitdikdə: taf, nə vaxt, onun AI-ının istifadə etdiyi kreditlər və sayılıb-sayılmadığı və ya niyə sayılmadığı. Hesab silinənə qədər; faktura üçün ödəniş emalçımıza bildirilənlər faktura qeydləri ilə birlikdə saxlanılır.
+			</li>
+			<li>
+				<strong>Agent giriş əlaqələri</strong> — hansı agent, tətbiqin adı, kim icazə verib, nə vaxt və son istifadə: əlaqə canlı olduğu müddətdə, sonra bitməsindən 30 gün (bu müddət ərzində idarə panelində siyahıda qalır), sonra token-ləri və API açarı ilə birlikdə silinir. Hamısı hesabla birlikdə silinir.
+			</li>
+			<li>
+				<strong>tafs</strong> — cihazın push token-i tətbiqdən çıxışınıza, cihazı silməyinizə və ya Apple və ya Google token-in artıq olmadığını bildirənə qədər. Cihazın açıq açarı, adı, platforması və tarixləri onu istifadə etdiyiniz müddətdə; çıxış etdikdən sonra silinmiş kimi qeyd olunur və hesab silinənə qədər saxlanılır ki, KIFF ondan gecikmiş cavabı rədd edə bilsin və daha əvvəlkini hansı cihazın imzaladığını göstərə bilsin. Passkey-in açıq açarı, id-si və adı: cihazınınkı kimi. Kompüterin sessiyası: 90 günə qədər və ya çıxışınıza qədər. tafs-ın şirkətiniz üçün saxladığı emal edən kimi saxlanılır: taf-ın icraları və söhbətləri, söhbətin (və Setup-ın) xülasəsi ilə, 30 gün, alətlərinizin qaytardıqları yalnız icra bitənə qədər (söhbətdə yalnız oxunanlar sonrakı mesajları üçün şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir), və onun yaddaş qeydləri taf silinənə qədər; təqdim etdiyi fayllar onları yaradan icradan 30 gün, sonra bir gün ərzində avtomatik silinir, ya da hesabınızdakı kimsə birini silərsə daha tez; planque-də əlaqənin token-i və ya açarı, ya da Composio-da idarə olunan əlaqənin girişi siz onu ayırana qədər (əgər əlaqələrinizdən digəri həmin təchizatçıda eyni hesabdan istifadə edə bilərsə, o da ayrılana qədər istifadə olunmadan saxlanılır), və onun təsdiqlərinin qeydi hesab bitənə qədər; <a href="/legal/dpa#annex-4">DPA-nın 4-cü Əlavəsinə</a> (ingiliscə) baxın.
+			</li>
+			<li>
+				<strong>Faktura qeydləri</strong> — maliyyə ilinin sonundan 7 il (Estoniya Mühasibat Uçotu Qanunu §12).
+			</li>
+			<li>
+				<strong>App Store və Google Play alışları</strong> — Apple və ya Google-ın hər alış barədə bizə dedikləri hesab silinənə qədər hesabınızda qalır. Onların satış və ödəniş hesabatları, faktura qeydləri kimi 7 il saxladığımız, sizi adlandırmır.
+			</li>
+			<li>
+				<strong>Dəstək yazışması</strong> — son qarşılıqlı əlaqədən 3 il, sonra silinir.
+			</li>
+		</ul>
+	</section>
+}
+
+templ privacyRightsAZ() {
+	<section id="rights">
+		<h2>9. Hüquqlarınız</h2>
+		<p>
+			GDPR-ə əsasən şəxsi məlumatlarınızla bağlı aşağıdakı hüquqlara maliksiniz:
+		</p>
+		<ul>
+			<li><strong>Giriş</strong> (15-ci maddə) — məlumatlarınızı emal edib-etmədiyimizin təsdiqi və onun surəti.</li>
+			<li><strong>Düzəliş</strong> (16-cı maddə) — yanlış və ya natamam məlumatların düzəldilməsi.</li>
+			<li><strong>Silmə</strong> (17-ci maddə) — məlumatlarınızın silinməsi, hüquqi saxlama istisnaları nəzərə alınmaqla.</li>
+			<li><strong>Məhdudlaşdırma</strong> (18-ci maddə) — mübahisə həll olunana qədər emalın dayandırılması.</li>
+			<li><strong>Daşınma</strong> (20-ci maddə) — təqdim etdiyiniz məlumatların maşınla oxuna bilən ixracı.</li>
+			<li><strong>Etiraz</strong> (21-ci maddə) — qanuni maraqlara əsaslanan emala; üstün əsaslar göstərə bilməsək, dayandırırıq.</li>
+			<li><strong>Razılığın geri götürülməsi</strong> (7(3)-cü maddə) — razılığa əsaslanan hər hansı emal üçün, məsələn tafs tətbiqindəki AI üçün (Hesabda, <a href="#ai-in-tafs">yuxarıdakı</a> kimi). Geri götürmə əvvəlki qanuni emala təsir etmir.</li>
+		</ul>
+		<p>
+			Bu hüquqlardan hər hansı birini həyata keçirmək üçün <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına e-məktub göndərin. 12(3)-cü maddəyə əsasən bir ay ərzində cavab veririk; mürəkkəb sorğular üçün daha iki aya qədər uzada bilərik və bunu etsək, sizə deyəcəyik.
+		</p>
+		<h3 id="export-chats">Öz tafs söhbətləriniz</h3>
+		<p>
+			tafs tətbiqində Hesab → Söhbətlərimi ixrac et hər taf ilə, Coach-unku daxil olmaqla öz söhbətlərinizi, əlavə etdiyiniz faylların adlarını və öz qeydlərinizi oxuna bilən fayl və JSON kimi yükləyir. Onları yalnız siz ixrac edə bilərsiniz: administrator və ya hesabın sahibi edə bilməz və KIFF-in hesab ixracı onları ehtiva etmir.
+		</p>
+		<h3 id="delete-account">tafs hesabınızın silinməsi</h3>
+		<p>
+			tafs KIFF-in tətbiqidir. tafs hesabınızı və onun məlumatlarını silmək üçün:
+		</p>
+		<ol>
+			<li>tafs tətbiqini açın və daxil olun.</li>
+			<li>Hesab bölməsinə keçin, sonra <em>Hesabı sil</em> düyməsinə toxunun.</li>
+			<li>Təsdiq edin. Hesabın silinməsi geri qaytarıla bilməz.</li>
+		</ol>
+		<p>
+			<em>Hesabı sil</em> şirkətin hesabını silə bilən şəxsə, adətən sahibinə görünür. Görmürsünüzsə və ya tətbiqiniz yoxdursa, daxil olduğunuz ünvandan <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına e-məktub göndərin və biz məlumatlarınızı bir ay ərzində silirik.
+		</p>
+		<p>
+			Nə silinir: hesabın açarları dərhal dayanır. Onun taf-ları, söhbətləri, qeydləri, əlavə edilmiş faylları və əlaqələri dərhal silinir, zamanla nüsxələrindən isə 35 gün ərzində. KIFF-in hesab üçün saxladıqları 30 gün ərzində, ehtiyat nüsxələrdən isə bundan sonra 7 gün ərzində silinir. Hesabı adlandıran xidmət jurnalları 30 gün ərzində yox olur. Tenant audit məlumatları tenant ilə birlikdə silinir. Hər növ məlumat üçün <a href="#retention">Saxlama</a> bölməsinə baxın.
+		</p>
+		<p id="delete-data">
+			Məlumatlarınızın bir hissəsini silmək və hesabı saxlamaq üçün: tətbiqdə söhbəti silin, onun mesajları və əlavə edilmiş fayllar onunla gedir; taf-ı silin, onun söhbətləri, qeydləri və əlaqələri onunla gedir. Qalan hər şey üçün <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına e-məktub göndərin və nəyin silinəcəyini deyin. Bunu bir ay ərzində edirik.
+		</p>
+		<p>
+			Nəzarət orqanına şikayət etmək hüququnuz var. Aparıcı nəzarət orqanımız <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Estoniya Məlumatların Müdafiəsi İnspektoratıdır (Andmekaitse Inspektsioon)</a>. Yaşadığınız üzv dövlətin nəzarət orqanına da şikayət edə bilərsiniz.
+		</p>
+		<p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href="/privacy/countries">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p>
+	</section>
+}
+
+templ privacyCookiesAZ() {
+	<section id="cookies">
+		<h2>10. Kuki-lər</h2>
+		<p>
+			Üç kuki təyin edirik, hamısı ciddi şəkildə zəruri, birinci tərəfə aid, yalnız HTTPS vasitəsilə göndərilir və səhifədəki skriptlər tərəfindən oxuna bilməz. Aİ ePrivacy qaydalarına əsasən razılıq tələb etmir; onların mövcud olduğunu bilməyiniz üçün siyahıya alırıq. <a href="/cookies">Kuki siyasəti</a> (ingiliscə) təfərrüatlara malikdir.
+		</p>
+		<ul>
+			<li>
+				<strong><code>kiff_session</code></strong> — sizi daxil olmuş saxlayır. Giriş id-nizi, e-poçtunuzu və adınızı və idarə panelinin sizin üçün istifadə etdiyi etimadnaməni daşıyan imzalanmış sessiya kuki-si. <code>.kiff.dev</code> üçün təyin edilir. 24 saat və ya çıxışınıza qədər davam edir.
+			</li>
+			<li>
+				<strong><code>kiff_flash</code></strong> — növbəti səhifəyə birdəfəlik mesaj daşıyır, məsələn „açarınız yaradıldı“. İmzalanıb; yeni açar heç vaxt onun içində deyil. <code>.kiff.dev</code> üçün təyin edilir. Növbəti səhifə onu oxuyanda silinir və ən çoxu 5 dəqiqə.
+			</li>
+			<li>
+				<strong><code>kiff_cb_attempts</code></strong> — giriş səhifəsinin neçə dəfə yenidən yükləndiyini sayır, beləliklə dövr edən giriş dayandırılır. Yalnız həmin səhifəyə göndərilir. 5 dəqiqə davam edir və giriş başladıqda və ya uğurlu olduqda təmizlənir.
+			</li>
+		</ul>
+		<p>
+			Analitik kuki-lərdən, reklam kuki-lərindən və ya hər hansı üçüncü tərəf izləyicilərindən istifadə etmirik. Hər hansını əlavə etsək, kuki təyin edilməzdən əvvəl ePrivacy və EDPB-nin izləmə texnologiyaları üzrə 2023 təlimatına uyğun razılıq bannerini təqdim edəcəyik.
+		</p>
+		<p>
+			Clerk (autentifikasiya alt emal edənimiz) vasitəsilə daxil olsanız, Clerk öz frontend domenində (<code>clerk.kiff.dev</code>) da kuki-lər təyin edir. Həmin kuki-lər Clerk-ın sizi giriş axını boyunca tanıması üçün zəruridir və bizimki ilə yanaşı Clerk-ın məxfilik siyasəti ilə tənzimlənir. Təfərrüatlar üçün alt emal edənlər siyahısına baxın.
+		</p>
+	</section>
+}
+
+templ privacySecurityAZ() {
+	<section id="security">
+		<h2>11. Təhlükəsizlik</h2>
+		<p>
+			Texniki və təşkilati təhlükəsizlik tədbirlərimiz <a href="/security">/security</a> (ingiliscə) ünvanında sənədləşdirilib. Onlara verilənlər bazası səviyyəsində tenant izolyasiyası, ötürülmə zamanı TLS 1.2+, idarə olunan provayderin defolt parametrləri ilə saxlanılma zamanı şifrələmə və ən az imtiyaz prinsipinə əsaslanan giriş nəzarətləri daxildir.
+		</p>
+		<p>
+			Təsirə məruz qalmış müştərilərə şəxsi məlumatların pozulması barədə əsassız gecikmə olmadan və təsdiqdən 72 saat ərzində, GDPR-in 33-cü maddəsinə uyğun olaraq bildiririk. Bildirişə pozuntunun xarakteri, təsirə məruz qalan subyektlərin və qeydlərin kateqoriyaları və təxmini sayı, ehtimal olunan nəticələr və görülmüş və ya təklif olunan tədbirlər daxildir.
+		</p>
+	</section>
+}
+
+templ privacyChildrenAZ() {
+	<section id="children">
+		<h2>12. Uşaqlar</h2>
+		<p>
+			KIFF Cloud uşaqlara yönəlməyən tərtibatçı infrastrukturu məhsuludur. 16 yaşdan kiçik uşaqlardan bilərəkdən şəxsi məlumat toplamırıq. Uşağın bizə şəxsi məlumat verdiyinə inanırsınızsa, <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a> ünvanına müraciət edin və biz onu siləcəyik.
+		</p>
+	</section>
+}
+
+templ privacyAutomatedAZ() {
+	<section id="automated">
+		<h2>13. Avtomatlaşdırılmış qərar qəbulu</h2>
+		<p>
+			KIFF Cloud-un runtime-ı müştərilərimizin göndərdiyi məlumatlar əsasında deterministik siyasət qərarları qəbul edir. Bunlar GDPR-in 22-ci maddəsi mənasında hüquqi və ya oxşar əhəmiyyətli təsirlər doğuran sizinlə bağlı qərarlar deyil; müştərinin öz siyasəti əsasında icra olunan müştərinin fəaliyyətləri (geri ödəmələr, sifarişlər, mesajlar və s.) haqqında qərarlardır.
+		</p>
+		<p>
+			KIFF Cloud-dan öz son istifadəçilərinə təsir edən qərarlar qəbul etmək üçün istifadə edən müştərilər 22-ci maddəyə uyğunluğa özləri cavabdehdirlər. İdarəetmə qəbzlərimiz bu müştərilərə insan nəzarətini nümayiş etdirmək üçün lazım olan audit izini verməyə yönəlib, lakin bu nəzarəti təmin etmək hüquqi öhdəliyi müştərinin üzərindədir.
+		</p>
+	</section>
+}
+
+templ privacyChangesAZ() {
+	<section id="changes">
+		<h2>14. Bu siyasətdə dəyişikliklər</h2>
+		<p>
+			Bu siyasəti vaxtaşırı yeniləyə bilərik. Əhəmiyyətli dəyişikliklər aktiv müştərilərə e-poçtla və bu səhifədə ən azı 30 gün üçün nəzərə çarpan banner ilə bildirilir. Əhəmiyyətsiz dəyişikliklər yeni „son yenilənmə“ tarixi ilə dərc olunur.
+		</p>
+	</section>
+}
+
+templ privacyContactAZ() {
+	<section id="contact">
+		<h2>15. Bizimlə əlaqə</h2>
+		<p>
+			Məxfilik sualları və hüquq sorğuları: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+		</p>
+		<p>
+			Kiff Agents OÜ-yə rəsmi hüquqi bildirişlər: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a> ya da poçtla Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya ünvanına.
+		</p>
+		<p>
+			Şikayətlər üçün aparıcı nəzarət orqanı: <a href="https://www.aki.ee/en" target="_blank" rel="noopener">Estoniya Məlumatların Müdafiəsi İnspektoratı (Andmekaitse Inspektsioon)</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Sənəd versiyası:</strong> v0.1.<br/> <strong>Son yenilənmə:</strong> 22 noyabr 2026.
+		</p>
+	</section>
+}

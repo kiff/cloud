@@ -134,14 +134,21 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 		invalid("the body is the QR's JSON, at most 4 KiB, with no other fields")
 		return
 	}
-	// A computer whose device key is in software (a Mac with no Secure
-	// Enclave) pairs as a view device, whatever its kind: it shows the
-	// person's tafs and sends every approval to the phone, and never approves
-	// itself, not even with the person's passkeys (§5.1, §2.6). It brings no
-	// approval key and no credential, and its check code is over pub alone.
+	// A computer whose device key is in software (Linux, a Mac with no Secure
+	// Enclave) pairs as a view device: it shows the person's tafs and sends
+	// every approval to the phone (§5.1, §2.6). It brings no approval key,
+	// and its check code is over pub alone. Or it pairs with kind passkey and
+	// a security key's credential, with that credential's proof at the claim:
+	// it then approves with that security key alone, each request with a fresh
+	// assertion, the person present and verified, and its device key still
+	// grants nothing (auth.Identity.SoftwareKeyPasskey). Never with the
+	// person's account passkeys: kind passkey with no credential stays a
+	// view device.
 	software, keyStore := req.KeyStore != nil, ""
+	securityKey := false
 	if software {
 		keyStore = auth.KeyStoreSoftware
+		securityKey = req.Kind == "passkey" && req.Credential != nil
 		switch {
 		case *req.KeyStore != auth.KeyStoreSoftware:
 			invalid(`key_store is "software", or left out when the device key is in hardware`)
@@ -149,8 +156,8 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 		case phonePairingKinds[req.Platform] != "":
 			invalid("a phone or tablet pairs with its keys in hardware: key_store is for a computer")
 			return
-		case req.ApprovalPub != "" || req.Credential != nil:
-			invalid("a computer with key_store software pairs view-only: no approval_pub and no credential")
+		case req.ApprovalPub != "":
+			invalid("a computer with key_store software holds no approval key: no approval_pub")
 			return
 		}
 	}
@@ -158,7 +165,7 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 	// which the pairing registers for it, or with none: it then approves
 	// with the passkeys the person registered for the account (a phone's
 	// passkey, a security key: POST /v1/me/passkeys).
-	if !software && req.Kind == "passkey" && h.passkeys == nil {
+	if (!software || securityKey) && req.Kind == "passkey" && h.passkeys == nil {
 		refusePairing(w, http.StatusBadRequest, "invalid_pairing", "key_store isn't taken yet, and passkey pairing needs KIFF's passkeys",
 			"This computer approves with a passkey, which KIFF can't pair yet.")
 		return
@@ -207,7 +214,7 @@ func (h *DeviceAuthHandler) approvePairing(w http.ResponseWriter, r *http.Reques
 			return
 		}
 	}
-	if !software && req.Kind == "passkey" && req.Credential != nil {
+	if (!software || securityKey) && req.Kind == "passkey" && req.Credential != nil {
 		var ok bool
 		if credentialID, ok = auth.ParsePairingCredentialID(req.Credential.ID); !ok {
 			invalid("credential.id is the WebAuthn credential id, base64url without padding, at most 1023 bytes")
@@ -366,7 +373,7 @@ func (h *DeviceAuthHandler) credentialProven(w http.ResponseWriter, r *http.Requ
 		return true
 	case proof != nil && !hasCredential:
 		return refuse("no_credential", "this pairing has no credential of its own, so a credential_proof isn't taken")
-	case proof == nil && !now.Before(PairingProofRequiredFrom):
+	case proof == nil && (p.KeyStore == auth.KeyStoreSoftware || !now.Before(PairingProofRequiredFrom)):
 		return refuse("required", "a passkey computer's claim carries credential_proof: {client_data_json, attestation_object}")
 	case proof == nil:
 		return true
@@ -396,13 +403,15 @@ func (h *DeviceAuthHandler) credentialProven(w http.ResponseWriter, r *http.Requ
 }
 
 // pairingSecondKey is the key the check code covers after pub: the approval
-// key, or a passkey computer's credential key (§5.2).
+// key, or a passkey computer's credential key (§5.2), a software-key
+// computer's security key included. A software-key computer with none has
+// pub alone.
 func pairingSecondKey(p auth.Pairing) []byte {
-	if p.KeyStore == auth.KeyStoreSoftware {
-		return nil
-	}
 	if p.Kind == "passkey" {
 		return p.CredentialKey
+	}
+	if p.KeyStore == auth.KeyStoreSoftware {
+		return nil
 	}
 	return p.ApprovalKey
 }
@@ -563,8 +572,9 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not finish pairing; claim again"})
 	}
 	// A software-keyed computer is a view device: it approves nothing, and
-	// doesn't count as one that approves.
-	view := p.KeyStore == auth.KeyStoreSoftware
+	// doesn't count as one that approves. One that paired its security key
+	// approves with that key alone (auth.Identity.SoftwareKeyPasskey).
+	view := p.KeyStore == auth.KeyStoreSoftware && p.CredentialID == nil
 	passkey := p.Kind == "passkey" && !view
 	device := auth.ApprovalDevice{ID: auth.NewDeviceID(), Tenant: p.Tenant, Subject: p.Subject, Name: p.Name,
 		Platform: p.Platform, Kind: pairedKind(p), PublicKey: p.PublicKey, HasApprovalKey: !view && (len(p.ApprovalKey) > 0 || passkey),
@@ -634,5 +644,5 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		deviceTokenResponse
 		DeviceID string `json:"device_id"`
 	}{deviceTokenResponse{AccessToken: gen.Plaintext, TokenType: "Bearer", ExpiresIn: int(h.sessionTTL.Seconds()),
-		Tenant: p.Tenant, Subject: p.Subject, ApprovalMode: auth.ShownApprovalMode(mode, len(p.ApprovalKey) > 0, "")}, device.ID})
+		Tenant: p.Tenant, Subject: p.Subject, ApprovalMode: auth.ShownApprovalMode(mode, len(p.ApprovalKey) > 0, p.KeyStore)}, device.ID})
 }

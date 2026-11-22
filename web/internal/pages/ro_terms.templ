@@ -1,0 +1,815 @@
+package pages
+
+import (
+	"github.com/kiff/cloud/web/internal/components"
+)
+
+// TermsRO is the Terms of Service (/terms) in Romanian, at /ro/terms. It is
+// a translation of Terms: the same sections, anchors, links and figures,
+// held to it by TestTranslationsKeepTheEnglishPage. The English page
+// governs. Change the English page first, then this one. Romanian has the
+// legal texts only, so a link to any other page goes to English and says
+// so.
+templ TermsRO() {
+	@components.LayoutSite("KIFF — termeni și condiții", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			@termsHeadRO()
+			@termsDefinitionsRO()
+			@termsAgreementRO()
+			@termsServiceRO()
+			@termsTafsRO()
+			@termsAccountRO()
+			@termsAcceptableUseRO()
+			@termsCustomerDataRO()
+			@termsConfidentialityRO()
+			@termsFeesRO()
+			@termsTermRO()
+			@termsWarrantiesRO()
+			@termsDisclaimerRO()
+			@termsLiabilityRO()
+			@termsIndemnityRO()
+			@termsSLARO()
+			@termsServiceModsRO()
+			@termsTermsModsRO()
+			@termsForceMajeureRO()
+			@termsGoverningLawRO()
+			@termsGeneralRO()
+			@termsContactRO()
+		</article>
+	}
+}
+
+templ termsHeadRO() {
+	<header class="legal-head">
+		<p class="legal-badge">Termeni și condiții · v0.1</p>
+		<h1>Termeni și condiții</h1>
+		<p class="legal-meta">
+			<strong>Ultima actualizare:</strong> 22 noiembrie 2026.
+			<strong>Data intrării în vigoare:</strong> 24 mai 2026.
+		</p>
+		<p class="legal-disclaimer">
+			<strong>Ce s-a schimbat:</strong> cu cine aveți contractul atunci când v-a prezentat o altă firmă (§2) și microîntreprinderile (§8). Anterior: cine poate folosi Serviciul, în funcție de regiune, proprietate și sancțiuni (§4); aplicația tafs pe Android și
+			Solo cumpărat prin Google Play (§1, §8). Înainte de acestea:
+			abonamentele plătite (§3A, §8),
+			<a href="/legal/sla">acordul privind nivelul serviciilor</a> (în engleză) (§14) și
+			lista utilizărilor interzise, care se află acum în
+			<a href="/acceptable-use">Politica de utilizare acceptabilă</a> (în engleză) (§5).
+		</p>
+		<p class="legal-disclaimer">
+			Acești termeni reglementează utilizarea KIFF Cloud, inclusiv
+			tafs. Întrebări contractuale:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+	</header>
+}
+
+templ termsDefinitionsRO() {
+	<section id="definitions">
+		<h2>1. Definiții</h2>
+		<ul>
+			<li><strong>„Kiff Agents OÜ”</strong>, <strong>„noi”</strong>, <strong>„ne”</strong>, <strong>„nostru”</strong> — societatea estoniană cu răspundere limitată care prestează Serviciul. Cod de înregistrare 17372313.</li>
+			<li><strong>„Client”</strong>, <strong>„dumneavoastră”</strong>, <strong>„al dumneavoastră”</strong> — persoana fizică sau juridică ce acceptă acești termeni.</li>
+			<li><strong>„Utilizator”</strong> — orice persoană fizică pe care Clientul o autorizează să acceseze Serviciul prin contul Clientului.</li>
+			<li><strong>„Serviciu”</strong> — produsul KIFF Cloud, inclusiv <code>api.kiff.dev</code>, <code>app.kiff.dev</code>, <code>kiff.dev</code>, tafs, precum și documentația, panourile de control și API-urile pe care le publicăm acolo.</li>
+			<li><strong>„tafs”</strong> — aplicația tafs pentru iPhone, iPad, Android și computere (Mac, Windows și Linux) și serviciul din spatele ei, inclusiv Setup și planque (§3A), în care un Client încredințează o sarcină unui agent AI care lucrează în limitele KIFF Cards. Un <strong>„taf”</strong> este un astfel de agent.</li>
+			<li><strong>„Chiriaș”</strong> — un spațiu de lucru izolat logic în cadrul Serviciului, care aparține unui singur Client.</li>
+			<li><strong>„Date de audit”</strong> — evenimentele, deciziile, acțiunile, aprobările și chitanțele pe care Serviciul le păstrează în numele Clientului prin mediul de execuție.</li>
+			<li><strong>„Date tafs”</strong> — ceea ce păstrează tafs în numele Clientului: rulările și conversațiile fiecărui taf (inclusiv ceea ce îi returnează instrumentele conectate ale Clientului), rapoartele sale, notițele sale de memorie și telefoanele înregistrate pentru alertele sale.</li>
+			<li><strong>„Chitanță”</strong> — o înregistrare semnată și versionată a unei decizii, emisă de Serviciu pentru fiecare acțiune guvernată.</li>
+			<li><strong>„Documentație”</strong> — documentația tehnică a Serviciului și măsurile de securitate în versiunea datată la care trimit acești Termeni (<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>). Exclude cartea albă strategică, materialele de marketing și documentația cadrului open-source licențiat separat.</li>
+			<li><strong>„DPA”</strong> — acordul de prelucrare a datelor de la <a href="/legal/dpa">/legal/dpa</a> (în engleză), care reglementează relația noastră în calitate de persoană împuternicită.</li>
+		</ul>
+	</section>
+}
+
+templ termsAgreementRO() {
+	<section id="agreement">
+		<h2>2. Acordul</h2>
+		<p>
+			Acești termeni reglementează utilizarea Serviciului de către
+			dumneavoastră. Prin crearea unui cont, generarea unei chei
+			API sau utilizarea în alt mod a Serviciului, acceptați
+			acești termeni. Dacă îi acceptați în numele unei companii
+			sau al altei persoane juridice, declarați că aveți
+			autoritatea de a obliga acea entitate, iar
+			„dumneavoastră” se referă la acea entitate.
+		</p>
+		<p>
+			Dacă un dezvoltator, un partener sau o altă firmă v-a prezentat KIFF ori a creat agentul pe care îl folosiți, contractul dumneavoastră pentru Serviciu este direct cu noi, conform acestor termeni, și îi acceptați personal. Acea firmă nu este agentul nostru: nu poate accepta acești termeni, nu poate da un consimțământ și nu poate aproba o plată în numele dumneavoastră și nu vinde Serviciul în numele nostru.
+		</p>
+		<p>
+			Putem publica termeni suplimentari pentru anumite funcții
+			(funcții beta, integrări cu terți). Atunci când aceștia
+			contravin acestor termeni, termenii suplimentari prevalează
+			pentru funcția respectivă.
+		</p>
+	</section>
+}
+
+templ termsServiceRO() {
+	<section id="service">
+		<h2>3. Serviciul</h2>
+		<p>
+			KIFF Cloud este un serviciu găzduit pentru guvernarea
+			acțiunilor delegate. Evaluează cererile în funcție de
+			permisiunile și Cardurile configurate de Client, poate
+			solicita aprobare umană și înregistrează deciziile de
+			guvernanță. În funcție de integrarea configurată, KIFF
+			transmite mai departe o cerere autorizată sau oferă
+			o autorizare pe care sistemul protejat o verifică.
+			Acțiunea propriu-zisă este efectuată de sistemul conectat.
+		</p>
+		<p>
+			Comportamentul tehnic aplicabil, dovezile, cerințele de
+			integrare și limitele de execuție sunt specificate în
+			Documentația datată la care trimit acești Termeni.
+			<a href="/whitepaper">Cartea albă</a> (în engleză) strategică
+			explică principiile și modelul KIFF; nu este încorporată
+			ca Documentație tehnică în temeiul acestor Termeni.
+		</p>
+		<p>
+			Serviciul de guvernanță KIFF Cloud <em>nu</em> este un cadru
+			pentru agenți, un motor de fluxuri de lucru, un gateway
+			pentru modele sau o platformă gestionată de agenți. Se
+			combină cu orice folosiți deja. Consultați
+			<a href="/#not">„Ce nu este KIFF”</a> (în engleză) pe pagina
+			principală pentru lista explicită. tafs este singura
+			parte a Serviciului care rulează agenți pentru
+			dumneavoastră, în limitele Cardurilor pe care le emiteți;
+			§3A o descrie.
+		</p>
+		<p>
+			Cadrul open-source <a href="https://github.com/kiff/kiff" target="_blank" rel="noopener">kiff/kiff</a>
+			este reglementat de propria licență MIT și nu intră sub
+			incidența acestor termeni. Când rulați cadrul pe propria
+			infrastructură, nu se încheie niciun contract cu Kiff
+			Agents OÜ.
+		</p>
+	</section>
+}
+
+templ termsTafsRO() {
+	<section id="tafs">
+		<h2>3A. tafs</h2>
+		<p>
+			În tafs încredințați o sarcină (de exemplu rambursări,
+			plata facturilor sau contestații de card) unui taf: un agent
+			AI care lucrează după un program, cu instrumentele pe care
+			le conectați, în limitele KIFF Cards pe care le emiteți
+			pentru el. Fiecare taf rulează pe mediul nostru de execuție
+			pentru agenți, iar modelul AI pe care îl folosește este
+			furnizat de Anthropic. Răspundeți la apelurile sale reținute
+			în aplicația tafs.
+		</p>
+		<p>
+			<strong>Conectarea instrumentelor.</strong> Setup, un agent
+			AI din tafs care rulează ca un taf, vă ajută să conectați un
+			instrument și să configurați un taf pentru o sarcină. Nu
+			conectează nimic singur. Vă autentificați la furnizorul
+			propriu al instrumentului (de exemplu Stripe) și aprobați
+			pe dispozitivul dumneavoastră fiecare conexiune,
+			instrumentele pe care un taf le poate folosi și Cardurile
+			sale. Tokenul obținut din acea autentificare este păstrat de
+			planque, serviciul nostru de conectare. Este criptat,
+			folosit numai pentru a efectua un apel decis de KIFF și nu
+			este dat niciodată unui taf. Deconectarea unui instrument
+			revocă tokenul la furnizor și îl șterge.
+		</p>
+		<p>
+			<strong>Cardurile dumneavoastră sunt instrucțiunile dumneavoastră.</strong> Un taf
+			ajunge la instrumentele dumneavoastră numai prin KIFF, care
+			verifică fiecare apel în raport cu Cardurile tafului înainte
+			de a fi trimis. Un apel din limitele unui Card emis de
+			dumneavoastră este efectuat la instrucțiunea dumneavoastră.
+			Un apel în afara unui Card este reținut sau refuzat, după
+			cum prevede Cardul. Un apel reținut este efectuat numai după
+			ce îl aprobă cineva căruia contul dumneavoastră îi permite să
+			răspundă la apelurile reținute. În aplicația tafs, răspunsul
+			poartă o semnătură de pe dispozitivul acelei persoane, pe
+			care KIFF o verifică, iar chitanța păstrează această dovadă.
+			Contul dumneavoastră poate răspunde și chiar în KIFF (în
+			panoul de control, prin instrumentul său din linia de comandă
+			sau printr-un aprobator pe care îl autorizați acolo);
+			chitanța înregistrează atunci cine a răspuns și cum.
+		</p>
+		<p>
+			<strong>Plăți.</strong> Atunci când un taf plătește în numele dumneavoastră la finalizarea unei comenzi, cu un card sau cu altă metodă de plată pe care ați salvat-o pe acel site, o face doar în cadrul unui Card și după ce ați aprobat plata respectivă pe telefon. Aprobarea dumneavoastră autorizează acea singură plată în numele dumneavoastră. Site-ul și furnizorul său de plăți o procesează. KIFF și planque nu dețin niciodată banii dumneavoastră, nu stochează niciodată datele cardului dumneavoastră, iar un taf nu tastează niciodată un număr de card.
+		</p>
+		<p>
+			<strong>Ce rămâne în sarcina dumneavoastră.</strong> Alegeți
+			sarcina și Cardurile fiecărui taf, răspundeți la apelurile
+			sale reținute și vă asigurați că aveți dreptul să folosiți
+			instrumentele și conturile pe care le conectați. Rapoartele,
+			mesajele și notițele de memorie ale unui taf sunt scrise de
+			un model AI și pot fi greșite; verificați ce contează
+			înainte să vă bazați pe ele.
+		</p>
+		<p>
+			<strong>Oprirea unui taf.</strong> Puteți opri un taf sau
+			pe toate, întrerupe un taf, revoca oricare dintre Cardurile
+			sale sau îl puteți elimina. Din momentul în care opriți un
+			taf sau revocați un Card, KIFF nu mai permite niciun apel
+			nou în baza lui. Aplicația tafs afișează un taf ca oprit
+			numai după ce atât KIFF, cât și planque au confirmat oprirea;
+			de atunci, planque nu mai trimite niciunul dintre apelurile
+			sale, nici pe cel permis de KIFF chiar înainte. O cerere deja
+			trimisă furnizorului unui instrument se poate totuși
+			finaliza: oprim apelurile noi și nu putem anula ce a făcut
+			un furnizor. Un instrument care verifică singur
+			permisiunile KIFF, fără planque, poate încă accepta
+			o permisiune emisă de KIFF chiar înainte, timp de cel mult
+			90 de secunde. Reluarea unui taf oprit necesită aprobarea
+			dumneavoastră pe dispozitiv, iar nimic din ce a fost reținut
+			sau pus în coadă înainte de oprire nu rulează după aceea.
+		</p>
+		<p>
+			<strong>Eliminarea unui taf</strong> îi oprește
+			programul și îi șterge rulările, conversațiile, memoria și
+			cheia pe care a folosit-o. Chiar și înainte de aceasta, ceea
+			ce instrumentele dumneavoastră returnează unui taf este
+			păstrat numai până la încheierea rulării (ceea ce o
+			conversație doar a citit, criptat, pentru mesajele sale
+			următoare: folosit cel mult patru ore, apoi șters), iar
+			rulările și conversațiile sale timp de 30 de zile. KIFF păstrează chitanțele a ceea ce a făcut.
+		</p>
+		<p>
+			<strong>Regulamentul UE privind IA.</strong> Pentru tafs, Kiff Agents OÜ
+			este furnizorul sistemului de IA, iar dumneavoastră sunteți
+			implementatorul acestuia. Ne asigurăm că orice scrie un taf
+			cuiva din afara companiei dumneavoastră precizează că a fost
+			scris de un agent AI. Folosiți tafs numai pentru sarcinile
+			pe care le oferă și nu pentru vreo utilizare pe care
+			Regulamentul privind IA o interzice sau o clasifică drept
+			cu risc ridicat, cum ar fi deciziile privind încadrarea în
+			muncă a unei persoane, creditul sau accesul la servicii
+			esențiale. Păstrați aprobările umane pe care le cer
+			Cardurile dumneavoastră și vă asigurați că persoanele care
+			folosesc tafs pentru dumneavoastră înțeleg ce face și care
+			îi sunt limitele.
+		</p>
+		<p>
+			<strong>Costuri.</strong> tafs face parte din abonamentul
+			dumneavoastră KIFF (§8): fiecare rulare a unui taf folosește
+			credite pentru AI-ul pe care l-a folosit. Coach și
+			configurarea tafurilor sunt incluse în limita utilizării
+			rezonabile a lui Coach.
+		</p>
+	</section>
+}
+
+templ termsAccountRO() {
+	<section id="account">
+		<h2>4. Conturi și acces</h2>
+		<p>
+			Pentru a folosi Serviciul trebuie să creați un cont. Vă
+			angajați să furnizați informații exacte la înregistrare,
+			să păstrați confidențialitatea credențialelor și să
+			răspundeți pentru toată activitatea din contul dumneavoastră.
+		</p>
+		<p>
+			Trebuie să aveți cel puțin 16 ani sau vârsta consimțământului
+			digital din jurisdicția dumneavoastră, oricare dintre acestea
+			este mai mare. Serviciul nu se adresează copiilor.
+		</p>
+		<p>
+			Serviciul este oferit numai în țările și regiunile în care Anthropic, care furnizează modelul său AI, își oferă propriul serviciu, așa cum le <a href="https://www.anthropic.com/supported-countries">enumeră Anthropic</a>. Nu îl puteți folosi din altă parte. O companie nu îl poate folosi dacă are sediul central într-o țară sau regiune din afara acelei liste ori este deținută majoritar sau controlată de o companie cu sediul central într-o astfel de țară sau regiune, indiferent unde se află utilizatorii săi. Nici dumneavoastră nu îl puteți folosi dacă dumneavoastră sau compania pentru care îl folosiți faceți obiectul sancțiunilor Uniunii Europene, ale Organizației Națiunilor Unite sau ale Statelor Unite. Refuzăm conturile care încalcă această regulă și putem suspenda un astfel de cont.
+		</p>
+		<p>
+			Răspundeți pentru acțiunile fiecărui Utilizator pe care îl
+			autorizați în contul dumneavoastră. Putem suspenda un cont
+			sau revoca accesul cu o notificare prealabilă rezonabilă
+			dacă detectăm o încălcare credibilă a acestor termeni.
+			Pentru încălcări ale utilizării acceptabile (vezi §5),
+			suspendarea poate fi imediată.
+		</p>
+	</section>
+}
+
+templ termsAcceptableUseRO() {
+	<section id="acceptable-use">
+		<h2>5. Utilizare acceptabilă</h2>
+		<p>
+			Dumneavoastră, utilizatorii și agenții dumneavoastră trebuie
+			să respectați
+			<a href="/acceptable-use">Politica de utilizare acceptabilă</a> (în engleză). Aceasta
+			face parte din acești termeni și enumeră scopurile pentru
+			care Serviciul nu poate fi folosit.
+		</p>
+		<p>
+			Putem suspenda imediat în cazul unei încălcări credibile
+			a acestei politici. Nu suntem obligați să monitorizăm
+			conținutul Clientului, dar putem acționa pe baza unor
+			sesizări credibile.
+		</p>
+	</section>
+}
+
+templ termsCustomerDataRO() {
+	<section id="customer-data">
+		<h2>6. Datele și conținutul Clientului</h2>
+		<p>
+			Datele de audit vă aparțin. Acordați Kiff Agents OÜ o licență
+			limitată, neexclusivă, fără redevențe, la nivel mondial,
+			pentru a găzdui, copia, transmite, afișa și prelucra în alt
+			mod Datele de audit numai în măsura necesară pentru
+			a opera, întreține și îmbunătăți Serviciul pentru
+			dumneavoastră.
+		</p>
+		<p>
+			Acționăm ca <strong>persoană împuternicită</strong> pentru
+			Datele de audit și Datele tafs ale dumneavoastră, în
+			temeiul articolului 28 din GDPR;
+			<a href="/legal/dpa">DPA</a> (în engleză) reglementează în
+			detaliu această relație. Acționăm ca <strong>operator</strong>
+			pentru metadatele contului dumneavoastră;
+			<a href="/ro/privacy">politica de confidențialitate</a>
+			reglementează această relație.
+		</p>
+		<p>
+			Declarați că aveți toate drepturile necesare pentru
+			a transmite datele pe care le transmiteți și că
+			transmiterea respectă legislația aplicabilă (inclusiv
+			legislația privind protecția datelor și, după caz,
+			Regulamentul UE privind IA).
+		</p>
+	</section>
+}
+
+templ termsConfidentialityRO() {
+	<section id="confidentiality">
+		<h2>7. Confidențialitate</h2>
+		<p>
+			Fiecare parte poate primi informații nepublice de la
+			cealaltă („Informații confidențiale”). Partea care le
+			primește va folosi Informațiile confidențiale numai în
+			măsura necesară pentru a-și îndeplini obligațiile și
+			a-și exercita drepturile conform acestor termeni și le va
+			proteja cu cel puțin același grad de grijă pe care îl
+			acordă propriilor informații confidențiale.
+		</p>
+		<p>
+			Informațiile confidențiale nu includ informațiile care
+			(a) sunt sau devin disponibile public fără o încălcare,
+			(b) erau cunoscute de partea care le primește înainte de
+			dezvăluire, (c) sunt dezvoltate independent fără folosirea
+			Informațiilor confidențiale sau (d) trebuie dezvăluite
+			potrivit legii (cu notificarea celeilalte părți, acolo unde
+			este permis).
+		</p>
+	</section>
+}
+
+templ termsFeesRO() {
+	<section id="fees">
+		<h2>8. Taxe și plată</h2>
+		<p>
+			<strong>Abonamente.</strong> Fiecare cont are un singur
+			abonament. Prețurile actuale se află pe <a href="/pricing">pagina
+			de prețuri</a> (în engleză); la data acestei actualizări:
+		</p>
+		<ul>
+			<li><strong>Solo:</strong> o persoană, pentru tafs, vândut în aplicația tafs prin App Store sau Google Play la 12,50 € pe lună, cu TVA inclus, cu 500 de credite pe lună incluse.</li>
+			<li><strong>Company:</strong> 10,50 € pe lună pentru fiecare loc, cu 500 de credite pe lună pentru fiecare loc, cumulate, și, pentru apelurile propriilor agenți prin KIFF Cloud, 500 de acțiuni pe lună pentru fiecare loc, cumulate.</li>
+			<li><strong>Un acord:</strong> taxele și termenii din formularul său de comandă.</li>
+		</ul>
+		<p>
+			Locurile sunt administratorii și editorii unui cont.
+			Aprobatorii și vizualizatorii sunt gratuiți în orice
+			abonament. Pe Company, peste ce este inclus, un credit
+			costă 0,01 €, iar o acțiune 0,02 €. Creditele peste cele
+			incluse sunt facturate până la limita lunară de cheltuieli
+			stabilită de cont (50 € la început): la atingerea limitei,
+			KIFF nu mai pornește nicio rulare nouă a tafurilor contului
+			până la începutul perioadei următoare sau până când cineva
+			care gestionează facturarea o mărește.
+		</p>
+		<p>
+			<strong>Pachete de credite.</strong> Pe Solo, creditele peste
+			cele incluse în lună provin din pachetele de credite
+			cumpărate în aplicația tafs. Un pachet se cumpără o singură
+			dată, nu expiră și nu este un abonament; creditele sale sunt
+			folosite după cele incluse în lună, începând cu cel mai vechi
+			pachet. Un pachet a cărui plată este rambursată integral este
+			retras, împreună cu creditele rămase. Când creditele lunii și
+			pachetele sunt consumate, KIFF nu mai pornește nicio rulare
+			nouă a tafurilor contului până la începutul perioadei
+			următoare sau până se adaugă un pachet.
+			Creditele bonus pe care KIFF le adaugă unui cont nu
+			expiră nici ele, la fel ca pachetele.
+		</p>
+		<p>
+			<strong>Ce se contorizează.</strong> Un <em>credit</em> plătește
+			AI-ul folosit de rularea unui taf, în credite întregi,
+			rotunjit în sus o dată pe rulare și contorizat o singură
+			dată, la încheierea rulării. O rulare al cărei apel a fost
+			refuzat de KIFF și-a folosit totuși AI-ul. Nu se
+			contorizează niciodată: Coach și configurarea tafurilor, în
+			limita utilizării rezonabile a lui Coach; o probă a unei
+			versiuni noi, care nu trimite nimic; și o rulare care
+			a eșuat din cauza noastră. O <em>acțiune</em> este un apel al
+			propriului agent prin KIFF Cloud care a realizat ceva: KIFF
+			l-a permis, a fost trimis, iar instrumentul a raportat
+			succes. Nu se numără niciodată ca acțiune: un apel refuzat,
+			reținut și apoi refuzat, oprit de o oprire, invalid, eșuat la
+			instrument sau cu rezultat necunoscut, precum și un apel care
+			doar citește.
+		</p>
+		<p>
+			<strong>Fără perioadă de probă.</strong> Un cont plătește din
+			prima zi. Înainte ca un abonament să înceapă, KIFF nu
+			pornește nicio rulare a tafurilor sale, cu excepția
+			configurării de către Coach; nimic nu este șters.
+		</p>
+		<p>
+			<strong>Plată și facturi.</strong> Un abonament este facturat
+			într-un singur loc. Un abonament cumpărat pe kiff.dev este
+			cumpărat, modificat și anulat acolo și în portalul de
+			facturare către care trimite, iar plățile sale sunt procesate
+			de Stripe. Solo cumpărat în aplicația tafs este vândut prin
+			App Store pe iPhone și iPad sau prin Google Play pe Android
+			și este gestionat în abonamentele Apple sau Google Play ale
+			dumneavoastră, conform termenilor magazinului respectiv
+			privind plata, reînnoirea și rambursările. Pachetele de
+			credite se cumpără în aplicație. Company se cumpără pe
+			kiff.dev. Taxele se facturează lunar, în avans; utilizarea
+			peste ce este inclus se facturează cu factura următoare.
+			O modificare a numărului de persoane se aplică de la factura
+			următoare. Dacă o plată eșuează și nu este remediată,
+			abonamentul se încheie, iar KIFF refuză apelurile contului
+			până când se alege un abonament.
+		</p>
+		<p>
+			<strong>Anulare.</strong> Puteți anula oricând în portalul de
+			facturare sau, pentru Solo cumpărat în aplicație, în
+			abonamentele Apple sau Google Play ale dumneavoastră. Abonamentul durează până la
+			sfârșitul perioadei plătite și nu se reînnoiește. Cu excepția
+			cazurilor prevăzute de lege, taxele deja plătite nu se
+			rambursează. Dacă sunteți consumator în UE, vă puteți
+			retrage în termen de 14 zile de la achiziție fără a invoca
+			un motiv, iar noi vă rambursăm ce ați plătit, mai puțin
+			partea corespunzătoare zilelor în care abonamentul a rulat
+			deja. Achizițiile Solo sunt rambursate prin App Store sau Google Play, conform termenilor acestora.
+		</p>
+		<p>
+			<strong>Microîntreprinderi.</strong> Dacă firma dumneavoastră are mai puțin de 10 persoane și o cifră de afaceri anuală sau un total al bilanțului de cel mult 2 milioane de euro, o tratăm ca pe un consumator pentru toate regulile din acești termeni privind plățile efectuate cu cardul, inclusiv pentru Company.
+		</p>
+		<p>
+			<strong>TVA.</strong> Prețurile Company nu includ TVA; Solo
+			și pachetele de credite sunt vândute de App Store sau Google
+			Play cu TVA inclus. Kiff Agents OÜ
+			(cod de TVA EE102924327) adaugă TVA estonian acolo unde
+			se aplică. Vânzările între întreprinderi din UE către un
+			Client din afara Estoniei cu un cod valabil de identificare
+			în scopuri de TVA sunt facturate prin mecanismul de taxare
+			inversă al UE.
+		</p>
+		<p>
+			<strong>Modificări.</strong> Oferim conturilor active
+			o notificare scrisă cu cel puțin treizeci de zile înainte de
+			o creștere de preț (§16). O scădere de preț se aplică de la
+			factura următoare.
+		</p>
+	</section>
+}
+
+templ termsTermRO() {
+	<section id="term">
+		<h2>9. Durată și încetare</h2>
+		<p>
+			Acești termeni intră în vigoare când folosiți pentru prima
+			dată Serviciul și continuă până la încetare.
+		</p>
+		<p>
+			Puteți înceta oricând, prin ștergerea contului. Noi putem
+			înceta (a) pentru o încălcare semnificativă neremediată în
+			termen de treizeci de zile de la notificarea scrisă sau
+			(b) imediat, pentru încălcări ale utilizării acceptabile ori
+			în caz de insolvență.
+		</p>
+		<p id="leaving">
+			<strong>Plecarea și luarea datelor cu dumneavoastră.</strong>
+			Vă puteți exporta datele oricând, într-un format structurat,
+			care poate fi citit automat: în KIFF, Setări → Date oferă un
+			fișier JSON cu contul dumneavoastră, Cardurile cu toate
+			versiunile lor, deciziile din Jurnalul dumneavoastră (cele mai
+			recente 10.000; cereți-ne mai multe), chitanța semnată
+			a fiecăreia pe care KIFF a permis-o și detaliile cheilor API
+			(niciodată cheile propriu-zise). În aplicația tafs, fiecare
+			persoană își exportă propriile conversații, fișiere și notițe
+			din Cont →  Exportați
+			conversațiile mele; conversațiile sunt păstrate treizeci de
+			zile în orice caz, așa cum spune politica de
+			confidențialitate. Ștergerea contului încheie imediat
+			Serviciul, așa că exportați mai întâi.
+		</p>
+		<p>
+			Puteți, în schimb, să plecați cu preaviz, pentru a trece la
+			alt furnizor sau la propriile sisteme, scriind la
+			<a href="mailto:support@kiff.dev">support@kiff.dev</a>.
+			Nu cerem niciodată un preaviz mai lung de două luni: preavizul
+			dumneavoastră produce efecte la data pe care o alegeți, cel
+			târziu la două luni după ce îl trimiteți. De la acea dată
+			urmează o perioadă de tranziție de treizeci de zile, în care
+			Serviciul continuă să funcționeze, dumneavoastră vă exportați
+			datele și vă mutați activitatea, iar noi vă ajutăm cu cererile
+			rezonabile în acest sens. Puteți prelungi perioada de tranziție
+			o dată, cât timp aveți nevoie. Dacă nu o putem finaliza tehnic
+			în treizeci de zile, vă spunem acest lucru în termen de
+			paisprezece zile lucrătoare de la preaviz, cu motivele și cu
+			o nouă perioadă de cel mult șapte luni. După perioada de
+			tranziție, datele dumneavoastră rămân disponibile pentru export
+			încă cel puțin treizeci de zile. Taxele abonamentului continuă
+			ca de obicei până la sfârșitul perioadei de tranziție. Solo
+			cumpărat din App Store sau Google Play se anulează în magazin;
+			perioadele de tranziție și de export se aplică la fel.
+		</p>
+		<p>
+			Nu percepem taxe pentru plecare, schimbarea furnizorului sau
+			exportul datelor. Această secțiune acordă tuturor clienților
+			drepturile de schimbare a furnizorului din capitolul VI al
+			Regulamentului UE privind datele (Regulamentul (UE) 2023/2854).
+		</p>
+		<p>
+			La încetare și după orice perioadă de tranziție și de export,
+			ștergem Datele de audit, Datele tafs și metadatele contului
+			dumneavoastră în conformitate cu regulile de păstrare din
+			<a href="/ro/privacy#retention">politica de confidențialitate</a>.
+		</p>
+		<p>
+			Secțiunile care, prin natura lor, trebuie să supraviețuiască
+			încetării supraviețuiesc — inclusiv confidențialitatea,
+			proprietatea intelectuală, despăgubirea, limitarea
+			răspunderii, exonerările de garanție, legea aplicabilă și
+			orice taxe acumulate.
+		</p>
+	</section>
+}
+
+templ termsWarrantiesRO() {
+	<section id="warranties">
+		<h2>10. Garanții</h2>
+		<p>
+			Fiecare parte declară că are dreptul și autoritatea de
+			a încheia și executa acești termeni.
+		</p>
+		<p>
+			Garantăm că vom presta Serviciul în mod profesionist și în
+			conformitate substanțială cu Documentația. Singurul
+			dumneavoastră remediu pentru încălcarea acestei garanții
+			este, la alegerea noastră, reexecutarea sau rambursarea
+			proporțională a taxelor aferente Serviciului afectat pentru
+			perioada încălcării.
+		</p>
+		<p>
+			Garantați că utilizarea Serviciului de către dumneavoastră
+			respectă legislația aplicabilă și acești termeni.
+		</p>
+	</section>
+}
+
+templ termsDisclaimerRO() {
+	<section id="disclaimer">
+		<h2>11. Exonerare de răspundere</h2>
+		<p>
+			Cu excepția garanțiilor exprese din §10, Serviciul este
+			furnizat <strong>„ca atare” și „în funcție de
+			disponibilitate”</strong>. În măsura maximă permisă de lege,
+			declinăm orice alte garanții, exprese, implicite sau legale,
+			inclusiv garanțiile de vandabilitate, de adecvare la un
+			anumit scop, de neîncălcare a drepturilor și orice garanție
+			care decurge din practica comercială sau din uzanțe.
+		</p>
+		<p>
+			Nu garantăm că Serviciul va fi neîntrerupt, fără erori sau
+			fără componente dăunătoare ori că datele nu se vor pierde
+			sau corupe. Sunteți responsabil pentru copiile de rezervă
+			ale datelor dumneavoastră.
+		</p>
+	</section>
+}
+
+templ termsLiabilityRO() {
+	<section id="liability">
+		<h2>12. Limitarea răspunderii</h2>
+		<p>
+			În măsura maximă permisă de lege, niciuna dintre părți nu
+			răspunde față de cealaltă pentru daune indirecte,
+			incidentale, consecutive, speciale, exemplare sau punitive,
+			inclusiv profit pierdut, venituri pierdute, date pierdute
+			sau întreruperea activității, care decurg din acești termeni
+			sau din Serviciu ori sunt legate de acestea, chiar dacă
+			a fost informată despre posibilitatea unor astfel de daune.
+		</p>
+		<p>
+			Răspunderea totală a fiecărei părți care decurge din acești
+			termeni sau este legată de aceștia nu va depăși suma mai mare
+			dintre (a) taxele plătite sau datorate de Client către Kiff
+			Agents OÜ în cele douăsprezece luni anterioare evenimentului
+			care a generat răspunderea sau (b) o sută de mii de euro
+			(100.000 €).
+		</p>
+		<p>
+			Nimic din acești termeni nu limitează și nu exclude
+			răspunderea care nu poate fi limitată sau exclusă conform
+			legislației aplicabile, inclusiv răspunderea pentru deces,
+			vătămare corporală cauzată din neglijență, fraudă sau
+			abatere intenționată, precum și răspunderea pentru un produs
+			cu defecte conform legilor de transpunere a Directivei (UE)
+			2024/2853 privind răspunderea pentru produsele cu defecte.
+		</p>
+	</section>
+}
+
+templ termsIndemnityRO() {
+	<section id="indemnification">
+		<h2>13. Despăgubire</h2>
+		<p>
+			Vă vom apăra împotriva pretențiilor terților potrivit
+			cărora Serviciul, așa cum este furnizat de noi și folosit de
+			dumneavoastră în conformitate cu acești termeni, încalcă
+			drepturile de proprietate intelectuală ale acelui terț și vom
+			plăti daunele acordate definitiv împotriva dumneavoastră (sau
+			suma convenită prin tranzacție) pentru astfel de pretenții.
+		</p>
+		<p>
+			Ne veți apăra împotriva pretențiilor terților care decurg din
+			(a) datele sau conținutul dumneavoastră de Client; (b)
+			utilizarea Serviciului cu încălcarea acestor termeni (inclusiv
+			a Politicii de utilizare acceptabilă); sau (c) neglijența
+			gravă sau abaterea intenționată a dumneavoastră și veți plăti
+			daunele acordate definitiv împotriva noastră (sau suma
+			convenită prin tranzacție) pentru astfel de pretenții.
+		</p>
+		<p>
+			Despăgubirea este condiționată de notificarea promptă
+			a pretenției, de controlul exclusiv al apărării și al
+			tranzacției de către partea care despăgubește și de
+			cooperarea rezonabilă a părții despăgubite. Partea care
+			despăgubește nu poate încheia fără consimțământ o tranzacție
+			care impune obligații părții despăgubite.
+		</p>
+	</section>
+}
+
+templ termsSLARO() {
+	<section id="sla">
+		<h2>14. Angajamentul privind nivelul serviciilor</h2>
+		<p>
+			Pentru un abonament plătit, <a href="/legal/sla">acordul
+			privind nivelul serviciilor</a> (în engleză) stabilește
+			disponibilitatea la care ne angajăm, modul în care se
+			contorizează o cerere lentă sau eșuată, timpii noștri de
+			răspuns ai asistenței și creditele de serviciu atunci când
+			nu ne respectăm angajamentul. Face parte din acești termeni.
+		</p>
+		<p>
+			Practicile operaționale, răspunsul la incidente și
+			angajamentele de notificare a încălcărilor sunt descrise în
+			versiunea datată la care trimit acești Termeni
+			(<a href="https://kiff.dev/docs/archive/2026-10-10">kiff.dev/docs/archive/2026-10-10</a>);
+			<a href="/security">/security</a> (în engleză) arată
+			practicile actuale.
+		</p>
+	</section>
+}
+
+templ termsServiceModsRO() {
+	<section id="service-mods">
+		<h2>15. Modificări ale Serviciului</h2>
+		<p>
+			Putem adăuga, modifica sau elimina funcții oricând.
+			Reducerile semnificative de funcționalitate sau renunțarea la
+			o componentă API care afectează comportamentul documentat
+			sunt notificate clienților activi cu cel puțin treizeci de
+			zile înainte, cu un calendar publicat de retragere.
+			Modificările impuse de securitate pot fi făcute fără
+			notificare atunci când notificarea însăși ar crea un risc.
+		</p>
+	</section>
+}
+
+templ termsTermsModsRO() {
+	<section id="terms-mods">
+		<h2>16. Modificări ale acestor termeni</h2>
+		<p>
+			Putem modifica acești termeni din când în când. Modificările
+			semnificative sunt notificate prin e-mail și printr-un banner
+			vizibil pe această pagină cu cel puțin treizeci de zile
+			înainte. Modificările nesemnificative (clarificări,
+			trimiteri) sunt publicate cu o nouă dată a „ultimei
+			actualizări”. Continuarea utilizării Serviciului după data
+			intrării în vigoare a unei actualizări constituie
+			acceptare.
+		</p>
+	</section>
+}
+
+templ termsForceMajeureRO() {
+	<section id="force-majeure">
+		<h2>17. Forță majoră</h2>
+		<p>
+			Niciuna dintre părți nu răspunde pentru neexecutarea sau
+			întârzierea executării în măsura în care sunt cauzate de
+			împrejurări aflate în afara controlului său rezonabil,
+			inclusiv calamități naturale, război, terorism, tulburări
+			civile, conflicte de muncă, incendiu, dezastre naturale,
+			măsuri guvernamentale legate de pandemii, întreruperi ale
+			internetului sau ale curentului electric ori acțiuni ale
+			furnizorilor de telecomunicații sau ale infrastructurii de
+			găzduire a terților.
+		</p>
+	</section>
+}
+
+templ termsGoverningLawRO() {
+	<section id="governing-law">
+		<h2>18. Legea aplicabilă și instanța competentă</h2>
+		<p>
+			Acești termeni sunt guvernați de legile Republicii Estonia,
+			fără a ține seama de normele sale privind conflictul de
+			legi. Instanța competentă exclusiv pentru litigii este
+			Tribunalul Județean Harju (Harju Maakohus) din Tallinn.
+		</p>
+		<p>
+			Dacă sunteți un consumator cu reședința în alt stat membru al
+			UE, normele imperative de protecție a consumatorilor din
+			jurisdicția dumneavoastră de origine continuă să se aplice în
+			măsura în care vă acordă drepturi la care nu puteți renunța
+			prin contract; această clauză nu vă privează de protecția
+			acelor norme.
+		</p>
+	</section>
+}
+
+templ termsGeneralRO() {
+	<section id="general">
+		<h2>19. Dispoziții generale</h2>
+		<p>
+			<strong>Întregul acord.</strong> Acești termeni, împreună cu
+			politica de confidențialitate, DPA, orice formulare de
+			comandă și orice termeni suplimentari încorporați în mod
+			expres, constituie întregul acord dintre noi cu privire la
+			obiectul lor și înlocuiesc orice înțelegere anterioară sau
+			concomitentă.
+		</p>
+		<p>
+			<strong>Divizibilitate.</strong> Dacă o prevedere este
+			considerată inaplicabilă, celelalte rămân în vigoare.
+		</p>
+		<p>
+			<strong>Cesiune.</strong> Nu puteți cesiona acești termeni
+			fără consimțământul nostru scris. Noi îi putem cesiona fără
+			consimțământ în legătură cu o fuziune, o achiziție sau
+			vânzarea tuturor sau a aproape tuturor activelor noastre, cu
+			notificarea dumneavoastră.
+		</p>
+		<p>
+			<strong>Nicio renunțare.</strong> Neaplicarea unei prevederi
+			nu înseamnă renunțarea la dreptul de a o aplica ulterior.
+		</p>
+		<p>
+			<strong>Notificări.</strong> Notificările către Kiff Agents OÜ
+			se trimit la <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>
+			sau prin poștă la Tööstuse tn 75-71, Põhja-Tallinna
+			linnaosa, Tallinn 10416, Estonia. Notificările către
+			dumneavoastră se trimit la adresa de e-mail asociată contului
+			sau, dacă ați furnizat una, la adresa desemnată pentru
+			notificări juridice.
+		</p>
+		<p>
+			<strong>Contractanți independenți.</strong> Nimic din acești
+			termeni nu creează un parteneriat, o relație de mandat, o
+			asociere în participațiune sau un raport de muncă.
+		</p>
+		<p>
+			<strong>Terți beneficiari.</strong> Nu există, cu excepția
+			cazului în care afiliații despăgubiți sunt identificați în
+			mod expres.
+		</p>
+	</section>
+}
+
+templ termsContactRO() {
+	<section id="contact">
+		<h2>20. Contact</h2>
+		<p>
+			Întrebări comerciale și contractuale:
+			<a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.
+		</p>
+		<p>
+			Întrebări generale despre produs:
+			<a href="mailto:hello@kiff.dev">hello@kiff.dev</a>.
+			Întrebări privind confidențialitatea:
+			<a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>.
+			Raportarea problemelor de securitate:
+			<a href="mailto:security@kiff.dev">security@kiff.dev</a>.
+		</p>
+
+		<hr/>
+
+		<p class="legal-footnote">
+			<strong>Versiunea documentului:</strong> v0.1.<br/>
+			<strong>Ultima actualizare:</strong> 22 noiembrie 2026.
+		</p>
+	</section>
+}

@@ -181,7 +181,7 @@ func TestPasskeyPairingFieldsAreChecked(t *testing.T) {
 		{"credential id padded", func(r *pairRig, q map[string]any) {
 			q["credential"].(map[string]string)["id"] = base64.URLEncoding.EncodeToString(make([]byte, 31))
 		}},
-		{"key_store", func(r *pairRig, q map[string]any) { q["key_store"] = "software" }},
+		{"key_store tpm", func(r *pairRig, q map[string]any) { q["key_store"] = "tpm" }},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			r := newPairRig(t, handlers.WithDevicePasskeys(auth.NewMemoryPasskeyStore()))

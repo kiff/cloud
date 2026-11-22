@@ -61,7 +61,7 @@ templ privacyHead() {
 		<p class="legal-badge">Privacy policy · v0.1</p>
 		<h1>Privacy Policy</h1>
 		<p class="legal-meta">
-			<strong>Last updated:</strong> 21 November 2026.
+			<strong>Last updated:</strong> 22 November 2026.
 			<strong>Effective date:</strong> 24 May 2026.
 		</p>
 		<p class="legal-disclaimer">
@@ -172,6 +172,15 @@ templ privacyCategories() {
 				authentication subject (issued by our identity
 				provider) and the email address you sign in with.
 				Stored verbatim today; hashed-at-rest is planned.
+				If you turn on sign-in with a code sent by email (it is
+				off unless you do), KIFF keeps that setting with your
+				sign-in id and the date you changed it. A code we email
+				you is kept only as a keyed hash, until it is used or ten
+				minutes pass. To limit abuse, we keep, for up to a day, a
+				count of requests per keyed hash of the address that asked
+				and of the IP address. After you sign in with a code, we
+				note it for a quarter of an hour, so that changes needing a
+				recent sign-in ask you to sign in another way.
 			</li>
 			<li>
 				<strong>Tenant metadata</strong> — tenant id, slug,
@@ -259,7 +268,7 @@ templ privacyCategories() {
 				notification list. On Linux they're on until you
 				turn them off, and what a locked screen shows depends on
 				your desktop. When you
-				connect a tool, you sign in at the tool's own provider. For an app planque signs in to itself, such as Stripe, or a key you give, planque keeps that token or key for your company, encrypted; for a managed connection, Composio, the connection service planque works with, holds the sign-in, and planque keeps only the connection's record and the tools you approved (all as processor, see below). A connection's record can include the account it's signed in to (its name or email), so the app can show you which one it is. KIFF uses managed connections only for the apps named on <a href="/subprocessors#composio">/subprocessors</a>. The app has no analytics or
+				connect a tool, you sign in at the tool's own provider. For an app planque signs in to itself, such as Stripe, or a key you give, planque keeps that token or key for your company, encrypted; for a managed connection, Composio, the connection service planque works with, holds the sign-in, and planque keeps only the connection's record and the tools you approved (all as processor, see below). If you pair the tafs extension, a taf can also read and act on the pages of the sites you allow, in your own Chrome (as processor; the <a href="/tafs/privacy">tafs Privacy page</a> says what's read, what's kept and for how long). A connection's record can include the account it's signed in to (its name or email), so the app can show you which one it is. KIFF uses managed connections only for the apps named on <a href="/subprocessors#composio">/subprocessors</a>. The app has no analytics or
 				advertising trackers.
 			</li>
 			<li>
@@ -753,7 +762,7 @@ templ privacyContact() {
 
 		<p class="legal-footnote">
 			<strong>Document version:</strong> v0.1.<br/>
-			<strong>Last updated:</strong> 21 November 2026.
+			<strong>Last updated:</strong> 22 November 2026.
 		</p>
 	</section>
 }

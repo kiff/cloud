@@ -41,10 +41,14 @@ type tafsCostWords struct {
 func (w tafsCostWords) money(cents int) string {
 	whole, frac := cents/100, cents%100
 	switch w.Lang {
-	case "en", "ko", "ja":
+	case "en", "ko", "ja", "th", "zh", "ar", "he", "mn", "ne", "si", "ta", "dv", "dz":
 		return fmt.Sprintf("€%s.%02d", w.number(whole), frac)
 	case "nl":
 		return fmt.Sprintf("€ %s,%02d", w.number(whole), frac)
+	case "id", "lo":
+		return fmt.Sprintf("€%s,%02d", w.number(whole), frac)
+	case "km":
+		return fmt.Sprintf("%s.%02d€", w.number(whole), frac)
 	}
 	return fmt.Sprintf("%s,%02d €", w.number(whole), frac)
 }
@@ -63,6 +67,64 @@ func (w tafsCostWords) number(n int) string {
 	case "lv":
 		sep = " "
 	case "el":
+		sep = "."
+	case "cs":
+		sep = " "
+	case "sl":
+		sep = "."
+	case "ro":
+		sep = "."
+	case "bg":
+		sep = " "
+	case "hr":
+		sep = "."
+	case "dz":
+		sep = ","
+	case "dv":
+		sep = ","
+	case "tg":
+		sep = "\u00a0"
+	case "ta":
+		sep = ","
+	case "si":
+		sep = ","
+	case "lo":
+		sep = "."
+	case "km":
+		sep = ","
+	case "ne":
+		sep = ","
+	case "mn":
+		sep = ","
+	case "mk":
+		sep = "."
+	case "ca":
+		sep = "."
+	case "he":
+		sep = ","
+	case "bn":
+		sep = "."
+	case "az":
+		sep = "."
+	case "hy":
+		sep = "."
+	case "ka":
+		sep = "."
+	case "sq":
+		sep = "."
+	case "sr":
+		sep = "."
+	case "ar":
+		sep = ","
+	case "zh":
+		sep = ","
+	case "th":
+		sep = ","
+	case "vi":
+		sep = "."
+	case "id":
+		sep = "."
+	case "tr":
 		sep = "."
 	}
 	s := fmt.Sprint(n)
@@ -110,3 +172,106 @@ var tafsCostEL = tafsCostWords{Lang: "el"}
 // money's default, and the credits as they stand ("500"). Lithuanian has no
 // /tafs page, so it has no footer line of its own.
 var tafsCostLT = tafsCostWords{Lang: "lt"}
+
+// tafsCostCS writes the prices tafs's terms state in Czech: "12,50 €",
+// "1 500". Czech has no /tafs page, so it has no footer line of its own.
+var tafsCostCS = tafsCostWords{Lang: "cs"}
+
+// tafsCostSK writes the prices tafs's terms state in Slovak: "12,50 €",
+// money's default, and the credits as they stand ("500"). Slovak has no
+// /tafs page, so it has no footer line of its own.
+var tafsCostSK = tafsCostWords{Lang: "sk"}
+
+// tafsCostSL writes the prices tafs's terms state in Slovene: "12,50 €",
+// "1.500". Slovene has no /tafs page, so it has no footer line of its own.
+var tafsCostSL = tafsCostWords{Lang: "sl"}
+
+// tafsCostHU writes the prices tafs's terms state in Hungarian: "12,50 €",
+// money's default, and the credits as they stand ("500"): Hungarian groups
+// no four-digit number. Hungarian has no /tafs page, so it has no footer
+// line of its own.
+var tafsCostHU = tafsCostWords{Lang: "hu"}
+
+// tafsCostRO writes the prices tafs's terms state in Romanian: "12,50 €",
+// "1.500". Romanian has no /tafs page, so it has no footer line of its own.
+var tafsCostRO = tafsCostWords{Lang: "ro"}
+
+// tafsCostBG writes the prices tafs's terms state in Bulgarian: "12,50 €",
+// "1 500". Bulgarian has no /tafs page, so it has no footer line of its own.
+var tafsCostBG = tafsCostWords{Lang: "bg"}
+
+// tafsCostHR writes the prices tafs's terms state in Croatian: "12,50 €",
+// "1.500". Croatian has no /tafs page, so it has no footer line of its own.
+var tafsCostHR = tafsCostWords{Lang: "hr"}
+
+// tafsCostTR writes the prices tafs's terms state in Turkish: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostTR = tafsCostWords{Lang: "tr"}
+
+// tafsCostID writes the prices tafs's terms state in Indonesian: "€12,50", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostID = tafsCostWords{Lang: "id"}
+
+// tafsCostVI writes the prices tafs's terms state in Vietnamese: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostVI = tafsCostWords{Lang: "vi"}
+
+// tafsCostTH writes the prices tafs's terms state in Thai: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostTH = tafsCostWords{Lang: "th"}
+
+// tafsCostZH writes the prices tafs's terms state in Traditional Chinese: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostZH = tafsCostWords{Lang: "zh"}
+
+// tafsCostAR writes the prices tafs's terms state in Arabic: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostAR = tafsCostWords{Lang: "ar"}
+
+// tafsCostSR writes the prices tafs's terms state in Serbian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostSR = tafsCostWords{Lang: "sr"}
+
+// tafsCostSQ writes the prices tafs's terms state in Albanian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostSQ = tafsCostWords{Lang: "sq"}
+
+// tafsCostKA writes the prices tafs's terms state in Georgian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostKA = tafsCostWords{Lang: "ka"}
+
+// tafsCostHY writes the prices tafs's terms state in Armenian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostHY = tafsCostWords{Lang: "hy"}
+
+// tafsCostAZ writes the prices tafs's terms state in Azerbaijani: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostAZ = tafsCostWords{Lang: "az"}
+
+// tafsCostBN writes the prices tafs's terms state in Bengali: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostBN = tafsCostWords{Lang: "bn"}
+
+// tafsCostHE writes the prices tafs's terms state in Hebrew: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostHE = tafsCostWords{Lang: "he"}
+
+// tafsCostCA writes the prices tafs's terms state in Catalan: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostCA = tafsCostWords{Lang: "ca"}
+
+// tafsCostMK writes the prices tafs's terms state in Macedonian: "12,50 €", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostMK = tafsCostWords{Lang: "mk"}
+
+// tafsCostMN writes the prices tafs's terms state in Mongolian: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostMN = tafsCostWords{Lang: "mn"}
+
+// tafsCostNE writes the prices tafs's terms state in Nepali: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostNE = tafsCostWords{Lang: "ne"}
+
+// tafsCostKM writes the prices tafs's terms state in Khmer: "12.50€", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostKM = tafsCostWords{Lang: "km"}
+
+// tafsCostLO writes the prices tafs's terms state in Lao: "€12,50", "1.500". It has no /tafs page, so no footer line of its own.
+var tafsCostLO = tafsCostWords{Lang: "lo"}
+
+// tafsCostSI writes the prices tafs's terms state in Sinhala: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostSI = tafsCostWords{Lang: "si"}
+
+// tafsCostTA writes the prices tafs's terms state in Tamil: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostTA = tafsCostWords{Lang: "ta"}
+
+// tafsCostTG writes the prices tafs's terms state in Tajik: "12,50 €", "1 500". It has no /tafs page, so no footer line of its own.
+var tafsCostTG = tafsCostWords{Lang: "tg"}
+
+// tafsCostDV writes the prices tafs's terms state in Dhivehi: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostDV = tafsCostWords{Lang: "dv"}
+
+// tafsCostDZ writes the prices tafs's terms state in Dzongkha: "€12.50", "1,500". It has no /tafs page, so no footer line of its own.
+var tafsCostDZ = tafsCostWords{Lang: "dz"}

@@ -6,11 +6,11 @@ Cette section s'applique si vous utilisez KIFF ou tafs à Monaco. Elle ajoute ce
 
 ## 1. Ce que nous traitons, pourquoi et combien de temps
 
-Ce que nous traitons, pourquoi et combien de temps figure aux sections 4, 5 et 8 de chaque politique. En bref : votre compte, vos appareils, ce que vous écrivez à Coach et à vos tafs et ce que vos apps connectées renvoient pendant qu'un taf travaille, les données de facturation d'un forfait payant et les journaux de requêtes. Nous supprimons chacun à la fin de sa durée, ou quand vous supprimez votre compte.
+Ce que nous traitons, pourquoi et combien de temps figure aux sections 4, 5 et 8 de la politique de KIFF et aux sections 4, 8 et 9 de celle de tafs. En bref : votre compte, vos appareils, ce que vous écrivez à Coach et à vos tafs et ce que vos apps connectées renvoient pendant qu'un taf travaille, les données de facturation d'un forfait payant et les journaux de requêtes. Nous supprimons chacun à la fin de sa durée, ou quand vous supprimez votre compte.
 
 ## 2. Transferts hors Monaco
 
-KIFF est exploité par Kiff Agents OÜ, une société estonienne, et hébergé par Amazon Web Services en Irlande. Tout ce que vous nous envoyez quitte Monaco. Certains destinataires sont aux États-Unis : Clerk (connexion), Anthropic (les modèles d'IA de Coach et de chaque taf), Stripe (paiement d'un forfait payant), Resend (avis par e-mail), Apple et Google (notifications et achats), Cloudflare et Google Workspace (courrier vers une adresse kiff.dev) et Composio (connexions gérées). Chaque transfert est protégé par les clauses contractuelles types de la Commission européenne ou par le cadre de protection des données UE-États-Unis, comme le dit la section 7 de chaque politique.
+KIFF est exploité par Kiff Agents OÜ, une société estonienne, et hébergé par Amazon Web Services en Irlande. Tout ce que vous nous envoyez quitte Monaco. Certains destinataires sont aux États-Unis : Clerk (connexion), Anthropic (les modèles d'IA de Coach et de chaque taf), Stripe (paiement d'un forfait payant), Resend (avis par e-mail), Apple et Google (notifications et achats), Cloudflare et Google Workspace (courrier vers une adresse kiff.dev) et Composio (connexions gérées). Chaque transfert est protégé par les clauses contractuelles types de la Commission européenne ou par le cadre de protection des données UE-États-Unis, comme le dit la section 7 de la politique de KIFF.
 
 ## 3. Vos droits
 

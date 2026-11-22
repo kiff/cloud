@@ -1,0 +1,66 @@
+package pages
+
+import "github.com/kiff/cloud/web/internal/components"
+
+// TafsTermsRO is tafs's terms (/tafs/terms) in Romanian, at /ro/tafs/terms.
+// It is a translation of TafsTerms: the same sections, anchors, links and
+// figures, held to it by TestTranslationsKeepTheEnglishPage. The English
+// page governs. Change the English page first, then this one. Romanian has
+// the legal texts only, so a link to any other page goes to English and
+// says so.
+templ TafsTermsRO() {
+	@components.LayoutSiteWithMeta("Termenii tafs", "Termenii pentru tafs, aplicația KIFF: cine o furnizează, contul dumneavoastră, ce face un taf și cum îl controlați, utilizarea acceptabilă, tarifele, răspunderea și încetarea.", "website", "", "css/prose.css", "css/legal.css") {
+		<article class="legal prose">
+			<header class="legal-head">
+				<p class="legal-badge">tafs · termeni</p>
+				<h1>Termenii tafs</h1>
+				<p class="legal-meta"><strong>Ultima actualizare:</strong> 22 noiembrie 2026.</p>
+				<p class="legal-disclaimer">Acești termeni se aplică tafs, aplicația KIFF pentru iPhone, iPad, Android și computere, și serviciului din spatele acesteia. tafs face parte din KIFF Cloud, iar această pagină reia ceea ce spun <a href="/ro/terms">Termenii de utilizare KIFF</a> despre aceasta, fără a le adăuga nimic. Termenii KIFF se aplică pentru tot ceea ce această pagină nu acoperă. Întrebări: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>.</p>
+			</header>
+			<section id="provider">
+				<h2>1. Cine furnizează tafs</h2>
+				<p>tafs este furnizată de <strong>Kiff Agents OÜ</strong>, o societate cu răspundere limitată din Estonia (cod de înregistrare 17372313), cu sediul la Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Prin crearea unui cont sau prin orice altă utilizare a tafs, sunteți de acord cu acești termeni și cu Termenii KIFF. Dacă acceptați în numele unei companii, confirmați că aveți dreptul de a o angaja.</p>
+			</section>
+			<section id="account">
+				<h2>2. Contul dumneavoastră</h2>
+				<p>Vă autentificați în tafs cu un cont KIFF. Furnizați informații exacte, păstrați confidențialitatea datelor de autentificare; sunteți responsabil pentru toată activitatea desfășurată în contul dumneavoastră și pentru fiecare persoană căreia îi permiteți accesul în acesta. Trebuie să aveți cel puțin 16 ani sau vârsta consimțământului digital din țara în care locuiți, dacă aceasta este mai mare. Puteți utiliza tafs numai dintr-o țară sau regiune în care Anthropic își oferă propriul serviciu, astfel cum <a href="https://www.anthropic.com/supported-countries">le enumeră Anthropic</a>; nu pentru o companie cu sediul central într-o țară sau regiune din afara acestei liste ori deținută în majoritate sau controlată de o companie cu sediul central într-o astfel de țară sau regiune; și nu dacă dumneavoastră sau compania pentru care o utilizați faceți obiectul unor sancțiuni ale Uniunii Europene, ale Organizației Națiunilor Unite sau ale Statelor Unite (Termenii KIFF, §4).</p>
+			</section>
+			<section id="what-a-taf-does">
+				<h2>3. Ce face un taf</h2>
+				<p>În tafs încredințați o sarcină unui taf: un agent IA care lucrează după un program cu instrumentele pe care le conectați, în limitele Cardurilor KIFF pe care le emiteți pentru el. Anthropic furnizează modelul IA pe care îl utilizează. Setup, un agent IA din tafs, vă ajută să conectați un instrument și să configurați un taf, dar nu conectează nimic singur: vă autentificați la furnizorul instrumentului respectiv și aprobați pe dispozitivul dumneavoastră fiecare conexiune, instrumentele pe care un taf le poate utiliza și Cardurile acestuia.</p>
+				<p>Rapoartele, mesajele și notele de memorie ale unui taf sunt scrise de un model IA și pot fi greșite. Verificați ceea ce contează înainte de a vă baza pe ele. Orice scrie un taf unei persoane din afara companiei dumneavoastră precizează că a fost scris de un agent IA.</p>
+			</section>
+			<section id="control">
+				<h2>4. Controlul dumneavoastră: Cardul și aprobările</h2>
+				<p>Un taf ajunge la instrumentele dumneavoastră numai prin KIFF, care verifică fiecare apel în raport cu Cardurile tafului înainte ca acesta să fie trimis. Un apel care se încadrează într-un Card emis de dumneavoastră este efectuat la instrucțiunea dumneavoastră. Un apel din afara unui Card este reținut sau refuzat, după cum prevede Cardul. Un apel reținut este efectuat numai după ce îl aprobă o persoană căreia contul dumneavoastră îi permite să răspundă la apelurile reținute.</p>
+				<p>Dumneavoastră alegeți sarcina și Cardurile fiecărui taf, răspundeți la apelurile sale reținute și vă asigurați că aveți dreptul să utilizați instrumentele și conturile pe care le conectați. Puteți opri un taf sau pe toate, puteți pune un taf pe pauză, puteți revoca oricare dintre Cardurile sale sau îl puteți elimina. Din momentul în care opriți un taf sau revocați un Card, KIFF nu mai permite niciun apel nou din partea acelui taf sau în baza acelui Card. O cerere deja trimisă furnizorului unui instrument se poate totuși finaliza: oprim apelurile noi, dar nu putem anula ceea ce a făcut un furnizor. <a href="/ro/terms#tafs">Termenii KIFF, §3A</a> conțin detaliile. Atunci când un taf plătește la finalizarea unei comenzi cu o metodă salvată pe acel site, o face doar în cadrul unui Card și după ce ați aprobat plata respectivă pe telefon; site-ul și furnizorul său de plăți o procesează, iar KIFF și planque nu dețin niciodată banii dumneavoastră, nu stochează niciodată datele cardului dumneavoastră, iar un taf nu tastează niciodată un număr de card.</p>
+				<p>În temeiul Regulamentului UE privind inteligența artificială, Kiff Agents OÜ este furnizorul tafs, iar dumneavoastră sunteți implementatorul acesteia. Utilizați tafs numai pentru sarcinile pe care le oferă și nu pentru vreo utilizare pe care Regulamentul privind inteligența artificială o interzice sau o clasifică drept cu grad ridicat de risc, cum ar fi deciziile privind încadrarea în muncă a unei persoane, creditarea acesteia sau accesul său la servicii esențiale.</p>
+			</section>
+			<section id="acceptable-use">
+				<h2>5. Utilizarea acceptabilă</h2>
+				<p>Dumneavoastră, persoanele dumneavoastră și tafurile dumneavoastră trebuie să respectați <a href="/acceptable-use">Politica de utilizare acceptabilă</a> (în engleză). Acțiunea unui agent este acțiunea dumneavoastră. Printre altele, nu puteți utiliza tafs pentru a încălca legea, pentru a acționa asupra unui sistem sau cont pe care nu sunteți autorizat să îl utilizați, pentru a conecta un instrument cu o autentificare pe care nu aveți dreptul să o oferiți, pentru a trimite spam sau pentru a eluda un Card, o limită sau o reținere. Putem suspenda imediat utilizarea în cazul unei încălcări credibile.</p>
+			</section>
+			<section id="fees">
+				<h2>6. Tarife</h2>
+				<p>La data acestei actualizări, Solo costă { tafsCostRO.money(TafsSoloCents) } pe lună, cu TVA inclus, cu { tafsCostRO.number(TafsSoloCredits) } de credite pe lună, și se vinde în aplicație prin App Store sau Google Play. Pachetele de credite, cumpărate în aplicație, încep de la { tafsCostRO.money(TafsPackCents[TafsSoloCredits]) }; acestea nu expiră. Fiecare rulare a unui taf consumă credite pentru IA pe care a utilizat-o. Coach și configurarea tafurilor sunt incluse, în limitele utilizării rezonabile a Coach. Acestea sunt prețurile din zona euro. În alte părți, App Store sau Google Play afișează prețul în moneda dumneavoastră, cu sau fără taxa locală, după cum prevăd normele țării respective, iar acesta este prețul pe care îl plătiți. Prețurile actuale se găsesc pe <a href="/pricing">pagina de prețuri</a> (în engleză); tafs face parte și din planul Company al KIFF.</p>
+				<p>Nu există o perioadă de probă. Solo cumpărat în aplicație se gestionează și se anulează în abonamentele dumneavoastră Apple sau Google Play, în conformitate cu termenii magazinului respectiv privind plata, reînnoirea și rambursările. Un plan rămâne activ până la sfârșitul perioadei pentru care ați plătit. Dacă sunteți consumator în UE, vă puteți retrage în termen de 14 zile de la cumpărare. <a href="/ro/terms#fees">Termenii KIFF, §8</a> conțin detaliile.</p>
+			</section>
+			<section id="liability">
+				<h2>7. Răspunderea</h2>
+				<p>tafs este furnizată „ca atare” și „în măsura disponibilității”, cu excepția garanțiilor din Termenii KIFF (§10). În măsura permisă de lege, niciuna dintre părți nu răspunde pentru daune indirecte sau subsecvente, iar răspunderea totală a fiecărei părți este limitată astfel cum prevăd <a href="/ro/terms#liability">Termenii KIFF, §12</a>. Nimic nu limitează răspunderea pe care legea nu permite să fie limitată.</p>
+			</section>
+			<section id="termination">
+				<h2>8. Încetarea</h2>
+				<p>Puteți renunța oricând: ștergeți-vă contul în aplicație, în Cont → <em>Ștergeți contul</em>. Exportați-vă mai întâi conversațiile, din Cont → Exportați conversațiile mele. Putem înceta utilizarea de către dumneavoastră în cazul unei încălcări semnificative care nu a fost remediată în termen de treizeci de zile de la notificare sau imediat în cazul unei încălcări a utilizării acceptabile. Drepturile dumneavoastră de a pleca și de a vă lua datele cu dumneavoastră se găsesc în <a href="/ro/terms#term">Termenii KIFF, §9</a>.</p>
+			</section>
+			<section id="governing-law">
+				<h2>9. Modificări și legea aplicabilă</h2>
+				<p>Modificăm acești termeni în modul în care Termenii KIFF prevăd pentru ei înșiși (§16). Aceștia sunt guvernați de legile Republicii Estonia, iar litigiile sunt soluționate de Tribunalul Județean Harju din Tallinn. Dacă sunteți consumator într-un alt stat membru al UE, normele obligatorii de protecție a consumatorilor din țara dumneavoastră de origine continuă să se aplice.</p>
+			</section>
+			<section id="contact">
+				<h2>10. Contact</h2>
+				<p>Întrebări contractuale: <a href="mailto:legal@kiff.dev">legal@kiff.dev</a>. Ajutor cu aplicația: <a href="mailto:support@kiff.dev">support@kiff.dev</a>. Confidențialitate: <a href="mailto:privacy@kiff.dev">privacy@kiff.dev</a>, iar modul în care tafs prelucrează datele cu caracter personal este descris în <a href="/ro/tafs/privacy">Politica de confidențialitate tafs</a>.</p>
+			</section>
+		</article>
+	}
+}
