@@ -213,3 +213,39 @@ func TestCodeSignIn_OffShowsNothingOnShowsTheLink(t *testing.T) {
 		t.Errorf("/sign-in:\n%s", body)
 	}
 }
+
+func TestCodeSignIn_TheMoreLanguagesReadTheirOwnWords(t *testing.T) {
+	_, mux, _ := codeRig(t, true, script{})
+	for _, c := range []struct {
+		header, lang string
+		rtl          bool
+	}{
+		{"ar-EG,ar;q=0.9,en;q=0.5", "ar", true},
+		{"he", "he", true},
+		{"dv", "dv", true},
+		{"ko-KR,ko;q=0.9", "ko", false},
+		{"th;q=0.9,xx", "th", false},
+		{"de-CH,de;q=0.9", "de", false},
+		{"xx", "en", false},
+	} {
+		req := httptest.NewRequest(http.MethodGet, codeSignInPath+"?next=%2Fcards", nil)
+		req.Header.Set("Accept-Language", c.header)
+		body := serve(mux, req).Body.String()
+		w := words.CodeSignInIn(c.lang)
+		if !strings.Contains(body, `<html lang="`+c.lang+`"`) || !strings.Contains(body, w.EmailLabel) || !strings.Contains(body, w.Send) {
+			t.Errorf("%s: the page isn't in %s:\n%s", c.header, c.lang, body)
+		}
+		if has := strings.Contains(body, ` dir="rtl"`); has != c.rtl {
+			t.Errorf("%s: dir=rtl is %v, want %v", c.header, has, c.rtl)
+		}
+		if c.lang != "en" && w.Send == words.CodeSignInIn("en").Send {
+			t.Errorf("%s: the page's words are English", c.lang)
+		}
+	}
+	// ui_locales (the app's language, or the last screen's) beats the browser's.
+	req := httptest.NewRequest(http.MethodGet, codeSignInPath+"?next=%2Fcards&ui_locales=ja", nil)
+	req.Header.Set("Accept-Language", "ar")
+	if body := serve(mux, req).Body.String(); !strings.Contains(body, `<html lang="ja"`) {
+		t.Errorf("ui_locales=ja with an Arabic browser:\n%s", body)
+	}
+}

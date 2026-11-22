@@ -269,9 +269,13 @@ var codeSignIn = map[string]CodeSignIn{
 	},
 }
 
-// CodeSignInIn is the lines in lang, English when it has none.
+// CodeSignInIn is the lines in lang: the eight's, the more languages', or
+// English when it has none.
 func CodeSignInIn(lang string) CodeSignIn {
 	if c, ok := codeSignIn[lang]; ok {
+		return c
+	}
+	if c, ok := codeSignInMore[lang]; ok {
 		return c
 	}
 	return codeSignIn["en"]
