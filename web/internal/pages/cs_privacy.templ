@@ -147,6 +147,7 @@ templ privacyCategoriesCS() {
 				identity) a e-mailová adresa, kterou se přihlašujete.
 				Dnes se ukládají v původní podobě; ukládání v hashované
 				podobě se plánuje.
+				Pokud zapnete přihlašování kódem poslaným e-mailem (je vypnuté, dokud to neuděláte), KIFF uchovává toto nastavení s vaším přihlašovacím ID a datem změny. Kód, který vám pošleme e-mailem, se uchovává jen jako klíčovaný otisk, dokud se nepoužije nebo neuplyne deset minut. Abychom omezili zneužití, uchováváme až jeden den počet požadavků podle klíčovaného otisku adresy, která o kód požádala, a IP adresy. Po přihlášení kódem si to poznamenáme na čtvrt hodiny, aby vás změny vyžadující čerstvé přihlášení vyzvaly k přihlášení jiným způsobem.
 			</li>
 			<li>
 				<strong>Metadata tenanta</strong> — ID tenanta, slug,
