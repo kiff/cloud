@@ -48,6 +48,12 @@ var partialPages = map[string][]string{
 	"az": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"bn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"he": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ca": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"mk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"mn": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ne": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"km": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"lo": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -78,7 +84,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -123,6 +129,12 @@ var languageNames = map[string]string{
 	"az": "Azərbaycanca",
 	"bn": "বাংলা",
 	"he": "עברית",
+	"ca": "Català",
+	"mk": "Македонски",
+	"mn": "Монгол",
+	"ne": "नेपाली",
+	"km": "ខ្មែរ",
+	"lo": "ລາວ",
 }
 
 // LanguageName is a site language's name in that language.
@@ -308,6 +320,12 @@ var translationNotices = map[string]string{
 	"az": "Bu, məlumat məqsədilə tərcümədir. İngilis dilindəki versiya qüvvədədir:",
 	"bn": "এটি তথ্যের জন্য একটি অনুবাদ। ইংরেজি সংস্করণই প্রযোজ্য:",
 	"he": "זהו תרגום למידע בלבד. הגרסה האנגלית היא הקובעת:",
+	"ca": "Aquesta és una traducció a títol informatiu. Preval la versió anglesa:",
+	"mk": "Ова е превод само за информација. Англиската верзија е меродавна:",
+	"mn": "Энэ нь зөвхөн мэдээллийн зорилготой орчуулга юм. Англи хувилбар үйлчилнэ:",
+	"ne": "यो जानकारीका लागि मात्र अनुवाद हो। अङ्ग्रेजी संस्करण नै मान्य हुन्छ:",
+	"km": "នេះជាការបកប្រែសម្រាប់ព័ត៌មានតែប៉ុណ្ណោះ។ ជំនាន់ភាសាអង់គ្លេសជាអាទិភាព៖",
+	"lo": "ນີ້ເປັນການແປເພື່ອເປັນຂໍ້ມູນເທົ່ານັ້ນ. ສະບັບພາສາອັງກິດມີຜົນບັງຄັບ:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -344,6 +362,12 @@ var inEnglish = map[string]string{
 	"az": "(ingiliscə)",
 	"bn": "(ইংরেজিতে)",
 	"he": "(באנגלית)",
+	"ca": "(en anglès)",
+	"mk": "(на англиски)",
+	"mn": "(англиар)",
+	"ne": "(अङ्ग्रेजीमा)",
+	"km": "(ជាភាសាអង់គ្លេស)",
+	"lo": "(ເປັນພາສາອັງກິດ)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an

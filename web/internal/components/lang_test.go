@@ -50,6 +50,24 @@ func TestLangPath(t *testing.T) {
 		{"hr", "/terms#fees", "/hr/terms#fees"},
 		{"hr", "/tafs/privacy", "/hr/tafs/privacy"},
 		{"hr", "/security", "/security"}, // and Croatian
+		{"lo", "/terms#fees", "/lo/terms#fees"},
+		{"lo", "/tafs/privacy", "/lo/tafs/privacy"},
+		{"lo", "/security", "/security"}, // and Lao
+		{"km", "/terms#fees", "/km/terms#fees"},
+		{"km", "/tafs/privacy", "/km/tafs/privacy"},
+		{"km", "/security", "/security"}, // and Khmer
+		{"ne", "/terms#fees", "/ne/terms#fees"},
+		{"ne", "/tafs/privacy", "/ne/tafs/privacy"},
+		{"ne", "/security", "/security"}, // and Nepali
+		{"mn", "/terms#fees", "/mn/terms#fees"},
+		{"mn", "/tafs/privacy", "/mn/tafs/privacy"},
+		{"mn", "/security", "/security"}, // and Mongolian
+		{"mk", "/terms#fees", "/mk/terms#fees"},
+		{"mk", "/tafs/privacy", "/mk/tafs/privacy"},
+		{"mk", "/security", "/security"}, // and Macedonian
+		{"ca", "/terms#fees", "/ca/terms#fees"},
+		{"ca", "/tafs/privacy", "/ca/tafs/privacy"},
+		{"ca", "/security", "/security"}, // and Catalan
 		{"he", "/terms#fees", "/he/terms#fees"},
 		{"he", "/tafs/privacy", "/he/tafs/privacy"},
 		{"he", "/security", "/security"}, // and Hebrew
@@ -132,6 +150,18 @@ func TestSplitLangPath(t *testing.T) {
 		{"/bg/cookies", "en", "/bg/cookies", false},
 		{"/hr/tafs/terms", "hr", "/tafs/terms", true},
 		{"/hr/support", "en", "/hr/support", false},
+		{"/lo/tafs/terms", "lo", "/tafs/terms", true},
+		{"/lo/support", "en", "/lo/support", false},
+		{"/km/tafs/terms", "km", "/tafs/terms", true},
+		{"/km/support", "en", "/km/support", false},
+		{"/ne/tafs/terms", "ne", "/tafs/terms", true},
+		{"/ne/support", "en", "/ne/support", false},
+		{"/mn/tafs/terms", "mn", "/tafs/terms", true},
+		{"/mn/support", "en", "/mn/support", false},
+		{"/mk/tafs/terms", "mk", "/tafs/terms", true},
+		{"/mk/support", "en", "/mk/support", false},
+		{"/ca/tafs/terms", "ca", "/tafs/terms", true},
+		{"/ca/support", "en", "/ca/support", false},
 		{"/he/tafs/terms", "he", "/tafs/terms", true},
 		{"/he/support", "en", "/he/support", false},
 		{"/bn/tafs/terms", "bn", "/tafs/terms", true},
