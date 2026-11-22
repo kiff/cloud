@@ -37,6 +37,9 @@ var StoreCountries = map[string][]string{
 		// Barbados waits on its scope question.
 		"BZ", "AG", "BS", "KN", "LC", "GM", "GN", "CG", "KM", "DJ",
 		"SC", "MU",
+		// Wave 2, the owner's five (22 Nov 2026): the 3 Play offers. Play
+		// doesn't offer Barbados or Lesotho.
+		"SV", "CM", "SM",
 	},
 	// The App Store, iOS and macOS, 21 Nov 2026: the EU, Iceland, Norway,
 	// Switzerland and the United Kingdom (no storefront in Liechtenstein; Korea
