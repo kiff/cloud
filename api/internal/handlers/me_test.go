@@ -254,14 +254,15 @@ func TestMe_SaysHowADeviceSessionApproves(t *testing.T) {
 		id   auth.Identity
 		want string
 	}{
-		"approval key":         {device(auth.ApprovalModeKey, []byte{1}, ""), "key"},
-		"passkey":              {device(auth.ApprovalModePasskey, nil, ""), "passkey"},
-		"view":                 {device(auth.ApprovalModeView, nil, ""), "view"},
-		"software key store":   {device(auth.ApprovalModePasskey, nil, auth.KeyStoreSoftware), "view"},
-		"before modes, key":    {device("", []byte{1}, ""), "key"},
-		"before modes, no key": {device("", nil, ""), "device_key"},
-		"browser":              {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodSession}, ""},
-		"cli":                  {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodDeveloper}, ""},
+		"approval key":           {device(auth.ApprovalModeKey, []byte{1}, ""), "key"},
+		"passkey":                {device(auth.ApprovalModePasskey, nil, ""), "passkey"},
+		"view":                   {device(auth.ApprovalModeView, nil, ""), "view"},
+		"software key store":     {device(auth.ApprovalModeKey, nil, auth.KeyStoreSoftware), "view"},
+		"software, security key": {device(auth.ApprovalModePasskey, nil, auth.KeyStoreSoftware), "passkey"},
+		"before modes, key":      {device("", []byte{1}, ""), "key"},
+		"before modes, no key":   {device("", nil, ""), "device_key"},
+		"browser":                {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodSession}, ""},
+		"cli":                    {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodDeveloper}, ""},
 	} {
 		rec := httptest.NewRecorder()
 		withFakeIdentity(inner, c.id).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/v1/me", nil))

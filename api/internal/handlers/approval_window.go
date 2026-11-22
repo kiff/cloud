@@ -83,6 +83,13 @@ func (h *ApprovalWindowHandler) open(w http.ResponseWriter, r *http.Request) {
 			"detail": "an approval window opens only with the device's approval key or its own passkey, behind its fingerprint, face or PIN"})
 		return
 	}
+	// A software-key computer's security key approves each request alone:
+	// it opens no window.
+	if id.SoftwareKeyPasskey() {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "security_key_each_request",
+			"detail": "this computer approves each request with its security key, one at a time: it opens no approval window"})
+		return
+	}
 	openedBy := id.ApprovalKey
 	if !byKey {
 		openedBy = with.Passkey

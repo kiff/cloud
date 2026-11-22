@@ -50,6 +50,12 @@ func (h *DeviceAuthHandler) relink(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusForbidden, auth.ViewOnlyRefusal())
 		return
 	}
+	// A software-keyed computer never holds an approval key: its security key
+	// approves.
+	if id.SoftwareKeyPasskey() {
+		writeJSON(w, http.StatusForbidden, auth.SecurityKeyOnlyRefusal())
+		return
+	}
 	var req struct {
 		ApprovalPublicKey string `json:"approval_public_key"`
 		SignedAt          string `json:"signed_at"`
