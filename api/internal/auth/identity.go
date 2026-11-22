@@ -175,9 +175,20 @@ type Identity struct {
 
 // ViewOnly reports whether nothing the session signs approves: a view-only
 // session, or one whose device key is in software (the desktop client contract,
-// §1.1, §2.6). It reads, refuses, answers hand-offs and signs out.
+// §1.1, §2.6) and that paired no security key of its own. It reads, refuses,
+// answers hand-offs and signs out.
 func (id Identity) ViewOnly() bool {
-	return id.ApprovalMode == ApprovalModeView || id.KeyStore == KeyStoreSoftware
+	return id.ApprovalMode == ApprovalModeView || id.KeyStore == KeyStoreSoftware && id.ApprovalMode != ApprovalModePasskey
+}
+
+// SoftwareKeyPasskey reports whether the session's device key is in software
+// and it approves with the security key its pairing registered (a Linux
+// computer, a Mac without Touch ID). The device key grants nothing: only a
+// fresh assertion from that credential approves, one request at a time, with
+// the person present and verified. No account passkey, window or assertion
+// over two requests counts for it.
+func (id Identity) SoftwareKeyPasskey() bool {
+	return id.KeyStore == KeyStoreSoftware && id.ApprovalMode == ApprovalModePasskey
 }
 
 // ApprovalModeDeviceKey is what ShownApprovalMode says of a session from
@@ -187,14 +198,14 @@ const ApprovalModeDeviceKey = "device_key"
 
 // ShownApprovalMode is how a device's session approves, as its apps are told
 // (approval_mode): "view" when nothing it signs approves (a view-only
-// session, or a device key in software), "passkey" when it approves with its
-// device's own passkey, "key" with its approval key, and "device_key" for a
+// session, or a device key in software with no security key paired),
+// "passkey" when it approves with its device's own passkey or security key, "key" with its approval key, and "device_key" for a
 // session from before approval modes with no approval key. It follows what
 // KIFF checks, so an app shows "View only" exactly when KIFF approves nothing
 // from it.
 func ShownApprovalMode(mode string, hasApprovalKey bool, keyStore string) string {
 	switch {
-	case mode == ApprovalModeView || keyStore == KeyStoreSoftware:
+	case mode == ApprovalModeView || keyStore == KeyStoreSoftware && mode != ApprovalModePasskey:
 		return ApprovalModeView
 	case mode == ApprovalModePasskey:
 		return ApprovalModePasskey
@@ -226,6 +237,21 @@ func (id Identity) HeldToApprovalKey() bool {
 func ViewOnlyRefusal() map[string]string {
 	return map[string]string{"error": "view_only",
 		"message": "this device can't approve: approve on your phone, or pair this device from it"}
+}
+
+// SecurityKeyOnlyRefusal is the 403 body for a SoftwareKeyPasskey session
+// that asks for an approval key: its device key is in software, so it never
+// holds one, and its security key approves.
+func SecurityKeyOnlyRefusal() map[string]string {
+	return map[string]string{"error": "security_key_only",
+		"message": "this computer's device key is in software: it approves with its security key alone, and holds no approval key"}
+}
+
+// softwareKeyRefusal is the 403 body for a window or a two-request signature
+// from a SoftwareKeyPasskey session.
+func softwareKeyRefusal() map[string]string {
+	return map[string]string{"error": "security_key_each_request",
+		"message": "this computer approves each request with its security key, one at a time: no window, and no signature over two requests"}
 }
 
 // ActorID returns the authenticated principal that should appear in framework
