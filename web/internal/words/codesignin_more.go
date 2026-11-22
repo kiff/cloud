@@ -31,6 +31,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "تعطيل",
 		SettingNotAvailable: "تسجيل الدخول برمز غير متاح بعد.",
 		SettingSaved:        "تم الحفظ. أرسلنا إليك بريدًا إلكترونيًا عن التغيير.",
+		SecondFactor:        "تسجّل الدخول بخطوة ثانية، لذا لا يكفي الرمز وحده لتسجيل دخولك. سجّل الدخول بطريقة أخرى.",
 	},
 	"az": {
 		Link:                "Əvəzində mənə e-poçtla kod göndərin",
@@ -58,6 +59,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Söndür",
 		SettingNotAvailable: "Kodla giriş hələ əlçatan deyil.",
 		SettingSaved:        "Yadda saxlanıldı. Dəyişiklik barədə sizə e-məktub göndərdik.",
+		SecondFactor:        "Siz ikinci addımla daxil olursunuz, buna görə kod tək başına sizi daxil edə bilməz. Başqa yolla daxil olun.",
 	},
 	"bg": {
 		Link:                "Вместо това получете код по имейл",
@@ -85,6 +87,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Изключване",
 		SettingNotAvailable: "Входът с код още не е наличен.",
 		SettingSaved:        "Запазено. Изпратихме ви имейл за промяната.",
+		SecondFactor:        "Влизате с втора стъпка, така че само код не може да ви впише. Влезте по друг начин.",
 	},
 	"bn": {
 		Link:                "এর বদলে আমাকে ইমেইলে একটি কোড পাঠান",
@@ -112,6 +115,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "বন্ধ করুন",
 		SettingNotAvailable: "কোড দিয়ে সাইন ইন এখনও পাওয়া যায় না।",
 		SettingSaved:        "সংরক্ষিত হয়েছে। পরিবর্তন সম্পর্কে আপনাকে ইমেইল করেছি।",
+		SecondFactor:        "আপনি দ্বিতীয় একটি ধাপ দিয়ে সাইন ইন করেন, তাই শুধু একটি কোড দিয়ে আপনি সাইন ইন করতে পারবেন না। অন্যভাবে সাইন ইন করুন।",
 	},
 	"ca": {
 		Link:                "Envia'm un codi per correu",
@@ -139,6 +143,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Desactiva",
 		SettingNotAvailable: "L'inici de sessió amb codi encara no està disponible.",
 		SettingSaved:        "Desat. T'hem enviat un correu sobre el canvi.",
+		SecondFactor:        "Inicies la sessió amb un segon pas, així que un codi sol no n'hi ha prou. Inicia la sessió d'una altra manera.",
 	},
 	"cs": {
 		Link:                "Místo toho mi pošlete kód e-mailem",
@@ -166,6 +171,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Vypnout",
 		SettingNotAvailable: "Přihlášení kódem zatím není k dispozici.",
 		SettingSaved:        "Uloženo. Poslali jsme vám e-mail o změně.",
+		SecondFactor:        "Přihlašujete se druhým krokem, takže samotný kód vás nepřihlásí. Přihlaste se jinak.",
 	},
 	"dv": {
 		Link:                "އެއާ ބަދަލުގައި އީމެއިލްގައި ކޯޑެއް ފޮނުއްވާ",
@@ -193,6 +199,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "އޮފްކުރޭ",
 		SettingNotAvailable: "ކޯޑަކުން ސައިން-އިން ވުން އަދި ލިބެން ނެތެވެ.",
 		SettingSaved:        "ސޭވްވެއްޖެއެވެ. ބަދަލާ ބެހޭގޮތުން ތިޔަބައިމީހާއަށް އީމެއިލް ފޮނުއްވީމެވެ.",
+		SecondFactor:        "ތިޔަބޭފުޅާ ސައިން އިން ކުރައްވަނީ ދެވަނަ ސްޓެޕަކާއެކު، އެހެންވީމާ ހަމައެކަނި ކޯޑަކުން ސައިން އިން ނުކުރެވޭނެ. އެހެން ގޮތަކުން ސައިން އިން ކުރައްވާ.",
 	},
 	"dz": {
 		Link:                "དེ་གི་ཚབ་ལུ་ ང་ལུ་ གློག་འཕྲིན་གྱིས་ཀོཌི་གཏང་།",
@@ -220,6 +227,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "བཀག།",
 		SettingNotAvailable: "ཀོཌི་གིས་ཐོ་འཛུལ་འབད་ནི་ད་ལྟོ་ཚུན་མ་འབྱུང་།",
 		SettingSaved:        "ཉར་ཚགས་འབད་ཡི། བསྒྱུར་བཅོས་ཀྱི་སྐོར་ལས་ ང་བཅས་ཀྱིས་ཁྱེད་ལུ་གློག་འཕྲིན་གཅིག་བསྐུར་ཡི།",
+		SecondFactor:        "ཁྱོད་ཀྱིས་གོ་རིམ་གཉིས་པ་ཅིག་གིས་ནང་བསྐྱོད་འབདཝ་ལས་ ཨང་རྟགས་རྐྱངམ་གཅིག་གིས་ནང་བསྐྱོད་འབད་མི་ཚུགས། ཐབས་ལམ་གཞན་ཅིག་གིས་ནང་བསྐྱོད་འབད།",
 	},
 	"el": {
 		Link:                "Στείλτε μου αντί γι' αυτό έναν κωδικό με email",
@@ -247,6 +255,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Απενεργοποίηση",
 		SettingNotAvailable: "Η σύνδεση με κωδικό δεν είναι ακόμη διαθέσιμη.",
 		SettingSaved:        "Αποθηκεύτηκε. Σου στείλαμε email για την αλλαγή.",
+		SecondFactor:        "Συνδέεστε με δεύτερο βήμα, οπότε ένας κωδικός μόνος του δεν αρκεί. Συνδεθείτε με άλλον τρόπο.",
 	},
 	"et": {
 		Link:                "Saada mulle selle asemel kood e-postiga",
@@ -274,6 +283,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Lülita välja",
 		SettingNotAvailable: "Koodiga sisselogimine pole veel saadaval.",
 		SettingSaved:        "Salvestatud. Saatsime sulle muudatuse kohta e-kirja.",
+		SecondFactor:        "Logite sisse teise sammuga, seega ainult kood teid sisse ei logi. Logige sisse muul viisil.",
 	},
 	"he": {
 		Link:                "שלחו לי במקום זאת קוד באימייל",
@@ -301,6 +311,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "כיבוי",
 		SettingNotAvailable: "כניסה עם קוד עדיין לא זמינה.",
 		SettingSaved:        "נשמר. שלחנו לך אימייל על השינוי.",
+		SecondFactor:        "אתה נכנס עם שלב שני, ולכן קוד לבדו לא יכול להכניס אותך. היכנס בדרך אחרת.",
 	},
 	"hr": {
 		Link:                "Umjesto toga pošaljite mi kod e-poštom",
@@ -328,6 +339,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Isključi",
 		SettingNotAvailable: "Prijava kodom još nije dostupna.",
 		SettingSaved:        "Spremljeno. Poslali smo vam e-poruku o promjeni.",
+		SecondFactor:        "Prijavljujete se drugim korakom, pa vas sam kod ne može prijaviti. Prijavite se na drugi način.",
 	},
 	"hu": {
 		Link:                "Inkább kérek egy kódot e-mailben",
@@ -355,6 +367,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Kikapcsolás",
 		SettingNotAvailable: "A kóddal való bejelentkezés még nem érhető el.",
 		SettingSaved:        "Mentve. A változásról e-mailt küldtünk.",
+		SecondFactor:        "Második lépéssel jelentkezel be, így egy kód önmagában nem jelentkeztet be. Jelentkezz be másképp.",
 	},
 	"hy": {
 		Link:                "Փոխարենը ուղարկեք ինձ կոդ էլ. փոստով",
@@ -382,6 +395,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Անջատել",
 		SettingNotAvailable: "Կոդով մուտքը դեռ հասանելի չէ։",
 		SettingSaved:        "Պահպանվեց։ Փոփոխության մասին ձեզ էլ. նամակ ուղարկեցինք։",
+		SecondFactor:        "Դուք մուտք եք գործում երկրորդ քայլով, ուստի միայն կոդը չի կարող ձեզ մուտք գործել։ Մուտք գործեք այլ կերպ։",
 	},
 	"id": {
 		Link:                "Kirimi saya kode lewat email saja",
@@ -409,6 +423,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Nonaktifkan",
 		SettingNotAvailable: "Masuk dengan kode belum tersedia.",
 		SettingSaved:        "Tersimpan. Kami mengirimi Anda email tentang perubahan ini.",
+		SecondFactor:        "Anda masuk dengan langkah kedua, jadi kode saja tidak cukup untuk memasukkan Anda. Masuk dengan cara lain.",
 	},
 	"ja": {
 		Link:                "代わりにメールでコードを受け取る",
@@ -436,6 +451,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "オフにする",
 		SettingNotAvailable: "コードによるサインインはまだ利用できません。",
 		SettingSaved:        "保存しました。変更についてメールをお送りしました。",
+		SecondFactor:        "2段階目の確認でサインインしているため、コードだけではサインインできません。別の方法でサインインしてください。",
 	},
 	"ka": {
 		Link:                "სანაცვლოდ გამომიგზავნეთ კოდი ელფოსტით",
@@ -463,6 +479,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "გამორთვა",
 		SettingNotAvailable: "კოდით შესვლა ჯერ მიუწვდომელია.",
 		SettingSaved:        "შენახულია. ცვლილების შესახებ ელფოსტა გამოგიგზავნეთ.",
+		SecondFactor:        "თქვენ შედიხართ მეორე ნაბიჯით, ამიტომ მხოლოდ კოდით შესვლა შეუძლებელია. შედით სხვა გზით.",
 	},
 	"km": {
 		Link:                "ផ្ញើកូដមកខ្ញុំតាមអ៊ីមែលជំនួសវិញ",
@@ -490,6 +507,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "បិទ",
 		SettingNotAvailable: "ការចូលគណនីដោយកូដមិនទាន់អាចប្រើបានទេ។",
 		SettingSaved:        "បានរក្សាទុក។ យើងបានផ្ញើអ៊ីមែលអំពីការផ្លាស់ប្តូរនេះទៅអ្នក។",
+		SecondFactor:        "អ្នកចូលដោយប្រើជំហានទីពីរ ដូច្នេះលេខកូដតែមួយមុខមិនអាចឱ្យអ្នកចូលបានទេ។ សូមចូលតាមវិធីផ្សេង។",
 	},
 	"ko": {
 		Link:                "대신 이메일로 코드 받기",
@@ -517,6 +535,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "끄기",
 		SettingNotAvailable: "코드 로그인은 아직 사용할 수 없습니다.",
 		SettingSaved:        "저장했습니다. 변경에 대해 이메일로 알려 드렸습니다.",
+		SecondFactor:        "두 번째 단계로 로그인하므로 코드만으로는 로그인할 수 없습니다. 다른 방법으로 로그인하세요.",
 	},
 	"lo": {
 		Link:                "ສົ່ງລະຫັດທາງອີເມວໃຫ້ຂ້ອຍແທນ",
@@ -544,6 +563,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "ປິດ",
 		SettingNotAvailable: "ການເຂົ້າສູ່ລະບົບດ້ວຍລະຫັດຍັງບໍ່ພ້ອມໃຊ້.",
 		SettingSaved:        "ບັນທຶກແລ້ວ. ພວກເຮົາສົ່ງອີເມວຫາທ່ານກ່ຽວກັບການປ່ຽນແປງນີ້.",
+		SecondFactor:        "ທ່ານເຂົ້າສູ່ລະບົບດ້ວຍຂັ້ນຕອນທີສອງ ດັ່ງນັ້ນລະຫັດຢ່າງດຽວບໍ່ສາມາດເຂົ້າສູ່ລະບົບໃຫ້ທ່ານໄດ້. ເຂົ້າສູ່ລະບົບດ້ວຍວິທີອື່ນ.",
 	},
 	"lt": {
 		Link:                "Atsiųskite man kodą el. paštu",
@@ -571,6 +591,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Išjungti",
 		SettingNotAvailable: "Prisijungimas kodu dar neprieinamas.",
 		SettingSaved:        "Išsaugota. Išsiuntėme jums el. laišką apie pakeitimą.",
+		SecondFactor:        "Prisijungiate su antru žingsniu, todėl vien kodas jūsų neprijungs. Prisijunkite kitu būdu.",
 	},
 	"lv": {
 		Link:                "Nosūti man kodu pa e-pastu",
@@ -598,6 +619,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Izslēgt",
 		SettingNotAvailable: "Pierakstīšanās ar kodu vēl nav pieejama.",
 		SettingSaved:        "Saglabāts. Mēs tev nosūtījām e-pastu par izmaiņu.",
+		SecondFactor:        "Jūs pierakstāties ar otru soli, tāpēc ar kodu vien nepietiek. Pierakstieties citādi.",
 	},
 	"mk": {
 		Link:                "Наместо тоа испратете ми код по е-пошта",
@@ -625,6 +647,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Исклучи",
 		SettingNotAvailable: "Најавата со код сѐ уште не е достапна.",
 		SettingSaved:        "Зачувано. Ти испративме е-порака за промената.",
+		SecondFactor:        "Се најавувате со втор чекор, па само код не може да ве најави. Најавете се на друг начин.",
 	},
 	"mn": {
 		Link:                "Үүний оронд надад имэйлээр код илгээнэ үү",
@@ -652,6 +675,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Унтраах",
 		SettingNotAvailable: "Кодоор нэвтрэх хараахан боломжгүй.",
 		SettingSaved:        "Хадгалсан. Өөрчлөлтийн талаар танд имэйл илгээсэн.",
+		SecondFactor:        "Та хоёр дахь алхмаар нэвтэрдэг тул зөвхөн код таныг нэвтрүүлж чадахгүй. Өөр аргаар нэвтэрнэ үү.",
 	},
 	"ne": {
 		Link:                "यसको सट्टा मलाई इमेलमा कोड पठाउनुहोस्",
@@ -679,6 +703,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "बन्द गर्नुहोस्",
 		SettingNotAvailable: "कोडबाट साइन इन अहिले उपलब्ध छैन।",
 		SettingSaved:        "सुरक्षित भयो। परिवर्तनबारे हामीले तपाईंलाई इमेल पठायौं।",
+		SecondFactor:        "तपाईं दोस्रो चरणसहित साइन इन गर्नुहुन्छ, त्यसैले कोड मात्रले तपाईंलाई साइन इन गराउन सक्दैन। अर्को तरिकाले साइन इन गर्नुहोस्।",
 	},
 	"ro": {
 		Link:                "Primiți în schimb un cod pe e-mail",
@@ -706,6 +731,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Dezactivați",
 		SettingNotAvailable: "Conectarea cu cod nu este încă disponibilă.",
 		SettingSaved:        "Salvat. V-am trimis un e-mail despre schimbare.",
+		SecondFactor:        "Te conectezi cu un al doilea pas, așa că un cod singur nu te poate conecta. Conectează-te în alt mod.",
 	},
 	"si": {
 		Link:                "ඒ වෙනුවට මට ඊමේල් මගින් කේතයක් එවන්න",
@@ -733,6 +759,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "අක්‍රිය කරන්න",
 		SettingNotAvailable: "කේතයෙන් පිවිසීම තවමත් නොමැත.",
 		SettingSaved:        "සුරකින ලදී. වෙනස ගැන අපි ඔබට ඊමේල් එකක් එව්වෙමු.",
+		SecondFactor:        "ඔබ දෙවන පියවරක් සමඟ පුරනය වන බැවින් කේතයකින් පමණක් ඔබව පුරනය කළ නොහැක. වෙනත් ආකාරයකින් පුරනය වන්න.",
 	},
 	"sk": {
 		Link:                "Namiesto toho mi pošlite kód e-mailom",
@@ -760,6 +787,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Vypnúť",
 		SettingNotAvailable: "Prihlásenie kódom zatiaľ nie je k dispozícii.",
 		SettingSaved:        "Uložené. Poslali sme vám e-mail o zmene.",
+		SecondFactor:        "Prihlasujete sa druhým krokom, takže samotný kód vás neprihlási. Prihláste sa inak.",
 	},
 	"sl": {
 		Link:                "Namesto tega mi pošljite kodo po e-pošti",
@@ -787,6 +815,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Izklopi",
 		SettingNotAvailable: "Prijava s kodo še ni na voljo.",
 		SettingSaved:        "Shranjeno. O spremembi smo vam poslali e-pošto.",
+		SecondFactor:        "Prijavljate se z drugim korakom, zato vas koda sama ne more prijaviti. Prijavite se drugače.",
 	},
 	"sq": {
 		Link:                "Më dërgoni në vend të kësaj një kod me email",
@@ -814,6 +843,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Çaktivizo",
 		SettingNotAvailable: "Hyrja me kod nuk është ende e disponueshme.",
 		SettingSaved:        "U ruajt. Ju dërguam një email për ndryshimin.",
+		SecondFactor:        "Ju hyni me një hap të dytë, prandaj vetëm një kod nuk ju fut dot. Hyni në një mënyrë tjetër.",
 	},
 	"sr": {
 		Link:                "Pošaljite mi umesto toga kod e-poštom",
@@ -841,6 +871,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Isključi",
 		SettingNotAvailable: "Prijava kodom još nije dostupna.",
 		SettingSaved:        "Sačuvano. Poslali smo vam e-poruku o promeni.",
+		SecondFactor:        "Пријављујете се другим кораком, па вас сам код не може пријавити. Пријавите се на други начин.",
 	},
 	"ta": {
 		Link:                "இதற்குப் பதிலாக எனக்கு மின்னஞ்சலில் குறியீட்டை அனுப்புங்கள்",
@@ -868,6 +899,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "அணை",
 		SettingNotAvailable: "குறியீட்டுடன் உள்நுழைவு இன்னும் கிடைக்கவில்லை.",
 		SettingSaved:        "சேமிக்கப்பட்டது. மாற்றம் பற்றி உங்களுக்கு மின்னஞ்சல் அனுப்பினோம்.",
+		SecondFactor:        "நீங்கள் இரண்டாவது படியுடன் உள்நுழைகிறீர்கள், எனவே குறியீடு மட்டும் உங்களை உள்நுழைய வைக்காது. வேறு வழியில் உள்நுழையவும்.",
 	},
 	"tg": {
 		Link:                "Ба ҷои ин ба ман рамзро тавассути почтаи электронӣ фиристед",
@@ -895,6 +927,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Хомӯш кардан",
 		SettingNotAvailable: "Воридшавӣ бо рамз ҳанӯз дастрас нест.",
 		SettingSaved:        "Захира шуд. Мо дар бораи тағйир ба шумо почтаи электронӣ фиристодем.",
+		SecondFactor:        "Шумо бо қадами дуюм ворид мешавед, бинобар ин танҳо рамз шуморо ворид карда наметавонад. Бо роҳи дигар ворид шавед.",
 	},
 	"th": {
 		Link:                "ส่งรหัสทางอีเมลให้ฉันแทน",
@@ -922,6 +955,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "ปิด",
 		SettingNotAvailable: "การเข้าสู่ระบบด้วยรหัสยังไม่พร้อมใช้งาน",
 		SettingSaved:        "บันทึกแล้ว เราส่งอีเมลถึงคุณเกี่ยวกับการเปลี่ยนแปลงนี้",
+		SecondFactor:        "คุณลงชื่อเข้าใช้ด้วยขั้นตอนที่สอง รหัสอย่างเดียวจึงลงชื่อเข้าใช้ให้คุณไม่ได้ ลงชื่อเข้าใช้ด้วยวิธีอื่น",
 	},
 	"tr": {
 		Link:                "Bunun yerine bana e-postayla bir kod gönderin",
@@ -949,6 +983,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Kapat",
 		SettingNotAvailable: "Kodla oturum açma henüz kullanılabilir değil.",
 		SettingSaved:        "Kaydedildi. Değişiklikle ilgili size e-posta gönderdik.",
+		SecondFactor:        "İkinci bir adımla giriş yapıyorsunuz, bu yüzden tek başına bir kod sizi giriş yaptıramaz. Başka bir yolla giriş yapın.",
 	},
 	"vi": {
 		Link:                "Gửi cho tôi mã qua email thay thế",
@@ -976,6 +1011,7 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "Tắt",
 		SettingNotAvailable: "Đăng nhập bằng mã chưa khả dụng.",
 		SettingSaved:        "Đã lưu. Chúng tôi đã gửi email cho bạn về thay đổi này.",
+		SecondFactor:        "Bạn đăng nhập bằng bước thứ hai, nên chỉ một mã thì không thể đăng nhập cho bạn. Hãy đăng nhập bằng cách khác.",
 	},
 	"zh": {
 		Link:                "改為以電子郵件寄代碼給我",
@@ -1003,5 +1039,6 @@ var codeSignInMore = map[string]CodeSignIn{
 		TurnOff:             "關閉",
 		SettingNotAvailable: "代碼登入尚未提供。",
 		SettingSaved:        "已儲存。我們已寄電子郵件告知此變更。",
+		SecondFactor:        "你使用第二步驟登入，因此單靠代碼無法讓你登入。請改用其他方式登入。",
 	},
 }
