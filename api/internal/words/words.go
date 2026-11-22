@@ -90,6 +90,40 @@ func FromHeader(header string) Lang {
 	return best
 }
 
+// ReceiptStepsFor is a receipt's step words for a reader's Accept-Language:
+// the tag with the highest q whose primary language KIFF has step words in,
+// the eight or ReceiptStepsMore's ("ca-ES" reads Catalan, "zh-Hant" the
+// Traditional Chinese), the earlier one on a tie. English when none is. A
+// reader in one of the more languages gets their receipts' steps in it,
+// and KIFF's other lines in English, as FromHeader says.
+func ReceiptStepsFor(header string) ReceiptSteps {
+	best, bestQ := Of(EN).ReceiptSteps, 0.0
+	for i, part := range strings.Split(header, ",") {
+		if i >= 20 {
+			break
+		}
+		tag, params, _ := strings.Cut(strings.TrimSpace(part), ";")
+		q := 1.0
+		if v, ok := strings.CutPrefix(strings.TrimSpace(params), "q="); ok {
+			f, err := strconv.ParseFloat(v, 64)
+			if err != nil || f > 1 {
+				continue
+			}
+			q = f
+		}
+		if q <= bestQ {
+			continue
+		}
+		primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")
+		if l, ok := known(primary); ok {
+			best, bestQ = Of(l).ReceiptSteps, q
+		} else if more, ok := ReceiptStepsMore[primary]; ok {
+			best, bestQ = more, q
+		}
+	}
+	return best
+}
+
 // Parse is a stored language tag as a Lang; English for anything else.
 func Parse(tag string) Lang {
 	primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")
@@ -228,6 +262,10 @@ type Words struct {
 	// (notify/code_sign_in.go). Each language sets them in
 	// codesignin_<lang>.go.
 	CodeSignInEmail
+
+	// A receipt's steps, by their code (receipt.StepWords), beside the
+	// signed English. Each language sets them in receiptsteps_<lang>.go.
+	ReceiptSteps
 }
 
 // CodeSignInEmail is the lines of the three code sign-in emails: the code;
@@ -245,6 +283,30 @@ type CodeSignInEmail struct {
 	CodeTurnedOnSubject, CodeTurnedOnIntro, CodeTurnedOffSubject, CodeTurnedOffIntro, CodeChangedNotYou string
 	// CodeWhy is the footer of the two emails a request sends.
 	CodeWhy string
+}
+
+// ReceiptSteps are the words for a receipt's steps, by their stable code
+// (receipt.Codes): what the apps show, with the signed message under it.
+// "%s" is the step's free part (a reason, a next step, a tool's status), as
+// it was signed.
+type ReceiptSteps struct {
+	ReceiptStepLines map[string]string
+	// ReceiptAskedAgain is a decision the call was asked again for, and
+	// got the same.
+	ReceiptAskedAgain func(line string) string
+}
+
+// ReceiptStep is code's words with its free part, or "" for a code with
+// none.
+func (r ReceiptSteps) ReceiptStep(code, detail string) string {
+	line := r.ReceiptStepLines[code]
+	if line == "" {
+		return ""
+	}
+	if strings.Contains(line, "%s") {
+		return strings.Replace(line, "%s", detail, 1)
+	}
+	return line
 }
 
 // DeviceNames are a device's names in a person's list, by its kind
