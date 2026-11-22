@@ -14,6 +14,7 @@ import (
 
 	"github.com/kiff/cloud/web/internal/apiclient"
 	"github.com/kiff/cloud/web/internal/auth"
+	"github.com/kiff/cloud/web/internal/components"
 	"github.com/kiff/cloud/web/internal/region"
 	"github.com/kiff/cloud/web/internal/session"
 	"github.com/kiff/cloud/web/internal/words"
@@ -109,7 +110,7 @@ func codeNext(r *http.Request) string {
 }
 
 func (h *CodeSignInHandler) view(r *http.Request, step string) codeView {
-	lang := appSignInLang(r)
+	lang := codeLang(r)
 	next := codeNext(r)
 	v := codeView{Lang: lang, W: words.CodeSignInIn(lang), Step: step, Next: next}
 	v.Title = v.W.Title
@@ -267,7 +268,7 @@ func (h *CodeSignInHandler) SignInPage(w http.ResponseWriter, r *http.Request) b
 		return false
 	}
 	next := redirectTarget(r)
-	lang := appSignInLang(r)
+	lang := codeLang(r)
 	v := codeView{Lang: lang, W: words.CodeSignInIn(lang), Step: "signin", Next: next}
 	v.Title = words.AppSignInIn(lang).Title
 	v.Title = strings.Replace(v.Title, "tafs", "KIFF", 1)
@@ -336,7 +337,7 @@ func browserOf(ua string) string {
 }
 
 var codePage = template.Must(template.New("code").Parse(`<!doctype html>
-<html lang="{{.Lang}}">
+<html lang="{{.Lang}}"{{if .RTL}} dir="rtl"{{end}}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -373,7 +374,7 @@ var codePage = template.Must(template.New("code").Parse(`<!doctype html>
     <input type="hidden" name="next" value="{{.Next}}">
     <input type="hidden" name="ui_locales" value="{{.Lang}}">
     <label for="email">{{.W.EmailLabel}}</label>
-    <input id="email" name="email" type="email" autocomplete="email" required value="{{.Email}}">
+    <input id="email" name="email" type="email" dir="ltr" autocomplete="email" required value="{{.Email}}">
     <button class="go" type="submit">{{.W.Send}}</button>
   </form>
   <a class="other" href="{{.Other}}">{{.W.OtherWays}}</a>
@@ -383,7 +384,7 @@ var codePage = template.Must(template.New("code").Parse(`<!doctype html>
     <input type="hidden" name="next" value="{{.Next}}">
     <input type="hidden" name="ui_locales" value="{{.Lang}}">
     <label for="code">{{.W.CodeLabel}}</label>
-    <input id="code" class="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus>
+    <input id="code" class="code" dir="ltr" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus>
     <button class="go" type="submit">{{.W.Verify}}</button>
   </form>
   <form method="post" action="/sign-in/code">
@@ -501,7 +502,7 @@ func (h *SignInSettingHandler) bearer(r *http.Request) (string, bool) {
 }
 
 func (h *SignInSettingHandler) show(w http.ResponseWriter, r *http.Request) {
-	lang := appSignInLang(r)
+	lang := codeLang(r)
 	v := settingView{Lang: lang, W: words.CodeSignInIn(lang)}
 	bearer, ok := h.bearer(r)
 	if !ok {
@@ -540,7 +541,7 @@ func (h *SignInSettingHandler) set(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/sign-out?next="+url.QueryEscape(SignInSettingPath), http.StatusSeeOther)
 	default:
 		h.logger.WarnContext(r.Context(), "sign-in setting: set failed", slog.String("err", err.Error()))
-		lang := appSignInLang(r)
+		lang := codeLang(r)
 		v := settingView{Lang: lang, W: words.CodeSignInIn(lang), On: !on, Available: !errors.Is(err, apiclient.ErrCodeOff)}
 		v.Problem = v.W.Unavailable
 		if errors.Is(err, apiclient.ErrCodeSecondFactor) {
@@ -561,7 +562,7 @@ func (h *SignInSettingHandler) render(w http.ResponseWriter, r *http.Request, v 
 }
 
 var settingPage = template.Must(template.New("setting").Parse(`<!doctype html>
-<html lang="{{.Lang}}">
+<html lang="{{.Lang}}"{{if .RTL}} dir="rtl"{{end}}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -602,3 +603,24 @@ var settingPage = template.Must(template.New("setting").Parse(`<!doctype html>
 </body>
 </html>
 `))
+
+// codeLang is the language the code sign-in screens speak: ui_locales (the
+// app's, or the one the last screen passed on) when the screens have words in
+// it, else ?lang=, else the browser's best. Unlike appSignInLang it is not
+// limited to the site's eight: the code screens read codeSignInMore's too.
+func codeLang(r *http.Request) string {
+	for _, l := range []string{r.URL.Query().Get("ui_locales"), r.PostFormValue("ui_locales"), r.URL.Query().Get("lang")} {
+		if c := words.CodeSignInTag(l); c != "" {
+			return c
+		}
+	}
+	return words.CodeSignInFromHeader(r.Header.Get("Accept-Language"))
+}
+
+// RTL is whether the screen's language is written right to left (Arabic,
+// Hebrew, Dhivehi), so its <html> says dir="rtl". The address and the code
+// stay left to right.
+func (v codeView) RTL() bool { return components.IsRightToLeft(v.Lang) }
+
+// RTL is the same for the Settings row.
+func (v settingView) RTL() bool { return components.IsRightToLeft(v.Lang) }

@@ -208,7 +208,7 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, settingJSON{})
 		return
 	}
-	set, err := h.svc.SetEmailCode(r.Context(), id.Subject, *b.EmailCode, words.FromHeader(r.Header.Get("Accept-Language")))
+	set, err := h.svc.SetEmailCode(r.Context(), id.Subject, *b.EmailCode, words.CodeLangFromHeader(r.Header.Get("Accept-Language")))
 	if err != nil {
 		h.logger.WarnContext(r.Context(), "code sign-in: set failed", slog.String("err", err.Error()))
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "unavailable"})
@@ -217,14 +217,7 @@ func (h *Handler) put(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, settingJSON{EmailCode: set.EmailCode, ChangedAt: &set.ChangedAt, Available: true})
 }
 
-func lang(s string) words.Lang {
-	for _, l := range words.All {
-		if string(l) == strings.TrimSpace(s) {
-			return l
-		}
-	}
-	return words.EN
-}
+func lang(s string) words.Lang { return words.CodeLang(s) }
 
 func cut(s string, n int) string {
 	s = strings.TrimSpace(s)

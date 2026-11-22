@@ -25,13 +25,13 @@ type codeView struct {
 	Rows                                                 []newDeviceRow
 }
 
-func askedRows(w *words.Words, lang words.Lang, a CodeAsked) []newDeviceRow {
-	rows := []newDeviceRow{{Label: w.CodeAskedWhen, Value: w.DateTimeIn(a.At, time.UTC) + " (UTC)"}}
+func askedRows(w *words.Words, e words.CodeSignInEmail, lang words.Lang, a CodeAsked) []newDeviceRow {
+	rows := []newDeviceRow{{Label: e.CodeAskedWhen, Value: w.DateTimeIn(a.At, time.UTC) + " (UTC)"}}
 	if b := strings.TrimSpace(a.Browser); b != "" {
-		rows = append(rows, newDeviceRow{Label: w.CodeAskedBrowser, Value: b})
+		rows = append(rows, newDeviceRow{Label: e.CodeAskedBrowser, Value: b})
 	}
 	if c := country(a.Country, lang); c != "" {
-		rows = append(rows, newDeviceRow{Label: w.CodeAskedPlace, Value: c})
+		rows = append(rows, newDeviceRow{Label: e.CodeAskedPlace, Value: c})
 	}
 	for i := range rows {
 		rows[i].Line = w.NewDeviceRow(rows[i].Label, rows[i].Value)
@@ -87,9 +87,9 @@ func renderCode(v codeView) (string, string, error) {
 // renderSignInCode is the code email: the code, how long it works, never
 // to give it to anyone, and where it was asked for.
 func renderSignInCode(code string, lang words.Lang, a CodeAsked) (subject, text, html string, err error) {
-	w := words.Of(lang)
-	v := codeView{Subject: w.CodeSubject, Intro: w.CodeIntro, Code: code, Valid: w.CodeValid, NeverShare: w.CodeNeverShare,
-		NotYou: w.CodeNotYou, Why: w.CodeWhy, Rows: askedRows(w, lang, a)}
+	w, e := words.Of(lang), words.CodeSignInEmailFor(lang)
+	v := codeView{Subject: e.CodeSubject, Intro: e.CodeIntro, Code: code, Valid: e.CodeValid, NeverShare: e.CodeNeverShare,
+		NotYou: e.CodeNotYou, Why: e.CodeWhy, Rows: askedRows(w, e, lang, a)}
 	text, html, err = renderCode(v)
 	return v.Subject, text, html, err
 }
@@ -97,9 +97,9 @@ func renderSignInCode(code string, lang words.Lang, a CodeAsked) (subject, text,
 // renderSignInCodeOff is "signing in with a code isn't on", and how to turn
 // it on.
 func renderSignInCodeOff(lang words.Lang, a CodeAsked) (subject, text, html string, err error) {
-	w := words.Of(lang)
-	v := codeView{Subject: w.CodeOffSubject, Intro: w.CodeOffIntro + " " + w.CodeOffHow, NotYou: w.CodeOffNotYou, Why: w.CodeWhy,
-		Rows: askedRows(w, lang, a)}
+	w, e := words.Of(lang), words.CodeSignInEmailFor(lang)
+	v := codeView{Subject: e.CodeOffSubject, Intro: e.CodeOffIntro + " " + e.CodeOffHow, NotYou: e.CodeOffNotYou, Why: e.CodeWhy,
+		Rows: askedRows(w, e, lang, a)}
 	text, html, err = renderCode(v)
 	return v.Subject, text, html, err
 }
@@ -107,12 +107,12 @@ func renderSignInCodeOff(lang words.Lang, a CodeAsked) (subject, text, html stri
 // renderSignInCodeChanged is the notice that the setting was turned on or
 // off.
 func renderSignInCodeChanged(on bool, lang words.Lang, at time.Time) (subject, text, html string, err error) {
-	w := words.Of(lang)
-	v := codeView{Subject: w.CodeTurnedOffSubject, Intro: w.CodeTurnedOffIntro, NotYou: w.CodeChangedNotYou}
+	w, e := words.Of(lang), words.CodeSignInEmailFor(lang)
+	v := codeView{Subject: e.CodeTurnedOffSubject, Intro: e.CodeTurnedOffIntro, NotYou: e.CodeChangedNotYou}
 	if on {
-		v.Subject, v.Intro = w.CodeTurnedOnSubject, w.CodeTurnedOnIntro
+		v.Subject, v.Intro = e.CodeTurnedOnSubject, e.CodeTurnedOnIntro
 	}
-	v.Rows = askedRows(w, lang, CodeAsked{At: at})
+	v.Rows = askedRows(w, e, lang, CodeAsked{At: at})
 	text, html, err = renderCode(v)
 	return v.Subject, text, html, err
 }

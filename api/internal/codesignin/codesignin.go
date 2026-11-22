@@ -287,6 +287,7 @@ func (s *Service) run() {
 func (s *Service) do(j job) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
+	defer s.recoverJob(ctx, "send")
 	now := s.now()
 	s.sweep(ctx, now)
 	// Never the address: its hash's start says which request it was.
@@ -500,6 +501,7 @@ func (s *Service) SetEmailCode(ctx context.Context, subject string, on bool, lan
 func (s *Service) tellChanged(subject string, on bool, lang words.Lang, at time.Time) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
+	defer s.recoverJob(ctx, "changed email")
 	addrs, err := s.People.VerifiedEmails(ctx, subject)
 	if err != nil {
 		s.Logger.WarnContext(ctx, "code sign-in: changed email: lookup failed", slog.String("err", err.Error()))
@@ -512,5 +514,14 @@ func (s *Service) tellChanged(subject string, on bool, lang words.Lang, at time.
 	}
 	if s.sent != nil {
 		s.sent()
+	}
+}
+
+// recoverJob drops one background job that panicked, and says so, instead of
+// letting it end the whole API: these run in their own goroutines, past the
+// request's answer, where nothing else would catch it.
+func (s *Service) recoverJob(ctx context.Context, what string) {
+	if r := recover(); r != nil {
+		s.Logger.ErrorContext(ctx, "code sign-in: "+what+" job panicked; dropped", slog.Any("panic", r))
 	}
 }

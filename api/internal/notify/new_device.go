@@ -97,7 +97,13 @@ func country(c string, lang words.Lang) string {
 	if err != nil {
 		tag = language.English
 	}
-	if n := display.Regions(tag).Name(r); n != "" {
+	// display.Regions has no names for a language CLDR doesn't cover (the Dhivehi
+	// or Dzongkha code emails): a nil namer, so it reads in English then.
+	namer := display.Regions(tag)
+	if namer == nil {
+		namer = display.Regions(language.English)
+	}
+	if n := namer.Name(r); n != "" {
 		return n
 	}
 	return c
