@@ -27,9 +27,13 @@ func fakeAPI(t *testing.T, routes map[string]http.HandlerFunc) *httptest.Server 
 	return srv
 }
 
+// newSessionClient talks to srv through srv's own transport. The tests run in
+// parallel, and httptest.Server.Close drops http.DefaultTransport's idle
+// connections: through the shared transport, one test's cleanup could break
+// another's request ("CloseIdleConnections called").
 func newSessionClient(t *testing.T, srv *httptest.Server) *apiclient.Client {
 	t.Helper()
-	c, err := apiclient.NewSessionAware(srv.URL, 0)
+	c, err := apiclient.NewSessionAwareWithTransport(srv.URL, 0, srv.Client().Transport)
 	if err != nil {
 		t.Fatalf("NewSessionAware: %v", err)
 	}
