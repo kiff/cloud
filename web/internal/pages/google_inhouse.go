@@ -79,6 +79,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ca": "veure, editar, crear i eliminar tots els vostres fulls de càlcul a Google Sheets",
 			"mk": "да ги гледате, уредувате, создавате и бришете сите ваши табели во Google Sheets",
 			"mn": "Google Sheets дахь бүх хүснэгтээ харах, засах, үүсгэх, устгах",
+			"ne": "Google Sheets मा आफ्ना सबै स्प्रेडसिट हेर्न, सम्पादन गर्न, बनाउन र मेट्न",
 		}},
 	},
 	"Google Calendar": {
@@ -120,6 +121,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ca": "veure els esdeveniments dels vostres calendaris",
 			"mk": "да ги гледате настаните во вашите календари",
 			"mn": "хуанлидаа байгаа үйл явдлуудыг харах",
+			"ne": "आफ्ना क्यालेन्डरका घटनाहरू हेर्न",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -159,6 +161,7 @@ var googleAppScopes = map[string][]googleScope{
 			"ca": "veure i editar els esdeveniments dels vostres calendaris",
 			"mk": "да ги гледате и уредувате настаните во вашите календари",
 			"mn": "хуанлидаа байгаа үйл явдлуудыг харах ба засах",
+			"ne": "आफ्ना क्यालेन्डरका घटनाहरू हेर्न र सम्पादन गर्न",
 		}},
 	},
 }
