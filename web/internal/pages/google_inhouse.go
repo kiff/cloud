@@ -84,6 +84,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lo": "ເບິ່ງ, ແກ້ໄຂ, ສ້າງ ແລະ ລຶບຕາຕະລາງ Google Sheets ທັງໝົດຂອງທ່ານ",
 			"si": "ඔබේ සියලුම Google Sheets පැතුරුම්පත් බැලීම, සංස්කරණය, සෑදීම සහ මැකීම",
 			"ta": "உங்கள் அனைத்து Google Sheets விரிதாள்களையும் பார்க்க, திருத்த, உருவாக்க மற்றும் நீக்க",
+			"tg": "дидан, таҳрир, эҷод ва нест кардани ҳамаи ҷадвалҳои Google Sheets-и шумо",
 		}},
 	},
 	"Google Calendar": {
@@ -130,6 +131,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lo": "ເບິ່ງເຫດການໃນປະຕິທິນຂອງທ່ານ",
 			"si": "ඔබේ දිනදර්ශනවල සිදුවීම් බැලීම",
 			"ta": "உங்கள் நாட்காட்டிகளில் உள்ள நிகழ்வுகளைப் பார்க்க",
+			"tg": "дидани рӯйдодҳо дар тақвимҳои шумо",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -174,6 +176,7 @@ var googleAppScopes = map[string][]googleScope{
 			"lo": "ເບິ່ງ ແລະ ແກ້ໄຂເຫດການໃນປະຕິທິນຂອງທ່ານ",
 			"si": "ඔබේ දිනදර්ශනවල සිදුවීම් බැලීම සහ සංස්කරණය",
 			"ta": "உங்கள் நாட்காட்டிகளில் உள்ள நிகழ்வுகளைப் பார்க்க மற்றும் திருத்த",
+			"tg": "дидан ва таҳрири рӯйдодҳо дар тақвимҳои шумо",
 		}},
 	},
 }
