@@ -210,6 +210,24 @@ func EmailPluralProblems(lang string, lines EmailLines) []string {
 	return out
 }
 
+// moneyClash says when a language's thousands separator is its decimal mark, so "1,250" could be one thousand two
+// hundred fifty or one and a quarter: DecimalComma false writes the mark as a dot, true as a comma.
+func moneyClash(lines EmailLines) string {
+	th, ok := lines["Money.Thousands"]
+	dc, ok2 := lines["DecimalComma"]
+	if !ok || !ok2 {
+		return ""
+	}
+	mark := "dot"
+	if dc == "true" {
+		mark = "comma"
+	}
+	if th == mark {
+		return "Money.Thousands is the decimal mark (" + mark + "): an amount would read two ways"
+	}
+	return ""
+}
+
 // lineValueProblem is what is wrong with one line's value besides its parts, "" when nothing.
 func lineValueProblem(name, got string) string {
 	_, isPlural := pluralLines[name]
@@ -254,7 +272,7 @@ func groupComplete(lines EmailLines, group string) bool {
 			return false
 		}
 	}
-	return true
+	return group != groupCards || moneyClash(lines) == ""
 }
 
 // EmailGroupComplete says whether lang has every line of a group ("core" or "notices"); the eight have them all.
@@ -407,6 +425,9 @@ func EmailLinesProblems(lines EmailLines) []string {
 		if _, ok := english[name]; !ok {
 			out = append(out, name+" is not a line of the emails")
 		}
+	}
+	if p := moneyClash(lines); p != "" {
+		out = append(out, p)
 	}
 	sort.Strings(out)
 	return out

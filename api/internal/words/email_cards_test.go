@@ -261,3 +261,33 @@ func TestACardLineWithAWrongValueMakesTheGroupNone(t *testing.T) {
 		t.Errorf("a line needs the form for other")
 	}
 }
+
+// A language's thousands separator is never its decimal mark: an entry with both a comma (or both a dot) is a problem
+// and its cards group is read as none, so no amount in a warning reads two ways.
+func TestAThousandsSeparatorIsNeverTheDecimalMark(t *testing.T) {
+	const tag = "nn"
+	full := EmailLines{}
+	for k, v := range EmailLinesEnglish() {
+		full[k] = shout(tag, k, v)
+	}
+	defer func() { delete(EmailMore, tag); forgetEmailWords(tag) }()
+	for _, c := range []struct {
+		thousands, comma string
+		bad              bool
+	}{
+		{"comma", "false", false}, {"dot", "true", false}, {"nbsp", "true", false}, {"apostrophe", "false", false}, {"none", "true", false},
+		{"comma", "true", true}, {"dot", "false", true},
+	} {
+		lines := EmailLines{}
+		for k, v := range full {
+			lines[k] = v
+		}
+		lines["Money.Thousands"], lines["DecimalComma"] = c.thousands, c.comma
+		EmailMore[tag] = lines
+		forgetEmailWords(tag)
+		problems := len(EmailLinesProblems(lines)) > 0
+		if problems != c.bad || EmailGroupComplete(tag, groupCards) == c.bad {
+			t.Errorf("thousands %s, decimal comma %s: problem %v, group whole %v", c.thousands, c.comma, problems, EmailGroupComplete(tag, groupCards))
+		}
+	}
+}
