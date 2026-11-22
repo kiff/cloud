@@ -73,6 +73,7 @@ var googleAppScopes = map[string][]googleScope{
 			"sq": "shikimin, redaktimin, krijimin dhe fshirjen e të gjitha fletëve tuaja të llogaritjes në Google Sheets",
 			"ka": "თქვენი ყველა ცხრილის ნახვა, რედაქტირება, შექმნა და წაშლა Google Sheets-ში",
 			"hy": "ձեր բոլոր աղյուսակները դիտելու, խմբագրելու, ստեղծելու և ջնջելու Google Sheets-ում",
+			"az": "bütün cədvəllərinizə Google Sheets-də baxmaq, onları redaktə etmək, yaratmaq və silmək",
 		}},
 	},
 	"Google Calendar": {
@@ -108,6 +109,7 @@ var googleAppScopes = map[string][]googleScope{
 			"sq": "shikimin e ngjarjeve në kalendarët tuaj",
 			"ka": "თქვენს კალენდრებში მოვლენების ნახვა",
 			"hy": "ձեր օրացույցների իրադարձությունները դիտելու",
+			"az": "təqvimlərinizdəki hadisələrə baxmaq",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -141,6 +143,7 @@ var googleAppScopes = map[string][]googleScope{
 			"sq": "shikimin dhe redaktimin e ngjarjeve në kalendarët tuaj",
 			"ka": "თქვენს კალენდრებში მოვლენების ნახვა და რედაქტირება",
 			"hy": "ձեր օրացույցների իրադարձությունները դիտելու և խմբագրելու",
+			"az": "təqvimlərinizdəki hadisələrə baxmaq və onları redaktə etmək",
 		}},
 	},
 }

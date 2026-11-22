@@ -45,6 +45,7 @@ var partialPages = map[string][]string{
 	"sq": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"ka": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"hy": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"az": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -75,7 +76,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -117,6 +118,7 @@ var languageNames = map[string]string{
 	"sq": "Shqip",
 	"ka": "ქართული",
 	"hy": "Հայերեն",
+	"az": "Azərbaycanca",
 }
 
 // LanguageName is a site language's name in that language.
@@ -299,6 +301,7 @@ var translationNotices = map[string]string{
 	"sq": "Ky është një përkthim për qëllime informimi. Versioni në anglisht është ai që mbizotëron:",
 	"ka": "ეს არის თარგმანი ინფორმაციის მიზნით. ძალაშია ინგლისური ვერსია:",
 	"hy": "Սա թարգմանություն է տեղեկատվության նպատակով։ Գործում է անգլերեն տարբերակը՝",
+	"az": "Bu, məlumat məqsədilə tərcümədir. İngilis dilindəki versiya qüvvədədir:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -332,6 +335,7 @@ var inEnglish = map[string]string{
 	"sq": "(në anglisht)",
 	"ka": "(ინგლისურად)",
 	"hy": "(անգլերեն)",
+	"az": "(ingiliscə)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
