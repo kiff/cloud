@@ -26,7 +26,7 @@ KIFF and tafs are not for anyone under 16.
 
 ## 6. Representative and registry
 
-**Representative in Türkiye.** A controller outside Türkiye registers in the data controllers' registry (VERBİS) through a representative in Türkiye, unless it is exempt. We have no representative in Türkiye today. We will name one here, as the contact point for the Personal Data Protection Authority and for people in Türkiye, before KIFF and tafs are offered in Türkiye.
+**Representative in Türkiye.** A controller outside Türkiye registers in the data controllers' registry (VERBİS) through a representative in Türkiye. We have no representative in Türkiye today. We will name one here, as the contact point for the Personal Data Protection Authority and for people in Türkiye, before KIFF and tafs are offered in Türkiye.
 
 ## 7. Where to complain
 
