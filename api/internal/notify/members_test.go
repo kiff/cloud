@@ -39,7 +39,7 @@ func TestMembershipEmailsInALanguage(t *testing.T) {
 	if subject != "Du bist zu „Acme“ auf KIFF eingeladen" ||
 		!strings.HasPrefix(text, "Ein Admin hat dich zu dem KIFF-Konto, das seine Admins „Acme“ genannt haben, eingeladen, als Genehmiger") ||
 		!strings.Contains(text, "die zurückgehaltenen Aktionen des Kontos beantworten kannst") ||
-		!strings.Contains(text, "Die Einladung läuft am 2. März 2027 15:04 UTC ab.") ||
+		!strings.Contains(text, "Die Einladung läuft am 2. März 2027, 15:04 (UTC) ab.") ||
 		!strings.Contains(body, ">Einladung ansehen und annehmen</a>") {
 		t.Fatalf("de invite:\n%s\n%s\n%s", subject, text, body)
 	}

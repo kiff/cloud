@@ -119,9 +119,13 @@ var pl = Words{
 	HeldApproveOnce: "Zatwierdź raz",
 	HeldChangeCard:  "Zmień Card, aby na to pozwalała",
 	HeldReject:      "Odrzuć",
-	WarnSpent:       "Ta suma Card została wyczerpana.",
-	WarnBurst:       "Nowa Card zużyła więcej niż jej próg skoku na początku tego okresu.",
-	WarnRunway:      "W ostatnim tempie ta suma Card wkrótce się wyczerpie.",
+	HeldWants: func(agent string) string {
+		return fmt.Sprintf("%s chce zrobić coś, co wykracza poza jego Card:", agent)
+	},
+	HeldRowAction: "Działanie", HeldRowAmount: "Kwota", HeldRowWhy: "Dlaczego jest oczekujące",
+	WarnSpent:  "Ta suma Card została wyczerpana.",
+	WarnBurst:  "Nowa Card zużyła więcej niż jej próg skoku na początku tego okresu.",
+	WarnRunway: "W ostatnim tempie ta suma Card wkrótce się wyczerpie.",
 	WarnUnusual: func(ratio string) string {
 		return "Ostatnie użycie to " + ratio + "× jego równoważnej średniej z siedmiu dni."
 	},

@@ -38,6 +38,15 @@ type HeldAction struct {
 	NextSteps []string
 	// Lang is the recipient's language (personlang); English when empty.
 	Lang words.Lang
+	// ActionWords, AmountText and Reason are the call in the person's
+	// words, as the apps' Needs you says it (handlers/held_email_words.go):
+	// "Refund a payment", "€47.00", "€47.00 is over the €40 limit for one
+	// call". Empty when KIFF could not read
+	// them; the email then says the action and amount as they were asked
+	// (Action, Amount, Outside). Zone is the account's time zone, for when the
+	// hold stops waiting; UTC when nil.
+	ActionWords, AmountText, Reason string
+	Zone                            *time.Location
 }
 
 // The answers offered in the email, with the Card's next steps between
@@ -50,6 +59,7 @@ type heldView struct {
 	Answers []heldAnswerLink
 	// The email's sentences in the recipient's language (internal/words):
 	// Intro and Intro HTML say who wants what; the rest are as worded.
+	Rows        []newDeviceRow
 	Intro       string
 	IntroHTML   htmltemplate.HTML
 	NothingDone string
@@ -71,11 +81,30 @@ func newHeldView(h HeldAction) heldView {
 	if h.Amount != "" {
 		amount = " " + h.Amount
 	}
-	v.Intro = w.HeldIntro(h.Agent, h.Action, amount)
 	esc := htmltemplate.HTMLEscapeString
-	v.IntroHTML = htmltemplate.HTML(w.HeldIntro("<strong>"+esc(h.Agent)+"</strong>", "<strong>"+esc(h.Action)+"</strong>", esc(amount))) //nolint:gosec // every part the agent chose is escaped
+	if h.ActionWords != "" {
+		// In people's words: who wants to do something outside its Card, then
+		// what, how much and why it is held, as rows.
+		v.Intro = w.HeldWants(h.Agent)
+		v.IntroHTML = htmltemplate.HTML(w.HeldWants("<strong>" + esc(h.Agent) + "</strong>")) //nolint:gosec // every part the agent chose is escaped
+		v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAction, Value: h.ActionWords})
+		if h.AmountText != "" {
+			v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowAmount, Value: h.AmountText})
+		}
+		if h.Reason != "" {
+			v.Rows = append(v.Rows, newDeviceRow{Label: w.HeldRowWhy, Value: h.Reason})
+		}
+		for i := range v.Rows {
+			v.Rows[i].Line = w.NewDeviceRow(v.Rows[i].Label, v.Rows[i].Value)
+		}
+		v.Outside = nil
+	} else {
+		v.Intro = w.HeldIntro(h.Agent, h.Action, amount)
+		v.IntroHTML = htmltemplate.HTML(w.HeldIntro("<strong>"+esc(h.Agent)+"</strong>", "<strong>"+esc(h.Action)+"</strong>", esc(amount))) //nolint:gosec // every part the agent chose is escaped
+	}
 	if !h.ExpiresAt.IsZero() {
-		v.Expires = w.HeldExpires(w.DateTime(h.ExpiresAt))
+		// When the hold stops waiting, in the account's zone and named.
+		v.Expires = w.HeldExpires(w.DateTimeIn(h.ExpiresAt, h.Zone) + " (" + zoneName(w, h.Zone) + ")")
 	}
 	var steps []string
 	for _, s := range h.NextSteps {
@@ -104,7 +133,8 @@ func nextStepLabel(step string) string {
 }
 
 var heldText = texttemplate.Must(texttemplate.New("held").Parse(`{{.Intro}}
-{{range .Outside}}
+{{range .Rows}}
+{{.Line}}{{end}}{{range .Outside}}
 - {{.}}{{end}}
 
 {{.NothingDone}} {{.Open}}
@@ -117,14 +147,20 @@ var heldText = texttemplate.Must(texttemplate.New("held").Parse(`{{.Intro}}
 — KIFF
 `))
 
-var heldHTML = htmltemplate.Must(htmltemplate.New("held").Parse(`<!doctype html><html><body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">
-<p>{{.IntroHTML}}</p>
-<ul>{{range .Outside}}<li>{{.}}</li>{{end}}</ul>
-<p>{{.NothingDone}}{{if .Expires}} {{.Expires}}{{end}}</p>
-<p>{{range .Answers}}<a href="{{.URL}}" style="display:inline-block;margin:0 8px 8px 0;padding:8px 14px;border:1px solid #1a1a1a;border-radius:6px;color:#1a1a1a;text-decoration:none">{{.Label}}</a>{{end}}</p>
-<p style="color:#666;font-size:13px">{{.ButtonsNote}} {{.NoApprove}}</p>
-<p style="color:#666;font-size:13px">— KIFF</p>
-</body></html>`))
+// heldMail is the email on the shared layout (layout.go): who wants what,
+// what it would do, then a button per answer that opens the hold.
+func heldMail(v heldView) mail {
+	paras := v.NothingDone
+	if v.Expires != "" {
+		paras += " " + v.Expires
+	}
+	m := mail{Lang: v.Lang, LeadHTML: v.IntroHTML, Rows: v.Rows, List: v.Outside, Paras: []string{paras},
+		Small: []string{v.ButtonsNote + " " + v.NoApprove}}
+	for _, a := range v.Answers {
+		m.Buttons = append(m.Buttons, mailButton{Label: a.Label, URL: a.URL})
+	}
+	return m
+}
 
 // renderHeld returns the subject, text and HTML of a held-action email.
 func renderHeld(h HeldAction) (subject, text, html string, err error) {
@@ -132,14 +168,18 @@ func renderHeld(h HeldAction) (subject, text, html string, err error) {
 		return "", "", "", fmt.Errorf("notify: a held action needs its review link")
 	}
 	v := newHeldView(h)
-	var t, b bytes.Buffer
+	var t bytes.Buffer
 	if err := heldText.Execute(&t, v); err != nil {
 		return "", "", "", err
 	}
-	if err := heldHTML.Execute(&b, v); err != nil {
+	subject = words.Of(h.Lang).HeldSubject
+	m := heldMail(v)
+	m.Title = subject
+	page, err := renderLayout(m)
+	if err != nil {
 		return "", "", "", err
 	}
-	return words.Of(h.Lang).HeldSubject, t.String(), b.String(), nil
+	return subject, t.String(), page, nil
 }
 
 // ActionHeld implements Notifier.

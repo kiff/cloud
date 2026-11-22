@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	htmltemplate "html/template"
 	"strings"
 	texttemplate "text/template"
 	"time"
@@ -61,7 +60,7 @@ type newDeviceRow struct{ Label, Value, Line string }
 type newDeviceView struct {
 	SessionsURL                                    string
 	Subject, Intro, PlaceNote, WasYou, NotYou, Why string
-	Sessions, Brand, KIFFLogo, TafsLogo            string
+	Sessions, Brand                                string
 	Rows                                           []newDeviceRow
 }
 
@@ -121,13 +120,11 @@ func (d NewDevice) place() string {
 
 func newNewDeviceView(d NewDevice) newDeviceView {
 	w := words.Of(d.Lang)
-	site := strings.TrimRight(d.SiteURL, "/")
 	v := newDeviceView{SessionsURL: d.SessionsURL, Subject: w.NewDeviceSubject, Intro: w.NewDeviceIntro,
 		WasYou: w.NewDeviceWasYou, NotYou: w.NewDeviceNotYouSignOut, Sessions: w.NewDeviceSessions, Why: w.NewDeviceWhy,
-		Brand: "KIFF", KIFFLogo: site + "/static/img/logo/kiff-logo-transparent-512.png"}
+		Brand: "KIFF"}
 	if d.Tafs {
 		v.Subject, v.Intro, v.Brand = w.NewDeviceSubjectTafs, w.NewDeviceIntroTafs, TafsByKIFF
-		v.TafsLogo = site + "/static/img/tafs/tafs-icon-512.png"
 	}
 	if d.Password {
 		v.NotYou = w.NewDeviceNotYou
@@ -178,23 +175,14 @@ var newDeviceText = texttemplate.Must(texttemplate.New("new-device").Parse(`{{.I
 — {{.Brand}}
 `))
 
-// The HTML is what mail apps render alike: tables, inline styles, no
-// script and no web font; one column that fits a phone.
-var newDeviceHTML = htmltemplate.Must(htmltemplate.New("new-device").Parse(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"></head>
-<body style="margin:0;padding:0">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:24px 16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">
-<tr><td style="padding:0 0 16px">{{if .TafsLogo}}<img src="{{.TafsLogo}}" alt="" width="24" height="24" style="vertical-align:middle;margin-right:6px">{{end}}<img src="{{.KIFFLogo}}" alt="" width="24" height="24" style="vertical-align:middle;margin-right:6px"><strong style="vertical-align:middle">{{.Brand}}</strong></td></tr>
-<tr><td style="padding:0 0 12px">{{.Intro}}</td></tr>
-<tr><td style="padding:0 0 16px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #d0d0d0;border-radius:8px;border-collapse:separate">
-{{range $i, $r := .Rows}}<tr><td width="38%" style="padding:10px 12px;{{if $i}}border-top:1px solid #d0d0d0;{{end}}color:#666666;font-size:13px;vertical-align:top">{{$r.Label}}</td><td style="padding:10px 12px;{{if $i}}border-top:1px solid #d0d0d0;{{end}}font-weight:600;vertical-align:top">{{$r.Value}}</td></tr>
-{{end}}</table>{{if .PlaceNote}}
-<p style="margin:8px 0 0;color:#666666;font-size:13px">{{.PlaceNote}}</p>{{end}}</td></tr>
-<tr><td style="padding:0 0 16px">{{.WasYou}}<br>{{.NotYou}}</td></tr>
-<tr><td style="padding:0 0 16px"><a href="{{.SessionsURL}}" style="display:inline-block;padding:8px 14px;border:1px solid #1a1a1a;border-radius:6px;color:#1a1a1a;text-decoration:none">{{.Sessions}}</a></td></tr>
-<tr><td style="color:#666666;font-size:13px">{{.Why}}</td></tr>
-</table></td></tr></table>
-</body></html>`))
+// newDeviceMail is the email on the shared layout (layout.go); the layout draws
+// the logos.
+func newDeviceMail(v newDeviceView, lang words.Lang, site string) mail {
+	return mail{Lang: lang, Brand: v.Brand, Site: site, Lead: v.Intro, Rows: v.Rows, Note: v.PlaceNote,
+		Paras:   []string{v.WasYou, v.NotYou},
+		Buttons: []mailButton{{Label: v.Sessions, URL: v.SessionsURL}},
+		Small:   []string{v.Why}}
+}
 
 // renderNewDevice returns the subject, text and HTML of a new-device email.
 func renderNewDevice(d NewDevice) (subject, text, html string, err error) {
@@ -202,14 +190,17 @@ func renderNewDevice(d NewDevice) (subject, text, html string, err error) {
 		return "", "", "", fmt.Errorf("notify: a new-device email needs its sessions link and the site")
 	}
 	v := newNewDeviceView(d)
-	var t, b bytes.Buffer
+	var t bytes.Buffer
 	if err := newDeviceText.Execute(&t, v); err != nil {
 		return "", "", "", err
 	}
-	if err := newDeviceHTML.Execute(&b, v); err != nil {
+	m := newDeviceMail(v, d.Lang, d.SiteURL)
+	m.Title = v.Subject
+	page, err := renderLayout(m)
+	if err != nil {
 		return "", "", "", err
 	}
-	return v.Subject, t.String(), b.String(), nil
+	return v.Subject, t.String(), page, nil
 }
 
 // NewDeviceSignedIn sends the new-device email.

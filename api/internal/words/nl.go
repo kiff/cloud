@@ -114,9 +114,13 @@ var nl = Words{
 	HeldApproveOnce: "Eenmalig goedkeuren",
 	HeldChangeCard:  "Card wijzigen om het toe te staan",
 	HeldReject:      "Weigeren",
-	WarnSpent:       "Dit totaal van de Card is op.",
-	WarnBurst:       "Een nieuwe Card heeft aan het begin van deze periode meer dan zijn piekdrempel gebruikt.",
-	WarnRunway:      "In het recente tempo is dit totaal van de Card bijna op.",
+	HeldWants: func(agent string) string {
+		return fmt.Sprintf("%s wil iets doen wat buiten zijn Card valt:", agent)
+	},
+	HeldRowAction: "Actie", HeldRowAmount: "Bedrag", HeldRowWhy: "Waarom het wordt vastgehouden",
+	WarnSpent:  "Dit totaal van de Card is op.",
+	WarnBurst:  "Een nieuwe Card heeft aan het begin van deze periode meer dan zijn piekdrempel gebruikt.",
+	WarnRunway: "In het recente tempo is dit totaal van de Card bijna op.",
 	WarnUnusual: func(ratio string) string {
 		return "Het recente gebruik is " + ratio + " keer het vergelijkbare gemiddelde over zeven dagen."
 	},

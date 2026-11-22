@@ -147,17 +147,19 @@ type ProposalsHandler struct {
 	// runs the send detached; tests make it synchronous.
 	holdOwners   OwnerEmailResolver
 	holdNotifier notify.Notifier
-	appBaseURL   string
-	dispatch     func(func())
-	ledger       billing.UsageLedger
-	reader       proposals.Reader
-	locker       ProposalLocker
-	alerter      alert.Notifier
-	cardUnits    CardUnitAsks   // optional; the one ask per agent, action and unit (kiff/tafs#464 item 11)
-	events       *stream.Broker // optional; pushes live decision events to SSE subscribers
-	logger       *slog.Logger
-	now          func() time.Time
-	idemWindow   time.Duration
+	// heldWords says the held call in people's words in that email; optional.
+	heldWords  HeldWordsSource
+	appBaseURL string
+	dispatch   func(func())
+	ledger     billing.UsageLedger
+	reader     proposals.Reader
+	locker     ProposalLocker
+	alerter    alert.Notifier
+	cardUnits  CardUnitAsks   // optional; the one ask per agent, action and unit (kiff/tafs#464 item 11)
+	events     *stream.Broker // optional; pushes live decision events to SSE subscribers
+	logger     *slog.Logger
+	now        func() time.Time
+	idemWindow time.Duration
 	// permits mints execution permits; nil refuses any request
 	// for one. permitTargets says which actions need one.
 	permits *permit.Issuer

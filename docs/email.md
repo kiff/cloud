@@ -1,0 +1,57 @@
+# Email
+
+Every email KIFF sends is drawn by one layout (`api/internal/notify/layout.go`) from the person's own words (`api/internal/words`). This is the guide for people who write or change one.
+
+## What a KIFF email looks like
+
+From **KIFF `<hello@kiff.dev>`**, reply-to `support@kiff.dev`. (Both are set in `api/cmd/api/main.go`; `KIFF_NOTIFY_FROM` and `KIFF_NOTIFY_REPLY_TO` override them.) The mail's own name is the brand: "KIFF", or "tafs by KIFF" for a sign-in through the tafs app.
+
+One column, 560 px at most, tables and inline styles, no script, no web font, no tracking. **The header is the same on every email:** the KIFF mark (28 px, hosted on kiff.dev, `static/img/logo/kiff-logo-transparent-512.png`; tafs by KIFF has the tafs mark before it) next to the name, and **one amber rule** under it. The amber is kiff.dev's own (`--k-amber`, `#ff9a1a`); it is also the button to press, with dark text on it, never white. **The footer is mandatory on every email**, in this order: "KIFF will never ask for your password or code.", the Privacy and Help links (tafs by KIFF links the tafs Privacy page), and Kiff Agents OÜ with its registered address. In order, and each part is optional:
+
+| Part | What it is |
+|---|---|
+| Brand | the logo(s) and the name |
+| Lead | the sentence the email opens with: who did what, or what happened |
+| Code | a sign-in code, large, monospace, always left to right |
+| Paragraphs | the body, one thought each |
+| Warning | one bold line (never share this code) |
+| List | bullets (what a held action would do) |
+| Details | a table of label and value (when, browser, place) |
+| Note | a small line under the table |
+| Buttons | links drawn as buttons; **the first is the one to press**, the rest are outlines |
+| Small print | why you got this, what to do if it wasn't you |
+| Footer | never-ask line, Privacy and Help, the company and its address: always |
+
+Screenshots, in English, French and Arabic (`docs/email/sheet-en.png`, `sheet-fr.png`, `sheet-ar.png`). The Arabic sheet shows the three code sign-in emails, the only ones written in Arabic today; its dates are still English (see "Languages").
+
+## Rules
+
+- **Say "account".** Never "workspace" and never "KIFF Cloud": the product says account.
+- **An email never answers for the person.** A button opens KIFF, where they sign in and decide. A link that answered by itself would let a mail scanner or anyone the email is forwarded to approve (see the held-action email).
+- **No secret but the code.** A code goes in the code email and nowhere else, never in a subject. No token, no link that signs in, no password, no card number. A ticket's reply never travels by email, only a link to it.
+- **Escape everything.** Every part is plain text and the layout escapes it. The one exception is `LeadHTML`, which the caller builds and escapes part by part (the held email's agent and action). A value an agent, a person or a provider chose (an account's name, a device, a browser, a place) is escaped and never reads as the sender.
+- **Speak people, not code.** An email never says an identifier, a unit's name or a raw number: a call is "Refund a payment", an amount is "€47.00" in the person's currency format, and a date is in the person's zone and language. The held-action email takes these from the same view every app's Needs you shows (`handlers/held_email_words.go`), so they cannot differ; when KIFF can't read the hold it says what it can from the proposal.
+- **Say what is known.** A detail that wasn't given has no row, never "unknown". A place from the network is called approximate.
+- **Calm and short.** What happened, what to do, and if it wasn't you. No alarm, no marketing, no images except the logo.
+- **No English in code.** The words are in `api/internal/words` in the person's language. A new email adds its lines there first.
+
+## Languages
+
+The language and direction are the person's: `lang` on the page, and `dir="rtl"` with right-aligned text for Arabic, Hebrew and Divehi. A row's value is isolated (`<bdi>`), so a Latin date or browser name in an Arabic line is not scrambled; the code stays left to right.
+
+Today:
+
+- the **code sign-in** emails are written in the eight languages of `words` and in 37 more (`words.CodeSignInEmailMore`);
+- **new device, invitations, account notices, held action and the Card budget warning** are written in the eight; any other language reads English, because the person's language is read as one of the eight (`words.Parse`);
+- **suspended, reactivated and support-ticket update** (`words.AccountEmail`) read English until a language has its lines in `words.AccountEmails`.
+
+The footer's three lines are in `words.EmailFooters`; a language without them reads English, and the layout then sets the footer left to right whatever the email's direction is. The decision is **every email in every shipped language**. What that needs besides the translations is the person's full language tag, not one of the eight, carried to the email, and a table of the other languages' lines for each email as the code emails have. Until then a language without lines reads English, never a half-written email.
+
+## Adding or changing an email
+
+1. Write the lines in `words` (English first; a test fails on a missing or empty line in the eight).
+2. Build a `mail` and send it with `sendMail` (`ResendNotifier`). The layout adds the title (the subject), the language and direction, the footer and the escaping.
+3. Write the plain-text part too: it says the same, in the same order.
+4. Add the email to `TestEveryEmailIsOnTheLayoutAndSaysAccount` and to `TestWriteEmailSamples`.
+5. Look at it: `KIFF_EMAIL_SAMPLES=/tmp/mail go test ./internal/notify -run TestWriteEmailSamples` writes one HTML file per email and language; open them in a browser, and in an Arabic one check that the direction is right.
+6. Say in the PR which Docs rows it touches (the subprocessors list if it sends to a new kind of address; the Resend row names what is sent through it).

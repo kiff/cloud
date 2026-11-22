@@ -332,8 +332,8 @@ const (
 	// Customer email notifications via Resend. When
 	// envResendAPIKey is set, suspend/unsuspend send a customer email;
 	// unset → no-op notifier (control actions run identically). From /
-	// reply-to are configurable; defaults are the KIFF Operations
-	// sender on the Resend-verified kiff.dev domain.
+	// reply-to are configurable; defaults are KIFF <hello@kiff.dev>, reply-to support@kiff.dev,
+	// on the Resend-verified kiff.dev domain.
 	envResendAPIKey  = "RESEND_API_KEY"
 	envNotifyFrom    = "KIFF_NOTIFY_FROM"
 	envNotifyReplyTo = "KIFF_NOTIFY_REPLY_TO"
@@ -1130,7 +1130,7 @@ func run() error {
 	if key := strings.TrimSpace(os.Getenv(envResendAPIKey)); key != "" {
 		from := strings.TrimSpace(os.Getenv(envNotifyFrom))
 		if from == "" {
-			from = "KIFF Operations <ops@kiff.dev>"
+			from = "KIFF <hello@kiff.dev>"
 		}
 		replyTo := strings.TrimSpace(os.Getenv(envNotifyReplyTo))
 		if replyTo == "" {
@@ -1878,6 +1878,8 @@ func newRouter(deps routerDeps) http.Handler {
 	// (events / entities / approvals). Mounted only when a runtime
 	// resolver was wired (production has one; the integration
 	// test in main_test.go can pass nil to skip).
+	// The proposals handler, so the mandates handler can later say a held call in words.
+	var proposalsHandler *handlers.ProposalsHandler
 	if deps.tenantRuntime != nil {
 		runtimeHandler := handlers.NewTenantRuntimeHandler(deps.tenantRuntime, "/v1", deps.logger)
 		// So a management review from the tenant-wide queue reaches the
@@ -2020,7 +2022,8 @@ func newRouter(deps routerDeps) http.Handler {
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))
 		}
-		handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...).Register(authed)
+		proposalsHandler = handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...)
+		proposalsHandler.Register(authed)
 
 		// Tenant-wide list-pending-approvals.
 		// Sits beside the framework's approval-review surface (the
@@ -2128,6 +2131,10 @@ func newRouter(deps routerDeps) http.Handler {
 		mandatesHandler.Register(authed)
 		mandatesHandler.RegisterExternalApprover(mux)
 		mandatesHandler.RegisterAgentDraftClaim(mux)
+		// The held-action email says the call as the apps do.
+		if proposalsHandler != nil {
+			proposalsHandler.SetHeldWords(mandatesHandler)
+		}
 	}
 
 	handlers.NewAgentsHandler(deps.agentStore,

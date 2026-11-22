@@ -2,7 +2,6 @@ package notify
 
 import (
 	"context"
-	"html"
 	"strings"
 	"time"
 
@@ -64,14 +63,13 @@ func renderInvite(inv MemberInvite) (subject, text, htmlBody string) {
 	intro := w.InviteIntro(by, account, w.Role(inv.Role), what)
 	expiry := ""
 	if !inv.ExpiresAt.IsZero() {
-		expiry = " " + w.InviteExpires(w.DateTime(inv.ExpiresAt))
+		// An invitation reaches someone with no account zone yet: UTC, named, as the sign-in codes say it.
+		expiry = " " + w.InviteExpires(w.DateTimeIn(inv.ExpiresAt, time.UTC)+" (UTC)")
 	}
 	text = intro + " " + w.InviteAccept(inv.AcceptURL) + expiry + " " + w.InviteIgnore
-	htmlBody = `<!doctype html><html><body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">` +
-		`<p>` + html.EscapeString(intro) + `</p>` +
-		`<p><a href="` + html.EscapeString(inv.AcceptURL) + `">` + html.EscapeString(w.InviteButton) + `</a></p>` +
-		`<p style="color:#666;font-size:13px">` + html.EscapeString(strings.TrimSpace(expiry+" "+w.InviteIgnore)) + `</p>` +
-		`</body></html>`
+	htmlBody, _ = renderLayout(mail{Lang: inv.Lang, Title: subject, Lead: intro,
+		Buttons: []mailButton{{Label: w.InviteButton, URL: inv.AcceptURL}},
+		Small:   []string{strings.TrimSpace(expiry + " " + w.InviteIgnore)}})
 	return subject, text, htmlBody
 }
 
@@ -83,12 +81,12 @@ func (r *ResendNotifier) MemberInvited(ctx context.Context, to string, inv Membe
 
 // AccountNotice implements MembershipNotifier.
 func (r *ResendNotifier) AccountNotice(ctx context.Context, to string, n AccountNotice) error {
-	text := n.Body
+	text, m := n.Body, mail{Lang: n.Lang, Lead: n.Body}
 	if n.URL != "" {
 		text += " " + n.URL
-		return r.sendHTML(ctx, to, n.Subject, text, htmlBodyLink(html.EscapeString(n.Body), n.URL, html.EscapeString(words.Of(n.Lang).PeopleLink)))
+		m.Buttons = []mailButton{{Label: words.Of(n.Lang).PeopleLink, URL: n.URL}}
 	}
-	return r.sendHTML(ctx, to, n.Subject, text, htmlBody(html.EscapeString(text)))
+	return r.sendMail(ctx, to, n.Subject, text, "", m)
 }
 
 // MemberInvited implements MembershipNotifier (no-op).
