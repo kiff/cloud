@@ -142,8 +142,9 @@ func StepCode(s ChainStep) (code string, again bool, detail string) {
 	return "", false, ""
 }
 
-// StepWords are the chain's steps KIFF worded, in w's language.
-func StepWords(chain []ChainStep, w *words.Words) []StepWord {
+// StepWords are the chain's steps KIFF worded, in w's language
+// (words.ReceiptStepsFor).
+func StepWords(chain []ChainStep, w words.ReceiptSteps) []StepWord {
 	out := []StepWord{}
 	for i, s := range chain {
 		code, again, detail := StepCode(s)

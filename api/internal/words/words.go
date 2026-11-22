@@ -90,6 +90,40 @@ func FromHeader(header string) Lang {
 	return best
 }
 
+// ReceiptStepsFor is a receipt's step words for a reader's Accept-Language:
+// the tag with the highest q whose primary language KIFF has step words in,
+// the eight or ReceiptStepsMore's ("ca-ES" reads Catalan, "zh-Hant" the
+// Traditional Chinese), the earlier one on a tie. English when none is. A
+// reader in one of the more languages gets their receipts' steps in it,
+// and KIFF's other lines in English, as FromHeader says.
+func ReceiptStepsFor(header string) ReceiptSteps {
+	best, bestQ := Of(EN).ReceiptSteps, 0.0
+	for i, part := range strings.Split(header, ",") {
+		if i >= 20 {
+			break
+		}
+		tag, params, _ := strings.Cut(strings.TrimSpace(part), ";")
+		q := 1.0
+		if v, ok := strings.CutPrefix(strings.TrimSpace(params), "q="); ok {
+			f, err := strconv.ParseFloat(v, 64)
+			if err != nil || f > 1 {
+				continue
+			}
+			q = f
+		}
+		if q <= bestQ {
+			continue
+		}
+		primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")
+		if l, ok := known(primary); ok {
+			best, bestQ = Of(l).ReceiptSteps, q
+		} else if more, ok := ReceiptStepsMore[primary]; ok {
+			best, bestQ = more, q
+		}
+	}
+	return best
+}
+
 // Parse is a stored language tag as a Lang; English for anything else.
 func Parse(tag string) Lang {
 	primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")

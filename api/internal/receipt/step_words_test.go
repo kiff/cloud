@@ -111,7 +111,7 @@ func TestAStepKIFFDidntWordHasNoCode(t *testing.T) {
 			t.Errorf("%s %q: got %q", s.Kind, s.Message, code)
 		}
 	}
-	got := StepWords([]ChainStep{{Sequence: 1, Kind: "action_executed", Message: "ticket closed"}}, words.Of(words.EN))
+	got := StepWords([]ChainStep{{Sequence: 1, Kind: "action_executed", Message: "ticket closed"}}, words.Of(words.EN).ReceiptSteps)
 	if got == nil || len(got) != 0 {
 		t.Errorf("a chain with nothing KIFF worded: %#v", got)
 	}
@@ -135,12 +135,19 @@ func TestEveryCodeHasWordsInEveryLanguage(t *testing.T) {
 			t.Errorf("%s: %d lines, %d codes", l, len(w.ReceiptStepLines), len(Codes))
 		}
 	}
+	for l, w := range words.ReceiptStepsMore {
+		for _, code := range Codes {
+			if strings.TrimSpace(w.ReceiptStep(code, "«x»")) == "" {
+				t.Errorf("%s: no words for %s", l, code)
+			}
+		}
+	}
 	chain := []ChainStep{
 		{Sequence: 1, Kind: string(decisionKind), Message: "held for approval"},
 		{Sequence: 2, Kind: "hold_settled", Message: "rejected, next step: ask the customer"},
 		{Sequence: 3, Kind: string(decisionKind), Message: "asked again: allowed"},
 	}
-	got := StepWords(chain, words.Of(words.DE))
+	got := StepWords(chain, words.Of(words.DE).ReceiptSteps)
 	if len(got) != 3 || got[0].Words != "Zur Genehmigung zurückgehalten" || got[1].Words != "Zurückgewiesen. Nächster Schritt: ask the customer" ||
 		got[1].Detail != "ask the customer" || !got[2].Again || got[2].Words != "Erneut angefragt: Erlaubt" || got[2].Sequence != 3 {
 		t.Errorf("German: %#v", got)

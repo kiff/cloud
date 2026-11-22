@@ -67,7 +67,7 @@ type worded struct {
 }
 
 func withWords(rec receipt.Receipt, r *http.Request) worded {
-	return worded{Receipt: rec, StepWords: receipt.StepWords(rec.CausalChain, words.Of(words.FromHeader(r.Header.Get("Accept-Language"))))}
+	return worded{Receipt: rec, StepWords: receipt.StepWords(rec.CausalChain, words.ReceiptStepsFor(r.Header.Get("Accept-Language")))}
 }
 
 // list handles GET /v1/receipts. Returns up to 50 of the caller

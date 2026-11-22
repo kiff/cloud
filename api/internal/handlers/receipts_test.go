@@ -12,6 +12,7 @@ import (
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/handlers"
 	"github.com/kiff/cloud/api/internal/receipt"
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // fixtureReceipt builds a minimal receipt for handler tests.
@@ -389,3 +390,29 @@ func TestReceiptsHandler_StepWordsAreInTheReadersLanguageAndLeaveTheChainAlone(t
 		}
 	}
 }
+
+// A reader in a language beyond KIFF's eight reads the steps in it.
+func TestReceiptsHandler_StepWordsInALanguageBeyondTheEight(t *testing.T) {
+	t.Parallel()
+	store := receipt.NewMemoryStore()
+	r := fixtureReceipt("ten-A", "trace-ca")
+	r.CausalChain = []receipt.ChainStep{{Sequence: 1, Kind: "proposal_decision", Message: "allowed", DataHash: "aa", OccurredAt: r.IssuedAt}}
+	if err := store.Save(context.Background(), r); err != nil {
+		t.Fatal(err)
+	}
+	mux := http.NewServeMux()
+	handlers.NewReceiptsHandler(store).Register(mux)
+	req := authedRequest(t, "GET", "/v1/receipts/trace-ca", "ten-A")
+	req.Header.Set("Accept-Language", "ca-ES,ca;q=0.9,en;q=0.5")
+	rec := httptest.NewRecorder()
+	mux.ServeHTTP(rec, req)
+	var got struct {
+		StepWords []receipt.StepWord `json:"step_words"`
+	}
+	_ = json.Unmarshal(rec.Body.Bytes(), &got)
+	want := words.ReceiptStepsMore["ca"].ReceiptStep(receipt.CodeDecisionAllowed, "")
+	if len(got.StepWords) != 1 || got.StepWords[0].Words != want || want == "" || want == "Allowed" {
+		t.Fatalf("Catalan: %#v, want %q", got.StepWords, want)
+	}
+}
+
