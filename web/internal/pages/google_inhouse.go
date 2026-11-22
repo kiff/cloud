@@ -68,6 +68,7 @@ var googleAppScopes = map[string][]googleScope{
 			"vi": "xem, chỉnh sửa, tạo và xóa tất cả bảng tính của bạn trong Google Sheets",
 			"th": "ดู แก้ไข สร้าง และลบสเปรดชีตทั้งหมดของคุณใน Google Sheets",
 			"zh": "檢視、編輯、建立與刪除您在 Google Sheets 中的所有試算表",
+			"ar": "عرض جميع جداول البيانات الخاصة بك في Google Sheets وتحريرها وإنشائها وحذفها",
 		}},
 	},
 	"Google Calendar": {
@@ -98,6 +99,7 @@ var googleAppScopes = map[string][]googleScope{
 			"vi": "xem các sự kiện trên lịch của bạn",
 			"th": "ดูเหตุการณ์ในปฏิทินของคุณ",
 			"zh": "檢視您行事曆上的事件",
+			"ar": "عرض الأحداث على تقويماتك",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -126,6 +128,7 @@ var googleAppScopes = map[string][]googleScope{
 			"vi": "xem và chỉnh sửa các sự kiện trên lịch của bạn",
 			"th": "ดูและแก้ไขเหตุการณ์ในปฏิทินของคุณ",
 			"zh": "檢視與編輯您行事曆上的事件",
+			"ar": "عرض الأحداث على تقويماتك وتحريرها",
 		}},
 	},
 }

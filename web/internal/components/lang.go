@@ -40,6 +40,7 @@ var partialPages = map[string][]string{
 	"vi": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"th": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"zh": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+	"ar": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -53,9 +54,21 @@ func LangTag(lang string) string {
 	return lang
 }
 
+// IsRightToLeft reports a language written right to left (Arabic).
+func IsRightToLeft(lang string) bool { return lang == "ar" }
+
+// HTMLAttrs are the extra attributes the public shell puts on <html>: dir="rtl"
+// on a right-to-left page, none on any other, so no other page's markup changes.
+func HTMLAttrs(ctx context.Context) templ.Attributes {
+	if IsRightToLeft(HTMLLanguage(ctx)) {
+		return templ.Attributes{"dir": "rtl"}
+	}
+	return nil
+}
+
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -92,6 +105,7 @@ var languageNames = map[string]string{
 	"vi": "Tiếng Việt",
 	"th": "ไทย",
 	"zh": "繁體中文",
+	"ar": "العربية",
 }
 
 // LanguageName is a site language's name in that language.
@@ -269,6 +283,7 @@ var translationNotices = map[string]string{
 	"vi": "Đây là bản dịch để tham khảo. Bản tiếng Anh là bản có hiệu lực:",
 	"th": "นี่คือคำแปลเพื่อให้ข้อมูล ฉบับภาษาอังกฤษเป็นฉบับที่มีผลบังคับ:",
 	"zh": "這是供參考的翻譯。以英文版本為準：",
+	"ar": "هذه ترجمة للاطلاع. النسخة الإنجليزية هي المعتمدة:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -297,6 +312,7 @@ var inEnglish = map[string]string{
 	"vi": "(bằng tiếng Anh)",
 	"th": "(ภาษาอังกฤษ)",
 	"zh": "（英文）",
+	"ar": "(بالإنجليزية)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
