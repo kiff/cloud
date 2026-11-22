@@ -61,5 +61,8 @@ var StoreCountries = map[string][]string{
 		// waits on its scope question.
 		"BZ", "GY", "AG", "BS", "KN", "LC", "VC", "GM", "CG", "MG",
 		"SC", "MU", "SZ",
+		// Wave 2, the owner's five (22 Nov 2026): the 3 with a storefront.
+		// None in San Marino or Lesotho.
+		"SV", "CM", "BB",
 	},
 }
