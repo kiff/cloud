@@ -329,8 +329,15 @@ func (h *DeviceAuthHandler) RegisterPublic(mux *http.ServeMux) {
 		mux.HandleFunc("GET /v1/auth/app/terms", h.app.Terms)
 	}
 	if h.pairings != nil && h.devices != nil {
-		mux.HandleFunc("POST /v1/pair/claim", h.claimPairing)
+		mux.HandleFunc("POST /v1/pair/claim", extensionCORS(h.claimPairing))
+		// The tafs Chrome extension claims its view-only device from its own
+		// origin, so Chrome asks first (extension_cors.go).
+		mux.HandleFunc("OPTIONS /v1/pair/claim", extensionPreflight("content-type"))
 	}
+	// The extension's sign-out sends its bearer, so it's asked for too. The
+	// preflight sits here, outside the auth middleware: Chrome sends it with
+	// no bearer. The logout itself stays behind it (RegisterAuthenticated).
+	mux.HandleFunc("OPTIONS /v1/auth/device/logout", extensionPreflight("authorization, content-type"))
 }
 
 // RegisterAuthenticated attaches the routes that run behind the auth
@@ -339,7 +346,7 @@ func (h *DeviceAuthHandler) RegisterPublic(mux *http.ServeMux) {
 func (h *DeviceAuthHandler) RegisterAuthenticated(mux *http.ServeMux) {
 	mux.HandleFunc("GET /v1/auth/device/pending", h.pendingInfo)
 	mux.HandleFunc("POST /v1/auth/device/approve", h.approve)
-	mux.HandleFunc("POST /v1/auth/device/logout", h.logout)
+	mux.HandleFunc("POST /v1/auth/device/logout", extensionCORS(h.logout))
 	mux.HandleFunc("GET /v1/me/devices", h.listDevices)
 	mux.HandleFunc("DELETE /v1/me/devices/{id}", h.deleteDevice)
 	mux.HandleFunc("POST /v1/me/device/approval-key", h.approvalKey)
