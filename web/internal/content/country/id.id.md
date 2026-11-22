@@ -10,11 +10,11 @@ Kiff Agents OÜ, perusahaan di Estonia, adalah pengendali data untuk akun dan da
 
 ## 2. Apa yang kami proses, mengapa, dan berapa lama
 
-Apa yang kami proses, mengapa, atas dasar hukum apa, dan berapa lama ada di bagian 4, 5, 8, dan 9 setiap kebijakan. Kami memproses data Anda untuk menjalankan akun dan taf Anda, menjaga keamanan layanan, dan memenuhi kewajiban hukum kami. Jika dasarnya adalah persetujuan, seperti untuk AI di tafs, kami memintanya secara terpisah dan Anda dapat menariknya di Akun.
+Apa yang kami proses, mengapa, atas dasar hukum apa, dan berapa lama ada di bagian 4, 5, dan 8 kebijakan KIFF dan di bagian 4, 8, dan 9 kebijakan tafs. Kami memproses data Anda untuk menjalankan akun dan taf Anda, menjaga keamanan layanan, dan memenuhi kewajiban hukum kami. Jika dasarnya adalah persetujuan, seperti untuk AI di tafs, kami memintanya secara terpisah dan Anda dapat menariknya di Akun.
 
 ## 3. Transfer ke luar Indonesia
 
-KIFF dijalankan dari Estonia dan dihosting di Irlandia. Semua yang Anda kirim kepada kami meninggalkan Indonesia. Sebagian penerima berada di Amerika Serikat, sebagaimana didaftarkan bagian 7 setiap kebijakan. Setiap transfer bertumpu pada perlindungan yang disebut bagian 7 setiap kebijakan.
+KIFF dijalankan dari Estonia dan dihosting di Irlandia. Semua yang Anda kirim kepada kami meninggalkan Indonesia. Sebagian penerima berada di Amerika Serikat, sebagaimana didaftarkan bagian 7 setiap kebijakan. Setiap transfer bertumpu pada perlindungan yang disebut bagian 7 kebijakan KIFF.
 
 ## 4. Hak Anda
 

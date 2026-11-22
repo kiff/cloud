@@ -76,6 +76,7 @@ import (
 	"github.com/kiff/cloud/api/internal/operatoraudit"
 	"github.com/kiff/cloud/api/internal/owneremail"
 	"github.com/kiff/cloud/api/internal/packs"
+	"github.com/kiff/cloud/api/internal/payreports"
 	"github.com/kiff/cloud/api/internal/permit"
 	"github.com/kiff/cloud/api/internal/personlang"
 	"github.com/kiff/cloud/api/internal/playstore"
@@ -511,6 +512,14 @@ func run() error {
 			return fmt.Errorf("apply halts: %w", err)
 		}
 		haltStore = halts.NewPostgresStore(pool)
+	}
+	// The payments their owners reported, which halt their tafs.
+	var payReports payreports.Store = payreports.NewMemoryStore()
+	if pool != nil {
+		if err := payreports.ApplySchema(ctx, pool); err != nil {
+			return fmt.Errorf("apply payment reports: %w", err)
+		}
+		payReports = payreports.NewPostgresStore(pool)
 	}
 	var mandateStore mandate.Store
 	if pool != nil {
@@ -1206,6 +1215,7 @@ func run() error {
 		apiKeyStore:          apiKeyStore,
 		agentDrafts:          agentDrafts,
 		halts:                haltStore,
+		payReports:           payReports,
 		planques:             planquesFor(splitCSV(os.Getenv(envPlanqueURLs)), permitIssuer),
 		devSessionStore:      devSessionStore,
 		deviceStore:          deviceStore,
@@ -1333,8 +1343,10 @@ type routerDeps struct {
 	agentDrafts    agentdrafts.Store
 	// halts are the owner's halts, and planques the planques that confirm
 	// them.
-	halts           halts.Store
-	planques        halts.Confirmer
+	halts    halts.Store
+	planques halts.Confirmer
+	// payReports are the payments reported as unexpected; each halts its taf.
+	payReports      payreports.Store
 	devSessionStore auth.DeveloperSessionStore
 	// deviceStore keeps the devices people approve with. Nil: a
 	// phone's key stays on its session alone, as before.
@@ -1816,6 +1828,8 @@ func newRouter(deps routerDeps) http.Handler {
 				handlers.WithControlsHoldAnswers(holdExceptions(deps), holdAnswers(deps)),
 				// The owner's halts and resumes on the Record.
 				handlers.WithControlsHalts(deps.halts),
+				// Which payments were reported, on their receipts.
+				handlers.WithControlsPaymentReports(deps.payReports),
 				handlers.WithControlsOwnUse(ownUse),
 			).Register(authed)
 		}
@@ -1956,7 +1970,13 @@ func newRouter(deps routerDeps) http.Handler {
 		// asked before it.
 		if deps.halts != nil {
 			propOpts = append(propOpts, handlers.WithProposalsHalts(deps.halts))
-			handlers.NewHaltsHandler(deps.halts, deps.planques, deps.receiptStore, deps.logger).WithWindows(deps.windows).Register(authed)
+			haltsHandler := handlers.NewHaltsHandler(deps.halts, deps.planques, deps.receiptStore, deps.logger).WithWindows(deps.windows)
+			haltsHandler.Register(authed)
+			// "Report this payment": halts the payment's taf, through the same halt.
+			if calls := callsReader(deps.decisionsReader); calls != nil && deps.payReports != nil && deps.receiptStore != nil && deps.pool != nil {
+				handlers.NewPaymentReportsHandler(deps.receiptStore, calls, tooloutcome.NewPostgres(deps.pool), toolOutcomes(deps),
+					deps.payReports, haltsHandler, deps.logger).Register(authed)
+			}
 		}
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))

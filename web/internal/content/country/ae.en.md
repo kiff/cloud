@@ -10,11 +10,11 @@ Kiff Agents OÜ, a company in Estonia, is the data controller of your account an
 
 ## 2. What we process and why
 
-What we process, why, on what legal basis and for how long is in sections 4, 5, 8 and 9 of each policy. We process your data to run your account and your tafs, to keep the service secure, and to meet our legal duties. Where a consent is the basis, such as for the AI in tafs, we ask for it separately and you can withdraw it in Account.
+What we process, why, on what legal basis and for how long is in sections 4, 5 and 8 of KIFF's policy and sections 4, 8 and 9 of the tafs policy. We process your data to run your account and your tafs, to keep the service secure, and to meet our legal duties. Where a consent is the basis, such as for the AI in tafs, we ask for it separately and you can withdraw it in Account.
 
 ## 3. Transfers outside United Arab Emirates
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves United Arab Emirates. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of each policy names.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves United Arab Emirates. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of KIFF's policy names.
 
 ## 4. Your rights
 
