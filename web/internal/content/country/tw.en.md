@@ -10,11 +10,11 @@ Kiff Agents OÜ, a company in Estonia, is the data controller of your account an
 
 ## 2. What we tell you when we collect your data
 
-When we collect your data we tell you who we are, why we collect it, what kind of data it is, for how long and where it is used, who uses it and how, your rights, and what happens if you don't give it. Sections 1, 4, 5, 8, 9 and 10 of each policy do that.
+When we collect your data we tell you who we are, why we collect it, what kind of data it is, for how long and where it is used, who uses it and how, your rights, and what happens if you don't give it. Sections 1, 4, 5, 8 and 9 of KIFF's policy and sections 1, 4, 8, 9 and 10 of the tafs policy do that.
 
 ## 3. Transfers outside Taiwan
 
-KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Taiwan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of each policy names. The authority in charge may restrict a transfer of personal data abroad, and we follow any such order.
+KIFF is run from Estonia and hosted in Ireland. Everything you send us leaves Taiwan. Some recipients are in the United States, as section 7 of each policy lists. Each transfer rests on the safeguards section 7 of KIFF's policy names. The authority in charge may restrict a transfer of personal data abroad, and we follow any such order.
 
 ## 4. Your rights
 

@@ -6,11 +6,11 @@ Ovaj odeljak se primenjuje ako koristite KIFF ili tafs u Srbiji. On dodaje ono �
 
 ## 1. Šta obrađujemo, zašto i koliko dugo
 
-Šta obrađujemo, zašto i koliko dugo navedeno je u odeljcima 4, 5 i 8 svake politike. Ukratko: vaš nalog, vaše uređaje, ono što pišete Coach-u i svojim tafs i ono što vaše povezane aplikacije vrate dok taf radi, podatke o naplati na plaćenom planu i evidenciju zahteva. Svaku vrstu brišemo kada istekne njen rok ili kada obrišete nalog.
+Šta obrađujemo, zašto i koliko dugo navedeno je u odeljcima 4, 5 i 8 politike KIFF-a i u odeljcima 4, 8 i 9 politike tafs-a. Ukratko: vaš nalog, vaše uređaje, ono što pišete Coach-u i svojim tafs i ono što vaše povezane aplikacije vrate dok taf radi, podatke o naplati na plaćenom planu i evidenciju zahteva. Svaku vrstu brišemo kada istekne njen rok ili kada obrišete nalog.
 
 ## 2. Prenosi van Srbije
 
-KIFF vodi Kiff Agents OÜ, kompanija u Estoniji, a hostovan je u Irskoj. Sve što nam pošaljete napušta Srbiju. Neki primaoci su u Sjedinjenim Državama: Clerk (prijava), Anthropic (AI modeli iza Coach-a i svakog taf), Stripe (plaćanje na plaćenom planu), Resend (obaveštenja e-poštom), Apple i Google (push obaveštenja i kupovine), Cloudflare i Google Workspace (pošta na kiff.dev adresu) i Composio (upravljane veze). Svaki prenos štite standardne ugovorne klauzule Evropske komisije ili okvir EU–SAD za zaštitu podataka, kako kaže odeljak 7 svake politike.
+KIFF vodi Kiff Agents OÜ, kompanija u Estoniji, a hostovan je u Irskoj. Sve što nam pošaljete napušta Srbiju. Neki primaoci su u Sjedinjenim Državama: Clerk (prijava), Anthropic (AI modeli iza Coach-a i svakog taf), Stripe (plaćanje na plaćenom planu), Resend (obaveštenja e-poštom), Apple i Google (push obaveštenja i kupovine), Cloudflare i Google Workspace (pošta na kiff.dev adresu) i Composio (upravljane veze). Svaki prenos štite standardne ugovorne klauzule Evropske komisije ili okvir EU–SAD za zaštitu podataka, kako kaže odeljak 7 politike KIFF-a.
 
 ## 3. Vaša prava
 

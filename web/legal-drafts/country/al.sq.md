@@ -6,11 +6,11 @@ Ky seksion zbatohet nëse përdorni KIFF ose tafs në Shqipëri. Ai shton atë q
 
 ## 1. Çfarë përpunojmë, pse dhe për sa kohë
 
-Çfarë përpunojmë, pse dhe për sa kohë gjendet në seksionet 4, 5 dhe 8 të secilës politikë. Shkurt: llogarinë tuaj, pajisjet tuaja, atë që i shkruani Coach-it dhe tafs-ave tuaja dhe atë që kthejnë aplikacionet tuaja të lidhura ndërsa një taf punon, të dhënat e faturimit në një plan me pagesë dhe regjistrat e kërkesave. Çdo lloj e fshijmë kur mbaron afati i tij, ose kur fshini llogarinë.
+Çfarë përpunojmë, pse dhe për sa kohë gjendet në seksionet 4, 5 dhe 8 të politikës së KIFF dhe në seksionet 4, 8 dhe 9 të politikës së tafs. Shkurt: llogarinë tuaj, pajisjet tuaja, atë që i shkruani Coach-it dhe tafs-ave tuaja dhe atë që kthejnë aplikacionet tuaja të lidhura ndërsa një taf punon, të dhënat e faturimit në një plan me pagesë dhe regjistrat e kërkesave. Çdo lloj e fshijmë kur mbaron afati i tij, ose kur fshini llogarinë.
 
 ## 2. Transferime jashtë Shqipërisë
 
-KIFF drejtohet nga Kiff Agents OÜ, një shoqëri në Estoni, dhe strehohet në Irlandë. Gjithçka që na dërgoni del nga Shqipëria. Disa marrës janë në Shtetet e Bashkuara: Clerk (hyrja), Anthropic (modelet e AI pas Coach-it dhe çdo taf), Stripe (pagesa në një plan me pagesë), Resend (njoftime me email), Apple dhe Google (njoftime push dhe blerje), Cloudflare dhe Google Workspace (posta drejt një adrese kiff.dev) dhe Composio (lidhje të menaxhuara). Çdo transferim mbrohet nga klauzolat kontraktuale standarde të Komisionit Evropian ose nga Kuadri i Privatësisë së të Dhënave BE–SHBA, siç thotë seksioni 7 i secilës politikë.
+KIFF drejtohet nga Kiff Agents OÜ, një shoqëri në Estoni, dhe strehohet në Irlandë. Gjithçka që na dërgoni del nga Shqipëria. Disa marrës janë në Shtetet e Bashkuara: Clerk (hyrja), Anthropic (modelet e AI pas Coach-it dhe çdo taf), Stripe (pagesa në një plan me pagesë), Resend (njoftime me email), Apple dhe Google (njoftime push dhe blerje), Cloudflare dhe Google Workspace (posta drejt një adrese kiff.dev) dhe Composio (lidhje të menaxhuara). Çdo transferim mbrohet nga klauzolat kontraktuale standarde të Komisionit Evropian ose nga Kuadri i Privatësisë së të Dhënave BE–SHBA, siç thotë seksioni 7 i politikës së KIFF.
 
 ## 3. Të drejtat tuaja
 
