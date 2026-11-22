@@ -223,6 +223,34 @@ type Words struct {
 	// A device's name in a person's list of devices (GET /v1/me/devices),
 	// by its kind. Each language sets them in newdevice_<lang>.go.
 	DeviceNames
+
+	// A receipt's steps, by their code (receipt.StepWords), beside the
+	// signed English. Each language sets them in receiptsteps_<lang>.go.
+	ReceiptSteps
+}
+
+// ReceiptSteps are the words for a receipt's steps, by their stable code
+// (receipt.Codes): what the apps show, with the signed message under it.
+// "%s" is the step's free part (a reason, a next step, a tool's status), as
+// it was signed.
+type ReceiptSteps struct {
+	ReceiptStepLines map[string]string
+	// ReceiptAskedAgain is a decision the call was asked again for, and
+	// got the same.
+	ReceiptAskedAgain func(line string) string
+}
+
+// ReceiptStep is code's words with its free part, or "" for a code with
+// none.
+func (r ReceiptSteps) ReceiptStep(code, detail string) string {
+	line := r.ReceiptStepLines[code]
+	if line == "" {
+		return ""
+	}
+	if strings.Contains(line, "%s") {
+		return strings.Replace(line, "%s", detail, 1)
+	}
+	return line
 }
 
 // DeviceNames are a device's names in a person's list, by its kind

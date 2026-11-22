@@ -338,3 +338,54 @@ func TestReceiptsHandler_ListLimitClamping(t *testing.T) {
 		})
 	}
 }
+
+// A receipt's steps come with their words in the reader's language, beside
+// the receipt: its causal_chain stays byte for byte what KIFF signed, so a
+// phone that hashes the chain from the response still verifies it.
+func TestReceiptsHandler_StepWordsAreInTheReadersLanguageAndLeaveTheChainAlone(t *testing.T) {
+	t.Parallel()
+	store := receipt.NewMemoryStore()
+	r := fixtureReceipt("ten-A", "trace-words")
+	r.CausalChain = []receipt.ChainStep{
+		{Sequence: 1, Kind: "proposal_decision", Message: "allowed", DataHash: "aa", OccurredAt: r.IssuedAt},
+		{Sequence: 2, Kind: "action_executed", Message: "refund of 500 cents issued", DataHash: "bb", OccurredAt: r.IssuedAt},
+	}
+	if err := store.Save(context.Background(), r); err != nil {
+		t.Fatal(err)
+	}
+	mux := http.NewServeMux()
+	handlers.NewReceiptsHandler(store).Register(mux)
+	for _, path := range []string{"/v1/receipts/trace-words", "/v1/receipts"} {
+		req := authedRequest(t, "GET", path, "ten-A")
+		req.Header.Set("Accept-Language", "de-DE,de;q=0.9")
+		rec := httptest.NewRecorder()
+		mux.ServeHTTP(rec, req)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: %d %s", path, rec.Code, rec.Body)
+		}
+		var one struct {
+			Chain     json.RawMessage    `json:"causal_chain"`
+			StepWords []receipt.StepWord `json:"step_words"`
+		}
+		body := rec.Body.Bytes()
+		if path == "/v1/receipts" {
+			var list struct {
+				Receipts []json.RawMessage `json:"receipts"`
+			}
+			if err := json.Unmarshal(body, &list); err != nil || len(list.Receipts) != 1 {
+				t.Fatalf("list: %v %s", err, body)
+			}
+			body = list.Receipts[0]
+		}
+		if err := json.Unmarshal(body, &one); err != nil {
+			t.Fatal(err)
+		}
+		signed, _ := json.Marshal(r.CausalChain)
+		if string(one.Chain) != string(signed) {
+			t.Errorf("%s: the chain isn't what was signed:\n%s\n%s", path, one.Chain, signed)
+		}
+		if len(one.StepWords) != 1 || one.StepWords[0].Sequence != 1 || one.StepWords[0].Code != receipt.CodeDecisionAllowed || one.StepWords[0].Words != "Erlaubt" {
+			t.Errorf("%s: step words: %#v", path, one.StepWords)
+		}
+	}
+}

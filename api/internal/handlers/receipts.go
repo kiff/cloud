@@ -9,6 +9,7 @@ import (
 
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/receipt"
+	"github.com/kiff/cloud/api/internal/words"
 )
 
 // ReceiptsHandler exposes the public receipt-read surface:
@@ -52,8 +53,21 @@ func (h *ReceiptsHandler) Register(mux *http.ServeMux) {
 // The receipts slice is empty (not nil) when no receipts exist
 // so the dashboard's table renderer doesn't have to nil-check.
 type receiptListResponse struct {
-	Receipts []receipt.Receipt `json:"receipts"`
-	Limit    int               `json:"limit"`
+	Receipts []worded `json:"receipts"`
+	Limit    int      `json:"limit"`
+}
+
+// worded is a receipt as stored, and its steps' words in the reader's
+// language (Accept-Language) beside it, outside the signature. The receipt's
+// own fields are encoded as they always were, so its causal_chain is byte
+// for byte what KIFF signed.
+type worded struct {
+	receipt.Receipt
+	StepWords []receipt.StepWord `json:"step_words"`
+}
+
+func withWords(rec receipt.Receipt, r *http.Request) worded {
+	return worded{Receipt: rec, StepWords: receipt.StepWords(rec.CausalChain, words.Of(words.FromHeader(r.Header.Get("Accept-Language"))))}
 }
 
 // list handles GET /v1/receipts. Returns up to 50 of the caller
@@ -98,12 +112,13 @@ func (h *ReceiptsHandler) list(w http.ResponseWriter, r *http.Request) {
 			rows = rows[:limit]
 		}
 	}
-	if rows == nil {
-		rows = []receipt.Receipt{}
+	out := make([]worded, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, withWords(row, r))
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(receiptListResponse{Receipts: rows, Limit: limit})
+	_ = json.NewEncoder(w).Encode(receiptListResponse{Receipts: out, Limit: limit})
 }
 
 // parseLimit returns a clamped limit value: defaults when empty
@@ -184,8 +199,9 @@ func (h *ReceiptsHandler) get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Vary", "Accept-Language")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(rec)
+	_ = json.NewEncoder(w).Encode(withWords(rec, r))
 }
 
 func writeReceiptError(w http.ResponseWriter, status int, err error) {
