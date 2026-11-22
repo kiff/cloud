@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
+
+	"golang.org/x/text/feature/plural"
+	"golang.org/x/text/language"
 )
 
 // The emails in every shipped language. Eight languages have every line in Words; the
@@ -53,14 +57,52 @@ var noticeLineNames = []string{
 	"Someone", "UnnamedAccount",
 }
 
+// cardLineNames are the Words fields the Card warning's sentence and a held action's reason line read, and that the
+// amounts in them are written with: how an amount is written (Money, DecimalComma, NoCurrency), a window's words, the
+// count of calls and the ordinal ("21st"), and each reason. They are the third group of the table ("cards").
+//
+// Two lines are not plain templates. CallCount and Ordinal take a number, so they hold one form per plural category of
+// the language (CLDR: zero, one, two, few, many, other), written "one={0} call|other={0} calls"; the form for a number
+// is the language's own rule's, and "other" is the one a missing category falls back to. Money is written as three
+// lines: Money.Thousands, Money.Gap (what goes between the amount and its currency) and Money.CurrencyAfter, whose
+// separators are named (moneySeparators) because a space that is a line's whole text cannot be told from no text.
+var cardLineNames = []string{
+	"WarnSpent", "WarnBurst", "WarnRunway", "WarnUnusual", "WarnUsed", "Periods", "WarnNeverResets", "WarnReviewWindow",
+	"Money", "DecimalComma", "NoCurrency",
+	"EachCallAsks", "CallCount", "WindowAmount", "WindowCount", "ForEach", "Ordinal",
+	"WouldBe", "WouldBeFor", "OverCalls", "OverForOneCall", "OverTheTotal",
+	"OutsideCard", "OverActionLimit", "OverCardTotal", "NotCardResource",
+}
+
+// pluralLines are the lines that hold a form per plural category, by name, and whether they count places (ordinal).
+var pluralLines = map[string]bool{"CallCount": false, "Ordinal": true}
+
+// pluralEnglish are English's forms of those lines (a test says they are what English's functions write).
+var pluralEnglish = map[string]string{
+	"CallCount": "one={0} call|other={0} calls",
+	"Ordinal":   "one={0}st|two={0}nd|few={0}rd|other={0}th",
+}
+
+// moneySeparators are the names a money line gives its separators.
+var moneySeparators = map[string]string{
+	"none": "", "comma": ",", "dot": ".", "space": " ", "nbsp": "\u00a0", "thin": "\u202f", "apostrophe": "’",
+}
+
+var moneyKeys = []string{"Money.Thousands", "Money.Gap", "Money.CurrencyAfter"}
+
 // Groups of lines. "core" is every email this package draws; "notices" is the account notices' sentences, written by
-// handlers, and needs "core". An entry is complete when core is, and has the notices when that group is too.
+// handlers, and needs "core"; "cards" is the Card warning's and the held reason's, and needs "core" too. An entry is
+// complete when core is, and has each other group when that group is whole.
 const (
 	groupCore    = "core"
 	groupNotices = "notices"
+	groupCards   = "cards"
 )
 
-func init() { emailLineNames = append(emailLineNames, noticeLineNames...) }
+func init() {
+	emailLineNames = append(emailLineNames, noticeLineNames...)
+	emailLineNames = append(emailLineNames, cardLineNames...)
+}
 
 // lineGroup is the group a line belongs to: its Words field name decides it.
 func lineGroup(key string) string {
@@ -70,7 +112,142 @@ func lineGroup(key string) string {
 			return groupNotices
 		}
 	}
+	for _, n := range cardLineNames {
+		if n == name {
+			return groupCards
+		}
+	}
 	return groupCore
+}
+
+// parsePlural reads "one={0} call|other={0} calls" into its forms; false when a form has no category, an unknown one,
+// or "other" is missing.
+func parsePlural(line string) (map[string]string, bool) {
+	out := map[string]string{}
+	for _, part := range strings.Split(line, "|") {
+		cat, text, ok := strings.Cut(part, "=")
+		switch cat {
+		case "zero", "one", "two", "few", "many", "other":
+		default:
+			return nil, false
+		}
+		if !ok || strings.TrimSpace(text) == "" {
+			return nil, false
+		}
+		out[cat] = text
+	}
+	_, hasOther := out["other"]
+	return out, hasOther
+}
+
+// pluralCategory is the plural category of the whole number n in lang, by CLDR's rules.
+func pluralCategory(lang string, n int64, ordinal bool) string {
+	tag := language.Make(lang)
+	rules := plural.Cardinal
+	if ordinal {
+		rules = plural.Ordinal
+	}
+	switch rules.MatchPlural(tag, int(n), 0, 0, 0, 0) {
+	case plural.Zero:
+		return "zero"
+	case plural.One:
+		return "one"
+	case plural.Two:
+		return "two"
+	case plural.Few:
+		return "few"
+	case plural.Many:
+		return "many"
+	}
+	return "other"
+}
+
+// pluralCategoriesOf are the categories the whole numbers reach in lang: the ones a line of it needs a form for.
+func pluralCategoriesOf(lang string, ordinal bool) []string {
+	seen := map[string]bool{}
+	probe := []int64{1000000, 2000000, 1000000000}
+	for n := int64(0); n <= 1000; n++ {
+		probe = append(probe, n)
+	}
+	for _, n := range probe {
+		seen[pluralCategory(lang, n, ordinal)] = true
+	}
+	var out []string
+	for c := range seen {
+		out = append(out, c)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// EmailPluralProblems says which plural forms a language's CallCount and Ordinal lines lack: a form for each category
+// a whole number can have in it. A missing one is not an error at run time ("other" reads), but it is a wrong
+// sentence ("2 call"), so legal-i18n's lines are checked.
+func EmailPluralProblems(lang string, lines EmailLines) []string {
+	var out []string
+	for name, ordinal := range pluralLines {
+		line, ok := lines[name]
+		if !ok {
+			continue
+		}
+		forms, ok := parsePlural(line)
+		if !ok {
+			out = append(out, name+" is not forms like one={0} call|other={0} calls")
+			continue
+		}
+		for _, c := range pluralCategoriesOf(lang, ordinal) {
+			if _, has := forms[c]; !has {
+				out = append(out, name+" has no form for "+c+" in "+lang)
+			}
+		}
+		for c, text := range forms {
+			if strings.Join(placeholders(text), " ") != "{0}" {
+				out = append(out, name+" form "+c+" must have {0} once as its number")
+			}
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
+// moneyClash says when a language's thousands separator is its decimal mark, so "1,250" could be one thousand two
+// hundred fifty or one and a quarter: DecimalComma false writes the mark as a dot, true as a comma.
+func moneyClash(lines EmailLines) string {
+	th, ok := lines["Money.Thousands"]
+	dc, ok2 := lines["DecimalComma"]
+	if !ok || !ok2 {
+		return ""
+	}
+	mark := "dot"
+	if dc == "true" {
+		mark = "comma"
+	}
+	if th == mark {
+		return "Money.Thousands is the decimal mark (" + mark + "): an amount would read two ways"
+	}
+	return ""
+}
+
+// lineValueProblem is what is wrong with one line's value besides its parts, "" when nothing.
+func lineValueProblem(name, got string) string {
+	_, isPlural := pluralLines[name]
+	switch {
+	case name == "Months" && len(strings.Split(got, "|")) != 12:
+		return "Months is not twelve names joined by |"
+	case isPlural:
+		if _, ok := parsePlural(got); !ok {
+			return name + " is not forms like one={0} call|other={0} calls"
+		}
+	case name == "Money.Thousands" || name == "Money.Gap":
+		if _, ok := moneySeparators[got]; !ok {
+			return name + " is not one of none, comma, dot, space, nbsp, thin, apostrophe"
+		}
+	case name == "Money.CurrencyAfter" || name == "DecimalComma" || name == "DayDot":
+		if got != "true" && got != "false" {
+			return name + " is not true or false"
+		}
+	}
+	return ""
 }
 
 // groupLines are the English lines of one group.
@@ -91,11 +268,11 @@ func groupComplete(lines EmailLines, group string) bool {
 		if !ok || strings.TrimSpace(got) == "" || strings.Join(placeholders(got), " ") != strings.Join(placeholders(en), " ") {
 			return false
 		}
-		if k == "Months" && len(strings.Split(got, "|")) != 12 {
+		if lineValueProblem(k, got) != "" {
 			return false
 		}
 	}
-	return true
+	return group != groupCards || moneyClash(lines) == ""
 }
 
 // EmailGroupComplete says whether lang has every line of a group ("core" or "notices"); the eight have them all.
@@ -115,6 +292,10 @@ func EmailLineNames() []string {
 	var out []string
 	for _, n := range emailLineNames {
 		f := reflect.ValueOf(en).FieldByName(n)
+		if f.Kind() == reflect.Struct { // Money
+			out = append(out, moneyKeys...)
+			continue
+		}
 		if f.Kind() == reflect.Map {
 			for _, k := range f.MapKeys() {
 				out = append(out, n+"."+k.String())
@@ -149,12 +330,31 @@ func EmailLinesEnglish() EmailLines {
 			for _, k := range f.MapKeys() {
 				out[n+"."+k.String()] = f.MapIndex(k).String()
 			}
+		case reflect.Struct:
+			for k, v := range moneyLines(ev.FieldByName(n).Interface().(MoneyStyle)) {
+				out[k] = v
+			}
 		case reflect.Func:
+			if line, ok := pluralEnglish[n]; ok {
+				out[n] = line
+				continue
+			}
+			// A part that is a number is called with a marker, then written as {i}.
 			args := make([]reflect.Value, f.Type().NumIn())
+			marks := map[int]string{}
 			for i := range args {
+				if k := f.Type().In(i).Kind(); k >= reflect.Int && k <= reflect.Int64 {
+					marks[i] = strconv.Itoa(7000001 + i)
+					args[i] = reflect.ValueOf(int64(7000001 + i)).Convert(f.Type().In(i))
+					continue
+				}
 				args[i] = reflect.ValueOf(fmt.Sprintf("{%d}", i))
 			}
-			out[n] = f.Call(args)[0].String()
+			line := f.Call(args)[0].String()
+			for i, m := range marks {
+				line = strings.ReplaceAll(line, m, fmt.Sprintf("{%d}", i))
+			}
+			out[n] = line
 		}
 	}
 	return out
@@ -215,14 +415,19 @@ func EmailLinesProblems(lines EmailLines) []string {
 			out = append(out, name+" is missing")
 		case strings.Join(placeholders(got), " ") != strings.Join(placeholders(en), " "):
 			out = append(out, fmt.Sprintf("%s has parts %v, English %v", name, placeholders(got), placeholders(en)))
-		case name == "Months" && len(strings.Split(got, "|")) != 12:
-			out = append(out, "Months is not twelve names joined by |")
+		default:
+			if p := lineValueProblem(name, got); p != "" {
+				out = append(out, p)
+			}
 		}
 	}
 	for name := range lines {
 		if _, ok := english[name]; !ok {
 			out = append(out, name+" is not a line of the emails")
 		}
+	}
+	if p := moneyClash(lines); p != "" {
+		out = append(out, p)
 	}
 	sort.Strings(out)
 	return out
@@ -248,12 +453,13 @@ func emailWordsFor(lang Lang) (*Words, bool) {
 	w := en // a copy: English's own lines stay English
 	// Each group is laid over only when it is whole: the notices' sentences need the core as well.
 	use := EmailLines{}
+	whole := map[string]bool{groupCore: true, groupNotices: groupComplete(lines, groupNotices), groupCards: groupComplete(lines, groupCards)}
 	for k, v := range lines {
-		if lineGroup(k) == groupCore || groupComplete(lines, groupNotices) {
+		if whole[lineGroup(k)] {
 			use[k] = v
 		}
 	}
-	setEmailLines(&w, use)
+	setEmailLines(&w, string(lang), use)
 	moreWords[string(lang)] = &w
 	return &w, true
 }
@@ -273,7 +479,33 @@ func fill(template string, args []string) string {
 	return strings.NewReplacer(pairs...).Replace(template)
 }
 
-func setEmailLines(w *Words, lines EmailLines) {
+// moneyLines are a MoneyStyle as the table's lines.
+func moneyLines(m MoneyStyle) EmailLines {
+	name := func(sep string) string {
+		for k, v := range moneySeparators {
+			if v == sep {
+				return k
+			}
+		}
+		return "none"
+	}
+	return EmailLines{"Money.Thousands": name(m.Thousands), "Money.Gap": name(m.CurrencyGap),
+		"Money.CurrencyAfter": strconv.FormatBool(m.CurrencyAfter)}
+}
+
+// pluralFunc is a line of forms as a function of a number, by lang's plural rules.
+func pluralFunc(lang, line string, ordinal bool) func(int64) string {
+	forms, _ := parsePlural(line)
+	return func(n int64) string {
+		form, ok := forms[pluralCategory(lang, n, ordinal)]
+		if !ok {
+			form = forms["other"]
+		}
+		return strings.ReplaceAll(form, "{0}", strconv.FormatInt(n, 10))
+	}
+}
+
+func setEmailLines(w *Words, lang string, lines EmailLines) {
 	wv := reflect.ValueOf(w).Elem()
 	for _, n := range emailLineNames {
 		f := wv.FieldByName(n)
@@ -306,15 +538,33 @@ func setEmailLines(w *Words, lines EmailLines) {
 				}
 			}
 			f.Set(m)
+		case reflect.Struct:
+			if v, ok := lines["Money.Thousands"]; ok {
+				w.Money.Thousands = moneySeparators[v]
+				w.Money.CurrencyGap = moneySeparators[lines["Money.Gap"]]
+				w.Money.CurrencyAfter = lines["Money.CurrencyAfter"] == "true"
+			}
 		case reflect.Func:
 			v, ok := lines[n]
 			if !ok {
 				continue
 			}
+			if ordinal, isPlural := pluralLines[n]; isPlural {
+				if n == "CallCount" {
+					w.CallCount = pluralFunc(lang, v, ordinal)
+				} else {
+					w.Ordinal = pluralFunc(lang, v, ordinal)
+				}
+				continue
+			}
 			f.Set(reflect.MakeFunc(f.Type(), func(in []reflect.Value) []reflect.Value {
 				args := make([]string, len(in))
 				for i, a := range in {
-					args[i] = a.String()
+					if k := a.Kind(); k >= reflect.Int && k <= reflect.Int64 {
+						args[i] = strconv.FormatInt(a.Int(), 10)
+					} else {
+						args[i] = a.String()
+					}
 				}
 				return []reflect.Value{reflect.ValueOf(fill(v, args))}
 			}))
@@ -382,6 +632,28 @@ func NoticeLangFor(l Lang) Lang {
 	return EN
 }
 
+// CardLangFor is the language of a Card warning email: the eight, or a language with the core lines and the cards'
+// lines too (its sentence and the email around it are then both the language's), else English entirely.
+func CardLangFor(l Lang) Lang {
+	if EmailGroupComplete(l, groupCards) {
+		return l
+	}
+	return EN
+}
+
+// EmailCardLanguagesMissing are the languages that have the core lines and not yet the cards': the Card warning and
+// a held action's reason read English in them.
+func EmailCardLanguagesMissing() []string {
+	var out []string
+	for tag := range CodeSignInEmailMore {
+		if !EmailGroupComplete(Lang(tag), groupCards) {
+			out = append(out, tag)
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
 // EmailNoticeLanguagesMissing are the languages that have the core lines and not yet the notices'.
 func EmailNoticeLanguagesMissing() []string {
 	var out []string
@@ -394,7 +666,7 @@ func EmailNoticeLanguagesMissing() []string {
 	return out
 }
 
-// EmailGroupName is the group a line of the table is in: "core" or "notices".
+// EmailGroupName is the group a line of the table is in: "core", "notices" or "cards".
 func EmailGroupName(key string) string { return lineGroup(key) }
 
 // OfNotice is the words a handler words an account notice from: the language's when it has the notices' sentences
