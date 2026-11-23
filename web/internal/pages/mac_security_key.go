@@ -56,6 +56,7 @@ var macSecurityKeyClause = map[string]string{
 	"tg": ", ё дар Mac бо калиди амният",
 	"tk": ", ýa-da Mac-da howpsuzlyk açary bilen",
 	"ur": "، یا Mac پر سیکیورٹی کلید سے",
+	"hi": ", या Mac पर सुरक्षा कुंजी से",
 	"dv": "، ނުވަތަ Mac އެއްގައި، ރައްކާތެރިކަމުގެ ކީއަކުން",
 	"dz": "། ཡང་ན་ Mac ནང་ ཉེན་སྲུང་ལྡེ་མིག་གིས་",
 }
