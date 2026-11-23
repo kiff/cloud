@@ -102,7 +102,7 @@ func TestTafsInEveryLanguage(t *testing.T) {
 				}
 			}
 			// The Google band opens the footer, open (never in a fold), and is
-			// nowhere else: the first screen keeps to its words (owner, 18 Nov).
+			// nowhere else: the first screen keeps to its words.
 			foot, band, row1 := strings.Index(body, `<footer class="kf">`), strings.Index(body, `id="google"`), strings.Index(body, `class="row1"`)
 			if strings.Count(body, `id="google"`) != 1 || !(foot < band && band < row1) {
 				t.Errorf("the Google band doesn't open the footer")

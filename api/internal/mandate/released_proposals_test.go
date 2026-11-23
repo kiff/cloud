@@ -10,8 +10,8 @@ import (
 
 // Which proposals a Card gave its room back for, read by proposal: only a call
 // with a release is named, never one that merely finished, and never across
-// tenants. (kiff/work#17: the apps say "doesn't count toward today's limit"
-// only for these.)
+// tenants. The apps say "doesn't count toward today's limit" only for
+// these.
 func testReleasedProposals(t *testing.T, s mandate.Store, tenant, other string) {
 	t.Helper()
 	ctx := context.Background()

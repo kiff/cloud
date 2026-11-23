@@ -196,8 +196,7 @@ func TestProposals_ACallWhoseAmountCantBeReadIsBlocked(t *testing.T) {
 	}
 	// A relay tool's action has a permit target, so a call decided without a
 	// permit request is refused permit_required, but the record-only refusal
-	// still reaches its blocked decision, with no permit and nothing counted
-	// (codex-assistant's review of).
+	// still reaches its blocked decision, with no permit and nothing counted.
 	targets := &anyTargets{permit.Target{Domain: "gateway", Action: "stripe_refund", Tool: "refund", Audience: "https://planque.example/v1/relay",
 		AmountArg: "amount", ResourceArg: "charge", AmountLookedUp: true}}
 	srv, rt, tenantID = callFactsSetup(t, handlers.WithProposalsPermitTargets(targets))
