@@ -65,6 +65,9 @@ func LanguageRootTargets() map[string]string {
 		target := "/"
 		if _, ok := pages.Translation(lang, "/tafs"); ok {
 			target = components.LangPath(lang, "/tafs")
+		} else if base, ok := components.VariantBase(lang); ok {
+			// A regional variant without its own /tafs lands on its base's.
+			target = components.LangPath(base, "/tafs")
 		}
 		out["/"+lang] = target
 		out["/"+lang+"/"] = target
