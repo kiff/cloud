@@ -16,7 +16,7 @@ import (
 )
 
 // A sealed fill is a browser step that moves a sign-in saved in the owner's
-// Chrome into a page (kiff/tafs docs/chrome.md, "Sealed values"). The
+// Chrome into a page (the tafs Chrome extension's "sealed values"). The
 // extension fills it only with the paired phone's own release
 // (tafs-chrome/release/v1), which the phone signs when the owner allows the
 // held step, and which the allow carries as {release: {chrome_id, op,
