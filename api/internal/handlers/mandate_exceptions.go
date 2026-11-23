@@ -807,6 +807,10 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 	}
 	signed := auth.Answer{TenantID: tenantID, ExceptionID: id, Answer: answer, NextStep: refusal.NextStep, Note: refusal.Note,
 		AccountingVersion: held.AccountingVersion, SignedAt: sig.SignedAt}
+	// A held sealed fill's answer signs over the block the phone drew.
+	if v := h.withBrowserBlock(r.Context(), tenantID, map[string]any{}, held); v["browser_sha256"] != nil {
+		signed.BrowserSHA256, _ = v["browser_sha256"].(string)
+	}
 	// A session that approves with its device's own passkey: an answer that
 	// grants authority counts only with that passkey's assertion (§2.6); a
 	// refusal is its device key's, as for any device.

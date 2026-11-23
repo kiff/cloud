@@ -72,6 +72,11 @@ type Answer struct {
 	Note              string
 	AccountingVersion int
 	SignedAt          string // RFC 3339, as sent
+	// BrowserSHA256 is, for a held sealed fill, the hex SHA-256 of the
+	// browser block's JCS that the phone drew (the hold's browser_sha256):
+	// the answer then signs over what the owner read. Empty for every other
+	// hold, whose message is unchanged.
+	BrowserSHA256 string
 }
 
 // Message is the exact text KIFF verifies, one field per line:
@@ -84,16 +89,21 @@ type Answer struct {
 //	<sha256(note) hex>     empty when there is no note
 //	<accounting_version>
 //	<signed_at>
+//	<browser_sha256>       only for a held sealed fill; no line otherwise
 func (a Answer) Message() []byte {
 	note := ""
 	if a.Note != "" {
 		sum := sha256.Sum256([]byte(a.Note))
 		note = hex.EncodeToString(sum[:])
 	}
-	return []byte(strings.Join([]string{
+	lines := []string{
 		"kiff.answer.v1", a.TenantID, a.ExceptionID, a.Answer, a.NextStep, note,
 		strconv.Itoa(a.AccountingVersion), a.SignedAt,
-	}, "\n"))
+	}
+	if a.BrowserSHA256 != "" {
+		lines = append(lines, a.BrowserSHA256)
+	}
+	return []byte(strings.Join(lines, "\n"))
 }
 
 // VerifyAnswer checks a base64 DER ECDSA signature over a.Message() with

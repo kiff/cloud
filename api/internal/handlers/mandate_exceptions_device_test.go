@@ -8,6 +8,8 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
+	"github.com/kiff/cloud/api/internal/permit"
 	"net/http"
 	"strings"
 	"testing"
@@ -165,5 +167,62 @@ func TestSignedAnswerKeepsTheDeviceProof(t *testing.T) {
 	}
 	if got, _ := f.members.HoldAnswers(context.Background(), "t1", []string{other}); got[other].Device != nil {
 		t.Errorf("a dashboard answer has a device proof: %+v", got[other].Device)
+	}
+}
+
+// A held sealed fill's answer counts only when it signs over the block the
+// phone drew (the hold's browser_sha256, a ninth line): an answer signed as
+// for any other hold, or over another block, is refused.
+func TestASealedFillsAnswerSignsTheBlockThePhoneDrew(t *testing.T) {
+	mux, store := mandatesServer(t, owner())
+	now := time.Date(2026, 9, 12, 12, 0, 0, 0, time.UTC)
+	key, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	der, _ := x509.MarshalPKIXPublicKey(&key.PublicKey)
+	phone := owner()
+	phone.Method, phone.DeviceKey, phone.DeviceSessionID = auth.MethodDeveloper, der, "sess-phone"
+	sign := func(a auth.Answer) map[string]any {
+		digest := sha256.Sum256(a.Message())
+		sig, _ := ecdsa.SignASN1(rand.Reader, key, digest[:])
+		return map[string]any{"signed_at": a.SignedAt, "value": base64.StdEncoding.EncodeToString(sig)}
+	}
+	card := mandate.Mandate{ID: "card-x", TenantID: "t1", Subject: "agent://a", OnExceed: mandate.OnExceedOwner,
+		Grants: []mandate.Grant{{Action: "REFUND_INVOICE", PerAction: []mandate.PerActionLimit{{
+			Quantity: mandate.Quantity{Kind: mandate.KindSum, Parameter: "amount"}, Max: 1000}}}}}
+	if err := store.Issue(context.Background(), card, "owner"); err != nil {
+		t.Fatal(err)
+	}
+	a := mandate.NewAuthorizer(store, nil, func() time.Time { return now })
+	d, err := a.Authorize(context.Background(), "t1", "p-fill", mandate.Request{Subject: "agent://a", Action: "REFUND_INVOICE",
+		Parameters: map[string]int64{"amount": 1}, OwnerAsk: "sealed_fill"})
+	if err != nil || d.Outcome != mandate.OutcomeOwnerRequired {
+		t.Fatalf("hold: %+v %v", d, err)
+	}
+	e, _ := store.Exception(context.Background(), "t1", d.ExceptionID)
+	block := []byte(`{"block":{"v":"planque/describe/v1","site":"shop.example"},"sig":"x"}`)
+	if err := store.KeepBrowserBlock(context.Background(), "t1", "p-fill", block); err != nil {
+		t.Fatal(err)
+	}
+	canon, _ := permit.Canonicalize([]byte(`{"v":"planque/describe/v1","site":"shop.example"}`))
+	sum := sha256.Sum256(canon)
+	answer := auth.Answer{TenantID: "t1", ExceptionID: e.ID, Answer: "approve-once", AccountingVersion: e.AccountingVersion,
+		SignedAt: now.Add(-30 * time.Second).Format(time.RFC3339)}
+	post := func(body any) (int, string) {
+		rr := do(t, mux, phone, http.MethodPost, "/v1/me/card-exceptions/"+e.ID+"/approve-once", body)
+		return rr.Code, rr.Body.String()
+	}
+	// Signed as for any other hold: refused.
+	if code, body := post(map[string]any{"signature": sign(answer)}); code != http.StatusForbidden || !strings.Contains(body, "signature_invalid") {
+		t.Fatalf("an answer that didn't sign the block: %d %s", code, body)
+	}
+	// Over another block: refused.
+	other := answer
+	other.BrowserSHA256 = strings.Repeat("0", 64)
+	if code, body := post(map[string]any{"signature": sign(other)}); code != http.StatusForbidden || !strings.Contains(body, "signature_invalid") {
+		t.Fatalf("an answer over another block: %d %s", code, body)
+	}
+	// Over the block the phone drew: taken.
+	answer.BrowserSHA256 = hex.EncodeToString(sum[:])
+	if code, body := post(map[string]any{"signature": sign(answer)}); code != http.StatusOK {
+		t.Fatalf("an answer over the block: %d %s", code, body)
 	}
 }

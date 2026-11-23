@@ -167,3 +167,17 @@ func TestVerifyRequest(t *testing.T) {
 		t.Errorf("old signature: %v", err)
 	}
 }
+
+// A held sealed fill's answer signs over the block the phone drew, as a ninth
+// line; every other answer's message is the same eight lines as before.
+func TestAnAnswerSignsTheBrowserBlockOnlyForASealedFill(t *testing.T) {
+	a := Answer{TenantID: "t1", ExceptionID: "e1", Answer: "approve-once", AccountingVersion: 2, SignedAt: "2026-11-23T19:00:00Z"}
+	plain := string(a.Message())
+	if want := "kiff.answer.v1\nt1\ne1\napprove-once\n\n\n2\n2026-11-23T19:00:00Z"; plain != want {
+		t.Fatalf("an answer's message changed:\n%q\nwant\n%q", plain, want)
+	}
+	a.BrowserSHA256 = "abc123"
+	if got := string(a.Message()); got != plain+"\nabc123" {
+		t.Fatalf("a sealed fill's message: %q", got)
+	}
+}
