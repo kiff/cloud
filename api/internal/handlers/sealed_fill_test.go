@@ -8,9 +8,11 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"github.com/kiff/cloud/api/internal/permit"
+	"github.com/kiff/cloud/api/internal/words"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
@@ -379,5 +381,55 @@ func TestABrowserBlockIsKeptOnlyAsPlanqueSignedItForThisCall(t *testing.T) {
 	// planque's step names, as chrome_driver.go writes them.
 	if chromeStepID("op_1", 1) != "op_1.1" || len(chromeStepID(strings.Repeat("x", 70), 1)) != len("op_")+40+2 {
 		t.Fatalf("chromeStepID: %s %s", chromeStepID("op_1", 1), chromeStepID(strings.Repeat("x", 70), 1))
+	}
+}
+
+// A held sealed fill's view carries planque's block as it was signed, and the
+// hash the phone's answer signs over; a hold without one, or any other hold,
+// carries none.
+func TestASealedFillsHoldShowsPlanquesBlockAndItsHash(t *testing.T) {
+	r, _, plain := sealedRig(t, sealedArgs())
+	m := r.cardTerms("rae-refund")
+	a := mandate.NewAuthorizer(r.store, nil, func() time.Time { return r.now })
+	d, err := a.Authorize(t.Context(), "t1", "p-fill", mandate.Request{Subject: "rae", Domain: m.Domain, DomainID: m.DomainID,
+		Environment: m.Environment, Action: "refund", Parameters: map[string]int64{"amount_cents": 100}, OwnerAsk: words.OwnerAskSealedFill})
+	if err != nil || d.Outcome != mandate.OutcomeOwnerRequired {
+		t.Fatalf("a sealed fill wasn't held: %+v %v", d, err)
+	}
+	view := func(id string) map[string]any {
+		t.Helper()
+		rr := do(t, r.mux, admin(), http.MethodGet, "/v1/me/card-exceptions/"+id, nil)
+		var v map[string]any
+		if err := json.Unmarshal(rr.Body.Bytes(), &v); err != nil || rr.Code != http.StatusOK {
+			t.Fatalf("view: %d %s", rr.Code, rr.Body)
+		}
+		return v
+	}
+	if v := view(d.ExceptionID); v["browser"] != nil || v["browser_sha256"] != nil {
+		t.Fatalf("a hold with no block showed one: %v", v["browser"])
+	}
+	planque, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	signed := testBlock(t, planque, "t1", "p-fill", nil)
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-fill", signed); err != nil {
+		t.Fatal(err)
+	}
+	var s struct {
+		Block json.RawMessage `json:"block"`
+	}
+	_ = json.Unmarshal(signed, &s)
+	canon, _ := permit.Canonicalize(s.Block)
+	sum := sha256.Sum256(canon)
+	v := view(d.ExceptionID)
+	b, _ := v["browser"].(map[string]any)
+	if b == nil || b["origin"] != "https://shop.example" || v["browser_sha256"] != hex.EncodeToString(sum[:]) {
+		t.Fatalf("the hold's block: %v %v", v["browser"], v["browser_sha256"])
+	}
+	// Written once: a second block isn't kept.
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-fill", testBlock(t, planque, "t1", "p-fill", func(b map[string]any) { b["site"] = "evil.example" })); !errors.Is(err, mandate.ErrExceptionState) {
+		t.Fatalf("a second block: %v", err)
+	}
+	// An ordinary hold shows none.
+	if v := view(plain); v["browser"] != nil {
+		t.Fatalf("an ordinary hold showed a block: %v", v["browser"])
 	}
 }

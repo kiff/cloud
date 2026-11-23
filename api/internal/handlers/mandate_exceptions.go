@@ -416,6 +416,7 @@ func (h *MandatesHandler) listExceptions(w http.ResponseWriter, r *http.Request)
 		if vt := vendors[e.Action]; vt != "" {
 			v["vendor_tool"] = vt
 		}
+		v = h.withBrowserBlock(r.Context(), tenantID, v, e)
 		out = append(out, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"exceptions": out})
@@ -465,6 +466,7 @@ func (h *MandatesHandler) getException(w http.ResponseWriter, r *http.Request) {
 	if vt := h.vendorTools(r, tenantID)[e.Action]; vt != "" {
 		v["vendor_tool"] = vt
 	}
+	v = h.withBrowserBlock(r.Context(), tenantID, v, e)
 	writeJSON(w, http.StatusOK, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 }
 

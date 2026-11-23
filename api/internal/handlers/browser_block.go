@@ -170,3 +170,33 @@ func (h *ProposalsHandler) keepBrowserBlock(ctx context.Context, tenantID string
 func WithProposalsBrowserBlocks(b mandate.BrowserBlocks) ProposalsOption {
 	return func(h *ProposalsHandler) { h.browserBlocks = b }
 }
+
+// withBrowserBlock adds a held sealed fill's block to its view: browser, as
+// planque signed it (the apps draw it and nothing else), and browser_sha256,
+// the hex SHA-256 of its JCS, which the phone's answer signs over. A hold
+// with no block shows none, and can't be allowed (refuseSealedFill).
+func (h *MandatesHandler) withBrowserBlock(ctx context.Context, tenantID string, v map[string]any, e mandate.Exception) map[string]any {
+	if e.Request.OwnerAsk != words.OwnerAskSealedFill {
+		return v
+	}
+	blocks, ok := h.store.(mandate.BrowserBlocks)
+	if !ok {
+		return v
+	}
+	raw, err := blocks.BrowserBlock(ctx, tenantID, e.ProposalID)
+	if err != nil || len(raw) == 0 {
+		return v
+	}
+	var s signedBrowserBlock
+	if json.Unmarshal(raw, &s) != nil || len(s.Block) == 0 {
+		return v
+	}
+	canon, err := permit.Canonicalize(s.Block)
+	if err != nil {
+		return v
+	}
+	sum := sha256.Sum256(canon)
+	v["browser"] = s.Block
+	v["browser_sha256"] = hex.EncodeToString(sum[:])
+	return v
+}
