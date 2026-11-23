@@ -3,7 +3,7 @@ package words
 import "strings"
 
 // A regional variant is a language's lines for one region where some read differently: pt-BR beside pt, as the apps
-// have it (kiff/tafs docs/languages.md, "Regional variants"). Its emails are its base's, with its own lines on top: a
+// have it ("Regional variants" in the apps' language guide). Its emails are its base's, with its own lines on top: a
 // line it doesn't change reads as the base's, never as English. The code sign-in emails, the account emails, the
 // footer and a receipt's steps are whole sets in the variant (CodeSignInEmailMore, AccountEmails, EmailFooters and
 // ReceiptStepsMore, under its tag); the other emails' lines are only those that differ (EmailVariants).

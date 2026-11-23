@@ -4,7 +4,7 @@ import "fmt"
 
 // Brazilian Portuguese (pt-BR), a regional variant of pt (variants.go): "você" throughout, "Entrar" for signing in,
 // "senha", "celular", "o Card" (masculine), no enclitics where Brazil puts the pronoun first, and no "a + infinitive",
-// as kiff/tafs docs/languages.md's pt-BR glossary has it. A first draft for the language's owner to correct.
+// as the apps' pt-BR glossary has it. A first draft for the language's owner to correct.
 func init() {
 	CodeSignInEmailMore["pt-BR"] = CodeSignInEmail{
 		CodeSubject:          "Seu código para entrar no KIFF",
