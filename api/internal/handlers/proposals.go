@@ -149,6 +149,9 @@ type ProposalsHandler struct {
 	// browserBlocks keeps a held sealed fill's signed block
 	// (keepBrowserBlock); nil keeps none.
 	browserBlocks mandate.BrowserBlocks
+	// verifyBlock checks planque's signature on a block; nil is
+	// verifyPlanque, the pinned key. Only tests set it (export_test.go).
+	verifyBlock func(json.RawMessage, string) bool
 	// holdOwners and holdNotifier email the owner about each newly held
 	// action; appBaseURL makes its link absolute. dispatch
 	// runs the send detached; tests make it synchronous.

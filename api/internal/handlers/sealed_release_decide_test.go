@@ -2,6 +2,9 @@ package handlers_test
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -114,5 +117,78 @@ func TestASealedFillsReleaseGoesOutOnceOnTheDecisionThatSendsIt(t *testing.T) {
 		if strings.Contains(string(b), "SIGNED-BY-THE-PHONE") {
 			t.Fatalf("record %s keeps the release: %s", rec.ID, b)
 		}
+	}
+}
+
+// lazyBlocks is the rig's own store, set once the rig has made it.
+type lazyBlocks struct{ s mandate.BrowserBlocks }
+
+func (l *lazyBlocks) KeepBrowserBlock(ctx context.Context, tenantID, proposalID string, block json.RawMessage) error {
+	return l.s.KeepBrowserBlock(ctx, tenantID, proposalID, block)
+}
+
+func (l *lazyBlocks) BrowserBlock(ctx context.Context, tenantID, proposalID string) (json.RawMessage, error) {
+	return l.s.BrowserBlock(ctx, tenantID, proposalID)
+}
+
+// Invariant: the block a held sealed fill's card draws is the one planque signed for it on the decision that held it, and nothing sent after replaces it.
+// Category: authority
+// Attack: a taf decides its held sealed fill again with another block planque really signed (for this call, but showing another page), so the card changes under the owner before they allow
+// Refused: the block kept on the holding decision stays; a later decision of the same call, with any block, changes nothing, and a plain call's block is never kept
+func TestASealedFillsBlockIsKeptOnTheDecisionThatHoldsIt(t *testing.T) {
+	ctx := context.Background()
+	planque, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	blocks := &lazyBlocks{}
+	r := newGrantRig(t, handlers.WithProposalsBrowserBlocks(blocks), handlers.WithProposalsBlockVerifier(handlers.VerifyWith(&planque.PublicKey)))
+	blocks.s = r.store
+	resolved, err := r.rt.For(ctx, r.tnt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ingested := map[string]bool{}
+	decide := func(call string, sealed bool, block json.RawMessage) string {
+		t.Helper()
+		if !ingested[call] {
+			ingested[call] = true
+			_, _ = resolved.IngestRaw(ctx, kiffadapter.RawInput{ID: "evt-" + call, Adapter: "cloud", Type: "TOOL_CALL_REQUESTED",
+				Source: "kiff-gateway", ReceivedAt: time.Now().UTC(), EntityID: call, EntityType: "ToolCall", ActorID: "refund-agent", Payload: map[string]any{}})
+		}
+		params := map[string]any{"amount": 100}
+		if sealed {
+			params[handlers.GatewayOwnerAskParam] = "sealed_fill"
+		}
+		rec := drivePost(t, r.serve(agentKey), "/v1/proposals/decide", map[string]any{"id": call, "entity_id": call, "entity_type": "ToolCall",
+			"action_name": "refund_payment", "actor_id": "refund-agent", "parameters": params, "browser_block": block})
+		var a struct {
+			Outcome string `json:"outcome"`
+		}
+		_ = json.Unmarshal(rec.Body.Bytes(), &a)
+		return a.Outcome
+	}
+	shows := func(words string) func(map[string]any) {
+		return func(b map[string]any) { b["action_words"] = words }
+	}
+	first := handlers.SignedBlock(t, planque, r.tnt, "call-fill", shows("Fill your password into “Password”"))
+	if got := decide("call-fill", true, first); got != "owner_required" {
+		t.Fatalf("the sealed fill wasn't held: %s", got)
+	}
+	kept, err := r.store.BrowserBlock(ctx, r.tnt, "call-fill")
+	if err != nil || string(kept) != string(first) {
+		t.Fatalf("the holding decision's block wasn't kept: %s %v", kept, err)
+	}
+	second := handlers.SignedBlock(t, planque, r.tnt, "call-fill", shows("Read the news"))
+	if got := decide("call-fill", true, second); got != "owner_required" {
+		t.Fatalf("the second decision: %s", got)
+	}
+	if kept, _ := r.store.BrowserBlock(ctx, r.tnt, "call-fill"); string(kept) != string(first) {
+		t.Fatalf("a later block replaced the one the card drew: %s", kept)
+	}
+
+	// A call the gateway didn't mark sealed_fill keeps no block, even one
+	// planque signed for it.
+	plain := handlers.SignedBlock(t, planque, r.tnt, "call-plain", nil)
+	decide("call-plain", false, plain)
+	if got, _ := r.store.BrowserBlock(ctx, r.tnt, "call-plain"); got != nil {
+		t.Fatalf("a plain call's block was kept: %s", got)
 	}
 }

@@ -101,6 +101,12 @@ func verifyPlanque(block json.RawMessage, sig string) bool {
 	if !ok || k.Curve.Params().Name != "P-256" {
 		return false
 	}
+	return verifyWith(k, block, sig)
+}
+
+// verifyWith reports whether sig is k's signature over JCS(block) under
+// planqueDescribeLabel.
+func verifyWith(k *ecdsa.PublicKey, block json.RawMessage, sig string) bool {
 	raw, err := base64.RawURLEncoding.DecodeString(sig)
 	if err != nil || len(raw) != 64 {
 		return false
@@ -232,7 +238,11 @@ func (h *ProposalsHandler) keepBrowserBlock(ctx context.Context, tenantID string
 	if code, _ := prop.Parameters[GatewayOwnerAskParam].(string); code != words.OwnerAskSealedFill {
 		return
 	}
-	if why := browserBlockRefusal(raw, tenantID, prop.ID, verifyPlanque); why != "" {
+	verify := h.verifyBlock
+	if verify == nil {
+		verify = verifyPlanque
+	}
+	if why := browserBlockRefusal(raw, tenantID, prop.ID, verify); why != "" {
 		h.logger.WarnContext(ctx, "proposals: browser block not kept", slog.String("tenant", tenantID), slog.String("proposal", prop.ID), slog.String("why", why))
 		return
 	}
