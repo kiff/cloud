@@ -72,7 +72,7 @@ func TestPricing(t *testing.T) {
 		"$500",
 		// A credit is €0.01 only past Company's plan, not for everyone.
 		"1 credit is €0.01",
-		// Test-mode calls count like any other (PM).
+		// Test-mode calls count like any other.
 		"test mode", "Testing is free",
 		// History and people aren't by plan.
 		"days of history", "A year of history", "Several approvers",

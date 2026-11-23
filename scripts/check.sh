@@ -70,7 +70,7 @@ deny=(
 	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
 	# Who decided something, never the requirement itself: "the PM", a
 	# ruling's time stamp, and a reference cut short to "(review on)".
-	"coordination note|\bthe PM\b|\(PM[ ,]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) on\)"
+	"coordination note|\bthe PM\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) on\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
 	# demos, the smoke and Stripe scripts, AGENTS.md, the desktop doc by name.
 	# The API's server, its HTTP layer and the deploy are public. Exported paths
