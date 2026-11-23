@@ -175,8 +175,8 @@ func TestSettingsWorkspace_CanonicalPlans(t *testing.T) {
 	}{
 		{"trial", "Trial", `<span class="dash-pill dash-pill-muted">trial</span>`},
 		{"solo", "Solo", `<span class="dash-pill dash-pill-ok">paid</span>`},
-		{"team", "Team", `<span class="dash-pill dash-pill-ok">paid</span>`},
-		{"company", "Company", `<span class="dash-pill dash-pill-ok">paid</span>`},
+		{"team", "Company", `<span class="dash-pill dash-pill-ok">paid</span>`},
+		{"company", "Company, by agreement", `<span class="dash-pill dash-pill-ok">paid</span>`},
 		{"internal", "Internal", `<span class="dash-pill dash-pill-muted">internal</span>`},
 		// A legacy plan is the trial: there is no free tier.
 		{"growth", "Trial", `<span class="dash-pill dash-pill-muted">trial</span>`},

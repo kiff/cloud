@@ -264,7 +264,7 @@ templ settingsWorkspaceCard(v DashboardView) {
 			<p class="dash-note st-billing-source">{ line }</p>
 		}
 		if appleSoloMovesToTeam(v) {
-			<p class="dash-note st-solo-to-team">To add people, move to Team here. The Solo days you've paid Apple for become Team days, at no charge. Then cancel Solo with Apple so it doesn't renew.</p>
+			<p class="dash-note st-solo-to-team">To add people, move to Company here. The Solo days you've paid Apple for become Company days, at no charge. Then cancel Solo with Apple so it doesn't renew.</p>
 		}
 		if line := appleSoloStillRenews(v); line != "" {
 			<p class="dash-note st-solo-renews">{ line } <a href={ templ.SafeURL(appleManageURL(v)) } target="_blank" rel="noopener">Cancel with Apple</a></p>
@@ -272,7 +272,7 @@ templ settingsWorkspaceCard(v DashboardView) {
 		<div class="dash-plan-actions">
 			if billedByApple(v) {
 				if appleSoloMovesToTeam(v) {
-					<a class="btn btn-primary" href="/dashboard/checkout?plan=team">Move to Team</a>
+					<a class="btn btn-primary" href="/dashboard/checkout?plan=team">Move to Company</a>
 				}
 				<a class="btn btn-secondary" href={ templ.SafeURL(appleManageURL(v)) } target="_blank" rel="noopener">Manage with Apple</a>
 			} else {

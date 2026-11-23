@@ -165,8 +165,8 @@ func TestSettingsBilledByApple(t *testing.T) {
 	}{Packs: []apiclient.StorePack{{ID: "pico", Name: "Pico", Line: "Pico · 12 tasks", Tasks: 12, Months: 12, StripePrice: "kiff_pack_pico"}}}
 	body := renderSettings(t, v)
 	for _, want := range []string{"Billed by Apple.", `href="https://apps.apple.com/account/subscriptions"`, "Manage with Apple", "Add Pico",
-		// Solo may move to Team here, its paid days credited.
-		`href="/dashboard/checkout?plan=team"`, "Move to Team", "become Team days"} {
+		// Solo may move to Company here, its paid days credited.
+		`href="/dashboard/checkout?plan=team"`, "Move to Company", "become Company days"} {
 		if !strings.Contains(body, want) {
 			t.Errorf("missing %q", want)
 		}
@@ -178,7 +178,7 @@ func TestSettingsBilledByApple(t *testing.T) {
 	}
 	// Apple's free week isn't Solo: nothing is credited, and no Team is offered here.
 	v.Me.Plan = "trial"
-	if body := renderSettings(t, v); strings.Contains(body, "Move to Team") {
+	if body := renderSettings(t, v); strings.Contains(body, "Move to Company") {
 		t.Error("an Apple trial is offered Team on credited days")
 	}
 
