@@ -102,14 +102,23 @@ A signed `POST /v1/me/alert-targets` registers the app's backend, if
 KIFF lists it for phone apps, as the account's alert target for
 `owner_required` and `hold_answered`. See [Webhooks](/docs/reference-webhooks).
 
-## 8. Passkeys (coming next)
+## 8. Passkeys and security keys
 
 A computer with no secure key store of its own, such as an older Mac or
-Linux, will approve with a **passkey**: the phone's own passkey through a QR
-code, or a USB security key. The assertion's challenge **is** the action's
-digest: the base64url of the SHA-256 of the same `kiff.request.v1` message
-a device key signs. So a passkey approves exactly one action, as a device
-signature does.
+Linux, approves with a **passkey**: the phone's own passkey through a QR
+code, or a FIDO2 security key. It sends an assertion in place of a device
+signature:
+
+```
+KIFF-Passkey-Assertion: t=<signed_at>,a=<assertion>
+```
+
+`a` is the base64url of `{"credential_id", "client_data_json",
+"authenticator_data", "signature"}`. The assertion's challenge **is** the
+action's digest: the base64url of the SHA-256 of the same `kiff.request.v1`
+message a device key signs, with the same `signed_at`. So a passkey approves
+exactly one action, as a device signature does, and each challenge is used
+once.
 
 KIFF accepts an assertion only when every check below holds:
 
@@ -119,14 +128,24 @@ KIFF accepts an assertion only when every check below holds:
 - the user was present and verified (the UP and UV flags);
 - the signature verifies over `authenticatorData ‖ sha256(clientDataJSON)` with the passkey's registered P-256 key;
 - the sign counter never goes backwards (an authenticator that keeps no counter reports 0 every time);
-- the passkey is registered to this account.
+- the passkey is registered to this account and this person, and a computer's own passkey to this computer, never synced.
 
-Registering a passkey will itself be an approval, signed by one of the
-account's existing approval devices. A passkey synced to the computer's own
-cloud account never counts as the second device that payments need.
+**An account's passkeys.** `POST /v1/me/passkeys` registers one, signed by
+an existing approval device's approval key (never a passkey, a window or a
+device key alone), by an owner or admin. `GET /v1/me/passkeys` lists them;
+`DELETE /v1/me/passkeys/{id}` removes one, itself an approval. A passkey
+synced to the computer's own cloud account never counts as the second
+device that payments need.
 
-The check is built. Registering a passkey, and sending an assertion in
-place of a device signature, come in the next change.
+**A computer's own security key.** A computer whose device key is in
+software pairs (section 9) with `kind: "passkey"`, `key_store: "software"`,
+its security key's `credential` and `credential_proof`. That key alone then
+approves for it, with its PIN every time (UV), one request at a time.
+Refusals: `passkey_required` (a device key's signature alone),
+`user_verification_required` (no UV), `passkey_not_this_device` (an account
+passkey), `security_key_each_request` (two requests at once, or a window),
+and `security_key_only` (registering an approval key, which would be in
+software too). Without a security key, it pairs to view only.
 
 ## 9. Pairing a computer from a phone
 
