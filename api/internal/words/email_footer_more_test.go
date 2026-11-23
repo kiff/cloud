@@ -8,8 +8,8 @@ import (
 // Every shipped language has the footer's three lines, and the never-ask
 // sentence still names KIFF and none of the English words that would be left over.
 func TestEveryLanguageHasTheEmailFooter(t *testing.T) {
-	if got := len(EmailFooters); got != 44 {
-		t.Fatalf("the email footer is written in %d languages, want 44", got)
+	if got := len(EmailFooters); got != 47 {
+		t.Fatalf("the email footer is written in %d languages, want 47", got)
 	}
 	for code, f := range EmailFooters {
 		for name, line := range map[string]string{"Privacy": f.Privacy, "Help": f.Help, "NeverAsk": f.NeverAsk} {

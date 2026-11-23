@@ -137,6 +137,15 @@ var accountEmailMore = map[string]AccountEmail{
 		SupportBody:        "יש עדכון חדש בפנייה שלך לתמיכה של KIFF.",
 		SupportView:        "הצג את הפנייה",
 	},
+	"hi": {
+		SuspendedSubject:   "आपका KIFF खाता अस्थायी रूप से निलंबित कर दिया गया है",
+		SuspendedBody:      "आपका KIFF खाता अस्थायी रूप से निलंबित कर दिया गया है। ऐसा तब हो सकता है जब KIFF को कोई ऐसी गतिविधि दिखे जिसकी समीक्षा ज़रूरी हो। अगर आपको लगता है कि यह अनपेक्षित है, तो इस ईमेल का जवाब दें या support@kiff.dev से संपर्क करें।",
+		UnsuspendedSubject: "आपका KIFF खाता फिर से चालू कर दिया गया है",
+		UnsuspendedBody:    "आपका KIFF खाता फिर से चालू कर दिया गया है। आप KIFF का फिर से उपयोग कर सकते हैं।",
+		SupportSubject:     "आपके KIFF सहायता टिकट पर एक अपडेट है",
+		SupportBody:        "आपके KIFF सहायता टिकट पर एक नया अपडेट है।",
+		SupportView:        "अपना टिकट देखें",
+	},
 	"hr": {
 		SuspendedSubject:   "Vaš KIFF račun privremeno je suspendiran",
 		SuspendedBody:      "Vaš KIFF račun privremeno je suspendiran. To se može dogoditi kad KIFF otkrije aktivnost koju treba provjeriti. Ako mislite da je to neočekivano, odgovorite na ovu e-poruku ili se javite na support@kiff.dev.",
@@ -380,6 +389,15 @@ var accountEmailMore = map[string]AccountEmail{
 		SupportBody:        "มีการอัปเดตใหม่ในทิกเก็ตขอรับการสนับสนุน KIFF ของคุณ",
 		SupportView:        "ดูทิกเก็ตของคุณ",
 	},
+	"tk": {
+		SuspendedSubject:   "KIFF hasabyňyz wagtlaýyn togtadyldy",
+		SuspendedBody:      "KIFF hasabyňyz wagtlaýyn togtadyldy. Bu KIFF barlanmaly bir hereketi görende bolup biler. Muny garaşylmadyk hasaplaýan bolsaňyz, bu emaile jogap beriň ýa-da support@kiff.dev bilen habarlaşyň.",
+		UnsuspendedSubject: "KIFF hasabyňyz täzeden işjeňleşdirildi",
+		UnsuspendedBody:    "KIFF hasabyňyz täzeden işjeňleşdirildi. KIFF-i ýene ulanyp bilersiňiz.",
+		SupportSubject:     "KIFF goldaw ýüzlenmäňizde täzelik bar",
+		SupportBody:        "KIFF goldaw ýüzlenmäňizde täze bir täzelik bar.",
+		SupportView:        "Ýüzlenmäňizi görüň",
+	},
 	"tr": {
 		SuspendedSubject:   "KIFF hesabınız geçici olarak askıya alındı",
 		SuspendedBody:      "KIFF hesabınız geçici olarak askıya alındı. Bu, KIFF incelenmesi gereken bir etkinlik algıladığında olabilir. Beklenmedik olduğunu düşünüyorsanız bu e-postayı yanıtlayın veya support@kiff.dev adresine yazın.",
@@ -388,6 +406,15 @@ var accountEmailMore = map[string]AccountEmail{
 		SupportSubject:     "KIFF destek talebinizde bir güncelleme var",
 		SupportBody:        "KIFF destek talebinizde yeni bir güncelleme var.",
 		SupportView:        "Talebinizi görüntüleyin",
+	},
+	"ur": {
+		SuspendedSubject:   "آپ کا KIFF اکاؤنٹ عارضی طور پر معطل کر دیا گیا ہے",
+		SuspendedBody:      "آپ کا KIFF اکاؤنٹ عارضی طور پر معطل کر دیا گیا ہے۔ ایسا تب ہو سکتا ہے جب KIFF کو کوئی ایسی سرگرمی نظر آئے جس کا جائزہ ضروری ہو۔ اگر آپ سمجھتے ہیں کہ یہ غیر متوقع ہے تو اس ای میل کا جواب دیں یا support@kiff.dev سے رابطہ کریں۔",
+		UnsuspendedSubject: "آپ کا KIFF اکاؤنٹ دوبارہ چالو کر دیا گیا ہے",
+		UnsuspendedBody:    "آپ کا KIFF اکاؤنٹ دوبارہ چالو کر دیا گیا ہے۔ آپ KIFF دوبارہ استعمال کر سکتے ہیں۔",
+		SupportSubject:     "آپ کے KIFF سپورٹ ٹکٹ پر ایک اپ ڈیٹ ہے",
+		SupportBody:        "آپ کے KIFF سپورٹ ٹکٹ پر ایک نئی اپ ڈیٹ ہے۔",
+		SupportView:        "اپنا ٹکٹ دیکھیں",
 	},
 	"vi": {
 		SuspendedSubject:   "Tài khoản KIFF của bạn đã bị tạm ngưng",
