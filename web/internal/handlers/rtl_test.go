@@ -18,7 +18,7 @@ func TestArabicAndHebrewPagesAreRightToLeft(t *testing.T) {
 	for _, tr := range TranslatedRoutes() {
 		mux.Handle("GET "+tr.Path, Translated(tr.Lang, tr.Page, OfferLinks{}))
 	}
-	arabic, hebrew, dhivehi := 0, 0, 0
+	arabic, hebrew, dhivehi, urdu := 0, 0, 0, 0
 	for _, tr := range TranslatedRoutes() {
 		rec := getPage(t, mux, tr.Path)
 		body := rec.Body.String()
@@ -39,6 +39,16 @@ func TestArabicAndHebrewPagesAreRightToLeft(t *testing.T) {
 				t.Errorf("%s: not <html lang=\"he\" dir=\"rtl\">", tr.Path)
 			}
 			if got := rec.Header().Get("Content-Language"); got != "he" {
+				t.Errorf("%s: Content-Language %q", tr.Path, got)
+			}
+			continue
+		}
+		if tr.Lang == "ur" {
+			urdu++
+			if !strings.Contains(body, `<html lang="ur" dir="rtl"`) {
+				t.Errorf("%s: not <html lang=\"ur\" dir=\"rtl\">", tr.Path)
+			}
+			if got := rec.Header().Get("Content-Language"); got != "ur" {
 				t.Errorf("%s: Content-Language %q", tr.Path, got)
 			}
 			continue
@@ -85,10 +95,13 @@ func TestArabicAndHebrewPagesAreRightToLeft(t *testing.T) {
 	if dhivehi != 4 {
 		t.Errorf("Dhivehi has %d routes, want its four legal pages", dhivehi)
 	}
+	if urdu != 4 {
+		t.Errorf("Urdu has %d routes, want its four legal pages", urdu)
+	}
 	if got := getPage(t, mux, "/privacy").Body.String(); strings.Contains(got, "dir=\"rtl\"") {
 		t.Error("the English Privacy page is marked right to left")
 	}
-	if !components.IsRightToLeft("ar") || !components.IsRightToLeft("he") || !components.IsRightToLeft("dv") || components.IsRightToLeft("en") {
+	if !components.IsRightToLeft("ar") || !components.IsRightToLeft("he") || !components.IsRightToLeft("dv") || !components.IsRightToLeft("ur") || components.IsRightToLeft("en") {
 		t.Error("IsRightToLeft")
 	}
 }
