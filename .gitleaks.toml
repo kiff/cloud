@@ -16,4 +16,8 @@ paths = [
 regexes = [
   '''^whsec_dGVzdC1zZWNyZXQtZm9yLWtpZmY=$''',
   '''^whsec_b3RoZXI=$''',
+  # planque's step public key (SPKI, base64url), pinned to check its signed
+  # browser blocks (api/internal/handlers/browser_block.go): public, the same
+  # value the tafs Chrome extension's build pins. Allowed by its value alone.
+  '''^MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExS_lxBTwDdO8wf8ksu6kkIF8r3Z-Vp3tWZUKjlBjQezW0BhCCW_0tkGqRewu0qBL8KDggls0cjFF-NDcnAjH7g$''',
 ]
