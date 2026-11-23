@@ -206,10 +206,13 @@ import hashlib, re, subprocess, sys
 NAMES = set("""
 3c32e58c6fc3cf62 20cca48ece26c362 f5068c4b858ead38 fe9c6bd7a66301f4 50077b782480811e
 be896ac583d76627 afb42e3f1a4bce7e d419916f176e52d3 bd184cdc7aea9ef8 ab63a9b276c86bec
-2ad06b22b301f873 3c00d0a9d4c2eb08 018a7f9527b114ab 94c6cdf43ac3f929 4a25962615e31ac6
+2ad06b22b301f873 3c00d0a9d4c2eb08 4a25962615e31ac6
+d184eb5cf606a3eb d1cac6ef5a9ddbd1 a74b534355e685fc ea0edce134693c74 cb722454717333e5
 """.split())
-# Reviewer logins: named only where GitHub reads them.
-LOGINS = set("53dd1be914bd441c f66e74c6b8883a1f 3726111e555e250c".split())
+# Logins, the owner's included: named only where GitHub reads them.
+LOGINS = set("""
+53dd1be914bd441c f66e74c6b8883a1f 3726111e555e250c 018a7f9527b114ab 94c6cdf43ac3f929
+""".split())
 OWNERS = ".github/CODEOWNERS"
 MONTH = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
 SAID = re.compile(
@@ -217,7 +220,7 @@ SAID = re.compile(
     r"|\b(review|probe|ask|point|negatives|read) (on|of)\)"
     rf"|\bowner(?:'s|,) [0-9]{{1,2}} {MONTH}\b"
 )
-WORD = re.compile(r"(?<![@\w-])[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])")
+WORD = re.compile(r"(?<![\w-])[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])")
 SKIP = {"scripts/check.sh", "web/internal/handlers/skills_test.go"}
 SKIP_DIRS = ("web/internal/content/decks/",)
 
