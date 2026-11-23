@@ -2,6 +2,7 @@ package mandate
 
 import (
 	"context"
+	"encoding/json"
 	"sort"
 	"strings"
 	"sync"
@@ -25,6 +26,7 @@ type MemoryStore struct {
 	approverPolicy func(context.Context, string, string) error
 	releases       map[string]EffectRelease
 	surcharges     map[string]EffectSurcharge
+	sealedReleases map[string]json.RawMessage // a held sealed fill's release, keyed by tenant + proposal
 	// trialMu guards trials, each trial run's simulated draws. It is its
 	// own lock: a trial reads real usage through mu while holding it.
 	trialMu    sync.Mutex

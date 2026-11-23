@@ -31,6 +31,7 @@ import (
 	"github.com/kiff/cloud/api/internal/callabout"
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/halts"
+	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/notify"
 	"github.com/kiff/cloud/api/internal/permit"
 	"github.com/kiff/cloud/api/internal/profile"
@@ -142,6 +143,9 @@ type ProposalsHandler struct {
 	// mandates is the cumulative-authority check. Nil means
 	// this deployment issues no mandates and behaves as before.
 	mandates MandateAuthorizer
+	// sealedReleases hands a sealed fill's release to the decision that
+	// sends it (handSealedRelease); nil hands none.
+	sealedReleases mandate.SealedReleases
 	// holdOwners and holdNotifier email the owner about each newly held
 	// action; appBaseURL makes its link absolute. dispatch
 	// runs the send detached; tests make it synchronous.
@@ -590,6 +594,11 @@ type proposalResponse struct {
 	// the gateway waits on that request until the permit can no longer be
 	// used.
 	PermitIssuedAt *time.Time `json:"permit_issued_at,omitempty"`
+	// SealedRelease is the phone's release for a sealed fill the owner
+	// allowed once, on the allowed decision that sends it: handed to the
+	// gateway once, which sends it to the tool beside the call
+	// (mandate.SealedReleases). Never kept in the response's record.
+	SealedRelease json.RawMessage `json:"sealed_release,omitempty"`
 }
 
 // approvalHandle is the approval pointer embedded in a
@@ -1163,6 +1172,8 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	h.recordBillableOperation(ctx, id.Tenant, prop.ID, resp.Outcome)
 	h.recordAskedBy(ctx, id.Tenant, prop.ID)
 	h.maybeAlert(ctx, id, prop, resp)
+	// Last, so nothing above reads or records it.
+	h.handSealedRelease(ctx, id.Tenant, prop, spec, &resp)
 	writeJSON(w, statusForResponse(resp), resp)
 }
 

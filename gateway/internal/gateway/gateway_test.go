@@ -41,7 +41,10 @@ type fakeAPI struct {
 	asked    []string
 	ingested map[string]int
 	approved map[string]bool
-	drawn    map[string]int64
+	// sealedReleases is the release apps/api hands once, on the allowed
+	// decision of a sealed fill the owner allowed.
+	sealedReleases map[string]json.RawMessage
+	drawn          map[string]int64
 	// refuse answers a call for this amount with this decision.
 	refuse map[int64]kiffapi.Decision
 	// why is, by amount, the limits a hold of that amount went over.
@@ -103,7 +106,7 @@ func newFakeAPI() *fakeAPI {
 		refuse: map[int64]kiffapi.Decision{}, why: map[int64][]string{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
 		issued: map[string]time.Time{}, now: time.Now, params: map[string]map[string]any{},
 		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{},
-		words: map[string]gateway.TafWords{}}
+		words: map[string]gateway.TafWords{}, sealedReleases: map[string]json.RawMessage{}}
 }
 
 // refundCard is the Card fakeAPI decides by, as GET /v1/me/card reads it.
@@ -230,6 +233,10 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 	if d, ok := f.refuse[amount]; ok {
 		return d, nil
 	}
+	if p.Parameters[gateway.OwnerAskParam] == gateway.OwnerAskSealedFill && !f.approved[p.ID] {
+		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
+			ExpiresAt: f.holdExpiry}}, nil
+	}
 	if amount > 1000 && !f.approved[p.ID] {
 		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
 			ExpiresAt: f.holdExpiry, Why: f.why[amount]}}, nil
@@ -244,6 +251,10 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 			f.issued[p.ID] = f.now()
 			return kiffapi.Decision{Outcome: "allowed", Permit: "permit-for-" + p.ID}, nil
 		}
+	}
+	if rel, ok := f.sealedReleases[p.ID]; ok {
+		delete(f.sealedReleases, p.ID)
+		return kiffapi.Decision{Outcome: "allowed", SealedRelease: rel}, nil
 	}
 	return kiffapi.Decision{Outcome: "allowed"}, nil
 }
@@ -298,10 +309,12 @@ type fakeTool struct {
 	raw     []json.RawMessage
 	bearers []string
 	permits []string
-	hang    bool
-	echo    bool
-	leak    bool
-	spoof   bool
+	// releases is each call's KIFF-Sealed-Release header ("" without one).
+	releases []string
+	hang     bool
+	echo     bool
+	leak     bool
+	spoof    bool
 	// refuse answers every call with the tool's own error result.
 	refuse string
 	// currency is each order's currency, as the get_order read says it.
@@ -324,6 +337,7 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.raw = append(f.raw, args)
 	f.bearers = append(f.bearers, bearer)
 	f.permits = append(f.permits, mcp.CallHeader(ctx, gateway.PermitHeader))
+	f.releases = append(f.releases, mcp.CallHeader(ctx, gateway.SealedReleaseHeader))
 	echo, leak, spoof, refuse, answer := f.echo, f.leak, f.spoof, f.refuse, f.answer
 	cur, isRead, readMeta := f.currency[fmt.Sprint(a["order"])], tool == "get_order", f.readMeta
 	amt, hasAmount := f.amounts[fmt.Sprint(a["order"])]

@@ -11,8 +11,11 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/tooloutcome"
+	"github.com/kiff/cloud/api/internal/words"
+	kiffproposal "github.com/kiff/kiff/pkg/kiff/proposal"
 )
 
 // A sealed fill is a browser step that moves a sign-in saved in the owner's
@@ -129,39 +132,86 @@ func releaseRefusal(raw json.RawMessage, now time.Time) string {
 	return ""
 }
 
-// refuseSealedFill answers an allow of hold id and reports true when it is a
-// sealed fill the allow can't take: any answer but approve-once with a
+// refuseSealedFill answers an allow of hold id and reports refused when it
+// is a sealed fill the allow can't take: any answer but approve-once with a
 // release (change-card, an external approver's approve). A refusal is
-// always taken: it takes power away.
-func (h *MandatesHandler) refuseSealedFill(w http.ResponseWriter, r *http.Request, tenantID, id, answer string, release json.RawMessage) bool {
+// always taken: it takes power away. sealed says the hold is a sealed fill
+// whose allow was taken, with its release checked: the caller keeps that
+// release once the hold is approved (keepSealedRelease).
+func (h *MandatesHandler) refuseSealedFill(w http.ResponseWriter, r *http.Request, tenantID, id, answer string, release json.RawMessage) (refused, sealed bool) {
 	if answer == "reject" {
-		return false
+		return false, false
 	}
 	e, err := h.store.Exception(r.Context(), tenantID, id)
 	if errors.Is(err, mandate.ErrExceptionNotFound) {
-		return false // answered as before: 404
+		return false, false // answered as before: 404
 	}
 	if err == nil {
 		var sealed bool
 		sealed, err = h.sealedFillHold(r.Context(), tenantID, e)
 		if err == nil && !sealed {
-			return false
+			return false, false
 		}
 	}
 	if err != nil {
 		h.logger.ErrorContext(r.Context(), "mandates: held call not read for a sealed fill",
 			slog.String("tenant", tenantID), slog.String("exception", id), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "KIFF couldn't read the held call to check it: try again"})
-		return true
+		return true, true
 	}
 	if answer != "approve-once" {
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "sealed_fill_once",
 			"detail": "this call fills a sign-in saved in Chrome: it's allowed once, with the phone's release, never by a change to the Card"})
-		return true
+		return true, true
 	}
 	if why := releaseRefusal(release, h.now()); why != "" {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": why})
-		return true
+		return true, true
 	}
-	return false
+	return false, true
+}
+
+// keepSealedRelease keeps an approved sealed fill's release until the
+// gateway sends the call (mandate.SealedReleases). A release not kept fails
+// closed: the call goes without one, and the Chrome fills nothing
+// (release_missing), so the owner is asked to allow again.
+func (h *MandatesHandler) keepSealedRelease(ctx context.Context, tenantID, id string, release json.RawMessage) {
+	keeper, ok := h.store.(mandate.SealedReleases)
+	if !ok {
+		h.logger.ErrorContext(ctx, "mandates: sealed release not kept: the store keeps none", slog.String("tenant", tenantID), slog.String("exception", id))
+		return
+	}
+	if err := keeper.KeepSealedRelease(ctx, tenantID, id, release); err != nil {
+		h.logger.ErrorContext(ctx, "mandates: sealed release not kept",
+			slog.String("tenant", tenantID), slog.String("exception", id), slog.String("err", err.Error()))
+	}
+}
+
+// handSealedRelease puts the release the owner's phone gave for this sealed
+// fill on its allowed decision, taken once (mandate.SealedReleases). Only a
+// gateway call the gateway marked sealed_fill asks, so no other decision
+// reads the store. A release not there, or past its exp, leaves none: the
+// Chrome then fills nothing.
+func (h *ProposalsHandler) handSealedRelease(ctx context.Context, tenantID string, prop kiffproposal.ActionProposal, spec domain.Spec, resp *proposalResponse) {
+	if resp.Outcome != string(outcomeAllowed) || spec.Domain != gatewayDomain {
+		return
+	}
+	if code, _ := prop.Parameters[GatewayOwnerAskParam].(string); code != words.OwnerAskSealedFill {
+		return
+	}
+	if h.sealedReleases == nil {
+		return
+	}
+	raw, err := h.sealedReleases.TakeSealedRelease(ctx, tenantID, prop.ID, h.now())
+	if err != nil {
+		h.logger.ErrorContext(ctx, "proposals: sealed release not read", slog.String("tenant", tenantID), slog.String("proposal", prop.ID), slog.String("err", err.Error()))
+		return
+	}
+	resp.SealedRelease = raw
+}
+
+// WithProposalsSealedReleases is where the decide path takes a sealed fill's
+// release from, once the owner allowed it (handSealedRelease).
+func WithProposalsSealedReleases(r mandate.SealedReleases) ProposalsOption {
+	return func(h *ProposalsHandler) { h.sealedReleases = r }
 }

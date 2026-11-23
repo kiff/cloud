@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -165,6 +166,23 @@ func TestASealedFillIsAllowedOnlyOnceWithThePhonesRelease(t *testing.T) {
 	}
 	if s := status(r, sealed); s != mandate.ExceptionApproved {
 		t.Fatalf("after the allow: %s", s)
+	}
+	// The release is kept for the gateway, handed over once, and only for
+	// the sealed fill: the ordinary hold keeps none.
+	var keeper mandate.SealedReleases = r.store
+	got, err := keeper.TakeSealedRelease(t.Context(), "t1", "p-sealed", r.now)
+	if err != nil || len(got) == 0 {
+		t.Fatalf("the kept release: %s %v", got, err)
+	}
+	var kept, sent map[string]any
+	if json.Unmarshal(got, &kept) != nil || json.Unmarshal(testRelease(r.now, nil), &sent) != nil || !reflect.DeepEqual(kept, sent) {
+		t.Fatalf("the kept release isn't the phone's: %s", got)
+	}
+	if again, _ := keeper.TakeSealedRelease(t.Context(), "t1", "p-sealed", r.now); again != nil {
+		t.Fatalf("a release was handed over twice: %s", again)
+	}
+	if none, _ := keeper.TakeSealedRelease(t.Context(), "t1", "p-plain", r.now); none != nil {
+		t.Fatalf("an ordinary hold kept a release: %s", none)
 	}
 
 	// Refused, a sealed fill needs nothing.

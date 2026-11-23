@@ -5,6 +5,7 @@ package gateway
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -148,6 +149,14 @@ const (
 
 // PermitHeader carries the execution permit on a forwarded tools/call.
 const PermitHeader = "KIFF-Permit"
+
+// SealedReleaseHeader carries, beside a sealed fill's call, the release the
+// owner's phone signed for it (tafs-chrome/release/v1), as apps/api handed it
+// once on the allowed decision: the JSON, base64url without padding. It goes
+// in a header, never in the call's arguments, so the held arguments are sent
+// byte for byte and a taf can't set it: only the gateway writes its headers.
+// planque puts it on the Chrome's step, and the extension checks it.
+const SealedReleaseHeader = "KIFF-Sealed-Release"
 
 // needsPermit reports whether the tool runs only with an execution permit.
 func (t Tool) needsPermit() bool { return t.Mode == ModeVerify || t.Mode == ModeRelay }
@@ -1081,6 +1090,9 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 	fctx, cancel := context.WithTimeout(ctx, timeout)
 	if permit != "" {
 		fctx = mcp.WithCallHeader(fctx, PermitHeader, permit)
+	}
+	if len(d.SealedRelease) > 0 {
+		fctx = mcp.WithCallHeader(fctx, SealedReleaseHeader, base64.RawURLEncoding.EncodeToString(d.SealedRelease))
 	}
 	res, err := a.g.Forward.CallTool(fctx, t.UpstreamURL, credential, t.UpstreamTool, body)
 	cancel()

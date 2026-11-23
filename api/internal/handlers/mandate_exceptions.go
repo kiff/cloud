@@ -535,7 +535,8 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 			return
 		}
 		// A sealed fill is allowed only once, with the phone's release.
-		if h.refuseSealedFill(w, r, tenantID, id, answer, body.Release) {
+		refused, sealed := h.refuseSealedFill(w, r, tenantID, id, answer, body.Release)
+		if refused {
 			return
 		}
 		gov := membership.Governance{}
@@ -598,6 +599,9 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 			if rerr := h.holds.RecordSigned(r.Context(), ident, tenantID, id, answer, gov, answeredAt, device); rerr != nil {
 				h.logger.ErrorContext(r.Context(), "mandates: answer attribution not recorded",
 					slog.String("tenant", tenantID), slog.String("exception", id), slog.String("err", rerr.Error()))
+			}
+			if sealed && answer == "approve-once" {
+				h.keepSealedRelease(r.Context(), tenantID, id, body.Release)
 			}
 			if answer == "change-card" && gov.SeparationOfDuties && h.cardChangeNotice != nil {
 				cards := make([]string, 0, len(e.Breaches))

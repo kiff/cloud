@@ -452,6 +452,9 @@ func (s *PostgresStore) ExpireHeld(ctx context.Context, before time.Time, limit 
 		   AND (status = 'held' OR (status = 'expired' AND expiry_told_at IS NULL))`, window, before.UTC()); err != nil {
 		return nil, fmt.Errorf("expire old holds: %w", err)
 	}
+	if err := dropStaleSealedReleases(ctx, tx, before); err != nil {
+		return nil, err
+	}
 	// SKIP LOCKED: a call being answered right now (answer() locks its
 	// row) is left to its answer.
 	rows, err := tx.Query(ctx, exceptionColumns+`

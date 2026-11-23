@@ -1975,6 +1975,11 @@ func newRouter(deps routerDeps) http.Handler {
 			if asks, ok := deps.mandateStore.(handlers.CardUnitAsks); ok {
 				propOpts = append(propOpts, handlers.WithProposalsCardUnitAsks(asks))
 			}
+			// A sealed fill's release, kept from the owner's allow, goes out
+			// with the decision that sends the call.
+			if releases, ok := deps.mandateStore.(mandate.SealedReleases); ok {
+				propOpts = append(propOpts, handlers.WithProposalsSealedReleases(releases))
+			}
 			// the cards-for-any-agent design: the owner is emailed about each newly held
 			// action, when Resend and owner-email resolution are both
 			// configured (as for the ops notifications).
