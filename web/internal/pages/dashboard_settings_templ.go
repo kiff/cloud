@@ -891,7 +891,7 @@ func settingsWorkspaceCard(v DashboardView) templ.Component {
 			}
 		}
 		if appleSoloMovesToTeam(v) {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "<p class=\"dash-note st-solo-to-team\">To add people, move to Team here. The Solo days you've paid Apple for become Team days, at no charge. Then cancel Solo with Apple so it doesn't renew.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "<p class=\"dash-note st-solo-to-team\">To add people, move to Company here. The Solo days you've paid Apple for become Company days, at no charge. Then cancel Solo with Apple so it doesn't renew.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -930,7 +930,7 @@ func settingsWorkspaceCard(v DashboardView) templ.Component {
 		}
 		if billedByApple(v) {
 			if appleSoloMovesToTeam(v) {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "<a class=\"btn btn-primary\" href=\"/dashboard/checkout?plan=team\">Move to Team</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "<a class=\"btn btn-primary\" href=\"/dashboard/checkout?plan=team\">Move to Company</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

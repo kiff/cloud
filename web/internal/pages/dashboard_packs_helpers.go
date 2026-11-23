@@ -36,7 +36,7 @@ func appleSoloStillRenews(v DashboardView) string {
 	if v.Meters == nil || v.Meters.Billing.AppleSoloUntil == nil {
 		return ""
 	}
-	return "Team is billed here now. The Solo bought in the App Store renews on " +
+	return "Company is billed here now. The Solo bought in the App Store renews on " +
 		v.Meters.Billing.AppleSoloUntil.Format("2 January") + " unless it's cancelled with Apple, from the Apple account that bought it."
 }
 

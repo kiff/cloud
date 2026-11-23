@@ -1273,9 +1273,11 @@ func planDisplayName(me *apiclient.Me) string {
 	case "solo":
 		return "Solo"
 	case "team":
-		return "Team"
-	case "company":
+		// What kiff.dev sells as Company (tenant.PlanTeam).
 		return "Company"
+	case "company":
+		// The negotiated plan.
+		return "Company, by agreement"
 	case "internal":
 		return "Internal"
 	}
