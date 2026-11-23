@@ -280,6 +280,10 @@ func EmailGroupComplete(lang Lang, group string) bool {
 	if _, ok := catalogs[lang]; ok {
 		return true
 	}
+	// A variant has every group: a line it doesn't write reads as its base's.
+	if _, ok := variantBase[lang]; ok {
+		return true
+	}
 	lines, ok := EmailMore[string(lang)]
 	if !ok || !groupComplete(lines, groupCore) {
 		return false
@@ -578,6 +582,9 @@ func setEmailLines(w *Words, lang string, lines EmailLines) {
 func EmailLanguagesMissing() []string {
 	var out []string
 	for tag := range CodeSignInEmailMore {
+		if _, variant := variantBase[Lang(tag)]; variant {
+			continue // its base's lines fill what it doesn't write
+		}
 		if lines, ok := EmailMore[tag]; !ok || len(EmailLinesProblems(lines)) > 0 {
 			out = append(out, tag)
 		}
@@ -593,6 +600,9 @@ func EmailLanguagesMissing() []string {
 // TextLang is the language of words that are not in the emails' table (a notice a handler words from `Words`): the
 // eight, else English.
 func TextLang(l Lang) Lang {
+	if b, ok := variantBase[l]; ok {
+		return b
+	}
 	if _, ok := catalogs[l]; ok {
 		return l
 	}
@@ -603,6 +613,9 @@ func TextLang(l Lang) Lang {
 // line, else English.
 func EmailLangFor(l Lang) Lang {
 	if _, ok := catalogs[l]; ok {
+		return l
+	}
+	if _, ok := variantBase[l]; ok {
 		return l
 	}
 	if _, ok := emailWordsFor(l); ok {

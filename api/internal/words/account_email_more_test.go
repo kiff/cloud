@@ -9,8 +9,8 @@ import (
 // "account" and never "workspace" or "KIFF Cloud", keeps KIFF's name and the
 // support address, and carries no digits the English does not.
 func TestEveryLanguageHasAllTheAccountEmailLines(t *testing.T) {
-	if got := len(AccountEmails); got != 47 {
-		t.Fatalf("the account emails are written in %d languages, want 47 (every shipped language besides English)", got)
+	if got := len(AccountEmails); got != 48 {
+		t.Fatalf("the account emails are written in %d languages, want 48 (every shipped language besides English)", got)
 	}
 	for code, e := range AccountEmails {
 		lines := map[string]string{
