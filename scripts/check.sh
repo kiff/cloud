@@ -71,10 +71,6 @@ deny=(
 	# Who decided something, never the requirement itself: "the PM", a
 	# ruling's time stamp, and a reference cut short to "(review on)".
 	"coordination note|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) (on|of)\)"
-	# The private planning repository, and the names of the agents that work
-	# in it. A rule reads as the rule, not as who set it or when: "(the owner,
-	# 6 Nov 2026)" is caught too.
-	"coordination link|\bkiff/work\b|\b(mac-local|agentgabo|mac12|qa-kiff|legal-i18n|dev-android|desktop-(linux|macos|windows)|codex-assistant)\b|\((the )?owner,? [0-9]{1,2} [A-Z][a-z]{2,8}( 20[0-9]{2})?\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
 	# demos, the smoke and Stripe scripts, AGENTS.md, the desktop doc by name.
 	# The API's server, its HTTP layer and the deploy are public. Exported paths
@@ -116,9 +112,6 @@ allow_in=(
 	# The archive of earlier pages, as kiff.dev serves it: links a visitor
 	# can't open, kept as served.
 	"private repository link|\./web/internal/content/archive/"
-	# The investors deck links the agent's public GitHub profile, and the
-	# skills page's guard test lists it among the words that page must not say.
-	"coordination link|\./web/internal/(content/decks/|handlers/skills_test\.go)"
 	# Page-voice guards: the words a served page must never contain.
 	"private repository link|\./web/internal/handlers/(landing|pricing)_test\.go"
 	"private path reference|\./web/internal/handlers/(dpa|legal_pages|privacy|sla|support|terms)_test\.go"
@@ -196,6 +189,55 @@ else
 		echo "read these from secrets.*: a job's env shows vars.* in clear in the public log"
 		failed+=("id vars")
 	fi
+fi
+
+# This repository is public, the whole of it: its code, docs and tests say each rule as itself, never
+# where it came from. So no planning thread, no PM, no dated rule, and no team's own name for its
+# working lanes. Those names are matched by the first 16 hex digits of their SHA-256, so this script
+# doesn't spell them out either. To add one: printf %s NAME | sha256sum | cut -c1-16.
+# Skipped: this script, and the two files that name a public GitHub account on purpose (the investors
+# deck links it; the skills page's guard test lists it among the words that page must not say).
+printf '==> public text says the rule, not who set it\n'
+if ! (cd "$repo" && python3 - <<'PY'
+import hashlib, re, subprocess, sys
+
+NAMES = set("""
+3c32e58c6fc3cf62 20cca48ece26c362 f5068c4b858ead38 fe9c6bd7a66301f4 50077b782480811e
+be896ac583d76627 afb42e3f1a4bce7e d419916f176e52d3 bd184cdc7aea9ef8 ab63a9b276c86bec
+2ad06b22b301f873 3c00d0a9d4c2eb08 018a7f9527b114ab 94c6cdf43ac3f929 4a25962615e31ac6
+""".split())
+MONTH = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+SAID = re.compile(
+    r"kiff/work\b|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}"
+    r"|\b(review|probe|ask|point|negatives|read) (on|of)\)"
+    rf"|\bowner(?:'s|,) [0-9]{{1,2}} {MONTH}\b"
+)
+WORD = re.compile(r"(?<![@\w-])[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])")
+SKIP = {"scripts/check.sh", "web/internal/handlers/skills_test.go"}
+SKIP_DIRS = ("web/internal/content/decks/",)
+
+files = subprocess.run(["git", "ls-files", "-z"], capture_output=True, check=True).stdout
+found = []
+for path in files.decode().split("\0"):
+    if not path or path in SKIP or path.startswith(SKIP_DIRS):
+        continue
+    try:
+        text = open(path, encoding="utf-8").read()
+    except (UnicodeDecodeError, IsADirectoryError, FileNotFoundError):
+        continue  # binary, a submodule or gone: no words to read
+    for n, line in enumerate(text.splitlines(), 1):
+        why = SAID.search(line) or next((w for w in WORD.finditer(line.lower())
+            if hashlib.sha256(w.group().encode()).hexdigest()[:16] in NAMES), None)
+        if why:
+            found.append(f"{path}:{n}: {line.strip()[:160]}")
+if found:
+    print("Public text names a thread, a lane, the PM or a dated rule; say the rule itself:")
+    print("\n".join(found))
+    sys.exit(1)
+print("clean")
+PY
+); then
+	failed+=("public text")
 fi
 
 if [[ ${#failed[@]} -gt 0 ]]; then
