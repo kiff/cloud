@@ -31,6 +31,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `bn.en.md` | Brunei (Personal Data Protection Order 2025), English only (English meets the rule); the transfer basis for Estonia, Ireland and the United States | served with batch 5 |
 | `lk.en.md`, `lk.si.md`, `lk.ta.md` | Sri Lanka (PDPA No. 9 of 2022, amended by Act No. 22 of 2025; main provisions from 1 January 2027), en, si and ta | served with batch 6 |
 | `tj.en.md`, `tj.tg.md` | Tajikistan (Law on Personal Data Protection No. 1537 of 2018), en and tg; the consent route for transfers | served with batch 6 |
+| `tm.en.md`, `tm.tk.md` | Turkmenistan (Law "On Information about Private Life and its Protection", 20 March 2017), en and tk; consent and the transfer rule | draft, not served: Turkmenistan is held until Turkmen ships (kiff/tafs#1767). Two **[owner]** lawyer checks: no local copy required, and the authority's name |
 | `id.en.md`, `id.id.md` | Indonesia (UU PDP 27/2022), en and id | served with batch 3 (kiff/cloud#80); says KIFF isn't registered as an electronic system yet |
 | `th.en.md`, `th.th.md` | Thailand (PDPA 2019), en and th | served with batch 3 (kiff/cloud#80); says no representative yet |
 | `vn.en.md`, `vn.vi.md` | Vietnam (Decree 13/2023, Law on Personal Data Protection 2025), en and vi | served with batch 3 (kiff/cloud#80) |
