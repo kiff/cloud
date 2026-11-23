@@ -265,6 +265,11 @@ func (h *MandatesHandler) externalAnswer(w http.ResponseWriter, r *http.Request)
 		approverError(w, mandate.ErrStaleReview)
 		return
 	}
+	// A sealed fill is the owner's to allow, with the phone's release: an
+	// approver may refuse it or defer, never approve it (sealed_fill.go).
+	if req.Decision == "approve" && h.refuseSealedFill(w, r, g.TenantID, r.PathValue("id"), "external-approve", nil) {
+		return
+	}
 	a := mandate.ExternalAnswer{GrantID: g.ID, Principal: g.Principal, Decision: req.Decision, ReasonCode: req.ReasonCode, ReviewToken: req.ReviewToken, Model: req.Model, Reason: req.Reason}
 	e, err := h.store.(mandate.ApproverStore).AnswerExternal(r.Context(), g.TenantID, r.PathValue("id"), g.ID, mandate.ExternalReview{State: v.State, Card: v.CardState, Answer: a}, h.now())
 	if err != nil {

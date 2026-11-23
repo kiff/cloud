@@ -534,6 +534,10 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 		if !ok {
 			return
 		}
+		// A sealed fill is allowed only once, with the phone's release.
+		if h.refuseSealedFill(w, r, tenantID, id, answer, body.Release) {
+			return
+		}
 		gov := membership.Governance{}
 		if h.holds != nil {
 			held, err := h.store.Exception(r.Context(), tenantID, id)
@@ -716,6 +720,9 @@ type answerBody struct {
 	NextStep  string           `json:"next_step,omitempty"`
 	Note      string           `json:"note,omitempty"`
 	Signature *answerSignature `json:"signature,omitempty"`
+	// Release is the phone's tafs-chrome/release/v1 for a held sealed fill
+	// (sealed_fill.go): required to allow one, ignored on any other hold.
+	Release json.RawMessage `json:"release,omitempty"`
 }
 
 // answerSignature is a phone's signature over auth.Answer.Message: value

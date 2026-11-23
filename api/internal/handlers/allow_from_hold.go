@@ -78,6 +78,15 @@ func (h *MandatesHandler) allowDraft(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"none": mandate.AllowNoneNoChange})
 		return
 	}
+	// No lasting change lets a sealed fill go: each is allowed once, with the
+	// phone's release (sealed_fill.go).
+	if sealed, err := h.sealedFillHold(r.Context(), tenantID, e); err != nil {
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "KIFF couldn't read the held call to check it: try again"})
+		return
+	} else if sealed {
+		writeJSON(w, http.StatusOK, map[string]string{"none": mandate.AllowNoneNoChange})
+		return
+	}
 	ms, err := h.store.ForSubject(r.Context(), tenantID, e.Subject)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load Cards failed"})
