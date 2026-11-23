@@ -44,7 +44,11 @@ type fakeAPI struct {
 	// sealedReleases is the release apps/api hands once, on the allowed
 	// decision of a sealed fill the owner allowed.
 	sealedReleases map[string]json.RawMessage
-	drawn          map[string]int64
+	// blocks are the browser_block each proposal carried, by proposal id;
+	// openOutcome, when set, is how a describe's "<call>:open" is decided.
+	blocks      map[string]json.RawMessage
+	openOutcome string
+	drawn       map[string]int64
 	// refuse answers a call for this amount with this decision.
 	refuse map[int64]kiffapi.Decision
 	// why is, by amount, the limits a hold of that amount went over.
@@ -106,7 +110,7 @@ func newFakeAPI() *fakeAPI {
 		refuse: map[int64]kiffapi.Decision{}, why: map[int64][]string{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
 		issued: map[string]time.Time{}, now: time.Now, params: map[string]map[string]any{},
 		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{},
-		words: map[string]gateway.TafWords{}, sealedReleases: map[string]json.RawMessage{}}
+		words: map[string]gateway.TafWords{}, sealedReleases: map[string]json.RawMessage{}, blocks: map[string]json.RawMessage{}}
 }
 
 // refundCard is the Card fakeAPI decides by, as GET /v1/me/card reads it.
@@ -226,6 +230,12 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 	f.trialDrafts[p.ID] = p.TrialDraft
 	f.runGrants[p.ID] = p.RunGrant
 	f.words[p.ID] = gateway.TafWords{About: p.TafAbout, Reason: p.TafReason}
+	if len(p.BrowserBlock) > 0 {
+		f.blocks[p.ID] = p.BrowserBlock
+	}
+	if strings.HasSuffix(p.ID, ":open") && f.openOutcome != "" {
+		return kiffapi.Decision{Outcome: f.openOutcome}, nil
+	}
 	if p.RunGrant == "krg_bad" {
 		return kiffapi.Decision{Outcome: "refused", Reasons: []string{"run_grant"}, Message: "the person who asked may not use this agent"}, nil
 	}
@@ -309,8 +319,13 @@ type fakeTool struct {
 	raw     []json.RawMessage
 	bearers []string
 	permits []string
-	// releases is each call's KIFF-Sealed-Release header ("" without one).
-	releases []string
+	// releases is each call's KIFF-Sealed-Release header ("" without one);
+	// describes, its KIFF-Sealed-Describe; tools, the tool each call named.
+	releases  []string
+	describes []string
+	tools     []string
+	// described, when set, is browse_open's answer to a describe.
+	described json.RawMessage
 	hang     bool
 	echo     bool
 	leak     bool
@@ -338,6 +353,13 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.bearers = append(f.bearers, bearer)
 	f.permits = append(f.permits, mcp.CallHeader(ctx, gateway.PermitHeader))
 	f.releases = append(f.releases, mcp.CallHeader(ctx, gateway.SealedReleaseHeader))
+	f.describes = append(f.describes, mcp.CallHeader(ctx, gateway.SealedDescribeHeader))
+	f.tools = append(f.tools, tool)
+	if tool == "browse_open" && f.described != nil {
+		d := f.described
+		f.mu.Unlock()
+		return d, nil
+	}
 	echo, leak, spoof, refuse, answer := f.echo, f.leak, f.spoof, f.refuse, f.answer
 	cur, isRead, readMeta := f.currency[fmt.Sprint(a["order"])], tool == "get_order", f.readMeta
 	amt, hasAmount := f.amounts[fmt.Sprint(a["order"])]

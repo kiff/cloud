@@ -913,7 +913,7 @@ func (a *agent) proposal(ctx context.Context, t Tool, in invocation.Invocation, 
 	words := tafWordsFrom(ctx)
 	p := kiffapi.Proposal{ID: in.Key, Domain: Domain, EntityID: in.Key, EntityType: "ToolCall",
 		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant,
-		TafAbout: words.About, TafReason: words.Reason}
+		TafAbout: words.About, TafReason: words.Reason, BrowserBlock: browserBlockFrom(ctx)}
 	if t.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: t.Audience, Tool: t.UpstreamTool, Arguments: body}
 	}
@@ -949,6 +949,15 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 	}
 	if a.governsRefund(t) {
 		return a.refundFirst(ctx, t, in, params, from)
+	}
+	// A sealed fill is described before it's decided: the hold carries the
+	// page its owner is shown (sealed_describe.go).
+	if describesSealed(t, params) {
+		block, why := a.describeSealed(ctx, t, in)
+		if why != "" {
+			return a.sealedNotDescribed(ctx, in, from, why)
+		}
+		ctx = withBrowserBlock(ctx, block)
 	}
 	return a.decided(ctx, t, in, params, from)
 }

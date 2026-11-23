@@ -187,6 +187,9 @@ type Proposal struct {
 	// for its owner to read, and decides nothing on them.
 	TafAbout  string `json:"taf_about,omitempty"`
 	TafReason string `json:"taf_reason,omitempty"`
+	// BrowserBlock is planque's signed block for a sealed fill
+	// (gateway/sealed_describe.go): KIFF keeps it on the hold it opens.
+	BrowserBlock json.RawMessage `json:"browser_block,omitempty"`
 }
 
 func (c *Client) do(ctx context.Context, key, method, path string, body any) (int, []byte, error) {
