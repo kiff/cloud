@@ -50,7 +50,7 @@ func TestCanonicalizeRefusesTrailingData(t *testing.T) {
 }
 
 // Integers beyond 2^53 - 1 are refused: as doubles, 2^53 and 2^53 + 1 would
-// hash the same while the tool received either (review on kiff-guard#66).
+// hash the same while the tool received either.
 func TestCanonicalizeRefusesUnsafeIntegers(t *testing.T) {
 	for _, in := range []string{`{"id":9007199254740992}`, `{"id":9007199254740993}`, `{"a":[{"id":-9007199254740993}]}`} {
 		if _, err := Canonicalize(json.RawMessage(in)); err == nil {
