@@ -145,6 +145,9 @@ func browserBlockRefusal(raw json.RawMessage, tenantID, proposalID string, verif
 		return "the block isn't planque/describe/v1"
 	}
 	switch {
+	// planque's account id is KIFF's tenant id, by construction: planque
+	// takes a call only with KIFF's permit for its own account (permit's
+	// tenant equal to the connection's), and the describe is such a call.
 	case b.Tenant != tenantID:
 		return "the block is for another account"
 	case b.Op != chromeStepID(proposalID, sealedFillStep) || b.Release.Op != b.Op:

@@ -361,7 +361,8 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.releases = append(f.releases, mcp.CallHeader(ctx, gateway.SealedReleaseHeader))
 	f.describes = append(f.describes, mcp.CallHeader(ctx, gateway.SealedDescribeHeader))
 	f.tools = append(f.tools, tool)
-	if tool == "browse_open" && f.described != nil {
+	// planque answers a block only to the gateway's describe.
+	if tool == "browse_open" && f.described != nil && mcp.CallHeader(ctx, gateway.SealedDescribeHeader) != "" {
 		d := f.described
 		f.mu.Unlock()
 		return d, nil

@@ -161,3 +161,38 @@ func TestASealedFillThatCantBeDescribedIsRefusedNotHeld(t *testing.T) {
 		})
 	}
 }
+
+// Invariant: the describe header and planque's block are the gateway's alone: a taf can't send its own describe, and never reads the block
+// Category: authority
+// Attack: a taf sets KIFF-Sealed-Describe on its own call to have planque open and keep a page for a fill KIFF never decided, or reads the signed block to replay it
+// Refused: no call reaches planque with the taf's header (only the gateway's own describe, on its own open), and the taf's answers carry no browser_block
+func TestATafsOwnDescribeNeverReachesPlanqueAndItNeverReadsTheBlock(t *testing.T) {
+	r := sealedRig(t)
+	forged := base64.RawURLEncoding.EncodeToString([]byte(`{"op":"forged","read":"rd-9f2","fill":"f1","sealed":"sec_a1:password"}`))
+	r.headers = map[string]string{gateway.SealedDescribeHeader: forged}
+	// A plain open, with the taf's own header.
+	status, out := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": "browse_open", "arguments": map[string]any{"url": "https://shop.example/", gateway.OperationArg: "op-open"}})
+	if status != http.StatusOK || out["result"] == nil {
+		t.Fatalf("open: %d %v", status, out)
+	}
+	// A sealed fill, with it too: the gateway's describe goes, never the taf's.
+	status, held := r.rpc(t, "agent-key", "tools/call", map[string]any{"name": "browse_act", "arguments": sealedFill("op-fill")})
+	if status != http.StatusOK {
+		t.Fatalf("fill: %d %v", status, held)
+	}
+	for i, d := range r.tool.describes {
+		if d == forged {
+			t.Fatalf("call %d (%s) reached planque with the taf's describe", i, r.tool.tools[i])
+		}
+	}
+	if len(r.tool.describes) != 2 || r.tool.describes[0] != "" || r.tool.describes[1] == "" {
+		t.Fatalf("describes sent: %q for %v", r.tool.describes, r.tool.tools)
+	}
+	// Neither answer the taf read carries planque's block.
+	for _, ans := range []map[string]any{out, held} {
+		b, _ := json.Marshal(ans)
+		if strings.Contains(string(b), "browser_block") || strings.Contains(string(b), "c2lnbmVkLWJ5LXBsYW5xdWU") {
+			t.Fatalf("the taf's answer carries the block: %s", b)
+		}
+	}
+}
