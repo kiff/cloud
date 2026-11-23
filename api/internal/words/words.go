@@ -114,6 +114,12 @@ func ReceiptStepsFor(header string) ReceiptSteps {
 		if q <= bestQ {
 			continue
 		}
+		if v, ok := variantOf(tag); ok {
+			if more, ok := ReceiptStepsMore[string(v)]; ok {
+				best, bestQ = more, q
+				continue
+			}
+		}
 		primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")
 		if l, ok := known(primary); ok {
 			best, bestQ = Of(l).ReceiptSteps, q
@@ -146,6 +152,10 @@ func known(primary string) (Lang, bool) {
 func Of(l Lang) *Words {
 	if w, ok := catalogs[l]; ok {
 		return w
+	}
+	// A regional variant: its base's words with its own lines on top (variants.go).
+	if _, ok := variantBase[l]; ok {
+		return variantWords(l)
 	}
 	// A language beyond the eight that has the emails' lines (EmailMore).
 	if w, ok := emailWordsFor(l); ok {

@@ -23,7 +23,7 @@ func TestCodeSignInEmailMoreHasEveryLineLikeEnglish(t *testing.T) {
 			}
 		}
 	}
-	if len(CodeSignInEmailMore) != 40 {
+	if len(CodeSignInEmailMore) != 41 {
 		t.Errorf("%d languages", len(CodeSignInEmailMore))
 	}
 }

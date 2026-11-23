@@ -25,6 +25,12 @@ func CodeSignInEmailFor(lang Lang) CodeSignInEmail {
 // CodeLang is a language tag ("ar", "pt-PT", "ar_EG") as the Lang the code
 // emails speak: the eight, or one of the more, else English.
 func CodeLang(tag string) Lang {
+	// A regional variant first ("pt-BR"), when its code emails are written; else its base, as any other region.
+	if v, ok := variantOf(tag); ok {
+		if _, ok := CodeSignInEmailMore[string(v)]; ok {
+			return v
+		}
+	}
 	primary, _, _ := strings.Cut(strings.ToLower(strings.TrimSpace(tag)), "-")
 	primary, _, _ = strings.Cut(primary, "_")
 	if l, ok := known(primary); ok {

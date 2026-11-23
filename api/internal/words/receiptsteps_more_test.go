@@ -33,7 +33,7 @@ func TestReceiptStepsMoreWordEveryCodeLikeEnglish(t *testing.T) {
 			t.Errorf("%s: asked again reads %q", lang, got)
 		}
 	}
-	if len(ReceiptStepsMore) != 40 {
+	if len(ReceiptStepsMore) != 41 {
 		t.Errorf("%d languages", len(ReceiptStepsMore))
 	}
 }
