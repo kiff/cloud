@@ -84,7 +84,7 @@ var de = Words{
 		OwnerAskNoRequestID:  "der Agent hat keine Anfrage aus einer verbundenen App genannt, daher wartet diese Erstattung auf Genehmigung",
 		OwnerAskOther:        "jeder Aufruf dieses Tools wartet auf Genehmigung",
 		OwnerAskEachCall:     "jeder Aufruf dieses Tools wartet auf Genehmigung",
-		OwnerAskSealedFill:   "dieser Schritt füllt eine in Ihrem Chrome gespeicherte Anmeldung aus, daher wartet er jedes Mal auf Sie, und nur Ihr Telefon kann sie freigeben",
+		OwnerAskSealedFill:   "dieser Schritt füllt eine in deinem Chrome gespeicherte Anmeldung aus, daher wartet er jedes Mal auf dich, und nur dein Telefon kann ihn freigeben",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("der Aufruf nennt kein %s, und diese Card gilt nur für die %s, die sie aufführt", param, param)
