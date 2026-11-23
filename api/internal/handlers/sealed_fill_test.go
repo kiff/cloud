@@ -3,9 +3,15 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"github.com/kiff/cloud/api/internal/permit"
+	"math/big"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -139,6 +145,15 @@ func TestASealedFillIsAllowedOnlyOnceWithThePhonesRelease(t *testing.T) {
 		if code, out := answer(r, sealed, "approve-once", body); code != http.StatusBadRequest || out["error"] != "release_required" {
 			t.Fatalf("approve-once without a release (%v): %d %v", body, code, out)
 		}
+	}
+	// Without planque's block on the hold, the card can't show the fill, so
+	// even a good release doesn't take it.
+	if code, out := answer(r, sealed, "approve-once", map[string]any{"release": testRelease(r.now, nil)}); code != http.StatusBadRequest ||
+		out["error"] != "release_required" || !strings.Contains(out["detail"].(string), "can't show") {
+		t.Fatalf("an allow with no block: %d %v", code, out)
+	}
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-sealed", json.RawMessage(`{"block":{"v":"planque/describe/v1"},"sig":"x"}`)); err != nil {
+		t.Fatal(err)
 	}
 	// A release the extension would refuse on sight.
 	late := testRelease(r.now, func(m map[string]any) { m["exp"] = r.now.Add(-time.Minute).UnixMilli() })
@@ -279,5 +294,90 @@ func TestAnExternalApproverNeverApprovesASealedFill(t *testing.T) {
 	answer["decision"] = "reject"
 	if rr := send("POST", path+"/answer", answer); rr.Code != 200 {
 		t.Fatalf("an approver's refusal: %d %s", rr.Code, rr.Body)
+	}
+}
+
+// testBlock is a sealed fill's block for proposal in tenant, edited, signed by
+// key under planque/describe/v1 as planque signs it.
+func testBlock(t *testing.T, key *ecdsa.PrivateKey, tenant, proposal string, edit func(map[string]any)) json.RawMessage {
+	t.Helper()
+	op := chromeStepID(proposal, 1)
+	b := map[string]any{"v": "planque/describe/v1", "tenant": tenant, "op": op, "site": "shop.example", "origin": "https://shop.example",
+		"action_words": "Fill your password into “Password”", "context": map[string]any{"title": "Sign in", "text": "Email Password Sign in"},
+		"chrome":         map[string]any{"id": "chr_1", "name": "Work Mac"},
+		"release_fields": map[string]any{"chrome_id": "chr_1", "op": op, "sealed": "sec_a1:password", "origin": "https://shop.example", "field_ref": "f2", "read_id": "r1"}}
+	if edit != nil {
+		edit(b)
+	}
+	raw, _ := json.Marshal(b)
+	canon, err := permit.Canonicalize(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+	r, s, err := ecdsa.Sign(rand.Reader, key, sum[:])
+	if err != nil {
+		t.Fatal(err)
+	}
+	sig := make([]byte, 64)
+	r.FillBytes(sig[:32])
+	s.FillBytes(sig[32:])
+	out, _ := json.Marshal(map[string]any{"block": json.RawMessage(raw), "sig": base64.RawURLEncoding.EncodeToString(sig)})
+	return out
+}
+
+// Invariant: KIFF keeps a sealed fill's block only when planque signed it, for this account, for this call's one Chrome step and the Chrome it releases on: whoever carries it can't change what the owner reads, and no other call's block fits.
+// Category: authority
+// Attack: a taf, holding its agent key, sends the decide that holds its sealed fill with a block it wrote, or another call's real block, so the owner releases a password over a card that shows something else
+// Refused: a block not signed by planque's key, for another account, call or Chrome, or naming no sealed value, field or read, isn't kept, and the hold can't be allowed
+func TestABrowserBlockIsKeptOnlyAsPlanqueSignedItForThisCall(t *testing.T) {
+	planque, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	other, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	verify := func(block json.RawMessage, sig string) bool {
+		raw, err := base64.RawURLEncoding.DecodeString(sig)
+		if err != nil || len(raw) != 64 {
+			return false
+		}
+		canon, err := permit.Canonicalize(block)
+		if err != nil {
+			return false
+		}
+		sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+		return ecdsa.Verify(&planque.PublicKey, sum[:], new(big.Int).SetBytes(raw[:32]), new(big.Int).SetBytes(raw[32:]))
+	}
+	if why := browserBlockRefusal(testBlock(t, planque, "t1", "p-sealed", nil), "t1", "p-sealed", verify); why != "" {
+		t.Fatalf("planque's own block: %s", why)
+	}
+	for name, raw := range map[string]json.RawMessage{
+		"another key":     testBlock(t, other, "t1", "p-sealed", nil),
+		"another account": testBlock(t, planque, "t2", "p-sealed", nil),
+		"another call":    testBlock(t, planque, "t1", "p-other", nil),
+		"release on another op": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
+			b["release_fields"].(map[string]any)["op"] = "p-sealed.2"
+		}),
+		"another chrome": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
+			b["release_fields"].(map[string]any)["chrome_id"] = "chr_2"
+		}),
+		"http":       testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["origin"] = "http://shop.example" }),
+		"no field":   testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["release_fields"].(map[string]any)["field_ref"] = "" }),
+		"other v":    testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["v"] = "planque/describe/v2" }),
+		"not signed": json.RawMessage(`{"block":{"v":"planque/describe/v1"}}`),
+		"empty":      nil,
+	} {
+		if browserBlockRefusal(raw, "t1", "p-sealed", verify) == "" {
+			t.Errorf("%s: kept", name)
+		}
+	}
+	// A block changed after planque signed it isn't kept.
+	var s map[string]json.RawMessage
+	_ = json.Unmarshal(testBlock(t, planque, "t1", "p-sealed", nil), &s)
+	s["block"] = json.RawMessage(strings.Replace(string(s["block"]), "Sign in", "Read the news", 1))
+	changed, _ := json.Marshal(s)
+	if browserBlockRefusal(changed, "t1", "p-sealed", verify) == "" {
+		t.Error("a changed block was kept")
+	}
+	// planque's step names, as chrome_driver.go writes them.
+	if chromeStepID("op_1", 1) != "op_1.1" || len(chromeStepID(strings.Repeat("x", 70), 1)) != len("op_")+40+2 {
+		t.Fatalf("chromeStepID: %s %s", chromeStepID("op_1", 1), chromeStepID(strings.Repeat("x", 70), 1))
 	}
 }

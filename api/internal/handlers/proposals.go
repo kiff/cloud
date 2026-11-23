@@ -146,6 +146,9 @@ type ProposalsHandler struct {
 	// sealedReleases hands a sealed fill's release to the decision that
 	// sends it (handSealedRelease); nil hands none.
 	sealedReleases mandate.SealedReleases
+	// browserBlocks keeps a held sealed fill's signed block
+	// (keepBrowserBlock); nil keeps none.
+	browserBlocks mandate.BrowserBlocks
 	// holdOwners and holdNotifier email the owner about each newly held
 	// action; appBaseURL makes its link absolute. dispatch
 	// runs the send detached; tests make it synchronous.
@@ -532,6 +535,11 @@ type proposalRequest struct {
 	// taf's, and never part of the decision (taf_words.go).
 	TafAbout  tafText `json:"taf_about,omitempty"`
 	TafReason tafText `json:"taf_reason,omitempty"`
+
+	// BrowserBlock is planque's signed description of a sealed fill, sent
+	// by the gateway on the decide that holds it: kept with the hold only
+	// when planque's signature holds (browser_block.go).
+	BrowserBlock json.RawMessage `json:"browser_block,omitempty"`
 }
 
 // proposalResponse is the JSON body returned on every call,
@@ -1172,6 +1180,7 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	h.recordBillableOperation(ctx, id.Tenant, prop.ID, resp.Outcome)
 	h.recordAskedBy(ctx, id.Tenant, prop.ID)
 	h.maybeAlert(ctx, id, prop, resp)
+	h.keepBrowserBlock(ctx, id.Tenant, prop, spec, resp, req.BrowserBlock)
 	// Last, so nothing above reads or records it.
 	h.handSealedRelease(ctx, id.Tenant, prop, spec, &resp)
 	writeJSON(w, statusForResponse(resp), resp)

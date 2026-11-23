@@ -1980,6 +1980,9 @@ func newRouter(deps routerDeps) http.Handler {
 			if releases, ok := deps.mandateStore.(mandate.SealedReleases); ok {
 				propOpts = append(propOpts, handlers.WithProposalsSealedReleases(releases))
 			}
+			if blocks, ok := deps.mandateStore.(mandate.BrowserBlocks); ok {
+				propOpts = append(propOpts, handlers.WithProposalsBrowserBlocks(blocks))
+			}
 			// the cards-for-any-agent design: the owner is emailed about each newly held
 			// action, when Resend and owner-email resolution are both
 			// configured (as for the ops notifications).

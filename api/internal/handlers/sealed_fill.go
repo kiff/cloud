@@ -164,6 +164,15 @@ func (h *MandatesHandler) refuseSealedFill(w http.ResponseWriter, r *http.Reques
 			"detail": "this call fills a sign-in saved in Chrome: it's allowed once, with the phone's release, never by a change to the Card"})
 		return true, true
 	}
+	// The owner allows a fill only from a card that showed it: planque's
+	// signed block, kept on the hold (browser_block.go).
+	if blocks, ok := h.store.(mandate.BrowserBlocks); !ok {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": "the hold can't show what it fills, so it can't be allowed"})
+		return true, true
+	} else if b, err := blocks.BrowserBlock(r.Context(), tenantID, e.ProposalID); err != nil || len(b) == 0 {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": "the hold can't show what it fills, so it can't be allowed"})
+		return true, true
+	}
 	if why := releaseRefusal(release, h.now()); why != "" {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": why})
 		return true, true

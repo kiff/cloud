@@ -30,6 +30,9 @@ type MemoryStore struct {
 	// (tenant + proposal), so Keep (by the hold's id) and Take (by its
 	// proposal) meet on one key.
 	sealedReleases map[string]json.RawMessage
+	// browserBlocks is a held browser call's signed block, keyed as
+	// exceptions is.
+	browserBlocks map[string]json.RawMessage
 	// trialMu guards trials, each trial run's simulated draws. It is its
 	// own lock: a trial reads real usage through mu while holding it.
 	trialMu    sync.Mutex
