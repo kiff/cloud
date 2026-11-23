@@ -5,6 +5,7 @@ package gateway
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -149,6 +150,14 @@ const (
 // PermitHeader carries the execution permit on a forwarded tools/call.
 const PermitHeader = "KIFF-Permit"
 
+// SealedReleaseHeader carries, beside a sealed fill's call, the release the
+// owner's phone signed for it (tafs-chrome/release/v1), as apps/api handed it
+// once on the allowed decision: the JSON, base64url without padding. It goes
+// in a header, never in the call's arguments, so the held arguments are sent
+// byte for byte and a taf can't set it: only the gateway writes its headers.
+// planque puts it on the Chrome's step, and the extension checks it.
+const SealedReleaseHeader = "KIFF-Sealed-Release"
+
 // needsPermit reports whether the tool runs only with an execution permit.
 func (t Tool) needsPermit() bool { return t.Mode == ModeVerify || t.Mode == ModeRelay }
 
@@ -167,6 +176,38 @@ const OwnerAskSealedMoney = "sealed_money"
 // OwnerAskEachCall is the code for an operation whose reviewed profile
 // holds every call for its owner (ask_each_call): a website's checkout.
 const OwnerAskEachCall = "each_call"
+
+// OwnerAskSealedFill is the code for a call that fills a sign-in saved in
+// the owner's Chrome: its arguments name a sealed handle ("sec_<id>:<part>",
+// namesSealed). Every one waits for the owner, whatever the Card, and is
+// allowed once, with the phone's release (apps/api sealed_fill.go).
+const OwnerAskSealedFill = "sealed_fill"
+
+// namesSealed reports whether v names a sealed handle: a "sealed" key whose
+// value is "sec_" followed by an id and a part, at any depth. It is apps/api's
+// namesSealed (sealed_fill.go), so the gateway asks for exactly the calls KIFF
+// takes a release for. The part isn't checked here: a malformed handle still
+// asks, and the extension refuses it.
+func namesSealed(v any) bool {
+	switch t := v.(type) {
+	case map[string]any:
+		for k, x := range t {
+			if s, ok := x.(string); ok && k == "sealed" && strings.HasPrefix(s, "sec_") && strings.Contains(s, ":") {
+				return true
+			}
+			if namesSealed(x) {
+				return true
+			}
+		}
+	case []any:
+		for _, x := range t {
+			if namesSealed(x) {
+				return true
+			}
+		}
+	}
+	return false
+}
 
 // ownerAsk is the code for why every call of t asks its owner, or "": an
 // operation its profile holds on every call, or a money operation that no
@@ -751,7 +792,11 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 			params[t.AmountArg] = i
 		}
 	}
-	if code := t.ownerAsk(); code != "" {
+	// A sealed fill asks whatever the tool's own code would say: it is
+	// allowed only once, with the phone's release.
+	if namesSealed(args) {
+		params[OwnerAskParam] = OwnerAskSealedFill
+	} else if code := t.ownerAsk(); code != "" {
 		params[OwnerAskParam] = code
 	}
 	return t.resourceParam(args, params)
@@ -868,7 +913,7 @@ func (a *agent) proposal(ctx context.Context, t Tool, in invocation.Invocation, 
 	words := tafWordsFrom(ctx)
 	p := kiffapi.Proposal{ID: in.Key, Domain: Domain, EntityID: in.Key, EntityType: "ToolCall",
 		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant,
-		TafAbout: words.About, TafReason: words.Reason}
+		TafAbout: words.About, TafReason: words.Reason, BrowserBlock: browserBlockFrom(ctx)}
 	if t.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: t.Audience, Tool: t.UpstreamTool, Arguments: body}
 	}
@@ -904,6 +949,15 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 	}
 	if a.governsRefund(t) {
 		return a.refundFirst(ctx, t, in, params, from)
+	}
+	// A sealed fill is described before it's decided: the hold carries the
+	// page its owner is shown (sealed_describe.go).
+	if describesSealed(t, params) {
+		block, why := a.describeSealed(ctx, t, in)
+		if why != "" {
+			return a.sealedNotDescribed(ctx, in, from, why)
+		}
+		ctx = withBrowserBlock(ctx, block)
 	}
 	return a.decided(ctx, t, in, params, from)
 }
@@ -1045,6 +1099,9 @@ func (a *agent) forward(ctx context.Context, t Tool, in invocation.Invocation, f
 	fctx, cancel := context.WithTimeout(ctx, timeout)
 	if permit != "" {
 		fctx = mcp.WithCallHeader(fctx, PermitHeader, permit)
+	}
+	if len(d.SealedRelease) > 0 {
+		fctx = mcp.WithCallHeader(fctx, SealedReleaseHeader, base64.RawURLEncoding.EncodeToString(d.SealedRelease))
 	}
 	res, err := a.g.Forward.CallTool(fctx, t.UpstreamURL, credential, t.UpstreamTool, body)
 	cancel()

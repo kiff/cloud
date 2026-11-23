@@ -461,3 +461,15 @@ ALTER TABLE cloud_meta.mandate_revisions
 -- terms; NULL for a Card issued or last reissued directly.
 ALTER TABLE cloud_meta.mandates
     ADD COLUMN IF NOT EXISTS draft_id TEXT;
+
+-- A held sealed fill's release (tafs-chrome/release/v1), kept from the
+-- approve-once that carried it until the gateway sends the call: taken once,
+-- never listed, and cleared by the hold sweep once its exp is past
+-- (mandate/sealed_release.go).
+ALTER TABLE cloud_meta.mandate_exceptions ADD COLUMN IF NOT EXISTS sealed_release JSONB;
+
+-- A held browser call's block: planque's signed description of it (the site,
+-- the element's words, an excerpt of the page, and for a sealed fill the
+-- fields the phone's release signs), kept once while the call is held
+-- (mandate/browser_block.go). Erased with its hold.
+ALTER TABLE cloud_meta.mandate_exceptions ADD COLUMN IF NOT EXISTS browser_block JSONB;

@@ -41,7 +41,14 @@ type fakeAPI struct {
 	asked    []string
 	ingested map[string]int
 	approved map[string]bool
-	drawn    map[string]int64
+	// sealedReleases is the release apps/api hands once, on the allowed
+	// decision of a sealed fill the owner allowed.
+	sealedReleases map[string]json.RawMessage
+	// blocks are the browser_block each proposal carried, by proposal id;
+	// openOutcome, when set, is how a describe's "<call>:open" is decided.
+	blocks      map[string]json.RawMessage
+	openOutcome string
+	drawn       map[string]int64
 	// refuse answers a call for this amount with this decision.
 	refuse map[int64]kiffapi.Decision
 	// why is, by amount, the limits a hold of that amount went over.
@@ -103,7 +110,7 @@ func newFakeAPI() *fakeAPI {
 		refuse: map[int64]kiffapi.Decision{}, why: map[int64][]string{}, card: refundCard, permits: map[string]kiffapi.PermitRequest{},
 		issued: map[string]time.Time{}, now: time.Now, params: map[string]map[string]any{},
 		trying: map[string]bool{}, trialDrafts: map[string]string{}, runGrants: map[string]string{},
-		words: map[string]gateway.TafWords{}}
+		words: map[string]gateway.TafWords{}, sealedReleases: map[string]json.RawMessage{}, blocks: map[string]json.RawMessage{}}
 }
 
 // refundCard is the Card fakeAPI decides by, as GET /v1/me/card reads it.
@@ -223,12 +230,22 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 	f.trialDrafts[p.ID] = p.TrialDraft
 	f.runGrants[p.ID] = p.RunGrant
 	f.words[p.ID] = gateway.TafWords{About: p.TafAbout, Reason: p.TafReason}
+	if len(p.BrowserBlock) > 0 {
+		f.blocks[p.ID] = p.BrowserBlock
+	}
+	if strings.HasSuffix(p.ID, ":open") && f.openOutcome != "" {
+		return kiffapi.Decision{Outcome: f.openOutcome}, nil
+	}
 	if p.RunGrant == "krg_bad" {
 		return kiffapi.Decision{Outcome: "refused", Reasons: []string{"run_grant"}, Message: "the person who asked may not use this agent"}, nil
 	}
 	amount, _ := p.Parameters["amount_eur"].(int64)
 	if d, ok := f.refuse[amount]; ok {
 		return d, nil
+	}
+	if p.Parameters[gateway.OwnerAskParam] == gateway.OwnerAskSealedFill && !f.approved[p.ID] {
+		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
+			ExpiresAt: f.holdExpiry}}, nil
 	}
 	if amount > 1000 && !f.approved[p.ID] {
 		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
@@ -242,8 +259,18 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 		}
 		if !f.withholdPermit {
 			f.issued[p.ID] = f.now()
-			return kiffapi.Decision{Outcome: "allowed", Permit: "permit-for-" + p.ID}, nil
+			d := kiffapi.Decision{Outcome: "allowed", Permit: "permit-for-" + p.ID}
+			// A sealed fill's release comes on the same decision as its permit.
+			if rel, ok := f.sealedReleases[p.ID]; ok {
+				delete(f.sealedReleases, p.ID)
+				d.SealedRelease = rel
+			}
+			return d, nil
 		}
+	}
+	if rel, ok := f.sealedReleases[p.ID]; ok {
+		delete(f.sealedReleases, p.ID)
+		return kiffapi.Decision{Outcome: "allowed", SealedRelease: rel}, nil
 	}
 	return kiffapi.Decision{Outcome: "allowed"}, nil
 }
@@ -298,10 +325,17 @@ type fakeTool struct {
 	raw     []json.RawMessage
 	bearers []string
 	permits []string
-	hang    bool
-	echo    bool
-	leak    bool
-	spoof   bool
+	// releases is each call's KIFF-Sealed-Release header ("" without one);
+	// describes, its KIFF-Sealed-Describe; tools, the tool each call named.
+	releases  []string
+	describes []string
+	tools     []string
+	// described, when set, is browse_open's answer to a describe.
+	described json.RawMessage
+	hang      bool
+	echo      bool
+	leak      bool
+	spoof     bool
 	// refuse answers every call with the tool's own error result.
 	refuse string
 	// currency is each order's currency, as the get_order read says it.
@@ -324,6 +358,14 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.raw = append(f.raw, args)
 	f.bearers = append(f.bearers, bearer)
 	f.permits = append(f.permits, mcp.CallHeader(ctx, gateway.PermitHeader))
+	f.releases = append(f.releases, mcp.CallHeader(ctx, gateway.SealedReleaseHeader))
+	f.describes = append(f.describes, mcp.CallHeader(ctx, gateway.SealedDescribeHeader))
+	f.tools = append(f.tools, tool)
+	if tool == "browse_open" && f.described != nil {
+		d := f.described
+		f.mu.Unlock()
+		return d, nil
+	}
 	echo, leak, spoof, refuse, answer := f.echo, f.leak, f.spoof, f.refuse, f.answer
 	cur, isRead, readMeta := f.currency[fmt.Sprint(a["order"])], tool == "get_order", f.readMeta
 	amt, hasAmount := f.amounts[fmt.Sprint(a["order"])]
@@ -404,6 +446,8 @@ type rig struct {
 	gw    *gateway.Gateway
 	// trialRun, when set, is sent as KIFF-Trial-Run on trial calls.
 	trialRun string
+	// headers are sent on every request, as the agent's client would.
+	headers map[string]string
 	// runGrant, when set, is sent as KIFF-Run-Grant on calls.
 	runGrant string
 }
@@ -445,6 +489,9 @@ func (r *rig) rpc(t *testing.T, key, method string, params any) (int, map[string
 	b, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
 	req, _ := http.NewRequest(http.MethodPost, r.srv.URL, bytes.NewReader(b))
 	req.Header.Set("Authorization", "Bearer "+key)
+	for k, v := range r.headers {
+		req.Header.Set(k, v)
+	}
 	if r.runGrant != "" {
 		req.Header.Set(gateway.RunGrantHeader, r.runGrant)
 	}

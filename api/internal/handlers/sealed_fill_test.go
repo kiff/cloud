@@ -3,11 +3,20 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/kiff/cloud/api/internal/permit"
+	"github.com/kiff/cloud/api/internal/words"
+	"math/big"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -41,7 +50,7 @@ func TestASealedFillIsNamedByItsHandle(t *testing.T) {
 }
 
 func testRelease(now time.Time, edit func(map[string]any)) json.RawMessage {
-	r := map[string]any{"chrome_id": "chr_workmac0001", "op": "op_fill.3", "origin": "https://shop.example",
+	r := map[string]any{"chrome_id": "chr_1", "op": "p-sealed.2", "origin": "https://shop.example",
 		"nonce": base64.RawURLEncoding.EncodeToString([]byte("sixteen-byte-nonce")), "exp": now.Add(60 * time.Second).UnixMilli(), "sig": "MEUCIQ"}
 	if edit != nil {
 		edit(r)
@@ -139,6 +148,25 @@ func TestASealedFillIsAllowedOnlyOnceWithThePhonesRelease(t *testing.T) {
 			t.Fatalf("approve-once without a release (%v): %d %v", body, code, out)
 		}
 	}
+	// Without planque's block on the hold, the card can't show the fill, so
+	// even a good release doesn't take it.
+	if code, out := answer(r, sealed, "approve-once", map[string]any{"release": testRelease(r.now, nil)}); code != http.StatusBadRequest ||
+		out["error"] != "release_required" || !strings.Contains(out["detail"].(string), "can't show") {
+		t.Fatalf("an allow with no block: %d %v", code, out)
+	}
+	key, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-sealed", testBlock(t, key, "t1", "p-sealed", nil)); err != nil {
+		t.Fatal(err)
+	}
+	// A release for another Chrome, step or site than the block the card
+	// drew: the owner would release a fill they weren't shown.
+	for field, v := range map[string]string{"chrome_id": "chr_2", "op": "p-other.1", "origin": "https://other.example"} {
+		rel := testRelease(r.now, func(m map[string]any) { m[field] = v })
+		if code, out := answer(r, sealed, "approve-once", map[string]any{"release": rel}); code != http.StatusBadRequest || out["error"] != "release_required" ||
+			!strings.Contains(out["detail"].(string), "than the hold shows") {
+			t.Fatalf("a release with another %s: %d %v", field, code, out)
+		}
+	}
 	// A release the extension would refuse on sight.
 	late := testRelease(r.now, func(m map[string]any) { m["exp"] = r.now.Add(-time.Minute).UnixMilli() })
 	if code, out := answer(r, sealed, "approve-once", map[string]any{"release": late}); code != http.StatusBadRequest || out["error"] != "release_required" ||
@@ -165,6 +193,23 @@ func TestASealedFillIsAllowedOnlyOnceWithThePhonesRelease(t *testing.T) {
 	}
 	if s := status(r, sealed); s != mandate.ExceptionApproved {
 		t.Fatalf("after the allow: %s", s)
+	}
+	// The release is kept for the gateway, handed over once, and only for
+	// the sealed fill: the ordinary hold keeps none.
+	var keeper mandate.SealedReleases = r.store
+	got, err := keeper.TakeSealedRelease(t.Context(), "t1", "p-sealed", r.now)
+	if err != nil || len(got) == 0 {
+		t.Fatalf("the kept release: %s %v", got, err)
+	}
+	var kept, sent map[string]any
+	if json.Unmarshal(got, &kept) != nil || json.Unmarshal(testRelease(r.now, nil), &sent) != nil || !reflect.DeepEqual(kept, sent) {
+		t.Fatalf("the kept release isn't the phone's: %s", got)
+	}
+	if again, _ := keeper.TakeSealedRelease(t.Context(), "t1", "p-sealed", r.now); again != nil {
+		t.Fatalf("a release was handed over twice: %s", again)
+	}
+	if none, _ := keeper.TakeSealedRelease(t.Context(), "t1", "p-plain", r.now); none != nil {
+		t.Fatalf("an ordinary hold kept a release: %s", none)
 	}
 
 	// Refused, a sealed fill needs nothing.
@@ -261,5 +306,180 @@ func TestAnExternalApproverNeverApprovesASealedFill(t *testing.T) {
 	answer["decision"] = "reject"
 	if rr := send("POST", path+"/answer", answer); rr.Code != 200 {
 		t.Fatalf("an approver's refusal: %d %s", rr.Code, rr.Body)
+	}
+}
+
+// testBlock is a sealed fill's block for proposal in tenant, edited, signed by
+// key under planque/describe/v1 as planque signs it.
+func testBlock(t *testing.T, key *ecdsa.PrivateKey, tenant, proposal string, edit func(map[string]any)) json.RawMessage {
+	t.Helper()
+	op := chromeStepID(proposal, sealedFillStep)
+	b := map[string]any{"v": "planque/describe/v1", "tenant": tenant, "op": op, "site": "shop.example", "origin": "https://shop.example",
+		"action_words": "Fill your password into “Password”", "context": map[string]any{"title": "Sign in", "text": "Email Password Sign in"},
+		"chrome":         map[string]any{"id": "chr_1", "name": "Work Mac"},
+		"release_fields": map[string]any{"chrome_id": "chr_1", "op": op, "sealed": "sec_a1:password", "origin": "https://shop.example", "field_ref": "f2", "read_id": "r1"}}
+	if edit != nil {
+		edit(b)
+	}
+	raw, _ := json.Marshal(b)
+	canon, err := permit.Canonicalize(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+	r, s, err := ecdsa.Sign(rand.Reader, key, sum[:])
+	if err != nil {
+		t.Fatal(err)
+	}
+	sig := make([]byte, 64)
+	r.FillBytes(sig[:32])
+	s.FillBytes(sig[32:])
+	out, _ := json.Marshal(map[string]any{"block": json.RawMessage(raw), "sig": base64.RawURLEncoding.EncodeToString(sig)})
+	return out
+}
+
+// Invariant: KIFF keeps a sealed fill's block only when planque signed it, for this account, for this call's one Chrome step and the Chrome it releases on: whoever carries it can't change what the owner reads, and no other call's block fits.
+// Category: authority
+// Attack: a taf, holding its agent key, sends the decide that holds its sealed fill with a block it wrote, or another call's real block, so the owner releases a password over a card that shows something else
+// Refused: a block not signed by planque's key, for another account, call or Chrome, or naming no sealed value, field or read, isn't kept, and the hold can't be allowed
+func TestABrowserBlockIsKeptOnlyAsPlanqueSignedItForThisCall(t *testing.T) {
+	planque, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	other, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	verify := func(block json.RawMessage, sig string) bool {
+		raw, err := base64.RawURLEncoding.DecodeString(sig)
+		if err != nil || len(raw) != 64 {
+			return false
+		}
+		canon, err := permit.Canonicalize(block)
+		if err != nil {
+			return false
+		}
+		sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+		return ecdsa.Verify(&planque.PublicKey, sum[:], new(big.Int).SetBytes(raw[:32]), new(big.Int).SetBytes(raw[32:]))
+	}
+	if why := browserBlockRefusal(testBlock(t, planque, "t1", "p-sealed", nil), "t1", "p-sealed", verify); why != "" {
+		t.Fatalf("planque's own block: %s", why)
+	}
+	for name, raw := range map[string]json.RawMessage{
+		"another key":     testBlock(t, other, "t1", "p-sealed", nil),
+		"another account": testBlock(t, planque, "t2", "p-sealed", nil),
+		"another call":    testBlock(t, planque, "t1", "p-other", nil),
+		"release on another op": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
+			b["release_fields"].(map[string]any)["op"] = "p-sealed.3"
+		}),
+		"another chrome": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
+			b["release_fields"].(map[string]any)["chrome_id"] = "chr_2"
+		}),
+		"http":       testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["origin"] = "http://shop.example" }),
+		"no field":   testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["release_fields"].(map[string]any)["field_ref"] = "" }),
+		"other v":    testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) { b["v"] = "planque/describe/v2" }),
+		"not signed": json.RawMessage(`{"block":{"v":"planque/describe/v1"}}`),
+		"empty":      nil,
+	} {
+		if browserBlockRefusal(raw, "t1", "p-sealed", verify) == "" {
+			t.Errorf("%s: kept", name)
+		}
+	}
+	// A block changed after planque signed it isn't kept.
+	var s map[string]json.RawMessage
+	_ = json.Unmarshal(testBlock(t, planque, "t1", "p-sealed", nil), &s)
+	s["block"] = json.RawMessage(strings.Replace(string(s["block"]), "Sign in", "Read the news", 1))
+	changed, _ := json.Marshal(s)
+	if browserBlockRefusal(changed, "t1", "p-sealed", verify) == "" {
+		t.Error("a changed block was kept")
+	}
+	// A block that reads two ways, even signed: a key written twice, two
+	// keys the same but for case (Go would read either into one field), or a
+	// key KIFF doesn't know. What KIFF checked must be what the card draws.
+	signed := func(block string) json.RawMessage {
+		t.Helper()
+		canon, err := permit.Canonicalize(json.RawMessage(block))
+		if err != nil {
+			t.Fatal(err)
+		}
+		sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+		r, s, err := ecdsa.Sign(rand.Reader, planque, sum[:])
+		if err != nil {
+			t.Fatal(err)
+		}
+		sig := make([]byte, 64)
+		r.FillBytes(sig[:32])
+		s.FillBytes(sig[32:])
+		out, _ := json.Marshal(map[string]any{"block": json.RawMessage(block), "sig": base64.RawURLEncoding.EncodeToString(sig)})
+		return out
+	}
+	var good map[string]json.RawMessage
+	_ = json.Unmarshal(testBlock(t, planque, "t1", "p-sealed", nil), &good)
+	body := strings.TrimPrefix(string(good["block"]), "{")
+	if why := browserBlockRefusal(signed("{"+body), "t1", "p-sealed", verify); why != "" {
+		t.Fatalf("the same block, re-signed: %s", why)
+	}
+	for name, block := range map[string]string{
+		"a key twice":           `{"action_words":"Read the news",` + body,
+		"a key in another case": `{"Origin":"https://evil.example",` + body,
+		"twice, deeper":         strings.Replace("{"+body, `"chrome":{`, `"chrome":{"id":"chr_9",`, 1),
+		"an unknown key":        `{"shown":"Read the news",` + body,
+	} {
+		if browserBlockRefusal(signed(block), "t1", "p-sealed", verify) == "" {
+			t.Errorf("%s: kept", name)
+		}
+	}
+	if browserBlockRefusal(append(testBlock(t, planque, "t1", "p-sealed", nil), []byte(`{}`)...), "t1", "p-sealed", verify) == "" {
+		t.Error("a block with data after it was kept")
+	}
+
+	// planque's step names, as chrome_driver.go writes them.
+	if chromeStepID("op_1", 1) != "op_1.1" || len(chromeStepID(strings.Repeat("x", 70), 1)) != len("op_")+40+2 {
+		t.Fatalf("chromeStepID: %s %s", chromeStepID("op_1", 1), chromeStepID(strings.Repeat("x", 70), 1))
+	}
+}
+
+// A held sealed fill's view carries planque's block as it was signed, and the
+// hash the phone's answer signs over; a hold without one, or any other hold,
+// carries none.
+func TestASealedFillsHoldShowsPlanquesBlockAndItsHash(t *testing.T) {
+	r, _, plain := sealedRig(t, sealedArgs())
+	m := r.cardTerms("rae-refund")
+	a := mandate.NewAuthorizer(r.store, nil, func() time.Time { return r.now })
+	d, err := a.Authorize(t.Context(), "t1", "p-fill", mandate.Request{Subject: "rae", Domain: m.Domain, DomainID: m.DomainID,
+		Environment: m.Environment, Action: "refund", Parameters: map[string]int64{"amount_cents": 100}, OwnerAsk: words.OwnerAskSealedFill})
+	if err != nil || d.Outcome != mandate.OutcomeOwnerRequired {
+		t.Fatalf("a sealed fill wasn't held: %+v %v", d, err)
+	}
+	view := func(id string) map[string]any {
+		t.Helper()
+		rr := do(t, r.mux, admin(), http.MethodGet, "/v1/me/card-exceptions/"+id, nil)
+		var v map[string]any
+		if err := json.Unmarshal(rr.Body.Bytes(), &v); err != nil || rr.Code != http.StatusOK {
+			t.Fatalf("view: %d %s", rr.Code, rr.Body)
+		}
+		return v
+	}
+	if v := view(d.ExceptionID); v["browser"] != nil || v["browser_sha256"] != nil {
+		t.Fatalf("a hold with no block showed one: %v", v["browser"])
+	}
+	planque, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	signed := testBlock(t, planque, "t1", "p-fill", nil)
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-fill", signed); err != nil {
+		t.Fatal(err)
+	}
+	var s struct {
+		Block json.RawMessage `json:"block"`
+	}
+	_ = json.Unmarshal(signed, &s)
+	canon, _ := permit.Canonicalize(s.Block)
+	sum := sha256.Sum256(canon)
+	v := view(d.ExceptionID)
+	b, _ := v["browser"].(map[string]any)
+	if b == nil || b["origin"] != "https://shop.example" || v["browser_sha256"] != hex.EncodeToString(sum[:]) {
+		t.Fatalf("the hold's block: %v %v", v["browser"], v["browser_sha256"])
+	}
+	// Written once: a second block isn't kept.
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-fill", testBlock(t, planque, "t1", "p-fill", func(b map[string]any) { b["site"] = "evil.example" })); !errors.Is(err, mandate.ErrExceptionState) {
+		t.Fatalf("a second block: %v", err)
+	}
+	// An ordinary hold shows none.
+	if v := view(plain); v["browser"] != nil {
+		t.Fatalf("an ordinary hold showed a block: %v", v["browser"])
 	}
 }

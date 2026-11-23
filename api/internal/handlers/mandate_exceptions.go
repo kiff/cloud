@@ -416,6 +416,7 @@ func (h *MandatesHandler) listExceptions(w http.ResponseWriter, r *http.Request)
 		if vt := vendors[e.Action]; vt != "" {
 			v["vendor_tool"] = vt
 		}
+		v = h.withBrowserBlock(r.Context(), tenantID, v, e)
 		out = append(out, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"exceptions": out})
@@ -465,6 +466,7 @@ func (h *MandatesHandler) getException(w http.ResponseWriter, r *http.Request) {
 	if vt := h.vendorTools(r, tenantID)[e.Action]; vt != "" {
 		v["vendor_tool"] = vt
 	}
+	v = h.withBrowserBlock(r.Context(), tenantID, v, e)
 	writeJSON(w, http.StatusOK, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 }
 
@@ -535,7 +537,8 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 			return
 		}
 		// A sealed fill is allowed only once, with the phone's release.
-		if h.refuseSealedFill(w, r, tenantID, id, answer, body.Release) {
+		refused, sealed := h.refuseSealedFill(w, r, tenantID, id, answer, body.Release)
+		if refused {
 			return
 		}
 		gov := membership.Governance{}
@@ -598,6 +601,9 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 			if rerr := h.holds.RecordSigned(r.Context(), ident, tenantID, id, answer, gov, answeredAt, device); rerr != nil {
 				h.logger.ErrorContext(r.Context(), "mandates: answer attribution not recorded",
 					slog.String("tenant", tenantID), slog.String("exception", id), slog.String("err", rerr.Error()))
+			}
+			if sealed && answer == "approve-once" {
+				h.keepSealedRelease(r.Context(), tenantID, id, body.Release)
 			}
 			if answer == "change-card" && gov.SeparationOfDuties && h.cardChangeNotice != nil {
 				cards := make([]string, 0, len(e.Breaches))
@@ -801,6 +807,10 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 	}
 	signed := auth.Answer{TenantID: tenantID, ExceptionID: id, Answer: answer, NextStep: refusal.NextStep, Note: refusal.Note,
 		AccountingVersion: held.AccountingVersion, SignedAt: sig.SignedAt}
+	// A held sealed fill's answer signs over the block the phone drew.
+	if v := h.withBrowserBlock(r.Context(), tenantID, map[string]any{}, held); v["browser_sha256"] != nil {
+		signed.BrowserSHA256, _ = v["browser_sha256"].(string)
+	}
 	// A session that approves with its device's own passkey: an answer that
 	// grants authority counts only with that passkey's assertion (§2.6); a
 	// refusal is its device key's, as for any device.

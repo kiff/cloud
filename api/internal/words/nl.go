@@ -81,6 +81,7 @@ var nl = Words{
 		OwnerAskNoRequestID:  "de agent noemde geen verzoek uit een gekoppelde app, dus deze terugbetaling wacht op goedkeuring",
 		OwnerAskOther:        "elke aanroep van deze tool wacht op goedkeuring",
 		OwnerAskEachCall:     "elke aanroep van deze tool wacht op goedkeuring",
+		OwnerAskSealedFill:   "deze stap vult een inlog in die in je Chrome is bewaard, dus hij wacht elke keer op jou, en alleen je telefoon kan hem vrijgeven",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("de aanroep noemt geen %s, en deze Card geldt alleen voor de %s die erop staan", param, param)
