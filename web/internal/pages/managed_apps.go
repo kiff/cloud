@@ -10,7 +10,7 @@ import (
 
 // ManagedApps names the apps a customer may connect as a managed connection,
 // whose sign-in Composio holds in the United States. It's the disclosure the
-// owner's decision on app connections (17 Nov 2026) asks for: no customer's
+// rule for app connections asks for: no customer's
 // connection goes through Composio for an app that isn't named here.
 // /subprocessors shows it on Composio's row. Since 18 Nov 2026: Gmail,
 // Google Calendar and Google Sheets (the owner's yes, pre-launch).

@@ -457,7 +457,7 @@ func TestAppSignIn_NoGETAnswersWithoutTheFormsMark(t *testing.T) {
 	}
 }
 
-// mac-local's sequence: another app's authorize opens the form (the mark is set), the person closes it, signs in to
+// The sequence: another app's authorize opens the form (the mark is set), the person closes it, signs in to
 // KIFF the ordinary way, and the app opens the page again. The mark is there and the sign-in is fresh, but it wasn't
 // made for this request: the person is asked, never approved for.
 func TestAppSignIn_AStaleMarkAndAnOrdinarySignInAreAskedNeverApproved(t *testing.T) {

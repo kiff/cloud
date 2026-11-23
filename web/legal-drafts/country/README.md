@@ -8,7 +8,7 @@ language. The two policies stay as they are; a section only adds what that count
 except where local law requires the local-language text to bind (Quebec's Charter of the French language; any other
 country so marked below). The page says so in both languages at its top.
 
-These are drafts for the owner's read. Nothing here is served until mac-local builds it into `web/internal/pages`
+These are drafts for the owner's read. Nothing here is served until it is built into `web/internal/pages`
 and the owner has approved the text. Lines marked **[owner]** need a fact only the owner can give.
 
 | File | Market | Status |
@@ -25,7 +25,7 @@ and the owner has approved the text. Lines marked **[owner]** need a fact only t
 | `ni.en.md`, `ni.es.md` | Nicaragua (Ley 787 de 2012), en and es | served (ruling B) |
 | `sm.en.md`, `sm.it.md` | San Marino (Legge 171/2018), en and it | served (ruling B) |
 | `cm.en.md`, `cm.fr.md` | Cameroon (Loi 2024/017), en and fr | served (ruling B) |
-| `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | served at /legal/japan and /legal/japan/ja (owner, 21 Nov): the responsible person as the e-Business Register gives it; credits don't expire; prices as each item shows them in yen at purchase |
+| `jp-tokushoho.en.md`, `jp-tokushoho.ja.md` | Japan: the seller notice under the Act on Specified Commercial Transactions (特定商取引法に基づく表記), linked from the JP store listings and the app's purchase screen | served at /legal/japan and /legal/japan/ja: the responsible person as the e-Business Register gives it; credits don't expire; prices as each item shows them in yen at purchase |
 | `mc.en.md`, `mc.fr.md` | Monaco (Loi 1.565), en and fr | served (ruling B); says no representative yet. Monaco opens only once the owner appoints one and its name and address replace that line |
 | `tr.en.md`, `tr.tr.md` | Türkiye (KVKK 6698), en and tr | served with batch 3 (kiff/cloud#80); says no representative yet |
 | `bn.en.md` | Brunei (Personal Data Protection Order 2025), English only (English meets the rule); the transfer basis for Estonia, Ireland and the United States | served with batch 5 |

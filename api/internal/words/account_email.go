@@ -6,7 +6,7 @@ package words
 // Cloud": that is the word the product uses.
 //
 // English is the source. AccountEmails holds the other languages, keyed by the
-// primary language tag, as legal-i18n writes them; a language with no entry
+// primary language tag, as the translations write them; a language with no entry
 // reads English, whatever the person's language is. A test fails on an entry
 // that has an empty line.
 type AccountEmail struct {

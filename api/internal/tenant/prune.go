@@ -8,13 +8,13 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Prune keeps a test account small (the owner, 22 Oct 2026): what it
+// Prune keeps a test account small: what it
 // finished with before a cutoff is deleted, and the account goes on as it
 // was. Its people and roles, its settings, its live keys, live Cards in use
 // and what they have drawn, and anything still open stay. A control version
 // replaced before the cutoff goes, and on an account the operators label
 // "eval", a Card issued before the cutoff that has drawn nothing since is
-// retired (archived) (the owner, 19 Nov 2026): Eval runs leave both behind
+// retired (archived): Eval runs leave both behind
 // by the thousand, and a live Card is re-read for warnings every minute. A
 // test account a person uses keeps its Cards between tests. Only for accounts an
 // operator names (KIFF_PRUNE_TENANTS, kiff-tenant prune): a customer's

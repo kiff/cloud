@@ -322,7 +322,7 @@ const (
 	envPermitIssuer        = "KIFF_PERMIT_ISSUER"   // default https://api.kiff.dev
 	envPermitLifetime      = "KIFF_PERMIT_LIFETIME" // default 60s, at most 300s
 
-	// Test accounts kept small (the owner, 22 Oct 2026): every hour, what
+	// Test accounts kept small: every hour, what
 	// each listed account finished with more than envPruneAfter ago is
 	// deleted, and the account goes on (tenant.Prune). Comma-separated
 	// tenant ids; empty prunes nothing. Never a customer's account.

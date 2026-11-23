@@ -63,8 +63,7 @@ func (h *ProposalsHandler) permitRequired(ctx context.Context, id auth.Identity,
 	}
 	// A gateway call whose amount couldn't be read is only ever recorded as
 	// blocked (evaluate, amountRefusal): it can't be held or allowed, so
-	// nothing needs binding, and it has no amount to ask a permit with
-	// (codex-assistant's review of).
+	// nothing needs binding, and it has no amount to ask a permit with.
 	if unverified, _ := takeAmountUnverified(spec, prop); unverified {
 		return proposalResponse{}, false
 	}

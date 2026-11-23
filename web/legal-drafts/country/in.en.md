@@ -1,7 +1,7 @@
 # India
 
 This section applies if you live in India. It adds what the Digital Personal Data Protection Act, 2023 (DPDP Act) and
-its Rules ask, beyond KIFF's Privacy Policy and the tafs Privacy Policy. **[mac-local]** Check which of the Rules'
+its Rules ask, beyond KIFF's Privacy Policy and the tafs Privacy Policy. **[ops]** Check which of the Rules'
 phases are in force today; the text below is written for all of them.
 
 ## 1. Notice
@@ -49,4 +49,4 @@ If a breach affects your personal data, we tell you and the Data Protection Boar
 ## 7. Languages
 
 You can ask for this notice in English or in any language in the Eighth Schedule to the Constitution of India.
-**[legal-i18n]** Hindi first, on request.
+**[translation]** Hindi first, on request.

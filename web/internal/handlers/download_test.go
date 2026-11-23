@@ -89,8 +89,7 @@ func firstStore(body string) string {
 }
 
 // A phone sees its own store first and bigger. The computers keep one order
-// for every visitor, macOS 13 and later first and big (the owner, 18 Nov
-// 2026), so a computer, or a device the page can't name, sees it first.
+// for every visitor, macOS 13 and later first and big, so a computer, or a device the page can't name, sees it first.
 func TestDownloadPutsTheVisitorsDeviceFirst(t *testing.T) {
 	for _, c := range []struct {
 		name, ua, want string

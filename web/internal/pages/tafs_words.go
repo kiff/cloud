@@ -88,7 +88,7 @@ type tafsWords struct {
 	TafsPrivacy, TafsTerms                               string
 	// Google is the footer's band on what tafs does with a connected Google
 	// account, for Google's review of the sign-in: open on every language's
-	// page, never in a fold, and off the first screen (owner, 18 Nov 2026).
+	// page, never in a fold, and off the first screen.
 	Google tafsGoogle
 }
 

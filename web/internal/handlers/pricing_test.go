@@ -31,13 +31,13 @@ func TestPricing(t *testing.T) {
 		`href="/static/css/home.css"`,
 		`class="k-home"`,
 
-		// The plans in a few lines (owner, 13 Nov 2026: two phone screens).
+		// The plans in a few lines: two phone screens.
 		`id="plans"`,
 		"One account covers the tafs app and your own agents. A credit pays for the AI a run uses. No free plan, no trial.",
 		"Solo", "€12.50", "a month, VAT included. 500 credits a month, then packs. In the tafs app.",
 		"Company", "€10.50", "a seat a month, plus VAT. 500 credits a seat, pooled, then €0.01 a credit up to a limit you set. On kiff.dev.",
 		"Committed volume on an order form.", "Talk to Gabriel",
-		// /on-rails lives here now (owner, 13 Nov 2026).
+		// /on-rails lives here now.
 		"We can also get your first agent action live with you: we observe it on your real traffic, then you issue its Card.",
 		"Coach for about 4 new jobs a month, runs that fail on our side and tries that send nothing are free.",
 		"Your tafs stop at what you have.", "The framework and kiff-guard are MIT.",
@@ -72,7 +72,7 @@ func TestPricing(t *testing.T) {
 		"$500",
 		// A credit is €0.01 only past Company's plan, not for everyone.
 		"1 credit is €0.01",
-		// Test-mode calls count like any other (PM).
+		// Test-mode calls count like any other.
 		"test mode", "Testing is free",
 		// History and people aren't by plan.
 		"days of history", "A year of history", "Several approvers",

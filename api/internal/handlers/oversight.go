@@ -30,7 +30,7 @@ const AuditOversightRead = "oversight.read"
 //	GET  /v1/me/oversight-reads         who read my work, when and why
 //	GET  /v1/oversight/reads?agent=     the account's reads: members.manage
 //
-// It is off on every account (owner, 26 Oct): no admin, manager or owner
+// It is off on every account: no admin, manager or owner
 // reads an employee's conversations. A read is refused with
 // oversight_off, and a grant already given no longer resolves. It may only
 // come back, separately, as a process for a legal dispute or a forensic

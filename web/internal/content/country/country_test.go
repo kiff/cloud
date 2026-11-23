@@ -102,7 +102,7 @@ func TestRawHTMLIsOff(t *testing.T) {
 	}
 }
 
-// Both privacy policies, in each of the 8 languages, carry legal-i18n's line
+// Both privacy policies, in each of the 8 languages, carry the line
 // (web/legal-drafts/policy-link.md) as written, twice: at transfers and at
 // rights, each linking this page.
 func TestThePoliciesLinkThePageInEachLanguage(t *testing.T) {
@@ -134,7 +134,7 @@ func TestThePoliciesLinkThePageInEachLanguage(t *testing.T) {
 }
 
 // Both privacy policies open their "who else receives data" section (KIFF's
-// §6, tafs's §7) with legal-i18n's no-sale line, as written in each language.
+// §6, tafs's §7) with the no-sale line, as written in each language.
 func TestThePoliciesSayNoSaleInEachLanguage(t *testing.T) {
 	src, err := os.ReadFile("../../../legal-drafts/policy-link.md")
 	if err != nil {

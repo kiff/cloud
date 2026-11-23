@@ -1,7 +1,7 @@
 // Package country holds the "Your country" sections that both privacy
 // policies link to: what a country's law asks beyond them, each in English
-// and in the country's language (owner, 20 Nov 2026: English binds unless
-// local law says the local text does). The sources are legal-i18n's drafts in
+// and in the country's language (English binds unless local law says the
+// local text does). The sources are the drafts in
 // web/legal-drafts/country, copied here as they are once approved; a test
 // keeps each copy identical to its draft.
 package country
@@ -125,7 +125,7 @@ func load() {
 				loadErr = fmt.Errorf("country: %s.%s: %w", c, l, err)
 				return
 			}
-			if bytes.Contains(src, []byte("[owner]")) || bytes.Contains(src, []byte("[mac-local]")) {
+			if bytes.Contains(src, []byte("[owner]")) || bytes.Contains(src, []byte("[ops]")) {
 				loadErr = fmt.Errorf("country: %s.%s still has a drafting mark", c, l)
 				return
 			}
@@ -154,7 +154,7 @@ func loadOne(name, lang string) (Section, error) {
 	if err != nil {
 		return Section{}, fmt.Errorf("country: %s.%s: %w", name, lang, err)
 	}
-	if bytes.Contains(src, []byte("[owner]")) || bytes.Contains(src, []byte("[mac-local]")) {
+	if bytes.Contains(src, []byte("[owner]")) || bytes.Contains(src, []byte("[ops]")) {
 		return Section{}, fmt.Errorf("country: %s.%s still has a drafting mark", name, lang)
 	}
 	title := name

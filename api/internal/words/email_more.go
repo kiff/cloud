@@ -14,7 +14,7 @@ import (
 
 // The emails in every shipped language. Eight languages have every line in Words; the
 // others (the 37 more the code sign-in emails already speak) have the lines the emails
-// read, here, as EmailLines, written by legal-i18n. Of(lang) is the English Words with
+// read, here, as EmailLines, the translations. Of(lang) is the English Words with
 // these lines laid over it, so every email (new device, invitations, account notices,
 // held action, Card warning) reads in the person's language with no change in the code
 // that writes it. A language with no entry reads English, never half of each: an entry
@@ -182,7 +182,7 @@ func pluralCategoriesOf(lang string, ordinal bool) []string {
 
 // EmailPluralProblems says which plural forms a language's CallCount and Ordinal lines lack: a form for each category
 // a whole number can have in it. A missing one is not an error at run time ("other" reads), but it is a wrong
-// sentence ("2 call"), so legal-i18n's lines are checked.
+// sentence ("2 call"), so the translated lines are checked.
 func EmailPluralProblems(lang string, lines EmailLines) []string {
 	var out []string
 	for name, ordinal := range pluralLines {
@@ -578,7 +578,7 @@ func setEmailLines(w *Words, lang string, lines EmailLines) {
 
 // EmailLanguagesMissing are the languages the emails speak that have not every email's lines
 // yet, by primary tag: the code sign-in emails' languages without EmailMore lines, and the
-// languages in EmailMore that are not complete. For legal-i18n's list.
+// languages in EmailMore that are not complete. For the translators' list.
 func EmailLanguagesMissing() []string {
 	var out []string
 	for tag := range CodeSignInEmailMore {

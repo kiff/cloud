@@ -36,7 +36,7 @@ func TestDownloadLinksAComputersAppOnceReleased(t *testing.T) {
 }
 
 // The computers keep one order for every visitor: macOS 13 and later, then
-// Windows, then Linux, and the macOS 12 app last (the owner, 18 Nov 2026).
+// Windows, then Linux, and the macOS 12 app last.
 func TestDesktopFirst(t *testing.T) {
 	names := func(v DownloadView) string {
 		var out []string

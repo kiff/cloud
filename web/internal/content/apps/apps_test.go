@@ -30,7 +30,7 @@ func TestValidateRefusesBadEntries(t *testing.T) {
 	}
 }
 
-// The seven apps that connect by key in the live matrix (13 Nov 2026).
+// The seven apps that connect by key in the live matrix.
 func TestTheLiveMatrixWorks(t *testing.T) {
 	for _, id := range []string{"stripe", "qonto", "shippo", "intercom", "zendesk", "pipedrive", "github"} {
 		a, ok := ByID(id)

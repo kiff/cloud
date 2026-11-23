@@ -17,7 +17,7 @@ the tafs Privacy Policy.
 
 **Access logs.** As Brazil's Internet Civil Framework (Marco Civil, Art. 15) requires, we keep the access logs of
 people in Brazil (the date, time and IP address of each access) for 6 months, kept secure and used for nothing else,
-then delete them. **[mac-local]** Brazil's logs need the 6-month retention before Brazil is a market.
+then delete them. **[ops]** Brazil's logs need the 6-month retention before Brazil is a market.
 
 ## 2. Age
 

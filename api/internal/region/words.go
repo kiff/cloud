@@ -8,8 +8,7 @@ import (
 
 // Here is region.unsupported_here, the refusal when the caller's address is
 // outside the supported countries, in the 8 languages plus Korean and Japanese
-// (legal-i18n's words,
-// kiff/cloud's web/legal-drafts/region.md). The apps show it as sent.
+// (kiff/cloud's web/legal-drafts/region.md). The apps show it as sent.
 var Here = map[string]string{
 	"en": "KIFF isn't available where you are right now. We offer it only in the countries and regions where Anthropic's Claude is available.",
 	"de": "KIFF ist dort, wo du gerade bist, nicht verfügbar. Wir bieten es nur in den Ländern und Regionen an, in denen Claude von Anthropic verfügbar ist.",
