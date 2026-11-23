@@ -136,7 +136,7 @@ func TestASealedFillThatCantBeDescribedIsRefusedNotHeld(t *testing.T) {
 		"planque refuses it": func(r *rig) {
 			r.tool.described = mcp.TextResult("Refused by planque: sealed_busy", true)
 		},
-		"no block": func(r *rig) { r.tool.described = mcp.TextResult("opened", false) },
+		"no block":  func(r *rig) { r.tool.described = mcp.TextResult("opened", false) },
 		"two steps": func(r *rig) {},
 	} {
 		t.Run(name, func(t *testing.T) {

@@ -259,7 +259,13 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 		}
 		if !f.withholdPermit {
 			f.issued[p.ID] = f.now()
-			return kiffapi.Decision{Outcome: "allowed", Permit: "permit-for-" + p.ID}, nil
+			d := kiffapi.Decision{Outcome: "allowed", Permit: "permit-for-" + p.ID}
+			// A sealed fill's release comes on the same decision as its permit.
+			if rel, ok := f.sealedReleases[p.ID]; ok {
+				delete(f.sealedReleases, p.ID)
+				d.SealedRelease = rel
+			}
+			return d, nil
 		}
 	}
 	if rel, ok := f.sealedReleases[p.ID]; ok {
@@ -326,10 +332,10 @@ type fakeTool struct {
 	tools     []string
 	// described, when set, is browse_open's answer to a describe.
 	described json.RawMessage
-	hang     bool
-	echo     bool
-	leak     bool
-	spoof    bool
+	hang      bool
+	echo      bool
+	leak      bool
+	spoof     bool
 	// refuse answers every call with the tool's own error result.
 	refuse string
 	// currency is each order's currency, as the get_order read says it.
