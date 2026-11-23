@@ -418,6 +418,8 @@ type rig struct {
 	gw    *gateway.Gateway
 	// trialRun, when set, is sent as KIFF-Trial-Run on trial calls.
 	trialRun string
+	// headers are sent on every request, as the agent's client would.
+	headers map[string]string
 	// runGrant, when set, is sent as KIFF-Run-Grant on calls.
 	runGrant string
 }
@@ -459,6 +461,9 @@ func (r *rig) rpc(t *testing.T, key, method string, params any) (int, map[string
 	b, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
 	req, _ := http.NewRequest(http.MethodPost, r.srv.URL, bytes.NewReader(b))
 	req.Header.Set("Authorization", "Bearer "+key)
+	for k, v := range r.headers {
+		req.Header.Set(k, v)
+	}
 	if r.runGrant != "" {
 		req.Header.Set(gateway.RunGrantHeader, r.runGrant)
 	}

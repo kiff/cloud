@@ -46,8 +46,10 @@ func TestASealedFillGoesWithThePhonesReleaseOnlyOnceAllowed(t *testing.T) {
 		t.Fatalf("the release rode in the arguments: %s", r.tool.raw[0])
 	}
 
-	// A call KIFF handed no release goes with none.
+	// A call KIFF handed no release goes with none, even when the taf sends
+	// its own header: the gateway's headers to the tool are its own.
 	plain := newRig(t)
+	plain.headers = map[string]string{gateway.SealedReleaseHeader: base64.RawURLEncoding.EncodeToString(release)}
 	plain.call(t, "agent-key", amount(500, "op-plain"))
 	if len(plain.tool.releases) != 1 || plain.tool.releases[0] != "" {
 		t.Fatalf("a plain call went with a release: %q", plain.tool.releases)
