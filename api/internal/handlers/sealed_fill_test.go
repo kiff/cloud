@@ -1,15 +1,20 @@
 package handlers
 
 import (
+	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/mandate"
+	"github.com/kiff/cloud/api/internal/membership"
 )
 
 // A sealed fill is named by its arguments: a "sealed" value shaped as a
@@ -17,13 +22,13 @@ import (
 func TestASealedFillIsNamedByItsHandle(t *testing.T) {
 	for args, want := range map[string]bool{
 		`{"url":"https://shop.example/","read":"r1","steps":[{"fill":"f1","sealed":"sec_a1:password"}]}`: true,
-		`{"steps":[{"click":"c1"},{"fill":"f2","sealed":"sec_b:username"}]}`:                            true,
-		`{"act":{"kind":"fill","ref":"f1","sealed":"sec_x:password:username"}}`:                         true, // malformed, still a fill
-		`{"steps":[{"fill":"f1","value":"lamp"}]}`:                                                     false,
-		`{"sealed":true,"document":"contract"}`:                                                        false,
-		`{"sealed":"envelope"}`:                                                                        false,
-		`{"note":"sec_a1:password"}`:                                                                   false,
-		`{}`:                                                                                           false,
+		`{"steps":[{"click":"c1"},{"fill":"f2","sealed":"sec_b:username"}]}`:                             true,
+		`{"act":{"kind":"fill","ref":"f1","sealed":"sec_x:password:username"}}`:                          true, // malformed, still a fill
+		`{"steps":[{"fill":"f1","value":"lamp"}]}`:                                                       false,
+		`{"sealed":true,"document":"contract"}`:                                                          false,
+		`{"sealed":"envelope"}`:                                                                          false,
+		`{"note":"sec_a1:password"}`:                                                                     false,
+		`{}`:                                                                                             false,
 	} {
 		var v any
 		if err := json.Unmarshal([]byte(args), &v); err != nil {
@@ -190,5 +195,71 @@ func TestAnAllowIsRefusedWhenTheHeldCallCantBeRead(t *testing.T) {
 	}
 	if rr := do(t, r.mux, admin(), http.MethodPost, "/v1/me/card-exceptions/"+sealed+"/reject", map[string]any{}); rr.Code != http.StatusOK {
 		t.Fatalf("reject: %d %s", rr.Code, rr.Body.String())
+	}
+}
+
+// An external approver may refuse or defer a sealed fill, never approve it:
+// it's the owner's to allow, with the phone's release.
+func TestAnExternalApproverNeverApprovesASealedFill(t *testing.T) {
+	ctx := t.Context()
+	now := time.Now().UTC()
+	s := mandate.NewMemoryStore()
+	s.SetApproverPolicy(func(context.Context, string, string) error { return nil })
+	m := mandate.Mandate{ID: "card", TenantID: "t1", Subject: "worker", Domain: gatewayDomain, OnExceed: mandate.OnExceedOwner, ValidFrom: now.Add(-time.Hour), ValidUntil: now.Add(time.Hour),
+		Grants: []mandate.Grant{{Action: "browse_act", PerAction: []mandate.PerActionLimit{{Quantity: mandate.Quantity{Kind: mandate.KindSum, Parameter: "amount"}, Max: 50}}}}}
+	if err := s.Issue(ctx, m, "alice"); err != nil {
+		t.Fatal(err)
+	}
+	args := &outcomeAndArgs{args: map[string]json.RawMessage{
+		"op-sealed": json.RawMessage(`{"url":"https://shop.example/","steps":[{"fill":"f1","sealed":"sec_a1:password"}]}`),
+	}}
+	h := NewMandatesHandler(s, nil, WithMandatesClock(func() time.Time { return now }), WithMandatesToolOutcomes(args))
+	mux := http.NewServeMux()
+	h.Register(mux)
+	h.RegisterExternalApprover(mux)
+	admin := owner()
+	admin.Method = auth.MethodSession
+	admin.MemberRole = membership.RoleAdmin
+	rr := do(t, mux, admin, "POST", "/v1/me/approver-grants", map[string]any{"name": "night-shift", "card_id": "card", "worker": "worker", "action": "browse_act", "parameter": "amount", "max": 100, "expires_at": now.Add(time.Hour)})
+	if rr.Code != 201 {
+		t.Fatalf("create %d %s", rr.Code, rr.Body)
+	}
+	var created struct {
+		Credential string `json:"credential"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &created); err != nil {
+		t.Fatal(err)
+	}
+	a := mandate.NewAuthorizer(s, nil, func() time.Time { return now })
+	d, err := a.Authorize(ctx, "t1", "op-sealed", mandate.Request{Subject: "worker", Domain: gatewayDomain, Action: "browse_act", EntityID: "page", Parameters: map[string]int64{"amount": 75}})
+	if err != nil || d.ExceptionID == "" {
+		t.Fatalf("not held: %+v %v", d, err)
+	}
+	send := func(method, path string, body any) *httptest.ResponseRecorder {
+		var b bytes.Buffer
+		if body != nil {
+			_ = json.NewEncoder(&b).Encode(body)
+		}
+		req := httptest.NewRequest(method, path, &b)
+		req.Header.Set("Authorization", "Bearer "+created.Credential)
+		rr := httptest.NewRecorder()
+		mux.ServeHTTP(rr, req)
+		return rr
+	}
+	path := "/v1/approver/holds/" + d.ExceptionID
+	var view approverView
+	if rr := send("GET", path, nil); rr.Code != 200 || json.Unmarshal(rr.Body.Bytes(), &view) != nil || view.ReviewToken == "" {
+		t.Fatalf("read %d %s", rr.Code, rr.Body)
+	}
+	answer := map[string]any{"review_token": view.ReviewToken, "decision": "approve", "reason_code": "fixture"}
+	if rr := send("POST", path+"/answer", answer); rr.Code != http.StatusConflict || !strings.Contains(rr.Body.String(), "sealed_fill_once") {
+		t.Fatalf("an approver's approve: %d %s", rr.Code, rr.Body)
+	}
+	if e, _ := s.Exception(ctx, "t1", d.ExceptionID); e.Status != mandate.ExceptionHeld {
+		t.Fatalf("the hold moved: %s", e.Status)
+	}
+	answer["decision"] = "reject"
+	if rr := send("POST", path+"/answer", answer); rr.Code != 200 {
+		t.Fatalf("an approver's refusal: %d %s", rr.Code, rr.Body)
 	}
 }
