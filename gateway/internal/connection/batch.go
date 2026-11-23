@@ -10,6 +10,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -277,7 +278,12 @@ func (h *Handler) planBatch(ctx, probeCtx context.Context, c caller, conns []bat
 		}
 		seen[conn.Name] = true
 		if e, ok := there[conn.Name]; ok {
-			if sameConnection(e, conn) {
+			// The control server's own tool, asked to be replaced, whose server
+			// now lists another schema (an argument added since it was
+			// connected) is replaced, not kept: kept, the batch connected
+			// nothing and its sender asked again forever.
+			stale := one.Replace && e.Control && conn.Control && !sameSchema(e.InputSchema, conn.InputSchema)
+			if sameConnection(e, conn) && !stale {
 				kept = append(kept, conn.Name)
 				continue
 			}
@@ -297,6 +303,16 @@ func sameConnection(there, want Connection) bool {
 	return there.URL == want.URL && there.UpstreamTool == want.UpstreamTool && there.Control == want.Control &&
 		modeOrSealed(there.Mode) == modeOrSealed(want.Mode) && there.Audience == want.Audience &&
 		there.ReadOnly == want.ReadOnly && there.IdempotencyArg == want.IdempotencyArg
+}
+
+// sameSchema reports whether two input schemas are the same JSON, whatever
+// their spacing or key order; one that doesn't parse is never the same.
+func sameSchema(a, b json.RawMessage) bool {
+	var x, y any
+	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
+		return false
+	}
+	return reflect.DeepEqual(x, y)
 }
 
 // listCache keeps a batch's tool listings, by server and credential.

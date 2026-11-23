@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -175,6 +176,64 @@ func TestBatchReplacesOnlyTheControlServersOwnTools(t *testing.T) {
 	if conn, _ := r.store.Get(context.Background(), "tenant-a", "issue_refund"); conn.Control || conn.URL != r.tool.URL {
 		t.Fatalf("the vendor's tool changed: %+v", conn)
 	}
+}
+
+// A control server's tool KIFF keeps with an older schema than its server now
+// lists (an argument added since) is replaced when the batch asks to replace
+// it: kept as "already", the batch connected nothing and the phone asked to
+// give Coach its tools forever. Without replace, or once the schema matches,
+// it's left as it is.
+func TestBatchReplaceTakesTheServersNewSchema(t *testing.T) {
+	r := newRig(t, dev)
+	ctx := context.Background()
+	srv := openToolServer(t)
+	tool := func(replace bool) map[string]any {
+		return map[string]any{"connections": []any{map[string]any{"name": "taf_task", "url": srv.URL, "tool": "refund", "mode": "verify",
+			"audience": srv.URL + "/mcp", "idempotency_argument": "idem", "control": true, "replace": replace}}}
+	}
+	post := func(b any) (int, string) {
+		t.Helper()
+		payload, _ := json.Marshal(b)
+		req, _ := http.NewRequest(http.MethodPost, r.srv.URL+"/v1/connections/batch", bytes.NewReader(payload))
+		req.Header.Set("Authorization", "Bearer owner-a")
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var buf bytes.Buffer
+		_, _ = buf.ReadFrom(resp.Body)
+		return resp.StatusCode, buf.String()
+	}
+	if status, body := post(tool(false)); status != http.StatusCreated {
+		t.Fatalf("first: %d %s", status, body)
+	}
+	listed, err := r.store.Get(ctx, "tenant-a", "taf_task")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Kept from before the server added an argument.
+	if _, err := r.store.Pool.Exec(ctx, `UPDATE gateway.tools SET input_schema='{"type":"object"}' WHERE tenant_id='tenant-a' AND name='taf_task'`); err != nil {
+		t.Fatal(err)
+	}
+	if status, body := post(tool(false)); status != http.StatusOK || !strings.Contains(body, `"already":["taf_task"]`) {
+		t.Fatalf("without replace: %d %s", status, body)
+	}
+	if status, body := post(tool(true)); status != http.StatusCreated || !strings.Contains(body, `"replaced":["taf_task"]`) {
+		t.Fatalf("replace on a changed schema: %d %s", status, body)
+	}
+	conn, err := r.store.Get(ctx, "tenant-a", "taf_task")
+	if err != nil || string(conn.InputSchema) == `{"type":"object"}` || !sameJSON(conn.InputSchema, listed.InputSchema) {
+		t.Fatalf("after replace: %s %v", conn.InputSchema, err)
+	}
+	if status, body := post(tool(true)); status != http.StatusOK || !strings.Contains(body, `"already":["taf_task"]`) {
+		t.Fatalf("the same schema again: %d %s", status, body)
+	}
+}
+
+func sameJSON(a, b json.RawMessage) bool {
+	var x, y any
+	return json.Unmarshal(a, &x) == nil && json.Unmarshal(b, &y) == nil && reflect.DeepEqual(x, y)
 }
 
 // A computer that approves with its own passkey (the desktop client
