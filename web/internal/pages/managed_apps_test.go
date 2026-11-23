@@ -40,7 +40,7 @@ func TestTheManagedAppsFileIsAPlainList(t *testing.T) {
 	}
 }
 
-// The shipped list is the owner's 18 Nov decision (the three Google apps) plus
+// The shipped list is the three Google apps plus
 // wave 1a's 15 apps, named as planque's catalog names them, in this order.
 // planque's copy is held equal to it by planque's own test.
 func TestTheManagedAppsAreTheShippedList(t *testing.T) {
