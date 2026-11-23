@@ -69,8 +69,8 @@ deny=(
 	"private repository link|github\.com/kiff/kiff-cloud\b"
 	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
 	# Who decided something, never the requirement itself: "the PM", a
-	# ruling's time stamp, and a reference cut short to "(review on)".
-	"coordination note|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) (on|of)\)"
+	# ruling's time stamp, and a reference cut short to "(review on)", or ending in an issue number "(read on #12)".
+	"coordination note|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) (on|of)( [A-Za-z0-9/_.-]*#[0-9]+)?\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
 	# demos, the smoke and Stripe scripts, AGENTS.md, the desktop doc by name.
 	# The API's server, its HTTP layer and the deploy are public. Exported paths
@@ -207,7 +207,7 @@ NAMES = set("""
 3c32e58c6fc3cf62 20cca48ece26c362 f5068c4b858ead38 fe9c6bd7a66301f4 50077b782480811e
 be896ac583d76627 afb42e3f1a4bce7e d419916f176e52d3 bd184cdc7aea9ef8 ab63a9b276c86bec
 2ad06b22b301f873 3c00d0a9d4c2eb08 4a25962615e31ac6
-d184eb5cf606a3eb d1cac6ef5a9ddbd1 a74b534355e685fc ea0edce134693c74 cb722454717333e5
+d184eb5cf606a3eb d1cac6ef5a9ddbd1 a74b534355e685fc ea0edce134693c74 cb722454717333e5 6ce2da740ecd217f
 """.split())
 # Logins, the owner's included: named only where GitHub reads them.
 LOGINS = set("""
@@ -217,7 +217,7 @@ OWNERS = ".github/CODEOWNERS"
 MONTH = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
 SAID = re.compile(
     r"kiff/work\b|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}"
-    r"|\b(review|probe|ask|point|negatives|read) (on|of)\)"
+    r"|\b(review|probe|ask|point|negatives|read) (on|of)( [A-Za-z0-9/_.-]*#[0-9]+)?\)"
     rf"|\bowner(?:'s|,) [0-9]{{1,2}} {MONTH}\b"
 )
 WORD = re.compile(r"(?<![\w-])[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])")
