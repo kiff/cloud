@@ -208,6 +208,9 @@ NAMES = set("""
 be896ac583d76627 afb42e3f1a4bce7e d419916f176e52d3 bd184cdc7aea9ef8 ab63a9b276c86bec
 2ad06b22b301f873 3c00d0a9d4c2eb08 018a7f9527b114ab 94c6cdf43ac3f929 4a25962615e31ac6
 """.split())
+# Reviewer logins: named only where GitHub reads them.
+LOGINS = set("53dd1be914bd441c f66e74c6b8883a1f 3726111e555e250c".split())
+OWNERS = ".github/CODEOWNERS"
 MONTH = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
 SAID = re.compile(
     r"kiff/work\b|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}"
@@ -230,7 +233,8 @@ for path in paths:
         continue  # binary, a submodule or gone: no words to read
     for n, line in enumerate(text.splitlines(), 1):
         why = SAID.search(line) or next((w for w in WORD.finditer(line.lower())
-            if hashlib.sha256(w.group().encode()).hexdigest()[:16] in NAMES), None)
+            if (h := hashlib.sha256(w.group().encode()).hexdigest()[:16]) in NAMES
+            or (h in LOGINS and path != OWNERS)), None)
         if why:
             found.append(f"{path}:{n}: {line.strip()[:160]}")
 if found:
