@@ -197,8 +197,10 @@ fi
 # doesn't spell them out either. To add one: printf %s NAME | sha256sum | cut -c1-16.
 # Skipped: this script, and the two files that name a public GitHub account on purpose (the investors
 # deck links it; the skills page's guard test lists it among the words that page must not say).
-printf '==> public text says the rule, not who set it\n'
-if ! (cd "$repo" && python3 - <<'PY'
+# Given paths, it reads those instead: the check first runs on a planted line it must catch, so it
+# never passes by matching nothing.
+public_text() { # [paths...]
+	(cd "$repo" && python3 - "$@" <<'PY'
 import hashlib, re, subprocess, sys
 
 NAMES = set("""
@@ -216,9 +218,10 @@ WORD = re.compile(r"(?<![@\w-])[a-z0-9]+(?:-[a-z0-9]+)*(?![\w-])")
 SKIP = {"scripts/check.sh", "web/internal/handlers/skills_test.go"}
 SKIP_DIRS = ("web/internal/content/decks/",)
 
-files = subprocess.run(["git", "ls-files", "-z"], capture_output=True, check=True).stdout
+paths = sys.argv[1:] or subprocess.run(
+    ["git", "ls-files", "-z"], capture_output=True, check=True).stdout.decode().split("\0")
 found = []
-for path in files.decode().split("\0"):
+for path in paths:
     if not path or path in SKIP or path.startswith(SKIP_DIRS):
         continue
     try:
@@ -236,9 +239,17 @@ if found:
     sys.exit(1)
 print("clean")
 PY
-); then
+	)
+}
+printf '==> public text says the rule, not who set it\n'
+probe="$(mktemp)"
+printf '%s\n' "// as decided on kiff/work, owner's 22 Nov" "// $(printf 'qa%skiff' -)" > "$probe"
+if [[ "$(public_text "$probe" | grep -c "^$probe:")" -ne 2 ]]; then
+	echo "the public-text check missed a planted line"
 	failed+=("public text")
 fi
+rm -f "$probe"
+public_text || failed+=("public text")
 
 if [[ ${#failed[@]} -gt 0 ]]; then
 	printf '\nFAILED:\n'
