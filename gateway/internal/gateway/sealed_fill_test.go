@@ -1,8 +1,10 @@
 package gateway_test
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"log/slog"
 	"strings"
 	"testing"
 
@@ -15,6 +17,8 @@ import (
 // Refused: the call's arguments carry no release, the header is the gateway's alone (set from KIFF's decision), and a call KIFF handed no release goes with none
 func TestASealedFillGoesWithThePhonesReleaseOnlyOnceAllowed(t *testing.T) {
 	r := newRig(t)
+	var logs bytes.Buffer
+	r.gw.Logger = slog.New(slog.NewJSONHandler(&logs, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	fill := func(op string) map[string]any {
 		a := amount(500, op)
 		a["steps"] = []any{map[string]any{"fill": "f1", "sealed": "sec_a1:password"}}
@@ -44,6 +48,10 @@ func TestASealedFillGoesWithThePhonesReleaseOnlyOnceAllowed(t *testing.T) {
 	}
 	if strings.Contains(string(r.tool.raw[0]), "MEUCIQ") || strings.Contains(string(r.tool.raw[0]), "release") {
 		t.Fatalf("the release rode in the arguments: %s", r.tool.raw[0])
+	}
+	// Nor in any log line, as it travels or encoded.
+	if strings.Contains(logs.String(), "MEUCIQ") || strings.Contains(logs.String(), r.tool.releases[0]) {
+		t.Fatalf("the release was logged: %s", logs.String())
 	}
 
 	// A call KIFF handed no release goes with none, even when the taf sends
