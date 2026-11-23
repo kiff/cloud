@@ -586,7 +586,7 @@ func EmailLanguagesMissing() []string {
 	return out
 }
 
-// The language an email is really in. A person's language may be one of the 45 the emails speak, but an email
+// The language an email is really in. A person's language may be one of the 48 the emails speak, but an email
 // reads in it only as far as its words are written: the page's language, its direction and its footer follow the
 // words, so English is never laid out right to left.
 

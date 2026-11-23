@@ -13,8 +13,8 @@ func TestEveryMoreLanguageSpeaksTheCodeEmails(t *testing.T) {
 			t.Errorf("%s: a code email line is still English", tag)
 		}
 	}
-	if len(CodeSignInEmailMore) != 37 {
-		t.Errorf("expected 37 more languages, got %d", len(CodeSignInEmailMore))
+	if len(CodeSignInEmailMore) != 40 {
+		t.Errorf("expected 40 more languages, got %d", len(CodeSignInEmailMore))
 	}
 }
 

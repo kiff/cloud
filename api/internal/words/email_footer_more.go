@@ -25,6 +25,7 @@ var emailFooterMore = map[string]EmailFooter{
 	"et": {Privacy: "Privaatsus", Help: "Abi", NeverAsk: "KIFF ei küsi sinult kunagi sinu parooli ega koodi."},
 	"fr": {Privacy: "Confidentialité", Help: "Aide", NeverAsk: "KIFF ne vous demandera jamais votre mot de passe ni votre code."},
 	"he": {Privacy: "פרטיות", Help: "עזרה", NeverAsk: "KIFF לעולם לא יבקש ממך את הסיסמה או הקוד שלך."},
+	"hi": {Privacy: "गोपनीयता", Help: "सहायता", NeverAsk: "KIFF आपसे कभी आपका पासवर्ड या कोड नहीं मांगेगा।"},
 	"hr": {Privacy: "Privatnost", Help: "Pomoć", NeverAsk: "KIFF vas nikada neće tražiti zaporku ni kod."},
 	"hu": {Privacy: "Adatvédelem", Help: "Súgó", NeverAsk: "A KIFF soha nem kéri a jelszavadat vagy a kódodat."},
 	"hy": {Privacy: "Գաղտնիություն", Help: "Օգնություն", NeverAsk: "KIFF-ը երբեք չի խնդրի ձեր գաղտնաբառը կամ կոդը։"},
@@ -52,7 +53,9 @@ var emailFooterMore = map[string]EmailFooter{
 	"ta": {Privacy: "தனியுரிமை", Help: "உதவி", NeverAsk: "KIFF உங்கள் கடவுச்சொல்லையோ குறியீட்டையோ ஒருபோதும் கேட்காது."},
 	"tg": {Privacy: "Махфият", Help: "Кӯмак", NeverAsk: "KIFF ҳеҷ гоҳ рамз ё коди шуморо намепурсад."},
 	"th": {Privacy: "ความเป็นส่วนตัว", Help: "ความช่วยเหลือ", NeverAsk: "KIFF จะไม่ขอรหัสผ่านหรือรหัสของคุณเด็ดขาด"},
+	"tk": {Privacy: "Gizlinlik", Help: "Kömek", NeverAsk: "KIFF sizden hiç haçan parolyňyzy ýa-da koduňyzy soramaz."},
 	"tr": {Privacy: "Gizlilik", Help: "Yardım", NeverAsk: "KIFF sizden asla parolanızı veya kodunuzu istemez."},
+	"ur": {Privacy: "رازداری", Help: "مدد", NeverAsk: "KIFF آپ سے کبھی آپ کا پاس ورڈ یا کوڈ نہیں مانگے گا۔"},
 	"vi": {Privacy: "Quyền riêng tư", Help: "Trợ giúp", NeverAsk: "KIFF sẽ không bao giờ hỏi mật khẩu hoặc mã của bạn."},
 	"zh": {Privacy: "隱私權", Help: "說明", NeverAsk: "KIFF 絕不會向您索取密碼或代碼。"},
 }
