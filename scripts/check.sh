@@ -70,7 +70,11 @@ deny=(
 	"real-looking tenant id|tnt_01[0-9a-z]{4,}"
 	# Who decided something, never the requirement itself: "the PM", a
 	# ruling's time stamp, and a reference cut short to "(review on)".
-	"coordination note|\bthe PM\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) on\)"
+	"coordination note|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}|\b(review|probe|ask|point|negatives|read) (on|of)\)"
+	# The private planning repository, and the names of the agents that work
+	# in it. A rule reads as the rule, not as who set it or when: "(the owner,
+	# 6 Nov 2026)" is caught too.
+	"coordination link|\bkiff/work\b|\b(mac-local|agentgabo|mac12|qa-kiff|legal-i18n|dev-android|desktop-(linux|macos|windows)|codex-assistant)\b|\((the )?owner,? [0-9]{1,2} [A-Z][a-z]{2,8}( 20[0-9]{2})?\)"
 	# A path into kiff-cloud that the export does not carry: design docs,
 	# demos, the smoke and Stripe scripts, AGENTS.md, the desktop doc by name.
 	# The API's server, its HTTP layer and the deploy are public. Exported paths
@@ -112,6 +116,9 @@ allow_in=(
 	# The archive of earlier pages, as kiff.dev serves it: links a visitor
 	# can't open, kept as served.
 	"private repository link|\./web/internal/content/archive/"
+	# The investors deck links the agent's public GitHub profile, and the
+	# skills page's guard test lists it among the words that page must not say.
+	"coordination link|\./web/internal/(content/decks/|handlers/skills_test\.go)"
 	# Page-voice guards: the words a served page must never contain.
 	"private repository link|\./web/internal/handlers/(landing|pricing)_test\.go"
 	"private path reference|\./web/internal/handlers/(dpa|legal_pages|privacy|sla|support|terms)_test\.go"
