@@ -26,8 +26,8 @@ import (
 // of the page, which Chrome) and the fields the phone's release signs. planque
 // reads the page, so planque signs the block, with its step key under
 // planqueDescribeLabel. KIFF keeps a block only when that signature holds
-// under the pinned key and the block is for this account, this call's first
-// Chrome step and the Chrome it names: whoever carries it (the gateway, on the
+// under the pinned key and the block is for this account, this call's
+// sealed step (sealedFillStep) and the Chrome it names: whoever carries it (the gateway, on the
 // decide that holds the call) can't change it, and no other call's block fits.
 
 // planqueStepKey is planque's step public key (SPKI, base64url): the one the
@@ -74,9 +74,13 @@ type signedBrowserBlock struct {
 	Sig   string          `json:"sig"`
 }
 
+// sealedFillStep is a sealed fill's step in its call's run: planque opens the
+// page first, in every call (step 1), and a sealed fill is its call's only
+// act, so it's step 2.
+const sealedFillStep = 2
+
 // chromeStepID is planque's name for a run's nth Chrome step (planque
-// chrome_driver.go): the run is KIFF's operation, so a sealed fill, its call's
-// only step, is step 1.
+// chrome_driver.go); the run is KIFF's operation.
 func chromeStepID(run string, n int) string {
 	id := fmt.Sprintf("%s.%d", run, n)
 	if len(id) <= 64 {
@@ -143,7 +147,7 @@ func browserBlockRefusal(raw json.RawMessage, tenantID, proposalID string, verif
 	switch {
 	case b.Tenant != tenantID:
 		return "the block is for another account"
-	case b.Op != chromeStepID(proposalID, 1) || b.Release.Op != b.Op:
+	case b.Op != chromeStepID(proposalID, sealedFillStep) || b.Release.Op != b.Op:
 		return "the block is for another call"
 	case b.Chrome.ID == "" || b.Release.ChromeID != b.Chrome.ID:
 		return "the block names another Chrome than the one it releases on"

@@ -50,7 +50,7 @@ func TestASealedFillIsNamedByItsHandle(t *testing.T) {
 }
 
 func testRelease(now time.Time, edit func(map[string]any)) json.RawMessage {
-	r := map[string]any{"chrome_id": "chr_1", "op": "p-sealed.1", "origin": "https://shop.example",
+	r := map[string]any{"chrome_id": "chr_1", "op": "p-sealed.2", "origin": "https://shop.example",
 		"nonce": base64.RawURLEncoding.EncodeToString([]byte("sixteen-byte-nonce")), "exp": now.Add(60 * time.Second).UnixMilli(), "sig": "MEUCIQ"}
 	if edit != nil {
 		edit(r)
@@ -313,7 +313,7 @@ func TestAnExternalApproverNeverApprovesASealedFill(t *testing.T) {
 // key under planque/describe/v1 as planque signs it.
 func testBlock(t *testing.T, key *ecdsa.PrivateKey, tenant, proposal string, edit func(map[string]any)) json.RawMessage {
 	t.Helper()
-	op := chromeStepID(proposal, 1)
+	op := chromeStepID(proposal, sealedFillStep)
 	b := map[string]any{"v": "planque/describe/v1", "tenant": tenant, "op": op, "site": "shop.example", "origin": "https://shop.example",
 		"action_words": "Fill your password into “Password”", "context": map[string]any{"title": "Sign in", "text": "Email Password Sign in"},
 		"chrome":         map[string]any{"id": "chr_1", "name": "Work Mac"},
@@ -365,7 +365,7 @@ func TestABrowserBlockIsKeptOnlyAsPlanqueSignedItForThisCall(t *testing.T) {
 		"another account": testBlock(t, planque, "t2", "p-sealed", nil),
 		"another call":    testBlock(t, planque, "t1", "p-other", nil),
 		"release on another op": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
-			b["release_fields"].(map[string]any)["op"] = "p-sealed.2"
+			b["release_fields"].(map[string]any)["op"] = "p-sealed.3"
 		}),
 		"another chrome": testBlock(t, planque, "t1", "p-sealed", func(b map[string]any) {
 			b["release_fields"].(map[string]any)["chrome_id"] = "chr_2"

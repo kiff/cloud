@@ -69,7 +69,7 @@ func TestASealedFillsReleaseGoesOutOnceOnTheDecisionThatSendsIt(t *testing.T) {
 		return a
 	}
 	release := func(exp time.Time) json.RawMessage {
-		return json.RawMessage(fmt.Sprintf(`{"chrome_id":"chr_1","op":"call-fill.1","origin":"https://shop.example","nonce":%q,"exp":%d,"sig":"SIGNED-BY-THE-PHONE"}`,
+		return json.RawMessage(fmt.Sprintf(`{"chrome_id":"chr_1","op":"call-fill.2","origin":"https://shop.example","nonce":%q,"exp":%d,"sig":"SIGNED-BY-THE-PHONE"}`,
 			base64.RawURLEncoding.EncodeToString([]byte("sixteen-byte-nonce")), exp.UnixMilli()))
 	}
 	allow := func(call string, a answer, rel json.RawMessage) {
