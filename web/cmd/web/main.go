@@ -357,7 +357,7 @@ func run() error {
 	mux.Handle("GET /support", handlers.Support())
 	mux.Handle("GET /tafs", handlers.Tafs(offer))
 	// What you download is the tafs app, so the page lives under /tafs;
-	// kiff.dev/download is its short link, for print (owner, 13 Nov 2026).
+	// kiff.dev/download is its short link, for print.
 	mux.Handle("GET /tafs/download", handlers.Download(offer, strings.TrimSpace(os.Getenv(envAppStoreLive)) == "on"))
 	mux.Handle("GET /download", handlers.Redirect("/tafs/download"))
 	// tafs on a watch, in English, once it's live; its translations are routed below, or held back with it.
@@ -755,14 +755,14 @@ func mountSignedInApp(mux *http.ServeMux, gated http.Handler) {
 	}
 }
 
-// removedPages are public pages that became docs (owner, 13 Nov 2026: fewer
-// pages). Each URL answers a permanent redirect to the page that carries it.
+// removedPages are public pages that became docs, so there are fewer
+// pages. Each URL answers a permanent redirect to the page that carries it.
 var removedPages = map[string]string{
 	"/how-it-works": "/docs/connect-an-agent",
 	"/integrate":    "/docs/connect-an-agent",
 	"/builders":     "/docs/quickstart",
 	"/agent":        "/docs/what-kiff-is",
-	// The owner's page map (13 Nov 2026): /why into home, /on-rails into
+	// The page map: /why into home, /on-rails into
 	// /pricing's "Larger" row, /ai-act into the docs, in every language.
 	"/why":       "/",
 	"/on-rails":  "/pricing",

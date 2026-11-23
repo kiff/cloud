@@ -8,7 +8,7 @@ package pages
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// The homepage, at most four phone screens (owner, 13 Nov 2026): what KIFF
+// The homepage, at most four phone screens: what KIFF
 // is, how it works in three steps, one line of proof, one call to action.
 // The detail lives on the pages it links: /delegate, /tafs, /pricing, the docs.
 // Mobile-first; styles in css/home.css (prefix k-).
@@ -124,8 +124,7 @@ func homeSteps() templ.Component {
 	})
 }
 
-// homeWhy is why a Card (the founder's /why, in two lines; owner, 13 Nov
-// 2026).
+// homeWhy is why a Card (the founder's /why, in two lines).
 func homeWhy() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

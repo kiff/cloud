@@ -6,7 +6,7 @@ package words
 // code. The footer is mandatory on every email (the email design guide).
 //
 // English is the source. EmailFooters holds the other languages, keyed by the
-// primary language tag, as legal-i18n writes them; a language with no entry reads
+// primary language tag, as the translations write them; a language with no entry reads
 // English, and the layout then sets the footer left to right whatever the email's
 // own direction is, so English never sits in a right-to-left line.
 type EmailFooter struct {

@@ -48,8 +48,8 @@ GET https://api.kiff.dev/oauth/authorize
 **With no session in the sheet**, the sign-in page opens in it and offers the
 sign-in options KIFF has on: **Apple, Google and GitHub** (what the sign-in
 service has on, so the page offers exactly those). Signing in with an email
-code is **off** and the page offers none (owner, 20 Nov: tester accounts can't
-receive codes). Once signed in, KIFF makes the account if it's the
+code is **off** and the page offers none (tester accounts can't receive
+codes). Once signed in, KIFF makes the account if it's the
 person's first sign-in (`tenant.EnsureForSubject`), then redirects:
 
 ```

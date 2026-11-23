@@ -114,8 +114,7 @@ func Pricing(v PricingView) templ.Component {
 }
 
 // pricingPlans is the whole page: the plans, what a credit pays for, and a
-// link to the details in the docs. At most two phone screens (owner, 13 Nov
-// 2026).
+// link to the details in the docs. At most two phone screens.
 func pricingPlans(v PricingView) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -253,7 +252,7 @@ func offerActions(o OfferLinks) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(o.appLabel())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/pricing.templ`, Line: 106, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/pricing.templ`, Line: 105, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -281,7 +280,7 @@ func offerActions(o OfferLinks) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(playLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/pricing.templ`, Line: 109, Col: 80}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/pricing.templ`, Line: 108, Col: 80}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {

@@ -8,8 +8,8 @@ import (
 
 // InHouseApps names the apps customers connect in-house: KIFF's own sign-in
 // app at the provider, the token kept by planque in the EU (eu-west-1),
-// with no connection service in between. It's the owner's decision on app
-// connections (17 Nov 2026), point 3. Empty until the first one is live.
+// with no connection service in between. It's the rule for app connections,
+// point 3. Empty until the first one is live.
 //
 // /tafs/privacy §6 (Google user data) reads it: while it names no Google
 // app, §6 describes the managed path it has always described; once it does,

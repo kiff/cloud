@@ -24,7 +24,7 @@ Your personal information is provided to recipients outside Japan. For each coun
 APPI's standards: for the stated purpose only, kept secure, not passed on without the same terms, and deleted or
 returned when the work ends. We check these measures regularly, and you can ask us for more about them.
 
-**[legal-i18n]** Proposal: rely on these agreements (APPI Art. 28(1), "equivalent measures"), rather than consent,
+**[translation]** Proposal: rely on these agreements (APPI Art. 28(1), "equivalent measures"), rather than consent,
 because consent can be withdrawn and the service can't run without these recipients.
 
 ## 3. Security control measures

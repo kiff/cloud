@@ -22,7 +22,7 @@ at a level comparable to ours.
 
 **Quebec:** before personal information about someone in Quebec leaves Quebec, we assess whether it will be
 adequately protected, taking into account its sensitivity, the purpose, the safeguards, and the legal framework where
-it goes. **[owner]** The assessment itself is a record we keep, not published; mac-local and legal-i18n draft it for
+it goes. **[owner]** The assessment itself is a record we keep, not published; we draft it for
 your signature.
 
 ## 3. Your rights
@@ -57,5 +57,5 @@ KIFF and tafs are not meant for anyone under 16, and we don't knowingly collect 
 
 ## 8. French
 
-In Quebec, this policy, the terms and the app are offered in French. **[legal-i18n]** fr-CA comes from our fr text,
+In Quebec, this policy, the terms and the app are offered in French. **[translation]** fr-CA comes from our fr text,
 with Quebec's usage (e.g. « courriel », « clavarder » where it applies) and Quebec's legal names.

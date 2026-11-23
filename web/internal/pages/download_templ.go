@@ -118,7 +118,7 @@ func (a DesktopApp) device() string {
 
 // desktopFirst is the computers' apps in one order for every visitor: macOS
 // 13 and later first, then Windows, then Linux, and the macOS 12 app last
-// (the owner, 18 Nov 2026: the one on top is the one that works best). Only
+// (the one on top is the one that works best). Only
 // the phones put the visitor's own first.
 func (v DownloadView) desktopFirst() []DesktopApp {
 	out := make([]DesktopApp, 0, len(v.Desktop))
