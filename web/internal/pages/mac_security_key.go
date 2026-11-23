@@ -59,6 +59,9 @@ var macSecurityKeyClause = map[string]string{
 	"hi": ", या Mac पर सुरक्षा कुंजी से",
 	"dv": "، ނުވަތަ Mac އެއްގައި، ރައްކާތެރިކަމުގެ ކީއަކުން",
 	"dz": "། ཡང་ན་ Mac ནང་ ཉེན་སྲུང་ལྡེ་མིག་གིས་",
+
+	// Brazilian Portuguese, a regional variant of pt.
+	"pt-br": ", ou, em um Mac, com uma chave de segurança",
 }
 
 // macSecurityKey is the clause, or nothing while the switch is off.

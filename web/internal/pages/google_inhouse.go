@@ -90,6 +90,8 @@ var googleAppScopes = map[string][]googleScope{
 			"hi": "Google Sheets में अपनी सभी स्प्रेडशीट देखना, संपादित करना, बनाना और हटाना",
 			"dv": "ތިބާގެ ހުރިހާ Google Sheets ސްޕްރެޑްޝީޓެއް ބެލުމަށާއި، އެޑިޓްކުރުމަށާއި، ހެދުމަށާއި، ފޮހެލުމަށް",
 			"dz": "ཁྱོད་ཀྱི་ Google Sheets ཐིག་ཤོག་ཆ་མཉམ་བལྟ་ཞུན་དག་བཟོ་བསུབ་ནི",
+
+			"pt-br": "ver, editar, criar e excluir todas as suas planilhas do Planilhas Google",
 		}},
 	},
 	"Google Calendar": {
@@ -142,6 +144,8 @@ var googleAppScopes = map[string][]googleScope{
 			"hi": "अपने कैलेंडर के इवेंट देखना",
 			"dv": "ތިބާގެ ކެލެންޑަރުތަކުގެ އިވެންޓްތައް ބެލުމަށް",
 			"dz": "ཁྱོད་ཀྱི་ལོ་ཐོ་ནང་གི་བྱུང་རིམ་བལྟ་ནི",
+
+			"pt-br": "ver os eventos das suas agendas",
 		}},
 		{"https://www.googleapis.com/auth/calendar.events", map[string]string{
 			"en": "see and edit the events on your calendars",
@@ -192,6 +196,8 @@ var googleAppScopes = map[string][]googleScope{
 			"hi": "अपने कैलेंडर के इवेंट देखना और संपादित करना",
 			"dv": "ތިބާގެ ކެލެންޑަރުތަކުގެ އިވެންޓްތައް ބެލުމަށާއި އެޑިޓް ކުރުމަށް",
 			"dz": "ཁྱོད་ཀྱི་ལོ་ཐོ་ནང་གི་བྱུང་རིམ་བལྟ་ཞུན་དག་འབད་ནི",
+
+			"pt-br": "ver e editar os eventos das suas agendas",
 		}},
 	},
 }

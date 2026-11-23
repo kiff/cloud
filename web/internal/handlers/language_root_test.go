@@ -30,6 +30,10 @@ func TestALanguagePrefixLandsOnItsTafs(t *testing.T) {
 		want := "/" + lang + "/tafs"
 		if !components.HasPage(lang, "/tafs") {
 			want = "/"
+			// A regional variant without its own /tafs lands on its base's ("/pt-br" → "/pt/tafs").
+			if base, ok := components.VariantBase(lang); ok && components.HasPage(base, "/tafs") {
+				want = "/" + base + "/tafs"
+			}
 		}
 		for _, from := range []string{"/" + lang, "/" + lang + "/"} {
 			rec := httptest.NewRecorder()

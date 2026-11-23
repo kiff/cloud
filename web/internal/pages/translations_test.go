@@ -93,7 +93,12 @@ func shapeOf(page, lang string) shape {
 		}
 		if name == "a" {
 			if h := hrefRE.FindStringSubmatch(attrs); h != nil {
-				s.links = append(s.links, strings.TrimPrefix(h[1], "/"+lang+"/"))
+				link := strings.TrimPrefix(h[1], "/"+lang+"/")
+				// A regional variant links its base's pages where it has none of its own ("/pt/cookies" from pt-br).
+				if base, ok := components.VariantBase(lang); ok {
+					link = strings.TrimPrefix(link, "/"+base+"/")
+				}
+				s.links = append(s.links, link)
 			}
 		}
 	}

@@ -62,6 +62,20 @@ var partialPages = map[string][]string{
 	"tk": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"dv": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
 	"dz": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+
+	// Brazilian Portuguese, a regional variant of pt (variantBase): its own legal texts; every other page is pt's.
+	"pt-br": {"/privacy", "/terms", "/tafs/privacy", "/tafs/terms"},
+}
+
+// variantBase are the regional variants and the language each is drawn over, as the apps have them: a variant
+// has its own text where it reads differently, and a page it doesn't have is its base's, never English's. Its
+// path code is lowercase ("/pt-br/privacy"); LangTag gives its BCP 47 tag ("pt-BR").
+var variantBase = map[string]string{"pt-br": "pt"}
+
+// VariantBase is the language a regional variant is drawn over ("pt-br" → "pt"); false for any other language.
+func VariantBase(lang string) (string, bool) {
+	b, ok := variantBase[lang]
+	return b, ok
 }
 
 // LangTag is the BCP 47 tag a language's pages are marked with: its path
@@ -74,6 +88,8 @@ func LangTag(lang string) string {
 		return "zh-Hant"
 	case "sr":
 		return "sr-Latn"
+	case "pt-br":
+		return "pt-BR"
 	}
 	return lang
 }
@@ -94,7 +110,7 @@ func HTMLAttrs(ctx context.Context) templ.Attributes {
 
 // PageLanguages are every language a translated page can be in: the site
 // languages, then the languages that have some of the pages.
-var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "tk", "hi", "ur", "dv", "dz")
+var PageLanguages = append(append([]string{}, SiteLanguages...), "ko", "ja", "et", "lv", "lt", "el", "cs", "sk", "sl", "hu", "ro", "bg", "hr", "tr", "id", "vi", "th", "zh", "ar", "sr", "sq", "ka", "hy", "az", "bn", "he", "ca", "mk", "mn", "ne", "km", "lo", "si", "ta", "tg", "tk", "hi", "ur", "dv", "dz", "pt-br")
 
 // TranslatedPages are the public pages that exist in every site
 // language: /tafs, where to get it (/tafs/download), tafs on a watch
@@ -153,6 +169,8 @@ var languageNames = map[string]string{
 	"hi": "हिन्दी",
 	"dv": "ދިވެހި",
 	"dz": "རྫོང་ཁ",
+
+	"pt-br": "Português (Brasil)",
 }
 
 // LanguageName is a site language's name in that language.
@@ -216,7 +234,14 @@ func LangPath(lang, path string) string {
 	if i := strings.IndexAny(page, "#?"); i >= 0 {
 		page = page[:i]
 	}
-	if lang == "en" || !HasPage(lang, page) {
+	if lang == "en" {
+		return path
+	}
+	if !HasPage(lang, page) {
+		// A regional variant's missing page is its base's ("/pt/cookies" for pt-br).
+		if base, ok := variantBase[lang]; ok && HasPage(base, page) {
+			return "/" + base + path
+		}
 		return path
 	}
 	return "/" + lang + path
@@ -235,9 +260,13 @@ func SplitLangPath(path string) (lang, page string, ok bool) {
 	if IsTranslatedPage(path) {
 		return "en", path, true
 	}
-	if len(path) > 4 && path[0] == '/' && path[3] == '/' {
-		if l := path[1:3]; l != "en" && HasPage(l, path[3:]) {
-			return l, path[3:], true
+	// "/<code>/<page>": a two-letter code, or a variant's ("/pt-br/privacy").
+	if len(path) > 1 && path[0] == '/' {
+		if i := strings.IndexByte(path[1:], '/'); i > 0 {
+			l, rest := path[1:1+i], path[1+i:]
+			if l != "en" && HasPage(l, rest) {
+				return l, rest, true
+			}
 		}
 	}
 	return "en", path, false
@@ -352,6 +381,8 @@ var translationNotices = map[string]string{
 	"hi": "यह अनुवाद केवल जानकारी के लिए है। अंग्रेज़ी संस्करण ही मान्य है:",
 	"dv": "މިއީ މައުލޫމާތަށް ހަމައެކަނި ތަރުޖަމާއެކެވެ. އިނގިރޭސި ނުސްހާ ހިނގާނެއެވެ:",
 	"dz": "འདི་གནས་ཚུལ་གྱི་དོན་ལུ་རྐྱངམ་གཅིག་གི་འགྱུར་བཅོས་ཨིན། ཨིང་ལིཤ་ཐོན་རིམ་འདི་འཇུག:",
+
+	"pt-br": "Esta é uma tradução para fins informativos. Prevalece a versão em inglês:",
 }
 
 // TranslationNoticeText is the notice's sentence in a language.
@@ -402,6 +433,8 @@ var inEnglish = map[string]string{
 	"hi": "(अंग्रेज़ी में)",
 	"dv": "(އިނގިރޭސިން)",
 	"dz": "(ཨིང་ཁའི་ནང་)",
+
+	"pt-br": "(em inglês)",
 }
 
 // InEnglish is the marker a translated page puts after a link to an
