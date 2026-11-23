@@ -165,15 +165,21 @@ func (h *MandatesHandler) refuseSealedFill(w http.ResponseWriter, r *http.Reques
 		return true, true
 	}
 	// The owner allows a fill only from a card that showed it: planque's
-	// signed block, kept on the hold (browser_block.go).
-	if blocks, ok := h.store.(mandate.BrowserBlocks); !ok {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": "the hold can't show what it fills, so it can't be allowed"})
-		return true, true
-	} else if b, err := blocks.BrowserBlock(r.Context(), tenantID, e.ProposalID); err != nil || len(b) == 0 {
+	// signed block, kept on the hold (browser_block.go), and the release is
+	// for the Chrome, step and origin that block names.
+	var block json.RawMessage
+	if blocks, ok := h.store.(mandate.BrowserBlocks); ok {
+		block, err = blocks.BrowserBlock(r.Context(), tenantID, e.ProposalID)
+	}
+	if err != nil || len(block) == 0 {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": "the hold can't show what it fills, so it can't be allowed"})
 		return true, true
 	}
-	if why := releaseRefusal(release, h.now()); why != "" {
+	why := releaseRefusal(release, h.now())
+	if why == "" {
+		why = releaseFitsBlock(release, block)
+	}
+	if why != "" {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "release_required", "detail": why})
 		return true, true
 	}

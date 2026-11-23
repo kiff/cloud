@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"crypto/ecdsa"
 	"crypto/sha256"
@@ -119,15 +120,18 @@ func browserBlockRefusal(raw json.RawMessage, tenantID, proposalID string, verif
 	if len(raw) == 0 || len(raw) > maxBrowserBlock {
 		return "no block, or one over 8 KiB"
 	}
+	if !plainKeys(raw) {
+		return "a block's keys are each written once, in one case"
+	}
 	var s signedBrowserBlock
-	if json.Unmarshal(raw, &s) != nil || len(s.Block) == 0 || s.Sig == "" {
+	if strictDecode(raw, &s) != nil || len(s.Block) == 0 || s.Sig == "" {
 		return "a block travels as {block, sig}"
 	}
 	if !verify(s.Block, s.Sig) {
 		return "the block isn't signed by planque"
 	}
 	var b browserBlock
-	if json.Unmarshal(s.Block, &b) != nil || b.V != planqueDescribeLabel {
+	if strictDecode(s.Block, &b) != nil || b.V != planqueDescribeLabel {
 		return "the block isn't planque/describe/v1"
 	}
 	switch {
@@ -141,6 +145,77 @@ func browserBlockRefusal(raw json.RawMessage, tenantID, proposalID string, verif
 		return "the block's origin isn't one https origin"
 	case b.Release.Sealed == "" || b.Release.FieldRef == "" || b.Release.ReadID == "":
 		return "the block names no sealed value, field or read"
+	}
+	return ""
+}
+
+// strictDecode reads raw into v with no field v doesn't name.
+func strictDecode(raw json.RawMessage, v any) error {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.DisallowUnknownFields()
+	return dec.Decode(v)
+}
+
+// plainKeys reports whether every object in raw, at any depth, writes each
+// key once, with no two keys the same but for case. Go reads a key in any
+// case and keeps the last of two, while the apps draw the block as written:
+// a block that could read two ways is refused, so what KIFF checked is what
+// the owner reads.
+func plainKeys(raw json.RawMessage) bool {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.UseNumber()
+	var walk func() bool
+	walk = func() bool {
+		t, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		switch t {
+		case json.Delim('{'):
+			seen := map[string]bool{}
+			for dec.More() {
+				k, err := dec.Token()
+				key, ok := k.(string)
+				if err != nil || !ok || seen[strings.ToLower(key)] {
+					return false
+				}
+				seen[strings.ToLower(key)] = true
+				if !walk() {
+					return false
+				}
+			}
+			_, err = dec.Token()
+			return err == nil
+		case json.Delim('['):
+			for dec.More() {
+				if !walk() {
+					return false
+				}
+			}
+			_, err = dec.Token()
+			return err == nil
+		}
+		return true
+	}
+	if !walk() {
+		return false
+	}
+	_, err := dec.Token()
+	return err != nil // nothing after the value
+}
+
+// releaseFitsBlock is why an allow's release isn't for the call the hold
+// shows, or "": its Chrome, step and origin are the block's release fields,
+// so the owner releases the fill the card drew and no other.
+func releaseFitsBlock(release, block json.RawMessage) string {
+	var rel sealedRelease
+	var s signedBrowserBlock
+	var b browserBlock
+	if json.Unmarshal(release, &rel) != nil || json.Unmarshal(block, &s) != nil || json.Unmarshal(s.Block, &b) != nil {
+		return "the release doesn't read against the hold's block"
+	}
+	if rel.ChromeID != b.Release.ChromeID || rel.Op != b.Release.Op || rel.Origin != b.Release.Origin {
+		return "the release is for another Chrome, step or site than the hold shows: allow again from the phone"
 	}
 	return ""
 }

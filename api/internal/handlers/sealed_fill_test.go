@@ -50,7 +50,7 @@ func TestASealedFillIsNamedByItsHandle(t *testing.T) {
 }
 
 func testRelease(now time.Time, edit func(map[string]any)) json.RawMessage {
-	r := map[string]any{"chrome_id": "chr_workmac0001", "op": "op_fill.3", "origin": "https://shop.example",
+	r := map[string]any{"chrome_id": "chr_1", "op": "p-sealed.1", "origin": "https://shop.example",
 		"nonce": base64.RawURLEncoding.EncodeToString([]byte("sixteen-byte-nonce")), "exp": now.Add(60 * time.Second).UnixMilli(), "sig": "MEUCIQ"}
 	if edit != nil {
 		edit(r)
@@ -154,8 +154,18 @@ func TestASealedFillIsAllowedOnlyOnceWithThePhonesRelease(t *testing.T) {
 		out["error"] != "release_required" || !strings.Contains(out["detail"].(string), "can't show") {
 		t.Fatalf("an allow with no block: %d %v", code, out)
 	}
-	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-sealed", json.RawMessage(`{"block":{"v":"planque/describe/v1"},"sig":"x"}`)); err != nil {
+	key, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err := r.store.KeepBrowserBlock(t.Context(), "t1", "p-sealed", testBlock(t, key, "t1", "p-sealed", nil)); err != nil {
 		t.Fatal(err)
+	}
+	// A release for another Chrome, step or site than the block the card
+	// drew: the owner would release a fill they weren't shown.
+	for field, v := range map[string]string{"chrome_id": "chr_2", "op": "p-other.1", "origin": "https://other.example"} {
+		rel := testRelease(r.now, func(m map[string]any) { m[field] = v })
+		if code, out := answer(r, sealed, "approve-once", map[string]any{"release": rel}); code != http.StatusBadRequest || out["error"] != "release_required" ||
+			!strings.Contains(out["detail"].(string), "than the hold shows") {
+			t.Fatalf("a release with another %s: %d %v", field, code, out)
+		}
 	}
 	// A release the extension would refuse on sight.
 	late := testRelease(r.now, func(m map[string]any) { m["exp"] = r.now.Add(-time.Minute).UnixMilli() })
@@ -378,6 +388,46 @@ func TestABrowserBlockIsKeptOnlyAsPlanqueSignedItForThisCall(t *testing.T) {
 	if browserBlockRefusal(changed, "t1", "p-sealed", verify) == "" {
 		t.Error("a changed block was kept")
 	}
+	// A block that reads two ways, even signed: a key written twice, two
+	// keys the same but for case (Go would read either into one field), or a
+	// key KIFF doesn't know. What KIFF checked must be what the card draws.
+	signed := func(block string) json.RawMessage {
+		t.Helper()
+		canon, err := permit.Canonicalize(json.RawMessage(block))
+		if err != nil {
+			t.Fatal(err)
+		}
+		sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+		r, s, err := ecdsa.Sign(rand.Reader, planque, sum[:])
+		if err != nil {
+			t.Fatal(err)
+		}
+		sig := make([]byte, 64)
+		r.FillBytes(sig[:32])
+		s.FillBytes(sig[32:])
+		out, _ := json.Marshal(map[string]any{"block": json.RawMessage(block), "sig": base64.RawURLEncoding.EncodeToString(sig)})
+		return out
+	}
+	var good map[string]json.RawMessage
+	_ = json.Unmarshal(testBlock(t, planque, "t1", "p-sealed", nil), &good)
+	body := strings.TrimPrefix(string(good["block"]), "{")
+	if why := browserBlockRefusal(signed("{"+body), "t1", "p-sealed", verify); why != "" {
+		t.Fatalf("the same block, re-signed: %s", why)
+	}
+	for name, block := range map[string]string{
+		"a key twice":           `{"action_words":"Read the news",` + body,
+		"a key in another case": `{"Origin":"https://evil.example",` + body,
+		"twice, deeper":         strings.Replace("{"+body, `"chrome":{`, `"chrome":{"id":"chr_9",`, 1),
+		"an unknown key":        `{"shown":"Read the news",` + body,
+	} {
+		if browserBlockRefusal(signed(block), "t1", "p-sealed", verify) == "" {
+			t.Errorf("%s: kept", name)
+		}
+	}
+	if browserBlockRefusal(append(testBlock(t, planque, "t1", "p-sealed", nil), []byte(`{}`)...), "t1", "p-sealed", verify) == "" {
+		t.Error("a block with data after it was kept")
+	}
+
 	// planque's step names, as chrome_driver.go writes them.
 	if chromeStepID("op_1", 1) != "op_1.1" || len(chromeStepID(strings.Repeat("x", 70), 1)) != len("op_")+40+2 {
 		t.Fatalf("chromeStepID: %s %s", chromeStepID("op_1", 1), chromeStepID(strings.Repeat("x", 70), 1))
