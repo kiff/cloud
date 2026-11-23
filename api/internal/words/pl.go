@@ -86,6 +86,7 @@ var pl = Words{
 		OwnerAskNoRequestID:  "agent nie podał żadnej prośby z połączonej aplikacji, więc ten zwrot czeka na zatwierdzenie",
 		OwnerAskOther:        "każde wywołanie tego narzędzia czeka na zatwierdzenie",
 		OwnerAskEachCall:     "każde wywołanie tego narzędzia czeka na zatwierdzenie",
+		OwnerAskSealedFill:   "ten krok wypełnia logowanie zapisane w Twoim Chrome, więc za każdym razem czeka na Ciebie i tylko Twój telefon może je zwolnić",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("wywołanie nie wskazuje żadnego %s, a ta Card dotyczy tylko wymienionych w niej %s", param, param)

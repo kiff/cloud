@@ -46,6 +46,10 @@ const (
 	// OwnerAskEachCall: an operation whose reviewed profile holds every
 	// call for its owner (ask_each_call), such as a website's checkout.
 	OwnerAskEachCall = "each_call"
+	// OwnerAskSealedFill: a browser step that fills a sign-in saved in the
+	// owner's Chrome. It waits for the owner every time and is allowed once,
+	// with the phone's release (handlers/sealed_fill.go).
+	OwnerAskSealedFill = "sealed_fill"
 	// OwnerAskOther: any code KIFF doesn't know, or a value that isn't one.
 	OwnerAskOther = "other"
 )

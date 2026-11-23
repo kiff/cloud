@@ -78,6 +78,7 @@ var en = Words{
 		OwnerAskNoRequestID:  "the agent named no request from a connected app, so this refund waits for approval",
 		OwnerAskOther:        "every call of this tool waits for approval",
 		OwnerAskEachCall:     "every call of this tool waits for approval",
+		OwnerAskSealedFill:   "this step fills a sign-in saved in your Chrome, so it waits for you every time, and only your phone can release it",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("the call names no %s, and this Card only applies to the %s it lists", param, param)

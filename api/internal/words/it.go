@@ -81,6 +81,7 @@ var it = Words{
 		OwnerAskNoRequestID:  "l'agente non ha indicato nessuna richiesta da un'app collegata, quindi questo rimborso attende un'approvazione",
 		OwnerAskOther:        "ogni chiamata di questo strumento attende un'approvazione",
 		OwnerAskEachCall:     "ogni chiamata di questo strumento attende un'approvazione",
+		OwnerAskSealedFill:   "questo passaggio compila un accesso salvato nel tuo Chrome, quindi ti aspetta ogni volta, e solo il tuo telefono può sbloccarlo",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("la chiamata non indica alcun %s, e questa Card si applica solo ai %s che elenca", param, param)

@@ -81,6 +81,7 @@ var es = Words{
 		OwnerAskNoRequestID:  "el agente no indicó ninguna solicitud de una app conectada, así que este reembolso espera una aprobación",
 		OwnerAskOther:        "cada llamada de esta herramienta espera una aprobación",
 		OwnerAskEachCall:     "cada llamada de esta herramienta espera una aprobación",
+		OwnerAskSealedFill:   "este paso rellena un inicio de sesión guardado en tu Chrome, así que te espera cada vez, y solo tu teléfono puede liberarlo",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("la llamada no indica ningún %s, y esta Card solo se aplica a los %s que lista", param, param)

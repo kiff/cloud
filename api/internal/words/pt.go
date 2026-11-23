@@ -83,6 +83,7 @@ var pt = Words{
 		OwnerAskNoRequestID:  "o agente não indicou nenhum pedido de uma app ligada, por isso este reembolso aguarda aprovação",
 		OwnerAskOther:        "cada chamada desta ferramenta aguarda aprovação",
 		OwnerAskEachCall:     "cada chamada desta ferramenta aguarda aprovação",
+		OwnerAskSealedFill:   "este passo preenche um início de sessão guardado no seu Chrome, por isso espera por si sempre, e só o seu telemóvel o pode libertar",
 	},
 	ResourceMissing: func(param string) string {
 		return fmt.Sprintf("a chamada não indica nenhum %s, e esta Card só se aplica aos %s que lista", param, param)

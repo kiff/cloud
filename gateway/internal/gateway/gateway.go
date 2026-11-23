@@ -168,6 +168,38 @@ const OwnerAskSealedMoney = "sealed_money"
 // holds every call for its owner (ask_each_call): a website's checkout.
 const OwnerAskEachCall = "each_call"
 
+// OwnerAskSealedFill is the code for a call that fills a sign-in saved in
+// the owner's Chrome: its arguments name a sealed handle ("sec_<id>:<part>",
+// namesSealed). Every one waits for the owner, whatever the Card, and is
+// allowed once, with the phone's release (apps/api sealed_fill.go).
+const OwnerAskSealedFill = "sealed_fill"
+
+// namesSealed reports whether v names a sealed handle: a "sealed" key whose
+// value is "sec_" followed by an id and a part, at any depth. It is apps/api's
+// namesSealed (sealed_fill.go), so the gateway asks for exactly the calls KIFF
+// takes a release for. The part isn't checked here: a malformed handle still
+// asks, and the extension refuses it.
+func namesSealed(v any) bool {
+	switch t := v.(type) {
+	case map[string]any:
+		for k, x := range t {
+			if s, ok := x.(string); ok && k == "sealed" && strings.HasPrefix(s, "sec_") && strings.Contains(s, ":") {
+				return true
+			}
+			if namesSealed(x) {
+				return true
+			}
+		}
+	case []any:
+		for _, x := range t {
+			if namesSealed(x) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // ownerAsk is the code for why every call of t asks its owner, or "": an
 // operation its profile holds on every call, or a money operation that no
 // permit binds at the tool (any custody but verify or relay).
@@ -751,7 +783,11 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 			params[t.AmountArg] = i
 		}
 	}
-	if code := t.ownerAsk(); code != "" {
+	// A sealed fill asks whatever the tool's own code would say: it is
+	// allowed only once, with the phone's release.
+	if namesSealed(args) {
+		params[OwnerAskParam] = OwnerAskSealedFill
+	} else if code := t.ownerAsk(); code != "" {
 		params[OwnerAskParam] = code
 	}
 	return t.resourceParam(args, params)
