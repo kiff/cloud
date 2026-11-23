@@ -38,6 +38,19 @@ Refusals: `signature_required`, `signature_invalid`, and
 `signed_at_out_of_range` (more than 5 minutes from KIFF's clock). The
 receipt keeps the signed text and signature, so anyone can check it.
 
+**A held call that fills a sign-in saved in the owner's Chrome** (its
+arguments name a sealed handle, `"sealed": "sec_…:password"`) is allowed only
+by `approve-once` carrying the phone's release beside its signature:
+`"release": {"chrome_id", "op", "origin", "nonce", "exp", "sig"}`, the
+phone's approval key over `tafs-chrome/release/v1`, which the owner's Chrome
+checks before it fills. KIFF refuses an allow without one, from any client
+(`release_required`, 400: also a release with a missing field, an origin
+that isn't https, a nonce under 16 bytes, or an `exp` past or more than 2
+minutes ahead), and never lets one go by a lasting answer: `change-card` and
+an approver's approve are `sealed_fill_once` (409), and "Allow this from now
+on" offers no change. Refusing it needs nothing more. A hold whose call
+KIFF can't read to check is answered 503, and stays held.
+
 `change-card` lasts when a per-action limit or resource scope was in the
 way; for a reached total it adds room for this period only. A call that
 hit both is held again after the first answer.
