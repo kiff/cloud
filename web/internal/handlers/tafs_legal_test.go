@@ -38,7 +38,7 @@ func tafsLegalPage(t *testing.T, h http.Handler, path, updated string) string {
 // review reads, the Limited Use statement word for word, and both links.
 func TestTafsPrivacy(t *testing.T) {
 	t.Parallel()
-	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "23 November 2026")
+	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "24 November 2026")
 	// Doors: who a door keeps, by each kind of sender id, before the first Slack, Telegram or WhatsApp door.
 	for _, s := range []string{"<strong>Doors:</strong>", "Slack member ID", "Telegram user ID", "a phone number for a WhatsApp door"} {
 		if !strings.Contains(body, s) {
