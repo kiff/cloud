@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/handlers"
@@ -340,5 +341,63 @@ func TestMe_EmailIsResolvedForAPhone(t *testing.T) {
 	key := &emailLookup{email: "owner@example.test"}
 	if got := meAs(t, auth.Identity{Subject: "user_1", Method: auth.MethodAPIKey, APIKey: true}, key); got["email"] != nil || len(key.asked) != 0 {
 		t.Fatalf("an API key: email %v, asked %v; want none", got["email"], key.asked)
+	}
+}
+
+// /v1/me says which device a device's session belongs to and its platform
+// (device_id, device_platform), from KIFF's own record of the verified
+// session's device, so another service can tell a Chrome from a phone.
+// Both or neither: a browser session, a session without a device, or a
+// device that isn't the person's own, live, on this account gives neither,
+// and nothing the request says changes what KIFF answers.
+func TestMe_SaysTheSessionsDeviceAndItsPlatform(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	rig := newMeRig(t, nil)
+	devices := auth.NewMemoryDeviceStore()
+	removed := time.Now()
+	key := func() []byte { _, der := p256(t); return der }
+	for _, d := range []auth.ApprovalDevice{
+		{ID: "dev_phone", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "ios"},
+		{ID: "dev_chrome", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "chrome"},
+		{ID: "dev_other", PublicKey: key(), Tenant: rig.tenantID, Subject: "someone-else", Platform: "ios"},
+		{ID: "dev_elsewhere", PublicKey: key(), Tenant: "another-account", Subject: "p", Platform: "chrome"},
+		{ID: "dev_removed", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "chrome", RevokedAt: &removed},
+	} {
+		if err := devices.Insert(ctx, d); err != nil {
+			t.Fatal(err)
+		}
+	}
+	inner := http.NewServeMux()
+	handlers.NewMeHandler(tenantStoreWith(t, rig.tenant), handlers.WithMeDevices(devices)).Register(inner)
+	session := func(device string) auth.Identity {
+		return auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodDeveloper, DeviceKey: []byte{0x30}, DeviceSessionID: "s", DeviceID: device}
+	}
+	for name, c := range map[string]struct {
+		id               auth.Identity
+		device, platform string
+	}{
+		"a phone":                  {session("dev_phone"), "dev_phone", "ios"},
+		"a Chrome":                 {session("dev_chrome"), "dev_chrome", "chrome"},
+		"a browser":                {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodSession, DeviceID: "dev_chrome"}, "", ""},
+		"a session with no device": {session(""), "", ""},
+		"someone else's device":    {session("dev_other"), "", ""},
+		"another account's device": {session("dev_elsewhere"), "", ""},
+		"a removed device":         {session("dev_removed"), "", ""},
+		"an unknown device":        {session("dev_missing"), "", ""},
+	} {
+		req := httptest.NewRequest(http.MethodGet, "/v1/me", nil)
+		// What the request claims is never read.
+		req.Header.Set("X-Device-Platform", "ios")
+		req.Header.Set("Device-Id", "dev_phone")
+		rec := httptest.NewRecorder()
+		withFakeIdentity(inner, c.id).ServeHTTP(rec, req)
+		var got map[string]any
+		_ = json.Unmarshal(rec.Body.Bytes(), &got)
+		device, _ := got["device_id"].(string)
+		platform, _ := got["device_platform"].(string)
+		if rec.Code != http.StatusOK || device != c.device || platform != c.platform {
+			t.Errorf("%s: %d device_id=%q device_platform=%q, want %q %q", name, rec.Code, device, platform, c.device, c.platform)
+		}
 	}
 }
