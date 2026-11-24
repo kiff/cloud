@@ -46,7 +46,9 @@ type downloadWords struct {
 	// (WindowsSigned off): it's coming, and there's no download until then.
 	// NotarizedMac stands under macOS 12's download: signed and notarized by
 	// Apple. Libfido2Linux stands under Linux's: what approving on it needs.
-	WindowsSigning, NotarizedMac, Libfido2Linux string
+	// UpgradeLinux follows it from v1.1.0 on: a computer added before v1.1.0
+	// gets its security key by being added again (tafs-linux's v1.1.0 notes).
+	WindowsSigning, NotarizedMac, Libfido2Linux, UpgradeLinux string
 	// SignedBy and TheKey are Linux's signature line, in the file's details:
 	// "SHA256SUMS is signed with the release key" (then the fingerprint and
 	// the two files) and the key's link.
@@ -88,6 +90,7 @@ var downloadEN = downloadWords{
 	WindowsSigning:   "Coming soon, once its installer is signed.",
 	NotarizedMac:     "Signed with Apple's Developer ID and notarized by Apple.",
 	Libfido2Linux:    "To approve with a security key, Linux needs libfido2. Without it, you view on this computer and approve on your phone.",
+	UpgradeLinux:     "Used tafs on this computer before? To approve with a security key, sign out in Account, then add this computer again from your phone with the key plugged in.",
 	SignedBy:         "SHA256SUMS is signed with the release key",
 	TheKey:           "the key",
 	QRAlt:            "QR code that opens kiff.dev/tafs/download",
@@ -136,12 +139,15 @@ func (w downloadWords) sha() string { return or(w.AvailableSHA, downloadEN.Avail
 
 func (w downloadWords) checkHow() string { return or(w.CheckHow, downloadEN.CheckHow) }
 
-// note is the line under a computer's download, if it has one: macOS 12's and
-// Linux's.
-func (w downloadWords) note(os string) string {
+// note is the line under a computer's download, if it has one: macOS 12's,
+// and Linux's, with the upgrade line once its release is v1.1.0 or later
+// (before, there's no security key to add again).
+func (w downloadWords) note(os, version string) string {
 	switch {
 	case os == "macos":
 		return or(w.NotarizedMac, downloadEN.NotarizedMac)
+	case os == "linux" && version != "" && !strings.HasPrefix(version, "v1.0."):
+		return or(w.Libfido2Linux, downloadEN.Libfido2Linux) + " " + or(w.UpgradeLinux, downloadEN.UpgradeLinux)
 	case os == "linux":
 		return or(w.Libfido2Linux, downloadEN.Libfido2Linux)
 	}

@@ -23,6 +23,7 @@ var downloadPT = downloadWords{
 	WindowsSigning:   "Brevemente, assim que o instalador estiver assinado.",
 	NotarizedMac:     "Assinada com o Developer ID da Apple e notarizada pela Apple.",
 	Libfido2Linux:    "Para aprovar com uma chave de segurança, o Linux precisa do libfido2. Sem ele, consulta neste computador e aprova no telemóvel.",
+	UpgradeLinux:     "Já usava o tafs neste computador? Para aprovar com uma chave de segurança, escolha «Terminar sessão» em «Conta» e depois volte a adicionar este computador a partir do telemóvel, com a chave ligada.",
 	SignedBy:         "O SHA256SUMS está assinado com a chave de lançamento",
 	TheKey:           "a chave",
 	QRAlt:            "Código QR que abre kiff.dev/tafs/download",
