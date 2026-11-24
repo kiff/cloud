@@ -1746,6 +1746,9 @@ func newRouter(deps routerDeps) http.Handler {
 		if deps.memberStore != nil {
 			meOpts = append(meOpts, handlers.WithMeGovernance(deps.memberStore))
 		}
+		if deps.deviceStore != nil {
+			meOpts = append(meOpts, handlers.WithMeDevices(deps.deviceStore))
+		}
 		handlers.NewMeHandler(deps.tenantStore, meOpts...).Register(authed)
 		handlers.NewBillingPortalHandler(deps.tenantStore, deps.stripePortalClient, deps.appBaseURL, deps.logger).Register(authed)
 		if deps.stripe != nil {

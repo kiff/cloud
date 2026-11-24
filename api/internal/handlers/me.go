@@ -30,6 +30,7 @@ type MeHandler struct {
 	emails     EmailLookup
 	logger     *slog.Logger
 	governance GovernanceReader
+	devices    auth.DeviceStore
 }
 
 // GovernanceReader reads an account's governance policy (membership.Store
@@ -44,6 +45,13 @@ type GovernanceReader interface {
 // phone offers Approve only to whoever KIFF lets answer.
 func WithMeGovernance(g GovernanceReader) MeOption {
 	return func(h *MeHandler) { h.governance = g }
+}
+
+// WithMeDevices lets /v1/me say which device a device's session belongs to
+// and its platform (device_id, device_platform), read from KIFF's own
+// device record for the verified session, never from the request.
+func WithMeDevices(d auth.DeviceStore) MeOption {
+	return func(h *MeHandler) { h.devices = d }
 }
 
 // MeOption configures a MeHandler.
@@ -204,6 +212,15 @@ type MeResponse struct {
 	// (auth.ShownApprovalMode): view, key, passkey or device_key. Empty for
 	// other callers.
 	ApprovalMode string `json:"approval_mode,omitempty"`
+	// DeviceID and DevicePlatform are the device a device's session
+	// belongs to and its platform (ios, ipados, macos, android, windows,
+	// linux, or chrome for the browser extension), from KIFF's record of
+	// the verified session and its device, never from the request. Both
+	// or neither: when the device record can't be read, neither is sent,
+	// so a reader that filters by platform falls back to its closed
+	// default. Empty for other callers.
+	DeviceID       string `json:"device_id,omitempty"`
+	DevicePlatform string `json:"device_platform,omitempty"`
 	// SeparationOfDuties is the account's policy, for a person: with it
 	// on, only approvers answer held calls (Capabilities says already
 	// whether this person may). Absent for keys, or when it can't be read.
@@ -288,6 +305,7 @@ func (h *MeHandler) get(w http.ResponseWriter, r *http.Request) {
 	limits := tenant.PlanFor(t)
 	email := h.email(r, id)
 	caps, sod := h.capabilities(r.Context(), id, t.ID)
+	deviceID, platform := h.device(r.Context(), id)
 	writeJSON(w, http.StatusOK, MeResponse{
 		Subject:     id.Subject,
 		Email:       email,
@@ -310,6 +328,8 @@ func (h *MeHandler) get(w http.ResponseWriter, r *http.Request) {
 		// gateway, let it read but not change the account.
 		DeviceSession:      len(id.DeviceKey) > 0,
 		ApprovalMode:       id.ShownApprovalMode(),
+		DeviceID:           deviceID,
+		DevicePlatform:     platform,
 		SeparationOfDuties: sod,
 		// Plan + limit so the dashboard can render plan state
 		// without a second round-trip. See struct doc.
@@ -405,4 +425,21 @@ func capabilitiesOf(id auth.Identity) []string {
 		out = append(out, capHoldsAllow)
 	}
 	return out
+}
+
+// device is the verified session's device and that device's platform, from
+// KIFF's device record: only for a device's session, only for a device of
+// the same person on the same account that isn't removed. Both or neither.
+func (h *MeHandler) device(ctx context.Context, id auth.Identity) (string, string) {
+	if h.devices == nil || len(id.DeviceKey) == 0 || id.DeviceID == "" {
+		return "", ""
+	}
+	d, err := h.devices.Get(ctx, id.DeviceID)
+	if err != nil || d.Tenant != id.Tenant || d.Subject != id.Subject || d.IsRevoked() || d.Platform == "" {
+		if err != nil && h.logger != nil {
+			h.logger.Warn("me: device record unreadable", slog.String("tenant", id.Tenant), slog.String("error", err.Error()))
+		}
+		return "", ""
+	}
+	return d.ID, d.Platform
 }
