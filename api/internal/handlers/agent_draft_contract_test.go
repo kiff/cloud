@@ -14,8 +14,8 @@ import (
 var updateDraftContract = flag.Bool("update-draft-contract", false, "rewrite testdata/agent-draft-from-hold.json")
 
 // TestAgentDraftFromHoldContract pins what GET /v1/me/agent-drafts/{id}
-// answers for an "Allow this from now on" draft (kiff/tafs's
-// docs/allow-from-now-on.md): the apps read it before they sign, and
+// answers for an "Allow this from now on" draft (kiff/tafs's design of
+// it): the apps read it before they sign, and
 // refuse a Card key they don't compare, so a key added here must reach
 // them as a changed file, never first on a phone. The draft's own ids
 // and the held call's are set to fixed words; the clock is the rig's.
