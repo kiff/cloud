@@ -47,6 +47,9 @@ type DesktopApp struct {
 	// Sums and SumsSignature are the release's SHA256SUMS and its signature,
 	// when it carries both (Linux's).
 	Sums, SumsSignature string
+	// SigningPending is Windows while its installer isn't signed
+	// (WindowsSigned off): coming soon, with no download.
+	SigningPending bool
 }
 
 // LinuxReleaseKey is the fingerprint of tafs for Linux's release key, as
@@ -77,6 +80,12 @@ func DesktopApps() []DesktopApp {
 	for i := range apps {
 		state, r := desktop.Of(apps[i].OS)
 		apps[i].State = state
+		// Windows waits on its signing: no unsigned installer is offered here,
+		// whatever release is published.
+		if apps[i].OS == "windows" && !WindowsSigned && state != desktop.StateNotAvailable {
+			apps[i].State, apps[i].SigningPending = desktop.StateComingSoon, true
+			continue
+		}
 		if state == desktop.StateAvailable {
 			apps[i].URL, apps[i].Version, apps[i].Size, apps[i].SHA256 = r.URL, r.Version, r.Size, r.SHA256
 			apps[i].Sums, apps[i].SumsSignature = r.Sums, r.SumsSignature
@@ -212,6 +221,9 @@ templ downloadComputers(v DownloadView) {
 							}
 						</p>
 						<p class="k-small dlr-needs">{ v.words().needs(a.OS, a.Needs) }</p>
+						if a.SigningPending {
+							<p class="k-small dl-note">{ v.words().windowsSigning() }</p>
+						}
 						if a.URL != "" {
 							if note := v.words().note(a.OS); note != "" {
 								<p class="k-small dl-note">{ note }</p>

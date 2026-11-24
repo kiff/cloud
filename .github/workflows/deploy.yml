@@ -148,6 +148,8 @@ jobs:
       # kiff.dev's download page from the computers' published releases: KIFF_DESKTOP_RELEASES=on turns it on.
       KIFF_DESKTOP_RELEASES: ${{ vars.KIFF_DESKTOP_RELEASES }}
       KIFF_DESKTOP_NOT_AVAILABLE: ${{ vars.KIFF_DESKTOP_NOT_AVAILABLE }}
+      # Windows' installer is signed: KIFF_WINDOWS_SIGNED=on offers it on the download page. Off, Windows is coming soon.
+      KIFF_WINDOWS_SIGNED: ${{ vars.KIFF_WINDOWS_SIGNED }}
       # Integration proofs. All ten decide what KIFF trusts: the six OIDC values which workflow's
       # token the ingest accepts, the other four who may approve and what counts. Set them ONLY in
       # `production` (admin-only), never at the repository: an environment's value overrides a

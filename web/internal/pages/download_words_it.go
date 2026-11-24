@@ -20,7 +20,6 @@ var downloadIT = downloadWords{
 	AvailableSHA:     "SHA-256:",
 	CheckHow:         "Prima di aprirlo, verifica che lo SHA-256 del file corrisponda a questo.",
 	DownloadFor:      "Scarica per %s",
-	UnsignedWindows:  "Questa beta non è ancora firmata. Windows potrebbe indicare un autore sconosciuto: scegli «Ulteriori informazioni», poi «Esegui comunque». Seguirà una versione firmata.",
 	NotarizedMac:     "Firmata con il Developer ID di Apple e autenticata da Apple.",
 	Libfido2Linux:    "Per approvare con una chiave di sicurezza, Linux richiede libfido2. Senza di essa, consulti su questo computer e approvi sul telefono.",
 	SignedBy:         "SHA256SUMS è firmato con la chiave di rilascio",

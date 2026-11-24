@@ -42,11 +42,11 @@ type downloadWords struct {
 	AvailableVersion, AvailableSize, AvailableSHA, CheckHow string
 	// DownloadFor is the button for a computer's app: "Download for %s".
 	DownloadFor string
-	// UnsignedWindows stands under Windows' download while its installer isn't
-	// signed (WindowsSigned off): what Windows will say, and what to choose.
-	// NotarizedMac stands under macOS 12's: signed and notarized by Apple.
-	// Libfido2Linux stands under Linux's: what approving on it needs.
-	UnsignedWindows, NotarizedMac, Libfido2Linux string
+	// WindowsSigning stands in Windows' row while its installer isn't signed
+	// (WindowsSigned off): it's coming, and there's no download until then.
+	// NotarizedMac stands under macOS 12's download: signed and notarized by
+	// Apple. Libfido2Linux stands under Linux's: what approving on it needs.
+	WindowsSigning, NotarizedMac, Libfido2Linux string
 	// SignedBy and TheKey are Linux's signature line, in the file's details:
 	// "SHA256SUMS is signed with the release key" (then the fingerprint and
 	// the two files) and the key's link.
@@ -85,7 +85,7 @@ var downloadEN = downloadWords{
 	AvailableSHA:     "SHA-256:",
 	CheckHow:         "Check that the file's SHA-256 matches before you open it.",
 	DownloadFor:      "Download for %s",
-	UnsignedWindows:  "This beta isn't signed yet. Windows may say it's from an unknown publisher: choose More info, then Run anyway. A signed version follows.",
+	WindowsSigning:   "Coming soon, once its installer is signed.",
 	NotarizedMac:     "Signed with Apple's Developer ID and notarized by Apple.",
 	Libfido2Linux:    "To approve with a security key, Linux needs libfido2. Without it, you view on this computer and approve on your phone.",
 	SignedBy:         "SHA256SUMS is signed with the release key",
@@ -136,18 +136,21 @@ func (w downloadWords) sha() string { return or(w.AvailableSHA, downloadEN.Avail
 
 func (w downloadWords) checkHow() string { return or(w.CheckHow, downloadEN.CheckHow) }
 
-// note is the line under a computer's download, if it has one: Windows' while
-// its installer isn't signed, macOS 12's, and Linux's.
+// note is the line under a computer's download, if it has one: macOS 12's and
+// Linux's.
 func (w downloadWords) note(os string) string {
 	switch {
-	case os == "windows" && !WindowsSigned:
-		return or(w.UnsignedWindows, downloadEN.UnsignedWindows)
 	case os == "macos":
 		return or(w.NotarizedMac, downloadEN.NotarizedMac)
 	case os == "linux":
 		return or(w.Libfido2Linux, downloadEN.Libfido2Linux)
 	}
 	return ""
+}
+
+// windowsSigning is Windows' line while its installer isn't signed.
+func (w downloadWords) windowsSigning() string {
+	return or(w.WindowsSigning, downloadEN.WindowsSigning)
 }
 
 func (w downloadWords) signedBy() string { return or(w.SignedBy, downloadEN.SignedBy) }

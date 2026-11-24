@@ -153,14 +153,16 @@ func releasedAll(t *testing.T) {
 }
 
 // Each computer's download says what a person should know about its file:
-// Windows' unsigned beta until the installer is signed, macOS 12's
-// notarization, and Linux's signature with the release key and its files.
+// macOS 12's notarization, and Linux's signature with the release key and its
+// files. Windows, while its installer isn't signed, is offered nowhere: its
+// row is coming soon, "once its installer is signed", whatever release is
+// published, and only a signed installer is linked.
 func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
 	releasedAll(t)
 	t.Cleanup(func() { WindowsSigned = false })
 	html := renderDownload(t, downloadEN)
 	for _, want := range []string{
-		"This beta isn&#39;t signed yet. Windows may say it&#39;s from an unknown publisher",
+		"Coming soon, once its installer is signed.",
 		"Signed with Apple&#39;s Developer ID and notarized by Apple.",
 		"To approve with a security key, Linux needs libfido2.",
 		"SHA256SUMS is signed with the release key <code>" + LinuxReleaseKey + "</code>",
@@ -172,10 +174,32 @@ func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
 			t.Errorf("missing %q", want)
 		}
 	}
-	// Once Windows' installer is signed, its warning goes; nothing else changes.
+	// The published unsigned installer is linked nowhere, and its row is coming soon.
+	if strings.Contains(html, "tafs-setup-1.1.0-x64.exe") || strings.Contains(html, "Download for Windows") {
+		t.Error("an unsigned Windows installer is offered")
+	}
+	for _, a := range DesktopApps() {
+		if a.OS == "windows" && (a.State != desktop.StateComingSoon || a.URL != "" || !a.SigningPending) {
+			t.Errorf("Windows unsigned: %+v, want coming soon, signing pending, no link", a)
+		}
+	}
+	// Once Windows' installer is signed, it's offered as the others are, with no signing line.
 	WindowsSigned = true
-	if html := renderDownload(t, downloadEN); strings.Contains(html, "signed yet") {
-		t.Error("a signed Windows installer still says it isn't")
+	html = renderDownload(t, downloadEN)
+	if !strings.Contains(html, "tafs-setup-1.1.0-x64.exe") || strings.Contains(html, "once its installer is signed") {
+		t.Error("a signed Windows installer isn't offered, or still waits on its signing")
+	}
+}
+
+// Windows held back by the deploy (KIFF_DESKTOP_NOT_AVAILABLE) stays not
+// available: signing pending is only for a Windows that's coming.
+func TestWindowsHeldBackIsNotAvailableNotSigning(t *testing.T) {
+	releasedAll(t)
+	desktop.HoldNotAvailable("windows")
+	for _, a := range DesktopApps() {
+		if a.OS == "windows" && (a.State != desktop.StateNotAvailable || a.SigningPending) {
+			t.Errorf("Windows held back: %+v", a)
+		}
 	}
 }
 
@@ -184,7 +208,7 @@ func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
 func TestNoNoteWithoutADownload(t *testing.T) {
 	releasedMac(t, "")
 	html := renderDownload(t, downloadEN)
-	if strings.Contains(html, "signed yet") || strings.Contains(html, "SHA256SUMS") {
+	if strings.Contains(html, "Signed with Apple") && !strings.Contains(html, "tafs-0.1-2.dmg") || strings.Contains(html, "SHA256SUMS") {
 		t.Error("a note shows for a computer with no download")
 	}
 }
