@@ -20,7 +20,7 @@ var downloadNL = downloadWords{
 	AvailableSHA:     "SHA-256:",
 	CheckHow:         "Controleer voor het openen dat de SHA-256 van het bestand hiermee overeenkomt.",
 	DownloadFor:      "Download voor %s",
-	UnsignedWindows:  "Deze bèta is nog niet ondertekend. Windows meldt misschien een onbekende uitgever: kies „Meer info” en dan „Toch uitvoeren”. Een ondertekende versie volgt.",
+	UnsignedWindows:  "Deze bèta is nog niet ondertekend. Windows meldt misschien een onbekende uitgever: kies „Meer informatie” en dan „Toch uitvoeren”. Een ondertekende versie volgt.",
 	NotarizedMac:     "Ondertekend met Apples Developer ID en genotariseerd door Apple.",
 	Libfido2Linux:    "Om met een beveiligingssleutel goed te keuren, heeft Linux libfido2 nodig. Zonder libfido2 bekijk je op deze computer en keur je goed op je telefoon.",
 	SignedBy:         "SHA256SUMS is ondertekend met de releasesleutel",
