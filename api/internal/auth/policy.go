@@ -1023,10 +1023,18 @@ func (p *RoutePolicy) approvalSoonRoute(r *http.Request) bool {
 // verifyEither is verifySigned for a route moving to the approval routes: the
 // approval key's signature when it is the one that signed (KeyCritical),
 // else the device key's, as before. Which key signed is told by the signature
-// itself, never by a header the client sets. One signature over two requests,
-// or one naming a window, is checked as verifySigned checks it.
+// itself, never by a header the client sets. One signature over two requests
+// is checked as verifySigned checks it. A signature naming an approval window,
+// from a session with an approval key, is refused: these routes are critical
+// when they move, so no window covers them, and a window tap would otherwise
+// pass as a device-key change. The app then signs again with the approval key.
 func (p *RoutePolicy) verifyEither(w http.ResponseWriter, r *http.Request, id Identity) (SignedWith, bool) {
 	header := r.Header.Get(DeviceSignatureHeader)
+	if len(id.ApprovalKey) > 0 && signatureWindowNamed(header) {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "critical_key_required",
+			"message": "this gives someone authority: an approval window doesn't cover it. Sign it with the phone's approval key, behind its fingerprint"})
+		return SignedWith{}, false
+	}
 	if len(id.ApprovalKey) == 0 || SignedTogether(header) || signatureWindowNamed(header) {
 		return p.verifySigned(w, r, id, false)
 	}

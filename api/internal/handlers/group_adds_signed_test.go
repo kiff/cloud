@@ -69,6 +69,21 @@ func TestAGroupAddTakesEitherKeyAndTheTrailSaysWhich(t *testing.T) {
 			t.Errorf("%s: %d %s", name, code, body)
 		}
 	}
+	// A window tap is never an add: from a session with an approval key, a device-key signature naming an approval
+	// window is refused as critical, so the app signs again with the approval key, and nobody is added by it.
+	n++
+	tap := "/v1/groups/" + group + "/members/ed"
+	req := httptest.NewRequest(http.MethodPut, tap, bytes.NewBufferString(`{"role":"member"}`))
+	req.Header.Set(auth.DeviceSignatureHeader, signRequestWindow(t, deviceKey, "t1", http.MethodPut, tap, `{"role":"member"}`, time.Now().Add(time.Duration(n)*time.Second), "win_abcdefghijklmnopqrstuvwxyz"))
+	rec := httptest.NewRecorder()
+	withFakeIdentity(w.h, phone).ServeHTTP(rec, req)
+	if rec.Code != http.StatusForbidden || !strings.Contains(rec.Body.String(), "critical_key_required") {
+		t.Errorf("a window tap: %d %s", rec.Code, rec.Body.String())
+	}
+	if code, body := put(phone, approvalKey, "ed"); code != http.StatusOK {
+		t.Fatalf("signed again with the approval key: %d %s", code, body)
+	}
+
 	// The signature comes first: someone who isn't on the account is refused for the signature, not looked up, when
 	// it's missing; signed, the group's own rule answers.
 	if code, body := put(phone, otherKey, "nobody"); code != http.StatusForbidden || !strings.Contains(body, "signature_required") {
@@ -89,7 +104,8 @@ func TestAGroupAddTakesEitherKeyAndTheTrailSaysWhich(t *testing.T) {
 			by[e.Target] = e.AuthMethod
 		}
 	}
-	want := map[string]string{"ana": string(auth.MethodSession) + "+device", "maria": string(auth.MethodSession) + "+critical", "paul": string(auth.MethodSession) + "+device"}
+	want := map[string]string{"ana": string(auth.MethodSession) + "+device", "maria": string(auth.MethodSession) + "+critical", "paul": string(auth.MethodSession) + "+device",
+		"ed": string(auth.MethodSession) + "+critical"}
 	for subject, method := range want {
 		if by[subject] != method {
 			t.Errorf("%s added by %q, want %q (trail %v)", subject, by[subject], method, by)
@@ -100,9 +116,9 @@ func TestAGroupAddTakesEitherKeyAndTheTrailSaysWhich(t *testing.T) {
 	n++
 	path := "/v1/groups/" + group
 	body := `{"name":"Help"}`
-	req := httptest.NewRequest(http.MethodPatch, path, bytes.NewBufferString(body))
+	req = httptest.NewRequest(http.MethodPatch, path, bytes.NewBufferString(body))
 	req.Header.Set(auth.DeviceSignatureHeader, signRequest(t, approvalKey, "t1", http.MethodPatch, path, body, time.Now().Add(time.Duration(n)*time.Second)))
-	rec := httptest.NewRecorder()
+	rec = httptest.NewRecorder()
 	withFakeIdentity(w.h, phone).ServeHTTP(rec, req)
 	if rec.Code != http.StatusForbidden || !strings.Contains(rec.Body.String(), "signature_required") {
 		t.Errorf("a rename signed by the approval key: %d %s", rec.Code, rec.Body.String())
