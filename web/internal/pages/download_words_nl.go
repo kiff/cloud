@@ -23,6 +23,7 @@ var downloadNL = downloadWords{
 	WindowsSigning:   "Binnenkort, zodra het installatieprogramma is ondertekend.",
 	NotarizedMac:     "Ondertekend met Apples Developer ID en genotariseerd door Apple.",
 	Libfido2Linux:    "Om met een beveiligingssleutel goed te keuren, heeft Linux libfido2 nodig. Zonder libfido2 bekijk je op deze computer en keur je goed op je telefoon.",
+	UpgradeLinux:     "Gebruikte je tafs al op deze computer? Om met een beveiligingssleutel goed te keuren, kies je „Uitloggen” in „Account” en voeg je deze computer opnieuw toe vanaf je telefoon, met de sleutel erin.",
 	SignedBy:         "SHA256SUMS is ondertekend met de releasesleutel",
 	TheKey:           "de sleutel",
 	QRAlt:            "QR-code die kiff.dev/tafs/download opent",

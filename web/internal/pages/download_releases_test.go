@@ -203,6 +203,33 @@ func TestWindowsHeldBackIsNotAvailableNotSigning(t *testing.T) {
 	}
 }
 
+// Linux's note gains the upgrade line from v1.1.0 on, in every language: a
+// computer added before it gets its security key by being added again. A
+// v1.0.x release has no key to add, so its note stays the libfido2 line alone.
+func TestLinuxUpgradeLineFromV110(t *testing.T) {
+	all := []downloadWords{downloadEN}
+	for _, w := range downloadByLang {
+		all = append(all, w)
+	}
+	for _, w := range all {
+		if w.UpgradeLinux == "" {
+			t.Errorf("%s: no upgrade line", w.Lang)
+		}
+		if got := w.note("linux", "v1.1.0"); !strings.HasSuffix(got, " "+w.UpgradeLinux) || !strings.HasPrefix(got, w.Libfido2Linux) {
+			t.Errorf("%s v1.1.0: %q", w.Lang, got)
+		}
+		for _, old := range []string{"v1.0.0", "v1.0.1", ""} {
+			if got := w.note("linux", old); got != w.Libfido2Linux {
+				t.Errorf("%s %q: %q, want the libfido2 line alone", w.Lang, old, got)
+			}
+		}
+	}
+	releasedAll(t)
+	if html := renderDownload(t, downloadEN); !strings.Contains(html, "add this computer again from your phone with the key plugged in") {
+		t.Error("the live v1.1.0 row has no upgrade line")
+	}
+}
+
 // A computer with no release says nothing about signing: no note under a
 // download that isn't there.
 func TestNoNoteWithoutADownload(t *testing.T) {

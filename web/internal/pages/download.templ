@@ -225,7 +225,7 @@ templ downloadComputers(v DownloadView) {
 							<p class="k-small dl-note">{ v.words().windowsSigning() }</p>
 						}
 						if a.URL != "" {
-							if note := v.words().note(a.OS); note != "" {
+							if note := v.words().note(a.OS, a.Version); note != "" {
 								<p class="k-small dl-note">{ note }</p>
 							}
 						}

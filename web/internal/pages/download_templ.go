@@ -632,7 +632,7 @@ func downloadComputers(v DownloadView) templ.Component {
 				}
 			}
 			if a.URL != "" {
-				if note := v.words().note(a.OS); note != "" {
+				if note := v.words().note(a.OS, a.Version); note != "" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p class=\"k-small dl-note\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
