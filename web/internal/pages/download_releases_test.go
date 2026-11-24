@@ -162,6 +162,7 @@ func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
 	for _, want := range []string{
 		"This beta isn&#39;t signed yet. Windows may say it&#39;s from an unknown publisher",
 		"Signed with Apple&#39;s Developer ID and notarized by Apple.",
+		"To approve with a security key, Linux needs libfido2.",
 		"SHA256SUMS is signed with the release key <code>" + LinuxReleaseKey + "</code>",
 		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS"`,
 		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS.asc"`,
