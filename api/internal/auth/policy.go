@@ -42,6 +42,9 @@ type RoutePolicy struct {
 	// granted, the writes a phone's session makes once each with a live
 	// device grant (DeviceGrantRoutes).
 	granted *http.ServeMux
+	// approvalSoon, the signed routes moving to PhoneApprovalRules
+	// (PhoneApprovalSoonRules): either the device key or an approval counts.
+	approvalSoon *http.ServeMux
 	// window, the approval routes that are routine (PhoneWindowRules):
 	// inside an open approval window, the device key signs them.
 	window *http.ServeMux
@@ -89,6 +92,18 @@ var PhoneApprovalRules = []string{
 	// A passkey approves: registering or removing one is an approval.
 	"POST /v1/me/passkeys",
 	"DELETE /v1/me/passkeys/{id}",
+}
+
+// PhoneApprovalSoonRules are signed routes moving to PhoneApprovalRules. Until
+// they move, KIFF takes either the session's device key, as before, or an
+// approval: the approval key's signature, or on a passkey session the
+// passkey's assertion. So an app can sign them as approvals before KIFF
+// requires it, and SignedWith says which one came. Each is critical when it
+// moves: no window covers it.
+var PhoneApprovalSoonRules = []string{
+	// Adding someone to a group, or naming a manager, gives them the use of
+	// every agent shared with the group, as sharing does.
+	"PUT /v1/groups/{id}/members/{subject}",
 }
 
 // PhoneWindowRules are the approval routes that are routine
@@ -637,6 +652,10 @@ func DefaultRoutePolicy() *RoutePolicy {
 	for _, pattern := range PhoneApprovalRules {
 		p.approval.Handle(pattern, http.NotFoundHandler())
 	}
+	p.approvalSoon = http.NewServeMux()
+	for _, pattern := range PhoneApprovalSoonRules {
+		p.approvalSoon.Handle(pattern, http.NotFoundHandler())
+	}
 	p.window = http.NewServeMux()
 	for _, pattern := range PhoneWindowRules {
 		p.window.Handle(pattern, http.NotFoundHandler())
@@ -918,6 +937,17 @@ func (p *RoutePolicy) phoneAllowed(w http.ResponseWriter, r *http.Request, id Id
 				with, ok := p.verifyPasskey(w, r, id)
 				return with, true, ok
 			}
+			// A route moving to the approval routes: an approval counts already
+			// (the passkey's assertion, or the approval key's signature), and the
+			// device key still does.
+			if p.approvalSoonRoute(r) {
+				if id.ApprovalMode == ApprovalModePasskey && r.Header.Get(PasskeyAssertionHeader) != "" {
+					with, ok := p.verifyPasskey(w, r, id)
+					return with, true, ok
+				}
+				with, ok := p.verifyEither(w, r, id)
+				return with, true, ok
+			}
 			with, ok := p.verifySigned(w, r, id, p.grantsAuthority(r, id))
 			return with, true, ok
 		}
@@ -978,6 +1008,44 @@ func (p *RoutePolicy) approvalRoute(r *http.Request) bool {
 	}
 	_, pattern := p.approval.Handler(r)
 	return pattern != ""
+}
+
+// approvalSoonRoute reports whether the request's route is moving to the
+// approval routes (PhoneApprovalSoonRules).
+func (p *RoutePolicy) approvalSoonRoute(r *http.Request) bool {
+	if p.approvalSoon == nil {
+		return false
+	}
+	_, pattern := p.approvalSoon.Handler(r)
+	return pattern != ""
+}
+
+// verifyEither is verifySigned for a route moving to the approval routes: the
+// approval key's signature when it is the one that signed (KeyCritical),
+// else the device key's, as before. Which key signed is told by the signature
+// itself, never by a header the client sets. One signature over two requests,
+// or one naming a window, is checked as verifySigned checks it.
+func (p *RoutePolicy) verifyEither(w http.ResponseWriter, r *http.Request, id Identity) (SignedWith, bool) {
+	header := r.Header.Get(DeviceSignatureHeader)
+	if len(id.ApprovalKey) == 0 || SignedTogether(header) || signatureWindowNamed(header) {
+		return p.verifySigned(w, r, id, false)
+	}
+	var body []byte
+	if r.Body != nil {
+		b, err := io.ReadAll(io.LimitReader(r.Body, maxSignedBody+1))
+		if err != nil || len(b) > maxSignedBody {
+			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]string{"error": "request too large to sign"})
+			return SignedWith{}, false
+		}
+		body = b
+		r.Body = io.NopCloser(bytes.NewReader(b))
+	}
+	now := time.Now()
+	if p.now != nil {
+		now = p.now()
+	}
+	_, _, err := VerifyRequestWindow(id.ApprovalKey, id.Tenant, r.Method, r.URL.RequestURI(), body, header, now)
+	return p.verifySigned(w, r, id, err == nil)
 }
 
 // verifySigned checks a setup call's KIFF-Device-Signature over the
