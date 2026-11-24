@@ -45,6 +45,7 @@ jobs:
           # The site's own settings, as repository variables.
           KIFF_DESKTOP_RELEASES: ${{ vars.KIFF_DESKTOP_RELEASES }}
           KIFF_DESKTOP_NOT_AVAILABLE: ${{ vars.KIFF_DESKTOP_NOT_AVAILABLE }}
+          KIFF_WINDOWS_SIGNED: ${{ vars.KIFF_WINDOWS_SIGNED }}
           # Only for GitHub's higher rate limit; the desktop repositories are
           # public, and the site reads them without a token.
           GITHUB_TOKEN: ${{ github.token }}

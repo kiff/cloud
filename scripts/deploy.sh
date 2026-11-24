@@ -280,6 +280,9 @@ KIFF_APPS_PROVED="${KIFF_APPS_PROVED:-}"
 # not available when KIFF_DESKTOP_NOT_AVAILABLE names it ("windows,linux"). Empty: off, none held back.
 KIFF_DESKTOP_RELEASES="${KIFF_DESKTOP_RELEASES:-}"
 KIFF_DESKTOP_NOT_AVAILABLE="${KIFF_DESKTOP_NOT_AVAILABLE:-}"
+# Windows' published installer is signed (KIFF_WINDOWS_SIGNED=on): the download page offers it. Empty: off,
+# Windows is coming soon there whatever release is published.
+KIFF_WINDOWS_SIGNED="${KIFF_WINDOWS_SIGNED:-}"
 # The integration proofs' runner: the OIDC claims KIFF accepts
 # from it, the managed test tenants, the test phone's keys, a runner-version allow-list and the
 # release-anyway switch. None is a secret; all ten are environment variables of `production`
@@ -532,6 +535,7 @@ KIFF_ANDROID_APPS="${KIFF_ANDROID_APPS}"
 KIFF_APPS_PROVED="${KIFF_APPS_PROVED}"
 KIFF_DESKTOP_RELEASES="${KIFF_DESKTOP_RELEASES}"
 KIFF_DESKTOP_NOT_AVAILABLE="${KIFF_DESKTOP_NOT_AVAILABLE}"
+KIFF_WINDOWS_SIGNED="${KIFF_WINDOWS_SIGNED}"
 KIFF_PROOF_OIDC_AUDIENCE="${KIFF_PROOF_OIDC_AUDIENCE}"
 KIFF_PROOF_OIDC_REPOSITORY="${KIFF_PROOF_OIDC_REPOSITORY}"
 KIFF_PROOF_OIDC_REPOSITORY_ID="${KIFF_PROOF_OIDC_REPOSITORY_ID}"
@@ -840,6 +844,7 @@ KIFF_ANDROID_APPS=\${KIFF_ANDROID_APPS}
 KIFF_APPS_PROVED=\${KIFF_APPS_PROVED}
 KIFF_DESKTOP_RELEASES=\${KIFF_DESKTOP_RELEASES}
 KIFF_DESKTOP_NOT_AVAILABLE=\${KIFF_DESKTOP_NOT_AVAILABLE}
+KIFF_WINDOWS_SIGNED=\${KIFF_WINDOWS_SIGNED}
 KIFF_APP_SIGNIN=\${KIFF_APP_SIGNIN}
 KIFF_SIGNIN_CODE=\${KIFF_SIGNIN_CODE}
 KIFF_REGION_TABLE=/opt/kiff/geo/country.csv.gz

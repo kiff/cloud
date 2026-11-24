@@ -85,6 +85,10 @@ type Release struct {
 	// doesn't show it; the download check (cmd/downloadcheck) uses it to give a
 	// release just published time to reach the page.
 	Published time.Time
+	// Sums and SumsSignature are the release's SHA256SUMS and its signature
+	// (SHA256SUMS.asc), on github.com in the same release, when it carries
+	// both: Linux's, signed with its release key. Empty otherwise.
+	Sums, SumsSignature string
 }
 
 var (
@@ -202,9 +206,35 @@ func offered(os string, w wireRelease) (Release, bool) {
 			!strings.HasPrefix(u.Path, "/"+ch.Repo+"/releases/download/") {
 			continue
 		}
-		return Release{Version: strings.TrimSpace(w.TagName), URL: a.URL, Size: a.Size, SHA256: m[1], Published: w.PublishedAt}, true
+		r := Release{Version: strings.TrimSpace(w.TagName), URL: a.URL, Size: a.Size, SHA256: m[1], Published: w.PublishedAt}
+		r.Sums, r.SumsSignature = sums(ch, w)
+		return r, true
 	}
 	return Release{}, false
+}
+
+// sums is a release's SHA256SUMS and SHA256SUMS.asc, when it carries both on
+// github.com in its own repository's release; else both empty, so a page never
+// links one without the other.
+func sums(ch Channel, w wireRelease) (string, string) {
+	var file, sig string
+	for _, a := range w.Assets {
+		u, err := url.Parse(a.URL)
+		if err != nil || u.Scheme != "https" || u.Host != "github.com" || u.User != nil ||
+			!strings.HasPrefix(u.Path, "/"+ch.Repo+"/releases/download/") || a.Size <= 0 {
+			continue
+		}
+		switch a.Name {
+		case "SHA256SUMS":
+			file = a.URL
+		case "SHA256SUMS.asc":
+			sig = a.URL
+		}
+	}
+	if file == "" || sig == "" {
+		return "", ""
+	}
+	return file, sig
 }
 
 // Source reads the computers' releases and keeps their state current.

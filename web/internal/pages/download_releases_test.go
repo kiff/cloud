@@ -122,3 +122,93 @@ func TestSupportComputerFollowsTheReleases(t *testing.T) {
 		t.Fatal("§6 is on with the only release held back")
 	}
 }
+
+// releasedAll reads a fake GitHub where Windows, Linux (with its SHA256SUMS and
+// signature) and macOS 12 each have a published release.
+func releasedAll(t *testing.T) {
+	t.Helper()
+	asset := func(repo, tag, name string) string {
+		return `{"name": "` + name + `", "size": 15597295, "digest": "sha256:` + releaseSHA + `",
+		  "browser_download_url": "https://github.com/` + repo + `/releases/download/` + tag + `/` + name + `"}`
+	}
+	answers := map[string]string{
+		"/repos/kiff/tafs-windows/releases/latest": `{"tag_name": "v1.1.0", "assets": [` + asset("kiff/tafs-windows", "v1.1.0", "tafs-setup-1.1.0-x64.exe") + `]}`,
+		"/repos/kiff/tafs-linux/releases/latest": `{"tag_name": "v1.1.0", "assets": [` + asset("kiff/tafs-linux", "v1.1.0", "tafs-v1.1.0-x86_64.AppImage") + `,` +
+			asset("kiff/tafs-linux", "v1.1.0", "SHA256SUMS") + `,` + asset("kiff/tafs-linux", "v1.1.0", "SHA256SUMS.asc") + `]}`,
+		"/repos/kiff/tafs-macos/releases/latest": `{"tag_name": "v0.2", "assets": [` + asset("kiff/tafs-macos", "v0.2", "tafs-0.2.dmg") + `]}`,
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, ok := answers[r.URL.Path]
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		_, _ = w.Write([]byte(body))
+	}))
+	t.Cleanup(srv.Close)
+	t.Cleanup(desktop.ResetForTest)
+	if err := (&desktop.Source{API: srv.URL}).Read(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// Each computer's download says what a person should know about its file:
+// macOS 12's notarization, and Linux's signature with the release key and its
+// files. Windows, while its installer isn't signed, is offered nowhere: its
+// row is coming soon, "once its installer is signed", whatever release is
+// published, and only a signed installer is linked.
+func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
+	releasedAll(t)
+	t.Cleanup(func() { WindowsSigned = false })
+	html := renderDownload(t, downloadEN)
+	for _, want := range []string{
+		"Coming soon, once its installer is signed.",
+		"Signed with Apple&#39;s Developer ID and notarized by Apple.",
+		"To approve with a security key, Linux needs libfido2.",
+		"SHA256SUMS is signed with the release key <code>" + LinuxReleaseKey + "</code>",
+		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS"`,
+		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS.asc"`,
+		`href="` + LinuxReleaseKeyURL + `"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Errorf("missing %q", want)
+		}
+	}
+	// The published unsigned installer is linked nowhere, and its row is coming soon.
+	if strings.Contains(html, "tafs-setup-1.1.0-x64.exe") || strings.Contains(html, "Download for Windows") {
+		t.Error("an unsigned Windows installer is offered")
+	}
+	for _, a := range DesktopApps() {
+		if a.OS == "windows" && (a.State != desktop.StateComingSoon || a.URL != "" || !a.SigningPending) {
+			t.Errorf("Windows unsigned: %+v, want coming soon, signing pending, no link", a)
+		}
+	}
+	// Once Windows' installer is signed, it's offered as the others are, with no signing line.
+	WindowsSigned = true
+	html = renderDownload(t, downloadEN)
+	if !strings.Contains(html, "tafs-setup-1.1.0-x64.exe") || strings.Contains(html, "once its installer is signed") {
+		t.Error("a signed Windows installer isn't offered, or still waits on its signing")
+	}
+}
+
+// Windows held back by the deploy (KIFF_DESKTOP_NOT_AVAILABLE) stays not
+// available: signing pending is only for a Windows that's coming.
+func TestWindowsHeldBackIsNotAvailableNotSigning(t *testing.T) {
+	releasedAll(t)
+	desktop.HoldNotAvailable("windows")
+	for _, a := range DesktopApps() {
+		if a.OS == "windows" && (a.State != desktop.StateNotAvailable || a.SigningPending) {
+			t.Errorf("Windows held back: %+v", a)
+		}
+	}
+}
+
+// A computer with no release says nothing about signing: no note under a
+// download that isn't there.
+func TestNoNoteWithoutADownload(t *testing.T) {
+	releasedMac(t, "")
+	html := renderDownload(t, downloadEN)
+	if strings.Contains(html, "Signed with Apple") && !strings.Contains(html, "tafs-0.1-2.dmg") || strings.Contains(html, "SHA256SUMS") {
+		t.Error("a note shows for a computer with no download")
+	}
+}

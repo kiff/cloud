@@ -166,6 +166,9 @@ const (
 	// envWatchLive ("on") makes /tafs/watch public, once the Wear OS watch is on Google Play. Off, the page answers in no
 	// language and nothing links it (pages.WatchLive).
 	envWatchLive = "KIFF_WATCH_LIVE"
+	// envWindowsSigned ("on") says Windows' published installer is signed, which takes the unsigned-beta line off the
+	// download page (pages.WindowsSigned). Off, the line shows.
+	envWindowsSigned = "KIFF_WINDOWS_SIGNED"
 	// envMacSecurityKey ("on") says, on the privacy pages and /support in
 	// every language, that a Mac without a Secure Enclave can approve with a
 	// security key. Off until the macOS app's macPasskeyApprovals is on.
@@ -220,6 +223,7 @@ func run() error {
 	}
 	// Before any handler or route is built: what /tafs/watch's switch says decides its routes and links.
 	pages.HoldWatch(strings.TrimSpace(os.Getenv(envWatchLive)) == "on")
+	pages.WindowsSigned = strings.TrimSpace(os.Getenv(envWindowsSigned)) == "on"
 	// Before the docs and llms-full.txt are rendered: the first read of
 	// planque's proofs, if they're on, decides the apps table they start with.
 	startAppsProved(context.Background(), os.Getenv, logger)

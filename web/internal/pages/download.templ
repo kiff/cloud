@@ -44,7 +44,21 @@ type DesktopApp struct {
 	Version string
 	Size    int64
 	SHA256  string
+	// Sums and SumsSignature are the release's SHA256SUMS and its signature,
+	// when it carries both (Linux's).
+	Sums, SumsSignature string
+	// SigningPending is Windows while its installer isn't signed
+	// (WindowsSigned off): coming soon, with no download.
+	SigningPending bool
 }
+
+// LinuxReleaseKey is the fingerprint of tafs for Linux's release key, as
+// kiff/tafs-linux's README gives it: what SHA256SUMS.asc is checked against.
+const LinuxReleaseKey = "73BC 9445 0F18 1366 FE44  3DCB 2845 162C 93DB BCA1"
+
+// LinuxReleaseKeyURL is that key, as kiff/tafs-linux publishes it.
+const LinuxReleaseKeyURL = "https://github.com/kiff/tafs-linux/blob/main/packaging/tafs-release-key.asc"
+
 
 // DesktopApps are the computer downloads, each in the state its channel's
 // published release gives it (package desktop): with KIFF_DESKTOP_RELEASES
@@ -66,8 +80,15 @@ func DesktopApps() []DesktopApp {
 	for i := range apps {
 		state, r := desktop.Of(apps[i].OS)
 		apps[i].State = state
+		// Windows waits on its signing: no unsigned installer is offered here,
+		// whatever release is published.
+		if apps[i].OS == "windows" && !WindowsSigned && state != desktop.StateNotAvailable {
+			apps[i].State, apps[i].SigningPending = desktop.StateComingSoon, true
+			continue
+		}
 		if state == desktop.StateAvailable {
 			apps[i].URL, apps[i].Version, apps[i].Size, apps[i].SHA256 = r.URL, r.Version, r.Size, r.SHA256
+			apps[i].Sums, apps[i].SumsSignature = r.Sums, r.SumsSignature
 		}
 	}
 	return apps
@@ -200,6 +221,14 @@ templ downloadComputers(v DownloadView) {
 							}
 						</p>
 						<p class="k-small dlr-needs">{ v.words().needs(a.OS, a.Needs) }</p>
+						if a.SigningPending {
+							<p class="k-small dl-note">{ v.words().windowsSigning() }</p>
+						}
+						if a.URL != "" {
+							if note := v.words().note(a.OS); note != "" {
+								<p class="k-small dl-note">{ note }</p>
+							}
+						}
 						if a.URL != "" && a.Version != "" {
 							<span class="dlr-ver">{ shortVersion(a.Version) } · { v.words().size(a.Size) }</span>
 						}
@@ -216,6 +245,14 @@ templ downloadComputers(v DownloadView) {
 						<p class="k-small dl-file">{ v.words().version(shortVersion(a.Version)) } · { v.words().size(a.Size) }</p>
 						<p class="k-small dl-sha">{ v.words().sha() } <code>{ a.SHA256 }</code></p>
 						<p class="k-small">{ v.words().checkHow() }</p>
+						if a.Sums != "" {
+							<p class="k-small dl-signed">
+								{ v.words().signedBy() } <code>{ LinuxReleaseKey }</code>:
+								<a href={ templ.SafeURL(a.Sums) }>SHA256SUMS</a>,
+								<a href={ templ.SafeURL(a.SumsSignature) }>SHA256SUMS.asc</a>,
+								<a href={ templ.SafeURL(LinuxReleaseKeyURL) }>{ v.words().theKey() }</a>
+							</p>
+						}
 					</details>
 				}
 			</div>
