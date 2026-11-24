@@ -122,3 +122,68 @@ func TestSupportComputerFollowsTheReleases(t *testing.T) {
 		t.Fatal("§6 is on with the only release held back")
 	}
 }
+
+// releasedAll reads a fake GitHub where Windows, Linux (with its SHA256SUMS and
+// signature) and macOS 12 each have a published release.
+func releasedAll(t *testing.T) {
+	t.Helper()
+	asset := func(repo, tag, name string) string {
+		return `{"name": "` + name + `", "size": 15597295, "digest": "sha256:` + releaseSHA + `",
+		  "browser_download_url": "https://github.com/` + repo + `/releases/download/` + tag + `/` + name + `"}`
+	}
+	answers := map[string]string{
+		"/repos/kiff/tafs-windows/releases/latest": `{"tag_name": "v1.1.0", "assets": [` + asset("kiff/tafs-windows", "v1.1.0", "tafs-setup-1.1.0-x64.exe") + `]}`,
+		"/repos/kiff/tafs-linux/releases/latest": `{"tag_name": "v1.1.0", "assets": [` + asset("kiff/tafs-linux", "v1.1.0", "tafs-v1.1.0-x86_64.AppImage") + `,` +
+			asset("kiff/tafs-linux", "v1.1.0", "SHA256SUMS") + `,` + asset("kiff/tafs-linux", "v1.1.0", "SHA256SUMS.asc") + `]}`,
+		"/repos/kiff/tafs-macos/releases/latest": `{"tag_name": "v0.2", "assets": [` + asset("kiff/tafs-macos", "v0.2", "tafs-0.2.dmg") + `]}`,
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, ok := answers[r.URL.Path]
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		_, _ = w.Write([]byte(body))
+	}))
+	t.Cleanup(srv.Close)
+	t.Cleanup(desktop.ResetForTest)
+	if err := (&desktop.Source{API: srv.URL}).Read(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// Each computer's download says what a person should know about its file:
+// Windows' unsigned beta until the installer is signed, macOS 12's
+// notarization, and Linux's signature with the release key and its files.
+func TestEachDownloadSaysHowItsFileIsSigned(t *testing.T) {
+	releasedAll(t)
+	t.Cleanup(func() { WindowsSigned = false })
+	html := renderDownload(t, downloadEN)
+	for _, want := range []string{
+		"This beta isn&#39;t signed yet. Windows may say it&#39;s from an unknown publisher",
+		"Signed with Apple&#39;s Developer ID and notarized by Apple.",
+		"SHA256SUMS is signed with the release key <code>" + LinuxReleaseKey + "</code>",
+		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS"`,
+		`href="https://github.com/kiff/tafs-linux/releases/download/v1.1.0/SHA256SUMS.asc"`,
+		`href="` + LinuxReleaseKeyURL + `"`,
+	} {
+		if !strings.Contains(html, want) {
+			t.Errorf("missing %q", want)
+		}
+	}
+	// Once Windows' installer is signed, its warning goes; nothing else changes.
+	WindowsSigned = true
+	if html := renderDownload(t, downloadEN); strings.Contains(html, "signed yet") {
+		t.Error("a signed Windows installer still says it isn't")
+	}
+}
+
+// A computer with no release says nothing about signing: no note under a
+// download that isn't there.
+func TestNoNoteWithoutADownload(t *testing.T) {
+	releasedMac(t, "")
+	html := renderDownload(t, downloadEN)
+	if strings.Contains(html, "signed yet") || strings.Contains(html, "SHA256SUMS") {
+		t.Error("a note shows for a computer with no download")
+	}
+}

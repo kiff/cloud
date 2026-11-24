@@ -42,6 +42,14 @@ type downloadWords struct {
 	AvailableVersion, AvailableSize, AvailableSHA, CheckHow string
 	// DownloadFor is the button for a computer's app: "Download for %s".
 	DownloadFor string
+	// UnsignedWindows stands under Windows' download while its installer isn't
+	// signed (WindowsSigned off): what Windows will say, and what to choose.
+	// NotarizedMac stands under macOS 12's: signed and notarized by Apple.
+	UnsignedWindows, NotarizedMac string
+	// SignedBy and TheKey are Linux's signature line, in the file's details:
+	// "SHA256SUMS is signed with the release key" (then the fingerprint and
+	// the two files) and the key's link.
+	SignedBy, TheKey string
 	// QRAlt and QRCaption are the QR code a computer sees.
 	QRAlt, QRCaption string
 	// Cost leads to the prices: Cost, then the link named Pricing.
@@ -76,6 +84,10 @@ var downloadEN = downloadWords{
 	AvailableSHA:     "SHA-256:",
 	CheckHow:         "Check that the file's SHA-256 matches before you open it.",
 	DownloadFor:      "Download for %s",
+	UnsignedWindows:  "This beta isn't signed yet. Windows may say it's from an unknown publisher: choose More info, then Run anyway. A signed version follows.",
+	NotarizedMac:     "Signed with Apple's Developer ID and notarized by Apple.",
+	SignedBy:         "SHA256SUMS is signed with the release key",
+	TheKey:           "the key",
 	QRAlt:            "QR code that opens kiff.dev/tafs/download",
 	QRCaption:        "Scan with your phone's camera to open this page there.",
 	Cost:             "What it costs:",
@@ -121,6 +133,21 @@ func (w downloadWords) size(n int64) string {
 func (w downloadWords) sha() string { return or(w.AvailableSHA, downloadEN.AvailableSHA) }
 
 func (w downloadWords) checkHow() string { return or(w.CheckHow, downloadEN.CheckHow) }
+
+// note is the line under a computer's download, if it has one: Windows' while
+// its installer isn't signed, and macOS 12's.
+func (w downloadWords) note(os string) string {
+	switch {
+	case os == "windows" && !WindowsSigned:
+		return or(w.UnsignedWindows, downloadEN.UnsignedWindows)
+	case os == "macos":
+		return or(w.NotarizedMac, downloadEN.NotarizedMac)
+	}
+	return ""
+}
+
+func (w downloadWords) signedBy() string { return or(w.SignedBy, downloadEN.SignedBy) }
+func (w downloadWords) theKey() string   { return or(w.TheKey, downloadEN.TheKey) }
 
 // description is the page's meta, og and twitter description: the phones'
 // sentences, then the computers whose release is out, then those still to
