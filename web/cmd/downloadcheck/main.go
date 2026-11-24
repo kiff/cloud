@@ -3,7 +3,8 @@
 //
 // It reads the deploy's own settings from the environment, as the site does:
 // KIFF_DESKTOP_RELEASES ("on" reads the releases), KIFF_DESKTOP_NOT_AVAILABLE,
-// and KIFF_GITHUB_API. GITHUB_TOKEN, when set, is sent to GitHub for its
+// KIFF_WINDOWS_SIGNED (off, Windows is coming soon whatever its release) and
+// KIFF_GITHUB_API. GITHUB_TOKEN, when set, is sent to GitHub for its
 // higher rate limit only; the repositories are public.
 //
 // Exit status: 0 when the page matches (a release published in the last 15
@@ -22,6 +23,7 @@ import (
 	"time"
 
 	"github.com/kiff/cloud/web/internal/downloadcheck"
+	"github.com/kiff/cloud/web/internal/pages"
 )
 
 func main() {
@@ -42,6 +44,8 @@ func run(args []string, getenv func(string) string, out io.Writer) int {
 			ls = append(ls, l)
 		}
 	}
+	// As the site reads it: off, the page offers no Windows installer.
+	pages.WindowsSigned = strings.TrimSpace(getenv("KIFF_WINDOWS_SIGNED")) == "on"
 	cfg := downloadcheck.Config{
 		Site:         *site,
 		Langs:        ls,
