@@ -192,11 +192,31 @@ func (h *AccessHandler) audit(r *http.Request, id auth.Identity, tenantID, actio
 		return
 	}
 	actor := actorOf(id, r)
+	// A change the route policy verified signed says by what: the device key, an
+	// approval (the approval key), or a passkey's assertion. From what the policy
+	// verified, never from a header the client sets.
+	if with, ok := auth.SignedWithFrom(r.Context()); ok {
+		actor.AuthMethod += "+" + signedBy(with)
+	}
 	if err := h.members.Mutate(r.Context(), tenantID, func(tx membership.Tx) error {
 		return tx.Audit(membership.AuditEvent{Actor: actor.Subject, Action: action, Target: target, OldValue: oldV, NewValue: newV,
 			RequestID: actor.RequestID, AuthMethod: actor.AuthMethod})
 	}); err != nil {
 		h.logger.ErrorContext(r.Context(), "access: audit failed", slog.String("action", action), slog.String("err", err.Error()))
+	}
+}
+
+// signedBy names how the route policy found a request signed, for the audit:
+// "passkey" (a passkey's assertion), "critical" (the approval key) or
+// "device" (the device key).
+func signedBy(with auth.SignedWith) string {
+	switch {
+	case len(with.Passkey) > 0:
+		return "passkey"
+	case with.Critical():
+		return auth.KeyCritical
+	default:
+		return auth.KeyDevice
 	}
 }
 
