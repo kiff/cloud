@@ -215,10 +215,12 @@ type MeResponse struct {
 	// DeviceID and DevicePlatform are the device a device's session
 	// belongs to and its platform (ios, ipados, macos, android, windows,
 	// linux, or chrome for the browser extension), from KIFF's record of
-	// the verified session and its device, never from the request. Both
-	// or neither: when the device record can't be read, neither is sent,
-	// so a reader that filters by platform falls back to its closed
-	// default. Empty for other callers.
+	// the verified session and its device, never from the request.
+	// DeviceID is sent whenever that record checks out; DevicePlatform only
+	// when the record has one (a device kept from before platforms has
+	// none, and a Chrome always has "chrome", set at its pairing). When the
+	// record can't be read, neither is sent, so a reader that filters by
+	// platform falls back to its closed default. Empty for other callers.
 	DeviceID       string `json:"device_id,omitempty"`
 	DevicePlatform string `json:"device_platform,omitempty"`
 	// SeparationOfDuties is the account's policy, for a person: with it
@@ -429,13 +431,14 @@ func capabilitiesOf(id auth.Identity) []string {
 
 // device is the verified session's device and that device's platform, from
 // KIFF's device record: only for a device's session, only for a device of
-// the same person on the same account that isn't removed. Both or neither.
+// the same person on the same account that isn't removed. The platform is ""
+// for a device kept from before platforms; the id is still sent.
 func (h *MeHandler) device(ctx context.Context, id auth.Identity) (string, string) {
 	if h.devices == nil || len(id.DeviceKey) == 0 || id.DeviceID == "" {
 		return "", ""
 	}
 	d, err := h.devices.Get(ctx, id.DeviceID)
-	if err != nil || d.Tenant != id.Tenant || d.Subject != id.Subject || d.IsRevoked() || d.Platform == "" {
+	if err != nil || d.Tenant != id.Tenant || d.Subject != id.Subject || d.IsRevoked() {
 		if err != nil && h.logger != nil {
 			h.logger.Warn("me: device record unreadable", slog.String("tenant", id.Tenant), slog.String("error", err.Error()))
 		}

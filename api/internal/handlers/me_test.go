@@ -347,7 +347,7 @@ func TestMe_EmailIsResolvedForAPhone(t *testing.T) {
 // /v1/me says which device a device's session belongs to and its platform
 // (device_id, device_platform), from KIFF's own record of the verified
 // session's device, so another service can tell a Chrome from a phone.
-// Both or neither: a browser session, a session without a device, or a
+// A device kept from before platforms gives its id and no platform. A browser session, a session without a device, or a
 // device that isn't the person's own, live, on this account gives neither,
 // and nothing the request says changes what KIFF answers.
 func TestMe_SaysTheSessionsDeviceAndItsPlatform(t *testing.T) {
@@ -360,6 +360,7 @@ func TestMe_SaysTheSessionsDeviceAndItsPlatform(t *testing.T) {
 	for _, d := range []auth.ApprovalDevice{
 		{ID: "dev_phone", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "ios"},
 		{ID: "dev_chrome", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "chrome"},
+		{ID: "dev_old", PublicKey: key(), Tenant: rig.tenantID, Subject: "p"},
 		{ID: "dev_other", PublicKey: key(), Tenant: rig.tenantID, Subject: "someone-else", Platform: "ios"},
 		{ID: "dev_elsewhere", PublicKey: key(), Tenant: "another-account", Subject: "p", Platform: "chrome"},
 		{ID: "dev_removed", PublicKey: key(), Tenant: rig.tenantID, Subject: "p", Platform: "chrome", RevokedAt: &removed},
@@ -377,14 +378,15 @@ func TestMe_SaysTheSessionsDeviceAndItsPlatform(t *testing.T) {
 		id               auth.Identity
 		device, platform string
 	}{
-		"a phone":                  {session("dev_phone"), "dev_phone", "ios"},
-		"a Chrome":                 {session("dev_chrome"), "dev_chrome", "chrome"},
-		"a browser":                {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodSession, DeviceID: "dev_chrome"}, "", ""},
-		"a session with no device": {session(""), "", ""},
-		"someone else's device":    {session("dev_other"), "", ""},
-		"another account's device": {session("dev_elsewhere"), "", ""},
-		"a removed device":         {session("dev_removed"), "", ""},
-		"an unknown device":        {session("dev_missing"), "", ""},
+		"a phone":                   {session("dev_phone"), "dev_phone", "ios"},
+		"a Chrome":                  {session("dev_chrome"), "dev_chrome", "chrome"},
+		"a device with no platform": {session("dev_old"), "dev_old", ""},
+		"a browser":                 {auth.Identity{Tenant: rig.tenantID, Subject: "p", Method: auth.MethodSession, DeviceID: "dev_chrome"}, "", ""},
+		"a session with no device":  {session(""), "", ""},
+		"someone else's device":     {session("dev_other"), "", ""},
+		"another account's device":  {session("dev_elsewhere"), "", ""},
+		"a removed device":          {session("dev_removed"), "", ""},
+		"an unknown device":         {session("dev_missing"), "", ""},
 	} {
 		req := httptest.NewRequest(http.MethodGet, "/v1/me", nil)
 		// What the request claims is never read.
