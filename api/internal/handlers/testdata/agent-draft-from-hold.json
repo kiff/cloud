@@ -1,0 +1,120 @@
+{
+  "about": "GET /v1/me/agent-drafts/{id} for an \"Allow this from now on\" draft: Rae's €150-a-refund Card, held at €320, revised to €320",
+  "answer": {
+    "agent_id": "rae",
+    "card_title": "The taf's Card",
+    "cards": [
+      {
+        "aggregates": [
+          {
+            "limit": 200000,
+            "measure": "effects",
+            "quantity": "sum(amount_cents)",
+            "quantity_of": {
+              "kind": "sum",
+              "parameter": "amount_cents"
+            },
+            "scale": 2,
+            "unit": "EUR",
+            "window": "calendar_day"
+          }
+        ],
+        "current": {
+          "active": true,
+          "aggregates": [
+            {
+              "limit": 200000,
+              "measure": "effects",
+              "quantity": "sum(amount_cents)",
+              "quantity_of": {
+                "kind": "sum",
+                "parameter": "amount_cents"
+              },
+              "room_grants": null,
+              "scale": 2,
+              "unit": "EUR",
+              "window": "calendar_day"
+            }
+          ],
+          "domain": "gateway",
+          "domain_id": "gateway",
+          "environment": "",
+          "grants": [
+            {
+              "action": "refund",
+              "entity_states": null,
+              "per_action_max": [
+                {
+                  "max": 15000,
+                  "quantity": "sum(amount_cents)",
+                  "quantity_of": {
+                    "kind": "sum",
+                    "parameter": "amount_cents"
+                  },
+                  "scale": 2,
+                  "unit": "EUR"
+                }
+              ]
+            }
+          ],
+          "hold_expiry_seconds": 600,
+          "id": "rae-refund",
+          "lines": [
+            "refund: up to €150 each; more asks you first",
+            "€2,000 in total a day, then it asks you"
+          ],
+          "location": "",
+          "on_exceed": "owner",
+          "subject": "rae",
+          "subjects": [
+            "rae"
+          ]
+        },
+        "domain": "gateway",
+        "grants": [
+          {
+            "action": "refund",
+            "per_action_max": [
+              {
+                "max": 32000,
+                "quantity": "sum(amount_cents)",
+                "quantity_of": {
+                  "kind": "sum",
+                  "parameter": "amount_cents"
+                },
+                "scale": 2,
+                "unit": "EUR"
+              }
+            ]
+          }
+        ],
+        "id": "rae-refund",
+        "lines": [
+          "refund: up to €320 each; more asks you first",
+          "€2,000 in total a day, then it asks you"
+        ],
+        "on_exceed": "owner",
+        "revises": "rae-refund",
+        "subject": "rae"
+      }
+    ],
+    "confirm_key": "critical",
+    "created_at": "2026-10-14T12:00:00Z",
+    "created_by": "alice",
+    "expires_at": "2026-10-15T12:00:00Z",
+    "from_hold": "exc_fixed",
+    "id": "drf_fixed",
+    "label": "",
+    "review_url": "/agent-drafts/drf_fixed",
+    "revision": true,
+    "status": "draft",
+    "version": "4ada6a0a40e4e70e1034d2ca64cee8efe6e5e405167359e987a8754c2a42f4d6",
+    "widens": [
+      {
+        "card": "rae-refund",
+        "kind": "per_action",
+        "words": "Raises the limit on sum(amount_cents) for each refund from 15000 to 32000"
+      }
+    ]
+  }
+}
