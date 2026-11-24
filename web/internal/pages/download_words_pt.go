@@ -22,6 +22,7 @@ var downloadPT = downloadWords{
 	DownloadFor:      "Transferir para %s",
 	UnsignedWindows:  "Esta beta ainda não está assinada. O Windows pode indicar um editor desconhecido: escolha «Mais informações» e depois «Executar mesmo assim». Seguir-se-á uma versão assinada.",
 	NotarizedMac:     "Assinada com o Developer ID da Apple e notarizada pela Apple.",
+	Libfido2Linux:    "Para aprovar com uma chave de segurança, o Linux precisa do libfido2. Sem ele, consulta neste computador e aprova no telemóvel.",
 	SignedBy:         "O SHA256SUMS está assinado com a chave de lançamento",
 	TheKey:           "a chave",
 	QRAlt:            "Código QR que abre kiff.dev/tafs/download",

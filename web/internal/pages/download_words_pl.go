@@ -22,6 +22,7 @@ var downloadPL = downloadWords{
 	DownloadFor:      "Pobierz na %s",
 	UnsignedWindows:  "Ta wersja beta nie jest jeszcze podpisana. Windows może pokazać nieznanego wydawcę: wybierz „Więcej informacji”, a potem „Uruchom mimo to”. Podpisana wersja będzie wkrótce.",
 	NotarizedMac:     "Podpisana identyfikatorem Developer ID Apple i poświadczona notarialnie przez Apple.",
+	Libfido2Linux:    "Aby zatwierdzać kluczem bezpieczeństwa, Linux potrzebuje libfido2. Bez niej przeglądasz na tym komputerze, a zatwierdzasz na telefonie.",
 	SignedBy:         "SHA256SUMS jest podpisany kluczem wydania",
 	TheKey:           "klucz",
 	QRAlt:            "Kod QR, który otwiera kiff.dev/tafs/download",

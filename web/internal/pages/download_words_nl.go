@@ -22,6 +22,7 @@ var downloadNL = downloadWords{
 	DownloadFor:      "Download voor %s",
 	UnsignedWindows:  "Deze bèta is nog niet ondertekend. Windows meldt misschien een onbekende uitgever: kies „Meer info” en dan „Toch uitvoeren”. Een ondertekende versie volgt.",
 	NotarizedMac:     "Ondertekend met Apples Developer ID en genotariseerd door Apple.",
+	Libfido2Linux:    "Om met een beveiligingssleutel goed te keuren, heeft Linux libfido2 nodig. Zonder libfido2 bekijk je op deze computer en keur je goed op je telefoon.",
 	SignedBy:         "SHA256SUMS is ondertekend met de releasesleutel",
 	TheKey:           "de sleutel",
 	QRAlt:            "QR-code die kiff.dev/tafs/download opent",
