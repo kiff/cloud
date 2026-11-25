@@ -891,6 +891,9 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 			case errors.Is(ierr, auth.ErrDeviceDuplicate):
 				// Another sign-in of this key kept it first: that's the device.
 				existing, err = h.devices.FindByKey(r.Context(), id.Tenant, id.Subject, deviceKey)
+			case errors.Is(ierr, auth.ErrTestTenantKey):
+				writeTestTenantKey(w, ierr)
+				return mintedSession{}, false
 			default:
 				h.logger.ErrorContext(r.Context(), "device approve: insert device failed",
 					slog.String("tenant", id.Tenant), slog.String("err", ierr.Error()))
@@ -1680,4 +1683,17 @@ func (h *DeviceAuthHandler) revokePasskeys(r *http.Request, deviceID string, now
 	if err := h.passkeys.RevokeForDevice(r.Context(), deviceID, now); err != nil {
 		h.logger.WarnContext(r.Context(), "device: its passkeys not removed", slog.String("device", deviceID), slog.String("err", err.Error()))
 	}
+}
+
+// writeTestTenantKey answers 409 test_tenant_key: the account is a test
+// account, and this key isn't one of the test keys (auth.TestTenantGuard).
+// It names this key's fingerprint, so the owner can add it, and no other.
+func writeTestTenantKey(w http.ResponseWriter, err error) {
+	body := map[string]string{"error": "test_tenant_key",
+		"message": "this account is a test account: add this key to the test keys first"}
+	var e *auth.TestTenantKeyError
+	if errors.As(err, &e) {
+		body["fingerprint"] = e.Fingerprint
+	}
+	writeJSON(w, http.StatusConflict, body)
 }

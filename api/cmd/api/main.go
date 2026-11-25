@@ -1108,6 +1108,12 @@ func run() error {
 	// test keys refused there.
 	proofTenants := vetProofTestTenants(ctx, proofTenantStores{tenants: tenantStore, devices: deviceStore, passkeys: passkeys},
 		proofTestKeys, splitList(os.Getenv(envProofTestTenants)), logger)
+	// A test tenant holds only test keys: no device or passkey that isn't one
+	// joins it, by any path (409 test_tenant_key), so it never stops being a
+	// test account. Every handler takes the stores from here on.
+	testTenantGuard := proofTestTenantGuard(tenantStore, proofTestKeys, splitList(os.Getenv(envProofTestTenants)))
+	deviceStore = auth.GuardDevices(deviceStore, testTenantGuard)
+	passkeys = auth.GuardPasskeys(passkeys, testTenantGuard)
 
 	// Customer email notifications. The owner-email resolver
 	// maps tenant → owner subject (Postgres) → email (Clerk, never
@@ -3645,6 +3651,30 @@ func proofTestTenantCheck(stores proofTenantStores, keys proofs.TestKeys) proofs
 		}
 		return "", nil
 	}
+}
+
+// proofTestTenantGuard holds the listed test tenants that are KIFF's own
+// accounts (plan internal) to KIFF_PROOF_TEST_KEYS: the boot check's rule,
+// kept as keys are added rather than found broken at use. Nil (nothing held)
+// when no test key is listed, as proofKeyRestriction.
+func proofTestTenantGuard(tenants tenant.Store, keys proofs.TestKeys, ids []string) *auth.TestTenantGuard {
+	if keys.Empty() {
+		return nil
+	}
+	g := auth.NewTestTenantGuard(ids, keys.Has)
+	if tenants == nil {
+		return g
+	}
+	return g.WithOwn(func(ctx context.Context, id string) (bool, error) {
+		t, err := tenants.Get(ctx, id)
+		if errors.Is(err, tenant.ErrNotFound) {
+			return false, nil
+		}
+		if err != nil {
+			return false, err
+		}
+		return tenant.PlanFor(t).Canonical == tenant.PlanInternal, nil
+	})
 }
 
 // proofKeyRestriction keeps KIFF_PROOF_TEST_KEYS to the vetted test
