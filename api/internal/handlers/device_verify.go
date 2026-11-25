@@ -80,6 +80,52 @@ func (h *DeviceVerifyHandler) WithApprovalChecks(checks auth.ApprovalCheckStore)
 // Register attaches the route to the authenticated mux.
 func (h *DeviceVerifyHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/devices/verify", h.verify)
+	mux.HandleFunc("POST /v1/devices/by-key", h.byKey)
+}
+
+// byKey serves POST /v1/devices/by-key {pub}: which of the account's
+// devices is the Chrome extension planque paired, found by the key that
+// extension offered in its pairing (kiff.pair.v1's pub, as it was sent).
+// planque relayed the offer and keeps its pub; the phone paired that
+// device in the same step. So tafs knows one Chrome by both its ids:
+// planque's, where a run's steps go, and KIFF's, which its side panel
+// signs in with.
+//
+// It answers {device_id} and nothing else, only for a device of the
+// connector's own account that isn't removed and is the extension's
+// view-only one: platform chrome, a software key, no approval key. Any
+// other device, a device of another account, a removed one, or none at
+// all answers the same 404, so a key never tells what else it is.
+func (h *DeviceVerifyHandler) byKey(w http.ResponseWriter, r *http.Request) {
+	id, err := auth.IdentityFrom(r.Context())
+	if err != nil || !id.IsConnector() {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "connector_key_required",
+			"detail": "a service's connector key finds the Chrome it paired"})
+		return
+	}
+	var req struct {
+		Pub string `json:"pub"`
+	}
+	if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 4<<10)).Decode(&req); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request"})
+		return
+	}
+	key, err := auth.ParsePairingKey(req.Pub)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_request", "detail": "pub is the key the extension offered, as its pairing offer has it"})
+		return
+	}
+	d, err := h.devices.FindByKeyInTenant(r.Context(), id.Tenant, key)
+	switch {
+	case errors.Is(err, auth.ErrDeviceNotFound):
+	case err != nil:
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "could not read the devices"})
+		return
+	case d.Tenant == id.Tenant && !d.IsRevoked() && d.Platform == "chrome" && d.KeyStore == auth.KeyStoreSoftware && !d.HasApprovalKey:
+		writeJSON(w, http.StatusOK, map[string]string{"device_id": d.ID})
+		return
+	}
+	writeJSON(w, http.StatusNotFound, map[string]string{"error": "not_found"})
 }
 
 // The capabilities a service may ask about: what a person approves with a

@@ -44,6 +44,10 @@ var connectorRoutes = []string{
 	// planque asks whether a person's device signed an approval
 	// (kiff/planque#10), instead of keeping devices of its own.
 	"POST /v1/devices/verify",
+	// planque asks which of the account's devices is the Chrome extension
+	// it paired, by the key that extension offered, so tafs knows that
+	// Chrome by both its ids.
+	"POST /v1/devices/by-key",
 	// planque reads the owner's halt before every send.
 	"GET /v1/halt",
 	// planque asks for Setup's read Card, with the owner's signed approval
