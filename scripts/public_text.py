@@ -5,7 +5,7 @@ first 16 hex digits of their SHA-256, so this file doesn't spell them out either
 printf %s NAME | sha256sum | cut -c1-16.
 
 Run from the repository's root: `python3 scripts/public_text.py [paths...]` (scripts/check.sh runs it on the tree), or
-`--text` to check stdin: a pull request's title, body or review (.github/workflows/public-text-pr.yml).
+`--text` to check stdin: a pull request's title, body or review.
 """
 import hashlib, re, subprocess, sys
 
@@ -40,7 +40,7 @@ def named(path, line):
 
 
 if sys.argv[1:] == ["--text"]:
-    # A pull request's title, body or review, on stdin (.github/workflows/public-text-pr.yml).
+    # A pull request's title, body or review, on stdin.
     found = [f"line {n}: {line.strip()[:160]}" for n, line in enumerate(sys.stdin.read().splitlines(), 1) if named("", line)]
     if found:
         print("This pull request's text names a thread, a lane, the PM or a dated rule; say what changed and why:")
