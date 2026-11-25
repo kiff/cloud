@@ -31,7 +31,7 @@ templ subprocessorsHead() {
 		<p class="legal-badge">Subprocessors · v0.1</p>
 		<h1>Subprocessors</h1>
 		<p class="legal-meta">
-			<strong>Last updated:</strong> 17 November 2026.
+			<strong>Last updated:</strong> 25 November 2026.
 		</p>
 		<p class="legal-disclaimer">
 			The companies Kiff Agents OÜ uses to run KIFF Cloud and
@@ -116,9 +116,27 @@ templ subprocessorsList() {
 					</tr>
 					<tr id="anthropic">
 						<td>Anthropic</td>
-						<td>AI models: the model behind Coach and each taf (Claude API). tafs only</td>
+						<td>AI models: the model behind Coach and each taf (Claude API). Not in use now. tafs only</td>
 						<td>What's sent to it: what you write to Coach and your tafs, the files you attach, what your connected apps return to a taf while it works, and what's on your screen while Coach helps you in the app; and the model's reply. Never sent: the passwords and keys your connected apps use, or your fingerprint. Sent only once you allow it in the tafs app (see <a href="/privacy#ai-in-tafs">Privacy</a>). Anthropic keeps it up to 30 days, longer only where law, its usage policy or its terms require</td>
 						<td>United States, called from Ireland (eu-west-1); inference may run in the United States, Europe, Asia or Australia</td>
+					</tr>
+					<tr id="bedrock">
+						<td>Amazon Web Services (Amazon Bedrock)</td>
+						<td>AI models: the same Claude model, run through Amazon Bedrock. In use now. tafs only</td>
+						<td>What's sent to it: the same as in Anthropic's row, and only while it's the provider in use. AWS doesn't use it to train models. Under Bedrock's default retention mode, some models keep it up to 30 days for trust and safety</td>
+						<td>European Union: called from Ireland (eu-west-1), through Bedrock's EU cross-region inference profiles only, which run in EU regions</td>
+					</tr>
+					<tr id="vertex">
+						<td>Google Cloud (Vertex AI)</td>
+						<td>AI models: the same Claude model, run through Vertex AI. Not in use now; may run it instead of Anthropic, one provider at a time. tafs only</td>
+						<td>What's sent to it: the same as in Anthropic's row, and only while it's the provider in use. For some Anthropic models, Google keeps it up to 30 days for abuse monitoring and shares it with Anthropic for that</td>
+						<td>European Union: a europe-west regional endpoint only, never Google's global endpoint</td>
+					</tr>
+					<tr id="foundry">
+						<td>Microsoft Azure (AI Foundry)</td>
+						<td>AI models: the same Claude model, through Azure AI Foundry, hosted on Azure. Not in use now; may run it instead of Anthropic, one provider at a time. tafs only</td>
+						<td>What's sent to it: the same as in Anthropic's row, and only while it's the provider in use. Microsoft runs the endpoint; Anthropic processes what's sent, under Anthropic's own terms, as in Anthropic's row</td>
+						<td>European Union: an Azure-hosted deployment in the EU data zone only</td>
 					</tr>
 				</tbody>
 			</table>
@@ -167,7 +185,7 @@ templ subprocessorsChanges() {
 
 		<p class="legal-footnote">
 			<strong>Document version:</strong> v0.1.<br/>
-			<strong>Last updated:</strong> 17 November 2026.
+			<strong>Last updated:</strong> 25 November 2026.
 		</p>
 	</section>
 }

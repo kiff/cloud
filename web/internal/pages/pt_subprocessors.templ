@@ -25,7 +25,7 @@ templ subprocessorsHeadPT() {
 		<p class="legal-badge">Subcontratantes ulteriores · v0.1</p>
 		<h1>Subcontratantes ulteriores</h1>
 		<p class="legal-meta">
-			<strong>Última atualização:</strong> 17 de novembro de 2026.
+			<strong>Última atualização:</strong> 25 de novembro de 2026.
 		</p>
 		<p class="legal-disclaimer">
 			As empresas a que a Kiff Agents OÜ recorre para operar o
@@ -110,9 +110,27 @@ templ subprocessorsListPT() {
 					</tr>
 					<tr id="anthropic">
 						<td>Anthropic</td>
-						<td>Modelos de IA: o modelo por trás do Coach e de cada taf (Claude API). Apenas para o tafs</td>
+						<td>Modelos de IA: o modelo por trás do Coach e de cada taf (Claude API). Não está em uso agora. Apenas para o tafs</td>
 						<td>O que lhe é enviado: o que escreve ao Coach e aos seus tafs, os ficheiros que anexa, o que as suas apps ligadas devolvem a um taf enquanto trabalha e o que está no seu ecrã enquanto o Coach o ajuda na app; e a resposta do modelo. Nunca é enviado: as palavras-passe e chaves que as suas apps ligadas usam, nem a sua impressão digital. Só é enviado depois de o autorizar na app tafs (ver <a href="/pt/privacy#ai-in-tafs">Privacidade</a>). A Anthropic guarda-o até 30 dias, mais tempo apenas quando a lei, a sua política de utilização ou os seus termos o exigem</td>
 						<td>Estados Unidos, chamada a partir da Irlanda (eu-west-1); a inferência pode correr nos Estados Unidos, na Europa, na Ásia ou na Austrália</td>
+					</tr>
+					<tr id="bedrock">
+						<td>Amazon Web Services (Amazon Bedrock)</td>
+						<td>Modelos de IA: o mesmo modelo Claude, executado através do Amazon Bedrock. Em uso agora. Apenas tafs</td>
+						<td>O que lhe é enviado: o mesmo que na linha da Anthropic, e só enquanto for o fornecedor em uso. A AWS não o usa para treinar modelos. No modo de retenção predefinido do Bedrock, alguns modelos guardam-no até 30 dias por confiança e segurança</td>
+						<td>União Europeia: chamado a partir da Irlanda (eu-west-1), apenas através dos perfis de inferência inter-regionais da UE do Bedrock, que correm em regiões da UE</td>
+					</tr>
+					<tr id="vertex">
+						<td>Google Cloud (Vertex AI)</td>
+						<td>Modelos de IA: o mesmo modelo Claude, executado através do Vertex AI. Não está em uso agora; pode executá-lo em vez da Anthropic, um fornecedor de cada vez. Apenas tafs</td>
+						<td>O que lhe é enviado: o mesmo que na linha da Anthropic, e só enquanto for o fornecedor em uso. Para alguns modelos da Anthropic, a Google guarda-o até 30 dias para monitorizar abusos e partilha-o com a Anthropic para esse fim</td>
+						<td>União Europeia: apenas um endpoint regional europe-west, nunca o endpoint global da Google</td>
+					</tr>
+					<tr id="foundry">
+						<td>Microsoft Azure (AI Foundry)</td>
+						<td>Modelos de IA: o mesmo modelo Claude, através do Azure AI Foundry, alojado no Azure. Não está em uso agora; pode executá-lo em vez da Anthropic, um fornecedor de cada vez. Apenas tafs</td>
+						<td>O que lhe é enviado: o mesmo que na linha da Anthropic, e só enquanto for o fornecedor em uso. A Microsoft gere o endpoint; a Anthropic trata o que é enviado, segundo os seus próprios termos, como na linha da Anthropic</td>
+						<td>União Europeia: apenas uma implementação alojada no Azure na zona de dados da UE</td>
 					</tr>
 				</tbody>
 			</table>
@@ -164,7 +182,7 @@ templ subprocessorsChangesPT() {
 
 		<p class="legal-footnote">
 			<strong>Versão do documento:</strong> v0.1.<br/>
-			<strong>Última atualização:</strong> 17 de novembro de 2026.
+			<strong>Última atualização:</strong> 25 de novembro de 2026.
 		</p>
 	</section>
 }

@@ -46,7 +46,7 @@ templ dpaHeadIT() {
 		<h1>Accordo sul trattamento dei dati (DPA)</h1>
 		<p class="legal-meta">
 			<strong>Versione del modello:</strong> v0.1.
-			<strong>Ultimo aggiornamento:</strong> 17 novembre 2026.
+			<strong>Ultimo aggiornamento:</strong> 25 novembre 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Questo è un <em>modello</em> pubblicato, non un contratto
@@ -635,9 +635,27 @@ templ dpaAnnex3IT() {
 					</tr>
 					<tr>
 						<td>Anthropic, PBC</td>
-						<td>Solo per tafs: il modello di IA dietro Coach e ogni taf (Claude API), che riceve dati solo dopo che la persona l'ha consentito nell'app tafs. Anthropic elimina ciò che riceve e restituisce entro 30 giorni, a meno che non debba conservarlo più a lungo per rispettare la legge, per far rispettare le sue norme di utilizzo, o come altrimenti previsto dalle sue condizioni commerciali</td>
+						<td>Solo per tafs: il modello di IA dietro Coach e ogni taf (Claude API), che riceve dati solo dopo che la persona l'ha consentito nell'app tafs. Anthropic elimina ciò che riceve e restituisce entro 30 giorni, a meno che non debba conservarlo più a lungo per rispettare la legge, per far rispettare le sue norme di utilizzo, o come altrimenti previsto dalle sue condizioni commerciali. Non in uso ora.</td>
 						<td>Stati Uniti, con chiamate dall'Irlanda (eu-west-1); l'inferenza può avvenire negli Stati Uniti, in Europa, in Asia o in Australia</td>
 						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Amazon Web Services EMEA SARL (Amazon Bedrock)</td>
+						<td>Solo tafs, e solo finché è il fornitore in uso, uno alla volta: esegue Claude, il modello dietro Coach e ogni taf, tramite Amazon Bedrock, con dati solo dopo che la persona lo ha consentito nell'app tafs. Non usato per addestrare modelli; nella modalità di conservazione predefinita di Bedrock, alcuni modelli lo conservano fino a 30 giorni per fiducia e sicurezza. In uso ora.</td>
+						<td>Solo regioni UE (profili di inferenza interregionali UE di Bedrock), chiamato dall'Irlanda (eu-west-1)</td>
+						<td>All'interno dell'UE; Data Privacy Framework UE–USA / SCC come soluzione di riserva</td>
+					</tr>
+					<tr>
+						<td>Google Cloud EMEA Limited (Vertex AI)</td>
+						<td>Solo tafs, e solo finché è il fornitore in uso, uno alla volta: esegue Claude tramite Vertex AI, con dati solo dopo che la persona lo ha consentito nell'app tafs. Per alcuni modelli di Anthropic, conservato fino a 30 giorni per il monitoraggio degli abusi e condiviso con Anthropic a tal fine</td>
+						<td>Solo UE (endpoint regionali europe-west)</td>
+						<td>All'interno dell'UE; Data Privacy Framework UE–USA / SCC come soluzione di riserva</td>
+					</tr>
+					<tr>
+						<td>Microsoft Ireland Operations Limited (Azure AI Foundry)</td>
+						<td>Solo tafs, e solo finché è il fornitore in uso, uno alla volta: ospita l'endpoint di Claude su Azure, con dati solo dopo che la persona lo ha consentito nell'app tafs; Anthropic tratta ciò che viene inviato secondo i propri termini, come nella riga di Anthropic</td>
+						<td>Solo zona dati UE (un deployment ospitato su Azure)</td>
+						<td>All'interno dell'UE; Data Privacy Framework UE–USA / SCC come soluzione di riserva</td>
 					</tr>
 					<tr>
 						<td>Apple Inc.</td>
@@ -719,9 +737,9 @@ templ dpaAnnex4IT() {
 					</tr>
 					<tr>
 						<td>Richieste al modello</td>
-						<td>Anthropic</td>
+						<td>Anthropic, o il fornitore cloud in uso (vedi i sub-responsabili)</td>
 						<td>Ciò che una persona scrive a Coach e ai taf, i file allegati, ciò che le app collegate restituiscono a un taf durante un'esecuzione e ciò che è sullo schermo mentre Coach aiuta nell'app; e ciò che il modello restituisce. Mai le password e le chiavi delle app collegate, né un'impronta</td>
-						<td>Eliminate da Anthropic entro 30 giorni per impostazione predefinita; più a lungo se Anthropic deve conservarle per rispettare la legge, per far rispettare le sue norme di utilizzo, o come altrimenti previsto dalle sue condizioni commerciali</td>
+						<td>Cancellato entro 30 giorni dall'azienda che esegue il modello, a meno che non sia segnalato come contrario alle sue regole d'uso o la legge ne imponga la conservazione</td>
 					</tr>
 					<tr>
 						<td>La chiave KIFF del taf</td>
@@ -796,7 +814,7 @@ templ dpaAnnex4IT() {
 
 		<p class="legal-footnote">
 			<strong>Versione del documento:</strong> modello v0.1.<br/>
-			<strong>Ultimo aggiornamento:</strong> 17 novembre 2026.
+			<strong>Ultimo aggiornamento:</strong> 25 novembre 2026.
 		</p>
 	</section>
 }

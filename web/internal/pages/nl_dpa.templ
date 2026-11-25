@@ -48,7 +48,7 @@ templ dpaHeadNL() {
 		<h1>Verwerkersovereenkomst</h1>
 		<p class="legal-meta">
 			<strong>Versie van het sjabloon:</strong> v0.1.
-			<strong>Laatst bijgewerkt:</strong> 17 november 2026.
+			<strong>Laatst bijgewerkt:</strong> 25 november 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Dit is een gepubliceerd <em>sjabloon</em>, geen getekend
@@ -681,9 +681,27 @@ templ dpaAnnex3NL() {
 					</tr>
 					<tr>
 						<td>Anthropic, PBC</td>
-						<td>Alleen tafs: het AI-model achter Coach en elk taf (Claude API), dat pas gegevens krijgt als de persoon het in de tafs-app heeft toegestaan. Anthropic verwijdert wat het ontvangt en teruggeeft binnen 30 dagen, tenzij het dat langer moet bewaren om aan de wet te voldoen, om zijn gebruiksbeleid te handhaven, of zoals zijn commerciële voorwaarden anders bepalen</td>
+						<td>Alleen tafs: het AI-model achter Coach en elk taf (Claude API), dat pas gegevens krijgt als de persoon het in de tafs-app heeft toegestaan. Anthropic verwijdert wat het ontvangt en teruggeeft binnen 30 dagen, tenzij het dat langer moet bewaren om aan de wet te voldoen, om zijn gebruiksbeleid te handhaven, of zoals zijn commerciële voorwaarden anders bepalen. Nu niet in gebruik.</td>
 						<td>Verenigde Staten, aangeroepen vanuit Ierland (eu-west-1); de inferentie kan draaien in de Verenigde Staten, Europa, Azië of Australië</td>
 						<td>SCC's</td>
+					</tr>
+					<tr>
+						<td>Amazon Web Services EMEA SARL (Amazon Bedrock)</td>
+						<td>Alleen tafs, en alleen zolang het de aanbieder in gebruik is, één tegelijk: draait Claude, het model achter Coach en elke taf, via Amazon Bedrock, met gegevens pas nadat de persoon het in de tafs-app heeft toegestaan. Niet gebruikt om modellen te trainen; in de standaard bewaarmodus van Bedrock bewaren sommige modellen het tot 30 dagen voor vertrouwen en veiligheid. Nu in gebruik.</td>
+						<td>Alleen EU-regio's (EU-inferentieprofielen voor meerdere regio's van Bedrock), aangeroepen vanuit Ierland (eu-west-1)</td>
+						<td>Binnen de EU; EU-VS Data Privacy Framework / SCC's als terugvaloptie</td>
+					</tr>
+					<tr>
+						<td>Google Cloud EMEA Limited (Vertex AI)</td>
+						<td>Alleen tafs, en alleen zolang het de aanbieder in gebruik is, één tegelijk: draait Claude via Vertex AI, met gegevens pas nadat de persoon het in de tafs-app heeft toegestaan. Voor sommige Anthropic-modellen tot 30 dagen bewaard voor misbruiktoezicht en daarvoor gedeeld met Anthropic</td>
+						<td>Alleen EU (regionale europe-west-endpoints)</td>
+						<td>Binnen de EU; EU-VS Data Privacy Framework / SCC's als terugvaloptie</td>
+					</tr>
+					<tr>
+						<td>Microsoft Ireland Operations Limited (Azure AI Foundry)</td>
+						<td>Alleen tafs, en alleen zolang het de aanbieder in gebruik is, één tegelijk: host het Claude-endpoint op Azure, met gegevens pas nadat de persoon het in de tafs-app heeft toegestaan; Anthropic verwerkt wat er wordt verstuurd onder zijn eigen voorwaarden, zoals in de rij van Anthropic</td>
+						<td>Alleen EU-datazone (een op Azure gehoste implementatie)</td>
+						<td>Binnen de EU; EU-VS Data Privacy Framework / SCC's als terugvaloptie</td>
 					</tr>
 					<tr>
 						<td>Apple Inc.</td>
@@ -767,9 +785,9 @@ templ dpaAnnex4NL() {
 					</tr>
 					<tr>
 						<td>Modelverzoeken</td>
-						<td>Anthropic</td>
+						<td>Anthropic, of de cloudaanbieder in gebruik (zie de subverwerkers)</td>
 						<td>Wat iemand aan Coach en de tafs schrijft, bijgevoegde bestanden, wat gekoppelde apps een taf tijdens een run teruggeven, en wat er op het scherm staat terwijl Coach in de app helpt; en wat het model teruggeeft. Nooit de wachtwoorden en sleutels van gekoppelde apps, of een vingerafdruk</td>
-						<td>Standaard binnen 30 dagen door Anthropic verwijderd; langer waar Anthropic het moet bewaren om aan de wet te voldoen, om zijn gebruiksbeleid te handhaven, of zoals zijn commerciële voorwaarden anders bepalen</td>
+						<td>Binnen 30 dagen verwijderd door het bedrijf dat het model draait, tenzij het wordt gemarkeerd als in strijd met zijn gebruiksregels of de wet vereist dat het bewaard blijft</td>
 					</tr>
 					<tr>
 						<td>De KIFF-sleutel van het taf</td>
@@ -844,7 +862,7 @@ templ dpaAnnex4NL() {
 
 		<p class="legal-footnote">
 			<strong>Documentversie:</strong> sjabloon v0.1.<br/>
-			<strong>Laatst bijgewerkt:</strong> 17 november 2026.
+			<strong>Laatst bijgewerkt:</strong> 25 november 2026.
 		</p>
 	</section>
 }

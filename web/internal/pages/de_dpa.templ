@@ -46,7 +46,7 @@ templ dpaHeadDE() {
 		<h1>Auftragsverarbeitungsvertrag</h1>
 		<p class="legal-meta">
 			<strong>Version der Vorlage:</strong> v0.1.
-			<strong>Zuletzt aktualisiert:</strong> 17. November 2026.
+			<strong>Zuletzt aktualisiert:</strong> 25. November 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Dies ist eine veröffentlichte <em>Vorlage</em>, kein
@@ -653,9 +653,27 @@ templ dpaAnnex3DE() {
 					</tr>
 					<tr>
 						<td>Anthropic, PBC</td>
-						<td>Nur tafs: das KI-Modell hinter Coach und jedem taf (Claude API), das Daten erst erhält, wenn die Person es in der tafs-App erlaubt hat. Anthropic löscht, was es empfängt und zurückgibt, innerhalb von 30 Tagen, es sei denn, es muss es länger aufbewahren, um das Gesetz einzuhalten oder um seine Nutzungsrichtlinie durchzusetzen, oder seine kommerziellen Bedingungen sehen etwas anderes vor</td>
+						<td>Nur tafs: das KI-Modell hinter Coach und jedem taf (Claude API), das Daten erst erhält, wenn die Person es in der tafs-App erlaubt hat. Anthropic löscht, was es empfängt und zurückgibt, innerhalb von 30 Tagen, es sei denn, es muss es länger aufbewahren, um das Gesetz einzuhalten oder um seine Nutzungsrichtlinie durchzusetzen, oder seine kommerziellen Bedingungen sehen etwas anderes vor. Derzeit nicht im Einsatz.</td>
 						<td>Vereinigte Staaten, aufgerufen aus Irland (eu-west-1); die Inferenz kann in den Vereinigten Staaten, Europa, Asien oder Australien laufen</td>
 						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Amazon Web Services EMEA SARL (Amazon Bedrock)</td>
+						<td>Nur tafs, und nur solange es der eingesetzte Anbieter ist, immer nur einer: betreibt Claude, das Modell hinter Coach und jedem taf, über Amazon Bedrock, mit Daten erst, wenn die Person es in der tafs-App erlaubt hat. Nicht zum Trainieren von Modellen genutzt; im Standard-Aufbewahrungsmodus von Bedrock bewahren manche Modelle es bis zu 30 Tage für Vertrauen und Sicherheit auf. Derzeit im Einsatz.</td>
+						<td>Nur EU-Regionen (EU-regionsübergreifende Inferenzprofile von Bedrock), aufgerufen aus Irland (eu-west-1)</td>
+						<td>Innerhalb der EU; EU-US-Datenschutzrahmen / ersatzweise SCC</td>
+					</tr>
+					<tr>
+						<td>Google Cloud EMEA Limited (Vertex AI)</td>
+						<td>Nur tafs, und nur solange es der eingesetzte Anbieter ist, immer nur einer: betreibt Claude über Vertex AI, mit Daten erst, wenn die Person es in der tafs-App erlaubt hat. Bei manchen Anthropic-Modellen bis zu 30 Tage zur Missbrauchsüberwachung aufbewahrt und dafür mit Anthropic geteilt</td>
+						<td>Nur EU (regionale europe-west-Endpunkte)</td>
+						<td>Innerhalb der EU; EU-US-Datenschutzrahmen / ersatzweise SCC</td>
+					</tr>
+					<tr>
+						<td>Microsoft Ireland Operations Limited (Azure AI Foundry)</td>
+						<td>Nur tafs, und nur solange es der eingesetzte Anbieter ist, immer nur einer: hostet den Claude-Endpunkt auf Azure, mit Daten erst, wenn die Person es in der tafs-App erlaubt hat; Anthropic verarbeitet das Gesendete nach seinen eigenen Bedingungen, wie in der Zeile von Anthropic</td>
+						<td>Nur EU-Datenzone (eine auf Azure gehostete Bereitstellung)</td>
+						<td>Innerhalb der EU; EU-US-Datenschutzrahmen / ersatzweise SCC</td>
 					</tr>
 					<tr>
 						<td>Apple Inc.</td>
@@ -738,9 +756,9 @@ templ dpaAnnex4DE() {
 					</tr>
 					<tr>
 						<td>Modellanfragen</td>
-						<td>Anthropic</td>
+						<td>Anthropic oder der eingesetzte Cloud-Anbieter (siehe die Unterauftragsverarbeiter)</td>
 						<td>Was eine Person Coach und den tafs schreibt, angehängte Dateien, was verbundene Apps einem taf während eines Laufs zurückgeben, und was auf dem Bildschirm ist, während Coach in der App hilft; und was das Modell zurückgibt. Nie die Passwörter und Schlüssel verbundener Apps oder ein Fingerabdruck</td>
-						<td>Von Anthropic standardmäßig innerhalb von 30 Tagen gelöscht; länger, wo Anthropic es aufbewahren muss, um das Gesetz einzuhalten oder um seine Nutzungsrichtlinie durchzusetzen, oder wo seine kommerziellen Bedingungen etwas anderes vorsehen</td>
+						<td>Vom Unternehmen, das das Modell betreibt, innerhalb von 30 Tagen gelöscht, außer es wird als Verstoß gegen dessen Nutzungsregeln markiert oder das Gesetz verlangt, es aufzubewahren</td>
 					</tr>
 					<tr>
 						<td>Der KIFF-Schlüssel des tafs</td>
@@ -815,7 +833,7 @@ templ dpaAnnex4DE() {
 
 		<p class="legal-footnote">
 			<strong>Dokumentversion:</strong> v0.1 Vorlage.<br/>
-			<strong>Zuletzt aktualisiert:</strong> 17. November 2026.
+			<strong>Zuletzt aktualisiert:</strong> 25. November 2026.
 		</p>
 	</section>
 }

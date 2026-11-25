@@ -37,6 +37,8 @@ func TestLegalPages(t *testing.T) {
 			"Apple, Google or GitHub",
 			"It receives no",
 			"Standard Contractual Clauses",
+			// Claude may run on Anthropic or one listed cloud provider; the page says which one runs it now.
+			"In use now.", "Amazon Bedrock", "Vertex AI", "AI Foundry", "Not in use now",
 			`href="/legal/dpa#sub-processors"`,
 		}},
 		{"/cookies", Cookies(), []string{
@@ -69,7 +71,7 @@ func TestLegalPages(t *testing.T) {
 			for _, banned := range []string{
 				"Merkle", "Sepolia", "on-chain", "anchor", "kiff-cloud",
 				"apps/web/internal", "legal review", "Status:",
-				"Bedrock", "GitLab",
+				"GitLab",
 			} {
 				if strings.Contains(body, banned) {
 					t.Errorf("body contains banned token %q", banned)

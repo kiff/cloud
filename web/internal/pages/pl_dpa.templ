@@ -46,7 +46,7 @@ templ dpaHeadPL() {
 		<h1>Umowa powierzenia przetwarzania danych (DPA)</h1>
 		<p class="legal-meta">
 			<strong>Wersja wzoru:</strong> v0.1.
-			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+			<strong>Ostatnia aktualizacja:</strong> 25 listopada 2026.
 		</p>
 		<p class="legal-disclaimer">
 			To jest opublikowany <em>wzór</em>, a nie podpisana umowa.
@@ -643,9 +643,27 @@ templ dpaAnnex3PL() {
 					</tr>
 					<tr>
 						<td>Anthropic, PBC</td>
-						<td>Tylko tafs: model AI, dzięki któremu działają Coach i każdy taf (Claude API), który otrzymuje dane dopiero, gdy osoba zezwoli na to w aplikacji tafs. Anthropic usuwa to, co otrzymuje i zwraca, w ciągu 30 dni, chyba że musi to przechowywać dłużej, aby przestrzegać prawa lub egzekwować swoje zasady użytkowania, albo gdy jego warunki handlowe stanowią inaczej</td>
+						<td>Tylko tafs: model AI, dzięki któremu działają Coach i każdy taf (Claude API), który otrzymuje dane dopiero, gdy osoba zezwoli na to w aplikacji tafs. Anthropic usuwa to, co otrzymuje i zwraca, w ciągu 30 dni, chyba że musi to przechowywać dłużej, aby przestrzegać prawa lub egzekwować swoje zasady użytkowania, albo gdy jego warunki handlowe stanowią inaczej. Obecnie nieużywany.</td>
 						<td>Stany Zjednoczone, wywoływane z Irlandii (eu-west-1); wnioskowanie może odbywać się w Stanach Zjednoczonych, Europie, Azji lub Australii</td>
 						<td>SCC</td>
+					</tr>
+					<tr>
+						<td>Amazon Web Services EMEA SARL (Amazon Bedrock)</td>
+						<td>Tylko tafs, i tylko dopóki jest używanym dostawcą, jeden naraz: uruchamia Claude, model stojący za Coachem i każdym tafem, przez Amazon Bedrock, z danymi dopiero po zgodzie osoby w aplikacji tafs. Nieużywane do trenowania modeli; w domyślnym trybie przechowywania Bedrock niektóre modele przechowują to do 30 dni ze względów zaufania i bezpieczeństwa. Obecnie używany.</td>
+						<td>Tylko regiony UE (międzyregionalne profile wnioskowania UE Bedrock), wywoływane z Irlandii (eu-west-1)</td>
+						<td>W obrębie UE; Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
+					</tr>
+					<tr>
+						<td>Google Cloud EMEA Limited (Vertex AI)</td>
+						<td>Tylko tafs, i tylko dopóki jest używanym dostawcą, jeden naraz: uruchamia Claude przez Vertex AI, z danymi dopiero po zgodzie osoby w aplikacji tafs. W przypadku niektórych modeli Anthropic przechowywane do 30 dni w celu monitorowania nadużyć i w tym celu udostępniane firmie Anthropic</td>
+						<td>Tylko UE (regionalne punkty końcowe europe-west)</td>
+						<td>W obrębie UE; Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
+					</tr>
+					<tr>
+						<td>Microsoft Ireland Operations Limited (Azure AI Foundry)</td>
+						<td>Tylko tafs, i tylko dopóki jest używanym dostawcą, jeden naraz: hostuje punkt końcowy Claude na Azure, z danymi dopiero po zgodzie osoby w aplikacji tafs; Anthropic przetwarza to, co wysłano, na własnych warunkach, jak w wierszu Anthropic</td>
+						<td>Tylko strefa danych UE (wdrożenie hostowane na Azure)</td>
+						<td>W obrębie UE; Ramy ochrony danych UE–USA / SCC jako rozwiązanie zapasowe</td>
 					</tr>
 					<tr>
 						<td>Apple Inc.</td>
@@ -728,9 +746,9 @@ templ dpaAnnex4PL() {
 					</tr>
 					<tr>
 						<td>Żądania do modelu</td>
-						<td>Anthropic</td>
+						<td>Anthropic lub używany dostawca chmury (zob. podmioty przetwarzające)</td>
 						<td>To, co osoba pisze do Coacha i tafów, załączone pliki, to, co połączone aplikacje zwracają tafowi podczas uruchomienia, oraz to, co jest na ekranie, gdy Coach pomaga w aplikacji; i to, co model zwraca. Nigdy hasła i klucze połączonych aplikacji ani odcisk palca</td>
-						<td>Domyślnie usuwane przez Anthropic w ciągu 30 dni; dłużej tam, gdzie Anthropic musi to przechowywać, aby przestrzegać prawa lub egzekwować swoje zasady użytkowania, albo gdy jego warunki handlowe stanowią inaczej</td>
+						<td>Usuwane w ciągu 30 dni przez firmę uruchamiającą model, chyba że zostanie oznaczone jako naruszenie jej zasad użytkowania lub prawo wymaga przechowania</td>
 					</tr>
 					<tr>
 						<td>Klucz KIFF tafa</td>
@@ -805,7 +823,7 @@ templ dpaAnnex4PL() {
 
 		<p class="legal-footnote">
 			<strong>Wersja dokumentu:</strong> wzór v0.1.<br/>
-			<strong>Ostatnia aktualizacja:</strong> 17 listopada 2026.
+			<strong>Ostatnia aktualizacja:</strong> 25 listopada 2026.
 		</p>
 	</section>
 }
