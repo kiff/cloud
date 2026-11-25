@@ -299,3 +299,37 @@ func TestAnApprovalKeyThatIsntATestKeyRefusesTheTestTenant(t *testing.T) {
 		t.Fatalf("with a person's approval key: %+v, want refused for its keys", vet)
 	}
 }
+
+// The middleware's rule: a session whose device is revoked signs nothing, so
+// its approval key doesn't count, and the tenant stays a test tenant. A live
+// device's session with the same key would count.
+func TestARevokedDevicesSessionDoesntMakeATestTenantReal(t *testing.T) {
+	f := newProofFixture(t)
+	sessions := auth.NewMemoryDeveloperSessionStore()
+	f.stores.sessions = sessions
+	ctx := context.Background()
+	id := f.tenant(t, string(tenant.PlanInternal))
+	f.device(t, id, "proof-runner", f.testKey)
+	ipadKey, _ := newKey(t)
+	ipad := auth.ApprovalDevice{ID: auth.NewDeviceID(), Tenant: id, Subject: "the-owner", Name: "tafs on iPad", Platform: "ios",
+		PublicKey: ipadKey, CreatedAt: time.Now()}
+	if err := f.stores.devices.Insert(ctx, ipad); err != nil {
+		t.Fatal(err)
+	}
+	securityKey, _ := newKey(t)
+	if err := sessions.Insert(ctx, auth.DeveloperSession{ID: "sess-ipad", Tenant: id, Subject: "the-owner", TokenHash: [32]byte{3},
+		CreatedAt: time.Now(), ExpiresAt: time.Now().Add(time.Hour), DevicePublicKey: ipadKey, DeviceID: ipad.ID,
+		ApprovalPublicKey: securityKey}); err != nil {
+		t.Fatal(err)
+	}
+	if vet := f.vet(id); len(vet.own) != 0 {
+		t.Fatalf("with a person's live iPad and its approval key: %+v, want refused", vet)
+	}
+	// The iPad revoked, as on 18 Nov, its session left live: the tenant is a test tenant again.
+	if err := f.stores.devices.Revoke(ctx, ipad.ID, time.Now()); err != nil {
+		t.Fatal(err)
+	}
+	if vet := f.vet(id); strings.Join(vet.own, ",") != id {
+		t.Fatalf("with the iPad revoked: %+v, want %s accepted", vet, id)
+	}
+}

@@ -207,9 +207,9 @@ func (s guardedSessions) TenantOf(ctx context.Context, id string) (string, error
 }
 
 // ApprovalKeysInTenant passes through, for the proofs' check.
-func (s guardedSessions) ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error) {
+func (s guardedSessions) ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([]SessionApprovalKey, error) {
 	keys, ok := s.DeveloperSessionStore.(interface {
-		ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error)
+		ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([]SessionApprovalKey, error)
 	})
 	if !ok {
 		return nil, errors.New("auth: the session store can't list approval keys")

@@ -1669,13 +1669,19 @@ func removalApproved(w http.ResponseWriter, r *http.Request, id auth.Identity) b
 }
 
 // revokeDevice removes a device a failed or undone sign-in created, or one
-// whose session was removed. Best-effort: "" or no store does nothing.
+// whose session was removed, and every other session it signed in, as
+// deleteDevice does: the device first, so from then on none of its sessions
+// verifies (the middleware), then the sessions, so none still reads as live.
+// Best-effort: "" or no store does nothing.
 func (h *DeviceAuthHandler) revokeDevice(r *http.Request, deviceID string, now time.Time) {
 	if deviceID == "" || h.devices == nil {
 		return
 	}
 	if err := h.devices.Revoke(r.Context(), deviceID, now); err != nil && !errors.Is(err, auth.ErrDeviceNotFound) {
 		h.logger.WarnContext(r.Context(), "device: revoke failed", slog.String("device", deviceID), slog.String("err", err.Error()))
+	}
+	if err := h.sessions.RevokeForDevice(r.Context(), deviceID, now); err != nil {
+		h.logger.WarnContext(r.Context(), "device: its sessions not revoked", slog.String("device", deviceID), slog.String("err", err.Error()))
 	}
 	h.revokePasskeys(r, deviceID, now)
 	h.closeWindows(r, auth.WindowMatch{Device: deviceID}, auth.WindowClosedByRevoked)
