@@ -123,7 +123,7 @@ templ subprocessorsList() {
 					<tr id="bedrock">
 						<td>Amazon Web Services (Amazon Bedrock)</td>
 						<td>AI models: the same Claude model, run through Amazon Bedrock. Not in use now; may run it instead of Anthropic, one provider at a time. tafs only</td>
-						<td>What's sent to it: the same as in Anthropic's row, and only while it's the provider in use. AWS doesn't use it to train models, and the model's maker can't reach it. Under Bedrock's default retention mode, some models keep it up to 30 days for trust and safety</td>
+						<td>What's sent to it: the same as in Anthropic's row, and only while it's the provider in use. AWS doesn't use it to train models. Under Bedrock's default retention mode, some models keep it up to 30 days for trust and safety</td>
 						<td>European Union: called from Ireland (eu-west-1), through Bedrock's EU cross-region inference profiles only, which run in EU regions</td>
 					</tr>
 					<tr id="vertex">
