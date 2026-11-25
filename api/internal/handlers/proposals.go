@@ -533,6 +533,12 @@ type proposalRequest struct {
 	// then theirs. Only a key bound to the agent may send one.
 	RunGrant string `json:"run_grant,omitempty"`
 
+	// AgentRun is the run making the call, sent by the gateway from the
+	// call's KIFF-Run header. KIFF signs it into the call's permit as
+	// "run", so the tool can tell which run asked; it decides nothing.
+	// Only a key bound to the agent may send one.
+	AgentRun string `json:"agent_run,omitempty"`
+
 	// TafAbout and TafReason are the taf's own words about the call, sent
 	// by the gateway: kept with a hold for its owner, labelled as the
 	// taf's, and never part of the decision (taf_words.go).
@@ -937,6 +943,28 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx = withTafWords(ctx, string(req.TafAbout), string(req.TafReason))
+
+	// The run making the call, for its permit. It authorizes nothing, but
+	// it is signed, so only the agent's own key may name one, and only in
+	// the form a run id takes.
+	if run := req.AgentRun; run != "" {
+		reason := ""
+		switch {
+		case !id.APIKey || id.AgentID == "" || prop.ActorID != id.AgentID:
+			reason = "agent_run_needs_agent_key"
+		case !validAgentRun(run):
+			reason = "agent_run"
+		}
+		if reason != "" {
+			h.incCounter(ctx, id.Tenant, usage.CloudCounterProposalsSubmitted)
+			h.recordRejection(ctx, id, prop, outcomeInvalid, []string{reason})
+			resp := proposalResponse{ProposalID: prop.ID, Outcome: string(outcomeInvalid), Reasons: []string{reason},
+				Message: "this call's run isn't one KIFF can sign: it is sent by the agent's own key, as 1 to 128 letters, digits and . _ : -; nothing was sent"}
+			writeJSON(w, http.StatusBadRequest, resp)
+			return
+		}
+		ctx = withAgentRun(ctx, run)
+	}
 
 	// A person's run: the call is theirs if their run grant says so and
 	// they may still use the agent; a grant that fails refuses the call.
