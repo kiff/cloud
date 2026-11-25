@@ -56,7 +56,7 @@ func TestMintSignsTheStoredBindingOnce(t *testing.T) {
 	if err != nil || !created || !stored.Same(b) {
 		t.Fatalf("bind: %+v %v", stored, err)
 	}
-	tok, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", "", stored)
+	tok, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", "", "", stored)
 	if err != nil || !minted {
 		t.Fatalf("mint: %v %v", minted, err)
 	}
@@ -74,7 +74,7 @@ func TestMintSignsTheStoredBindingOnce(t *testing.T) {
 	}
 
 	// One permit per operation: a second mint issues nothing.
-	if tok2, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", "", stored); err != nil || minted || tok2 != "" {
+	if tok2, minted, err := is.Mint(ctx, "t1", "agent_1", "inv_1", "card_1", "", "", "", stored); err != nil || minted || tok2 != "" {
 		t.Fatalf("second mint: %q %v %v", tok2, minted, err)
 	}
 }
@@ -159,7 +159,7 @@ func TestLifetimeIsCapped(t *testing.T) {
 	ctx := context.Background()
 	b := Binding{Tool: "t", ArgsSHA256: "h", Audience: "a"}
 	_, _, _ = is.Bind(ctx, "t1", "op", b)
-	tok, _, _ := is.Mint(ctx, "t1", "s", "op", "", "", "", b)
+	tok, _, _ := is.Mint(ctx, "t1", "s", "op", "", "", "", "", b)
 	_, c := decodeToken(t, tok, is.Key.Public().Pub)
 	if c.Exp-c.Iat != int64(MaxLifetime/time.Second) {
 		t.Fatalf("lifetime %d", c.Exp-c.Iat)
