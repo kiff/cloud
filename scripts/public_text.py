@@ -40,7 +40,7 @@ def named(path, line):
 
 
 if sys.argv[1:] == ["--text"]:
-    # A pull request's title, body or review, on stdin.
+    # A pull request's title, body or review, on stdin (.github/workflows/public-text-pr.yml).
     found = [f"line {n}: {line.strip()[:160]}" for n, line in enumerate(sys.stdin.read().splitlines(), 1) if named("", line)]
     if found:
         print("This pull request's text names a thread, a lane, the PM or a dated rule; say what changed and why:")
