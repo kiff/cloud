@@ -782,6 +782,9 @@ var DefaultRules = map[string]membership.Capability{
 	// Planque's connector key checks a person's device signature.
 	// The handler serves only a connector key; a person is refused there.
 	"POST /v1/devices/verify": membership.CapToolsConnect,
+	// Planque's connector key finds the Chrome extension it paired by its
+	// key; the handler serves only a connector key, and only that device.
+	"POST /v1/devices/by-key": membership.CapToolsConnect,
 	// Another KIFF service asks whether the caller's phone signed a request
 	// it received: the gateway, connecting the account's control server
 	// (kiff/tafs#206), which only someone who may connect tools does.
