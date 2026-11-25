@@ -40,7 +40,7 @@ func TestSubmitRoot_SequentialNoncesNoCollision(t *testing.T) {
 		t.Fatalf("deploy: %v", err)
 	}
 	sim.Commit()
-	if _, err := waitMined(ctx, t, client, deployTx); err != nil {
+	if _, err := waitMined(ctx, t, sim, client, deployTx); err != nil {
 		t.Fatalf("deploy receipt: %v", err)
 	}
 
@@ -76,7 +76,7 @@ func TestSubmitRoot_SequentialNoncesNoCollision(t *testing.T) {
 	// Mine them and confirm each was included successfully.
 	sim.Commit()
 	for i, tx := range txs {
-		rcpt, err := waitMined(ctx, t, client, tx)
+		rcpt, err := waitMined(ctx, t, sim, client, tx)
 		if err != nil {
 			t.Fatalf("wait mined %d: %v", i, err)
 		}
@@ -112,7 +112,7 @@ func TestSubmitRoot_NonceResyncAfterReset(t *testing.T) {
 		t.Fatalf("deploy: %v", err)
 	}
 	sim.Commit()
-	if _, err := waitMined(ctx, t, client, deployTx); err != nil {
+	if _, err := waitMined(ctx, t, sim, client, deployTx); err != nil {
 		t.Fatalf("deploy receipt: %v", err)
 	}
 
@@ -127,7 +127,7 @@ func TestSubmitRoot_NonceResyncAfterReset(t *testing.T) {
 		t.Fatalf("submit 1: %v", err)
 	}
 	sim.Commit()
-	if _, err := waitMined(ctx, t, client, tx1); err != nil {
+	if _, err := waitMined(ctx, t, sim, client, tx1); err != nil {
 		t.Fatalf("wait mined 1: %v", err)
 	}
 
@@ -148,7 +148,51 @@ func TestSubmitRoot_NonceResyncAfterReset(t *testing.T) {
 		t.Fatalf("resync did not advance: tx1 nonce=%d tx2 nonce=%d", tx1.Nonce(), tx2.Nonce())
 	}
 	sim.Commit()
-	if _, err := waitMined(ctx, t, client, tx2); err != nil {
+	if _, err := waitMined(ctx, t, sim, client, tx2); err != nil {
 		t.Fatalf("wait mined 2: %v", err)
+	}
+}
+
+// TestWaitMined_MinesATransactionNoBlockTookYet is the case behind the flaky
+// "wait mined 4: not found": a transaction still in the pool after the last
+// Commit (as when go-ethereum's block builder runs out of its recommit
+// allowance and seals a block without it) is mined by waitMined committing
+// again, never left waiting for a block nobody asks for.
+func TestWaitMined_MinesATransactionNoBlockTookYet(t *testing.T) {
+	t.Parallel()
+
+	wallet, err := NewRandomWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	wei := new(big.Int).Mul(big.NewInt(100), big.NewInt(1_000_000_000_000_000_000))
+	alloc := types.GenesisAlloc{wallet.Address(): {Balance: wei}}
+	sim := simulated.NewBackend(alloc)
+	defer sim.Close()
+	client := sim.Client()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	sub, _, deployTx, err := DeployAnchor(ctx, client, wallet)
+	if err != nil {
+		t.Fatalf("deploy: %v", err)
+	}
+	// No Commit: the deploy is only in the pool.
+	if _, err := waitMined(ctx, t, sim, client, deployTx); err != nil {
+		t.Fatalf("deploy receipt: %v", err)
+	}
+	var root Hash
+	root[0] = 9
+	tx, err := sub.SubmitRoot(ctx, root, 1, StreamID("kiff.receipts"))
+	if err != nil {
+		t.Fatalf("submit: %v", err)
+	}
+	rcpt, err := waitMined(ctx, t, sim, client, tx)
+	if err != nil {
+		t.Fatalf("wait mined: %v", err)
+	}
+	if rcpt.Status != types.ReceiptStatusSuccessful {
+		t.Fatalf("submit reverted: status=%d", rcpt.Status)
 	}
 }

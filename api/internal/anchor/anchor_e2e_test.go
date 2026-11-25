@@ -44,7 +44,7 @@ func TestE2E(t *testing.T) {
 		t.Fatalf("deploy: %v", err)
 	}
 	sim.Commit()
-	if _, err := waitMined(ctx, t, client, deployTx); err != nil {
+	if _, err := waitMined(ctx, t, sim, client, deployTx); err != nil {
 		t.Fatalf("deploy receipt: %v", err)
 	}
 	t.Logf("deployed KiffAnchor at %s", address)
@@ -68,7 +68,7 @@ func TestE2E(t *testing.T) {
 	sim.Commit()
 
 	// Wait for the receipt and confirm success.
-	receipt, err := waitMined(ctx, t, client, res.Tx)
+	receipt, err := waitMined(ctx, t, sim, client, res.Tx)
 	if err != nil {
 		t.Fatalf("wait mined: %v", err)
 	}
@@ -125,18 +125,30 @@ func TestE2E(t *testing.T) {
 // the transaction. The simulated backend's Commit() is synchronous,
 // so a single fetch usually succeeds; we still loop in case the test
 // needs to extend Commit timing later.
-func waitMined(ctx context.Context, t *testing.T, client simulated.Client, tx *types.Transaction) (*types.Receipt, error) {
+func waitMined(ctx context.Context, t *testing.T, sim *simulated.Backend, client simulated.Client, tx *types.Transaction) (*types.Receipt, error) {
 	t.Helper()
-	deadline := time.Now().Add(10 * time.Second)
+	// A simulated chain mines only on Commit, and go-ethereum's block builder stops filling a block
+	// once its recommit allowance (miner.Config.Recommit, 2s) runs out. On a loaded runner one Commit
+	// can seal a block without the last transactions sent, which then wait in the pool for a block no
+	// one asks for: "wait mined 4: not found" after a single Commit. So a receipt not found after a
+	// short poll commits another block, which picks up what's still pending, until the deadline.
+	deadline := time.Now().Add(20 * time.Second)
 	for {
-		receipt, err := client.TransactionReceipt(ctx, tx.Hash())
-		if err == nil {
-			return receipt, nil
+		poll := time.Now().Add(500 * time.Millisecond)
+		for {
+			receipt, err := client.TransactionReceipt(ctx, tx.Hash())
+			if err == nil {
+				return receipt, nil
+			}
+			if time.Now().After(deadline) || ctx.Err() != nil {
+				return nil, err
+			}
+			if time.Now().After(poll) {
+				break
+			}
+			time.Sleep(20 * time.Millisecond)
 		}
-		if time.Now().After(deadline) {
-			return nil, err
-		}
-		time.Sleep(20 * time.Millisecond)
+		sim.Commit()
 	}
 }
 
