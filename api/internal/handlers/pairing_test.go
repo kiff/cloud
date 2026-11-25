@@ -44,11 +44,22 @@ type pairRig struct {
 
 func newPairRig(t *testing.T, extra ...handlers.DeviceAuthOption) *pairRig {
 	t.Helper()
+	return newPairRigWithSessions(t, nil, extra...)
+}
+
+// newPairRigWithSessions is newPairRig whose handler keeps its sessions in
+// wrap(the rig's store), as a guarded store does; nil keeps them as they are.
+func newPairRigWithSessions(t *testing.T, wrap func(auth.DeveloperSessionStore) auth.DeveloperSessionStore, extra ...handlers.DeviceAuthOption) *pairRig {
+	t.Helper()
 	r := &pairRig{t: t, now: time.Date(2026, 11, 14, 18, 0, 0, 0, time.UTC), sessions: auth.NewMemoryDeveloperSessionStore(),
 		devices: auth.NewMemoryDeviceStore(), windows: auth.NewMemoryWindowStore()}
 	opts := append([]handlers.DeviceAuthOption{handlers.WithDeviceStore(r.devices), handlers.WithDevicePairings(auth.NewMemoryPairingStore()),
 		handlers.WithDeviceClock(func() time.Time { return r.now })}, extra...)
-	h := handlers.NewDeviceAuthHandler(r.sessions, opts...)
+	var sessions auth.DeveloperSessionStore = r.sessions
+	if wrap != nil {
+		sessions = wrap(sessions)
+	}
+	h := handlers.NewDeviceAuthHandler(sessions, opts...)
 	r.pub = http.NewServeMux()
 	h.RegisterPublic(r.pub)
 	inner := http.NewServeMux()

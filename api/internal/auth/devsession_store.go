@@ -135,6 +135,11 @@ type DeveloperSessionStore interface {
 	// (tenant soft-delete). Idempotent.
 	RevokeAllForTenant(ctx context.Context, tenant string, at time.Time) error
 
+	// RevokeForDevice revokes every active session a device signed in, as
+	// removing the device does: a revoked device leaves no session that
+	// still reads as live. Idempotent.
+	RevokeForDevice(ctx context.Context, deviceID string, at time.Time) error
+
 	// SetApprovalKey gives a session its approval key, once
 	// (kiff/tafs#233). A session that has one is ErrApprovalKeySet,
 	// with the session as stored; an unknown, revoked or expired one is
@@ -327,4 +332,57 @@ func (s *MemoryDeveloperSessionStore) SetApprovalKey(_ context.Context, id strin
 	}
 	s.byID[id] = sess
 	return sess, nil
+}
+
+// TenantOf returns the account a session is on, revoked or not.
+// ErrDevSessionNotFound when the id is unknown. (TestTenantGuard reads it
+// before a session's approval key changes.)
+func (s *MemoryDeveloperSessionStore) TenantOf(_ context.Context, id string) (string, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	sess, ok := s.byID[id]
+	if !ok {
+		return "", ErrDevSessionNotFound
+	}
+	return sess.Tenant, nil
+}
+
+// SessionApprovalKey is a live session's approval key, with the device that
+// signed the session in ("" for a session with no device).
+type SessionApprovalKey struct {
+	DeviceID string
+	Key      []byte
+}
+
+// ApprovalKeysInTenant returns the approval keys of an account's sessions
+// that aren't revoked or expired, each with its device: what the proofs'
+// check reads beside the devices and passkeys (a test tenant may hold only
+// proof test keys). Whether the device is live is the check's to say, as
+// the middleware's: a session of a revoked device signs nothing.
+func (s *MemoryDeveloperSessionStore) ApprovalKeysInTenant(_ context.Context, tenant string, now time.Time) ([]SessionApprovalKey, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	var keys []SessionApprovalKey
+	for _, sess := range s.byID {
+		if sess.Tenant == tenant && len(sess.ApprovalPublicKey) > 0 && !sess.IsRevoked() && !sess.IsExpired(now) {
+			keys = append(keys, SessionApprovalKey{DeviceID: sess.DeviceID, Key: append([]byte(nil), sess.ApprovalPublicKey...)})
+		}
+	}
+	return keys, nil
+}
+
+func (s *MemoryDeveloperSessionStore) RevokeForDevice(_ context.Context, deviceID string, at time.Time) error {
+	if deviceID == "" {
+		return nil
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for id, sess := range s.byID {
+		if sess.DeviceID == deviceID && !sess.IsRevoked() {
+			t := at
+			sess.RevokedAt = &t
+			s.byID[id] = sess
+		}
+	}
+	return nil
 }

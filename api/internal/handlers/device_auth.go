@@ -891,6 +891,9 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 			case errors.Is(ierr, auth.ErrDeviceDuplicate):
 				// Another sign-in of this key kept it first: that's the device.
 				existing, err = h.devices.FindByKey(r.Context(), id.Tenant, id.Subject, deviceKey)
+			case errors.Is(ierr, auth.ErrTestTenantKey):
+				writeTestTenantKey(w, ierr)
+				return mintedSession{}, false
 			default:
 				h.logger.ErrorContext(r.Context(), "device approve: insert device failed",
 					slog.String("tenant", id.Tenant), slog.String("err", ierr.Error()))
@@ -937,6 +940,10 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 	}
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
 		h.revokeDevice(r, created, now)
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			writeTestTenantKey(w, err)
+			return mintedSession{}, false
+		}
 		h.logger.ErrorContext(r.Context(), "device approve: insert session failed",
 			slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not persist developer session"})
@@ -1097,6 +1104,9 @@ func (h *DeviceAuthHandler) approvalKey(w http.ResponseWriter, r *http.Request) 
 		h.closeWindows(r, auth.WindowMatch{Session: id.DeviceSessionID}, auth.WindowClosedByKeyChange)
 	}
 	switch {
+	case errors.Is(err, auth.ErrTestTenantKey):
+		writeTestTenantKey(w, err)
+		return
 	case errors.Is(err, auth.ErrApprovalKeySet):
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "approval_key_set",
 			"detail": "this session has an approval key; sign in again to use another", "fingerprint": auth.DeviceKeyFingerprint(sess.ApprovalPublicKey)})
@@ -1659,13 +1669,19 @@ func removalApproved(w http.ResponseWriter, r *http.Request, id auth.Identity) b
 }
 
 // revokeDevice removes a device a failed or undone sign-in created, or one
-// whose session was removed. Best-effort: "" or no store does nothing.
+// whose session was removed, and every other session it signed in, as
+// deleteDevice does: the device first, so from then on none of its sessions
+// verifies (the middleware), then the sessions, so none still reads as live.
+// Best-effort: "" or no store does nothing.
 func (h *DeviceAuthHandler) revokeDevice(r *http.Request, deviceID string, now time.Time) {
 	if deviceID == "" || h.devices == nil {
 		return
 	}
 	if err := h.devices.Revoke(r.Context(), deviceID, now); err != nil && !errors.Is(err, auth.ErrDeviceNotFound) {
 		h.logger.WarnContext(r.Context(), "device: revoke failed", slog.String("device", deviceID), slog.String("err", err.Error()))
+	}
+	if err := h.sessions.RevokeForDevice(r.Context(), deviceID, now); err != nil {
+		h.logger.WarnContext(r.Context(), "device: its sessions not revoked", slog.String("device", deviceID), slog.String("err", err.Error()))
 	}
 	h.revokePasskeys(r, deviceID, now)
 	h.closeWindows(r, auth.WindowMatch{Device: deviceID}, auth.WindowClosedByRevoked)
@@ -1680,4 +1696,17 @@ func (h *DeviceAuthHandler) revokePasskeys(r *http.Request, deviceID string, now
 	if err := h.passkeys.RevokeForDevice(r.Context(), deviceID, now); err != nil {
 		h.logger.WarnContext(r.Context(), "device: its passkeys not removed", slog.String("device", deviceID), slog.String("err", err.Error()))
 	}
+}
+
+// writeTestTenantKey answers 409 test_tenant_key: the account is a test
+// account, and this key isn't one of the test keys (auth.TestTenantGuard).
+// It names this key's fingerprint, so the owner can add it, and no other.
+func writeTestTenantKey(w http.ResponseWriter, err error) {
+	body := map[string]string{"error": "test_tenant_key",
+		"message": "this account is a test account: add this key to the test keys first"}
+	var e *auth.TestTenantKeyError
+	if errors.As(err, &e) {
+		body["fingerprint"] = e.Fingerprint
+	}
+	writeJSON(w, http.StatusConflict, body)
 }

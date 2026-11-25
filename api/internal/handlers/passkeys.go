@@ -108,6 +108,9 @@ func (h *DeviceAuthHandler) registerPasskey(w http.ResponseWriter, r *http.Reque
 	case errors.Is(err, auth.ErrPasskeyDuplicate):
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "passkey_registered", "message": "this passkey is already registered on the account"})
 		return
+	case errors.Is(err, auth.ErrTestTenantKey):
+		writeTestTenantKey(w, err)
+		return
 	case err != nil:
 		h.logger.ErrorContext(r.Context(), "passkeys: register failed", slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not register the passkey"})

@@ -571,6 +571,14 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		h.logger.ErrorContext(r.Context(), "pairing: "+what+" failed", slog.String("tenant", p.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not finish pairing; claim again"})
 	}
+	// A key the account can't take (a test account's, auth.TestTenantGuard): undone as a failure is, and said as 409.
+	refuse := func(err error, device string) {
+		h.revokeDevice(r, device, now)
+		if uerr := h.pairings.Unclaim(r.Context(), p.ID); uerr != nil {
+			h.logger.WarnContext(r.Context(), "pairing: unclaim failed", slog.String("pairing", p.ID), slog.String("err", uerr.Error()))
+		}
+		writeTestTenantKey(w, err)
+	}
 	// A software-keyed computer is a view device: it approves nothing, and
 	// doesn't count as one that approves. One that paired its security key
 	// approves with that key alone (auth.Identity.SoftwareKeyPasskey).
@@ -580,6 +588,10 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		Platform: p.Platform, Kind: pairedKind(p), PublicKey: p.PublicKey, HasApprovalKey: !view && (len(p.ApprovalKey) > 0 || passkey),
 		KeyStore: p.KeyStore, CreatedAt: now}
 	if err := h.devices.Insert(r.Context(), device); err != nil {
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			refuse(err, "")
+			return
+		}
 		fail("insert device", err, "")
 		return
 	}
@@ -600,6 +612,10 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		key := auth.StoredPasskey{Passkey: auth.Passkey{ID: p.CredentialID, Tenant: p.Tenant, PublicKey: p.CredentialKey},
 			Subject: p.Subject, DeviceID: device.ID, CreatedAt: now}
 		if err := h.passkeys.Insert(r.Context(), key); err != nil {
+			if errors.Is(err, auth.ErrTestTenantKey) {
+				refuse(err, device.ID)
+				return
+			}
 			fail("register passkey", err, device.ID)
 			return
 		}
@@ -626,6 +642,10 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		ApprovalMode: mode,
 	}
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			refuse(err, device.ID)
+			return
+		}
 		fail("insert session", err, device.ID)
 		return
 	}

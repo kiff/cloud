@@ -301,3 +301,59 @@ func (s *PostgresDeveloperSessionStore) SetApprovalKey(ctx context.Context, id s
 	}
 	return sess, ErrApprovalKeySet
 }
+
+const sqlSelectDevSessionTenant = `
+SELECT tenant_id FROM cloud_meta.developer_sessions WHERE id = $1
+`
+
+const sqlSelectApprovalKeysInTenant = `
+SELECT COALESCE(device_id, ''), approval_public_key FROM cloud_meta.developer_sessions
+WHERE tenant_id = $1 AND approval_public_key IS NOT NULL AND revoked_at IS NULL AND expires_at > $2
+`
+
+const sqlRevokeDevSessionsForDevice = `
+UPDATE cloud_meta.developer_sessions SET revoked_at = $2 WHERE device_id = $1 AND revoked_at IS NULL
+`
+
+// TenantOf returns the account a session is on, revoked or not.
+// ErrDevSessionNotFound when the id is unknown.
+func (s *PostgresDeveloperSessionStore) TenantOf(ctx context.Context, id string) (string, error) {
+	var tenant string
+	err := s.pool.QueryRow(ctx, sqlSelectDevSessionTenant, id).Scan(&tenant)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", ErrDevSessionNotFound
+	}
+	if err != nil {
+		return "", fmt.Errorf("read developer session tenant: %w", err)
+	}
+	return tenant, nil
+}
+
+// ApprovalKeysInTenant returns the approval keys of an account's sessions
+// that aren't revoked or expired, each with its device.
+func (s *PostgresDeveloperSessionStore) ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([]SessionApprovalKey, error) {
+	rows, err := s.pool.Query(ctx, sqlSelectApprovalKeysInTenant, tenant, now.UTC())
+	if err != nil {
+		return nil, fmt.Errorf("list approval keys: %w", err)
+	}
+	defer rows.Close()
+	var keys []SessionApprovalKey
+	for rows.Next() {
+		var k SessionApprovalKey
+		if err := rows.Scan(&k.DeviceID, &k.Key); err != nil {
+			return nil, fmt.Errorf("scan approval key: %w", err)
+		}
+		keys = append(keys, k)
+	}
+	return keys, rows.Err()
+}
+
+func (s *PostgresDeveloperSessionStore) RevokeForDevice(ctx context.Context, deviceID string, at time.Time) error {
+	if deviceID == "" {
+		return nil
+	}
+	if _, err := s.pool.Exec(ctx, sqlRevokeDevSessionsForDevice, deviceID, at.UTC()); err != nil {
+		return fmt.Errorf("revoke a device's sessions: %w", err)
+	}
+	return nil
+}

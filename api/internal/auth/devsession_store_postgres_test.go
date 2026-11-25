@@ -230,3 +230,87 @@ func TestPostgresDeveloperSessionStore_ReplaceApprovalKey(t *testing.T) {
 		t.Fatalf("an unknown session: %v", err)
 	}
 }
+
+// A session says its account (TenantOf), and an account's live sessions say
+// their approval keys (ApprovalKeysInTenant): what TestTenantGuard and the
+// proofs' check read. Revoked and expired sessions' keys don't count.
+func TestPostgresDeveloperSessionStore_TenantAndApprovalKeys(t *testing.T) {
+	pool := requirePostgres(t)
+	if err := auth.ApplyDeveloperSessionsSchema(context.Background(), pool); err != nil {
+		t.Fatalf("ApplyDeveloperSessionsSchema: %v", err)
+	}
+	truncateDevSessions(t, pool)
+	tenantID := tenant.NewID()
+	seedTenant(t, pool, tenantID)
+	store := auth.NewPostgresDeveloperSessionStore(pool)
+	ctx := context.Background()
+	now := time.Now().UTC().Truncate(time.Second)
+
+	add := func(id string, approval []byte, expires time.Time) {
+		t.Helper()
+		gen, _ := auth.NewDevSessionToken()
+		if err := store.Insert(ctx, auth.DeveloperSession{ID: id, Subject: "human-1", Tenant: tenantID, TokenHash: gen.Hash,
+			CreatedAt: now, ExpiresAt: expires, DevicePublicKey: []byte{1}, ApprovalPublicKey: approval}); err != nil {
+			t.Fatalf("insert %s: %v", id, err)
+		}
+	}
+	add("live-"+tenantID, []byte{2}, now.Add(time.Hour))
+	add("none-"+tenantID, nil, now.Add(time.Hour))
+	add("expired-"+tenantID, []byte{3}, now.Add(-time.Minute))
+	add("revoked-"+tenantID, []byte{4}, now.Add(time.Hour))
+	if err := store.Revoke(ctx, "revoked-"+tenantID, now); err != nil {
+		t.Fatal(err)
+	}
+
+	if got, err := store.TenantOf(ctx, "revoked-"+tenantID); err != nil || got != tenantID {
+		t.Fatalf("a session's account: %q %v", got, err)
+	}
+	if _, err := store.TenantOf(ctx, "nobody"); !errors.Is(err, auth.ErrDevSessionNotFound) {
+		t.Fatalf("an unknown session: %v", err)
+	}
+	keys, err := store.ApprovalKeysInTenant(ctx, tenantID, now)
+	if err != nil || len(keys) != 1 || string(keys[0].Key) != "\x02" {
+		t.Fatalf("the live approval keys: %v %v", keys, err)
+	}
+
+	// A device's sessions end with it; another device's and a session with no device stay.
+	// Sessions name real devices: developer_sessions.device_id is a foreign key.
+	if err := auth.ApplyDevicesSchema(ctx, pool); err != nil {
+		t.Fatalf("ApplyDevicesSchema: %v", err)
+	}
+	devices := auth.NewPostgresDeviceStore(pool)
+	devA, devB := auth.NewDeviceID(), auth.NewDeviceID()
+	for _, id := range []string{devA, devB} {
+		if err := devices.Insert(ctx, auth.ApprovalDevice{ID: id, Tenant: tenantID, Subject: "human-1", Name: "tafs on iPad", Platform: "ios",
+			PublicKey: p256(t), CreatedAt: now}); err != nil {
+			t.Fatalf("insert device %s: %v", id, err)
+		}
+	}
+	addDev := addDeviceSession(t, store, tenantID, now)
+	addDev("dev-a1-"+tenantID, devA, []byte{5})
+	addDev("dev-a2-"+tenantID, devA, []byte{6})
+	addDev("dev-b-"+tenantID, devB, []byte{7})
+	if err := store.RevokeForDevice(ctx, devA, now); err != nil {
+		t.Fatal(err)
+	}
+	keys, _ = store.ApprovalKeysInTenant(ctx, tenantID, now)
+	got := map[string]string{}
+	for _, k := range keys {
+		got[string(k.Key)] = k.DeviceID
+	}
+	if len(got) != 2 || got["\x02"] != "" || got["\x07"] != devB {
+		t.Fatalf("after the first device's revoke: %v", got)
+	}
+}
+
+// addDeviceSession returns a func that adds a live session signed in by device, with an approval key.
+func addDeviceSession(t *testing.T, store *auth.PostgresDeveloperSessionStore, tenantID string, now time.Time) func(id, device string, approval []byte) {
+	return func(id, device string, approval []byte) {
+		t.Helper()
+		gen, _ := auth.NewDevSessionToken()
+		if err := store.Insert(context.Background(), auth.DeveloperSession{ID: id, Subject: "human-1", Tenant: tenantID, TokenHash: gen.Hash,
+			CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}, DeviceID: device, ApprovalPublicKey: approval}); err != nil {
+			t.Fatalf("insert %s: %v", id, err)
+		}
+	}
+}
