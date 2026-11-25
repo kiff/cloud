@@ -204,8 +204,9 @@ public_text() { # [paths...]
 }
 printf '==> public text says the rule, not who set it\n'
 probe="$(mktemp)"
-printf '%s\n' "// as decided on kiff/work, owner's 22 Nov" "// $(printf 'qa%skiff' -)" > "$probe"
-if [[ "$(public_text "$probe" | grep -c "^$probe:")" -ne 2 ]]; then
+printf '%s\n' "// as decided on kiff/work, owner's 22 Nov" "// $(printf 'qa%skiff' -)" "// $(printf 'The P%s said so' M)" \
+	"// $(printf 'P%s: merge it' M)" "// doors open at 4:30 PM: bring a badge" > "$probe"
+if [[ "$(public_text "$probe" | grep -c "^$probe:")" -ne 4 ]]; then
 	echo "the public-text check missed a planted line"
 	failed+=("public text")
 fi

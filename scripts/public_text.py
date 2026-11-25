@@ -22,7 +22,9 @@ LOGINS = set("""
 OWNERS = ".github/CODEOWNERS"
 MONTH = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
 SAID = re.compile(
-    r"kiff/work\b|\bthe PM\b|\bPM's\b|\(PM[ ,)]|\bPM [0-9]{1,2}:[0-9]{2}"
+    r"kiff/work\b|\b(?i:the) PM\b|\bPM's\b|\(PM[ ,)]|\bPM,? [0-9]{1,2}:[0-9]{2}"
+    # "PM:" opening a line's say-so, never a time's "4:30 PM:".
+    r"|(?<![0-9] )\bPM:"
     r"|\b(review|probe|ask|point|negatives|read) (on|of)( [A-Za-z0-9/_.-]*#[0-9]+)?\)"
     rf"|\bowner(?:'s|,) [0-9]{{1,2}} {MONTH}\b"
     # A status line's own words: a hand-off (the all-caps word with an arrow) or a board's line.
