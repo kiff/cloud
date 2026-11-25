@@ -194,6 +194,9 @@ func (f *fakeAPI) Me(_ context.Context, key string) (kiffapi.Me, error) {
 	case "down-key":
 		// apps/api couldn't say: its database down.
 		return kiffapi.Me{}, errors.Join(kiffapi.ErrUnavailable, errors.New("kiffapi: 503: service unavailable"))
+	case "restricted-key":
+		// apps/api knows the key and refuses it here: its 403.
+		return kiffapi.Me{}, errors.Join(kiffapi.ErrForbidden, errors.New("kiffapi: 403: key_restricted"))
 	}
 	return kiffapi.Me{}, kiffapi.ErrUnauthorized
 }
@@ -1308,6 +1311,10 @@ func TestAKeyKIFFCantCheckIsUnavailable(t *testing.T) {
 	}
 	if resp := initialize("revoked-key"); resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("a refused key: %d", resp.StatusCode)
+	}
+	// A key KIFF refuses here (its 403) is 403, never the 401 that reads as a key that's gone, and not "try again".
+	if resp := initialize("restricted-key"); resp.StatusCode != http.StatusForbidden || resp.Header.Get("WWW-Authenticate") != "" || resp.Header.Get("Retry-After") != "" {
+		t.Fatalf("a key refused here: %d, WWW-Authenticate %q, Retry-After %q", resp.StatusCode, resp.Header.Get("WWW-Authenticate"), resp.Header.Get("Retry-After"))
 	}
 	if resp := initialize("agent-key"); resp.StatusCode != http.StatusOK {
 		t.Fatalf("a live key: %d", resp.StatusCode)
