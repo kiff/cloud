@@ -216,6 +216,11 @@ const RoleGatewayAgent = "gateway_agent"
 // key to the gateway's routes. Its calls are never billed (meter.FreeSetup).
 const RoleSetupReader = "setup_reader"
 
+// SetupAgentID is the agent id every app gives the account's Setup (Coach)
+// in its drafts. A key minted from a draft for it is Setup's, so it carries
+// RoleSetupReader, never RoleGatewayAgent, whatever Cards the draft holds.
+const SetupAgentID = "setup"
+
 func oauthForbidden(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusForbidden)

@@ -2441,6 +2441,15 @@ func openPool(ctx context.Context, url string, logger *slog.Logger) (*pgxpool.Po
 	} else if n > 0 {
 		logger.Info("setup_reader backfill", slog.Int64("keys", n))
 	}
+	repaired, err := auth.RepairSetupKeys(dialCtx, pool)
+	if err != nil {
+		pool.Close()
+		return nil, nil, err
+	}
+	for _, k := range repaired {
+		logger.Info("setup key narrowed to setup_reader",
+			slog.String("tenant_id", k.Tenant), slog.String("key_id", k.KeyID), slog.String("agent_id", k.AgentID))
+	}
 	if err := auth.ApplyDeveloperSessionsSchema(dialCtx, pool); err != nil {
 		pool.Close()
 		return nil, nil, fmt.Errorf("apply developer_sessions: %w", err)

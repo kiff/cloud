@@ -64,6 +64,54 @@ func BackfillSetupReader(ctx context.Context, pool *pgxpool.Pool) (int64, error)
 	return tag.RowsAffected(), nil
 }
 
+// RepairedSetupKey is a Setup key RepairSetupKeys narrowed.
+type RepairedSetupKey struct {
+	Tenant, KeyID, AgentID string
+}
+
+// RepairSetupKeys narrows to exactly RoleSetupReader the live keys of the
+// account's Setup (Coach) that were minted RoleGatewayAgent from a draft of
+// Setup's own Cards (kiff/tafs#852), which kept Setup to the gateway's
+// routes, refused its own drafts. A key is repaired only when all hold:
+//   - its roles are exactly [RoleGatewayAgent], and it is live;
+//   - a draft names it (agent_drafts.key_id) for the key's own agent, so an
+//     OAuth grant's key, which no draft names, is never touched;
+//   - that agent is Setup's: SetupAgentID, or one a live RoleSetupReader
+//     key is already bound to.
+//
+// A taf's own key is untouched. Idempotent; it answers the keys it changed.
+func RepairSetupKeys(ctx context.Context, pool *pgxpool.Pool) ([]RepairedSetupKey, error) {
+	var drafts bool
+	if err := pool.QueryRow(ctx, `SELECT to_regclass('cloud_meta.agent_drafts') IS NOT NULL`).Scan(&drafts); err != nil {
+		return nil, fmt.Errorf("repair setup keys: %w", err)
+	}
+	if !drafts {
+		return nil, nil
+	}
+	rows, err := pool.Query(ctx, `UPDATE cloud_meta.api_keys k SET roles = $1::jsonb
+		WHERE k.roles = $2::jsonb AND k.agent_id <> '' AND k.revoked_at IS NULL
+		  AND EXISTS (SELECT 1 FROM cloud_meta.agent_drafts d
+		              WHERE d.tenant_id = k.tenant_id AND d.key_id = k.id AND d.agent_id = k.agent_id)
+		  AND (k.agent_id = $3
+		       OR EXISTS (SELECT 1 FROM cloud_meta.api_keys s
+		                  WHERE s.tenant_id = k.tenant_id AND s.agent_id = k.agent_id AND s.id <> k.id
+		                    AND s.revoked_at IS NULL AND s.roles @> $1::jsonb))
+		RETURNING k.tenant_id, k.id, k.agent_id`,
+		`["`+RoleSetupReader+`"]`, `["`+RoleGatewayAgent+`"]`, SetupAgentID)
+	if err != nil {
+		return nil, fmt.Errorf("repair setup keys: %w", err)
+	}
+	out, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (RepairedSetupKey, error) {
+		var k RepairedSetupKey
+		err := row.Scan(&k.Tenant, &k.KeyID, &k.AgentID)
+		return k, err
+	})
+	if err != nil {
+		return nil, fmt.Errorf("repair setup keys: %w", err)
+	}
+	return out, nil
+}
+
 // APIKeyRecord is the persisted shape of an API key. The plaintext
 // key is never on this struct — only the hash. Issued once at
 // creation through GeneratedAPIKey.Plaintext, then forgotten.
