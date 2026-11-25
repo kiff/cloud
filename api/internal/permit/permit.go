@@ -48,6 +48,11 @@ type Detail struct {
 	// tool that must never run without its owner refuses a permit without
 	// one.
 	Approval string `json:"approval,omitempty"`
+	// Run is the run that made the call, as the agent's runtime named it
+	// (the gateway's KIFF-Run): a tool can tell which run asked. KIFF
+	// signs what the agent's own key sent and checks only its form; it
+	// authorizes nothing. Absent when the call named no run.
+	Run string `json:"run,omitempty"`
 }
 
 // Claims are the permit's JWT claims.

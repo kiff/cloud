@@ -160,10 +160,11 @@ func (i *Issuer) Bind(ctx context.Context, tenantID, op string, b Binding) (Bind
 
 // Mint signs the operation's one permit from its stored binding. minted
 // is false, with no token, when the operation already has its permit. act
-// is the person the call is for, from its run grant; "" for none.
+// is the person the call is for, from its run grant; "" for none. run is
+// the run that made the call, from its KIFF-Run; "" for none.
 // approval is the held call the owner approved, when that approval is what
 // authorizes this one; "" when a Card's room did.
-func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card, act, approval string, b Binding) (token string, minted bool, err error) {
+func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card, act, run, approval string, b Binding) (token string, minted bool, err error) {
 	life := i.Lifetime
 	if life <= 0 {
 		life = DefaultLifetime
@@ -175,7 +176,7 @@ func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card, act, approva
 	c := Claims{
 		Iss: i.Iss, Aud: b.Audience, Sub: sub, Iat: now.Unix(), Exp: now.Add(life).Unix(), Jti: NewJTI(),
 		Details: []Detail{{Type: DetailType, Tenant: tenantID, Tool: b.Tool, ArgsSHA256: b.ArgsSHA256,
-			Op: op, Card: card, Decision: op, Approval: approval}},
+			Op: op, Card: card, Decision: op, Approval: approval, Run: run}},
 	}
 	if act != "" {
 		c.Act = &Actor{Sub: act}

@@ -13,3 +13,10 @@ package gateway
 
 // RunGrantHeader carries a person's run grant.
 const RunGrantHeader = "KIFF-Run-Grant"
+
+// AgentRunHeader carries the run, as the agent's runtime keeps it, that
+// makes the call. The gateway passes it to KIFF with each call it asks
+// KIFF to decide, and KIFF signs it into the call's permit as "run", so
+// the tool can tell which run asked. It authorizes nothing: a call
+// without one is decided as before, and its permit names no run.
+const AgentRunHeader = "KIFF-Run"

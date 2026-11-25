@@ -236,7 +236,7 @@ func (h *ProposalsHandler) mintPermit(ctx context.Context, id auth.Identity, pro
 	if len(cov.ids) > 0 {
 		card = cov.ids[0]
 	}
-	tok, minted, err := h.permits.Mint(ctx, id.Tenant, prop.ActorID, prop.ID, card, runGrantSubjectOf(ctx), cov.approval, b)
+	tok, minted, err := h.permits.Mint(ctx, id.Tenant, prop.ActorID, prop.ID, card, runGrantSubjectOf(ctx), agentRunOf(ctx), cov.approval, b)
 	switch {
 	case err != nil:
 		h.logger.ErrorContext(ctx, "proposals: permit not minted",
@@ -257,4 +257,34 @@ func timePtr(t time.Time) *time.Time {
 		return nil
 	}
 	return &t
+}
+
+type agentRunKey struct{}
+
+// withAgentRun marks ctx as deciding a call made by run, as the call's
+// KIFF-Run header said.
+func withAgentRun(ctx context.Context, run string) context.Context {
+	return context.WithValue(ctx, agentRunKey{}, run)
+}
+
+// agentRunOf is the run ctx decides a call of, or "".
+func agentRunOf(ctx context.Context) string {
+	s, _ := ctx.Value(agentRunKey{}).(string)
+	return s
+}
+
+// validAgentRun reports whether run has the form a run id takes: 1 to 128
+// letters, digits and . _ : -. Anything else is refused, never signed.
+func validAgentRun(run string) bool {
+	if len(run) == 0 || len(run) > 128 {
+		return false
+	}
+	for _, c := range run {
+		switch {
+		case c >= 'a' && c <= 'z', c >= 'A' && c <= 'Z', c >= '0' && c <= '9', c == '.', c == '_', c == ':', c == '-':
+		default:
+			return false
+		}
+	}
+	return true
 }
