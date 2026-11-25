@@ -1106,8 +1106,15 @@ func run() error {
 	// The test tenants must be KIFF's own accounts (plan internal) holding
 	// only proof test keys: any other id keeps the ingest unmounted and the
 	// test keys refused there.
-	proofTenants := vetProofTestTenants(ctx, proofTenantStores{tenants: tenantStore, devices: deviceStore, passkeys: passkeys},
+	proofTenants := vetProofTestTenants(ctx, proofTenantStores{tenants: tenantStore, devices: deviceStore, passkeys: passkeys, sessions: devSessionStore},
 		proofTestKeys, splitList(os.Getenv(envProofTestTenants)), logger)
+	// A test tenant holds only test keys: no device or passkey that isn't one
+	// joins it, by any path (409 test_tenant_key), so it never stops being a
+	// test account. Every handler takes the stores from here on.
+	testTenantGuard := proofTestTenantGuard(tenantStore, proofTestKeys, splitList(os.Getenv(envProofTestTenants)))
+	deviceStore = auth.GuardDevices(deviceStore, testTenantGuard)
+	passkeys = auth.GuardPasskeys(passkeys, testTenantGuard)
+	devSessionStore = auth.GuardSessions(devSessionStore, testTenantGuard)
 
 	// Customer email notifications. The owner-email resolver
 	// maps tenant → owner subject (Postgres) → email (Clerk, never
@@ -3584,6 +3591,15 @@ type proofTenantStores struct {
 	tenants  tenant.Store
 	devices  auth.DeviceStore
 	passkeys auth.PasskeyStore
+	// sessions, when set, says its sessions' approval keys, which count as
+	// the devices' and passkeys' do (sessionApprovalKeys).
+	sessions auth.DeveloperSessionStore
+}
+
+// sessionApprovalKeys is what the proofs' check reads of the sessions: their
+// live approval keys on an account.
+type sessionApprovalKeys interface {
+	ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error)
 }
 
 // vetProofTestTenants keeps the test tenants that are KIFF's own accounts
@@ -3640,11 +3656,48 @@ func proofTestTenantCheck(stores proofTenantStores, keys proofs.TestKeys) proofs
 		for _, p := range passkeys {
 			registered = append(registered, p.PublicKey)
 		}
+		// A session's approval key signs approvals as a device's key does, so it
+		// counts too: a test tenant holds only test keys, whichever key signs.
+		if stores.sessions != nil {
+			lister, ok := stores.sessions.(sessionApprovalKeys)
+			if !ok {
+				return "", errors.New("the session store can't list approval keys")
+			}
+			approval, err := lister.ApprovalKeysInTenant(ctx, id, time.Now())
+			if err != nil {
+				return "", err
+			}
+			registered = append(registered, approval...)
+		}
 		if !keys.OnlyTestKeys(registered) {
 			return proofs.RefusedDevices, nil
 		}
 		return "", nil
 	}
+}
+
+// proofTestTenantGuard holds the listed test tenants that are KIFF's own
+// accounts (plan internal) to KIFF_PROOF_TEST_KEYS: the boot check's rule,
+// kept as keys are added rather than found broken at use. Nil (nothing held)
+// when no test key is listed, as proofKeyRestriction.
+func proofTestTenantGuard(tenants tenant.Store, keys proofs.TestKeys, ids []string) *auth.TestTenantGuard {
+	if keys.Empty() {
+		return nil
+	}
+	g := auth.NewTestTenantGuard(ids, keys.Has)
+	if tenants == nil {
+		return g
+	}
+	return g.WithOwn(func(ctx context.Context, id string) (bool, error) {
+		t, err := tenants.Get(ctx, id)
+		if errors.Is(err, tenant.ErrNotFound) {
+			return false, nil
+		}
+		if err != nil {
+			return false, err
+		}
+		return tenant.PlanFor(t).Canonical == tenant.PlanInternal, nil
+	})
 }
 
 // proofKeyRestriction keeps KIFF_PROOF_TEST_KEYS to the vetted test
@@ -3656,7 +3709,7 @@ func proofKeyRestriction(deps routerDeps) *auth.KeyRestriction {
 		return nil
 	}
 	return auth.NewKeyRestriction(deps.proofTestKeys.Has, deps.proofTestTenants).
-		WithUseCheck(proofUseCheck(proofTenantStores{tenants: deps.tenantStore, devices: deps.deviceStore, passkeys: deps.passkeys},
+		WithUseCheck(proofUseCheck(proofTenantStores{tenants: deps.tenantStore, devices: deps.deviceStore, passkeys: deps.passkeys, sessions: deps.devSessionStore},
 			deps.proofTestKeys, deps.logger))
 }
 

@@ -276,3 +276,26 @@ func TestTheProofBootLineNeverShowsAToken(t *testing.T) {
 		}
 	}
 }
+
+// A session's approval key signs approvals as a device's key does, so it
+// counts too: a test tenant whose devices are all test keys but where a
+// session holds a person's security key as its approval key is refused.
+func TestAnApprovalKeyThatIsntATestKeyRefusesTheTestTenant(t *testing.T) {
+	f := newProofFixture(t)
+	sessions := auth.NewMemoryDeveloperSessionStore()
+	f.stores.sessions = sessions
+	id := f.tenant(t, string(tenant.PlanInternal))
+	f.device(t, id, "proof-runner", f.testKey)
+	if vet := f.vet(id); strings.Join(vet.own, ",") != id {
+		t.Fatalf("before any approval key: %+v", vet)
+	}
+	other, _ := newKey(t)
+	if err := sessions.Insert(context.Background(), auth.DeveloperSession{ID: "sess-1", Tenant: id, Subject: "the-owner",
+		TokenHash: [32]byte{1}, CreatedAt: time.Now(), ExpiresAt: time.Now().Add(time.Hour), DevicePublicKey: f.testKey,
+		ApprovalPublicKey: other}); err != nil {
+		t.Fatal(err)
+	}
+	if vet := f.vet(id); len(vet.own) != 0 || refusedWhy(vet, id) != proofs.RefusedDevices {
+		t.Fatalf("with a person's approval key: %+v, want refused for its keys", vet)
+	}
+}

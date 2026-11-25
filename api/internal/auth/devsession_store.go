@@ -328,3 +328,31 @@ func (s *MemoryDeveloperSessionStore) SetApprovalKey(_ context.Context, id strin
 	s.byID[id] = sess
 	return sess, nil
 }
+
+// TenantOf returns the account a session is on, revoked or not.
+// ErrDevSessionNotFound when the id is unknown. (TestTenantGuard reads it
+// before a session's approval key changes.)
+func (s *MemoryDeveloperSessionStore) TenantOf(_ context.Context, id string) (string, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	sess, ok := s.byID[id]
+	if !ok {
+		return "", ErrDevSessionNotFound
+	}
+	return sess.Tenant, nil
+}
+
+// ApprovalKeysInTenant returns the approval keys of an account's sessions
+// that aren't revoked or expired: what the proofs' check reads beside the
+// devices and passkeys (a test tenant may hold only proof test keys).
+func (s *MemoryDeveloperSessionStore) ApprovalKeysInTenant(_ context.Context, tenant string, now time.Time) ([][]byte, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	var keys [][]byte
+	for _, sess := range s.byID {
+		if sess.Tenant == tenant && len(sess.ApprovalPublicKey) > 0 && !sess.IsRevoked() && !sess.IsExpired(now) {
+			keys = append(keys, append([]byte(nil), sess.ApprovalPublicKey...))
+		}
+	}
+	return keys, nil
+}
