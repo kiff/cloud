@@ -39,6 +39,11 @@ var ErrUnauthorized = errors.New("kiffapi: key refused")
 // the key is valid (a 5xx, its database down). Not the key's fault.
 var ErrUnavailable = errors.New("kiffapi: KIFF is unavailable")
 
+// ErrForbidden: apps/api knows the key and refuses it here (a 403: a
+// restricted key, a connector key). It is KIFF's answer, so not
+// ErrUnavailable, and not ErrUnauthorized: the key itself isn't gone.
+var ErrForbidden = errors.New("kiffapi: KIFF refuses this key here")
+
 // ErrNoSuchAgent: the account has no agent by the id named.
 var ErrNoSuchAgent = errors.New("kiffapi: no such agent on the account")
 
@@ -337,7 +342,12 @@ func DeviceGrantFrom(ctx context.Context) string {
 	return g
 }
 
-// Me resolves the key.
+// Me resolves the key. Only apps/api's own 401 is ErrUnauthorized, a refused
+// key, and its 403 ErrForbidden, the key refused here. Every other answer
+// says nothing about the key (a 5xx, a timeout, a throttle, a route missing
+// mid-deploy, a body that isn't the identity, or no answer): it is
+// ErrUnavailable, which the gateway answers 503 to try again. Read as a
+// refused key, it would end a caller's paused run whose key is fine.
 func (c *Client) Me(ctx context.Context, key string) (Me, error) {
 	status, raw, err := c.do(ctx, key, http.MethodGet, "/v1/me", nil)
 	if err != nil {
@@ -346,15 +356,15 @@ func (c *Client) Me(ctx context.Context, key string) (Me, error) {
 		}
 		return Me{}, errors.Join(ErrUnavailable, err)
 	}
-	if status != http.StatusOK {
-		if status >= 500 {
-			return Me{}, errors.Join(ErrUnavailable, apiError(status, raw))
-		}
-		return Me{}, apiError(status, raw)
+	switch {
+	case status == http.StatusForbidden:
+		return Me{}, errors.Join(ErrForbidden, apiError(status, raw))
+	case status != http.StatusOK:
+		return Me{}, errors.Join(ErrUnavailable, apiError(status, raw))
 	}
 	var m Me
 	if err := json.Unmarshal(raw, &m); err != nil {
-		return Me{}, err
+		return Me{}, errors.Join(ErrUnavailable, fmt.Errorf("kiffapi: reading /v1/me's answer: %w", err))
 	}
 	// Only the verified API answer can enrich the request log. Never
 	// classify an unverified token from its prefix or caller headers.
