@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 )
 
 // A proof test tenant (KIFF_PROOF_TEST_TENANTS) is a test account only while
@@ -12,9 +13,10 @@ import (
 // proofUseCheck refuses its test keys from the moment another key is there.
 // TestTenantGuard keeps that from happening: a key that isn't a test key
 // never joins a test tenant, by any path. It sits on the two stores that hold
-// a tenant's keys (GuardDevices, GuardPasskeys), so a device sign-in, a
-// pairing, a view-only computer and a passkey registration all pass through
-// it, and so does any path added later.
+// a tenant's keys (GuardDevices, GuardPasskeys) and on the sessions' approval
+// keys (GuardSessions), so a device sign-in, a pairing, a view-only computer,
+// a passkey registration and an approval key's enrolment or re-link all pass
+// through it, and so does any path added later.
 //
 // The rule reads only the key being added, never the tenant's other keys, so
 // two adds at once can't race past it: each is checked on its own.
@@ -134,4 +136,83 @@ func (s guardedPasskeys) Insert(ctx context.Context, p StoredPasskey) error {
 		return err
 	}
 	return s.PasskeyStore.Insert(ctx, p)
+}
+
+// SessionTenants is what GuardSessions needs of a session store beside
+// DeveloperSessionStore: the account a session is on, read before its
+// approval key changes.
+type SessionTenants interface {
+	TenantOf(ctx context.Context, id string) (string, error)
+}
+
+// GuardSessions is store with each key a session takes checked by g first:
+// a new session's device and approval keys, and an approval key set or
+// replaced later, on the session's own account. A store that can't say a
+// session's account refuses those changes rather than let a key past. A nil
+// g returns store as it is.
+func GuardSessions(store DeveloperSessionStore, g *TestTenantGuard) DeveloperSessionStore {
+	if g == nil || store == nil {
+		return store
+	}
+	return guardedSessions{DeveloperSessionStore: store, g: g}
+}
+
+type guardedSessions struct {
+	DeveloperSessionStore
+	g *TestTenantGuard
+}
+
+func (s guardedSessions) Insert(ctx context.Context, sess DeveloperSession) error {
+	for _, k := range [][]byte{sess.DevicePublicKey, sess.ApprovalPublicKey} {
+		if err := s.g.Check(ctx, sess.Tenant, k); err != nil {
+			return err
+		}
+	}
+	return s.DeveloperSessionStore.Insert(ctx, sess)
+}
+
+func (s guardedSessions) checkSession(ctx context.Context, id string, key []byte) error {
+	tenants, ok := s.DeveloperSessionStore.(SessionTenants)
+	if !ok {
+		return errors.New("auth: the session store can't say a session's account")
+	}
+	tenant, err := tenants.TenantOf(ctx, id)
+	if err != nil {
+		return err
+	}
+	return s.g.Check(ctx, tenant, key)
+}
+
+func (s guardedSessions) SetApprovalKey(ctx context.Context, id string, key []byte, now time.Time) (DeveloperSession, error) {
+	if err := s.checkSession(ctx, id, key); err != nil {
+		return DeveloperSession{}, err
+	}
+	return s.DeveloperSessionStore.SetApprovalKey(ctx, id, key, now)
+}
+
+func (s guardedSessions) ReplaceApprovalKey(ctx context.Context, id string, key []byte, now time.Time) ([]byte, error) {
+	if err := s.checkSession(ctx, id, key); err != nil {
+		return nil, err
+	}
+	return s.DeveloperSessionStore.ReplaceApprovalKey(ctx, id, key, now)
+}
+
+// TenantOf passes through, so a guarded store still says a session's account.
+func (s guardedSessions) TenantOf(ctx context.Context, id string) (string, error) {
+	tenants, ok := s.DeveloperSessionStore.(SessionTenants)
+	if !ok {
+		return "", errors.New("auth: the session store can't say a session's account")
+	}
+	return tenants.TenantOf(ctx, id)
+}
+
+// ApprovalKeysInTenant passes through, for the proofs' check.
+func (s guardedSessions) ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error) {
+	keys, ok := s.DeveloperSessionStore.(interface {
+		ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error)
+	})
+	if !ok {
+		return nil, errors.New("auth: the session store can't list approval keys")
+	}
+	return keys.ApprovalKeysInTenant(ctx, tenant, now)
 }

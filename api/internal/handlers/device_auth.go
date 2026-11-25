@@ -940,6 +940,10 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 	}
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
 		h.revokeDevice(r, created, now)
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			writeTestTenantKey(w, err)
+			return mintedSession{}, false
+		}
 		h.logger.ErrorContext(r.Context(), "device approve: insert session failed",
 			slog.String("tenant", id.Tenant), slog.String("err", err.Error()))
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "could not persist developer session"})
@@ -1100,6 +1104,9 @@ func (h *DeviceAuthHandler) approvalKey(w http.ResponseWriter, r *http.Request) 
 		h.closeWindows(r, auth.WindowMatch{Session: id.DeviceSessionID}, auth.WindowClosedByKeyChange)
 	}
 	switch {
+	case errors.Is(err, auth.ErrTestTenantKey):
+		writeTestTenantKey(w, err)
+		return
 	case errors.Is(err, auth.ErrApprovalKeySet):
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "approval_key_set",
 			"detail": "this session has an approval key; sign in again to use another", "fingerprint": auth.DeviceKeyFingerprint(sess.ApprovalPublicKey)})

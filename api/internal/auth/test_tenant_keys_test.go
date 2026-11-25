@@ -128,3 +128,51 @@ func TestTheGuardedStoresKeepNothingRefused(t *testing.T) {
 		t.Fatal("a nil guard wraps nothing")
 	}
 }
+
+// A session takes only test keys on a test tenant: as it's made (its device
+// and approval keys), and when its approval key is set or replaced later,
+// on its own account, read from the store.
+func TestASessionOnATestTenantTakesOnlyTestKeys(t *testing.T) {
+	ctx := context.Background()
+	now := time.Date(2026, 11, 25, 5, 0, 0, 0, time.UTC)
+	inner := NewMemoryDeveloperSessionStore()
+	sessions := GuardSessions(inner, guardFor("tnt_eval"))
+	sess := DeveloperSession{ID: "sess-test", Tenant: "tnt_eval", Subject: "user_maria", TokenHash: [32]byte{1},
+		CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: testKey, ApprovalPublicKey: otherKey}
+	if err := sessions.Insert(ctx, sess); !errors.Is(err, ErrTestTenantKey) {
+		t.Fatalf("a person's approval key at sign-in: %v", err)
+	}
+	if _, err := inner.TenantOf(ctx, "sess-test"); !errors.Is(err, ErrDevSessionNotFound) {
+		t.Fatalf("kept anyway: %v", err)
+	}
+	sess.ApprovalPublicKey = nil
+	if err := sessions.Insert(ctx, sess); err != nil {
+		t.Fatalf("the test phone, with no approval key yet: %v", err)
+	}
+	if _, err := sessions.SetApprovalKey(ctx, "sess-test", otherKey, now); !errors.Is(err, ErrTestTenantKey) {
+		t.Fatalf("enrolling a person's approval key: %v", err)
+	}
+	if _, err := sessions.ReplaceApprovalKey(ctx, "sess-test", otherKey, now); !errors.Is(err, ErrTestTenantKey) {
+		t.Fatalf("re-linking to a person's approval key: %v", err)
+	}
+	if keys, _ := inner.ApprovalKeysInTenant(ctx, "tnt_eval", now); len(keys) != 0 {
+		t.Fatalf("an approval key was kept anyway: %d", len(keys))
+	}
+	// On another account, any key; the session's account is read, never assumed.
+	real := sess
+	real.ID, real.Tenant, real.TokenHash, real.DevicePublicKey = "sess-real", "tnt_real", [32]byte{2}, otherKey
+	if err := sessions.Insert(ctx, real); err != nil {
+		t.Fatalf("a session on another account: %v", err)
+	}
+	if _, err := sessions.SetApprovalKey(ctx, "sess-real", otherKey, now); err != nil {
+		t.Fatalf("an approval key on another account: %v", err)
+	}
+	if _, err := sessions.SetApprovalKey(ctx, "sess-unknown", otherKey, now); !errors.Is(err, ErrDevSessionNotFound) {
+		t.Fatalf("an unknown session: %v", err)
+	}
+	// A store that can't say a session's account refuses the change rather than let a key past.
+	blind := GuardSessions(struct{ DeveloperSessionStore }{inner}, guardFor("tnt_eval"))
+	if _, err := blind.SetApprovalKey(ctx, "sess-real", testKey, now); err == nil {
+		t.Fatal("a store that can't say the account took the key")
+	}
+}

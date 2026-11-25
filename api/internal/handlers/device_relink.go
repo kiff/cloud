@@ -219,6 +219,10 @@ func (h *DeviceAuthHandler) approveRelink(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		h.deleteLocked(p)
 		h.mu.Unlock()
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			writeTestTenantKey(w, err)
+			return
+		}
 		if errors.Is(err, auth.ErrDevSessionNotFound) {
 			// The phone signed out, or its session ended, since it asked.
 			writeJSON(w, http.StatusNotFound, map[string]string{"error": "unknown or expired code"})

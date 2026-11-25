@@ -642,6 +642,10 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		ApprovalMode: mode,
 	}
 	if err := h.sessions.Insert(r.Context(), sess); err != nil {
+		if errors.Is(err, auth.ErrTestTenantKey) {
+			refuse(err, device.ID)
+			return
+		}
 		fail("insert session", err, device.ID)
 		return
 	}
