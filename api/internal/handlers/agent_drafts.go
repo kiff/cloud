@@ -1016,10 +1016,7 @@ func (h *MandatesHandler) claimDraft(w http.ResponseWriter, r *http.Request) {
 	// read-only tool on a Card of its own (kiff/tafs#138), and act on the
 	// account's own control server as Coach (kiff/tafs#206).
 	roles := []string{auth.RoleGatewayAgent}
-	if setup, err := h.setupDraft(r.Context(), d); err != nil {
-		undo(http.StatusServiceUnavailable, "whose agent this draft is for could not be checked; try again")
-		return
-	} else if setup {
+	if setupDraft(d) {
 		roles = []string{auth.RoleSetupReader}
 	}
 	rec := auth.APIKeyRecord{ID: ulid.MustNew(ulid.Timestamp(now), ulid.DefaultEntropy()).String(), Tenant: d.TenantID,
@@ -1034,30 +1031,22 @@ func (h *MandatesHandler) claimDraft(w http.ResponseWriter, r *http.Request) {
 		"card_ids": d.CardIDs, "roles": rec.Roles})
 }
 
-// setupDraft reports whether d is a draft for the account's Setup (Coach):
-// one with no Cards (no_tools, kiff/agents#91), one for the agent id every
-// app gives Setup (auth.SetupAgentID), or one for an agent a live
-// setup_reader key is already bound to. A draft of Setup's own Cards is
-// still Setup's: a first start drafts them at once (kiff/tafs#852), and a
-// gateway key would keep Setup to the gateway's routes, refused its own
-// drafts. What its key reaches is bounded by the role, never by the Cards:
-// the gateway's contract grants setup_reader the read-only tools and the
-// control server's, never a vendor's tool that writes.
-func (h *MandatesHandler) setupDraft(ctx context.Context, d agentdrafts.D) (bool, error) {
-	var drafted []json.RawMessage
-	if json.Unmarshal(d.Cards, &drafted) == nil && len(drafted) == 0 {
-		return true, nil
-	}
+// setupDraft reports whether d's key is setup_reader: a draft with no
+// Cards (no_tools, kiff/agents#91), or any draft for the account's Setup
+// (Coach), the agent id every app gives it (auth.SetupAgentID). A draft of
+// Setup's own Cards is still Setup's: a first start drafts them at once
+// (kiff/tafs#852), and a gateway key would keep Setup to the gateway's
+// routes, refused its own drafts. What its key reaches is bounded by the
+// role, never by the Cards: the gateway's contract grants setup_reader the
+// read-only tools and the control server's, never a vendor's tool that
+// writes. Any other agent's Cards draft mints a gateway key, even one whose
+// first draft had no Cards.
+func setupDraft(d agentdrafts.D) bool {
 	if d.AgentID == auth.SetupAgentID {
-		return true, nil
+		return true
 	}
-	keys, err := h.draftKeys.ListActive(ctx, d.TenantID)
-	if err != nil {
-		return false, err
-	}
-	return slices.ContainsFunc(keys, func(k auth.APIKeyRecord) bool {
-		return k.AgentID == d.AgentID && slices.Contains(k.Roles, auth.RoleSetupReader)
-	}), nil
+	var drafted []json.RawMessage
+	return json.Unmarshal(d.Cards, &drafted) == nil && len(drafted) == 0
 }
 
 // cardRevisedMsg is a confirmation refused because a Card the draft revises

@@ -77,20 +77,18 @@ func TestSetupsCardsDraftMintsSetupsKey(t *testing.T) {
 	}
 }
 
-// Setup is known by the server's own record, never by Cards alone: an agent
-// a live setup_reader key is already bound to is Setup under any id, and
-// any other agent's Cards draft mints a gateway key, whichever tools its
-// Cards name.
+// Setup is the agent every app gives it, never an agent that only once had
+// no tools: a no-tools draft mints setup_reader for any agent, and that
+// agent's later Cards draft still mints a gateway key, so it neither runs
+// unbilled nor loses its write tools. Any other agent's Cards draft mints a
+// gateway key too, whichever tools its Cards name.
 func TestASetupKeyIsKnownByItsAgent(t *testing.T) {
 	r := newDraftRig(t)
-	_, d := r.submit(admin(), map[string]any{"agent_id": "coach-1", "label": "Setup", "no_tools": true})
+	_, d := r.submit(admin(), map[string]any{"agent_id": "nora", "label": "Nora", "no_tools": true})
 	if code, got := r.claim(d["id"].(string), d["claim_secret"].(string)); code != http.StatusOK {
 		t.Fatalf("no-tools claim: %d %v", code, got)
 	}
-	if _, roles := r.mintFrom("coach-1"); !slices.Equal(roles, []string{auth.RoleSetupReader}) {
-		t.Errorf("Setup's Cards draft under its own id: roles %v", roles)
-	}
-	for _, agent := range []string{"manager", "setup-2", "Setup"} {
+	for _, agent := range []string{"nora", "manager", "setup-2", "Setup"} {
 		if _, roles := r.mintFrom(agent); !slices.Equal(roles, []string{auth.RoleGatewayAgent}) {
 			t.Errorf("%s: roles %v, want [%s]", agent, roles, auth.RoleGatewayAgent)
 		}

@@ -76,10 +76,10 @@ type RepairedSetupKey struct {
 //   - its roles are exactly [RoleGatewayAgent], and it is live;
 //   - a draft names it (agent_drafts.key_id) for the key's own agent, so an
 //     OAuth grant's key, which no draft names, is never touched;
-//   - that agent is Setup's: SetupAgentID, or one a live RoleSetupReader
-//     key is already bound to.
+//   - that agent is Setup's, SetupAgentID.
 //
-// A taf's own key is untouched. Idempotent; it answers the keys it changed.
+// A taf's own key is untouched, even one beside a setup_reader key from its
+// first draft with no Cards. Idempotent; it answers the keys it changed.
 func RepairSetupKeys(ctx context.Context, pool *pgxpool.Pool) ([]RepairedSetupKey, error) {
 	var drafts bool
 	if err := pool.QueryRow(ctx, `SELECT to_regclass('cloud_meta.agent_drafts') IS NOT NULL`).Scan(&drafts); err != nil {
@@ -92,10 +92,7 @@ func RepairSetupKeys(ctx context.Context, pool *pgxpool.Pool) ([]RepairedSetupKe
 		WHERE k.roles = $2::jsonb AND k.agent_id <> '' AND k.revoked_at IS NULL
 		  AND EXISTS (SELECT 1 FROM cloud_meta.agent_drafts d
 		              WHERE d.tenant_id = k.tenant_id AND d.key_id = k.id AND d.agent_id = k.agent_id)
-		  AND (k.agent_id = $3
-		       OR EXISTS (SELECT 1 FROM cloud_meta.api_keys s
-		                  WHERE s.tenant_id = k.tenant_id AND s.agent_id = k.agent_id AND s.id <> k.id
-		                    AND s.revoked_at IS NULL AND s.roles @> $1::jsonb))
+		  AND k.agent_id = $3
 		RETURNING k.tenant_id, k.id, k.agent_id`,
 		`["`+RoleSetupReader+`"]`, `["`+RoleGatewayAgent+`"]`, SetupAgentID)
 	if err != nil {
