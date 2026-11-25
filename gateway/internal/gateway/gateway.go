@@ -511,6 +511,9 @@ func (g *Gateway) authenticate(r *http.Request, resource string, link bool) (mcp
 	if errors.Is(err, kiffapi.ErrUnavailable) {
 		return nil, errors.Join(mcp.ErrUnavailable, err)
 	}
+	if errors.Is(err, kiffapi.ErrForbidden) {
+		return nil, errors.Join(mcp.ErrForbidden, err)
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -28,7 +28,7 @@ func TestMeTellsARefusedKeyFromAnOutage(t *testing.T) {
 		t.Fatalf("503: %v", err)
 	}
 	status = http.StatusForbidden
-	if _, err := c.Me(context.Background(), "k"); err == nil || errors.Is(err, kiffapi.ErrUnavailable) || errors.Is(err, kiffapi.ErrUnauthorized) {
+	if _, err := c.Me(context.Background(), "k"); !errors.Is(err, kiffapi.ErrForbidden) || errors.Is(err, kiffapi.ErrUnavailable) || errors.Is(err, kiffapi.ErrUnauthorized) {
 		t.Fatalf("403: %v", err)
 	}
 	srv.Close()
@@ -37,18 +37,25 @@ func TestMeTellsARefusedKeyFromAnOutage(t *testing.T) {
 	}
 }
 
-// A timeout, a throttle or an answer that isn't the identity says nothing
-// about the key: ErrUnavailable (the gateway's 503), never ErrUnauthorized
-// (its 401 "a valid agent key is required"), which ends a caller's paused
-// run as a revoked key's. Only apps/api's own 401 is a refused key.
-func TestMeTellsABusyAPIFromARefusedKey(t *testing.T) {
+// Any answer but apps/api's own 401 (a refused key) or 403 (the key refused
+// here) says nothing about the key: a timeout, a throttle, a route missing
+// mid-deploy, any other status, an answer that isn't the identity. It is
+// ErrUnavailable (the gateway's 503), never ErrUnauthorized (its 401 "a
+// valid agent key is required"), which ends a caller's paused run.
+func TestOnlyA401IsARefusedKey(t *testing.T) {
 	for _, c := range []struct {
 		name   string
 		status int
 		body   string
 	}{
+		{"400", http.StatusBadRequest, `{"error":"bad_request"}`},
+		{"404, a route missing mid-deploy", http.StatusNotFound, `404 page not found`},
 		{"408", http.StatusRequestTimeout, `{"error":"timeout"}`},
+		{"409", http.StatusConflict, `{"error":"conflict"}`},
+		{"413", http.StatusRequestEntityTooLarge, `{"error":"too_large"}`},
+		{"422", http.StatusUnprocessableEntity, `{"error":"unprocessable"}`},
 		{"429", http.StatusTooManyRequests, `{"error":"rate_limited"}`},
+		{"502", http.StatusBadGateway, `bad gateway`},
 		{"a body that isn't JSON", http.StatusOK, `<html>bad gateway</html>`},
 		{"a body cut short", http.StatusOK, `{"tenant_id":"t`},
 	} {

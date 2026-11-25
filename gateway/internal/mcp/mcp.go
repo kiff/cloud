@@ -39,6 +39,11 @@ import (
 // Retry-After, never 401, so an agent doesn't take its key for a bad one.
 var ErrUnavailable = errors.New("mcp: the key couldn't be checked")
 
+// ErrForbidden is what Auth returns when KIFF knows the key and refuses it
+// here (a restricted key): answered 403, never 401, which an agent reads as
+// a key that's gone.
+var ErrForbidden = errors.New("mcp: KIFF refuses this key here")
+
 // Protocol versions, newest first.
 var (
 	ModernVersions = []string{"2026-07-28"}
@@ -174,6 +179,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// may be fine (a 401 would read as a revoked key).
 		w.Header().Set("Retry-After", "5")
 		http.Error(w, "KIFF couldn't check the key just now; try again shortly", http.StatusServiceUnavailable)
+		return
+	}
+	if errors.Is(err, ErrForbidden) {
+		// KIFF knows the key and refuses it here: its answer, never the
+		// 401 that reads as a key that's gone.
+		http.Error(w, "KIFF refuses this key here", http.StatusForbidden)
 		return
 	}
 	if err != nil {
