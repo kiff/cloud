@@ -25,7 +25,7 @@ templ subprocessorsHeadFR() {
 		<p class="legal-badge">Sous-traitants ultérieurs · v0.1</p>
 		<h1>Sous-traitants ultérieurs</h1>
 		<p class="legal-meta">
-			<strong>Dernière mise à jour :</strong> 17 novembre 2026.
+			<strong>Dernière mise à jour :</strong> 25 novembre 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Les sociétés auxquelles Kiff Agents OÜ fait appel pour
@@ -111,9 +111,27 @@ templ subprocessorsListFR() {
 					</tr>
 					<tr id="anthropic">
 						<td>Anthropic</td>
-						<td>Modèles d'IA : le modèle derrière Coach et chaque taf (Claude API). tafs uniquement</td>
+						<td>Modèles d'IA : le modèle derrière Coach et chaque taf (Claude API). Utilisé actuellement. tafs uniquement</td>
 						<td>Ce qui lui est envoyé : ce que vous écrivez à Coach et à vos tafs, les fichiers que vous joignez, ce que vos apps connectées renvoient à un taf pendant qu'il travaille, et ce qui est à l'écran quand Coach vous aide dans l'app ; et la réponse du modèle. Jamais envoyé : les mots de passe et clés qu'utilisent vos apps connectées, ni votre empreinte. Envoyé seulement une fois que vous l'autorisez dans l'app tafs (voir <a href="/fr/privacy#ai-in-tafs">Confidentialité</a>). Anthropic le garde jusqu'à 30 jours, plus longtemps seulement si la loi, sa politique d'utilisation ou ses conditions l'exigent</td>
 						<td>États-Unis, appelé depuis l'Irlande (eu-west-1) ; l'inférence peut s'exécuter aux États-Unis, en Europe, en Asie ou en Australie</td>
+					</tr>
+					<tr id="bedrock">
+						<td>Amazon Web Services (Amazon Bedrock)</td>
+						<td>Modèles d'IA : le même modèle Claude, exécuté via Amazon Bedrock. Pas utilisé actuellement ; peut l'exécuter à la place d'Anthropic, un seul fournisseur à la fois. tafs uniquement</td>
+						<td>Ce qui lui est envoyé : comme dans la ligne d'Anthropic, et seulement tant qu'il est le fournisseur utilisé. AWS ne s'en sert pas pour entraîner des modèles, et le fabricant du modèle ne peut pas y accéder. Dans le mode de conservation par défaut de Bedrock, certains modèles le gardent jusqu'à 30 jours pour la confiance et la sécurité</td>
+						<td>Union européenne : appelé depuis l'Irlande (eu-west-1), uniquement via les profils d'inférence interrégionaux UE de Bedrock, qui s'exécutent dans des régions de l'UE</td>
+					</tr>
+					<tr id="vertex">
+						<td>Google Cloud (Vertex AI)</td>
+						<td>Modèles d'IA : le même modèle Claude, exécuté via Vertex AI. Pas utilisé actuellement ; peut l'exécuter à la place d'Anthropic, un seul fournisseur à la fois. tafs uniquement</td>
+						<td>Ce qui lui est envoyé : comme dans la ligne d'Anthropic, et seulement tant qu'il est le fournisseur utilisé. Pour certains modèles d'Anthropic, Google le garde jusqu'à 30 jours pour la surveillance des abus et le partage avec Anthropic à cette fin</td>
+						<td>Union européenne : uniquement un point de terminaison régional europe-west, jamais le point de terminaison mondial de Google</td>
+					</tr>
+					<tr id="foundry">
+						<td>Microsoft Azure (AI Foundry)</td>
+						<td>Modèles d'IA : le même modèle Claude, via Azure AI Foundry, hébergé sur Azure. Pas utilisé actuellement ; peut l'exécuter à la place d'Anthropic, un seul fournisseur à la fois. tafs uniquement</td>
+						<td>Ce qui lui est envoyé : comme dans la ligne d'Anthropic, et seulement tant qu'il est le fournisseur utilisé. Microsoft gère le point de terminaison ; Anthropic traite ce qui est envoyé, selon ses propres conditions, comme dans la ligne d'Anthropic</td>
+						<td>Union européenne : uniquement un déploiement hébergé sur Azure dans la zone de données UE</td>
 					</tr>
 				</tbody>
 			</table>
@@ -166,7 +184,7 @@ templ subprocessorsChangesFR() {
 
 		<p class="legal-footnote">
 			<strong>Version du document :</strong> v0.1.<br/>
-			<strong>Dernière mise à jour :</strong> 17 novembre 2026.
+			<strong>Dernière mise à jour :</strong> 25 novembre 2026.
 		</p>
 	</section>
 }

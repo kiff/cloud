@@ -86,7 +86,7 @@ templ dpaHead() {
 		<h1>Data Processing Agreement</h1>
 		<p class="legal-meta">
 			<strong>Template version:</strong> v0.1.
-			<strong>Last updated:</strong> 17 November 2026.
+			<strong>Last updated:</strong> 25 November 2026.
 		</p>
 		<p class="legal-disclaimer">
 			This is a published <em>template</em>, not a signed
@@ -664,9 +664,27 @@ templ dpaAnnex3() {
 					</tr>
 					<tr>
 						<td>Anthropic, PBC</td>
-						<td>tafs only: the AI model behind Coach and each taf (Claude API), which gets data only once the person has allowed it in the tafs app. Anthropic deletes what it receives and returns within 30 days, unless it must keep it longer to comply with law, to enforce its usage policy, or as its commercial terms otherwise provide</td>
+						<td>tafs only: the AI model behind Coach and each taf (Claude API), which gets data only once the person has allowed it in the tafs app. Anthropic deletes what it receives and returns within 30 days, unless it must keep it longer to comply with law, to enforce its usage policy, or as its commercial terms otherwise provide. In use now.</td>
 						<td>United States, called from Ireland (eu-west-1); inference may run in the United States, Europe, Asia or Australia</td>
 						<td>SCCs</td>
+					</tr>
+					<tr>
+						<td>Amazon Web Services EMEA SARL (Amazon Bedrock)</td>
+						<td>tafs only, and only while it's the provider in use, one at a time: runs Claude, the model behind Coach and each taf, through Amazon Bedrock, with data only once the person has allowed it in the tafs app. Not used to train models; under Bedrock's default retention mode some models keep it up to 30 days for trust and safety</td>
+						<td>EU regions only (Bedrock's EU cross-region inference profiles), called from Ireland (eu-west-1)</td>
+						<td>Within the EU; EU–US Data Privacy Framework / SCCs as fallback</td>
+					</tr>
+					<tr>
+						<td>Google Cloud EMEA Limited (Vertex AI)</td>
+						<td>tafs only, and only while it's the provider in use, one at a time: runs Claude through Vertex AI, with data only once the person has allowed it in the tafs app. For some Anthropic models, kept up to 30 days for abuse monitoring and shared with Anthropic for that</td>
+						<td>EU only (europe-west regional endpoints)</td>
+						<td>Within the EU; EU–US Data Privacy Framework / SCCs as fallback</td>
+					</tr>
+					<tr>
+						<td>Microsoft Ireland Operations Limited (Azure AI Foundry)</td>
+						<td>tafs only, and only while it's the provider in use, one at a time: hosts the Claude endpoint on Azure, with data only once the person has allowed it in the tafs app; Anthropic processes what's sent under its own terms, as in Anthropic's row</td>
+						<td>EU data zone only (an Azure-hosted deployment)</td>
+						<td>Within the EU; EU–US Data Privacy Framework / SCCs as fallback</td>
 					</tr>
 					<tr>
 						<td>Apple Inc.</td>
@@ -748,9 +766,9 @@ templ dpaAnnex4() {
 					</tr>
 					<tr>
 						<td>Model requests</td>
-						<td>Anthropic</td>
+						<td>Anthropic, or the cloud provider in use (see the sub-processors)</td>
 						<td>What a person writes to Coach and the tafs, the files they attach, what connected apps return to a taf during a run, and what's on screen while Coach helps in the app; and what the model returns. Never the connected apps' passwords and keys, or a fingerprint</td>
-						<td>Deleted by Anthropic within 30 days by default; longer where Anthropic must keep it to comply with law, to enforce its usage policy, or as its commercial terms otherwise provide</td>
+						<td>Deleted within 30 days by the company that runs the model, unless it's flagged as breaking that company's usage rules or the law requires keeping it</td>
 					</tr>
 					<tr>
 						<td>The taf's KIFF key</td>
@@ -824,7 +842,7 @@ templ dpaAnnex4() {
 
 		<p class="legal-footnote">
 			<strong>Document version:</strong> v0.1 template.<br/>
-			<strong>Last updated:</strong> 17 November 2026.
+			<strong>Last updated:</strong> 25 November 2026.
 		</p>
 	</section>
 }
