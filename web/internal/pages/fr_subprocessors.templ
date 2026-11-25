@@ -111,13 +111,13 @@ templ subprocessorsListFR() {
 					</tr>
 					<tr id="anthropic">
 						<td>Anthropic</td>
-						<td>Modèles d'IA : le modèle derrière Coach et chaque taf (Claude API). Utilisé actuellement. tafs uniquement</td>
+						<td>Modèles d'IA : le modèle derrière Coach et chaque taf (Claude API). Pas utilisé actuellement. tafs uniquement</td>
 						<td>Ce qui lui est envoyé : ce que vous écrivez à Coach et à vos tafs, les fichiers que vous joignez, ce que vos apps connectées renvoient à un taf pendant qu'il travaille, et ce qui est à l'écran quand Coach vous aide dans l'app ; et la réponse du modèle. Jamais envoyé : les mots de passe et clés qu'utilisent vos apps connectées, ni votre empreinte. Envoyé seulement une fois que vous l'autorisez dans l'app tafs (voir <a href="/fr/privacy#ai-in-tafs">Confidentialité</a>). Anthropic le garde jusqu'à 30 jours, plus longtemps seulement si la loi, sa politique d'utilisation ou ses conditions l'exigent</td>
 						<td>États-Unis, appelé depuis l'Irlande (eu-west-1) ; l'inférence peut s'exécuter aux États-Unis, en Europe, en Asie ou en Australie</td>
 					</tr>
 					<tr id="bedrock">
 						<td>Amazon Web Services (Amazon Bedrock)</td>
-						<td>Modèles d'IA : le même modèle Claude, exécuté via Amazon Bedrock. Pas utilisé actuellement ; peut l'exécuter à la place d'Anthropic, un seul fournisseur à la fois. tafs uniquement</td>
+						<td>Modèles d'IA : le même modèle Claude, exécuté via Amazon Bedrock. Utilisé actuellement. tafs uniquement</td>
 						<td>Ce qui lui est envoyé : comme dans la ligne d'Anthropic, et seulement tant qu'il est le fournisseur utilisé. AWS ne s'en sert pas pour entraîner des modèles. Dans le mode de conservation par défaut de Bedrock, certains modèles le gardent jusqu'à 30 jours pour la confiance et la sécurité</td>
 						<td>Union européenne : appelé depuis l'Irlande (eu-west-1), uniquement via les profils d'inférence interrégionaux UE de Bedrock, qui s'exécutent dans des régions de l'UE</td>
 					</tr>
