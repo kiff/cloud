@@ -115,7 +115,7 @@ func (a *agent) describeSealed(ctx context.Context, t Tool, in invocation.Invoca
 		return nil, "KIFF couldn't record the open that shows the owner the page"
 	}
 	p := kiffapi.Proposal{ID: id, Domain: Domain, EntityID: id, EntityType: "ToolCall", ActionName: open.Name, ActorID: a.me.AgentID,
-		Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant}
+		Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant, AgentRun: a.agentRun}
 	if open.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: open.Audience, Tool: open.UpstreamTool, Arguments: body}
 	}

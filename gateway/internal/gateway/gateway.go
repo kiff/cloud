@@ -487,6 +487,9 @@ type agent struct {
 	// runGrant is the request's KIFF-Run-Grant (grant.go): who asked for
 	// the run, as KIFF signed it. Empty: no person's run.
 	runGrant string
+	// agentRun is the request's KIFF-Run (grant.go): the run making the
+	// call, for KIFF to sign into its permit. Empty: none.
+	agentRun string
 	// trialDraft is set once KIFF said the KIFF-Trial draft is being tried
 	// (kiff/tafs#173): its calls are sent, decided on its trial Cards.
 	trialDraft string
@@ -528,7 +531,7 @@ func (g *Gateway) authenticate(r *http.Request, resource string, link bool) (mcp
 	}
 	return &agent{g: g, key: key, credentialID: credentialID(key, me), me: me,
 		trial: strings.TrimSpace(r.Header.Get(TrialHeader)), trialRun: strings.TrimSpace(r.Header.Get(TrialRunHeader)),
-		runGrant: strings.TrimSpace(r.Header.Get(RunGrantHeader))}, nil
+		runGrant: strings.TrimSpace(r.Header.Get(RunGrantHeader)), agentRun: strings.TrimSpace(r.Header.Get(AgentRunHeader))}, nil
 }
 
 // OAuthTokenPrefix marks an OAuth access token.
@@ -912,7 +915,7 @@ func operationReused(op string) json.RawMessage {
 func (a *agent) proposal(ctx context.Context, t Tool, in invocation.Invocation, params map[string]any, body json.RawMessage) kiffapi.Proposal {
 	words := tafWordsFrom(ctx)
 	p := kiffapi.Proposal{ID: in.Key, Domain: Domain, EntityID: in.Key, EntityType: "ToolCall",
-		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant,
+		ActionName: t.Name, ActorID: a.me.AgentID, Parameters: params, TrialDraft: a.trialDraft, RunGrant: a.runGrant, AgentRun: a.agentRun,
 		TafAbout: words.About, TafReason: words.Reason, BrowserBlock: browserBlockFrom(ctx)}
 	if t.needsPermit() {
 		p.Permit = &kiffapi.PermitRequest{Audience: t.Audience, Tool: t.UpstreamTool, Arguments: body}

@@ -182,6 +182,9 @@ type Proposal struct {
 	// may still use it, refuses the call otherwise, and records the call,
 	// and any hold it opens, as theirs ("asked by").
 	RunGrant string `json:"run_grant,omitempty"`
+	// AgentRun is the run making the call, as its KIFF-Run header
+	// carried it: KIFF signs it into the call's permit as "run".
+	AgentRun string `json:"agent_run,omitempty"`
 	// TafAbout and TafReason are the taf's own words about the call
 	// (gateway.AboutArg, gateway.ReasonArg): KIFF keeps them with a hold
 	// for its owner to read, and decides nothing on them.

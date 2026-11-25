@@ -800,3 +800,50 @@ func TestPermit_NamesTheOwnersApprovalItWasMintedFrom(t *testing.T) {
 		t.Fatalf("the approved call's permit names %q, not the approval %q", d.Approval, held.Exception.ID)
 	}
 }
+
+// The run that made a call goes into its permit, so the tool can tell
+// which run asked (the gateway's KIFF-Run, sent as agent_run). It is
+// signed as sent, with its form checked; a call naming no run gets a
+// permit naming none, and a run of the wrong form is refused, not signed.
+func TestPermit_CarriesTheRunThatMadeTheCall(t *testing.T) {
+	t.Parallel()
+	is := testIssuer(t)
+	h := permitRig(t, is, &heldCards{})
+	decide := func(op, run string) (int, decideResult) {
+		body := map[string]any{
+			"id": op, "entity_id": "o1", "entity_type": "Order", "action_name": "REFUND_ORDER",
+			"actor_id": "refund-agent", "parameters": map[string]any{"amount_cents": 500},
+			"permit": map[string]any{"arguments": json.RawMessage(strings.Replace(refundArgs, "op-1", op, 1))},
+		}
+		if run != "" {
+			body["agent_run"] = run
+		}
+		rr := drivePost(t, h, "/v1/proposals/decide", body)
+		var r decideResult
+		_ = json.Unmarshal(rr.Body.Bytes(), &r)
+		return rr.Code, r
+	}
+
+	if _, r := decide("op-run-1", "run_01JX:step-2.a"); r.Outcome != "allowed" || r.Permit == "" {
+		t.Fatalf("with a run: %+v", r)
+	} else if d := permitClaims(t, r.Permit, is.Key.Public().Pub).Details[0]; d.Run != "run_01JX:step-2.a" {
+		t.Fatalf("the permit's run = %q", d.Run)
+	}
+
+	_, r := decide("op-run-2", "")
+	if r.Outcome != "allowed" || r.Permit == "" {
+		t.Fatalf("without a run: %+v", r)
+	}
+	parts := strings.Split(r.Permit, ".")
+	payload, _ := base64.RawURLEncoding.DecodeString(parts[1])
+	if strings.Contains(string(payload), `"run"`) {
+		t.Fatalf("a call naming no run got a permit naming one: %s", payload)
+	}
+
+	for _, bad := range []string{"run 1", "run/1", `run"1`, strings.Repeat("r", 129)} {
+		code, r := decide("op-run-bad", bad)
+		if code != http.StatusBadRequest || r.Permit != "" || len(r.Reasons) != 1 || r.Reasons[0] != "agent_run" {
+			t.Fatalf("run %q: %d %+v", bad, code, r)
+		}
+	}
+}
