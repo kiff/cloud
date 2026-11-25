@@ -1,6 +1,10 @@
 package handlers
 
-import "github.com/kiff/cloud/web/internal/pages"
+import (
+	"time"
+
+	"github.com/kiff/cloud/web/internal/pages"
+)
 
 // dashboard_export_test.go re-exports unexported helpers for the
 // external _test package so tests can call the production code
@@ -18,4 +22,10 @@ import "github.com/kiff/cloud/web/internal/pages"
 // TestComputeNextAction_BranchesOnTenantState.
 func ComputeNextAction(v pages.DashboardView) *pages.NextAction {
 	return computeNextAction(v)
+}
+
+// SetNow pins the clock a page's "today" is read by, so a test's fixture
+// and the page agree on which day it is whenever the test runs.
+func (h *DashboardHandler) SetNow(now func() time.Time) {
+	h.now = now
 }

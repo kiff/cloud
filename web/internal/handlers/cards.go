@@ -265,7 +265,7 @@ func (h *DashboardHandler) renderCard(w http.ResponseWriter, r *http.Request, ta
 		if runtimesErr != nil {
 			h.logger.WarnContext(r.Context(), "cards: list guard runtimes failed", slog.String("card", id), slog.String("err", runtimesErr.Error()))
 		}
-		v.Connection = pages.NewCardConnection(v.Card.Subject, v.Decisions, v.DecisionsTruncated, keys, keysErr != nil, runtimes, runtimesErr != nil, time.Now())
+		v.Connection = pages.NewCardConnection(v.Card.Subject, v.Decisions, v.DecisionsTruncated, keys, keysErr != nil, runtimes, runtimesErr != nil, h.clock())
 		v.Decisions = firstDecisions(v.Decisions, cardDecisionsShown)
 	}
 	_ = pages.CardDetail(v).Render(r.Context(), w)

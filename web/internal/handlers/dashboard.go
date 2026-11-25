@@ -85,6 +85,19 @@ type DashboardHandler struct {
 	// must never be shown to a user as their connect endpoint. Empty
 	// falls back to the template default (https://api.kiff.dev).
 	PublicAPIURL string
+
+	// now is the clock a page's "today" is read by; nil is time.Now. Tests
+	// pin it (SetNow in dashboard_export_test.go), so a count of today's
+	// decisions can't change when a run crosses UTC midnight.
+	now func() time.Time
+}
+
+// clock is the time a page's "today" is read by.
+func (h *DashboardHandler) clock() time.Time {
+	if h.now != nil {
+		return h.now()
+	}
+	return time.Now()
 }
 
 // NewDashboardHandler wires the per-session apiclient + session

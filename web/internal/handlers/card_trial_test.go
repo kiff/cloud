@@ -42,6 +42,16 @@ type trialAPI struct {
 	// saturated serves a full page (50 rows) of the holder's decisions,
 	// all but one on an action the card does not cover.
 	saturated bool
+	// at is when the served decisions were made, and the page's clock
+	// (trialRig pins both). Read from the wall clock, the rows a minute
+	// or two old fell on yesterday in the first minutes after UTC
+	// midnight, and "2 decisions today" read "1 decision today".
+	at time.Time
+}
+
+// noonYesterday is a fixed instant well inside one UTC day.
+func noonYesterday() time.Time {
+	return time.Now().UTC().Truncate(24 * time.Hour).Add(-12 * time.Hour)
 }
 
 func (a *trialAPI) serve(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +76,10 @@ func (a *trialAPI) serve(w http.ResponseWriter, r *http.Request) {
 			writeJSONForTest(w, http.StatusInternalServerError, map[string]any{"error": "boom"})
 			return
 		}
-		now := time.Now().UTC()
+		now := a.at
+		if now.IsZero() {
+			now = time.Now().UTC()
+		}
 		if a.saturated {
 			rows := []any{map[string]any{"proposal_id": "card-row", "entity_id": "kiff-test-9", "action_name": "REFUND_ORDER",
 				"actor_id": "refund-agent", "outcome": "allowed", "created_at": now.Format(time.RFC3339), "receipt_status": "none"}}
@@ -139,6 +152,9 @@ func trialRig(t *testing.T, api *trialAPI) (http.Handler, *http.Cookie) {
 	}
 	mgr := newTestSessionManager(t)
 	dash := handlers.NewDashboardHandler(client, mgr, handlers.StaticBearerSource(), nil)
+	// The fixture's decisions and the page read one fixed day.
+	api.at = noonYesterday()
+	dash.SetNow(func() time.Time { return api.at })
 	mux := http.NewServeMux()
 	dash.Register(mux)
 	issue := httptest.NewRecorder()
