@@ -24,7 +24,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ github.event.pull_request.base.sha }}
+          # The base branch as it is now, never the pull request's: an old pull request's `base.sha` stays the commit it
+          # was opened on, from before this check's script existed, even after main is merged into it.
+          ref: ${{ github.event.pull_request.base.ref }}
       # Each is read as it is now, not as the event first carried it: a re-run then checks the text after an edit, and an
       # edit plus a re-run clears a failure. `shell: bash` runs with pipefail, so a read that fails fails the check.
       - name: The pull request's title and body, as they read now
