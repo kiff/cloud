@@ -3597,9 +3597,9 @@ type proofTenantStores struct {
 }
 
 // sessionApprovalKeys is what the proofs' check reads of the sessions: their
-// live approval keys on an account.
+// live approval keys on an account, each with its device.
 type sessionApprovalKeys interface {
-	ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([][]byte, error)
+	ApprovalKeysInTenant(ctx context.Context, tenant string, now time.Time) ([]auth.SessionApprovalKey, error)
 }
 
 // vetProofTestTenants keeps the test tenants that are KIFF's own accounts
@@ -3667,7 +3667,19 @@ func proofTestTenantCheck(stores proofTenantStores, keys proofs.TestKeys) proofs
 			if err != nil {
 				return "", err
 			}
-			registered = append(registered, approval...)
+			// The middleware's rule: a session signed in by a device is used only
+			// while that device is live on this account, so a revoked device's
+			// session signs nothing and its key doesn't count. A session with no
+			// device counts as it is.
+			live := map[string]bool{}
+			for _, d := range devices {
+				live[d.ID] = true
+			}
+			for _, k := range approval {
+				if k.DeviceID == "" || live[k.DeviceID] {
+					registered = append(registered, k.Key)
+				}
+			}
 		}
 		if !keys.OnlyTestKeys(registered) {
 			return proofs.RefusedDevices, nil

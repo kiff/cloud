@@ -269,7 +269,48 @@ func TestPostgresDeveloperSessionStore_TenantAndApprovalKeys(t *testing.T) {
 		t.Fatalf("an unknown session: %v", err)
 	}
 	keys, err := store.ApprovalKeysInTenant(ctx, tenantID, now)
-	if err != nil || len(keys) != 1 || string(keys[0]) != "\x02" {
+	if err != nil || len(keys) != 1 || string(keys[0].Key) != "\x02" {
 		t.Fatalf("the live approval keys: %v %v", keys, err)
+	}
+
+	// A device's sessions end with it; another device's and a session with no device stay.
+	// Sessions name real devices: developer_sessions.device_id is a foreign key.
+	if err := auth.ApplyDevicesSchema(ctx, pool); err != nil {
+		t.Fatalf("ApplyDevicesSchema: %v", err)
+	}
+	devices := auth.NewPostgresDeviceStore(pool)
+	devA, devB := auth.NewDeviceID(), auth.NewDeviceID()
+	for _, id := range []string{devA, devB} {
+		if err := devices.Insert(ctx, auth.ApprovalDevice{ID: id, Tenant: tenantID, Subject: "human-1", Name: "tafs on iPad", Platform: "ios",
+			PublicKey: p256(t), CreatedAt: now}); err != nil {
+			t.Fatalf("insert device %s: %v", id, err)
+		}
+	}
+	addDev := addDeviceSession(t, store, tenantID, now)
+	addDev("dev-a1-"+tenantID, devA, []byte{5})
+	addDev("dev-a2-"+tenantID, devA, []byte{6})
+	addDev("dev-b-"+tenantID, devB, []byte{7})
+	if err := store.RevokeForDevice(ctx, devA, now); err != nil {
+		t.Fatal(err)
+	}
+	keys, _ = store.ApprovalKeysInTenant(ctx, tenantID, now)
+	got := map[string]string{}
+	for _, k := range keys {
+		got[string(k.Key)] = k.DeviceID
+	}
+	if len(got) != 2 || got["\x02"] != "" || got["\x07"] != devB {
+		t.Fatalf("after the first device's revoke: %v", got)
+	}
+}
+
+// addDeviceSession returns a func that adds a live session signed in by device, with an approval key.
+func addDeviceSession(t *testing.T, store *auth.PostgresDeveloperSessionStore, tenantID string, now time.Time) func(id, device string, approval []byte) {
+	return func(id, device string, approval []byte) {
+		t.Helper()
+		gen, _ := auth.NewDevSessionToken()
+		if err := store.Insert(context.Background(), auth.DeveloperSession{ID: id, Subject: "human-1", Tenant: tenantID, TokenHash: gen.Hash,
+			CreatedAt: now, ExpiresAt: now.Add(time.Hour), DevicePublicKey: []byte{1}, DeviceID: device, ApprovalPublicKey: approval}); err != nil {
+			t.Fatalf("insert %s: %v", id, err)
+		}
 	}
 }
