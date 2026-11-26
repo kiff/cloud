@@ -37,7 +37,9 @@ type OpsMutator interface {
 	// SetTenantMetadata, and the account's App Store and Google Play packs
 	// with credits left set aside at at (packs.SetAsideStorePacksQ), with e,
 	// which also says what was set aside (store_packs_set_aside,
-	// store_pack_credits_set_aside), in the same atomic unit.
+	// store_pack_credits_set_aside), in the same atomic unit. It takes every
+	// store pack on the account, so it's only for an account the reset's
+	// guard allows (a review or test account): see packs.SetAsideStorePacksQ.
 	ResetStoreBilling(ctx context.Context, tenantID string, set map[string]any, at time.Time, e operatoraudit.Entry) (packs.StorePacksSetAside, error)
 	// SetTenantLabel sets the operators' label on the tenant ("" for
 	// none) and writes e.

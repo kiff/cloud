@@ -287,3 +287,36 @@ func TestAStoreBillingResetSetsAsideTheStorePacks(t *testing.T) {
 		t.Fatalf("after the app sent it again: %d pack credits", v.PacksLeft)
 	}
 }
+
+// The pack set-aside takes every store pack on the account, so it may run
+// only past the reset's guard: a reset refused for an account that isn't a
+// review or test account (409) leaves its packs as they were.
+func TestARefusedStoreBillingResetLeavesThePacks(t *testing.T) {
+	ctx := context.Background()
+	r := newCreditsRigOn(t, soloFromAStore())
+	if _, _, err := r.packs.RecordCredits(ctx, packs.CreditGrant{TenantID: r.id, Pack: "credits-5000", Credits: 5000,
+		Source: packs.SourceApple, SourceTxn: "paid-5000", At: r.now.Add(-time.Hour)}); err != nil {
+		t.Fatal(err)
+	}
+	audit := operatoraudit.NewMemoryStore()
+	resetter := &recordingResetter{}
+	// The store test accounts are another account's, not this one's.
+	h := NewOpsHandler([]string{opsSubject}, r.tenants, usage.NewMemoryStore(), receipt.NewMemoryStore(), nil, nil, nil,
+		WithOpsControlPlane(audit, resetter), WithOpsStoreTestAccounts(tenant.NewID()), WithOpsBonusCredits(r.packs))
+	mux := http.NewServeMux()
+	h.Register(mux)
+	rec := doOpsPost(mux, "/v1/ops/tenants/"+r.id+"/store-billing/reset", opsSubject, `{"confirm":"`+r.id+`","reason":"App Review"}`)
+	if rec.Code != http.StatusConflict {
+		t.Fatalf("a reset of a paying account: %d %s", rec.Code, rec.Body.String())
+	}
+	left, err := r.packs.CreditPacks(ctx, r.id)
+	if err != nil || len(left) != 1 || left[0].CreditsLeft != 5000 || left[0].RevokedAt != nil {
+		t.Fatalf("its packs after the refused reset: %+v %v", left, err)
+	}
+	if v := r.balance(r.admin(), "/v1/me/usage/credits"); v.Kind != meter.BalanceSolo || v.PacksLeft != 5000 {
+		t.Fatalf("its balance after the refused reset: %+v", v)
+	}
+	if entries, _ := audit.List(ctx, r.id, 10); len(entries) != 0 || len(resetter.Calls()) != 0 {
+		t.Fatalf("a refused reset was audited or evicted: %+v %v", entries, resetter.Calls())
+	}
+}

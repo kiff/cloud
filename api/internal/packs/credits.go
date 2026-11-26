@@ -367,6 +367,15 @@ type RowQuerier interface {
 // refunded pack is, so they're no longer drawn or shown. A store's later
 // word on one (a refund, the app sending its transaction again) finds it
 // recorded and doesn't bring it back. Bonuses and Stripe's packs stay.
+//
+// It takes every App Store and Google Play pack on the account, whatever
+// environment it was bought in: packs don't record whether a purchase was a
+// sandbox or test one. That's safe only because its one caller, Reset store
+// billing, runs on App Review's and the store test accounts alone
+// (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS), whose store
+// purchases are test ones, and refuses any other account before writing
+// anything. Never call it for a paying customer: their bought credits would
+// be lost.
 func SetAsideStorePacksQ(ctx context.Context, q RowQuerier, tenantID string, at time.Time) (StorePacksSetAside, error) {
 	sources := make([]string, len(StoreSources))
 	for i, s := range StoreSources {
