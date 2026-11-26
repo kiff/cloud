@@ -160,12 +160,20 @@ func TestATestKeyIsDeniedTheDangerousRoutesOnTheMembershipPath(t *testing.T) {
 	}
 }
 
-// While an operator has a test tenant suspended, its test keys reach no
-// route at all, reads included; once it's unsuspended they're back. A
-// suspension that can't be read refuses. Another tenant's phone is untouched.
+// While an operator has a test tenant suspended, nothing on it reaches any
+// route, reads included: its test keys, and a session without one. Once it's
+// unsuspended they're back. A suspension that can't be read refuses. A real
+// tenant's phone is untouched here, suspended or not.
 func TestASuspendedTestTenantsKeysReachNoRoute(t *testing.T) {
 	rig := newTestKeyRig(t)
-	suspended := map[string]bool{"tenant-test": true}
+	// Anything else on the test tenant: a session with no test key.
+	gen, _ := NewDevSessionToken()
+	if err := rig.sessions.Insert(context.Background(), DeveloperSession{ID: "sess-plain-on-test", Subject: "human-tenant-test",
+		Tenant: "tenant-test", TokenHash: gen.Hash, CreatedAt: time.Now(), ExpiresAt: time.Now().Add(time.Hour)}); err != nil {
+		t.Fatal(err)
+	}
+	rig.tokens["plain-on-test"] = gen.Plaintext
+	suspended := map[string]bool{"tenant-test": true, "tenant-customer": true}
 	var readErr error
 	k := rig.restriction().WithSuspendedCheck(func(_ context.Context, tenant string) (bool, error) {
 		return suspended[tenant], readErr
@@ -178,13 +186,14 @@ func TestASuspendedTestTenantsKeysReachNoRoute(t *testing.T) {
 		{http.MethodPost, "/v1/me/agent-drafts"}, {http.MethodPost, "/v1/proposals"}}, restrictedRoutes...)
 	for _, h := range []http.Handler{mw.Wrap(next), mw.WrapPerson(next)} {
 		for _, rt := range routes {
-			for _, s := range []string{"device-on-test", "approval-on-test"} {
+			for _, s := range []string{"device-on-test", "approval-on-test", "plain-on-test"} {
 				if code, why := serveKey(t, h, rig.tokens[s], rt.method, rt.path); code != http.StatusForbidden || why != TenantSuspendedCode {
 					t.Errorf("suspended, %s %s with %s: %d %q", rt.method, rt.path, s, code, why)
 				}
 			}
+			// A suspended tenant that isn't a test tenant isn't asked here.
 			if code, _ := serveKey(t, h, rig.tokens["plain-phone-on-customer"], rt.method, rt.path); code != http.StatusOK {
-				t.Errorf("another tenant's phone, %s %s: %d", rt.method, rt.path, code)
+				t.Errorf("a suspended real tenant's phone, %s %s: %d", rt.method, rt.path, code)
 			}
 		}
 	}

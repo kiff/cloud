@@ -19,11 +19,12 @@ import (
 )
 
 // An operator suspending a test tenant (POST /v1/ops/tenants/{id}/suspend)
-// stops its test device's session on every route, reads included, not only
-// new proposals; unsuspending brings it back. On any other account the
+// stops everything on it on every route, reads included, not only new
+// proposals: its test device's session and its agents' keys. Unsuspending
+// brings them back. On any other account the
 // middleware lets a suspended tenant's sessions through as before: there,
 // only new proposals and the gateway trial are refused.
-func TestSuspendingATestTenantStopsItsTestKeysOnEveryRoute(t *testing.T) {
+func TestSuspendingATestTenantStopsEverythingOnItOnEveryRoute(t *testing.T) {
 	ctx := context.Background()
 	mux, tenants, _, _, testID := opsControlFixture(t)
 	realID := tenant.NewID()
@@ -53,11 +54,21 @@ func TestSuspendingATestTenantStopsItsTestKeysOnEveryRoute(t *testing.T) {
 		return gen.Plaintext
 	}
 	testPhone, realPhone := token("s-test", testID, testKey), token("s-real", realID, phone)
+	// An agent's key on the test tenant.
+	apiKeys := auth.NewMemoryAPIKeyStore()
+	agentKey, err := auth.NewAPIKey(testID, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := apiKeys.Insert(ctx, auth.APIKeyRecord{ID: "k-agent", Tenant: testID, Subject: "agent", AgentID: "agt-1",
+		KeyHash: agentKey.Hash, CreatedAt: now}); err != nil {
+		t.Fatal(err)
+	}
 	// As main wires it.
 	k := auth.NewKeyRestriction(func(b []byte) bool { return bytes.Equal(b, testKey) }, []string{testID}).
 		WithSuspendedCheck(func(ctx context.Context, id string) (bool, error) { return tenant.IsSuspended(ctx, tenants, id) })
 	resolver := auth.NewMapResolver()
-	mw := auth.NewMiddleware(auth.NewStubProvider(resolver), auth.NewMemoryAPIKeyStore(), resolver,
+	mw := auth.NewMiddleware(auth.NewStubProvider(resolver), apiKeys, resolver,
 		auth.WithDeveloperSessions(sessions), auth.WithKeyRestriction(k))
 	app := mw.Wrap(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }))
 	routes := []struct{ method, path string }{
@@ -80,14 +91,18 @@ func TestSuspendingATestTenantStopsItsTestKeysOnEveryRoute(t *testing.T) {
 		}
 	}
 	for _, rt := range routes {
-		if code, _ := call(testPhone, rt.method, rt.path); code != http.StatusOK {
-			t.Fatalf("before the suspension, %s %s: %d", rt.method, rt.path, code)
+		for name, tok := range map[string]string{"the test phone": testPhone, "an agent's key": agentKey.Plaintext} {
+			if code, _ := call(tok, rt.method, rt.path); code != http.StatusOK {
+				t.Fatalf("before the suspension, %s %s with %s: %d", rt.method, rt.path, name, code)
+			}
 		}
 	}
 	suspend(testID, "suspend")
 	for _, rt := range routes {
-		if code, why := call(testPhone, rt.method, rt.path); code != http.StatusForbidden || why != auth.TenantSuspendedCode {
-			t.Errorf("suspended test tenant, %s %s: %d %q", rt.method, rt.path, code, why)
+		for name, tok := range map[string]string{"the test phone": testPhone, "an agent's key": agentKey.Plaintext} {
+			if code, why := call(tok, rt.method, rt.path); code != http.StatusForbidden || why != auth.TenantSuspendedCode {
+				t.Errorf("suspended test tenant, %s %s with %s: %d %q", rt.method, rt.path, name, code, why)
+			}
 		}
 	}
 	suspend(realID, "suspend")
@@ -97,7 +112,9 @@ func TestSuspendingATestTenantStopsItsTestKeysOnEveryRoute(t *testing.T) {
 		}
 	}
 	suspend(testID, "unsuspend")
-	if code, _ := call(testPhone, http.MethodGet, "/v1/me"); code != http.StatusOK {
-		t.Fatalf("unsuspended: %d", code)
+	for name, tok := range map[string]string{"the test phone": testPhone, "an agent's key": agentKey.Plaintext} {
+		if code, _ := call(tok, http.MethodGet, "/v1/me"); code != http.StatusOK {
+			t.Fatalf("unsuspended, %s: %d", name, code)
+		}
 	}
 }

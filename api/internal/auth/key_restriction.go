@@ -59,9 +59,10 @@ func (k *KeyRestriction) WithUseCheck(stillTest func(ctx context.Context, tenant
 }
 
 // WithSuspendedCheck sets how a test tenant's suspension is read: while an
-// operator has it suspended (POST /v1/ops/tenants/{id}/suspend), a session
-// holding a restricted key reaches no route on it (TenantSuspendedCode). A
-// check that fails refuses too. It returns k; on a nil k it does nothing.
+// operator has it suspended (POST /v1/ops/tenants/{id}/suspend), nothing on
+// it reaches any route (TenantSuspendedCode): its test device's sessions, its
+// agents' keys, and anyone else's session. A check that fails refuses too.
+// Other tenants aren't asked. It returns k; on a nil k it does nothing.
 func (k *KeyRestriction) WithSuspendedCheck(suspended func(ctx context.Context, tenant string) (bool, error)) *KeyRestriction {
 	if k != nil {
 		k.suspended = suspended
@@ -106,9 +107,13 @@ func (k *KeyRestriction) SessionOutlived(created, now time.Time, keys ...[]byte)
 
 // TestKeyDeniedRoutes are what a restricted key never does, even on its own
 // test tenant: delete the account, pay (Stripe's checkout and portal, an App
-// Store or Google Play purchase), or make or register a key (an account key,
-// a passkey, an approval key or its re-link, a computer's pairing, or the
-// approval of another device's or tool's sign-in, which mints its session).
+// Store or Google Play purchase), make or register a key (an account key, a
+// passkey, an approval key or its re-link, a computer's pairing, or the
+// approval of another device's or tool's sign-in, which mints its session),
+// or change who's on an account (inviting someone, accepting an invitation,
+// or changing a member's role). A taf's payments (browse_pay) go through the
+// gateway with its agent's key, never a device's session, so they're held
+// where the gateway's tools run, not here.
 var TestKeyDeniedRoutes = []string{
 	"POST /v1/me/delete",
 	"POST /v1/account-deletions",
@@ -124,6 +129,9 @@ var TestKeyDeniedRoutes = []string{
 	"POST /v1/me/pairings",
 	"POST /v1/auth/device/approve",
 	"POST /v1/oauth/device/approve",
+	"POST /v1/tenant/invites",
+	"POST /v1/invites/accept",
+	"PUT /v1/tenant/members/{subject}/role",
 }
 
 // TestKeyRouteCode is the error a restricted key gets on a route in
@@ -136,9 +144,9 @@ const (
 
 // Refusal is why id may not make r, or "" when it may: KeyRestrictedCode
 // (a restricted key outside its tenants, AllowsIdentity), TenantSuspendedCode
-// (a restricted key on its test tenant while it's suspended) or
-// TestKeyRouteCode (a restricted key on a route in TestKeyDeniedRoutes).
-// Only a session holding a restricted key is ever refused here.
+// (anything on a listed test tenant while it's suspended) or TestKeyRouteCode
+// (a restricted key on a route in TestKeyDeniedRoutes). Only an identity on
+// a listed test tenant, or holding a restricted key, is ever refused here.
 func (k *KeyRestriction) Refusal(r *http.Request, id Identity) string {
 	if k == nil {
 		return ""
@@ -146,13 +154,13 @@ func (k *KeyRestriction) Refusal(r *http.Request, id Identity) string {
 	if !k.AllowsIdentity(r.Context(), id) {
 		return KeyRestrictedCode
 	}
-	if !k.Holds(id.DeviceKey, id.ApprovalKey) {
-		return ""
-	}
-	if k.suspended != nil {
+	if k.suspended != nil && k.tenants[id.Tenant] {
 		if s, err := k.suspended(r.Context(), id.Tenant); err != nil || s {
 			return TenantSuspendedCode
 		}
+	}
+	if !k.Holds(id.DeviceKey, id.ApprovalKey) {
+		return ""
 	}
 	if _, pattern := k.denied.Handler(r); pattern != "" {
 		return TestKeyRouteCode
@@ -165,7 +173,7 @@ func WriteRefusal(w http.ResponseWriter, code string) {
 	switch code {
 	case TestKeyRouteCode:
 		writeJSON(w, http.StatusForbidden, map[string]string{"error": code,
-			"message": "this device's key is a test key: it can't delete the account, pay, or make or register a key"})
+			"message": "this device's key is a test key: it can't delete the account, pay, make or register a key, or change who's on the account"})
 	case TenantSuspendedCode:
 		writeJSON(w, http.StatusForbidden, map[string]string{"error": code,
 			"message": "this test account is suspended by an operator"})
