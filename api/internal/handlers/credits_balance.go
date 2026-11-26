@@ -174,7 +174,10 @@ func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case err != nil:
 	case setup && b.Kind == meter.BalanceNone:
-		noPlanSpent, err = h.ledger.NoPlanSetupSpent(r.Context(), t.ID)
+		// Counted from when the allowance last started: an account's first day,
+		// or an operator's Reset store billing (tenant.NoPlanAllowanceFrom).
+		since, _ := tenant.NoPlanAllowanceFrom(t)
+		noPlanSpent, err = h.ledger.NoPlanSetupSpent(r.Context(), t.ID, since)
 	case setup:
 		setupSpent, err = h.ledger.SetupSpent(r.Context(), t.ID, from, to)
 	}

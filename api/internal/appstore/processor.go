@@ -173,21 +173,25 @@ func (s Store) setAside(t tenant.Tenant) []string {
 }
 
 // ResetBilling is the metadata an operator's reset of t's store billing
-// writes (Reset store billing, at now): t ends as a subscription that ended
-// does (plan trial, its trial over, billing canceled, no billing source),
-// Apple's renewal status is cleared, and each of stores' subscriptions is
-// cleared and kept aside (ResetMeta), so the store's later word on it is
-// ignored.
+// writes (Reset store billing, at now): t starts again as a new sign-up does.
+// That's the trial not started (no trial stamps: it starts at checkout or
+// with the store's free week), no billing status or source, and the no-plan
+// allowance for Coach's runs counted again from now
+// (tenant.NoPlanAllowanceFrom). Apple's renewal status is cleared, and each
+// of stores' subscriptions is cleared and kept aside (ResetMeta), so the
+// store's later word on it is ignored.
 func ResetBilling(t tenant.Tenant, now time.Time, stores ...Store) map[string]any {
 	at := now.UTC().Format(time.RFC3339)
 	set := map[string]any{
-		tenant.MetadataKeyPlan:          string(tenant.PlanTrial),
-		tenant.MetadataKeyTrialEndsAt:   at,
-		billing.MetaBillingStatus:       billing.StatusCanceled,
-		tenant.MetadataKeyBillingSource: string(tenant.BillingNone),
-		MetaAutoRenew:                   "",
-		MetaAutoRenewAt:                 "",
-		MetaResetAt:                     at,
+		tenant.MetadataKeyPlan:                string(tenant.PlanTrial),
+		tenant.MetadataKeyTrialEndsAt:         "",
+		tenant.MetadataKeyTrialStartedAt:      "",
+		billing.MetaBillingStatus:             "",
+		tenant.MetadataKeyBillingSource:       string(tenant.BillingNone),
+		tenant.MetadataKeyNoPlanAllowanceFrom: at,
+		MetaAutoRenew:                         "",
+		MetaAutoRenewAt:                       "",
+		MetaResetAt:                           at,
 	}
 	for _, s := range stores {
 		for k, v := range s.ResetMeta(t) {

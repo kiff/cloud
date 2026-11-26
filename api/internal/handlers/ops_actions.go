@@ -406,7 +406,12 @@ type storeResetView struct {
 	AppleReset         bool   `json:"apple_reset"`
 	GoogleReset        bool   `json:"google_reset"`
 	ResetAt            string `json:"reset_at"`
-	From               string `json:"from,omitempty"`
+	// Trial is where the trial stands: "not_started" as for a new sign-up,
+	// "running" or "ended". NoPlanAllowanceFrom is when Coach's no-plan
+	// allowance counts from (empty: every run).
+	Trial               string `json:"trial"`
+	NoPlanAllowanceFrom string `json:"no_plan_allowance_from,omitempty"`
+	From                string `json:"from,omitempty"`
 }
 
 // storeBilling is the App Store's and Google Play's keys, for a reset. Only
@@ -421,7 +426,15 @@ func storeBilling() []appstore.Store {
 func storeResetOf(t tenant.Tenant) storeResetView {
 	str := func(k string) string { s, _ := t.Metadata[k].(string); return s }
 	v := storeResetView{ID: t.ID, Plan: string(tenant.PlanFor(t).Plan), BillingSource: string(tenant.BillingSourceOf(t)),
-		BillingStatus: str(billing.MetaBillingStatus), ResetAt: str(appstore.MetaResetAt)}
+		BillingStatus: str(billing.MetaBillingStatus), ResetAt: str(appstore.MetaResetAt), NoPlanAllowanceFrom: str(tenant.MetadataKeyNoPlanAllowanceFrom)}
+	switch tenant.TrialStatusAt(t, time.Now()) {
+	case tenant.TrialNotStarted:
+		v.Trial = "not_started"
+	case tenant.TrialRunning:
+		v.Trial = "running"
+	default:
+		v.Trial = "ended"
+	}
 	stores := storeBilling()
 	v.AppleSubscription = str(stores[0].MetaSubscription) != ""
 	v.GoogleSubscription = str(stores[1].MetaSubscription) != ""
@@ -431,9 +444,10 @@ func storeResetOf(t tenant.Tenant) storeResetView {
 }
 
 // resetStoreBilling serves POST /v1/ops/tenants/{id}/store-billing/reset: a
-// review or test account goes back to no plan after a store purchase (App
-// Review's account after a TestFlight Solo). As a subscription that ended: plan
-// trial, its trial over, billing canceled, no billing source; and the App
+// review or test account starts again as a new sign-up does after a store
+// purchase (App Review's account after a TestFlight Solo): the trial not
+// started, no billing status or source, Coach's no-plan allowance counted
+// again from now (appstore.ResetBilling); and the App
 // Store's and Google Play's subscriptions cleared, each kept aside so a later
 // renewal or expiry the store sends for it is ignored (appstore WasReset). A
 // purchase the person makes in the app after the reset applies as a new one.

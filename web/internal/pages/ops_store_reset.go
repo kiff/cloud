@@ -24,3 +24,22 @@ func setAside(reset bool) string {
 	}
 	return ""
 }
+
+// trialWords is the read-back's trial: as a new sign-up's, running or ended.
+func trialWords(trial string) string {
+	switch trial {
+	case "not_started":
+		return "not started, as for a new sign-up"
+	case "":
+		return "unknown"
+	}
+	return trial
+}
+
+// allowanceFrom is when Coach's no-plan allowance counts from.
+func allowanceFrom(at string) string {
+	if at == "" {
+		return "every run since the account began"
+	}
+	return "runs since " + at
+}

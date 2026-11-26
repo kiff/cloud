@@ -21,13 +21,14 @@ func (p *Postgres) SetupSpent(ctx context.Context, tenantID string, from, to tim
 }
 
 // NoPlanSetupSpent is what Setup's runs of tenantID cost while it had no
-// plan, all of them: what the no-plan allowance is measured against, once
-// per account.
-func (p *Postgres) NoPlanSetupSpent(ctx context.Context, tenantID string) (int64, error) {
+// plan, those that ended at since or later (zero: all of them): what the
+// no-plan allowance is measured against, once per account, or since an
+// operator's reset started it again (tenant.NoPlanAllowanceFrom).
+func (p *Postgres) NoPlanSetupSpent(ctx context.Context, tenantID string, since time.Time) (int64, error) {
 	var spent int64
 	if err := p.pool.QueryRow(ctx, `
 		SELECT COALESCE(SUM(cost_micro_usd), 0)::bigint FROM cloud_meta.billable_runs
-		 WHERE tenant_id = $1 AND setup AND no_plan`, tenantID).Scan(&spent); err != nil {
+		 WHERE tenant_id = $1 AND setup AND no_plan AND ended_at >= $2`, tenantID, since.UTC()).Scan(&spent); err != nil {
 		return 0, fmt.Errorf("meter: setup's spend with no plan: %w", err)
 	}
 	return spent, nil
