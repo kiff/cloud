@@ -22,10 +22,13 @@ type Request struct {
 }
 
 // ErrInvalid: the permit request is malformed. ErrSubstituted: it names a
-// tool or audience other than the action's target.
+// tool or audience other than the action's target. ErrUnsignable: its
+// arguments carry a number no permit can sign exactly (ErrUnsafeNumber),
+// such as an 18-digit id sent as a number; as a string it can be signed.
 var (
 	ErrInvalid     = errors.New("permit: invalid request")
 	ErrSubstituted = errors.New("permit: the request names another tool or audience than the action's target")
+	ErrUnsignable  = errors.New("permit: an argument is a number beyond what a permit signs exactly")
 )
 
 // BindingFor computes the binding for the action's target t.
@@ -37,6 +40,9 @@ func (r Request) BindingFor(t Target) (Binding, error) {
 		return Binding{}, ErrInvalid
 	}
 	h, err := ArgsSHA256(r.Arguments)
+	if errors.Is(err, ErrUnsafeNumber) {
+		return Binding{}, ErrUnsignable
+	}
 	if err != nil {
 		return Binding{}, ErrInvalid
 	}

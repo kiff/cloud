@@ -276,6 +276,7 @@ var nextSteps = map[string]struct {
 	"plan_trial_ended":             {"This account's trial ended, and no plan followed it. Nothing was sent. Don't retry: stop and tell the owner.", "none"},
 	"permits_unavailable":          {"KIFF could not issue the execution permit this tool requires. Call again with a new " + OperationArg + " shortly; if it persists, ask the account owner.", "new_call"},
 	"invalid_permit_request":       {"The tool's connection is not set up for execution permits. Ask the account owner to check the connection.", "none"},
+	"permit_args_unsignable":       {"A number in this call's arguments is too long for KIFF to sign exactly (an id of 17 digits or more, say). Nothing was sent. Send that value as text, in quotes, and call again with a new " + OperationArg + ".", "new_call"},
 	ReasonUnitMismatch:             {"The call is in another currency or unit than the agent's Card counts. Do not retry it; tell the account owner.", "none"},
 	ReasonUnitUnverified:           {"KIFF could not check the call's currency or unit. Do not retry it; tell the account owner.", "none"},
 	ReasonAmountUnverified:         {"KIFF couldn't read this call's amount from its resource. Do not retry it; tell the account owner.", "none"},

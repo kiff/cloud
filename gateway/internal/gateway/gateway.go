@@ -3,6 +3,7 @@
 package gateway
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
@@ -225,9 +226,13 @@ func (t Tool) ownerAsk() string {
 // forwardArgs is the exact argument object sent to the tool: the agent's
 // arguments plus the operation id under the tool's idempotency argument.
 // apps/api hashes these bytes into the permit, so they are built once.
+// Numbers go as the agent wrote them: read as doubles, an 18-digit id
+// would reach the tool rounded to another id.
 func forwardArgs(t Tool, in invocation.Invocation) json.RawMessage {
 	var args map[string]any
-	_ = json.Unmarshal(in.Arguments, &args)
+	dec := json.NewDecoder(bytes.NewReader(in.Arguments))
+	dec.UseNumber()
+	_ = dec.Decode(&args)
 	if args == nil {
 		args = map[string]any{}
 	}

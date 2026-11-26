@@ -223,3 +223,32 @@ func TestPendingCollectsAHeldCallWithFixedArguments(t *testing.T) {
 		t.Fatalf("collected twice: tool calls = %d", r.tool.count())
 	}
 }
+
+// An integer past 2^53 - 1 (an 18-digit id) reaches the tool, and the
+// permit request, exactly as the agent wrote it: read as a double it was
+// rounded to another id (123456789012345678 went as 123456789012345680).
+func TestALongIntegerIsForwardedAsWritten(t *testing.T) {
+	for _, mode := range []string{"", gateway.ModeVerify} {
+		r := newRig(t)
+		tool := refundTool
+		tool.InputSchema = json.RawMessage(`{"type":"object","properties":{"amount_eur":{"type":"integer"},"order":{"type":"string"},"ledger_id":{"type":"integer"}},"required":["amount_eur"]}`)
+		if mode != "" {
+			tool.Mode, tool.Audience = mode, "https://refunds.example.com/mcp"
+		}
+		r.gw.Catalog = catalog{tool}
+		args := amount(500, "op-long-"+mode)
+		args["ledger_id"] = json.Number("123456789012345678")
+		if got := r.call(t, "agent-key", args); got.isError || r.tool.count() != 1 {
+			t.Fatalf("mode %q: %+v, tool calls = %d", mode, got, r.tool.count())
+		}
+		if !bytes.Contains(r.tool.raw[0], []byte(`"ledger_id":123456789012345678`)) {
+			t.Errorf("mode %q: forwarded %s", mode, r.tool.raw[0])
+		}
+		if mode != "" {
+			key := strings.TrimPrefix(r.tool.permits[0], "permit-for-")
+			if pr := r.api.permits[key]; !bytes.Equal(pr.Arguments, r.tool.raw[0]) {
+				t.Errorf("permit over %s, forwarded %s", pr.Arguments, r.tool.raw[0])
+			}
+		}
+	}
+}
