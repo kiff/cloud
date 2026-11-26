@@ -303,6 +303,9 @@ func TestPermit_RequestNeedsAnIDAndAnObject(t *testing.T) {
 	if r := decideWithPermit(t, h, "op-1", `[1,2]`); r.Outcome != "invalid" || r.Reasons[0] != "invalid_permit_request" {
 		t.Fatalf("array arguments: %+v", r)
 	}
+	if r := decideWithPermit(t, h, "op-1", `{"order_number":1042,"amount_cents":500,"ledger_id":123456789012345678}`); r.Outcome != "invalid" || r.Reasons[0] != "permit_args_unsignable" {
+		t.Fatalf("an 18-digit number: %+v", r)
+	}
 	body := map[string]any{"entity_id": "o1", "entity_type": "Order", "action_name": "REFUND_ORDER",
 		"actor_id": "refund-agent", "parameters": map[string]any{"amount_cents": 500},
 		"permit": map[string]any{"arguments": map[string]any{"amount_cents": 500}}}

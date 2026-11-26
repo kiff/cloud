@@ -31,6 +31,7 @@ const (
 	reasonPermitNotConsumed   = "permit_not_consumed"
 	reasonPermitRequired      = "permit_required"
 	reasonPermitBindingLate   = "permit_binding_late"
+	reasonPermitUnsignable    = "permit_args_unsignable"
 )
 
 // decidedChecker is the part of the mandate authorizer that says whether a
@@ -166,6 +167,10 @@ func (h *ProposalsHandler) permitGate(ctx context.Context, id auth.Identity, pro
 	if errors.Is(err, permit.ErrSubstituted) {
 		return refuse(outcomeInvalid, reasonPermitSubstituted,
 			"the permit request names another tool or audience than the one this action is connected to")
+	}
+	if errors.Is(err, permit.ErrUnsignable) {
+		return refuse(outcomeInvalid, reasonPermitUnsignable,
+			"an argument is a number beyond 2^53 - 1, which a permit cannot sign exactly; send it as a string")
 	}
 	if err != nil {
 		return refuse(outcomeInvalid, reasonPermitInvalid, "the permit request needs the call's arguments as a JSON object")

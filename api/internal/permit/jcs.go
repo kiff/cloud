@@ -16,6 +16,11 @@ import (
 	"unicode/utf8"
 )
 
+// ErrUnsafeNumber: the arguments carry an integer beyond 2^53 - 1, or a
+// number past a double's range, which no permit can sign without
+// ambiguity. Such a value goes as a string.
+var ErrUnsafeNumber = errors.New("jcs: a number beyond what a JSON number carries exactly")
+
 // maxSafeInteger is 2^53 - 1, the largest integer every JSON number maps
 // to exactly.
 var maxSafeInteger = big.NewInt(1<<53 - 1)
@@ -68,9 +73,12 @@ func encode(b *bytes.Buffer, v any) error {
 		// could hash the same while the tool receives either. Refused, as
 		// the Python verifier refuses them.
 		if i, ok := new(big.Int).SetString(string(x), 10); ok && new(big.Int).Abs(i).Cmp(maxSafeInteger) > 0 {
-			return fmt.Errorf("jcs: integer %s is beyond 2^53 - 1 and cannot be hashed without ambiguity", x)
+			return fmt.Errorf("%w: integer %s is beyond 2^53 - 1 and cannot be hashed without ambiguity", ErrUnsafeNumber, x)
 		}
 		f, err := strconv.ParseFloat(string(x), 64)
+		if errors.Is(err, strconv.ErrRange) {
+			return fmt.Errorf("%w: number %s is past a double's range", ErrUnsafeNumber, x)
+		}
 		if err != nil {
 			return fmt.Errorf("jcs: number %s: %w", x, err)
 		}

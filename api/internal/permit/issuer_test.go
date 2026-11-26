@@ -5,6 +5,7 @@ import (
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -321,5 +322,25 @@ func TestSameGovernedAtPaths(t *testing.T) {
 	bad.AmountPath = "invoice.items[0].total"
 	if bad.Validate() == nil {
 		t.Error("an indexed path validated")
+	}
+}
+
+// A number no permit signs exactly (an 18-digit id sent as a number, or one
+// past a double's range) is ErrUnsignable, apart from a malformed request;
+// the same id as a string, and 2^53 - 1 itself, are signed.
+func TestRequestBindingNamesAnUnsignableNumber(t *testing.T) {
+	tg := Target{Action: "a", Tool: "t", Audience: "aud"}
+	for _, args := range []string{`{"administration_id":123456789012345678}`, `{"lines":[{"id":-9007199254740992}]}`, `{"x":1e400}`} {
+		if _, err := (Request{Arguments: json.RawMessage(args)}).BindingFor(tg); !errors.Is(err, ErrUnsignable) {
+			t.Errorf("%s: err = %v, want ErrUnsignable", args, err)
+		}
+	}
+	for _, args := range []string{`{"administration_id":"123456789012345678"}`, `{"n":9007199254740991}`, `{"n":1.5e300}`} {
+		if _, err := (Request{Arguments: json.RawMessage(args)}).BindingFor(tg); err != nil {
+			t.Errorf("%s: %v", args, err)
+		}
+	}
+	if _, err := (Request{Arguments: json.RawMessage(`{"a":1} trailing`)}).BindingFor(tg); errors.Is(err, ErrUnsignable) || err == nil {
+		t.Errorf("trailing data: %v, want ErrInvalid", err)
 	}
 }
