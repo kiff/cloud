@@ -1,0 +1,2 @@
+# A binary built in place (go build ./cmd/api), never kept.
+/api/api
