@@ -333,3 +333,28 @@ func TestARevokedDevicesSessionDoesntMakeATestTenantReal(t *testing.T) {
 		t.Fatalf("with the iPad revoked: %+v, want %s accepted", vet, id)
 	}
 }
+
+// A test tenant that's also pruned (KIFF_PRUNE_TENANTS) is refused at boot:
+// a test account's data is never pruned. Its test keys aren't kept to it,
+// and the ingest stays unmounted, as for any refused test tenant. Another
+// test tenant, not pruned, is still accepted.
+func TestATestTenantThatsAlsoPrunedIsRefused(t *testing.T) {
+	setProofOIDC(t)
+	f := newProofFixture(t)
+	pruned := f.tenant(t, string(tenant.PlanInternal))
+	kept := f.tenant(t, string(tenant.PlanInternal))
+	vet := withoutPruned(f.vet(pruned, kept), []string{"another", pruned}, discardLogger())
+	if strings.Join(vet.own, ",") != kept || refusedWhy(vet, pruned) != proofs.RefusedPruned {
+		t.Fatalf("got %+v, want %s refused as pruned and %s kept", vet, pruned, kept)
+	}
+	if ingestMounts(vet) {
+		t.Error("the ingest mounted with a test tenant refused")
+	}
+	if k := proofKeyRestriction(routerDeps{proofTestKeys: f.keys, proofTestTenants: vet.own, logger: discardLogger()}); k.Allows(context.Background(), pruned, f.testKey) {
+		t.Error("the test key still acts on the pruned tenant")
+	}
+	// Nothing pruned: the vetting is as it was.
+	if vet := withoutPruned(f.vet(pruned), nil, discardLogger()); strings.Join(vet.own, ",") != pruned || len(vet.refused) != 0 {
+		t.Fatalf("with nothing pruned: %+v", vet)
+	}
+}

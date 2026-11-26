@@ -407,8 +407,8 @@ func (m *Middleware) serveWithMemberships(w http.ResponseWriter, r *http.Request
 	if id.MemberRole != "" {
 		resolved.Roles = append([]string(nil), id.Roles...)
 	}
-	if !m.keys.AllowsIdentity(ctx, id) {
-		WriteKeyRestricted(w)
+	if code := m.keys.Refusal(r.WithContext(ctx), id); code != "" {
+		WriteRefusal(w, code)
 		return
 	}
 	ctx = WithIdentity(ctx, id)

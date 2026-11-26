@@ -110,7 +110,7 @@ func (h *DeviceAuthHandler) appToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.finishMint(r, id, m)
-	resp := deviceTokenResponse{AccessToken: m.token, TokenType: "Bearer", ExpiresIn: int(h.sessionTTL.Seconds()), Tenant: id.Tenant, Subject: id.Subject}
+	resp := deviceTokenResponse{AccessToken: m.token, TokenType: "Bearer", ExpiresIn: int(m.sess.ExpiresAt.Sub(m.sess.CreatedAt).Seconds()), Tenant: id.Tenant, Subject: id.Subject}
 	if in.deviceKey != nil {
 		resp.ApprovalMode = m.shownMode
 	}
