@@ -344,6 +344,7 @@ templ OpsStoreResetResult(id string, v *apiclient.OpsStoreReset, failed string, 
 					<dt>Google Play subscription</dt><dd>{ heldOrNot(v.GoogleSubscription) }{ setAside(v.GoogleReset) }</dd>
 					<dt>Trial</dt><dd>{ trialWords(v.Trial) }</dd>
 					<dt>Coach's no-plan allowance</dt><dd>{ allowanceFrom(v.NoPlanAllowanceFrom) }</dd>
+					<dt>Store packs set aside</dt><dd>{ packsSetAside(v.PacksSetAside) }</dd>
 					<dt>Reset at</dt><dd>{ v.ResetAt }</dd>
 				</dl>
 			}
