@@ -142,8 +142,8 @@ func (h *BillingCheckoutHandler) checkout(w http.ResponseWriter, r *http.Request
 	apple := tenant.BillingSourceOf(t) == tenant.BillingApple
 	if apple && (body.Plan != "team" || l.Canonical != tenant.PlanSolo) {
 		// One billing source per account: Solo stays Apple's, and only a paid
-		// Solo moves to Team here. Apple's free week would become paid Solo
-		// beside Team.
+		// Solo moves to Team here. A store free trial (none is offered on Solo
+		// today) would become paid Solo beside Team.
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "billed_by_apple",
 			"message": "Apple bills this account's plan. Cancel it with Apple first to choose a plan here."})
 		return

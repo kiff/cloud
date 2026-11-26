@@ -114,8 +114,8 @@ func TestBillingCheckout(t *testing.T) {
 	if code, f := run(appleSolo, membership.RoleAdmin, `{"plan": "team"}`, nil); code != http.StatusOK || !f.got.TrialEnd.IsZero() || f.got.AppleCredit {
 		t.Fatalf("apple solo ending: %d %+v", code, f.got)
 	}
-	// Apple's free week isn't a paid Solo: Team isn't sold beside it, since the week
-	// would become paid Solo and the person would pay twice.
+	// A store free trial (none is offered on Solo today) isn't a paid Solo: Team isn't
+	// sold beside it, since the trial would become paid Solo and the person would pay twice.
 	appleTrial := map[string]any{tenant.MetadataKeyPlan: "trial", tenant.MetadataKeyBillingSource: "apple",
 		tenant.MetadataKeyTrialEndsAt: end.Format(time.RFC3339), appstore.MetaExpiresAt: end.Format(time.RFC3339)}
 	if code, f := run(appleTrial, membership.RoleAdmin, `{"plan": "team"}`, nil); code != http.StatusConflict || f.got.Plan != "" {

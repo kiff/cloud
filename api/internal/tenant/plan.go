@@ -359,8 +359,11 @@ func TrialEndsAt(t Tenant) (time.Time, bool) {
 type TrialStatus int
 
 const (
-	// TrialNotStarted: no end is stamped. The trial starts with a card at
-	// checkout, or with the store's free week.
+	// TrialNotStarted: no end is stamped, as at sign-up. No plan has a free
+	// trial today: checkout bills from the first day, and neither store has
+	// an introductory offer on Solo. A trial is stamped only if Stripe or a
+	// store reports one (a store's FREE_TRIAL), and an account on it still
+	// reads as no plan (meter.KindOf): Solo is offered, and no taf runs.
 	TrialNotStarted TrialStatus = iota
 	// TrialRunning: started, and its end is still ahead.
 	TrialRunning
