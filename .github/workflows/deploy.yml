@@ -167,6 +167,9 @@ jobs:
       KIFF_PROOF_OIDC_WORKFLOW: ${{ vars.KIFF_PROOF_OIDC_WORKFLOW }}
       KIFF_PROOF_TEST_TENANTS: ${{ secrets.KIFF_PROOF_TEST_TENANTS }}
       KIFF_PROOF_TEST_KEYS: ${{ secrets.KIFF_PROOF_TEST_KEYS }}
+      # The test tenants whose test keys' sessions last two weeks (a robot test user's); optional, and
+      # each must also be in KIFF_PROOF_TEST_TENANTS. Unset or "-": none, every test key's session as usual.
+      KIFF_PROOF_SHORT_SESSION_TENANTS: ${{ secrets.KIFF_PROOF_SHORT_SESSION_TENANTS }}
       KIFF_PROOF_RUNNER_VERSIONS: ${{ vars.KIFF_PROOF_RUNNER_VERSIONS }}
       KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
       # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of
@@ -239,7 +242,7 @@ jobs:
       - name: Mask each element of the list secrets
         run: |
           for n in KIFF_STUB_SUBJECTS KIFF_APPLE_SANDBOX_TENANTS KIFF_GOOGLE_TEST_TENANTS KIFF_APP_SIGNIN_TENANTS KIFF_PROOF_TEST_TENANTS \
-            KIFF_PROOF_TEST_KEYS KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
+            KIFF_PROOF_TEST_KEYS KIFF_PROOF_SHORT_SESSION_TENANTS KIFF_OPS_SUBJECTS KIFF_PRUNE_TENANTS; do
             IFS=',' read -r -a parts <<< "${!n:-}"
             for p in "${parts[@]}"; do
               p="${p//[[:space:]]/}"

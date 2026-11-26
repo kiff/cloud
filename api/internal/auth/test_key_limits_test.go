@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -35,66 +36,92 @@ func splitRoute(t *testing.T, pattern string) (string, string) {
 	return method, path
 }
 
-// A session made with a test key lives two weeks, not the usual 90 days;
-// any other key's keeps the lifetime it's given.
-func TestATestKeysSessionLivesTwoWeeks(t *testing.T) {
+// shortRestriction keeps the test key to two test tenants: "tenant-test",
+// a robot test user's, held to short sessions, and "tenant-ci", the CI
+// phones', which isn't.
+func (rig *testKeyRig) shortRestriction() *KeyRestriction {
+	return NewKeyRestriction(func(der []byte) bool { return bytes.Equal(der, rig.key) }, []string{"tenant-test", "tenant-ci"}).
+		WithShortSessions([]string{"tenant-test", " ", "tenant-not-a-test-tenant"})
+}
+
+// On a short-session test tenant, a session made with a test key lives two
+// weeks, not the usual 90 days. On another test tenant (the CI's), and for
+// any other key, a session keeps the lifetime it's given.
+func TestATestKeysSessionLivesTwoWeeksOnAShortSessionTenant(t *testing.T) {
 	rig := newTestKeyRig(t)
-	k := rig.restriction()
+	k := rig.shortRestriction()
 	const usual = 90 * 24 * time.Hour
 	for name, keys := range map[string][][]byte{
 		"device key":          {rig.key, nil},
 		"approval key":        {rig.other, rig.key},
 		"approval key, alone": {nil, rig.key},
 	} {
-		if got := k.SessionLifetime(usual, keys...); got != TestKeySessionLifetime {
+		if got := k.SessionLifetime(usual, "tenant-test", keys...); got != TestKeySessionLifetime {
 			t.Errorf("%s: %v, want %v", name, got, TestKeySessionLifetime)
 		}
+		if got := k.SessionLifetime(usual, "tenant-ci", keys...); got != usual {
+			t.Errorf("%s on the CI's test tenant: %v, want %v", name, got, usual)
+		}
 	}
-	if got := k.SessionLifetime(usual, rig.other, nil); got != usual {
+	if got := k.SessionLifetime(usual, "tenant-test", rig.other, nil); got != usual {
 		t.Errorf("another key: %v", got)
 	}
-	if got := k.SessionLifetime(time.Hour, rig.key); got != time.Hour {
+	if got := k.SessionLifetime(time.Hour, "tenant-test", rig.key); got != time.Hour {
 		t.Errorf("a shorter lifetime stays: %v", got)
 	}
 	if TestKeySessionLifetime != 14*24*time.Hour {
 		t.Fatalf("TestKeySessionLifetime = %v", TestKeySessionLifetime)
 	}
+	// With no short-session tenant named, no session is shortened.
+	if got := rig.restriction().SessionLifetime(usual, "tenant-test", rig.key); got != usual {
+		t.Errorf("no short-session tenants: %v", got)
+	}
 	var none *KeyRestriction
-	if got := none.SessionLifetime(usual, rig.key); got != usual {
+	if got := none.SessionLifetime(usual, "tenant-test", rig.key); got != usual {
 		t.Errorf("no restriction: %v", got)
 	}
 }
 
-// A session holding a test key is refused once it's two weeks old, whatever
-// its own expiry says: one made before the limit, or given a test approval
-// key later. Another phone's session isn't.
-func TestATestKeysSessionEndsAfterTwoWeeks(t *testing.T) {
+// On a short-session test tenant, a session holding a test key is refused
+// once it's two weeks old, whatever its own expiry says: one made before the
+// limit, or given a test approval key later. On the CI's test tenant a test
+// key's 30-day-old session still works, and another phone's isn't touched.
+func TestATestKeysSessionEndsAfterTwoWeeksOnAShortSessionTenant(t *testing.T) {
 	rig := newTestKeyRig(t)
 	now := time.Now()
-	add := func(name string, created time.Time, device, approval []byte) {
+	add := func(name, tenant string, created time.Time, device, approval []byte) {
 		gen, _ := NewDevSessionToken()
-		if err := rig.sessions.Insert(context.Background(), DeveloperSession{ID: "sess-" + name, Subject: "human-tenant-test",
-			Tenant: "tenant-test", TokenHash: gen.Hash, CreatedAt: created, ExpiresAt: now.Add(80 * 24 * time.Hour),
+		if err := rig.sessions.Insert(context.Background(), DeveloperSession{ID: "sess-" + name, Subject: "human-" + tenant,
+			Tenant: tenant, TokenHash: gen.Hash, CreatedAt: created, ExpiresAt: now.Add(80 * 24 * time.Hour),
 			DevicePublicKey: device, ApprovalPublicKey: approval}); err != nil {
 			t.Fatal(err)
 		}
 		rig.tokens[name] = gen.Plaintext
 	}
-	add("test-15-days", now.Add(-15*24*time.Hour), rig.key, nil)
-	add("test-approval-15-days", now.Add(-15*24*time.Hour), nil, rig.key)
-	add("test-13-days", now.Add(-13*24*time.Hour), rig.key, nil)
-	add("other-60-days", now.Add(-60*24*time.Hour), rig.other, nil)
+	add("test-15-days", "tenant-test", now.Add(-15*24*time.Hour), rig.key, nil)
+	add("test-approval-15-days", "tenant-test", now.Add(-15*24*time.Hour), nil, rig.key)
+	add("test-13-days", "tenant-test", now.Add(-13*24*time.Hour), rig.key, nil)
+	add("ci-30-days", "tenant-ci", now.Add(-30*24*time.Hour), rig.key, nil)
+	add("ci-approval-30-days", "tenant-ci", now.Add(-30*24*time.Hour), nil, rig.key)
+	add("other-60-days", "tenant-test", now.Add(-60*24*time.Hour), rig.other, nil)
 	resolver := NewMapResolver()
 	mw := NewMiddleware(NewStubProvider(resolver), NewMemoryAPIKeyStore(), resolver,
-		WithDeveloperSessions(rig.sessions), WithKeyRestriction(rig.restriction()), WithClock(func() time.Time { return now }))
+		WithDeveloperSessions(rig.sessions), WithKeyRestriction(rig.shortRestriction()), WithClock(func() time.Time { return now }))
 	next := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
 	for name, want := range map[string]int{
 		"test-15-days": http.StatusUnauthorized, "test-approval-15-days": http.StatusUnauthorized,
-		"test-13-days": http.StatusOK, "other-60-days": http.StatusOK,
+		"test-13-days": http.StatusOK, "ci-30-days": http.StatusOK, "ci-approval-30-days": http.StatusOK, "other-60-days": http.StatusOK,
 	} {
 		if code, _ := serveKey(t, mw.Wrap(next), rig.tokens[name], http.MethodGet, "/v1/me"); code != want {
 			t.Errorf("%s: %d, want %d", name, code, want)
 		}
+	}
+	// With no short-session tenant named (as CI's account ran when this
+	// broke it), a test key's 15-day-old session works.
+	open := NewMiddleware(NewStubProvider(resolver), NewMemoryAPIKeyStore(), resolver,
+		WithDeveloperSessions(rig.sessions), WithKeyRestriction(rig.restriction()), WithClock(func() time.Time { return now }))
+	if code, _ := serveKey(t, open.Wrap(next), rig.tokens["test-15-days"], http.MethodGet, "/v1/me"); code != http.StatusOK {
+		t.Errorf("no short-session tenants, a 15-day session: %d", code)
 	}
 }
 

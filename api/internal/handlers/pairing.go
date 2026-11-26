@@ -632,8 +632,8 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		Label:     p.Name,
 		TokenHash: gen.Hash,
 		CreatedAt: now,
-		// A test key's session is shorter (auth.TestKeySessionLifetime).
-		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, p.PublicKey, p.ApprovalKey)),
+		// A test key's session is shorter on a short-session test tenant (auth.TestKeySessionLifetime).
+		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, p.Tenant, p.PublicKey, p.ApprovalKey)),
 		DeviceID:  device.ID,
 
 		DevicePublicKey:   p.PublicKey,

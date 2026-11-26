@@ -358,3 +358,30 @@ func TestATestTenantThatsAlsoPrunedIsRefused(t *testing.T) {
 		t.Fatalf("with nothing pruned: %+v", vet)
 	}
 }
+
+// KIFF_PROOF_SHORT_SESSION_TENANTS keeps only tenants that are also kept test
+// tenants: one that isn't (unlisted, or refused at boot) gets nothing from
+// it. As main wires it, only the kept one's test-key sessions are short; the
+// other test tenant's (the CI's) keep the usual lifetime.
+func TestShortSessionTenantsMustBeTestTenants(t *testing.T) {
+	setProofOIDC(t)
+	f := newProofFixture(t)
+	pilot := f.tenant(t, string(tenant.PlanInternal))
+	ci := f.tenant(t, string(tenant.PlanInternal))
+	vet := f.vet(pilot, ci)
+	short := shortSessionTenants([]string{pilot, "not-a-test-tenant", f.tenant(t, "solo")}, vet.own, discardLogger())
+	if strings.Join(short, ",") != pilot {
+		t.Fatalf("kept %v, want only %s", short, pilot)
+	}
+	k := proofKeyRestriction(routerDeps{proofTestKeys: f.keys, proofTestTenants: vet.own, proofShortSessionTenants: short, logger: discardLogger()})
+	const usual = 90 * 24 * time.Hour
+	if got := k.SessionLifetime(usual, pilot, f.testKey); got != auth.TestKeySessionLifetime {
+		t.Errorf("the pilot's test tenant: %v", got)
+	}
+	if got := k.SessionLifetime(usual, ci, f.testKey); got != usual {
+		t.Errorf("the CI's test tenant: %v", got)
+	}
+	if got := shortSessionTenants(nil, vet.own, discardLogger()); len(got) != 0 {
+		t.Fatalf("unset: %v", got)
+	}
+}

@@ -106,20 +106,26 @@ func TestATestKeyPairsOnlyOnATestTenant(t *testing.T) {
 	}
 }
 
-// A test key's sign-in on its test tenant gets a session of two weeks, and
-// the device is told so; another phone's gets the usual 90 days.
+// A test key's sign-in on a short-session test tenant gets a session of two
+// weeks, and the device is told so. On the CI's test tenant, and for another
+// phone, it's the usual 90 days.
 func TestATestKeysSignInLastsTwoWeeks(t *testing.T) {
 	t.Parallel()
 	_, testDER := p256(t)
 	_, otherDER := p256(t)
 	listed := true
 	for _, c := range []struct {
-		name string
-		key  []byte
-		want time.Duration
-	}{{"the test key", testDER, auth.TestKeySessionLifetime}, {"another phone", otherDER, 90 * 24 * time.Hour}} {
+		name, tenant string
+		key          []byte
+		want         time.Duration
+	}{
+		{"the test key", "tenant-test", testDER, auth.TestKeySessionLifetime},
+		{"the test key on the CI's test tenant", "tenant-ci", testDER, 90 * 24 * time.Hour},
+		{"another phone", "tenant-test", otherDER, 90 * 24 * time.Hour},
+	} {
 		sessions := auth.NewMemoryDeveloperSessionStore()
-		h := handlers.NewDeviceAuthHandler(sessions, handlers.WithDeviceKeyRestriction(restrictTo(&testDER, &listed, "tenant-test")))
+		k := restrictTo(&testDER, &listed, "tenant-test", "tenant-ci").WithShortSessions([]string{"tenant-test"})
+		h := handlers.NewDeviceAuthHandler(sessions, handlers.WithDeviceKeyRestriction(k))
 		pub := http.NewServeMux()
 		h.RegisterPublic(pub)
 		inner := http.NewServeMux()
@@ -136,7 +142,7 @@ func TestATestKeysSignInLastsTwoWeeks(t *testing.T) {
 		}
 		approve, _ := json.Marshal(map[string]string{"user_code": start.UserCode})
 		rec = httptest.NewRecorder()
-		withFakeIdentity(inner, auth.Identity{Tenant: "tenant-test", Subject: "user-abc", Method: auth.MethodSession}).
+		withFakeIdentity(inner, auth.Identity{Tenant: c.tenant, Subject: "user-abc", Method: auth.MethodSession}).
 			ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/device/approve", bytes.NewReader(approve)))
 		if rec.Code != http.StatusOK {
 			t.Fatalf("%s: approve: %d %s", c.name, rec.Code, rec.Body)

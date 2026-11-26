@@ -380,7 +380,7 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 			return Identity{}, ErrDevSessionRevoked
 		}
 		id.DeviceKey, id.DeviceSessionID, id.DeviceName, id.DeviceID, id.KeyStore = d.PublicKey, sess.ID, d.Name, d.ID, d.KeyStore
-		if m.keys.SessionOutlived(sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
+		if m.keys.SessionOutlived(sess.Tenant, sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
 			return Identity{}, ErrDevSessionExpired
 		}
 		if terr := m.devices.Touch(ctx, d.ID, m.clock()); terr != nil {
@@ -391,9 +391,10 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 	if len(sess.DevicePublicKey) > 0 {
 		id.DeviceKey, id.DeviceSessionID, id.DeviceName = sess.DevicePublicKey, sess.ID, sess.Label
 	}
-	// A session holding a test key lives TestKeySessionLifetime from when
-	// it was made, whatever its own expiry says (KeyRestriction).
-	if m.keys.SessionOutlived(sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
+	// A session holding a test key, on a tenant held to short sessions,
+	// lives TestKeySessionLifetime from when it was made, whatever its own
+	// expiry says (KeyRestriction.WithShortSessions).
+	if m.keys.SessionOutlived(sess.Tenant, sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
 		return Identity{}, ErrDevSessionExpired
 	}
 	return id, nil
