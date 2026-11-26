@@ -28,6 +28,10 @@ type KeyRestriction struct {
 	suspended func(ctx context.Context, tenant string) (bool, error)
 	// denied matches TestKeyDeniedRoutes.
 	denied *http.ServeMux
+	// short are the test tenants whose test keys' sessions last
+	// TestKeySessionLifetime (WithShortSessions); on any other, a test
+	// key's session lasts as long as any other.
+	short map[string]bool
 }
 
 // NewKeyRestriction keeps the keys restricted reports to tenants. Nil
@@ -70,6 +74,24 @@ func (k *KeyRestriction) WithSuspendedCheck(suspended func(ctx context.Context, 
 	return k
 }
 
+// WithShortSessions sets the test tenants whose test keys' sessions last
+// TestKeySessionLifetime: a robot test user's
+// (KIFF_PROOF_SHORT_SESSION_TENANTS), not the CI's, whose phones sign in
+// once and run for months. A tenant here that isn't one of k's is ignored.
+// It returns k; on a nil k it does nothing.
+func (k *KeyRestriction) WithShortSessions(tenants []string) *KeyRestriction {
+	if k == nil {
+		return k
+	}
+	k.short = map[string]bool{}
+	for _, t := range tenants {
+		if t = strings.TrimSpace(t); t != "" && k.tenants[t] {
+			k.short[t] = true
+		}
+	}
+	return k
+}
+
 // Holds reports whether any key given is a restricted one.
 func (k *KeyRestriction) Holds(keys ...[]byte) bool {
 	if k == nil {
@@ -84,25 +106,34 @@ func (k *KeyRestriction) Holds(keys ...[]byte) bool {
 }
 
 // TestKeySessionLifetime is how long a session holding a restricted key
-// lives from when it's made: a test device signs in again every two weeks,
-// rather than holding a session for the usual 90 days.
+// lives from when it's made, on a tenant WithShortSessions names: its test
+// device signs in again every two weeks, rather than holding a session for
+// the usual 90 days.
 const TestKeySessionLifetime = 14 * 24 * time.Hour
 
-// SessionLifetime is the lifetime of a session made with keys: ttl, or
-// TestKeySessionLifetime when it's shorter and any key is restricted.
-func (k *KeyRestriction) SessionLifetime(ttl time.Duration, keys ...[]byte) time.Duration {
-	if k.Holds(keys...) && ttl > TestKeySessionLifetime {
+// shortens reports that a session on tenant holding keys is held to
+// TestKeySessionLifetime.
+func (k *KeyRestriction) shortens(tenant string, keys ...[]byte) bool {
+	return k != nil && k.short[tenant] && k.Holds(keys...)
+}
+
+// SessionLifetime is the lifetime of a session made on tenant with keys:
+// ttl, or TestKeySessionLifetime when it's shorter, the tenant is one
+// WithShortSessions names and any key is restricted.
+func (k *KeyRestriction) SessionLifetime(ttl time.Duration, tenant string, keys ...[]byte) time.Duration {
+	if k.shortens(tenant, keys...) && ttl > TestKeySessionLifetime {
 		return TestKeySessionLifetime
 	}
 	return ttl
 }
 
-// SessionOutlived reports that a session made at created and holding keys
-// is past TestKeySessionLifetime at now, whatever its own expiry says: one
-// made before the limit, or given a restricted approval key after it was
-// made. A session with no creation time can't be measured and isn't.
-func (k *KeyRestriction) SessionOutlived(created, now time.Time, keys ...[]byte) bool {
-	return !created.IsZero() && k.Holds(keys...) && !now.Before(created.Add(TestKeySessionLifetime))
+// SessionOutlived reports that a session on tenant, made at created and
+// holding keys, is past TestKeySessionLifetime at now, whatever its own
+// expiry says (one made before the limit, or given a restricted approval key
+// after it was made), on a tenant WithShortSessions names. A session with no
+// creation time can't be measured and isn't.
+func (k *KeyRestriction) SessionOutlived(tenant string, created, now time.Time, keys ...[]byte) bool {
+	return !created.IsZero() && k.shortens(tenant, keys...) && !now.Before(created.Add(TestKeySessionLifetime))
 }
 
 // TestKeyDeniedRoutes are what a restricted key never does, even on its own

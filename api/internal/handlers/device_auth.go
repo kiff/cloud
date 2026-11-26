@@ -874,8 +874,8 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 		Label:     label,
 		TokenHash: gen.Hash,
 		CreatedAt: now,
-		// A test key's session is shorter (auth.TestKeySessionLifetime).
-		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, deviceKey, approvalKey)),
+		// A test key's session is shorter on a short-session test tenant (auth.TestKeySessionLifetime).
+		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, id.Tenant, deviceKey, approvalKey)),
 
 		DevicePublicKey:   deviceKey,
 		ApprovalPublicKey: approvalKey,
