@@ -379,7 +379,11 @@ type OpsStoreReset struct {
 	AppleReset         bool   `json:"apple_reset"`
 	GoogleReset        bool   `json:"google_reset"`
 	ResetAt            string `json:"reset_at"`
-	From               string `json:"from"`
+	// Trial is "not_started" (as a new sign-up), "running" or "ended";
+	// NoPlanAllowanceFrom, when Coach's no-plan allowance counts from.
+	Trial               string `json:"trial"`
+	NoPlanAllowanceFrom string `json:"no_plan_allowance_from"`
+	From                string `json:"from"`
 }
 
 // OpsResetStoreBillingBearer puts a review or test account back to no plan

@@ -95,7 +95,8 @@ func TestOps_ResetStoreBilling(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &back); err != nil {
 		t.Fatal(err)
 	}
-	if back.Plan != "trial" || back.BillingSource != "" || back.BillingStatus != billing.StatusCanceled || back.From != "solo" ||
+	if back.Plan != "trial" || back.BillingSource != "" || back.BillingStatus != "" || back.From != "solo" ||
+		back.Trial != "not_started" || back.NoPlanAllowanceFrom == "" ||
 		back.AppleSubscription || back.GoogleSubscription || !back.AppleReset || !back.GoogleReset || back.ResetAt == "" {
 		t.Fatalf("read-back: %+v", back)
 	}
@@ -168,6 +169,43 @@ func TestOps_ResetStoreBillingOnlyResetsStoreTestAccounts(t *testing.T) {
 	}
 	if entries, _ := audit.List(ctx, id, 10); len(entries) != 0 || len(resetter.Calls()) != 0 {
 		t.Fatalf("a refused reset was audited or evicted: %+v %v", entries, resetter.Calls())
+	}
+}
+
+// After the reset the account starts again as a new sign-up does: no plan,
+// its trial not started, and Coach answering within the no-plan allowance,
+// counted from the reset. What Coach spent on no plan before the reset no
+// longer counts against it; what it spends after does.
+func TestCoachAnswersAfterAStoreBillingReset(t *testing.T) {
+	meta := soloFromAStore()
+	resetAt := time.Date(2026, 11, 7, 11, 0, 0, 0, time.UTC)
+	for k, v := range appstore.ResetBilling(tenant.Tenant{Metadata: meta}, resetAt,
+		appstore.Store{MetaSubscription: appstore.MetaOriginalTransaction, MetaExpiresAt: appstore.MetaExpiresAt},
+		appstore.Store{MetaSubscription: playstore.MetaPurchaseToken, MetaExpiresAt: playstore.MetaExpiresAt}) {
+		meta[k] = v
+	}
+	got := tenant.Tenant{Metadata: meta}
+	if k, _ := meter.KindOf(got); k != meter.BalanceNone || tenant.PlanFor(got).Canonical != tenant.PlanTrial ||
+		tenant.TrialStatusAt(got, resetAt) != tenant.TrialNotStarted || tenant.BillingSourceOf(got) != tenant.BillingNone {
+		t.Fatalf("after the reset: kind %s, plan %s, trial %v, source %q", k, tenant.PlanFor(got).Plan, tenant.TrialStatusAt(got, resetAt), tenant.BillingSourceOf(got))
+	}
+	r := newCreditsRigOn(t, meta)
+	// Before the reset, Coach spent the whole no-plan allowance; since, nothing.
+	r.ledger.noPlanSpent, r.ledger.noPlanSpentSince = meter.NoPlanSetupMicroUSD*3, 0
+	if code, out := r.allowance(r.setup()); code != http.StatusOK || out["allowed"] != true {
+		t.Fatalf("Coach after the reset: %d %v", code, out)
+	}
+	if !r.ledger.noPlanAsked.Equal(resetAt) {
+		t.Fatalf("the allowance was counted from %v, want the reset's %v", r.ledger.noPlanAsked, resetAt)
+	}
+	// Spent again since the reset: refused, as a new sign-up's would be.
+	r.ledger.noPlanSpentSince = meter.NoPlanSetupMicroUSD
+	if _, out := r.allowance(r.setup()); out["allowed"] != false || out["why"] != meter.WhyNoPlan {
+		t.Fatalf("Coach past the allowance since the reset: %v", out)
+	}
+	// A taf doesn't run on no plan, reset or not.
+	if _, out := r.allowance(r.taf("agt-refunds")); out["allowed"] != false {
+		t.Fatalf("a taf after the reset: %v", out)
 	}
 }
 

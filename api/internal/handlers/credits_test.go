@@ -37,6 +37,9 @@ type fakeLedger struct {
 	scope       *meter.TaskScope
 	runtime     string
 	page        *meter.RunPage
+	// noPlanSpentSince and noPlanAsked: NoPlanSetupSpent's, from a since.
+	noPlanSpentSince int64
+	noPlanAsked      time.Time
 }
 
 func (f *fakeLedger) KeepRun(_ context.Context, r meter.RunReport, from, to time.Time) (meter.RunEntry, bool, error) {
@@ -69,7 +72,14 @@ func (f *fakeLedger) SetupSpent(context.Context, string, time.Time, time.Time) (
 	return f.setupSpent, nil
 }
 
-func (f *fakeLedger) NoPlanSetupSpent(context.Context, string) (int64, error) {
+// NoPlanSetupSpent is noPlanSpent, every run's; from a since, noPlanSpentSince,
+// what the runs that ended since cost. noPlanAsked is the since it was asked
+// with.
+func (f *fakeLedger) NoPlanSetupSpent(_ context.Context, _ string, since time.Time) (int64, error) {
+	f.noPlanAsked = since
+	if !since.IsZero() {
+		return f.noPlanSpentSince, nil
+	}
 	return f.noPlanSpent, nil
 }
 

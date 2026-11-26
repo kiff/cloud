@@ -313,3 +313,32 @@ func TestUsageByPerson(t *testing.T) {
 		t.Fatalf("an empty scope's tasks: %v %v", keys(none), err)
 	}
 }
+
+// The no-plan allowance is Setup's no-plan runs, every one, or from a since:
+// what an operator's Reset store billing starts again (tenant.NoPlanAllowanceFrom).
+func TestNoPlanSetupSpentSince(t *testing.T) {
+	ctx := context.Background()
+	pool := fixture(t)
+	if _, err := pool.Exec(ctx, `INSERT INTO cloud_meta.tenants VALUES ('t-no-plan') ON CONFLICT DO NOTHING`); err != nil {
+		t.Fatal(err)
+	}
+	m := meter.NewPostgres(pool)
+	reset := time.Date(2026, 11, 26, 19, 0, 0, 0, time.UTC)
+	for _, r := range []struct {
+		run   string
+		ended time.Time
+		cost  int64
+	}{{"before", reset.Add(-time.Hour), 500_000}, {"after", reset.Add(time.Minute), 20_000}} {
+		rep := meter.RunReport{Tenant: "t-no-plan", Run: r.run, Agent: "setup", RuntimeAgent: "setup", Setup: true, NoPlan: true,
+			Started: r.ended.Add(-time.Minute), Ended: r.ended, CostMicroUSD: r.cost, Status: "COMPLETED"}
+		if _, _, err := m.KeepRun(ctx, rep, r.ended.Add(-24*time.Hour), r.ended.Add(24*time.Hour)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if all, err := m.NoPlanSetupSpent(ctx, "t-no-plan", time.Time{}); err != nil || all != 520_000 {
+		t.Fatalf("every run: %d %v", all, err)
+	}
+	if since, err := m.NoPlanSetupSpent(ctx, "t-no-plan", reset); err != nil || since != 20_000 {
+		t.Fatalf("since the reset: %d %v", since, err)
+	}
+}

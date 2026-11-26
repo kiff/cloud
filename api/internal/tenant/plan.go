@@ -88,6 +88,19 @@ const MetadataKeyPlan = "plan"
 // it starts: at checkout, or when an existing account is moved onto it.
 const MetadataKeyTrialEndsAt = "trial_ends_at"
 
+// MetadataKeyNoPlanAllowanceFrom is when the account's no-plan allowance for
+// Setup's (Coach's) runs starts (RFC 3339): only runs that ended since count
+// against it (meter.NoPlanSetupMicroUSD). Absent, every run does, as for a new
+// account. An operator's Reset store billing sets it, so a review account
+// starts again as a new sign-up does.
+const MetadataKeyNoPlanAllowanceFrom = "no_plan_allowance_from"
+
+// NoPlanAllowanceFrom is when t's no-plan allowance starts; false when it
+// counts every run.
+func NoPlanAllowanceFrom(t Tenant) (time.Time, bool) {
+	return metaTime(t.Metadata, MetadataKeyNoPlanAllowanceFrom)
+}
+
 // MetadataKeyTrialStartedAt is when the trial started (RFC 3339). A trial
 // can be set to end later than TrialDays when an account is moved onto it.
 // Absent, the trial is the TrialDays before its end.

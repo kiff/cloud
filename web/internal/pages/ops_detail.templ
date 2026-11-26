@@ -308,7 +308,7 @@ templ opsTenantActions(t apiclient.OpsTenantRow) {
 
 		<div class="ops-action-block">
 			<h3>Reset store billing</h3>
-			<p class="dash-note">For App Review's and store test accounts only (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS): any other account is refused. Puts the account back to no plan after an App Store or Google Play purchase: plan trial, no billing source, and both stores' subscriptions cleared and set aside. Nothing about a subscription set aside applies afterwards, its renewals included; a new purchase made in the app after this applies. Cancel the subscription in the store first, so it stops renewing. Accounts billed on kiff.dev or a contract are refused. Recorded in the audit log.</p>
+			<p class="dash-note">For App Review's and store test accounts only (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS): any other account is refused. Starts the account again as a new sign-up does, after an App Store or Google Play purchase: no plan, the trial not started, Coach's no-plan allowance counted again from now, no billing source, and both stores' subscriptions cleared and set aside. Nothing about a subscription set aside applies afterwards, its renewals included; a new purchase made in the app after this applies. Cancel the subscription in the store first, so it stops renewing. Accounts billed on kiff.dev or a contract are refused. Recorded in the audit log.</p>
 			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/store-billing/reset") } class="ops-action-form">
 				<div class="ops-action-row">
 					<div class="ops-field">
@@ -342,6 +342,8 @@ templ OpsStoreResetResult(id string, v *apiclient.OpsStoreReset, failed string, 
 					<dt>Billing status</dt><dd>{ orNone(v.BillingStatus) }</dd>
 					<dt>App Store subscription</dt><dd>{ heldOrNot(v.AppleSubscription) }{ setAside(v.AppleReset) }</dd>
 					<dt>Google Play subscription</dt><dd>{ heldOrNot(v.GoogleSubscription) }{ setAside(v.GoogleReset) }</dd>
+					<dt>Trial</dt><dd>{ trialWords(v.Trial) }</dd>
+					<dt>Coach's no-plan allowance</dt><dd>{ allowanceFrom(v.NoPlanAllowanceFrom) }</dd>
 					<dt>Reset at</dt><dd>{ v.ResetAt }</dd>
 				</dl>
 			}
