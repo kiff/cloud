@@ -24,6 +24,10 @@ const (
 	ActionUnsuspend  = "tenant.unsuspend"
 	ActionRestore    = "tenant.restore"
 	ActionPlanChange = "tenant.plan_change"
+	// ActionStoreBillingReset puts a review or test account back to no plan
+	// after a store purchase (Reset store billing): plan trial, no billing
+	// source, the App Store's and Google Play's subscriptions cleared.
+	ActionStoreBillingReset = "tenant.store_billing_reset"
 	// ActionBonusTasks is the old bonus of tafs tasks, kept so past
 	// entries read; new bonuses are credits.
 	ActionBonusTasks   = "tenant.bonus_tasks"

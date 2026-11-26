@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strings"
 	"time"
 
@@ -126,6 +127,83 @@ type Store struct {
 	// sold as a product id.
 	SoloProduct string
 	PackProduct func(product string) (packs.Pack, bool)
+}
+
+// ResetSuffix makes a store's subscription key into the key that keeps the
+// subscription an operator reset the account's billing from (ResetMeta).
+const ResetSuffix = "_reset"
+
+// MetaResetAt is when an operator last reset the account's store billing.
+const MetaResetAt = "store_billing_reset_at"
+
+// ResetMeta is the metadata that clears this store's subscription from t,
+// as an operator's reset writes it: the subscription and its period cleared,
+// and the subscription added to those set aside under its reset key, every
+// earlier one kept, so the store's later word on any of them is ignored
+// (WasReset). Empty values read as absent everywhere.
+func (s Store) ResetMeta(t tenant.Tenant) map[string]any {
+	set := map[string]any{s.MetaSubscription: "", s.MetaExpiresAt: ""}
+	aside := s.setAside(t)
+	if stored, _ := t.Metadata[s.MetaSubscription].(string); stored != "" && !slices.Contains(aside, stored) {
+		aside = append(aside, stored)
+	}
+	if len(aside) > 0 {
+		set[s.MetaSubscription+ResetSuffix] = aside
+	}
+	return set
+}
+
+// setAside is the subscriptions kept under this store's reset key: a list as
+// written, read back from JSON as []any, or one id as a string.
+func (s Store) setAside(t tenant.Tenant) []string {
+	var ids []string
+	switch v := t.Metadata[s.MetaSubscription+ResetSuffix].(type) {
+	case string:
+		ids = append(ids, v)
+	case []string:
+		ids = append(ids, v...)
+	case []any:
+		for _, x := range v {
+			if id, _ := x.(string); id != "" {
+				ids = append(ids, id)
+			}
+		}
+	}
+	return slices.DeleteFunc(ids, func(id string) bool { return id == "" })
+}
+
+// ResetBilling is the metadata an operator's reset of t's store billing
+// writes (Reset store billing, at now): t ends as a subscription that ended
+// does (plan trial, its trial over, billing canceled, no billing source),
+// Apple's renewal status is cleared, and each of stores' subscriptions is
+// cleared and kept aside (ResetMeta), so the store's later word on it is
+// ignored.
+func ResetBilling(t tenant.Tenant, now time.Time, stores ...Store) map[string]any {
+	at := now.UTC().Format(time.RFC3339)
+	set := map[string]any{
+		tenant.MetadataKeyPlan:          string(tenant.PlanTrial),
+		tenant.MetadataKeyTrialEndsAt:   at,
+		billing.MetaBillingStatus:       billing.StatusCanceled,
+		tenant.MetadataKeyBillingSource: string(tenant.BillingNone),
+		MetaAutoRenew:                   "",
+		MetaAutoRenewAt:                 "",
+		MetaResetAt:                     at,
+	}
+	for _, s := range stores {
+		for k, v := range s.ResetMeta(t) {
+			set[k] = v
+		}
+	}
+	return set
+}
+
+// WasReset is the subscriptions operators set aside resetting t's store
+// billing, for this store, and when the last reset was; false when there's
+// none.
+func (s Store) WasReset(t tenant.Tenant) ([]string, time.Time, bool) {
+	aside := s.setAside(t)
+	at, ok := metaTime(t, MetaResetAt)
+	return aside, at, len(aside) > 0 && ok
 }
 
 // AppStore is Apple's App Store, with catalog's product ids.
@@ -353,7 +431,7 @@ func (p *Processor) apply(ctx context.Context, res billing.Result, kind string, 
 		}
 	}
 	if txn.ProductID != "" && txn.ProductID == p.store.SoloProduct {
-		return p.solo(ctx, res, t, kind, txn, takeBack)
+		return p.solo(ctx, res, t, kind, txn, takeBack, c != nil)
 	}
 	return res, fmt.Errorf("%w: %s", ErrUnknownProduct, txn.ProductID)
 }
@@ -447,8 +525,22 @@ func (p *Processor) creditPack(ctx context.Context, res billing.Result, t tenant
 // solo applies Solo's subscription: the trial during Apple's free trial,
 // Solo with Apple's period while it renews, and an ended trial once it
 // expired or was taken back.
-func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack bool) (billing.Result, error) {
+func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack, fromApp bool) (billing.Result, error) {
 	now := p.now().UTC()
+	if aside, at, ok := p.store.WasReset(t); ok && slices.Contains(aside, txn.OriginalTransactionID) &&
+		!(fromApp && txn.TransactionReason == ReasonPurchase && txn.Purchased().After(at)) {
+		// An operator reset this account's store billing (Reset store billing)
+		// and set this subscription aside: nothing about it applies since, the
+		// store's renewals and its end, or the app sending one of its renewals
+		// (Transaction.updates, a restore). Only a purchase the person made in
+		// the app after the reset (Apple's PURCHASE: a resubscription) applies.
+		// Play's purchase after an end has a new token, so a set-aside one is
+		// never let through.
+		p.logger.InfoContext(ctx, "appstore: a subscription the account's billing was reset from; ignored",
+			slog.String("store", p.store.Name), slog.String("tenant", t.ID), slog.String("transaction", txn.TransactionID), slog.String("type", kind))
+		res.Ignored = true
+		return res, nil
+	}
 	source := tenant.BillingSourceOf(t)
 	expired := kind == Expired || kind == GracePeriodExpired ||
 		(kind != DidFailToRenew && !txn.Expires().IsZero() && !txn.Expires().After(now))
@@ -524,6 +616,11 @@ func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenan
 		tenant.MetadataKeyBillingSource: string(p.store.Billing),
 		p.store.MetaSubscription:        txn.OriginalTransactionID,
 		p.store.MetaExpiresAt:           txn.Expires().Format(time.RFC3339),
+	}
+	if aside, _, ok := p.store.WasReset(t); ok && slices.Contains(aside, txn.OriginalTransactionID) {
+		// Bought again in the app after a reset: it bills the account now,
+		// and its renewals apply. Any other set aside stays so.
+		set[p.store.MetaSubscription+ResetSuffix] = slices.DeleteFunc(slices.Clone(aside), func(id string) bool { return id == txn.OriginalTransactionID })
 	}
 	if txn.FreeTrial() {
 		// The store's one-week free trial is KIFF's trial.

@@ -220,7 +220,15 @@ type Transaction struct {
 	OfferDiscountType string `json:"offerDiscountType"`
 	Environment       string `json:"environment"`
 	Quantity          int    `json:"quantity"`
+	// TransactionReason is Apple's PURCHASE (a purchase, a resubscription
+	// after the subscription ended included) or RENEWAL; empty from Google
+	// Play and from a payload without it.
+	TransactionReason string `json:"transactionReason"`
 }
+
+// ReasonPurchase is Apple's transactionReason for a purchase the person made,
+// as against an automatic RENEWAL.
+const ReasonPurchase = "PURCHASE"
 
 // Transaction types KIFF acts on.
 const (

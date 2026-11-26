@@ -602,3 +602,51 @@ func TestASecondFirstMonthPackIsStillCredited(t *testing.T) {
 		t.Fatalf("both purchases' credits: %d %v", left, err)
 	}
 }
+
+// After an operator reset the account's store billing (Reset store billing),
+// the Play subscription set aside changes nothing: Play's renewal of it, and
+// the app sending its token for the next period (a restore), are ignored.
+// A purchase on Play after an end has a new token, which applies.
+func TestAResetAccountIgnoresItsOldPlaySubscription(t *testing.T) {
+	ctx := context.Background()
+	r := newRig(t)
+	id, token := r.account(t, nil)
+	end := now.AddDate(0, 1, 0)
+	r.play.SetSubscription("sub-1", playstoretest.Subscription(r.solo, playstore.StateActive, token, now.Add(-time.Minute), end))
+	if out, err := r.b.Purchased(ctx, r.solo, "sub-1", appstore.Caller{TenantID: id}); err != nil || out.Action != "solo" {
+		t.Fatalf("purchase: %+v %v", out, err)
+	}
+	for k, v := range appstore.ResetBilling(r.get(t, id), now, playstore.GooglePlay(r.catalog)) {
+		if err := r.tenants.SetMetadata(ctx, id, k, v); err != nil {
+			t.Fatal(err)
+		}
+	}
+	noPlan := func(when string) {
+		t.Helper()
+		got := r.get(t, id)
+		if tenant.PlanFor(got).Canonical != tenant.PlanTrial || tenant.BillingSourceOf(got) != tenant.BillingNone || got.Metadata[playstore.MetaPurchaseToken] != "" {
+			t.Fatalf("%s: plan %s, source %q, token %v", when, tenant.PlanFor(got).Plan, tenant.BillingSourceOf(got), got.Metadata[playstore.MetaPurchaseToken])
+		}
+	}
+	noPlan("after the reset")
+	// Its next period, after the reset.
+	renewed := playstoretest.Subscription(r.solo, playstore.StateActive, token, now.Add(-time.Minute), end.AddDate(0, 1, 0))
+	renewed["acknowledgementState"] = playstore.AckDone
+	r.play.SetSubscription("sub-1", renewed)
+	if out, err := r.b.Notify(ctx, subNote("sub-1", playstore.SubRenewed)); err != nil || !out.Ignored {
+		t.Fatalf("Play's renewal of the old subscription: %+v %v", out, err)
+	}
+	noPlan("after Play's renewal")
+	if out, err := r.b.Purchased(ctx, r.solo, "sub-1", appstore.Caller{TenantID: id}); err != nil || !out.Ignored {
+		t.Fatalf("the app sending the old token's next period: %+v %v", out, err)
+	}
+	noPlan("after the app sent the old token")
+	if aside, _, ok := playstore.GooglePlay(r.catalog).WasReset(r.get(t, id)); !ok || len(aside) != 1 || aside[0] != "sub-1" {
+		t.Fatalf("set aside: %v %v", aside, ok)
+	}
+	// A new purchase, with its own token: Solo.
+	r.play.SetSubscription("sub-2", playstoretest.Subscription(r.solo, playstore.StateActive, token, now.Add(time.Minute), end.AddDate(0, 1, 0)))
+	if out, err := r.b.Purchased(ctx, r.solo, "sub-2", appstore.Caller{TenantID: id}); err != nil || out.Action != "solo" {
+		t.Fatalf("a new purchase: %+v %v", out, err)
+	}
+}

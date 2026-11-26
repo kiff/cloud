@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"slices"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -28,6 +29,9 @@ type OpsMutator interface {
 	SetTenantStatus(ctx context.Context, tenantID string, from, status tenant.Status, prov *time.Time, e operatoraudit.Entry) error
 	// SetTenantPlan sets the tenant's plan metadata key and writes e.
 	SetTenantPlan(ctx context.Context, tenantID, plan string, e operatoraudit.Entry) error
+	// SetTenantMetadata sets each of set's keys on the tenant ("" clears
+	// one) and writes e, in the same atomic unit.
+	SetTenantMetadata(ctx context.Context, tenantID string, set map[string]any, e operatoraudit.Entry) error
 	// SetTenantLabel sets the operators' label on the tenant ("" for
 	// none) and writes e.
 	SetTenantLabel(ctx context.Context, tenantID, label string, e operatoraudit.Entry) error
@@ -67,6 +71,18 @@ func (m *memOpsMutator) SetTenantPlan(ctx context.Context, tenantID, plan string
 		return err
 	}
 	return m.tenants.SetMetadata(ctx, tenantID, tenant.MetadataKeyPlan, plan)
+}
+
+func (m *memOpsMutator) SetTenantMetadata(ctx context.Context, tenantID string, set map[string]any, e operatoraudit.Entry) error {
+	if err := m.audit.Record(ctx, e); err != nil {
+		return err
+	}
+	for _, k := range sortedKeys(set) {
+		if err := m.tenants.SetMetadata(ctx, tenantID, k, set[k]); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (m *memOpsMutator) SetTenantLabel(ctx context.Context, tenantID, label string, e operatoraudit.Entry) error {
@@ -133,6 +149,33 @@ func (m *pgOpsMutator) SetTenantPlan(ctx context.Context, tenantID, plan string,
 		return err
 	}
 	return tx.Commit(ctx)
+}
+
+func (m *pgOpsMutator) SetTenantMetadata(ctx context.Context, tenantID string, set map[string]any, e operatoraudit.Entry) error {
+	tx, err := m.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	for _, k := range sortedKeys(set) {
+		if err := tenant.SetMetadataKeyQ(ctx, tx, tenantID, k, set[k]); err != nil {
+			return err
+		}
+	}
+	if err := operatoraudit.RecordQ(ctx, tx, e); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
+
+// sortedKeys is set's keys in order, so writes go in the same order each time.
+func sortedKeys(set map[string]any) []string {
+	keys := make([]string, 0, len(set))
+	for k := range set {
+		keys = append(keys, k)
+	}
+	slices.Sort(keys)
+	return keys
 }
 
 func (m *pgOpsMutator) SetTenantLabel(ctx context.Context, tenantID, label string, e operatoraudit.Entry) error {
