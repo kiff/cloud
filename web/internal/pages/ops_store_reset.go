@@ -1,5 +1,11 @@
 package pages
 
+import (
+	"fmt"
+
+	"github.com/kiff/cloud/web/internal/apiclient"
+)
+
 // orNone is s, or "none" when it's empty, for the store reset's read-back.
 func orNone(s string) string {
 	if s == "" {
@@ -42,4 +48,18 @@ func allowanceFrom(at string) string {
 		return "every run since the account began"
 	}
 	return "runs since " + at
+}
+
+// packsSetAside is what the reset set aside of the account's App Store and
+// Google Play packs.
+func packsSetAside(p *apiclient.OpsStorePacksSetAside) string {
+	switch {
+	case p == nil:
+		return "not read back"
+	case p.Packs == 0:
+		return "none"
+	case p.Packs == 1:
+		return fmt.Sprintf("1 pack, %d credits", p.Credits)
+	}
+	return fmt.Sprintf("%d packs, %d credits", p.Packs, p.Credits)
 }

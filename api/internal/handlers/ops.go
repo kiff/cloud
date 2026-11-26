@@ -129,7 +129,9 @@ func NewOpsHandler(operatorSubjects []string, tenants tenant.Store, usageStore u
 	// stores when no Postgres mutator was injected (tests / no-PG).
 	// Needs the audit store to be meaningful.
 	if h.mutator == nil && h.audit != nil {
-		h.mutator = newMemOpsMutator(h.tenants, h.audit, h.alertQueue)
+		m := newMemOpsMutator(h.tenants, h.audit, h.alertQueue)
+		m.packs, _ = h.bonus.(*packs.Memory)
+		h.mutator = m
 	}
 	return h
 }

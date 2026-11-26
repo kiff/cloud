@@ -412,6 +412,10 @@ type storeResetView struct {
 	Trial               string `json:"trial"`
 	NoPlanAllowanceFrom string `json:"no_plan_allowance_from,omitempty"`
 	From                string `json:"from,omitempty"`
+	// PacksSetAside is what this reset set aside of the account's App Store
+	// and Google Play packs (their store test purchases), so a Solo bought
+	// after it shows only Solo's credits.
+	PacksSetAside *packs.StorePacksSetAside `json:"packs_set_aside,omitempty"`
 }
 
 // storeBilling is the App Store's and Google Play's keys, for a reset. Only
@@ -447,7 +451,9 @@ func storeResetOf(t tenant.Tenant) storeResetView {
 // review or test account starts again as a new sign-up does after a store
 // purchase (App Review's account after a TestFlight Solo): the trial not
 // started, no billing status or source, Coach's no-plan allowance counted
-// again from now (appstore.ResetBilling); and the App
+// again from now (appstore.ResetBilling); its App Store and Google Play packs
+// set aside (their store test purchases), so a Solo bought after shows only
+// Solo's credits; and the App
 // Store's and Google Play's subscriptions cleared, each kept aside so a later
 // renewal or expiry the store sends for it is ignored (appstore WasReset). A
 // purchase the person makes in the app after the reset applies as a new one.
@@ -499,13 +505,15 @@ func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	before := storeResetOf(t)
-	set := appstore.ResetBilling(t, h.now(), storeBilling()...)
+	now := h.now()
+	set := appstore.ResetBilling(t, now, storeBilling()...)
 	entry := operatoraudit.Entry{
 		OperatorSubject: op, Action: operatoraudit.ActionStoreBillingReset, TargetTenantID: t.ID, Reason: body.Reason,
 		Metadata: map[string]any{"from_plan": before.Plan, "from_billing_source": before.BillingSource,
 			"apple_subscription": before.AppleSubscription, "google_subscription": before.GoogleSubscription},
 	}
-	if err := h.mutator.SetTenantMetadata(ctx, t.ID, set, entry); err != nil {
+	aside, err := h.mutator.ResetStoreBilling(ctx, t.ID, set, now, entry)
+	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "mutation failed; nothing was reset: " + err.Error(), "id": t.ID})
 		return
 	}
@@ -518,6 +526,6 @@ func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	v := storeResetOf(after)
-	v.From = before.Plan
+	v.From, v.PacksSetAside = before.Plan, &aside
 	writeJSON(w, http.StatusOK, v)
 }

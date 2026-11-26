@@ -9,6 +9,7 @@ import (
 
 	"github.com/kiff/cloud/api/internal/operatoralerts"
 	"github.com/kiff/cloud/api/internal/operatoraudit"
+	"github.com/kiff/cloud/api/internal/packs"
 	"github.com/kiff/cloud/api/internal/tenant"
 )
 
@@ -32,6 +33,12 @@ type OpsMutator interface {
 	// SetTenantMetadata sets each of set's keys on the tenant ("" clears
 	// one) and writes e, in the same atomic unit.
 	SetTenantMetadata(ctx context.Context, tenantID string, set map[string]any, e operatoraudit.Entry) error
+	// ResetStoreBilling is Reset store billing's write: set's keys, as
+	// SetTenantMetadata, and the account's App Store and Google Play packs
+	// with credits left set aside at at (packs.SetAsideStorePacksQ), with e,
+	// which also says what was set aside (store_packs_set_aside,
+	// store_pack_credits_set_aside), in the same atomic unit.
+	ResetStoreBilling(ctx context.Context, tenantID string, set map[string]any, at time.Time, e operatoraudit.Entry) (packs.StorePacksSetAside, error)
 	// SetTenantLabel sets the operators' label on the tenant ("" for
 	// none) and writes e.
 	SetTenantLabel(ctx context.Context, tenantID, label string, e operatoraudit.Entry) error
@@ -47,6 +54,9 @@ type memOpsMutator struct {
 	tenants tenant.Store
 	audit   operatoraudit.Store
 	alerts  operatoralerts.Store
+	// packs is the in-memory pack ledger, when the handler has one: the
+	// packs Reset store billing sets aside. nil sets none aside.
+	packs *packs.Memory
 }
 
 func newMemOpsMutator(t tenant.Store, a operatoraudit.Store, al operatoralerts.Store) *memOpsMutator {
@@ -83,6 +93,32 @@ func (m *memOpsMutator) SetTenantMetadata(ctx context.Context, tenantID string, 
 		}
 	}
 	return nil
+}
+
+func (m *memOpsMutator) ResetStoreBilling(ctx context.Context, tenantID string, set map[string]any, at time.Time, e operatoraudit.Entry) (packs.StorePacksSetAside, error) {
+	var aside packs.StorePacksSetAside
+	if m.packs != nil {
+		aside = m.packs.StorePacks(tenantID)
+	}
+	if err := m.SetTenantMetadata(ctx, tenantID, set, withStorePacks(e, aside)); err != nil {
+		return packs.StorePacksSetAside{}, err
+	}
+	if m.packs != nil {
+		aside = m.packs.SetAsideStorePacks(tenantID, at)
+	}
+	return aside, nil
+}
+
+// withStorePacks is e, its metadata also saying what Reset store billing set
+// aside.
+func withStorePacks(e operatoraudit.Entry, aside packs.StorePacksSetAside) operatoraudit.Entry {
+	meta := make(map[string]any, len(e.Metadata)+2)
+	for k, v := range e.Metadata {
+		meta[k] = v
+	}
+	meta["store_packs_set_aside"], meta["store_pack_credits_set_aside"] = aside.Packs, aside.Credits
+	e.Metadata = meta
+	return e
 }
 
 func (m *memOpsMutator) SetTenantLabel(ctx context.Context, tenantID, label string, e operatoraudit.Entry) error {
@@ -166,6 +202,30 @@ func (m *pgOpsMutator) SetTenantMetadata(ctx context.Context, tenantID string, s
 		return err
 	}
 	return tx.Commit(ctx)
+}
+
+func (m *pgOpsMutator) ResetStoreBilling(ctx context.Context, tenantID string, set map[string]any, at time.Time, e operatoraudit.Entry) (packs.StorePacksSetAside, error) {
+	tx, err := m.pool.Begin(ctx)
+	if err != nil {
+		return packs.StorePacksSetAside{}, err
+	}
+	defer tx.Rollback(ctx)
+	for _, k := range sortedKeys(set) {
+		if err := tenant.SetMetadataKeyQ(ctx, tx, tenantID, k, set[k]); err != nil {
+			return packs.StorePacksSetAside{}, err
+		}
+	}
+	aside, err := packs.SetAsideStorePacksQ(ctx, tx, tenantID, at)
+	if err != nil {
+		return packs.StorePacksSetAside{}, err
+	}
+	if err := operatoraudit.RecordQ(ctx, tx, withStorePacks(e, aside)); err != nil {
+		return packs.StorePacksSetAside{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return packs.StorePacksSetAside{}, err
+	}
+	return aside, nil
 }
 
 // sortedKeys is set's keys in order, so writes go in the same order each time.
