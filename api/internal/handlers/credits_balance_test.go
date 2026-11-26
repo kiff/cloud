@@ -257,3 +257,55 @@ func TestRaisingTheSpendLimit(t *testing.T) {
 		t.Fatalf("on Solo: %d %s", rr.Code, rr.Body.String())
 	}
 }
+
+// The allowance says the plan, for the runtime's share of its AI provider's
+// day: Solo's period with its packs, Team's with its limit, each with
+// Setup's fair use; no period where no credits bound it. It's said whether
+// the run is allowed or not.
+func TestTheAllowanceSaysThePlan(t *testing.T) {
+	ai := func(out map[string]any) (string, any) {
+		t.Helper()
+		m, ok := out["ai"].(map[string]any)
+		if !ok {
+			t.Fatalf("no ai: %v", out)
+		}
+		kind, _ := m["kind"].(string)
+		return kind, m["period_micro_usd"]
+	}
+	r := newCreditsRig(t)
+	if _, _, err := r.packs.RecordCredits(context.Background(), packs.CreditGrant{TenantID: r.id, Pack: "c-small", Credits: 100,
+		Source: packs.SourceApple, SourceTxn: "t1", At: r.now.AddDate(0, 0, -2)}); err != nil {
+		t.Fatal(err)
+	}
+	kind, period := ai(func() map[string]any { _, out := r.allowance(r.taf("agt-refunds")); return out }())
+	if want := float64(meter.MicroUSDOfCredits(meter.SoloIncludedCredits+100) + meter.SetupAllowanceMicroUSD); kind != "solo" || period != want {
+		t.Fatalf("Solo with a pack: %s %v, want %v", kind, period, want)
+	}
+	// Refused, it still says the plan.
+	r.ledger.totals = meter.RunTotals{Credits: meter.SoloIncludedCredits + 100, Free: map[string]int{}}
+	r.packs.DrawCredits(r.id, 100, r.now)
+	_, out := r.allowance(r.taf("agt-refunds"))
+	if kind, _ := ai(out); out["allowed"] != false || kind != "solo" {
+		t.Fatalf("Solo, used up: %v", out)
+	}
+
+	team := newCreditsRigOn(t, map[string]any{tenant.MetadataKeyPlan: "team", tenant.MetadataKeySeats: float64(3), tenant.MetadataKeyBillingSource: "stripe",
+		tenant.MetadataKeySpendLimitCents: float64(4 * meter.SpendLimitStepCents)})
+	_, out = team.allowance(team.taf("agt-refunds"))
+	kind, period = ai(out)
+	if want := float64(meter.MicroUSDOfCredits(3*meter.CompanyCreditsPerSeat+4*meter.SpendLimitStepCents/meter.CentsPerCredit) + meter.SetupAllowanceMicroUSD); kind != "company" || period != want {
+		t.Fatalf("Team: %s %v, want %v", kind, period, want)
+	}
+
+	for plan, want := range map[string]string{"": "none", "internal": "unbounded"} {
+		meta := map[string]any{}
+		if plan != "" {
+			meta[tenant.MetadataKeyPlan] = plan
+		}
+		x := newCreditsRigOn(t, meta)
+		_, out := x.allowance(x.setup())
+		if kind, period := ai(out); kind != want || period != nil {
+			t.Errorf("%q: %s %v, want %s and no period", plan, kind, period, want)
+		}
+	}
+}

@@ -130,3 +130,44 @@ func TestAllow(t *testing.T) {
 		})
 	}
 }
+
+// A credit's AI is Credits' rate turned round: 2,700 micro-USD, so a run's
+// cost read back in credits is the credits again.
+func TestMicroUSDOfCredits(t *testing.T) {
+	if got := MicroUSDOfCredits(1); got != 2_700 {
+		t.Fatalf("a credit: %d micro-USD, want 2,700", got)
+	}
+	for _, c := range []int64{1, 500, 5_000, 55_000} {
+		if back := Credits(MicroUSDOfCredits(c)); back != c {
+			t.Errorf("%d credits: %d micro-USD, read back as %d credits", c, MicroUSDOfCredits(c), back)
+		}
+	}
+	if MicroUSDOfCredits(0) != 0 || MicroUSDOfCredits(-5) != 0 {
+		t.Fatal("no credits cost something")
+	}
+}
+
+// The plan as the runtime reads it: Solo's period is what it had (included,
+// packs drawn and left), Team's its included credits and its spend limit,
+// each with Setup's fair use; an unbounded plan and no plan say no period.
+func TestPlanAI(t *testing.T) {
+	solo := ComputeBalance(BalanceIn{Kind: BalanceSolo, Used: 700, Over: 100, PacksDrawn: 300, PacksLeft: 5_000})
+	kind, period := PlanAI(solo)
+	// has = 500 included + 300 drawn + 5,000 left; took 600 of it, 100 over.
+	if want := MicroUSDOfCredits(5_800) + SetupAllowanceMicroUSD; kind != BalanceSolo || period != want {
+		t.Fatalf("Solo: %s %d, want %d", kind, period, want)
+	}
+	if _, fresh := PlanAI(ComputeBalance(BalanceIn{Kind: BalanceSolo})); fresh != MicroUSDOfCredits(SoloIncludedCredits)+SetupAllowanceMicroUSD {
+		t.Fatalf("a new Solo: %d", fresh)
+	}
+	team := ComputeBalance(BalanceIn{Kind: BalanceCompany, Seats: 3, LimitCents: 11 * SpendLimitStepCents, Used: 9_000})
+	kind, period = PlanAI(team)
+	if want := MicroUSDOfCredits(3*CompanyCreditsPerSeat+11*SpendLimitStepCents/CentsPerCredit) + SetupAllowanceMicroUSD; kind != BalanceCompany || period != want {
+		t.Fatalf("Team: %s %d, want %d", kind, period, want)
+	}
+	for _, k := range []BalanceKind{BalanceUnbounded, BalanceNone} {
+		if kind, period := PlanAI(ComputeBalance(BalanceIn{Kind: k})); kind != k || period != 0 {
+			t.Errorf("%s: %s %d", k, kind, period)
+		}
+	}
+}

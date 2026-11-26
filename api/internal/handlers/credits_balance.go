@@ -191,6 +191,15 @@ func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 	if why != "" {
 		out["why"] = why
 	}
+	// The plan, for the runtime's share of its AI provider's day (kiff/agents'
+	// DailyCap.Share): its kind, and what its period can pay for, null where
+	// no credits bound it. Facts in KIFF's figures; the share is the runtime's.
+	kind, period := meter.PlanAI(b)
+	ai := map[string]any{"kind": string(kind), "period_micro_usd": nil}
+	if period > 0 {
+		ai["period_micro_usd"] = period
+	}
+	out["ai"] = ai
 	writeJSON(w, http.StatusOK, out)
 }
 

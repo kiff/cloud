@@ -207,3 +207,41 @@ func KindOf(t tenant.Tenant) (BalanceKind, int) {
 	}
 	return BalanceNone, 0
 }
+
+// MicroUSDOfCredits is what credits cost in AI, in millionths of a US
+// dollar: Credits' rate turned round (a credit is 0.25 euro cents at 1.08
+// dollars a euro: 2,700 micro-USD).
+func MicroUSDOfCredits(credits int64) int64 {
+	if credits <= 0 {
+		return 0
+	}
+	return credits * 1_000_000 * usdPerEURHundredths / (100 * 100 * CreditMultiplier)
+}
+
+// PlanAI is the plan as the agents' runtime reads it from the allowance, to
+// size the account's share of its AI provider's day: b's kind, and for a
+// plan its credits bound (Solo, Team) the most its period can pay for, in
+// millionths of a US dollar. That's the period's credits (Solo: its included
+// credits and the packs it drew or holds; Team: its included credits and its
+// spend limit), plus Setup's fair use. Overshoot isn't counted. It's 0 for
+// an unbounded plan and for no plan. The runtime's share is only a runaway
+// bound: what stops a run for credits is Allow.
+func PlanAI(b Balance) (kind BalanceKind, periodMicroUSD int64) {
+	switch b.Kind {
+	case BalanceSolo:
+		var has int64
+		if b.Left != nil {
+			has = *b.Left + max(b.Used-b.Over, 0)
+		}
+		return b.Kind, MicroUSDOfCredits(has) + SetupAllowanceMicroUSD
+	case BalanceCompany:
+		limit := b.LimitCents
+		if limit <= 0 {
+			limit = SpendLimitStepCents
+		}
+		return b.Kind, MicroUSDOfCredits(b.Included+limit/CentsPerCredit) + SetupAllowanceMicroUSD
+	case BalanceUnbounded:
+		return b.Kind, 0
+	}
+	return BalanceNone, 0
+}
