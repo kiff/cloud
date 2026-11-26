@@ -1,8 +1,7 @@
 package meter
 
 // MicroUSDPerCredit is the AI cost a credit pays for, in millionths of a US
-// dollar: the inverse of Credits' rate (a euro cent is CreditMultiplier
-// credits, a euro is 1.08 dollars), so 2,700, or $0.0027.
+// dollar: the inverse of Credits' rate.
 const MicroUSDPerCredit = 1_000_000 * usdPerEURHundredths / (100 * 100 * CreditMultiplier)
 
 // AI is an account's plan as the allowance answer says it ("ai"), for the

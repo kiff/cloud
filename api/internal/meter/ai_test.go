@@ -2,11 +2,11 @@ package meter
 
 import "testing"
 
-// A credit pays for $0.0027 of AI, the inverse of Credits' rate, so a plan's
-// period read in micro-USD is the same credits KIFF counts runs in.
+// MicroUSDPerCredit is the inverse of Credits' rate, so a plan's period read
+// in micro-USD is the same credits KIFF counts runs in.
 func TestACreditPaysForItsAI(t *testing.T) {
-	if MicroUSDPerCredit != 2_700 {
-		t.Fatalf("MicroUSDPerCredit = %d, want 2,700 ($0.0027)", MicroUSDPerCredit)
+	if MicroUSDPerCredit <= 0 || Credits(MicroUSDPerCredit-1) != 1 || Credits(MicroUSDPerCredit+1) != 2 {
+		t.Fatal("MicroUSDPerCredit isn't the inverse of Credits' rate")
 	}
 	for _, n := range []int64{1, 500, 5_000, 56_500} {
 		if got := Credits(n * MicroUSDPerCredit); got != n {
