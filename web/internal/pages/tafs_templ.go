@@ -1549,9 +1549,9 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var97 string
-			templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinStringErrs(assets.URL("img/partners/nvidia-inception-1c-blk.svg"))
+			templ_7745c5c3_Var97, templ_7745c5c3_Err = templ.JoinStringErrs(assets.URL("img/partners/nvidia-inception.svg"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 213, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 213, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var97))
 			if templ_7745c5c3_Err != nil {

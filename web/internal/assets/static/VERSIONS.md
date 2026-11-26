@@ -84,4 +84,4 @@ recolored, reshaped or retexted, and is drawn smaller than the kiff mark.
 
 | File | Source | SHA-256 |
 |------|--------|---------|
-| `nvidia-inception-1c-blk.svg` | NVIDIA Inception member badge, "Inception Badges 8/8/2023" (`for-screen/nvidia-inception-program-badge-rgb-1c-blk-for-screen.svg`), from https://design.nvidia.com/partners/inception/nvidia-inception-program/member-badge | `d1c5c43dd96702d73e771ed3dfbc8b2bad597da301228f94ab558dc9151fc356` |
+| `nvidia-inception.svg` | NVIDIA Inception member badge, full colour for light backgrounds, "Inception Badges 8/8/2023" (`for-screen/nvidia-inception-program-badge-rgb-for-screen.svg`), from https://design.nvidia.com/partners/inception/nvidia-inception-program/member-badge | `d2f1fc25616ba02933506b21fa668289169e58ac4c76b5f7f209f2632f289f2e` |

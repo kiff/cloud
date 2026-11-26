@@ -185,8 +185,8 @@ func TestTafsEnglishAsDesigned(t *testing.T) {
 		`<a href="/tafs/privacy#google">How we handle Google data →</a>`,
 		`<a href="/tafs/privacy">tafs privacy</a>`, `<a href="/tafs/terms">tafs terms</a>`,
 		"© ", " KIFF · <span lang=\"en\">Part of Claude for Startups.</span> KIFF is not affiliated with or endorsed by Anthropic.",
-		// NVIDIA's member badge, single-colour, under the tagline.
-		`/static/img/partners/nvidia-inception-1c-blk.svg?v=`, `alt="NVIDIA Inception Program member"`,
+		// NVIDIA's member badge, full colour, under the tagline.
+		`/static/img/partners/nvidia-inception.svg?v=`, `alt="NVIDIA Inception Program member"`,
 	} {
 		if !strings.Contains(body, s) {
 			t.Errorf("missing %q", s)
