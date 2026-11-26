@@ -76,3 +76,12 @@ Pinned SHA-256 of the reference's WOFF2 bytes:
 | `ibm-plex-mono-600.woff2` | `ad4580d8cb4b5f627c2d18457656732f7f7b070f7837fbc380e08054157e6f6c` |
 | `ibm-plex-sans-400-italic.woff2` | `134dc0ee94e70cf5d52f608a7ac4b864c9b00bdf69779b8919712ce89da253b1` |
 | `ibm-plex-sans-400-600.woff2` | `056e4e2459f57a0033c8c9c844ff19d6e42ac8602027803d4345823bcc939818` |
+
+## Partner badges (`img/partners/`)
+
+Vendored unchanged from each program's own download. The badge is never
+recolored, reshaped or retexted, and is drawn smaller than the kiff mark.
+
+| File | Source | SHA-256 |
+|------|--------|---------|
+| `nvidia-inception-1c-blk.svg` | NVIDIA Inception member badge, "Inception Badges 8/8/2023" (`for-screen/nvidia-inception-program-badge-rgb-1c-blk-for-screen.svg`), from https://design.nvidia.com/partners/inception/nvidia-inception-program/member-badge | `d1c5c43dd96702d73e771ed3dfbc8b2bad597da301228f94ab558dc9151fc356` |

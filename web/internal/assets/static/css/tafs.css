@@ -183,6 +183,8 @@ main:focus { outline: none; }
 .kf .row1 { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 40px; }
 .kf .mark { font-weight: 900; font-size: clamp(3.5rem, 9vw, 7rem); letter-spacing: -.06em; line-height: .8; }
 .kf .mark + p { margin-top: 16px; font-weight: 600; max-width: 26ch; }
+/* NVIDIA's member badge, as their file draws it: never recolored or reshaped, and smaller than the kiff mark. */
+.kf .partner { display: block; margin-top: 24px; width: 140px; height: auto; }
 .kf h2 { margin: 0 0 12px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
 .kf ul { list-style: none; display: grid; gap: 8px; font-weight: 600; }
 .kf li { font-size: .84rem; }
