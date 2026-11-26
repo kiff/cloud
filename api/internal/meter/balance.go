@@ -91,9 +91,11 @@ type Balance struct {
 	// on Company the included ones. Nil where nothing bounds it.
 	Left *int64 `json:"left"`
 	// PacksLeft and Over are Solo's: the packs' credits left now, and the
-	// period's free overshoot.
-	PacksLeft int64 `json:"packs_left"`
-	Over      int64 `json:"over"`
+	// period's free overshoot. PacksDrawn are the pack credits drawn for the
+	// period's runs (for AIOf; not shown).
+	PacksLeft  int64 `json:"packs_left"`
+	Over       int64 `json:"over"`
+	PacksDrawn int64 `json:"-"`
 	// Beyond is Company's: credits used past the included ones, and what
 	// they cost (BeyondCents), against LimitCents.
 	Beyond      int64 `json:"beyond"`
@@ -112,11 +114,11 @@ func ComputeBalance(in BalanceIn) Balance {
 	case BalanceUnbounded:
 	case BalanceSolo:
 		b.Included = SoloIncludedCredits
-		b.PacksLeft, b.Over = max(in.PacksLeft, 0), max(in.Over, 0)
+		b.PacksLeft, b.Over, b.PacksDrawn = max(in.PacksLeft, 0), max(in.Over, 0), max(in.PacksDrawn, 0)
 		// What the period has had or has, and what of it the runs took:
 		// a run's credits past the balance are the free overshoot, which
 		// nothing pays for, so they don't take a pack bought later.
-		has := b.Included + max(in.PacksDrawn, 0) + b.PacksLeft
+		has := b.Included + b.PacksDrawn + b.PacksLeft
 		took := b.Used - b.Over
 		left := max(has-took, 0)
 		b.Left = &left
