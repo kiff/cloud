@@ -184,6 +184,12 @@ func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	allowed, why := meter.Allow(b, setup, setupSpent, noPlanSpent)
+	if !allowed && setup && b.Kind == meter.BalanceNone && h.reviewAccounts[t.ID] {
+		// App Review's or a store test account: Coach answers on no plan
+		// whatever the no-plan allowance says, so a reviewer can always try
+		// it. Only Coach, only on no plan: a taf still needs a plan.
+		allowed, why = true, ""
+	}
 	out := map[string]any{"allowed": allowed}
 	if why != "" {
 		out["why"] = why

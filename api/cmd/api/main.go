@@ -2106,7 +2106,11 @@ func newRouter(deps routerDeps) http.Handler {
 		// The credits each run of a taf or of Coach used: kept from its
 		// runtime's report, read as the tasks are.
 		credits := handlers.NewCreditsHandler(deps.tenantStore, deps.meter, deps.logger).WithOwnUse(ownUse).
-			WithCatalog(deps.packCatalog).WithRequests(deps.packRequests, deps.alertNotifier)
+			WithCatalog(deps.packCatalog).WithRequests(deps.packRequests, deps.alertNotifier).
+			// App Review's and the store test accounts: Coach starts for them
+			// on no plan past the no-plan allowance.
+			WithReviewAccounts(append(strings.Split(os.Getenv(envAppleSandboxTenants), ","),
+				strings.Split(os.Getenv(envGoogleTestTenants), ",")...)...)
 		if deps.creditLedger != nil {
 			credits.WithCreditPacks(deps.creditLedger)
 			// Both ledgers say what an account bought: a pack sold once
