@@ -174,8 +174,8 @@ func (s Store) setAside(t tenant.Tenant) []string {
 
 // ResetBilling is the metadata an operator's reset of t's store billing
 // writes (Reset store billing, at now): t starts again as a new sign-up does.
-// That's the trial not started (no trial stamps: it starts at checkout or
-// with the store's free week), no billing status or source, and the no-plan
+// That's the trial not started (no trial stamps, as at sign-up), no billing
+// status or source, and the no-plan
 // allowance for Coach's runs counted again from now
 // (tenant.NoPlanAllowanceFrom). Apple's renewal status is cleared, and each
 // of stores' subscriptions is cleared and kept aside (ResetMeta), so the
@@ -526,9 +526,10 @@ func (p *Processor) creditPack(ctx context.Context, res billing.Result, t tenant
 	return res, nil
 }
 
-// solo applies Solo's subscription: the trial during Apple's free trial,
-// Solo with Apple's period while it renews, and an ended trial once it
-// expired or was taken back.
+// solo applies Solo's subscription: Solo with the store's period while it
+// renews, and an ended trial once it expired or was taken back. A store's
+// free trial, which neither store offers on Solo today, is recorded as
+// KIFF's trial.
 func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack, fromApp bool) (billing.Result, error) {
 	now := p.now().UTC()
 	if aside, at, ok := p.store.WasReset(t); ok && slices.Contains(aside, txn.OriginalTransactionID) &&
@@ -627,7 +628,10 @@ func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenan
 		set[p.store.MetaSubscription+ResetSuffix] = slices.DeleteFunc(slices.Clone(aside), func(id string) bool { return id == txn.OriginalTransactionID })
 	}
 	if txn.FreeTrial() {
-		// The store's one-week free trial is KIFF's trial.
+		// A store's free trial. Neither store offers one on Solo today (no
+		// introductory offer in App Store Connect or Google Play). If one
+		// is reported, it's recorded as KIFF's trial, which reads as no
+		// plan (meter.KindOf): Solo stays offered, and no taf runs.
 		set[tenant.MetadataKeyPlan] = string(tenant.PlanTrial)
 		set[tenant.MetadataKeyTrialEndsAt] = txn.Expires().Format(time.RFC3339)
 		set[billing.MetaBillingStatus] = billingStatusTrialing
