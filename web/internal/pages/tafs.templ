@@ -208,7 +208,10 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 				<p>{ w.Google.Text } <a href={ w.legalPath(tafsGoogleURL) }>{ w.Google.Link } →</a>{ w.legalInEnglish(tafsGoogleURL) }</p>
 			</section>
 			<div class="row1">
-				<div><p class="mark">kiff</p><p>{ w.Tagline }</p></div>
+				<div>
+					<p class="mark">kiff</p><p>{ w.Tagline }</p>
+					<img class="partner" src={ assets.URL("img/partners/nvidia-inception.svg") } alt="NVIDIA Inception Program member" lang="en" width="140" height="60" loading="lazy"/>
+				</div>
 				<div>
 					<h2>tafs</h2>
 					<ul>
