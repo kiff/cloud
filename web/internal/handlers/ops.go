@@ -86,6 +86,7 @@ func (h *OpsHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /ops/tenants/{id}/plan", h.changePlan)
 	mux.HandleFunc("POST /ops/tenants/{id}/label", h.setLabel)
 	mux.HandleFunc("POST /ops/tenants/{id}/bonus", h.grantBonus)
+	mux.HandleFunc("POST /ops/tenants/{id}/store-billing/reset", h.resetStoreBilling)
 	mux.HandleFunc("POST /ops/alerts/sync", h.syncAlerts)
 	mux.HandleFunc("POST /ops/alerts/{id}/ack", h.ackAlert)
 	mux.HandleFunc("POST /ops/alerts/{id}/resolve", h.resolveAlert)

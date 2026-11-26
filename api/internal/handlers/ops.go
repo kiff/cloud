@@ -214,6 +214,7 @@ func (h *OpsHandler) Register(mux *http.ServeMux) {
 		mux.HandleFunc("POST /v1/ops/tenants/{id}/unsuspend", h.gate(h.unsuspend))
 		mux.HandleFunc("POST /v1/ops/tenants/{id}/restore", h.gate(h.restore))
 		mux.HandleFunc("POST /v1/ops/tenants/{id}/plan", h.gate(h.changePlan))
+		mux.HandleFunc("POST /v1/ops/tenants/{id}/store-billing/reset", h.gate(h.resetStoreBilling))
 		mux.HandleFunc("POST /v1/ops/tenants/{id}/label", h.gate(h.setLabel))
 		if h.bonus != nil {
 			mux.HandleFunc("POST /v1/ops/tenants/{id}/bonus", h.gate(h.grantBonus))

@@ -367,6 +367,38 @@ func (c *Client) OpsChangePlanBearer(ctx context.Context, bearer, tenantID, plan
 	return err
 }
 
+// OpsStoreReset is an account's billing as the API reads it back after
+// Reset store billing.
+type OpsStoreReset struct {
+	ID                 string `json:"id"`
+	Plan               string `json:"plan"`
+	BillingSource      string `json:"billing_source"`
+	BillingStatus      string `json:"billing_status"`
+	AppleSubscription  bool   `json:"apple_subscription"`
+	GoogleSubscription bool   `json:"google_subscription"`
+	AppleReset         bool   `json:"apple_reset"`
+	GoogleReset        bool   `json:"google_reset"`
+	ResetAt            string `json:"reset_at"`
+	From               string `json:"from"`
+}
+
+// OpsResetStoreBillingBearer puts a review or test account back to no plan
+// after a store purchase: confirm is the account's id typed back, reason is
+// required; audited on the API side. It answers the account read back.
+func (c *Client) OpsResetStoreBillingBearer(ctx context.Context, bearer, tenantID, confirm, reason string) (*OpsStoreReset, error) {
+	path := "/v1/ops/tenants/" + url.PathEscape(tenantID) + "/store-billing/reset"
+	body := `{"confirm":` + jsonString(confirm) + `,"reason":` + jsonString(reason) + `}`
+	raw, err := c.do(ctx, bearer, http.MethodPost, path, strings.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	var out OpsStoreReset
+	if err := json.Unmarshal(raw, &out); err != nil {
+		return nil, fmt.Errorf("apiclient: decode store billing reset: %w", err)
+	}
+	return &out, nil
+}
+
 // OpsSetLabelBearer sets the operators' label on a tenant ("" for none);
 // audited on the API side, display only.
 func (c *Client) OpsSetLabelBearer(ctx context.Context, bearer, tenantID, label, reason string) error {

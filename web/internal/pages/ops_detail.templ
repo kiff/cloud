@@ -305,8 +305,51 @@ templ opsTenantActions(t apiclient.OpsTenantRow) {
 				<button type="submit" class="btn btn-secondary">Give bonus credits</button>
 			</form>
 		</div>
+
+		<div class="ops-action-block">
+			<h3>Reset store billing</h3>
+			<p class="dash-note">For review and test accounts only. Puts the account back to no plan after an App Store or Google Play purchase: plan trial, no billing source, and both stores' subscriptions cleared. What the store sends later about the old subscription is ignored; a purchase made in the app after this applies. Cancel the subscription in the store first, so it stops renewing. Accounts billed on kiff.dev or a contract are refused. Recorded in the audit log.</p>
+			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/store-billing/reset") } class="ops-action-form">
+				<div class="ops-action-row">
+					<div class="ops-field">
+						<label class="ops-field-label" for="reset-confirm">Type the account's id to confirm</label>
+						<input id="reset-confirm" type="text" name="confirm" class="ops-reason" placeholder={ t.ID } autocomplete="off" required/>
+					</div>
+					<div class="ops-field">
+						<label class="ops-field-label" for="reset-reason">Reason (required)</label>
+						<input id="reset-reason" type="text" name="reason" class="ops-reason" placeholder="e.g. App Review's account after the TestFlight Solo" required/>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-secondary">Reset store billing</button>
+			</form>
+		</div>
 	</article>
 }
+
+// OpsStoreResetResult is what Reset store billing did: the account read back
+// from the API, or why nothing changed.
+templ OpsStoreResetResult(id string, v *apiclient.OpsStoreReset, failed string, chrome components.DashboardChrome) {
+	@components.OpsShell("Reset store billing", "tenants", chrome) {
+		<section class="dash">
+			<h1>Reset store billing</h1>
+			if v == nil {
+				<p class="dash-note">Nothing was reset: { failed }</p>
+			} else {
+				<p class="dash-note">The account now reads, from the API:</p>
+				<dl class="ops-readback">
+					<dt>Plan</dt><dd>{ v.Plan } (was { v.From })</dd>
+					<dt>Billing source</dt><dd>{ orNone(v.BillingSource) }</dd>
+					<dt>Billing status</dt><dd>{ orNone(v.BillingStatus) }</dd>
+					<dt>App Store subscription</dt><dd>{ heldOrNot(v.AppleSubscription) }{ setAside(v.AppleReset) }</dd>
+					<dt>Google Play subscription</dt><dd>{ heldOrNot(v.GoogleSubscription) }{ setAside(v.GoogleReset) }</dd>
+					<dt>Reset at</dt><dd>{ v.ResetAt }</dd>
+				</dl>
+			}
+			<p><a href={ templ.SafeURL("/ops/tenants/" + id) }>Back to the account</a></p>
+		</section>
+	}
+}
+
 
 templ opsPlanOption(plan, current string) {
 	if plan == current {

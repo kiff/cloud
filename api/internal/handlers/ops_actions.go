@@ -11,10 +11,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kiff/cloud/api/internal/appstore"
 	"github.com/kiff/cloud/api/internal/auth"
+	"github.com/kiff/cloud/api/internal/billing"
 	"github.com/kiff/cloud/api/internal/operatoraudit"
 	"github.com/kiff/cloud/api/internal/packs"
 	"github.com/kiff/cloud/api/internal/personlang"
+	"github.com/kiff/cloud/api/internal/playstore"
 	"github.com/kiff/cloud/api/internal/tenant"
 	"github.com/kiff/cloud/api/internal/words"
 )
@@ -378,4 +381,122 @@ func (h *OpsHandler) grantBonus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"id": t.ID, "pack": p.ID, "credits": p.Credits})
+}
+
+// opsStoreResetRequest is the body of POST /v1/ops/tenants/{id}/store-billing/reset.
+// Confirm is the account's id, typed back: the reset can't be undone from the
+// console.
+type opsStoreResetRequest struct {
+	Confirm string `json:"confirm"`
+	Reason  string `json:"reason"`
+}
+
+// storeResetView is the account's billing as stored after a reset: the
+// read-back the console shows.
+type storeResetView struct {
+	ID            string `json:"id"`
+	Plan          string `json:"plan"`
+	BillingSource string `json:"billing_source"`
+	BillingStatus string `json:"billing_status"`
+	// Apple and Google: whether a store subscription still bills the account
+	// (false after a reset), and the one each reset set aside, whose later
+	// notifications are ignored.
+	AppleSubscription  bool   `json:"apple_subscription"`
+	GoogleSubscription bool   `json:"google_subscription"`
+	AppleReset         bool   `json:"apple_reset"`
+	GoogleReset        bool   `json:"google_reset"`
+	ResetAt            string `json:"reset_at"`
+	From               string `json:"from,omitempty"`
+}
+
+// storeBilling is the App Store's and Google Play's keys, for a reset. Only
+// their metadata keys are read, so no catalog is needed.
+func storeBilling() []appstore.Store {
+	return []appstore.Store{
+		{Name: "apple", MetaSubscription: appstore.MetaOriginalTransaction, MetaExpiresAt: appstore.MetaExpiresAt},
+		{Name: "google", MetaSubscription: playstore.MetaPurchaseToken, MetaExpiresAt: playstore.MetaExpiresAt},
+	}
+}
+
+func storeResetOf(t tenant.Tenant) storeResetView {
+	str := func(k string) string { s, _ := t.Metadata[k].(string); return s }
+	v := storeResetView{ID: t.ID, Plan: string(tenant.PlanFor(t).Plan), BillingSource: string(tenant.BillingSourceOf(t)),
+		BillingStatus: str(billing.MetaBillingStatus), ResetAt: str(appstore.MetaResetAt)}
+	stores := storeBilling()
+	v.AppleSubscription = str(stores[0].MetaSubscription) != ""
+	v.GoogleSubscription = str(stores[1].MetaSubscription) != ""
+	_, _, v.AppleReset = stores[0].WasReset(t)
+	_, _, v.GoogleReset = stores[1].WasReset(t)
+	return v
+}
+
+// resetStoreBilling serves POST /v1/ops/tenants/{id}/store-billing/reset: a
+// review or test account goes back to no plan after a store purchase (App
+// Review's account after a TestFlight Solo). As a subscription that ended: plan
+// trial, its trial over, billing canceled, no billing source; and the App
+// Store's and Google Play's subscriptions cleared, each kept aside so a later
+// renewal or expiry the store sends for it is ignored (appstore WasReset). A
+// purchase made in the app after the reset applies as a new one. An account
+// that Stripe or a contract bills is refused: this is for store billing only.
+// The account's id typed back and a reason are required; the change and its
+// audit entry are written together, and the answer reads the account back.
+func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	id := r.PathValue("id")
+	op := auth.MustIdentity(ctx).Subject
+
+	var body opsStoreResetRequest
+	if r.Body != nil {
+		_ = json.NewDecoder(r.Body).Decode(&body)
+	}
+	body.Confirm, body.Reason = strings.TrimSpace(body.Confirm), strings.TrimSpace(body.Reason)
+	switch {
+	case body.Confirm != id:
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "confirm: type the account's id to reset its store billing"})
+		return
+	case body.Reason == "":
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "a reason is required: it goes in the audit log"})
+		return
+	}
+	t, err := h.tenants.Get(ctx, id)
+	if err != nil {
+		if errors.Is(err, tenant.ErrNotFound) {
+			http.NotFound(w, r)
+			return
+		}
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	switch src := tenant.BillingSourceOf(t); src {
+	case tenant.BillingStripe, tenant.BillingContract:
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "the account's plan is billed by " + string(src) + ", not a store: nothing was changed"})
+		return
+	}
+	switch tenant.PlanFor(t).Canonical {
+	case tenant.PlanTeam, tenant.PlanCompany, tenant.PlanInternal:
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "the account is on " + string(tenant.PlanFor(t).Plan) + ", which no store bills: nothing was changed"})
+		return
+	}
+	before := storeResetOf(t)
+	set := appstore.ResetBilling(t, h.now(), storeBilling()...)
+	entry := operatoraudit.Entry{
+		OperatorSubject: op, Action: operatoraudit.ActionStoreBillingReset, TargetTenantID: t.ID, Reason: body.Reason,
+		Metadata: map[string]any{"from_plan": before.Plan, "from_billing_source": before.BillingSource,
+			"apple_subscription": before.AppleSubscription, "google_subscription": before.GoogleSubscription},
+	}
+	if err := h.mutator.SetTenantMetadata(ctx, t.ID, set, entry); err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "mutation failed; nothing was reset: " + err.Error(), "id": t.ID})
+		return
+	}
+	if h.resetter != nil {
+		h.resetter.ResetTenant(t.ID) // the plan's limits live on the cached runtime manifest
+	}
+	after, err := h.tenants.Get(ctx, t.ID)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "reset, but the account couldn't be read back: " + err.Error(), "id": t.ID})
+		return
+	}
+	v := storeResetOf(after)
+	v.From = before.Plan
+	writeJSON(w, http.StatusOK, v)
 }

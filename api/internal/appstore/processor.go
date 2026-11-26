@@ -128,6 +128,58 @@ type Store struct {
 	PackProduct func(product string) (packs.Pack, bool)
 }
 
+// ResetSuffix makes a store's subscription key into the key that keeps the
+// subscription an operator reset the account's billing from (ResetMeta).
+const ResetSuffix = "_reset"
+
+// MetaResetAt is when an operator last reset the account's store billing.
+const MetaResetAt = "store_billing_reset_at"
+
+// ResetMeta is the metadata that clears this store's subscription from t,
+// as an operator's reset writes it: the subscription and its period cleared,
+// and the subscription kept under its reset key, so the store's later word on
+// it is ignored (WasReset). Empty values read as absent everywhere.
+func (s Store) ResetMeta(t tenant.Tenant) map[string]any {
+	set := map[string]any{s.MetaSubscription: "", s.MetaExpiresAt: ""}
+	if stored, _ := t.Metadata[s.MetaSubscription].(string); stored != "" {
+		set[s.MetaSubscription+ResetSuffix] = stored
+	}
+	return set
+}
+
+// ResetBilling is the metadata an operator's reset of t's store billing
+// writes (Reset store billing, at now): t ends as a subscription that ended
+// does (plan trial, its trial over, billing canceled, no billing source),
+// Apple's renewal status is cleared, and each of stores' subscriptions is
+// cleared and kept aside (ResetMeta), so the store's later word on it is
+// ignored.
+func ResetBilling(t tenant.Tenant, now time.Time, stores ...Store) map[string]any {
+	at := now.UTC().Format(time.RFC3339)
+	set := map[string]any{
+		tenant.MetadataKeyPlan:          string(tenant.PlanTrial),
+		tenant.MetadataKeyTrialEndsAt:   at,
+		billing.MetaBillingStatus:       billing.StatusCanceled,
+		tenant.MetadataKeyBillingSource: string(tenant.BillingNone),
+		MetaAutoRenew:                   "",
+		MetaAutoRenewAt:                 "",
+		MetaResetAt:                     at,
+	}
+	for _, s := range stores {
+		for k, v := range s.ResetMeta(t) {
+			set[k] = v
+		}
+	}
+	return set
+}
+
+// WasReset is the subscription an operator reset t's store billing from, for
+// this store, and when; false when there's none.
+func (s Store) WasReset(t tenant.Tenant) (string, time.Time, bool) {
+	id, _ := t.Metadata[s.MetaSubscription+ResetSuffix].(string)
+	at, ok := metaTime(t, MetaResetAt)
+	return id, at, id != "" && ok
+}
+
 // AppStore is Apple's App Store, with catalog's product ids.
 func AppStore(catalog packs.Catalog) Store {
 	return Store{Name: "apple", Billing: tenant.BillingApple, PackSource: packs.SourceApple,
@@ -353,7 +405,7 @@ func (p *Processor) apply(ctx context.Context, res billing.Result, kind string, 
 		}
 	}
 	if txn.ProductID != "" && txn.ProductID == p.store.SoloProduct {
-		return p.solo(ctx, res, t, kind, txn, takeBack)
+		return p.solo(ctx, res, t, kind, txn, takeBack, c != nil)
 	}
 	return res, fmt.Errorf("%w: %s", ErrUnknownProduct, txn.ProductID)
 }
@@ -447,8 +499,18 @@ func (p *Processor) creditPack(ctx context.Context, res billing.Result, t tenant
 // solo applies Solo's subscription: the trial during Apple's free trial,
 // Solo with Apple's period while it renews, and an ended trial once it
 // expired or was taken back.
-func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack bool) (billing.Result, error) {
+func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack, fromApp bool) (billing.Result, error) {
 	now := p.now().UTC()
+	if reset, at, ok := p.store.WasReset(t); ok && reset == txn.OriginalTransactionID && (!fromApp || !txn.Purchased().After(at)) {
+		// An operator reset this account's store billing (Reset store billing):
+		// nothing the store says of that subscription since applies, its
+		// renewals and its end alike. A purchase the app sends that was made
+		// after the reset is a new one, and applies.
+		p.logger.InfoContext(ctx, "appstore: a subscription the account's billing was reset from; ignored",
+			slog.String("store", p.store.Name), slog.String("tenant", t.ID), slog.String("transaction", txn.TransactionID), slog.String("type", kind))
+		res.Ignored = true
+		return res, nil
+	}
 	source := tenant.BillingSourceOf(t)
 	expired := kind == Expired || kind == GracePeriodExpired ||
 		(kind != DidFailToRenew && !txn.Expires().IsZero() && !txn.Expires().After(now))
@@ -524,6 +586,11 @@ func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenan
 		tenant.MetadataKeyBillingSource: string(p.store.Billing),
 		p.store.MetaSubscription:        txn.OriginalTransactionID,
 		p.store.MetaExpiresAt:           txn.Expires().Format(time.RFC3339),
+	}
+	if reset, _, ok := p.store.WasReset(t); ok && reset == txn.OriginalTransactionID {
+		// Bought again in the app after a reset: it bills the account now,
+		// and its renewals apply.
+		set[p.store.MetaSubscription+ResetSuffix] = ""
 	}
 	if txn.FreeTrial() {
 		// The store's one-week free trial is KIFF's trial.

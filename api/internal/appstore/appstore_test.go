@@ -689,3 +689,71 @@ func TestSoloRenewingAfterTheMoveToTeamKeepsItsDate(t *testing.T) {
 		t.Fatalf("a renewal charged before renewal was turned off: %+v", res)
 	}
 }
+
+// After an operator reset the account's store billing (Reset store billing),
+// what Apple sends of the old subscription changes nothing: a renewal doesn't
+// bring Solo back, and an expiry ends nothing. A purchase made in the app
+// after the reset is a new one, and applies; one made before it doesn't.
+func TestAResetAccountIgnoresItsOldSubscription(t *testing.T) {
+	ctx := context.Background()
+	r := newRig(t)
+	solo := r.catalog.Solo.AppleProduct
+	id, token := r.account(t, map[string]any{tenant.MetadataKeyPlan: "solo", tenant.MetadataKeyBillingSource: "apple",
+		appstore.MetaOriginalTransaction: "orig-1", appstore.MetaExpiresAt: now.AddDate(0, 0, 3).Format(time.RFC3339),
+		appstore.MetaAutoRenew: "on", billing.MetaBillingStatus: billing.StatusActive})
+	got, _ := r.tenants.Get(ctx, id)
+	resetAt := now.Add(-time.Hour)
+	for k, v := range appstore.ResetBilling(got, resetAt, appstore.AppStore(r.catalog)) {
+		if err := r.tenants.SetMetadata(ctx, id, k, v); err != nil {
+			t.Fatal(err)
+		}
+	}
+	noPlan := func(when string) {
+		t.Helper()
+		got, _ := r.tenants.Get(ctx, id)
+		if tenant.PlanFor(got).Canonical != tenant.PlanTrial || tenant.BillingSourceOf(got) != tenant.BillingNone ||
+			r.meta(t, id, appstore.MetaOriginalTransaction) != "" || r.meta(t, id, appstore.MetaExpiresAt) != "" {
+			t.Fatalf("%s: plan %s, source %q, subscription %v", when, tenant.PlanFor(got).Plan, tenant.BillingSourceOf(got), r.meta(t, id, appstore.MetaOriginalTransaction))
+		}
+	}
+	noPlan("after the reset")
+	got, _ = r.tenants.Get(ctx, id)
+	if reset, at, ok := appstore.AppStore(r.catalog).WasReset(got); !ok || reset != "orig-1" || !at.Equal(resetAt.UTC().Truncate(time.Second)) {
+		t.Fatalf("the reset kept %q at %v (%v)", reset, at, ok)
+	}
+	notify := func(kind, uuid string, purchased, expires time.Time) billing.Result {
+		t.Helper()
+		tx := decoded(t, txn("s-"+uuid, solo, token, purchased, expires))
+		res, err := r.p.Notify(ctx, appstore.Notification{NotificationType: kind, NotificationUUID: uuid}, &tx)
+		if err != nil {
+			t.Fatalf("%s: %v", kind, err)
+		}
+		return res
+	}
+	if res := notify(appstore.DidRenew, "r1", now, now.AddDate(0, 1, 0)); !res.Ignored {
+		t.Fatalf("a renewal of the old subscription: %+v", res)
+	}
+	noPlan("after DID_RENEW")
+	if res := notify(appstore.Expired, "e1", now.AddDate(0, -1, 0), now.Add(-time.Minute)); !res.Ignored {
+		t.Fatalf("an expiry of the old subscription: %+v", res)
+	}
+	noPlan("after EXPIRED")
+	// The app sends the old subscription's transaction, from before the reset (a restore at launch): ignored.
+	old := decoded(t, txn("s-old", solo, token, resetAt.Add(-time.Hour), now.AddDate(0, 0, 3)))
+	if res, err := r.p.Purchased(ctx, old, appstore.Caller{TenantID: id, Subject: "rev"}); err != nil || !res.Ignored {
+		t.Fatalf("the old purchase sent again: %+v %v", res, err)
+	}
+	noPlan("after the old purchase sent again")
+	// Bought again in the app after the reset: Solo, and its renewals apply from then.
+	again := decoded(t, txn("s-new", solo, token, now, now.AddDate(0, 1, 0)))
+	if res, err := r.p.Purchased(ctx, again, appstore.Caller{TenantID: id, Subject: "rev"}); err != nil || res.Action != "solo" {
+		t.Fatalf("bought again after the reset: %+v %v", res, err)
+	}
+	got, _ = r.tenants.Get(ctx, id)
+	if tenant.PlanFor(got).Canonical != tenant.PlanSolo || r.meta(t, id, appstore.MetaOriginalTransaction+appstore.ResetSuffix) != "" {
+		t.Fatalf("after buying again: plan %s, reset key %v", tenant.PlanFor(got).Plan, r.meta(t, id, appstore.MetaOriginalTransaction+appstore.ResetSuffix))
+	}
+	if res := notify(appstore.DidRenew, "r2", now.AddDate(0, 1, 0), now.AddDate(0, 2, 0)); res.Ignored || res.Action != "solo" {
+		t.Fatalf("a renewal after buying again: %+v", res)
+	}
+}

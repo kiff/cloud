@@ -153,6 +153,28 @@ func (h *OpsHandler) alerts(w http.ResponseWriter, r *http.Request) {
 	_ = pages.OpsAlerts(list, chrome).Render(r.Context(), w)
 }
 
+// resetStoreBilling puts a review or test account back to no plan after a
+// store purchase (App Review's account after a TestFlight Solo), then shows
+// the account read back from the API, or why nothing changed.
+func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	bearer, ok := h.guardMutation(w, r)
+	if !ok {
+		if h.api == nil {
+			http.Redirect(w, r, "/ops/tenants/"+id, http.StatusSeeOther)
+		}
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	v, err := h.api.OpsResetStoreBillingBearer(r.Context(), bearer, id, strings.TrimSpace(r.FormValue("confirm")), r.FormValue("reason"))
+	if err != nil {
+		h.logger.WarnContext(r.Context(), "ops console: store billing reset failed", slog.String("tenant", id), slog.String("err", err.Error()))
+		_ = pages.OpsStoreResetResult(id, nil, err.Error(), h.chrome(r)).Render(r.Context(), w)
+		return
+	}
+	_ = pages.OpsStoreResetResult(id, v, "", h.chrome(r)).Render(r.Context(), w)
+}
+
 // guardMutation resolves the bearer for a POST mutation; on a missing
 // api client or session it writes the appropriate response and returns
 // ok=false so the caller redirects.
