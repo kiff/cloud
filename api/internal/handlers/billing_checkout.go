@@ -33,8 +33,10 @@ type MembersLister interface {
 //	POST /v1/me/billing/checkout {"plan": "team", "seats": n}                  → {"url": …}
 //	POST /v1/me/billing/checkout {"pack": "rayo", "request_id": "pr_…"}       → {"url": …}
 //
-// A trial not started yet gets its 7 days, and a trial already running
-// keeps what's left of it; either way a card is taken at checkout. Team's
+// No plan has a free trial: a plan is billed from its first day, with a
+// card taken at checkout. An account moving from the App Store's Solo to
+// Team keeps the Solo days it paid for as Team days (TrialEnd with
+// AppleCredit). Team's
 // seats start at the account's admins and editors, at least 2. An account
 // that already has a subscription changes it in the billing portal
 // instead, and one Apple bills is never sold a plan here. A pack is a

@@ -160,9 +160,9 @@ type Checkout struct {
 	Plan string
 	// Seats is Team's people who run things; at least one.
 	Seats int
-	// TrialEnd starts the subscription on a trial that ends then: 7 days
-	// for a new account, what's left of it for one already on the trial.
-	// Zero: no trial.
+	// TrialEnd starts the subscription billed from then: only for the App
+	// Store Solo days an account already paid for (AppleCredit). Zero:
+	// billed from now. No plan has a free trial.
 	TrialEnd time.Time
 	// AppleCredit marks TrialEnd as the end of the App Store Solo days the
 	// account already paid for, credited as Team days, not a trial.
