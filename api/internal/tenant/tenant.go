@@ -332,3 +332,18 @@ func validSlug(s string) bool {
 	}
 	return true
 }
+
+// Getter is what IsSuspended reads an account from; a Store is one.
+type Getter interface {
+	Get(ctx context.Context, id string) (Tenant, error)
+}
+
+// IsSuspended reports whether an operator has account id suspended
+// (POST /v1/ops/tenants/{id}/suspend).
+func IsSuspended(ctx context.Context, s Getter, id string) (bool, error) {
+	t, err := s.Get(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	return t.Status == StatusSuspended, nil
+}

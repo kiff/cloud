@@ -3733,9 +3733,17 @@ func proofKeyRestriction(deps routerDeps) *auth.KeyRestriction {
 	if deps.proofTestKeys.Empty() {
 		return nil
 	}
-	return auth.NewKeyRestriction(deps.proofTestKeys.Has, deps.proofTestTenants).
+	k := auth.NewKeyRestriction(deps.proofTestKeys.Has, deps.proofTestTenants).
 		WithUseCheck(proofUseCheck(proofTenantStores{tenants: deps.tenantStore, devices: deps.deviceStore, passkeys: deps.passkeys, sessions: deps.devSessionStore},
 			deps.proofTestKeys, deps.logger))
+	if deps.tenantStore != nil {
+		// An operator's suspension of a test tenant stops its test keys on
+		// every route, not only new proposals.
+		k = k.WithSuspendedCheck(func(ctx context.Context, id string) (bool, error) {
+			return tenant.IsSuspended(ctx, deps.tenantStore, id)
+		})
+	}
+	return k
 }
 
 // proofUseCheck is the boot check run again when a test key is used: the
