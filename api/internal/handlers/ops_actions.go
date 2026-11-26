@@ -436,8 +436,11 @@ func storeResetOf(t tenant.Tenant) storeResetView {
 // trial, its trial over, billing canceled, no billing source; and the App
 // Store's and Google Play's subscriptions cleared, each kept aside so a later
 // renewal or expiry the store sends for it is ignored (appstore WasReset). A
-// purchase made in the app after the reset applies as a new one. An account
-// that Stripe or a contract bills is refused: this is for store billing only.
+// purchase the person makes in the app after the reset applies as a new one.
+// Only an App Review or store test account may be reset
+// (WithOpsStoreTestAccounts): a paying customer's subscription would be
+// ignored while the store kept charging. An account that Stripe or a contract
+// bills is refused too: this is for store billing only.
 // The account's id typed back and a reason are required; the change and its
 // audit entry are written together, and the answer reads the account back.
 func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
@@ -465,6 +468,10 @@ func (h *OpsHandler) resetStoreBilling(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	if !h.storeTestAccounts[t.ID] {
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "only an App Review or store test account can be reset (one in KIFF_APPLE_SANDBOX_TENANTS or KIFF_GOOGLE_TEST_TENANTS): a paying customer's store subscription would be ignored while the store kept charging them. Nothing was changed"})
 		return
 	}
 	switch src := tenant.BillingSourceOf(t); src {

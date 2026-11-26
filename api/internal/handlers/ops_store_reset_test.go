@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -11,9 +12,36 @@ import (
 	"github.com/kiff/cloud/api/internal/billing"
 	"github.com/kiff/cloud/api/internal/meter"
 	"github.com/kiff/cloud/api/internal/operatoraudit"
+	"github.com/kiff/cloud/api/internal/packs"
 	"github.com/kiff/cloud/api/internal/playstore"
+	"github.com/kiff/cloud/api/internal/receipt"
 	"github.com/kiff/cloud/api/internal/tenant"
+	"github.com/kiff/cloud/api/internal/usage"
 )
+
+// storeResetFixture is opsControlFixture's, with its account one whose store
+// test purchases count (App Review's) when testAccount, as Reset store billing
+// needs.
+func storeResetFixture(t *testing.T, testAccount bool) (*http.ServeMux, *tenant.MemoryStore, *operatoraudit.MemoryStore, *recordingResetter, string) {
+	t.Helper()
+	ctx := context.Background()
+	tenants := tenant.NewMemoryStore()
+	id := tenant.NewID()
+	if err := tenants.Create(ctx, tenant.Tenant{ID: id, Slug: "review", DisplayName: "Review", Status: tenant.StatusActive}); err != nil {
+		t.Fatal(err)
+	}
+	audit := operatoraudit.NewMemoryStore()
+	resetter := &recordingResetter{}
+	var named []string
+	if testAccount {
+		named = []string{" ", id}
+	}
+	h := NewOpsHandler([]string{opsSubject}, tenants, usage.NewMemoryStore(), receipt.NewMemoryStore(),
+		nil, nil, nil, WithOpsControlPlane(audit, resetter), WithOpsStoreTestAccounts(named...))
+	mux := http.NewServeMux()
+	h.Register(mux)
+	return mux, tenants, audit, resetter, id
+}
 
 // soloFromAStore is an account a store bills Solo for, as App Review's is
 // after a TestFlight purchase.
@@ -31,7 +59,7 @@ func soloFromAStore() map[string]any {
 func TestOps_ResetStoreBilling(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
-	mux, tenants, audit, resetter, id := opsControlFixture(t)
+	mux, tenants, audit, resetter, id := storeResetFixture(t, true)
 	for k, v := range soloFromAStore() {
 		if err := tenants.SetMetadata(ctx, id, k, v); err != nil {
 			t.Fatal(err)
@@ -78,9 +106,10 @@ func TestOps_ResetStoreBilling(t *testing.T) {
 			t.Errorf("%s still %q", k, v)
 		}
 	}
-	if got.Metadata[appstore.MetaOriginalTransaction+appstore.ResetSuffix] != "orig-review" ||
-		got.Metadata[playstore.MetaPurchaseToken+appstore.ResetSuffix] != "tok-review" {
-		t.Fatalf("the old subscriptions weren't set aside: %v", got.Metadata)
+	apple, _, okA := appstore.AppStore(packs.Catalog{}).WasReset(got)
+	google, _, okG := playstore.GooglePlay(packs.Catalog{}).WasReset(got)
+	if !okA || !okG || len(apple) != 1 || apple[0] != "orig-review" || len(google) != 1 || google[0] != "tok-review" {
+		t.Fatalf("the old subscriptions weren't set aside: %v %v", apple, google)
 	}
 	if calls := resetter.Calls(); len(calls) != 1 || calls[0] != id {
 		t.Fatalf("ResetTenant calls = %v", calls)
@@ -102,7 +131,7 @@ func TestOps_ResetStoreBillingRefusesOtherBilling(t *testing.T) {
 		"team":     {tenant.MetadataKeyPlan: "team"},
 		"internal": {tenant.MetadataKeyPlan: "internal"},
 	} {
-		mux, tenants, audit, _, id := opsControlFixture(t)
+		mux, tenants, audit, _, id := storeResetFixture(t, true)
 		for k, v := range meta {
 			if err := tenants.SetMetadata(ctx, id, k, v); err != nil {
 				t.Fatal(err)
@@ -114,6 +143,31 @@ func TestOps_ResetStoreBillingRefusesOtherBilling(t *testing.T) {
 		if entries, _ := audit.List(ctx, id, 10); len(entries) != 0 {
 			t.Fatalf("%s: audited", name)
 		}
+	}
+}
+
+// A paying customer's store Solo, on an account that isn't App Review's or a
+// store test account, is refused: its subscription would be ignored while
+// the store kept charging. Nothing changes and nothing is audited.
+func TestOps_ResetStoreBillingOnlyResetsStoreTestAccounts(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	mux, tenants, audit, resetter, id := storeResetFixture(t, false)
+	for k, v := range soloFromAStore() {
+		if err := tenants.SetMetadata(ctx, id, k, v); err != nil {
+			t.Fatal(err)
+		}
+	}
+	rec := doOpsPost(mux, "/v1/ops/tenants/"+id+"/store-billing/reset", opsSubject, `{"confirm":"`+id+`","reason":"x"}`)
+	if rec.Code != http.StatusConflict || !strings.Contains(rec.Body.String(), "store test account") {
+		t.Fatalf("a paying customer's account: %d %s", rec.Code, rec.Body.String())
+	}
+	got, _ := tenants.Get(ctx, id)
+	if tenant.PlanFor(got).Canonical != tenant.PlanSolo || got.Metadata[appstore.MetaOriginalTransaction] != "orig-review" {
+		t.Fatal("the refused reset changed the account")
+	}
+	if entries, _ := audit.List(ctx, id, 10); len(entries) != 0 || len(resetter.Calls()) != 0 {
+		t.Fatalf("a refused reset was audited or evicted: %+v %v", entries, resetter.Calls())
 	}
 }
 

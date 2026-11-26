@@ -2228,6 +2228,10 @@ func newRouter(deps routerDeps) http.Handler {
 	if deps.pool != nil {
 		opsOpts = append(opsOpts, handlers.WithOpsMutator(handlers.NewPostgresOpsMutator(deps.pool)))
 	}
+	// Reset store billing resets only the accounts whose store test purchases
+	// count, read from the same settings as the App Store's and Play's processors.
+	opsOpts = append(opsOpts, handlers.WithOpsStoreTestAccounts(append(strings.Split(os.Getenv(envAppleSandboxTenants), ","),
+		strings.Split(os.Getenv(envGoogleTestTenants), ",")...)...))
 	// Customer notifications wired only when both the resolver and a
 	// real notifier exist (Resend configured) — avoids pointless Clerk
 	// lookups when email is disabled.

@@ -308,7 +308,7 @@ templ opsTenantActions(t apiclient.OpsTenantRow) {
 
 		<div class="ops-action-block">
 			<h3>Reset store billing</h3>
-			<p class="dash-note">For review and test accounts only. Puts the account back to no plan after an App Store or Google Play purchase: plan trial, no billing source, and both stores' subscriptions cleared. What the store sends later about the old subscription is ignored; a purchase made in the app after this applies. Cancel the subscription in the store first, so it stops renewing. Accounts billed on kiff.dev or a contract are refused. Recorded in the audit log.</p>
+			<p class="dash-note">For App Review's and store test accounts only (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS): any other account is refused. Puts the account back to no plan after an App Store or Google Play purchase: plan trial, no billing source, and both stores' subscriptions cleared and set aside. Nothing about a subscription set aside applies afterwards, its renewals included; a new purchase made in the app after this applies. Cancel the subscription in the store first, so it stops renewing. Accounts billed on kiff.dev or a contract are refused. Recorded in the audit log.</p>
 			<form method="post" action={ templ.SafeURL("/ops/tenants/" + t.ID + "/store-billing/reset") } class="ops-action-form">
 				<div class="ops-action-row">
 					<div class="ops-field">

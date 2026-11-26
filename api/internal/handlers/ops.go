@@ -61,6 +61,10 @@ type OpsHandler struct {
 	resetter   RuntimeResetter
 	alertQueue operatoralerts.Store // optional; nil omits the alert queue
 	mutator    OpsMutator           // atomic state-change + audit
+	// storeTestAccounts are the accounts whose store test purchases count
+	// (App Review's, the Play test accounts): the only ones Reset store
+	// billing may reset.
+	storeTestAccounts map[string]bool
 	// bonus records the bonus credits an operator grants, as a pack of
 	// credits that never expires; nil leaves the route unmounted.
 	bonus packs.CreditLedger
@@ -165,6 +169,21 @@ func WithOpsSupport(store support.Store, linkBase string) OpsOption {
 	return func(h *OpsHandler) {
 		h.support = store
 		h.supportLinkBase = strings.TrimRight(strings.TrimSpace(linkBase), "/")
+	}
+}
+
+// WithOpsStoreTestAccounts names the accounts Reset store billing may reset:
+// those whose store test purchases count, as the App Store's and Google Play's
+// processors read them (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS).
+// None named, it resets none.
+func WithOpsStoreTestAccounts(ids ...string) OpsOption {
+	return func(h *OpsHandler) {
+		h.storeTestAccounts = map[string]bool{}
+		for _, id := range ids {
+			if id = strings.TrimSpace(id); id != "" {
+				h.storeTestAccounts[id] = true
+			}
+		}
 	}
 }
 

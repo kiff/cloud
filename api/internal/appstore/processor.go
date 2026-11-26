@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strings"
 	"time"
 
@@ -137,14 +138,38 @@ const MetaResetAt = "store_billing_reset_at"
 
 // ResetMeta is the metadata that clears this store's subscription from t,
 // as an operator's reset writes it: the subscription and its period cleared,
-// and the subscription kept under its reset key, so the store's later word on
-// it is ignored (WasReset). Empty values read as absent everywhere.
+// and the subscription added to those set aside under its reset key, every
+// earlier one kept, so the store's later word on any of them is ignored
+// (WasReset). Empty values read as absent everywhere.
 func (s Store) ResetMeta(t tenant.Tenant) map[string]any {
 	set := map[string]any{s.MetaSubscription: "", s.MetaExpiresAt: ""}
-	if stored, _ := t.Metadata[s.MetaSubscription].(string); stored != "" {
-		set[s.MetaSubscription+ResetSuffix] = stored
+	aside := s.setAside(t)
+	if stored, _ := t.Metadata[s.MetaSubscription].(string); stored != "" && !slices.Contains(aside, stored) {
+		aside = append(aside, stored)
+	}
+	if len(aside) > 0 {
+		set[s.MetaSubscription+ResetSuffix] = aside
 	}
 	return set
+}
+
+// setAside is the subscriptions kept under this store's reset key: a list as
+// written, read back from JSON as []any, or one id as a string.
+func (s Store) setAside(t tenant.Tenant) []string {
+	var ids []string
+	switch v := t.Metadata[s.MetaSubscription+ResetSuffix].(type) {
+	case string:
+		ids = append(ids, v)
+	case []string:
+		ids = append(ids, v...)
+	case []any:
+		for _, x := range v {
+			if id, _ := x.(string); id != "" {
+				ids = append(ids, id)
+			}
+		}
+	}
+	return slices.DeleteFunc(ids, func(id string) bool { return id == "" })
 }
 
 // ResetBilling is the metadata an operator's reset of t's store billing
@@ -172,12 +197,13 @@ func ResetBilling(t tenant.Tenant, now time.Time, stores ...Store) map[string]an
 	return set
 }
 
-// WasReset is the subscription an operator reset t's store billing from, for
-// this store, and when; false when there's none.
-func (s Store) WasReset(t tenant.Tenant) (string, time.Time, bool) {
-	id, _ := t.Metadata[s.MetaSubscription+ResetSuffix].(string)
+// WasReset is the subscriptions operators set aside resetting t's store
+// billing, for this store, and when the last reset was; false when there's
+// none.
+func (s Store) WasReset(t tenant.Tenant) ([]string, time.Time, bool) {
+	aside := s.setAside(t)
 	at, ok := metaTime(t, MetaResetAt)
-	return id, at, id != "" && ok
+	return aside, at, len(aside) > 0 && ok
 }
 
 // AppStore is Apple's App Store, with catalog's product ids.
@@ -501,11 +527,15 @@ func (p *Processor) creditPack(ctx context.Context, res billing.Result, t tenant
 // expired or was taken back.
 func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenant, kind string, txn Transaction, takeBack, fromApp bool) (billing.Result, error) {
 	now := p.now().UTC()
-	if reset, at, ok := p.store.WasReset(t); ok && reset == txn.OriginalTransactionID && (!fromApp || !txn.Purchased().After(at)) {
-		// An operator reset this account's store billing (Reset store billing):
-		// nothing the store says of that subscription since applies, its
-		// renewals and its end alike. A purchase the app sends that was made
-		// after the reset is a new one, and applies.
+	if aside, at, ok := p.store.WasReset(t); ok && slices.Contains(aside, txn.OriginalTransactionID) &&
+		!(fromApp && txn.TransactionReason == ReasonPurchase && txn.Purchased().After(at)) {
+		// An operator reset this account's store billing (Reset store billing)
+		// and set this subscription aside: nothing about it applies since, the
+		// store's renewals and its end, or the app sending one of its renewals
+		// (Transaction.updates, a restore). Only a purchase the person made in
+		// the app after the reset (Apple's PURCHASE: a resubscription) applies.
+		// Play's purchase after an end has a new token, so a set-aside one is
+		// never let through.
 		p.logger.InfoContext(ctx, "appstore: a subscription the account's billing was reset from; ignored",
 			slog.String("store", p.store.Name), slog.String("tenant", t.ID), slog.String("transaction", txn.TransactionID), slog.String("type", kind))
 		res.Ignored = true
@@ -587,10 +617,10 @@ func (p *Processor) solo(ctx context.Context, res billing.Result, t tenant.Tenan
 		p.store.MetaSubscription:        txn.OriginalTransactionID,
 		p.store.MetaExpiresAt:           txn.Expires().Format(time.RFC3339),
 	}
-	if reset, _, ok := p.store.WasReset(t); ok && reset == txn.OriginalTransactionID {
+	if aside, _, ok := p.store.WasReset(t); ok && slices.Contains(aside, txn.OriginalTransactionID) {
 		// Bought again in the app after a reset: it bills the account now,
-		// and its renewals apply.
-		set[p.store.MetaSubscription+ResetSuffix] = ""
+		// and its renewals apply. Any other set aside stays so.
+		set[p.store.MetaSubscription+ResetSuffix] = slices.DeleteFunc(slices.Clone(aside), func(id string) bool { return id == txn.OriginalTransactionID })
 	}
 	if txn.FreeTrial() {
 		// The store's one-week free trial is KIFF's trial.
