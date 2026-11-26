@@ -107,31 +107,39 @@ func (k *KeyRestriction) SessionOutlived(created, now time.Time, keys ...[]byte)
 
 // TestKeyDeniedRoutes are what a restricted key never does, even on its own
 // test tenant: delete the account, pay (Stripe's checkout and portal, an App
-// Store or Google Play purchase), make or register a key (an account key, a
-// passkey, an approval key or its re-link, a computer's pairing, or the
-// approval of another device's or tool's sign-in, which mints its session),
-// or change who's on an account (inviting someone, accepting an invitation,
-// or changing a member's role). A taf's payments (browse_pay) go through the
+// Store or Google Play purchase), make, change or register a key (an account
+// key or a change to one, an outside approver's secret, a passkey, an
+// approval key or its re-link, a computer's pairing, or the approval of
+// another device's, app's or tool's sign-in, which mints its session), or
+// change who's on an account (inviting someone, accepting an invitation,
+// changing a member's role, or reactivating one). A key a test session made
+// would be no test key, outside every limit here, so none is made. A taf's payments (browse_pay) go through the
 // gateway with its agent's key, never a device's session, so they're held
 // where the gateway's tools run, not here.
+// Finishing a deletion (POST /v1/account-deletions/finish) is public: its
+// authority is the signature an accepted deletion gives, which only POST
+// /v1/account-deletions makes, and that's here.
 var TestKeyDeniedRoutes = []string{
 	"POST /v1/me/delete",
 	"POST /v1/account-deletions",
-	"POST /v1/account-deletions/finish",
 	"POST /v1/me/billing/checkout",
 	"POST /v1/me/billing-portal",
 	"POST /v1/me/billing/apple/transactions",
 	"POST /v1/me/billing/google/purchases",
 	"POST /v1/keys",
+	"PATCH /v1/keys/{id}",
+	"POST /v1/me/approver-grants",
 	"POST /v1/me/passkeys",
 	"POST /v1/me/device/approval-key",
 	"POST /v1/me/device/relink",
 	"POST /v1/me/pairings",
 	"POST /v1/auth/device/approve",
+	"POST /v1/auth/app/approve",
 	"POST /v1/oauth/device/approve",
 	"POST /v1/tenant/invites",
 	"POST /v1/invites/accept",
 	"PUT /v1/tenant/members/{subject}/role",
+	"POST /v1/tenant/members/{subject}/reactivate",
 }
 
 // TestKeyRouteCode is the error a restricted key gets on a route in
