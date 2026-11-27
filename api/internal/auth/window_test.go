@@ -29,6 +29,12 @@ func TestOpeningAWindowIsCheckedAgainstTheSessionAndTheClock(t *testing.T) {
 	if err != nil || !expires.Equal(now.Add(4*time.Minute)) {
 		t.Fatalf("a good opening: %v, expires %v", err, expires)
 	}
+	// The taf whose step opened it, signed with the rest.
+	forRae := good
+	forRae.Agent = "rae"
+	if _, err := forRae.Check(id, now); err != nil {
+		t.Fatalf("an opening for a taf: %v", err)
+	}
 	// A phone's clock a little ahead: its expiry is kept to the server's 5 minutes.
 	ahead := good
 	ahead.Expires = now.Add(5*time.Minute + 20*time.Second).Format(time.RFC3339)
@@ -38,6 +44,9 @@ func TestOpeningAWindowIsCheckedAgainstTheSessionAndTheClock(t *testing.T) {
 	bad := map[string]auth.OpenWindow{
 		"another message":   {Message: "kiff.request.v1", Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce},
 		"another session":   {Message: good.Message, Session: "sess-other", Device: good.Device, Expires: good.Expires, Nonce: good.Nonce},
+		"agent too long":    {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: strings.Repeat("a", 129)},
+		"agent with spaces": {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: " rae"},
+		"agent with a NUL":  {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: "r\x00ae"},
 		"another device":    {Message: good.Message, Session: good.Session, Device: "dev_other", Expires: good.Expires, Nonce: good.Nonce},
 		"a short nonce":     {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: "short"},
 		"expires past":      {Message: good.Message, Session: good.Session, Device: good.Device, Expires: now.Add(-time.Second).Format(time.RFC3339), Nonce: good.Nonce},
@@ -78,25 +87,17 @@ func TestWindowStoreKeepsOneOpenWindowPerDevice(t *testing.T) {
 	if _, err := store.OpenFor(ctx, "dev_other", now); !errors.Is(err, auth.ErrWindowNotFound) {
 		t.Errorf("another device's window: %v", err)
 	}
-	// Expired: not open. Restarted at 4 minutes: open until 9; at 14: capped at 15.
-	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(6*time.Minute)); !errors.Is(err, auth.ErrWindowNotFound) {
-		t.Errorf("after expiry: %v", err)
-	}
+	// An approval never extends it: one fingerprint covers up to 5 minutes.
 	at := now.Add(4 * time.Minute)
-	if err := store.Restart(ctx, w.ID, w.Restarted(at)); err != nil {
-		t.Fatal(err)
+	if e := w.Restarted(at); !e.Equal(now.Add(auth.WindowLength)) || auth.WindowCap != auth.WindowLength {
+		t.Errorf("an approval at 4 minutes moved the expiry to %v (cap %v)", e, auth.WindowCap)
 	}
-	if got, err := store.OpenFor(ctx, "dev_abc", now.Add(8*time.Minute)); err != nil || !got.ExpiresAt.Equal(now.Add(9*time.Minute)) {
-		t.Errorf("restarted: %v %v", err, got.ExpiresAt)
+	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(4*time.Minute+59*time.Second)); err != nil {
+		t.Errorf("at 4:59: %v", err)
 	}
-	at = now.Add(14 * time.Minute)
-	got, _ := store.Get(ctx, w.ID)
-	if e := got.Restarted(at); !e.Equal(now.Add(auth.WindowCap)) {
-		t.Errorf("a restart near the cap: %v", e)
-	}
-	_ = store.Restart(ctx, w.ID, got.Restarted(at))
-	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(15*time.Minute)); !errors.Is(err, auth.ErrWindowNotFound) {
-		t.Errorf("at the cap: %v", err)
+	// Expired: not open.
+	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(5*time.Minute+time.Second)); !errors.Is(err, auth.ErrWindowNotFound) {
+		t.Errorf("after expiry: %v", err)
 	}
 	// A new window on the device replaces the open one.
 	w2 := w

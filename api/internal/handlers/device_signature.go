@@ -178,7 +178,6 @@ func (h *DeviceSignatureHandler) check(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			if werr == nil && open.ID == named && open.Tenant == id.Tenant && open.Subject == id.Subject && auth.WindowOpenedByApprover(r.Context(), h.passkeys, open, id.DeviceSessionID, id.ApprovalKey, id.ApprovalMode) {
-				_ = h.windows.Restart(r.Context(), open.ID, open.Restarted(now))
 				window["open"], window["expires"] = true, open.Restarted(now).UTC().Format(time.RFC3339)
 			}
 		}

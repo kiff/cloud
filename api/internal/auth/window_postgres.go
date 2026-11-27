@@ -35,7 +35,7 @@ func NewPostgresWindowStore(pool *pgxpool.Pool) *PostgresWindowStore {
 	return &PostgresWindowStore{pool: pool}
 }
 
-const sqlWindowColumns = `id, tenant_id, subject, device_id, session_id, opened_at, expires_at, cap_at, opened_by, closed_at, closed_by`
+const sqlWindowColumns = `id, tenant_id, subject, device_id, session_id, opened_at, expires_at, cap_at, opened_by, agent, closed_at, closed_by`
 
 // windowsKept is how long a closed or lapsed window's row stays, for the
 // Record; older rows go with the next opening.
@@ -52,8 +52,8 @@ WHERE device_id = $1 AND closed_at IS NULL`, w.DeviceID, w.OpenedAt.UTC(), Windo
 		return fmt.Errorf("open window: close the device's others: %w", err)
 	}
 	if _, err := tx.Exec(ctx, `INSERT INTO cloud_meta.approval_windows (`+sqlWindowColumns+`)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NULL, '')`,
-		w.ID, w.Tenant, w.Subject, w.DeviceID, w.SessionID, w.OpenedAt.UTC(), w.ExpiresAt.UTC(), w.CapAt.UTC(), w.OpenedBy); err != nil {
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NULL, '')`,
+		w.ID, w.Tenant, w.Subject, w.DeviceID, w.SessionID, w.OpenedAt.UTC(), w.ExpiresAt.UTC(), w.CapAt.UTC(), w.OpenedBy, w.Agent); err != nil {
 		return fmt.Errorf("open window: %w", err)
 	}
 	if err := tx.Commit(ctx); err != nil {
@@ -135,7 +135,7 @@ WHERE closed_at IS NULL AND ($3 = '' OR tenant_id = $3) AND ($4 = '' OR subject 
 func scanWindow(row pgx.Row) (ApprovalWindow, error) {
 	var w ApprovalWindow
 	var closed *time.Time
-	if err := row.Scan(&w.ID, &w.Tenant, &w.Subject, &w.DeviceID, &w.SessionID, &w.OpenedAt, &w.ExpiresAt, &w.CapAt, &w.OpenedBy, &closed, &w.ClosedBy); err != nil {
+	if err := row.Scan(&w.ID, &w.Tenant, &w.Subject, &w.DeviceID, &w.SessionID, &w.OpenedAt, &w.ExpiresAt, &w.CapAt, &w.OpenedBy, &w.Agent, &closed, &w.ClosedBy); err != nil {
 		return ApprovalWindow{}, err
 	}
 	if closed != nil {

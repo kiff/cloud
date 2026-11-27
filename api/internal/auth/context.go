@@ -46,6 +46,9 @@ type deviceSignedCtxKey struct{}
 type SignedWith struct {
 	Key    string
 	Window string
+	// WindowAgent is the taf whose step opened that window ("" for none):
+	// a handler confirms or issues Cards inside it for that taf only.
+	WindowAgent string
 	// Passkey is the public key of the passkey whose assertion approved the
 	// request (PasskeyAssertionHeader), and Assertion the header's a= value,
 	// for the receipt's proof; nil and "" when a key signed.

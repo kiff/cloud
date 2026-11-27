@@ -257,3 +257,48 @@ func TestRaisingTheSpendLimit(t *testing.T) {
 		t.Fatalf("on Solo: %d %s", rr.Code, rr.Body.String())
 	}
 }
+
+// The allowance answer also says the plan ("ai"), allowed or not: the agents
+// runtime sizes the account's share of the AI provider's day by it.
+func TestTheAllowanceSaysThePlan(t *testing.T) {
+	ai := func(out map[string]any) map[string]any {
+		t.Helper()
+		a, _ := out["ai"].(map[string]any)
+		if a == nil {
+			t.Fatalf("no ai: %v", out)
+		}
+		return a
+	}
+	usd := func(n int64) float64 { return float64(n) }
+
+	solo := newCreditsRig(t)
+	if _, _, err := solo.packs.RecordCredits(context.Background(), packs.CreditGrant{TenantID: solo.id, Pack: "c-small", Credits: 5_000,
+		Source: packs.SourceApple, SourceTxn: "t-ai", At: solo.now.Add(-time.Hour)}); err != nil {
+		t.Fatal(err)
+	}
+	if _, out := solo.allowance(solo.taf("agt-refunds")); out["allowed"] != true || ai(out)["kind"] != "solo" ||
+		ai(out)["period_micro_usd"] != usd(5_500*meter.MicroUSDPerCredit+meter.SetupAllowanceMicroUSD) {
+		t.Fatalf("Solo with a pack: %v", out)
+	}
+	// Refused, it still says it.
+	solo.ledger.totals = meter.RunTotals{Credits: 5_500, Free: map[string]int{}}
+	if _, out := solo.allowance(solo.taf("agt-refunds")); out["allowed"] != false || ai(out)["kind"] != "solo" {
+		t.Fatalf("Solo used up: %v", out)
+	}
+
+	team := newCreditsRigOn(t, map[string]any{tenant.MetadataKeyPlan: "team", tenant.MetadataKeySeats: float64(3),
+		tenant.MetadataKeySpendLimitCents: float64(55_000), tenant.MetadataKeyBillingSource: "stripe"})
+	if _, out := team.allowance(team.setup()); ai(out)["kind"] != "company" ||
+		ai(out)["period_micro_usd"] != usd((1_500+55_000)*meter.MicroUSDPerCredit+meter.SetupAllowanceMicroUSD) {
+		t.Fatalf("Team at a raised limit: %v", out)
+	}
+	for kind, meta := range map[string]map[string]any{
+		"unbounded": {tenant.MetadataKeyPlan: "internal"},
+		"none":      {},
+	} {
+		r := newCreditsRigOn(t, meta)
+		if _, out := r.allowance(r.setup()); ai(out)["kind"] != kind || ai(out)["period_micro_usd"] != nil {
+			t.Fatalf("%s: %v", kind, out)
+		}
+	}
+}
