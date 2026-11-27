@@ -632,7 +632,8 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 		Label:     p.Name,
 		TokenHash: gen.Hash,
 		CreatedAt: now,
-		ExpiresAt: now.Add(h.sessionTTL),
+		// A test key's session is shorter on a short-session test tenant (auth.TestKeySessionLifetime).
+		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, p.Tenant, p.PublicKey, p.ApprovalKey)),
 		DeviceID:  device.ID,
 
 		DevicePublicKey:   p.PublicKey,
@@ -663,6 +664,6 @@ func (h *DeviceAuthHandler) claimPairing(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, http.StatusOK, struct {
 		deviceTokenResponse
 		DeviceID string `json:"device_id"`
-	}{deviceTokenResponse{AccessToken: gen.Plaintext, TokenType: "Bearer", ExpiresIn: int(h.sessionTTL.Seconds()),
+	}{deviceTokenResponse{AccessToken: gen.Plaintext, TokenType: "Bearer", ExpiresIn: int(sess.ExpiresAt.Sub(sess.CreatedAt).Seconds()),
 		Tenant: p.Tenant, Subject: p.Subject, ApprovalMode: auth.ShownApprovalMode(mode, len(p.ApprovalKey) > 0, p.KeyStore)}, device.ID})
 }

@@ -215,7 +215,7 @@ type Transaction struct {
 	AppAccountToken string `json:"appAccountToken"`
 	RevocationDate  int64  `json:"revocationDate"`
 	// OfferType 1 is an introductory offer; with OfferDiscountType
-	// FREE_TRIAL, the one-week free trial.
+	// FREE_TRIAL, a free trial. Solo has none today.
 	OfferType         int    `json:"offerType"`
 	OfferDiscountType string `json:"offerDiscountType"`
 	Environment       string `json:"environment"`

@@ -33,8 +33,10 @@ type MembersLister interface {
 //	POST /v1/me/billing/checkout {"plan": "team", "seats": n}                  → {"url": …}
 //	POST /v1/me/billing/checkout {"pack": "rayo", "request_id": "pr_…"}       → {"url": …}
 //
-// A trial not started yet gets its 7 days, and a trial already running
-// keeps what's left of it; either way a card is taken at checkout. Team's
+// No plan has a free trial: a plan is billed from its first day, with a
+// card taken at checkout. An account moving from the App Store's Solo to
+// Team keeps the Solo days it paid for as Team days (TrialEnd with
+// AppleCredit). Team's
 // seats start at the account's admins and editors, at least 2. An account
 // that already has a subscription changes it in the billing portal
 // instead, and one Apple bills is never sold a plan here. A pack is a
@@ -142,8 +144,8 @@ func (h *BillingCheckoutHandler) checkout(w http.ResponseWriter, r *http.Request
 	apple := tenant.BillingSourceOf(t) == tenant.BillingApple
 	if apple && (body.Plan != "team" || l.Canonical != tenant.PlanSolo) {
 		// One billing source per account: Solo stays Apple's, and only a paid
-		// Solo moves to Team here. Apple's free week would become paid Solo
-		// beside Team.
+		// Solo moves to Team here. A store free trial (none is offered on Solo
+		// today) would become paid Solo beside Team.
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "billed_by_apple",
 			"message": "Apple bills this account's plan. Cancel it with Apple first to choose a plan here."})
 		return

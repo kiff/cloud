@@ -33,6 +33,7 @@ import (
 	"net/netip"
 	"os"
 	"os/signal"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -312,6 +313,10 @@ const (
 	envProofReleaseAnyway    = "KIFF_PROOF_RELEASE_ANYWAY"
 	envProofStateTokens      = "KIFF_PROOF_STATE_TOKENS"
 	envProofTestKeys         = "KIFF_PROOF_TEST_KEYS"
+	// envProofShortSessionTenants are the test tenants (each also in
+	// KIFF_PROOF_TEST_TENANTS) whose test keys' sessions last two weeks:
+	// a robot test user's, not the CI's phones.
+	envProofShortSessionTenants = "KIFF_PROOF_SHORT_SESSION_TENANTS"
 
 	// the execution-permits design execution permits. The signing key is "kid:base64url(seed)";
 	// unset leaves permits off, and a decide request asking for one is
@@ -1106,8 +1111,9 @@ func run() error {
 	// The test tenants must be KIFF's own accounts (plan internal) holding
 	// only proof test keys: any other id keeps the ingest unmounted and the
 	// test keys refused there.
-	proofTenants := vetProofTestTenants(ctx, proofTenantStores{tenants: tenantStore, devices: deviceStore, passkeys: passkeys, sessions: devSessionStore},
-		proofTestKeys, splitList(os.Getenv(envProofTestTenants)), logger)
+	// A test tenant that's also pruned (KIFF_PRUNE_TENANTS) is refused.
+	proofTenants := withoutPruned(vetProofTestTenants(ctx, proofTenantStores{tenants: tenantStore, devices: deviceStore, passkeys: passkeys, sessions: devSessionStore},
+		proofTestKeys, splitList(os.Getenv(envProofTestTenants)), logger), splitCSV(os.Getenv(envPruneTenants)), logger)
 	// A test tenant holds only test keys: no device or passkey that isn't one
 	// joins it, by any path (409 test_tenant_key), so it never stops being a
 	// test account. Every handler takes the stores from here on.
@@ -1249,89 +1255,90 @@ func run() error {
 	broker := stream.NewBroker()
 
 	handler := newRouter(routerDeps{
-		provider:             provider,
-		apiKeyStore:          apiKeyStore,
-		agentDrafts:          agentDrafts,
-		halts:                haltStore,
-		payReports:           payReports,
-		planques:             planquesFor(splitCSV(os.Getenv(envPlanqueURLs)), permitIssuer),
-		devSessionStore:      devSessionStore,
-		deviceStore:          deviceStore,
-		waitingSignIns:       waitingSignIns,
-		signedRequests:       signedRequests,
-		passkeys:             passkeys,
-		passkeyRP:            passkeyRP,
-		windows:              windows,
-		approvalChecks:       approvalChecks,
-		walletNonceStore:     walletNonceStore,
-		walletStore:          walletStore,
-		receiptStore:         receiptStore,
-		tenantStore:          tenantStore,
-		resolver:             resolver,
-		tenantRuntime:        tenantRuntime,
-		domainSource:         domainSource,
-		draftSource:          draftSource,
-		controlStore:         controlStore,
-		supportStore:         supportStore,
-		alertStore:           alertStore,
-		attentionStore:       attentionStore,
-		alertDeliveries:      alertDeliveries,
-		alertNotifier:        alertDispatcher,
-		allowPrivateWebhooks: allowPrivateWebhooks,
-		phoneAlertURLs:       parseOperatorSubjects(os.Getenv(envPhoneAlertURLs)),
-		billingProcessor:     billingProcessor,
-		billingLedger:        billingLedger,
-		stripeWebhookSecret:  stripeWebhookSecret,
-		newDevices:           newDevices,
-		stripePortalClient:   stripePortalClient,
-		stripe:               stripeClient,
-		appBaseURL:           os.Getenv(envAppBaseURL),
-		pool:                 pool,
-		lockPool:             lockPool,
-		executorRegistry:     executorRegistry,
-		runtimeResetter:      tenantRuntime,
-		postExecuteHook:      postExecuteHook,
-		blockedHook:          blockedExecuteHook,
-		usageStore:           usageStore,
-		usageAgg:             usageAgg,
-		meter:                meterStore,
-		packLedger:           packLedger,
-		creditLedger:         creditLedger,
-		packRequests:         packRequests,
-		packCatalog:          packCatalog,
-		appleAccounts:        appleAccounts,
-		appleHandler:         appleHandler,
-		googleHandler:        handlers.NewGoogleHandler(googleBilling, googlePush, logger),
-		googleBilling:        googleBilling != nil,
-		limiter:              limiter,
-		decisionsReader:      decisionsReader,
-		postureReader:        postureReader,
-		approvalReader:       approvalReader,
-		approvalDomains:      approvalDomains,
-		guardStore:           guardStore,
-		mandateStore:         mandateStore,
-		callAbout:            callAbout,
-		handoffs:             handoffs,
-		handoffSweeper:       handoffSweeper,
-		permitIssuer:         permitIssuer,
-		permitTargets:        permitTargets,
-		agentStore:           agentStore,
-		accessStore:          accessStore,
-		operatorSubjects:     parseOperatorSubjects(os.Getenv(envOpsSubjects)),
-		operatorAudit:        operatorAudit,
-		operatorAlerts:       operatorAlerts,
-		proofStore:           proofStore,
-		proofReader:          proofReader,
-		proofTestKeys:        proofTestKeys,
-		proofTestTenants:     proofTenants.own,
-		proofTenantsRefused:  len(proofTenants.refused) > 0,
-		ownerEmail:           ownerResolver,
-		customerNotifier:     customerNotifier,
-		memberStore:          memberStore,
-		stepUp:               stepUp,
-		codeSignIn:           codeSignIn,
-		broker:               broker,
-		logger:               logger,
+		provider:                 provider,
+		apiKeyStore:              apiKeyStore,
+		agentDrafts:              agentDrafts,
+		halts:                    haltStore,
+		payReports:               payReports,
+		planques:                 planquesFor(splitCSV(os.Getenv(envPlanqueURLs)), permitIssuer),
+		devSessionStore:          devSessionStore,
+		deviceStore:              deviceStore,
+		waitingSignIns:           waitingSignIns,
+		signedRequests:           signedRequests,
+		passkeys:                 passkeys,
+		passkeyRP:                passkeyRP,
+		windows:                  windows,
+		approvalChecks:           approvalChecks,
+		walletNonceStore:         walletNonceStore,
+		walletStore:              walletStore,
+		receiptStore:             receiptStore,
+		tenantStore:              tenantStore,
+		resolver:                 resolver,
+		tenantRuntime:            tenantRuntime,
+		domainSource:             domainSource,
+		draftSource:              draftSource,
+		controlStore:             controlStore,
+		supportStore:             supportStore,
+		alertStore:               alertStore,
+		attentionStore:           attentionStore,
+		alertDeliveries:          alertDeliveries,
+		alertNotifier:            alertDispatcher,
+		allowPrivateWebhooks:     allowPrivateWebhooks,
+		phoneAlertURLs:           parseOperatorSubjects(os.Getenv(envPhoneAlertURLs)),
+		billingProcessor:         billingProcessor,
+		billingLedger:            billingLedger,
+		stripeWebhookSecret:      stripeWebhookSecret,
+		newDevices:               newDevices,
+		stripePortalClient:       stripePortalClient,
+		stripe:                   stripeClient,
+		appBaseURL:               os.Getenv(envAppBaseURL),
+		pool:                     pool,
+		lockPool:                 lockPool,
+		executorRegistry:         executorRegistry,
+		runtimeResetter:          tenantRuntime,
+		postExecuteHook:          postExecuteHook,
+		blockedHook:              blockedExecuteHook,
+		usageStore:               usageStore,
+		usageAgg:                 usageAgg,
+		meter:                    meterStore,
+		packLedger:               packLedger,
+		creditLedger:             creditLedger,
+		packRequests:             packRequests,
+		packCatalog:              packCatalog,
+		appleAccounts:            appleAccounts,
+		appleHandler:             appleHandler,
+		googleHandler:            handlers.NewGoogleHandler(googleBilling, googlePush, logger),
+		googleBilling:            googleBilling != nil,
+		limiter:                  limiter,
+		decisionsReader:          decisionsReader,
+		postureReader:            postureReader,
+		approvalReader:           approvalReader,
+		approvalDomains:          approvalDomains,
+		guardStore:               guardStore,
+		mandateStore:             mandateStore,
+		callAbout:                callAbout,
+		handoffs:                 handoffs,
+		handoffSweeper:           handoffSweeper,
+		permitIssuer:             permitIssuer,
+		permitTargets:            permitTargets,
+		agentStore:               agentStore,
+		accessStore:              accessStore,
+		operatorSubjects:         parseOperatorSubjects(os.Getenv(envOpsSubjects)),
+		operatorAudit:            operatorAudit,
+		operatorAlerts:           operatorAlerts,
+		proofStore:               proofStore,
+		proofReader:              proofReader,
+		proofTestKeys:            proofTestKeys,
+		proofTestTenants:         proofTenants.own,
+		proofShortSessionTenants: shortSessionTenants(splitList(os.Getenv(envProofShortSessionTenants)), proofTenants.own, logger),
+		proofTenantsRefused:      len(proofTenants.refused) > 0,
+		ownerEmail:               ownerResolver,
+		customerNotifier:         customerNotifier,
+		memberStore:              memberStore,
+		stepUp:                   stepUp,
+		codeSignIn:               codeSignIn,
+		broker:                   broker,
+		logger:                   logger,
 	})
 	proofs.LogBoot(logger, proofBootConfig(proofStore, proofTestKeys, proofTenants))
 
@@ -1479,8 +1486,11 @@ type routerDeps struct {
 	// proofTestTenants are KIFF_PROOF_TEST_TENANTS vetted at boot: KIFF's
 	// own only. proofTenantsRefused is set when any listed id wasn't, and
 	// keeps the ingest unmounted.
-	proofTestTenants    []string
-	proofTenantsRefused bool
+	proofTestTenants []string
+	// proofShortSessionTenants are KIFF_PROOF_SHORT_SESSION_TENANTS kept at
+	// boot (shortSessionTenants): each one of proofTestTenants.
+	proofShortSessionTenants []string
+	proofTenantsRefused      bool
 
 	ownerEmail  *owneremail.Resolver
 	memberStore membership.Store
@@ -3598,6 +3608,45 @@ type proofTenantVet struct {
 	vetted  bool // false when there's no tenant store to ask
 }
 
+// shortSessionTenants keeps the tenants in ids (KIFF_PROOF_SHORT_SESSION_TENANTS)
+// that are also kept test tenants (own): a short session is a test key's
+// limit, so a tenant that isn't a test tenant is refused, with an error
+// logged, and gets nothing from the list.
+func shortSessionTenants(ids, own []string, logger *slog.Logger) []string {
+	var out []string
+	for _, id := range ids {
+		if !slices.Contains(own, id) {
+			logger.Error("proofs: a tenant in "+envProofShortSessionTenants+" isn't a kept test tenant ("+envProofTestTenants+"); its sessions aren't shortened",
+				slog.String("tenant", id))
+			continue
+		}
+		out = append(out, id)
+	}
+	return out
+}
+
+// withoutPruned refuses each test tenant vet kept that's also in pruned
+// (KIFF_PRUNE_TENANTS): a test account is never also one whose data is
+// pruned, so one listed in both is a mistake in the settings, and it's
+// refused as a test tenant (proofs.RefusedPruned), with an error logged.
+func withoutPruned(vet proofTenantVet, pruned []string, logger *slog.Logger) proofTenantVet {
+	if len(pruned) == 0 {
+		return vet
+	}
+	own := make([]string, 0, len(vet.own))
+	for _, id := range vet.own {
+		if slices.Contains(pruned, id) {
+			vet.refused = append(vet.refused, proofs.RefusedTenant{ID: id, Why: proofs.RefusedPruned})
+			logger.Error("proofs: a test tenant is also in "+envPruneTenants+"; it isn't used as a test tenant",
+				slog.String("tenant", id))
+			continue
+		}
+		own = append(own, id)
+	}
+	vet.own = own
+	return vet
+}
+
 // proofTenantStores are what the boot check reads: each test tenant's plan,
 // and every approval device and passkey registered on it.
 type proofTenantStores struct {
@@ -3733,9 +3782,18 @@ func proofKeyRestriction(deps routerDeps) *auth.KeyRestriction {
 	if deps.proofTestKeys.Empty() {
 		return nil
 	}
-	return auth.NewKeyRestriction(deps.proofTestKeys.Has, deps.proofTestTenants).
+	k := auth.NewKeyRestriction(deps.proofTestKeys.Has, deps.proofTestTenants).
+		WithShortSessions(deps.proofShortSessionTenants).
 		WithUseCheck(proofUseCheck(proofTenantStores{tenants: deps.tenantStore, devices: deps.deviceStore, passkeys: deps.passkeys, sessions: deps.devSessionStore},
 			deps.proofTestKeys, deps.logger))
+	if deps.tenantStore != nil {
+		// An operator's suspension of a test tenant stops its test keys on
+		// every route, not only new proposals.
+		k = k.WithSuspendedCheck(func(ctx context.Context, id string) (bool, error) {
+			return tenant.IsSuspended(ctx, deps.tenantStore, id)
+		})
+	}
+	return k
 }
 
 // proofUseCheck is the boot check run again when a test key is used: the

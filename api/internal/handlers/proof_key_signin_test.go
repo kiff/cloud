@@ -105,3 +105,71 @@ func TestATestKeyPairsOnlyOnATestTenant(t *testing.T) {
 		t.Fatalf("claim on the test tenant: %d %v", code, out)
 	}
 }
+
+// A test key's sign-in on a short-session test tenant gets a session of two
+// weeks, and the device is told so. On the CI's test tenant, and for another
+// phone, it's the usual 90 days.
+func TestATestKeysSignInLastsTwoWeeks(t *testing.T) {
+	t.Parallel()
+	_, testDER := p256(t)
+	_, otherDER := p256(t)
+	listed := true
+	for _, c := range []struct {
+		name, tenant string
+		key          []byte
+		want         time.Duration
+	}{
+		{"the test key", "tenant-test", testDER, auth.TestKeySessionLifetime},
+		{"the test key on the CI's test tenant", "tenant-ci", testDER, 90 * 24 * time.Hour},
+		{"another phone", "tenant-test", otherDER, 90 * 24 * time.Hour},
+	} {
+		sessions := auth.NewMemoryDeveloperSessionStore()
+		k := restrictTo(&testDER, &listed, "tenant-test", "tenant-ci").WithShortSessions([]string{"tenant-test"})
+		h := handlers.NewDeviceAuthHandler(sessions, handlers.WithDeviceKeyRestriction(k))
+		pub := http.NewServeMux()
+		h.RegisterPublic(pub)
+		inner := http.NewServeMux()
+		h.RegisterAuthenticated(inner)
+		body, _ := json.Marshal(map[string]string{"public_key": base64.StdEncoding.EncodeToString(c.key)})
+		rec := httptest.NewRecorder()
+		pub.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/device/start", bytes.NewReader(body)))
+		var start struct {
+			UserCode   string `json:"user_code"`
+			DeviceCode string `json:"device_code"`
+		}
+		if rec.Code != http.StatusOK || json.Unmarshal(rec.Body.Bytes(), &start) != nil {
+			t.Fatalf("%s: start: %d %s", c.name, rec.Code, rec.Body)
+		}
+		approve, _ := json.Marshal(map[string]string{"user_code": start.UserCode})
+		rec = httptest.NewRecorder()
+		withFakeIdentity(inner, auth.Identity{Tenant: c.tenant, Subject: "user-abc", Method: auth.MethodSession}).
+			ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/device/approve", bytes.NewReader(approve)))
+		if rec.Code != http.StatusOK {
+			t.Fatalf("%s: approve: %d %s", c.name, rec.Code, rec.Body)
+		}
+		poll, _ := json.Marshal(map[string]string{"device_code": start.DeviceCode})
+		rec = httptest.NewRecorder()
+		pub.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/auth/device/token", bytes.NewReader(poll)))
+		var tok struct {
+			AccessToken string `json:"access_token"`
+			ExpiresIn   int    `json:"expires_in"`
+		}
+		if rec.Code != http.StatusOK || json.Unmarshal(rec.Body.Bytes(), &tok) != nil || tok.AccessToken == "" {
+			t.Fatalf("%s: token: %d %s", c.name, rec.Code, rec.Body)
+		}
+		if tok.ExpiresIn != int(c.want.Seconds()) {
+			t.Errorf("%s: expires_in %d, want %d", c.name, tok.ExpiresIn, int(c.want.Seconds()))
+		}
+		parsed, err := auth.ParseDevSessionToken(tok.AccessToken)
+		if err != nil {
+			t.Fatal(err)
+		}
+		sess, err := sessions.GetByHash(t.Context(), parsed.Hash, time.Now())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := sess.ExpiresAt.Sub(sess.CreatedAt); got != c.want {
+			t.Errorf("%s: the session lives %v, want %v", c.name, got, c.want)
+		}
+	}
+}

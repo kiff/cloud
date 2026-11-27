@@ -13,6 +13,7 @@ const (
 	RefusedNotOwn     = "isn't one of KIFF's own (plan internal)"
 	RefusedDevices    = "has devices that aren't proof test keys"
 	RefusedUnreadable = "couldn't be checked: a store was unreadable"
+	RefusedPruned     = "is also pruned (KIFF_PRUNE_TENANTS): a test account's data is never pruned"
 )
 
 // TestTenantCheck says why a tenant can't be a proof test tenant (one of the
