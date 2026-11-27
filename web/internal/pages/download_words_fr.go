@@ -13,6 +13,8 @@ var downloadFR = downloadWords{
 	Sub:              "Des agents IA pour le travail de routine de votre entreprise, chacun dans une Card que vous fixez. Tout ce qui va au-delà attend votre validation sur votre téléphone.",
 	Phones:           "Téléphone et tablette",
 	Computer:         "Ordinateur",
+	Browser:          "Navigateur",
+	Chrome:           "Vos tafs travaillent dans votre Chrome, seulement sur les sites autorisés, chaque étape risquée approuvée sur votre téléphone.",
 	NotYet:           "Bientôt disponible",
 	NotAvailable:     "Non disponible",
 	AvailableVersion: "Version %s",

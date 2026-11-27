@@ -145,7 +145,8 @@ func (h *CreditsHandler) view(id auth.Identity, t tenant.Tenant, b meter.Balance
 // runtime asks before each one. A taf's waits with the balance; Setup's
 // (Coach's) doesn't while a plan runs and it's within its fair use, and on
 // an account with no plan it may start within the no-plan allowance, which
-// KIFF pays for.
+// KIFF pays for. It also says the plan ("ai", meter.AIOf), which the runtime
+// sizes the account's share of the AI provider's day by.
 func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 	id, err := auth.IdentityFrom(r.Context())
 	if err != nil || strings.TrimSpace(id.Tenant) == "" || !id.APIKey || id.AgentID == "" {
@@ -174,7 +175,10 @@ func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case err != nil:
 	case setup && b.Kind == meter.BalanceNone:
-		noPlanSpent, err = h.ledger.NoPlanSetupSpent(r.Context(), t.ID)
+		// Counted from when the allowance last started: an account's first day,
+		// or an operator's Reset store billing (tenant.NoPlanAllowanceFrom).
+		since, _ := tenant.NoPlanAllowanceFrom(t)
+		noPlanSpent, err = h.ledger.NoPlanSetupSpent(r.Context(), t.ID, since)
 	case setup:
 		setupSpent, err = h.ledger.SetupSpent(r.Context(), t.ID, from, to)
 	}
@@ -190,7 +194,9 @@ func (h *CreditsHandler) allowance(w http.ResponseWriter, r *http.Request) {
 		// it. Only Coach, only on no plan: a taf still needs a plan.
 		allowed, why = true, ""
 	}
-	out := map[string]any{"allowed": allowed}
+	// The plan, for the agents runtime's share of the AI provider's day
+	// (meter.AIOf): a bound against a runaway, never the gate.
+	out := map[string]any{"allowed": allowed, "ai": meter.AIOf(b)}
 	if why != "" {
 		out["why"] = why
 	}

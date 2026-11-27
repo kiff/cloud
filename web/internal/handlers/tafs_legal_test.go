@@ -38,7 +38,7 @@ func tafsLegalPage(t *testing.T, h http.Handler, path, updated string) string {
 // review reads, the Limited Use statement word for word, and both links.
 func TestTafsPrivacy(t *testing.T) {
 	t.Parallel()
-	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "25 November 2026")
+	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "27 November 2026")
 	// Doors: who a door keeps, by each kind of sender id, before the first Slack, Telegram or WhatsApp door.
 	for _, s := range []string{"<strong>Doors:</strong>", "Slack member ID", "Telegram user ID", "a phone number for a WhatsApp door"} {
 		if !strings.Contains(body, s) {
@@ -68,17 +68,19 @@ func TestTafsPrivacy(t *testing.T) {
 		}
 	}
 	// §6 prints the scopes of tafs's own Google sign-in, and only of the
-	// Google apps on inhouse_apps.json: Google's review reads them there.
+	// Google apps on inhouse_apps.json or inhouse_pending.json (in Google's
+	// review, connected through the sign-in partner until then): Google's
+	// review reads them there.
 	scopes := map[string][]string{
 		"Google Sheets":   {"auth/spreadsheets</code>"},
 		"Google Calendar": {"auth/calendar.events.readonly</code>", "auth/calendar.events</code>"},
 	}
 	inHouse := 0
 	for app, want := range scopes {
-		listed := slices.Contains(pages.InHouseApps, app)
+		listed := slices.Contains(pages.InHouseApps, app) || slices.Contains(pages.PendingInHouseApps, app)
 		for _, s := range want {
 			if strings.Contains(sec, s) != listed {
-				t.Errorf("the #google section shows %q = %v, but %s in-house = %v", s, !listed, app, listed)
+				t.Errorf("the #google section shows %q = %v, but %s in-house or pending = %v", s, !listed, app, listed)
 			}
 		}
 		if listed {
@@ -86,7 +88,7 @@ func TestTafsPrivacy(t *testing.T) {
 		}
 	}
 	if got := strings.Count(sec, "googleapis.com/auth/"); got != inHouse {
-		t.Errorf("the #google section prints %d Google scopes, want %d (the in-house apps')", got, inHouse)
+		t.Errorf("the #google section prints %d Google scopes, want %d (the in-house and pending apps')", got, inHouse)
 	}
 	for _, s := range []string{`id="ai"`, `id="retention"`, `id="rights"`, `href="/privacy"`, `href="/tafs/terms"`, "privacy@kiff.dev"} {
 		if !strings.Contains(body, s) {

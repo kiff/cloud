@@ -136,6 +136,9 @@ type pendingAuth struct {
 	subject    string
 	tenant     string
 	tokenOnce  string // minted session plaintext, delivered once then cleared
+	// expiresIn is the minted session's lifetime, as its device is told:
+	// shorter for a test key (auth.KeyRestriction.SessionLifetime).
+	expiresIn time.Duration
 	// approvalMode is the minted session's, as its device is told with the
 	// token (auth.ShownApprovalMode); empty for a sign-in with no device key.
 	approvalMode string
@@ -606,12 +609,15 @@ func (h *DeviceAuthHandler) token(w http.ResponseWriter, r *http.Request) {
 	// Approved: deliver the minted token exactly once, then retire the
 	// pending record so the token can't be re-fetched.
 	tok := p.tokenOnce
-	subject, tenant, mode := p.subject, p.tenant, p.approvalMode
+	subject, tenant, mode, expiresIn := p.subject, p.tenant, p.approvalMode, p.expiresIn
 	h.deleteLocked(p)
+	if expiresIn <= 0 {
+		expiresIn = h.sessionTTL
+	}
 	writeJSON(w, http.StatusOK, deviceTokenResponse{
 		AccessToken:  tok,
 		TokenType:    "Bearer",
-		ExpiresIn:    int(h.sessionTTL.Seconds()),
+		ExpiresIn:    int(expiresIn.Seconds()),
 		Tenant:       tenant,
 		Subject:      subject,
 		ApprovalMode: mode,
@@ -765,6 +771,7 @@ func (h *DeviceAuthHandler) approve(w http.ResponseWriter, r *http.Request) {
 		cur.subject = id.Subject
 		cur.tenant = id.Tenant
 		cur.tokenOnce = m.token
+		cur.expiresIn = m.sess.ExpiresAt.Sub(m.sess.CreatedAt)
 		if deviceKey != nil {
 			cur.approvalMode = m.shownMode
 		}
@@ -867,7 +874,8 @@ func (h *DeviceAuthHandler) mintSession(w http.ResponseWriter, r *http.Request, 
 		Label:     label,
 		TokenHash: gen.Hash,
 		CreatedAt: now,
-		ExpiresAt: now.Add(h.sessionTTL),
+		// A test key's session is shorter on a short-session test tenant (auth.TestKeySessionLifetime).
+		ExpiresAt: now.Add(h.keys.SessionLifetime(h.sessionTTL, id.Tenant, deviceKey, approvalKey)),
 
 		DevicePublicKey:   deviceKey,
 		ApprovalPublicKey: approvalKey,

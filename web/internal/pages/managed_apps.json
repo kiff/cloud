@@ -1,1 +1,3 @@
-["Gmail", "Google Calendar", "Google Sheets", "Airtable", "Asana", "Cal", "Calendly", "ClickUp", "Confluence", "Dropbox", "Excel", "Jira", "Linear", "Monday", "Notion", "OneDrive", "Trello", "Wrike"]
+{"all": true, 
+ "named": ["Gmail", "Google Calendar", "Google Sheets", "Airtable", "Asana", "Cal", "Calendly", "ClickUp", "Confluence", "Dropbox", "Excel", "Jira", "Linear", "Monday", "Notion", "OneDrive", "Trello", "Wrike"], 
+ "except": []}

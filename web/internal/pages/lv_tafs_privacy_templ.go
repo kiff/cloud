@@ -49,7 +49,7 @@ func TafsPrivacyLV() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · privātuma politika</p><h1>tafs privātuma politika</h1><p class=\"legal-meta\"><strong>Pēdējoreiz atjaunināta:</strong> 2026. gada 25. novembrī.</p><p class=\"legal-disclaimer\">Šī politika skaidro, kā tafs, KIFF lietotne iPhone, iPad, Android ierīcēm un datoriem, apstrādā personas datus. tafs ir daļa no KIFF Cloud, tāpēc uz to attiecas arī <a href=\"/lv/privacy\">KIFF privātuma politika</a>, kā arī uz visu, ko šī lapa neaptver. Jautājumi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Kas mēs esam</h2><p>tafs nodrošina <strong>Kiff Agents OÜ</strong>, Igaunijā dibināta sabiedrība ar ierobežotu atbildību (reģistra kods 17372313, PVN numurs EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Igaunija. Uz mūsu datu apstrādi attiecas ES Vispārīgā datu aizsardzības regula (VDAR).</p></section><section id=\"scope\"><h2>2. Ko šī politika aptver</h2><p>tafs lietotni iPhone, iPad, Android ierīcēm un datoriem (Mac, Windows un Linux) un pakalpojumu, uz kura tā darbojas, tostarp Setup, kas pievieno uzņēmuma rīkus, un planque, kas uztur šos savienojumus. tafs uzņēmums uztic darbu AI aģentam, taf, kas strādā KIFF Card ietvaros.</p></section><section id=\"roles\"><h2>3. Mūsu lomas</h2><p>Mēs esam jūsu konta un pierakstīšanās datu, kā arī sava pakalpojuma darbības datu <strong>pārzinis</strong>. Mēs darbojamies kā <strong>apstrādātājs</strong> jūsu uzņēmuma vārdā attiecībā uz to, ko tafs tam glabā: katra taf palaišanas, sarunas, ziņojumi, atmiņas piezīmes un faili, ko tie piegādā. Šo datu pārzinis ir jūsu uzņēmums, un šīs attiecības regulē <a href=\"/legal/dpa\">datu apstrādes līgums</a> (angliski).</p></section><section id=\"data\"><h2>4. Ko tafs vāc</h2><ul><li><strong>Jūsu konts:</strong> tafs pierakstāties ar savu KIFF kontu. Tālrunī vai planšetdatorā lietotne glabā jūsu sesiju ierīces Keychain (Android ierīcē — tās šifrētajā krātuvē). Datorā tā to glabā aizzīmogotu jūsu lietotāja kontam: Windows datorā ar pašas Windows datu aizsardzību, Linux — jūsu atslēgu glabātuvē (keyring), Mac — tā Keychain. Datora sesija ilgst līdz 90 dienām.</li><li><strong>Jūsu ierīce:</strong> lietotne izveido parakstīšanas atslēgu, kas nekad neatstāj ierīci: iPhone, iPad vai Mac Secure Enclave, Android ierīces Keystore vai Windows datora TPM. Linux un Mac bez Secure Enclave atslēga ir programmatūras atslēga, kas glabājas jūsu keyring vai Keychain, un šis dators var parādīt, kas jūs gaida, bet nevar to apstiprināt; jūs apstiprināt savā tālrunī")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · privātuma politika</p><h1>tafs privātuma politika</h1><p class=\"legal-meta\"><strong>Pēdējoreiz atjaunināta:</strong> 2026. gada 27. novembrī.</p><p class=\"legal-disclaimer\">Šī politika skaidro, kā tafs, KIFF lietotne iPhone, iPad, Android ierīcēm un datoriem, apstrādā personas datus. tafs ir daļa no KIFF Cloud, tāpēc uz to attiecas arī <a href=\"/lv/privacy\">KIFF privātuma politika</a>, kā arī uz visu, ko šī lapa neaptver. Jautājumi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Kas mēs esam</h2><p>tafs nodrošina <strong>Kiff Agents OÜ</strong>, Igaunijā dibināta sabiedrība ar ierobežotu atbildību (reģistra kods 17372313, PVN numurs EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Igaunija. Uz mūsu datu apstrādi attiecas ES Vispārīgā datu aizsardzības regula (VDAR).</p></section><section id=\"scope\"><h2>2. Ko šī politika aptver</h2><p>tafs lietotni iPhone, iPad, Android ierīcēm un datoriem (Mac, Windows un Linux) un pakalpojumu, uz kura tā darbojas, tostarp Setup, kas pievieno uzņēmuma rīkus, un planque, kas uztur šos savienojumus. tafs uzņēmums uztic darbu AI aģentam, taf, kas strādā KIFF Card ietvaros.</p></section><section id=\"roles\"><h2>3. Mūsu lomas</h2><p>Mēs esam jūsu konta un pierakstīšanās datu, kā arī sava pakalpojuma darbības datu <strong>pārzinis</strong>. Mēs darbojamies kā <strong>apstrādātājs</strong> jūsu uzņēmuma vārdā attiecībā uz to, ko tafs tam glabā: katra taf palaišanas, sarunas, ziņojumi, atmiņas piezīmes un faili, ko tie piegādā. Šo datu pārzinis ir jūsu uzņēmums, un šīs attiecības regulē <a href=\"/legal/dpa\">datu apstrādes līgums</a> (angliski).</p></section><section id=\"data\"><h2>4. Ko tafs vāc</h2><ul><li><strong>Jūsu konts:</strong> tafs pierakstāties ar savu KIFF kontu. Tālrunī vai planšetdatorā lietotne glabā jūsu sesiju ierīces Keychain (Android ierīcē — tās šifrētajā krātuvē). Datorā tā to glabā aizzīmogotu jūsu lietotāja kontam: Windows datorā ar pašas Windows datu aizsardzību, Linux — jūsu atslēgu glabātuvē (keyring), Mac — tā Keychain. Datora sesija ilgst līdz 90 dienām.</li><li><strong>Jūsu ierīce:</strong> lietotne izveido parakstīšanas atslēgu, kas nekad neatstāj ierīci: iPhone, iPad vai Mac Secure Enclave, Android ierīces Keystore vai Windows datora TPM. Linux un Mac bez Secure Enclave atslēga ir programmatūras atslēga, kas glabājas jūsu keyring vai Keychain, un šis dators var parādīt, kas jūs gaida, bet nevar to apstiprināt; jūs apstiprināt savā tālrunī")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -62,7 +62,69 @@ func TafsPrivacyLV() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Windows dators bez TPM nevar pierakstīties tafs. KIFF glabā atslēgas publisko daļu, ierīces nosaukumu un platformu, kā arī to, kad tā tika pievienota un pēdējoreiz izmantota, lai varētu pārbaudīt jūsu atbildes uz aizturētiem izsaukumiem un savienojumu apstiprinājumus.</li><li><strong>Jūsu pulkstenis:</strong> pulkstenis neglabā nevienu paroli vai atslēgu, sazinās tikai ar jūsu pārī savienoto tālruni un nekad neko neapstiprina. Tas nosūta to, ko sakāt, Coach vai jūsu izvēlētajam taf tikai kā tekstu, caur tālruni, pēc tam, kad esat atļāvis AI. Pulksteņa paša runas pakalpojums, Apple vai Google, pārvērš jūsu vārdus šajā tekstā. Wear OS pulkstenī, ja tas apstājas, pirms esat beidzis runāt, to tā vietā paveic jūsu tālruņa paša runas atpazīšana, tālrunī. Tas var atteikt, apturēt vai nosūtīt Coach vai taf tikai tad, ja tam ir ekrāna bloķēšana vai piekļuves kods un tas ir atbloķēts. Tas, ko nosūtāt taf, nonāk šī taf paša sarunā, it kā jūs to būtu uzrakstījis tālrunī. Taf saruna, ieskaitot summas, katru reizi, kad tā ir atvērta, tiek lasīta caur tālruni, un pulkstenis glabā tikai jaunākās ziņas, ko apraksta tā sadaļa zemāk. Kad lietotnes ir aizvērtas, tālrunis jaunās atbildes un ziņas nodod pulkstenim pa sistēmas pašas tālruņa–pulksteņa savienojumu (Apple Watch – Apple, Wear OS – Google Play pakalpojumu), kas tās glabā tālrunī un pulkstenī tikai līdz brīdim, kad pulkstenis tās saņem; paziņojumā, kas pamodina tālruni, nav vārdu. Atbilde, kas pienāk, kamēr neskatāties pulkstenī, tiek parādīta arī kā paziņojums jūsu iPhone un Apple Watch vai Wear OS pulkstenī, ar tās vārdiem, bet nekad ar summu, un paliek, līdz to noraidāt; bloķēts Wear OS pulkstenis rāda tikai, ka atbilde ir gatava.</li><li><strong>Apple Watch:</strong> tas rāda jūsu taf un to lapas, tās neglabājot. Tas glabā jūsu iesūtni failā, ko tas nevar nolasīt, kamēr ir bloķēts: katru aizturēto izsaukumu kā taf nosaukumu un to, ko tas lūdz, nekad summu, un Coach atbildes uz to, ko nosūtījāt no pulksteņa, kā tekstu. Ja izrakstāties pulkstenī, tas glabā arī to, ka to izdarījāt, līdz atkal pierakstāties pulkstenī. Izņemot to, tas neko neglabā, ja pulkstenim nav piekļuves koda. Iesūtne tiek dzēsta, kad izrakstāties pulkstenī vai jūsu iPhone izrakstās, vai nākamreiz, kad lietotne tiek atvērta vai aizvērta bez piekļuves koda. Tas neveic audioierakstus, un vienīgie paziņojumi, ko tas rāda, ir jūsu iPhone paziņojumi. Lai saruna atvērtos uzreiz, tas glabā arī pēdējās 30 ziņas no katras no līdz 20 tajā atvērtajām sarunām, Coach un jūsu tafs, tikai kā tekstu un nekad summu, bloķētas kā iesūtne; tās tiek dzēstas kopā ar iesūtni un tad, ja saruna nav atvērta 30 dienas. Ja ziņu Coach saglabā vēlākam, tas glabā arī šo vienu ziņu kā tekstu atsevišķā failā, kas bloķēts tāpat kā Iesūtnes fails, un nosūta to, kad tavs iPhone atkal ir pieejams. Tā tiek izdzēsta pēc nosūtīšanas, kad tu to izdzēs, kad tu vai tavs iPhone izrakstāties vai ja pulkstenim vairs nav piekļuves koda.</li><li><strong>Wear OS:</strong> tas rāda jūsu konta e-pastu un šodienas kalendāru, tos neglabājot. Lai tas atvērtos uzreiz, tas šifrēti glabā to, cik lietu jūs gaida, un katra taf nosaukumu un to, vai tas ir apturēts vai iepauzēts: nekad summu, aizturēta izsaukuma detaļas vai taf sarunu. Tas tiek dzēsts, kad izrakstāties, kad pulkstenis tiek bloķēts vai noņemts no plaukstas, un pēc 24 stundām. Tas glabā jūsu iesūtni, kurā katra rinda ir taf nosaukums un tas, ko tas saka, nekad summa, un vienu vēlākam laikam saglabātu ziņu, kā tekstu. Izrakstīšanās, pulkstenī vai tālrunī, to visu dzēš. Savai flīzei tas glabā arī to, cik lietu jūs gaida, kas tiek rādīts tikai tad, kad pulkstenis ir atbloķēts, un dzēsts, kad izrakstāties, vai nākamreiz, kad flīze tiek parādīta, kamēr pulkstenis ir bloķēts vai tam nav ekrāna bloķēšanas. Pēc izrakstīšanās pulkstenī tas glabā piezīmi, ka to izdarījāt, līdz atkal pierakstāties. Iesūtne tiek dzēsta arī nākamreiz, kad lietotne tiek atvērta vai aizvērta, kamēr pulkstenis ir bloķēts vai tam nav ekrāna bloķēšanas. Vēlākam laikam saglabāta ziņa paliek, līdz to nosūtāt vai dzēšat, jo lūdzāt to nosūtīt. Ja pulksteņa runas pakalpojums apstājas, pirms esat beidzis runāt, pulkstenis nosūta audioierakstu uz jūsu tālruni, kas to pārvērš tekstā pašā tālrunī, nekad serverī. Audioieraksts tiek dzēsts abās ierīcēs, tiklīdz teksts ir saņemts vai jūs atceļat, un ne vēlāk kā pēc 2 minūtēm. Coach vai jūsu taf tālāk tiek nodots tikai teksts. taf rezultāts var palikt pulksteņa paziņojumos, līdz to paslēpjat vai izrakstāties pulkstenī. Lai saruna atvērtos uzreiz, tas glabā arī pēdējās 30 ziņas no katras no līdz 20 tajā atvērtajām sarunām, Coach un jūsu tafs, tikai kā tekstu un nekad summu, šifrētas; tās tiek dzēstas, kad izrakstāties pulkstenī vai tālrunī, un tad, ja saruna nav atvērta 30 dienas, bet pulkstenis bez ekrāna bloķēšanas neglabā nevienu. Vēlākam saglabātā ziņa tiek izdzēsta arī tad, ja pulkstenim vairs nav ekrāna bloķēšanas.</li><li><strong>Piekļuves atslēgas (passkeys):</strong> kad apstiprināt ar piekļuves atslēgu datorā, piemēram, ar Windows Hello vai drošības atslēgu, jūsu seja, pirksta nospiedums vai PIN paliek datora paša sistēmā. KIFF glabā piekļuves atslēgas publisko atslēgu, tās identifikatoru, skaitītāju un nosaukumu, nekad neko slepenu, un noraida piekļuves atslēgu, kas tiek sinhronizēta ar citām ierīcēm.</li><li><strong>Paziņojumi:</strong> tālrunī, planšetdatorā vai Mac datorā, kurā darbojas iPad lietotne, kad tos ieslēdzat, mēs glabājam ierīces push žetonu kopā ar jūsu KIFF personas identifikatoru un valodu, ko rādīja lietotne. Paziņojums iet caur Apple vai Google tikai ar to, kurš taf un ko tas vēlas, un durvju (door) paziņojumā ar tā cilvēka vārdu vai e-pasta adresi, kurš rakstīja: nekad ar summu vai pieprasījuma detaļām. Lietotne tās pievieno pašā ierīcē no KIFF, tāpēc atbloķēta tālruņa paziņojums var rādīt summu, tirgotāju vai personu. Bloķētā Android tālrunī tas rāda tikai \"taf gaida tevi\", un bloķētā iPhone tāpat, ja vien neesat iestatījis priekšskatījumus rādīt vienmēr. Windows datorā, Linux datorā vai Mac ar macOS 12 lietotni paziņojumus veido pati lietotne, kamēr tā darbojas, bez push žetona un bez jebkāda cita uzņēmuma. Windows un Linux tie rāda, kurš taf, ko tas vēlas darīt, summu, iemeslu un termiņu; macOS 12 lietotnē tie rāda KIFF formulējumu par izsaukumu, kad tos ieslēdzat, un bloķēts ekrāns rāda to, ko atļauj Mac priekšskatījuma iestatījums. Windows tie ir izslēgti, līdz tos ieslēdzat, un, kamēr ekrāns ir bloķēts, rāda tikai \"taf gaida tevi\". Paziņojums, kas parādīts pirms ekrāna bloķēšanas, saglabā savas detaļas Windows paziņojumu sarakstā. Linux tie ir ieslēgti, līdz tos izslēdzat, un tas, ko rāda bloķēts ekrāns, ir atkarīgs no jūsu darbvirsmas. Tālrunis, kas nodod atjauninājumus pulkstenim, patur savu push žetonu reģistrētu pat tad, ja paziņojumi ir izslēgti, tikai lai kluss push varētu to pamodināt un nodot atjauninājumus pulkstenim; šis push nesatur nekādus vārdus un neko nerāda.</li><li><strong>Valoda:</strong> tafs pakalpojums glabā konta valodu, pēc tā, kurš pēdējais sarunājās ar Coach, līdz trim mēnešiem, lai taf ziņojumi būtu šajā valodā.</li><li><strong>Jūsu rīki:</strong> pievienojot rīku, jūs pierakstāties pie paša rīka nodrošinātāja. Lietotnei, kurā planque pierakstās pats, piemēram, Stripe, vai jūsu dotai atslēgai planque glabā šo žetonu vai atslēgu jūsu uzņēmumam šifrētā veidā. Pārvaldītam savienojumam pierakstīšanos glabā Composio, savienojumu pakalpojums, ar kuru strādā planque, un planque glabā tikai savienojuma ierakstu un jūsu apstiprinātos rīkus (sk. <a href=\"#google\">Google lietotāju dati</a>). Savienojuma ierakstā var būt konts, kurā tas ir pierakstīts (tā nosaukums vai e-pasts), lai lietotne varētu jums parādīt, kurš tas ir. KIFF izmanto pārvaldītus savienojumus tikai lietotnēm, kas nosauktas lapā <a href=\"/subprocessors#composio\">/subprocessors</a> (angliski).</li><li><strong>Jūsu pārlūks (Chrome):</strong> Kad savienojat tafs paplašinājumu ar savu tālruni, taf var strādāt savienotajā Chrome profilā, tikai tajās vietnēs, kuras norādītas tā savienojumā. Tas atver savas cilnes cilņu grupā, ko jūs redzat un varat apturēt vai pārtraukt, un tas apstājas, ja pieskaraties kādai no tām. Taf, ko palaižat no paplašinājuma sānu paneļa, tā vietā strādā cilnē, kurā esat šajā logā, ja tā ir kādā no tā savienojuma vietnēm: cilne pievienojas tā grupai un tiek uzskatīta par tā paša cilni, un tā paliek atvērta, kad taf apstājas. Tas pievienojas šai cilnei tikai tad, ja šī lapa ir pirmā, kas tam vajadzīga. Tur tas var klikšķināt un rakstīt, tikai savās vietnēs. Šajā cilnē tas lasa lapu tur, kur tā ir, un jebkuru citu lapu atver savā cilnē; jūsu cilni var pārvietot tikai tā tur veikts solis, piemēram, klikšķis, un tikai tā vietņu robežās. Tas lasa šīs lapas kā tekstu un veidlapu laukus, bez paroļu, karšu un kodu laukiem, nekad jūsu citas cilnes vai citas vietnes. Šis teksts kā darbināšanas daļa nonāk pie mūsu AI nodrošinātāja un tiek glabāts kopā ar darbināšanu kā jebkura rīka rezultāts. Katrs solis tiek ierakstīts žurnālā ar vietni un lauka nosaukumu, nekad ar to, kas ierakstīts slepenā laukā. Par katru izmaiņu, ko veic taf, KIFF glabā lapu pirms un pēc tam kā tekstu bez šiem laukiem ne ilgāk kā 30 dienas un izdzēš to agrāk, ja atvienojat savienojumu vai izdzēšat savu kontu. Šajās lapās var būt redzami citu cilvēku dati, piemēram, jūsu klientu; KIFF apstrādā tos jūsu vārdā kā apstrādātājs. Paplašinājums jūsu datorā glabā savu atslēgu, savu KIFF sesiju un tajā sākto tērzēšanu ar Coach sarakstu, nekad jūsu paroles: pierakstīšanās lapā taf apstājas un lūdz jūs pierakstīties pašiem, savā cilnē. Ar Coach vari runāt arī no paplašinājuma sānu paneļa. Coach lasa lapu tikai pēc tam, kad esi to atļāvis paplašinājumā, ar atsevišķu piekrišanu, ko tur vari atsaukt, un ziņu bez lapas vari nosūtīt vienmēr. Kad no turienes nosūti tam ziņu, priekšējā lapa aiziet kopā ar šo ziņu tikai kā tās redzamais teksts, nekad ne tas, ko ierakstīji, izņemot bankas, maksājumu, pasta vai veselības vietni vai vietni, ko esi izslēdzis Coach. Lauku vērtības un paroles netiek nolasītas; karšu numuri tiek saīsināti līdz pēdējiem četriem cipariem; atslēgas un apzīmēti noslēpumi tiek maskēti. Tiek maskēti arī vienreizējie kodi, ko lapas teksts tā nosauc angļu, franču, spāņu vai vācu valodā. Tā aiziet pie mūsu MI pakalpojumu sniedzēja tikai šai ziņai; tafs glabā lapu tikai līdz atbilde ir gatava, bet vietnes nosaukumu glabā ar tavu tērzēšanu, rādītu kā „Lasa:“, 30 dienas. Coach atbilde var citēt lapu un tiek glabāta ar tavu tērzēšanu kā jebkura atbilde. Tas pats attiecas uz ziņu, ko tur sūtāt taf, ar to pašu piekrišanu, bet tikai kādā no šī taf paša vietnēm: citur nekas netiek lasīts, šajā gājienā taf tikai lasa, un tā atbildē var būt citāti no lapas. Taf gadījumā lapas teksts tiek glabāts kopā ar tā izpildi tikai līdz šīs izpildes beigām. Sānu panelis rāda tērzēšanas, kas sāktas šajā Chrome kopš tā savienošanas pārī; pārējās tavas tērzēšanas paliek tavā tālrunī un citās ierīcēs. Kad taf strādā šajā Chrome ziņas dēļ, ko nosūtīji no citas ierīces, panelis rāda arī šo palaišanu: ziņu, tās soļus un atbildi, bet nekad pārējo tērzēšanu, līdz tu izdzēs šo tērzēšanu, atvieno Chrome vai pārvieto taf uz citu Chrome. Tur ziņai var pievienot arī failus: tāpat kā tafs lietotnēs pievienotie faili, tie kopā ar šo ziņu aiziet pie mūsu MI pakalpojumu sniedzēja un tiek glabāti kopā ar to 30 dienas vai īsāk, ja tērzēšana tiek noņemta (fails, ko neizmanto neviena ziņa, aptuveni stundu), un failu var atvērt tikai tā pievienotājs. Tas glabā arī savienošanu pārī ar jūsu tālruni, vietnes, ko izslēdzāt Coach, un nejaušu šī Chrome profila identifikatoru, kas tiek nosūtīts KIFF ar katru savienošanu pārī, lai jūsu tālrunis atpazītu šo Chrome. Atinstalēšana izdzēš visu; atvienošana izdzēš visu, izņemot šo identifikatoru un Coach izslēgtās vietnes. Taf nekad nemaksā bez jūsu apstiprinājuma tālrunī. Par katru soli, kas veic darbību (klikšķis, ievadīšana, iesniegšana), ieskaitot jūsu apstiprināto, tas papildus saglabā vienu lapas ekrānuzņēmumu, uzņemtu tieši pirms darbības, žurnālam; nekad par lapu, ko tas tikai lasa, nekad bankas, maka, paroļu pārvaldnieka, maksājumu, veselības vai valsts iestāžu vietnē, un paroles, kartes un koda lauki tiek paslēpti pirms uzņemšanas. Teksts, kas izskatās pēc kartes numura vai atslēgas, tāpat tiek aizmelnēts, bet kaut kas, kas uzrakstīts citādi, joprojām var būt redzams. Ekrānuzņēmumi tiek glabāti šifrētā krātuvē, piesaistīti šim solim, 30 dienas, tad automātiski dzēsti vai agrāk, ja atvienojat savienojumu, atsaistāt šo Chrome vai dzēšat savu kontu, un tie nekad nenonāk pie mūsu mākslīgā intelekta sniedzēja. Katru no tiem redzat zem tā soļa tafa aktivitātē. tafs atpazīst banku, maku, paroļu pārvaldnieku, maksājumu, pasta, veselības un valsts iestāžu vietnes pēc saraksta un pēc vārdiem to adresē, tāpēc vietne, ko tas neatpazīst, tiek uzskatīta par tādu pašu kā jebkura cita.</li><li><strong>Jūsu taf darbs:</strong> katra taf palaišanas, sarunas, ziņojumi, atmiņas piezīmes un faili, ko tie piegādā, ko mēs glabājam kā apstrādātājs. Ikviens jūsu kontā redz failus, ko piegādā jūsu taf.</li><li><strong>Durvis:</strong> kad atverat durvis, lai cilvēki varētu rakstīt taf pa e-pastu, Slack vai Telegram, tafs pakalpojums glabā katru sapāroto sūtītāju pēc viņa e-pasta adreses, Slack dalībnieka ID vai Telegram lietotāja ID (WhatsApp durvīm — tālruņa numura) ar vārdu, ko jūs viņam piešķirat, līdz noņemat durvis vai taf. Ziņa no kāda, ko neesat sapārojis, gaida jūs kā klauvējiens, ar to, kurš to uzrakstīja un ko tā saka, līdz 30 dienām pēc pēdējā. Sapārota sūtītāja ziņa nonāk taf sarunā un tiek glabāta tāpat kā pārējā saruna. Slack un Telegram pārsūta ziņas saskaņā ar saviem noteikumiem.</li><li><strong>Pirkumi:</strong> Solo un kredītu paketes pārdod Apple caur App Store vai Google caur Google Play norēķinu sistēmu. Tie mums paziņo, kas tika nopirkts, kuram KIFF kontam (nejaušs identifikators), kad, un darījuma vai pasūtījuma atsauces. Tie mums nesniedz jūsu Apple ID vai Google kontu, vārdu, e-pasta adresi vai karti.</li></ul><p>Lietotnē nav analītikas vai reklāmas izsekotāju.</p></section><section id=\"ai\"><h2>5. AI tafs</h2><p>tafs izmanto Anthropic AI Claude Coach un jūsu taf vajadzībām. Mūsu vietā to darbina Anthropic vai kāds no mākoņpakalpojumu sniedzējiem mūsu apakšapstrādātāju lapā. Šajā lapā norādīts, kurš un kur. Lietotne jums jautā, pirms tam kaut kas tiek nosūtīts.</p><ul><li>Kas tam tiek nosūtīts: tas, ko rakstāt Coach un saviem taf, faili, ko pievienojat, tas, ko jūsu pievienotās lietotnes atgriež taf tā darba laikā, un tas, kas ir jūsu ekrānā, kamēr Coach jums palīdz lietotnē.</li><li>No Chrome: priekšējā lapa, kad raksti Coach paplašinājuma sānu panelī, kad esi atļāvis Coach tur lasīt lapas. Arī tad, kad tur rakstāt taf kādā no tā paša vietnēm.</li><li>Kas netiek nosūtīts nekad: paroles un atslēgas, ko izmanto jūsu pievienotās lietotnes, kā arī jūsu pirksta nospiedums.</li><li>Uzņēmums, kas to darbina, to izmanto, lai atbildētu, un izdzēš 30 dienu laikā, ja vien tas netiek atzīmēts kā tā lietošanas noteikumu pārkāpums vai likums neprasa to glabāt.</li><li>Nekas netiek nosūtīts, kamēr to neatļaujat. Piekrišanu varat atsaukt sadaļā Konts.</li></ul><p>Kad atsaucat piekrišanu, Coach un jūsu taf pārtrauc jums atbildēt, un taf, kura palaišanas balstās uz jūsu piekrišanu, tiek iepauzēts. tafs glabā ierakstu par katru piekrišanu, ko dodat vai atsaucat, ar laiku un tās teksta versiju, 10 gadus no pēdējām izmaiņām, lai parādītu, kam piekritāt; konta dzēšana to izdzēš ātrāk. Sīkāka informācija ir <a href=\"/lv/privacy#ai-in-tafs\">KIFF privātuma politikā</a>.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Windows dators bez TPM nevar pierakstīties tafs. KIFF glabā atslēgas publisko daļu, ierīces nosaukumu un platformu, kā arī to, kad tā tika pievienota un pēdējoreiz izmantota, lai varētu pārbaudīt jūsu atbildes uz aizturētiem izsaukumiem un savienojumu apstiprinājumus.</li><li><strong>Jūsu pulkstenis:</strong> pulkstenis neglabā nevienu paroli vai atslēgu, sazinās tikai ar jūsu pārī savienoto tālruni un nekad neko neapstiprina. Tas nosūta to, ko sakāt, Coach vai jūsu izvēlētajam taf tikai kā tekstu, caur tālruni, pēc tam, kad esat atļāvis AI. Pulksteņa paša runas pakalpojums, Apple vai Google, pārvērš jūsu vārdus šajā tekstā. Wear OS pulkstenī, ja tas apstājas, pirms esat beidzis runāt, to tā vietā paveic jūsu tālruņa paša runas atpazīšana, tālrunī. Tas var atteikt, apturēt vai nosūtīt Coach vai taf tikai tad, ja tam ir ekrāna bloķēšana vai piekļuves kods un tas ir atbloķēts. Tas, ko nosūtāt taf, nonāk šī taf paša sarunā, it kā jūs to būtu uzrakstījis tālrunī. Taf saruna, ieskaitot summas, katru reizi, kad tā ir atvērta, tiek lasīta caur tālruni, un pulkstenis glabā tikai jaunākās ziņas, ko apraksta tā sadaļa zemāk. Kad lietotnes ir aizvērtas, tālrunis jaunās atbildes un ziņas nodod pulkstenim pa sistēmas pašas tālruņa–pulksteņa savienojumu (Apple Watch – Apple, Wear OS – Google Play pakalpojumu), kas tās glabā tālrunī un pulkstenī tikai līdz brīdim, kad pulkstenis tās saņem; paziņojumā, kas pamodina tālruni, nav vārdu. Atbilde, kas pienāk, kamēr neskatāties pulkstenī, tiek parādīta arī kā paziņojums jūsu iPhone un Apple Watch vai Wear OS pulkstenī, ar tās vārdiem, bet nekad ar summu, un paliek, līdz to noraidāt; bloķēts Wear OS pulkstenis rāda tikai, ka atbilde ir gatava.</li><li><strong>Apple Watch:</strong> tas rāda jūsu taf un to lapas, tās neglabājot. Tas glabā jūsu iesūtni failā, ko tas nevar nolasīt, kamēr ir bloķēts: katru aizturēto izsaukumu kā taf nosaukumu un to, ko tas lūdz, nekad summu, un Coach atbildes uz to, ko nosūtījāt no pulksteņa, kā tekstu. Ja izrakstāties pulkstenī, tas glabā arī to, ka to izdarījāt, līdz atkal pierakstāties pulkstenī. Izņemot to, tas neko neglabā, ja pulkstenim nav piekļuves koda. Iesūtne tiek dzēsta, kad izrakstāties pulkstenī vai jūsu iPhone izrakstās, vai nākamreiz, kad lietotne tiek atvērta vai aizvērta bez piekļuves koda. Tas neveic audioierakstus, un vienīgie paziņojumi, ko tas rāda, ir jūsu iPhone paziņojumi. Lai saruna atvērtos uzreiz, tas glabā arī pēdējās 30 ziņas no katras no līdz 20 tajā atvērtajām sarunām, Coach un jūsu tafs, tikai kā tekstu un nekad summu, bloķētas kā iesūtne; tās tiek dzēstas kopā ar iesūtni un tad, ja saruna nav atvērta 30 dienas. Ja ziņu Coach saglabā vēlākam, tas glabā arī šo vienu ziņu kā tekstu atsevišķā failā, kas bloķēts tāpat kā Iesūtnes fails, un nosūta to, kad tavs iPhone atkal ir pieejams. Tā tiek izdzēsta pēc nosūtīšanas, kad tu to izdzēs, kad tu vai tavs iPhone izrakstāties vai ja pulkstenim vairs nav piekļuves koda.</li><li><strong>Wear OS:</strong> tas rāda jūsu konta e-pastu un šodienas kalendāru, tos neglabājot. Lai tas atvērtos uzreiz, tas šifrēti glabā to, cik lietu jūs gaida, un katra taf nosaukumu un to, vai tas ir apturēts vai iepauzēts: nekad summu, aizturēta izsaukuma detaļas vai taf sarunu. Tas tiek dzēsts, kad izrakstāties, kad pulkstenis tiek bloķēts vai noņemts no plaukstas, un pēc 24 stundām. Tas glabā jūsu iesūtni, kurā katra rinda ir taf nosaukums un tas, ko tas saka, nekad summa, un vienu vēlākam laikam saglabātu ziņu, kā tekstu. Izrakstīšanās, pulkstenī vai tālrunī, to visu dzēš. Savai flīzei tas glabā arī to, cik lietu jūs gaida, kas tiek rādīts tikai tad, kad pulkstenis ir atbloķēts, un dzēsts, kad izrakstāties, vai nākamreiz, kad flīze tiek parādīta, kamēr pulkstenis ir bloķēts vai tam nav ekrāna bloķēšanas. Pēc izrakstīšanās pulkstenī tas glabā piezīmi, ka to izdarījāt, līdz atkal pierakstāties. Iesūtne tiek dzēsta arī nākamreiz, kad lietotne tiek atvērta vai aizvērta, kamēr pulkstenis ir bloķēts vai tam nav ekrāna bloķēšanas. Vēlākam laikam saglabāta ziņa paliek, līdz to nosūtāt vai dzēšat, jo lūdzāt to nosūtīt. Ja pulksteņa runas pakalpojums apstājas, pirms esat beidzis runāt, pulkstenis nosūta audioierakstu uz jūsu tālruni, kas to pārvērš tekstā pašā tālrunī, nekad serverī. Audioieraksts tiek dzēsts abās ierīcēs, tiklīdz teksts ir saņemts vai jūs atceļat, un ne vēlāk kā pēc 2 minūtēm. Coach vai jūsu taf tālāk tiek nodots tikai teksts. taf rezultāts var palikt pulksteņa paziņojumos, līdz to paslēpjat vai izrakstāties pulkstenī. Lai saruna atvērtos uzreiz, tas glabā arī pēdējās 30 ziņas no katras no līdz 20 tajā atvērtajām sarunām, Coach un jūsu tafs, tikai kā tekstu un nekad summu, šifrētas; tās tiek dzēstas, kad izrakstāties pulkstenī vai tālrunī, un tad, ja saruna nav atvērta 30 dienas, bet pulkstenis bez ekrāna bloķēšanas neglabā nevienu. Vēlākam saglabātā ziņa tiek izdzēsta arī tad, ja pulkstenim vairs nav ekrāna bloķēšanas.</li><li><strong>Piekļuves atslēgas (passkeys):</strong> kad apstiprināt ar piekļuves atslēgu datorā, piemēram, ar Windows Hello vai drošības atslēgu, jūsu seja, pirksta nospiedums vai PIN paliek datora paša sistēmā. KIFF glabā piekļuves atslēgas publisko atslēgu, tās identifikatoru, skaitītāju un nosaukumu, nekad neko slepenu, un noraida piekļuves atslēgu, kas tiek sinhronizēta ar citām ierīcēm.</li><li><strong>Paziņojumi:</strong> tālrunī, planšetdatorā vai Mac datorā, kurā darbojas iPad lietotne, kad tos ieslēdzat, mēs glabājam ierīces push žetonu kopā ar jūsu KIFF personas identifikatoru un valodu, ko rādīja lietotne. Paziņojums iet caur Apple vai Google tikai ar to, kurš taf un ko tas vēlas, un durvju (door) paziņojumā ar tā cilvēka vārdu vai e-pasta adresi, kurš rakstīja: nekad ar summu vai pieprasījuma detaļām. Lietotne tās pievieno pašā ierīcē no KIFF, tāpēc atbloķēta tālruņa paziņojums var rādīt summu, tirgotāju vai personu. Bloķētā Android tālrunī tas rāda tikai \"taf gaida tevi\", un bloķētā iPhone tāpat, ja vien neesat iestatījis priekšskatījumus rādīt vienmēr. Windows datorā, Linux datorā vai Mac ar macOS 12 lietotni paziņojumus veido pati lietotne, kamēr tā darbojas, bez push žetona un bez jebkāda cita uzņēmuma. Windows un Linux tie rāda, kurš taf, ko tas vēlas darīt, summu, iemeslu un termiņu; macOS 12 lietotnē tie rāda KIFF formulējumu par izsaukumu, kad tos ieslēdzat, un bloķēts ekrāns rāda to, ko atļauj Mac priekšskatījuma iestatījums. Windows tie ir izslēgti, līdz tos ieslēdzat, un, kamēr ekrāns ir bloķēts, rāda tikai \"taf gaida tevi\". Paziņojums, kas parādīts pirms ekrāna bloķēšanas, saglabā savas detaļas Windows paziņojumu sarakstā. Linux tie ir ieslēgti, līdz tos izslēdzat, un tas, ko rāda bloķēts ekrāns, ir atkarīgs no jūsu darbvirsmas. Tālrunis, kas nodod atjauninājumus pulkstenim, patur savu push žetonu reģistrētu pat tad, ja paziņojumi ir izslēgti, tikai lai kluss push varētu to pamodināt un nodot atjauninājumus pulkstenim; šis push nesatur nekādus vārdus un neko nerāda.</li><li><strong>Valoda:</strong> tafs pakalpojums glabā konta valodu, pēc tā, kurš pēdējais sarunājās ar Coach, līdz trim mēnešiem, lai taf ziņojumi būtu šajā valodā.</li><li><strong>Jūsu rīki:</strong> pievienojot rīku, jūs pierakstāties pie paša rīka nodrošinātāja. Lietotnei, kurā planque pierakstās pats, piemēram, Stripe, vai jūsu dotai atslēgai planque glabā šo žetonu vai atslēgu jūsu uzņēmumam šifrētā veidā. Pārvaldītam savienojumam pierakstīšanos glabā Composio, savienojumu pakalpojums, ar kuru strādā planque, un planque glabā tikai savienojuma ierakstu un jūsu apstiprinātos rīkus (sk. <a href=\"#google\">Google lietotāju dati</a>). Savienojuma ierakstā var būt konts, kurā tas ir pierakstīts (tā nosaukums vai e-pasts), lai lietotne varētu jums parādīt, kurš tas ir. KIFF izmanto pārvaldītus savienojumus tikai lietotnēm, kas nosauktas lapā <a href=\"/subprocessors#composio\">/subprocessors</a> (angliski).</li><li><strong>Jūsu pārlūks (Chrome):</strong> Kad savienojat tafs paplašinājumu ar savu tālruni, taf var strādāt savienotajā Chrome profilā, tikai tajās vietnēs, kuras norādītas tā savienojumā. Tas atver savas cilnes cilņu grupā, ko jūs redzat un varat apturēt vai pārtraukt, un tas apstājas, ja pieskaraties kādai no tām. Taf, ko palaižat no paplašinājuma sānu paneļa, tā vietā strādā cilnē, kurā esat šajā logā, ja tā ir kādā no tā savienojuma vietnēm: cilne pievienojas tā grupai un tiek uzskatīta par tā paša cilni, un tā paliek atvērta, kad taf apstājas. Tas pievienojas šai cilnei tikai tad, ja šī lapa ir pirmā, kas tam vajadzīga. Tur tas var klikšķināt un rakstīt, tikai savās vietnēs. Šajā cilnē tas lasa lapu tur, kur tā ir, un jebkuru citu lapu atver savā cilnē; jūsu cilni var pārvietot tikai tā tur veikts solis, piemēram, klikšķis, un tikai tā vietņu robežās. Tas lasa šīs lapas kā tekstu un veidlapu laukus, bez paroļu, karšu un kodu laukiem, nekad jūsu citas cilnes vai citas vietnes. Šis teksts kā darbināšanas daļa nonāk pie mūsu AI nodrošinātāja un tiek glabāts kopā ar darbināšanu kā jebkura rīka rezultāts. Katrs solis tiek ierakstīts žurnālā ar vietni un lauka nosaukumu, nekad ar to, kas ierakstīts slepenā laukā. Par katru izmaiņu, ko veic taf, KIFF glabā lapu pirms un pēc tam kā tekstu bez šiem laukiem ne ilgāk kā 30 dienas un izdzēš to agrāk, ja atvienojat savienojumu vai izdzēšat savu kontu. Šajās lapās var būt redzami citu cilvēku dati, piemēram, jūsu klientu; KIFF apstrādā tos jūsu vārdā kā apstrādātājs. Paplašinājums jūsu datorā glabā savu atslēgu, savu KIFF sesiju un tajā sākto tērzēšanu ar Coach sarakstu, nekad jūsu paroles: pierakstīšanās lapā taf apstājas un lūdz jūs pierakstīties pašiem, savā cilnē. Ar Coach vari runāt arī no paplašinājuma sānu paneļa. Coach lasa lapu tikai pēc tam, kad esi to atļāvis paplašinājumā, ar atsevišķu piekrišanu, ko tur vari atsaukt, un ziņu bez lapas vari nosūtīt vienmēr. Kad no turienes nosūti tam ziņu, priekšējā lapa aiziet kopā ar šo ziņu tikai kā tās redzamais teksts, nekad ne tas, ko ierakstīji, izņemot bankas, maksājumu, pasta vai veselības vietni vai vietni, ko esi izslēdzis Coach. Lauku vērtības un paroles netiek nolasītas; karšu numuri tiek saīsināti līdz pēdējiem četriem cipariem; atslēgas un apzīmēti noslēpumi tiek maskēti. Tiek maskēti arī vienreizējie kodi, ko lapas teksts tā nosauc angļu, franču, spāņu vai vācu valodā. Tā aiziet pie mūsu MI pakalpojumu sniedzēja tikai šai ziņai; tafs glabā lapu tikai līdz atbilde ir gatava, bet vietnes nosaukumu glabā ar tavu tērzēšanu, rādītu kā „Lasa:“, 30 dienas. Coach atbilde var citēt lapu un tiek glabāta ar tavu tērzēšanu kā jebkura atbilde. Tas pats attiecas uz ziņu, ko tur sūtāt taf, ar to pašu piekrišanu, bet tikai kādā no šī taf paša vietnēm: citur nekas netiek lasīts, šajā gājienā taf tikai lasa, un tā atbildē var būt citāti no lapas. Taf gadījumā lapas teksts tiek glabāts kopā ar tā izpildi tikai līdz šīs izpildes beigām. Sānu panelis rāda tērzēšanas, kas sāktas šajā Chrome kopš tā savienošanas pārī; pārējās tavas tērzēšanas paliek tavā tālrunī un citās ierīcēs. Kad taf strādā šajā Chrome ziņas dēļ, ko nosūtīji no citas ierīces, panelis rāda arī šo palaišanu: ziņu, tās soļus un atbildi, bet nekad pārējo tērzēšanu, līdz tu izdzēs šo tērzēšanu, atvieno Chrome vai pārvieto taf uz citu Chrome. Tur ziņai var pievienot arī failus: tāpat kā tafs lietotnēs pievienotie faili, tie kopā ar šo ziņu aiziet pie mūsu MI pakalpojumu sniedzēja un tiek glabāti kopā ar to 30 dienas vai īsāk, ja tērzēšana tiek noņemta (fails, ko neizmanto neviena ziņa, aptuveni stundu), un failu var atvērt tikai tā pievienotājs. Tas glabā arī savienošanu pārī ar jūsu tālruni, vietnes, ko izslēdzāt Coach, un nejaušu šī Chrome profila identifikatoru, kas tiek nosūtīts KIFF ar katru savienošanu pārī, lai jūsu tālrunis atpazītu šo Chrome. Atinstalēšana izdzēš visu; atvienošana izdzēš visu, izņemot šo identifikatoru un Coach izslēgtās vietnes. Taf nekad nemaksā bez jūsu apstiprinājuma tālrunī. Par katru soli, kas veic darbību (klikšķis, ievadīšana, iesniegšana), ieskaitot jūsu apstiprināto, tas papildus saglabā vienu lapas ekrānuzņēmumu, uzņemtu tieši pirms darbības, žurnālam; nekad par lapu, ko tas tikai lasa, nekad bankas, maka, paroļu pārvaldnieka, maksājumu, veselības vai valsts iestāžu vietnē, un paroles, kartes un koda lauki tiek paslēpti pirms uzņemšanas. Teksts, kas izskatās pēc kartes numura vai atslēgas, tāpat tiek aizmelnēts, bet kaut kas, kas uzrakstīts citādi, joprojām var būt redzams. Ekrānuzņēmumi tiek glabāti šifrētā krātuvē, piesaistīti šim solim, 30 dienas, tad automātiski dzēsti vai agrāk, ja atvienojat savienojumu, atsaistāt šo Chrome vai dzēšat savu kontu, un tie nekad nenonāk pie mūsu mākslīgā intelekta sniedzēja. Katru no tiem redzat zem tā soļa tafa aktivitātē. tafs atpazīst banku, maku, paroļu pārvaldnieku, maksājumu, pasta, veselības un valsts iestāžu vietnes pēc saraksta un pēc vārdiem to adresē, tāpēc vietne, ko tas neatpazīst, tiek uzskatīta par tādu pašu kā jebkura cita.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if HostedBrowserForCustomers {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("lv").Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 46, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("lv").Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 46, Col: 93}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("lv").Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 48, Col: 44}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("lv").Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 48, Col: 82}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Jūsu taf darbs:</strong> katra taf palaišanas, sarunas, ziņojumi, atmiņas piezīmes un faili, ko tie piegādā, ko mēs glabājam kā apstrādātājs. Ikviens jūsu kontā redz failus, ko piegādā jūsu taf.</li><li><strong>Durvis:</strong> kad atverat durvis, lai cilvēki varētu rakstīt taf pa e-pastu, Slack vai Telegram, tafs pakalpojums glabā katru sapāroto sūtītāju pēc viņa e-pasta adreses, Slack dalībnieka ID vai Telegram lietotāja ID (WhatsApp durvīm — tālruņa numura) ar vārdu, ko jūs viņam piešķirat, līdz noņemat durvis vai taf. Ziņa no kāda, ko neesat sapārojis, gaida jūs kā klauvējiens, ar to, kurš to uzrakstīja un ko tā saka, līdz 30 dienām pēc pēdējā. Sapārota sūtītāja ziņa nonāk taf sarunā un tiek glabāta tāpat kā pārējā saruna. Slack un Telegram pārsūta ziņas saskaņā ar saviem noteikumiem.</li><li><strong>Pirkumi:</strong> Solo un kredītu paketes pārdod Apple caur App Store vai Google caur Google Play norēķinu sistēmu. Tie mums paziņo, kas tika nopirkts, kuram KIFF kontam (nejaušs identifikators), kad, un darījuma vai pasūtījuma atsauces. Tie mums nesniedz jūsu Apple ID vai Google kontu, vārdu, e-pasta adresi vai karti.</li></ul><p>Lietotnē nav analītikas vai reklāmas izsekotāju.</p></section><section id=\"ai\"><h2>5. AI tafs</h2><p>tafs izmanto Anthropic AI Claude Coach un jūsu taf vajadzībām. Mūsu vietā to darbina Anthropic vai kāds no mākoņpakalpojumu sniedzējiem mūsu apakšapstrādātāju lapā. Šajā lapā norādīts, kurš un kur. Lietotne jums jautā, pirms tam kaut kas tiek nosūtīts.</p><ul><li>Kas tam tiek nosūtīts: tas, ko rakstāt Coach un saviem taf, faili, ko pievienojat, tas, ko jūsu pievienotās lietotnes atgriež taf tā darba laikā, un tas, kas ir jūsu ekrānā, kamēr Coach jums palīdz lietotnē.</li><li>No Chrome: priekšējā lapa, kad raksti Coach paplašinājuma sānu panelī, kad esi atļāvis Coach tur lasīt lapas. Arī tad, kad tur rakstāt taf kādā no tā paša vietnēm.</li><li>Kas netiek nosūtīts nekad: paroles un atslēgas, ko izmanto jūsu pievienotās lietotnes, kā arī jūsu pirksta nospiedums.</li><li>Uzņēmums, kas to darbina, to izmanto, lai atbildētu, un izdzēš 30 dienu laikā, ja vien tas netiek atzīmēts kā tā lietošanas noteikumu pārkāpums vai likums neprasa to glabāt.</li><li>Nekas netiek nosūtīts, kamēr to neatļaujat. Piekrišanu varat atsaukt sadaļā Konts.</li></ul><p>Kad atsaucat piekrišanu, Coach un jūsu taf pārtrauc jums atbildēt, un taf, kura palaišanas balstās uz jūsu piekrišanu, tiek iepauzēts. tafs glabā ierakstu par katru piekrišanu, ko dodat vai atsaucat, ar laiku un tās teksta versiju, 10 gadus no pēdējām izmaiņām, lai parādītu, kam piekritāt; konta dzēšana to izdzēš ātrāk. Sīkāka informācija ir <a href=\"/lv/privacy#ai-in-tafs\">KIFF privātuma politikā</a>.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -70,7 +132,20 @@ func TafsPrivacyLV() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section id=\"sharing\"><h2>7. Kas vēl saņem datus</h2><p>Mēs nepārdodam jūsu personas datus un nekopīgojam tos reklāmas nolūkos.</p><p>tafs vajadzībām mēs izmantojam šos uzņēmumus: Amazon Web Services (mitināšana, tostarp tafs krātuve un planque savienojumi), Clerk (KIFF kontu pierakstīšanās), Anthropic (AI modelis, ko darbina Anthropic, Amazon Web Services, Google Cloud vai Microsoft Azure), Composio (pārvaldīto savienojumu pierakstīšanās un izsaukumi, ko planque lūdz tam veikt), Apple (push paziņojumi), Google (push paziņojumi Android ierīcēs un Google Play norēķinu sistēma) un Resend (taf e-pasta durvis). Oficiālais, aktuālais saraksts ar to, ko katrs skar un kur, ir lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</p><p>Daži no tiem atrodas ārpus Eiropas Ekonomikas zonas, galvenokārt Amerikas Savienotajās Valstīs. <a href=\"/lv/privacy#transfers\">KIFF privātuma politika</a> apraksta, kā šī nosūtīšana tiek aizsargāta.</p><p><strong>Jūsu valsts.</strong> Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā <a href=\"/privacy/countries\">Jūsu valsts</a>.</p></section><section id=\"retention\"><h2>8. Cik ilgi mēs tos glabājam</h2><ul><li>Tas, ko jūsu rīki atgriež taf: tikai līdz palaišanas beigām. Sarunā tas, ko tas tikai nolasīja, tiek glabāts šifrēts tās nākamajām ziņām, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā.</li><li>taf palaišanas un sarunas ar sarunas kopsavilkumu: 30 dienas. Tā atmiņas piezīmes: līdz taf tiek noņemts. Savu sarunu ar Coach varat izdzēst arī ātrāk: tās ziņas un jūsu pievienotie faili tiek dzēsti uzreiz, bet ieraksts par to, ka katra tās palaišana notika, kad un cik tā maksāja, paliek šīs 30 dienas. Ja ziņo par atbildi, KIFF glabā šo atbildi, tavu iemeslu un piezīmi 180 dienas vai līdz tu izdzēs šo tērzēšanu vai savu kontu. KIFF tos arī nosūta pa e-pastu komandai, kas lasa ziņojumus, un šo e-pastu glabā tāpat kā KIFF atbalsta pastu.</li><li>Coach īsās piezīmes nākamajai atbildei, piemēram, kāpēc sarunā neizdevās izveidot savienojumu vai ka Card tika apstiprināta: līdz šī atbilde tās paņem, ne ilgāk kā 7 dienas; pēc tam kā daļa no šīs sarunas, tik ilgi, cik tiek glabāta saruna. Kopija tiek glabāta 24 stundas, lai atkārtoti nosūtīta ziņa saņemtu to pašu piezīmi. Sarunas piezīme tiek izmantota tikai šajā sarunā.</li><li>Faili, ko pievienojat sarunā: kopā ar ziņu, kurai tie pievienoti, 30 dienas vai mazāk, ja saruna tiek noņemta, un jebkurā gadījumā 38 dienu laikā. Fails, ko neizmanto neviena ziņa, tiek noņemts aptuveni stundu pēc augšupielādes. Konta dzēšana tos dzēš.</li><li>Faili, ko piegādā jūsu taf: 30 dienas no brīža, kad palaišana tos izveidoja, pēc tam tie tiek automātiski dzēsti dienas laikā. Ikviens jūsu kontā var failu dzēst agrāk ar Dzēst tūlīt: pats fails pazūd nekavējoties, kopija netiek saglabāta; tā nosaukums, izmērs un taf un palaišana, kas to izveidoja, var palikt tafs krātuves šifrētajās laika punkta kopijās līdz 35 dienām, ko izmanto tikai atjaunošanai pēc kļūmes. taf noņemšana vai konta dzēšana dzēš tā failus. Faila kopīgošana nosūta pašu failu, un kopīgotā kopija paliek lietotnē, ar kuru to kopīgojāt. Lai lejupielādētu failu, mēs izveidojam saiti jūsu konta pierakstītam dalībniekam, kas pārstāj darboties pēc vienas minūtes; citu saiti uz to mēs neveidojam.</li><li>Tas, ko atgrieza rīks, planque ierakstā par katru izsaukumu: 24 stundas. Pēc tam ieraksts glabā tikai to, vai izsaukums tika nosūtīts, lai tas nekad netiktu nosūtīts divreiz.</li><li>Savienojuma žetons vai atslēga planque vai pārvaldīta savienojuma pierakstīšanās Composio: līdz to atvienojat. Ja cits jūsu savienojums var izmantot to pašu kontu pie šī piegādātāja, tas tiek glabāts, neizmantots, līdz arī tas tiek atvienots, un pēc tam atsaukts. Tā apstiprinājumu ieraksts: līdz konta beigām.</li><li>Ierīces push žetons: līdz izrakstāties no lietotnes, noņemat ierīci vai Apple vai Google paziņo, ka žetona vairs nav. Ierīces publiskā atslēga, nosaukums, platforma un datumi: kamēr to izmantojat; kad to izrakstāt, tā tiek atzīmēta kā noņemta un glabāta līdz konta dzēšanai, lai KIFF varētu noraidīt tās novēlotu atbildi un parādīt, kura ierīce parakstīja agrāku. Piekļuves atslēgas publiskā atslēga, identifikators un nosaukums: kā tās ierīcei. Datora sesija: līdz 90 dienām vai līdz izrakstāties.</li><li>Jūsu konts: līdz tas tiek dzēsts. Pakalpojuma žurnāli: 30 dienas. tafs un planque krātuves glabā šifrētas laika punkta kopijas 35 dienas, ko izmanto tikai krātuves atjaunošanai pēc kļūmes.</li></ul><p>Viss pārējais ir <a href=\"/lv/privacy#retention\">KIFF glabāšanas sadaļā</a>.</p></section><section id=\"lawful-bases\"><h2>9. Tiesiskais pamats</h2><p>Līguma izpilde, lai uzturētu jūsu kontu un jūsu taf. Leģitīmās intereses — drošībai, krāpšanas novēršanai un ļaunprātīgas izmantošanas atklāšanai. Piekrišana — AI tafs (<a href=\"#ai\">5. sadaļa</a>). Juridisks pienākums — nodokļu uzskaitei. Sīkāka informācija ir <a href=\"/lv/privacy#lawful-bases\">KIFF privātuma politikā</a>.</p></section><section id=\"rights\"><h2>10. Jūsu tiesības</h2><p>Saskaņā ar VDAR jūs varat pieprasīt piekļuvi saviem datiem, to labošanu, dzēšanu, apstrādes ierobežošanu vai pārnesamu kopiju, iebilst pret apstrādi, kas balstīta uz leģitīmām interesēm, un atsaukt piekrišanu. Rakstiet uz <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; mēs atbildam bez nepamatotas kavēšanās un ne vēlāk kā viena mēneša laikā; sarežģītam pieprasījumam var būt vajadzīgi vēl divi mēneši, un par to mēs paziņojam pirmā mēneša laikā. Lietotnē Konts → Eksportēt manas sarunas lejupielādē jūsu pašu sarunas un piezīmes.</p><p>Lai dzēstu savu tafs kontu, atveriet lietotni, dodieties uz Konts un pieskarieties <em>Dzēst kontu</em>, pēc tam apstipriniet. Dzēšana ir neatgriezeniska. <a href=\"/lv/privacy#delete-account\">KIFF privātuma politika</a> apraksta, kas un kad tiek dzēsts un kā to pieprasīt pa e-pastu.</p><p>Jūs varat iesniegt sūdzību <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Igaunijas Datu aizsardzības inspekcijai (Andmekaitse Inspektsioon)</a> vai savas dzīvesvietas uzraudzības iestādei.</p><p><strong>Jūsu valsts.</strong> Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā <a href=\"/privacy/countries\">Jūsu valsts</a>.</p></section><section id=\"more\"><h2>11. Drošība, bērni un izmaiņas</h2><p>Mūsu drošības pasākumi ir lapā <a href=\"/security\">/security</a> (angliski). tafs nav paredzēts bērniem, un mēs apzināti nevācam personas datus no bērniem, kas jaunāki par 16 gadiem. Mēs mainām šo politiku tā, kā <a href=\"/lv/privacy#changes\">KIFF privātuma politika</a> to nosaka attiecībā uz sevi.</p></section><section id=\"contact\"><h2>12. Kontakti</h2><p>Privātuma jautājumi un pieprasījumi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Oficiāli juridiski paziņojumi: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Lietotnes pašas noteikumi ir lapā <a href=\"/lv/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Kas vēl saņem datus</h2><p>Mēs nepārdodam jūsu personas datus un nekopīgojam tos reklāmas nolūkos.</p><p>tafs vajadzībām mēs izmantojam šos uzņēmumus: Amazon Web Services (mitināšana, tostarp tafs krātuve un planque savienojumi), Clerk (KIFF kontu pierakstīšanās), Anthropic (AI modelis, ko darbina Anthropic, Amazon Web Services, Google Cloud vai Microsoft Azure), Composio (pārvaldīto savienojumu pierakstīšanās un izsaukumi, ko planque lūdz tam veikt), Apple (push paziņojumi), Google (push paziņojumi Android ierīcēs un Google Play norēķinu sistēma) un Resend (taf e-pasta durvis). Oficiālais, aktuālais saraksts ar to, ko katrs skar un kur, ir lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</p><p>Daži no tiem atrodas ārpus Eiropas Ekonomikas zonas, galvenokārt Amerikas Savienotajās Valstīs. <a href=\"/lv/privacy#transfers\">KIFF privātuma politika</a> apraksta, kā šī nosūtīšana tiek aizsargāta.</p><p><strong>Jūsu valsts.</strong> Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā <a href=\"/privacy/countries\">Jūsu valsts</a>.</p></section><section id=\"retention\"><h2>8. Cik ilgi mēs tos glabājam</h2><ul><li>Tas, ko jūsu rīki atgriež taf: tikai līdz palaišanas beigām. Sarunā tas, ko tas tikai nolasīja, tiek glabāts šifrēts tās nākamajām ziņām, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā.</li><li>taf palaišanas un sarunas ar sarunas kopsavilkumu: 30 dienas. Tā atmiņas piezīmes: līdz taf tiek noņemts. Savu sarunu ar Coach varat izdzēst arī ātrāk: tās ziņas un jūsu pievienotie faili tiek dzēsti uzreiz, bet ieraksts par to, ka katra tās palaišana notika, kad un cik tā maksāja, paliek šīs 30 dienas. Ja ziņo par atbildi, KIFF glabā šo atbildi, tavu iemeslu un piezīmi 180 dienas vai līdz tu izdzēs šo tērzēšanu vai savu kontu. KIFF tos arī nosūta pa e-pastu komandai, kas lasa ziņojumus, un šo e-pastu glabā tāpat kā KIFF atbalsta pastu.</li><li>Coach īsās piezīmes nākamajai atbildei, piemēram, kāpēc sarunā neizdevās izveidot savienojumu vai ka Card tika apstiprināta: līdz šī atbilde tās paņem, ne ilgāk kā 7 dienas; pēc tam kā daļa no šīs sarunas, tik ilgi, cik tiek glabāta saruna. Kopija tiek glabāta 24 stundas, lai atkārtoti nosūtīta ziņa saņemtu to pašu piezīmi. Sarunas piezīme tiek izmantota tikai šajā sarunā.</li><li>Faili, ko pievienojat sarunā: kopā ar ziņu, kurai tie pievienoti, 30 dienas vai mazāk, ja saruna tiek noņemta, un jebkurā gadījumā 38 dienu laikā. Fails, ko neizmanto neviena ziņa, tiek noņemts aptuveni stundu pēc augšupielādes. Konta dzēšana tos dzēš.</li><li>Faili, ko piegādā jūsu taf: 30 dienas no brīža, kad palaišana tos izveidoja, pēc tam tie tiek automātiski dzēsti dienas laikā. Ikviens jūsu kontā var failu dzēst agrāk ar Dzēst tūlīt: pats fails pazūd nekavējoties, kopija netiek saglabāta; tā nosaukums, izmērs un taf un palaišana, kas to izveidoja, var palikt tafs krātuves šifrētajās laika punkta kopijās līdz 35 dienām, ko izmanto tikai atjaunošanai pēc kļūmes. taf noņemšana vai konta dzēšana dzēš tā failus. Faila kopīgošana nosūta pašu failu, un kopīgotā kopija paliek lietotnē, ar kuru to kopīgojāt. Lai lejupielādētu failu, mēs izveidojam saiti jūsu konta pierakstītam dalībniekam, kas pārstāj darboties pēc vienas minūtes; citu saiti uz to mēs neveidojam.</li><li>Tas, ko atgrieza rīks, planque ierakstā par katru izsaukumu: 24 stundas. Pēc tam ieraksts glabā tikai to, vai izsaukums tika nosūtīts, lai tas nekad netiktu nosūtīts divreiz.</li><li>Savienojuma žetons vai atslēga planque vai pārvaldīta savienojuma pierakstīšanās Composio: līdz to atvienojat. Ja cits jūsu savienojums var izmantot to pašu kontu pie šī piegādātāja, tas tiek glabāts, neizmantots, līdz arī tas tiek atvienots, un pēc tam atsaukts. ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("lv"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 84, Col: 315}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Tā apstiprinājumu ieraksts: līdz konta beigām.</li><li>Ierīces push žetons: līdz izrakstāties no lietotnes, noņemat ierīci vai Apple vai Google paziņo, ka žetona vairs nav. Ierīces publiskā atslēga, nosaukums, platforma un datumi: kamēr to izmantojat; kad to izrakstāt, tā tiek atzīmēta kā noņemta un glabāta līdz konta dzēšanai, lai KIFF varētu noraidīt tās novēlotu atbildi un parādīt, kura ierīce parakstīja agrāku. Piekļuves atslēgas publiskā atslēga, identifikators un nosaukums: kā tās ierīcei. Datora sesija: līdz 90 dienām vai līdz izrakstāties.</li><li>Jūsu konts: līdz tas tiek dzēsts. Pakalpojuma žurnāli: 30 dienas. tafs un planque krātuves glabā šifrētas laika punkta kopijas 35 dienas, ko izmanto tikai krātuves atjaunošanai pēc kļūmes.</li></ul><p>Viss pārējais ir <a href=\"/lv/privacy#retention\">KIFF glabāšanas sadaļā</a>.</p></section><section id=\"lawful-bases\"><h2>9. Tiesiskais pamats</h2><p>Līguma izpilde, lai uzturētu jūsu kontu un jūsu taf. Leģitīmās intereses — drošībai, krāpšanas novēršanai un ļaunprātīgas izmantošanas atklāšanai. Piekrišana — AI tafs (<a href=\"#ai\">5. sadaļa</a>). Juridisks pienākums — nodokļu uzskaitei. Sīkāka informācija ir <a href=\"/lv/privacy#lawful-bases\">KIFF privātuma politikā</a>.</p></section><section id=\"rights\"><h2>10. Jūsu tiesības</h2><p>Saskaņā ar VDAR jūs varat pieprasīt piekļuvi saviem datiem, to labošanu, dzēšanu, apstrādes ierobežošanu vai pārnesamu kopiju, iebilst pret apstrādi, kas balstīta uz leģitīmām interesēm, un atsaukt piekrišanu. Rakstiet uz <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; mēs atbildam bez nepamatotas kavēšanās un ne vēlāk kā viena mēneša laikā; sarežģītam pieprasījumam var būt vajadzīgi vēl divi mēneši, un par to mēs paziņojam pirmā mēneša laikā. Lietotnē Konts → Eksportēt manas sarunas lejupielādē jūsu pašu sarunas un piezīmes.</p><p>Lai dzēstu savu tafs kontu, atveriet lietotni, dodieties uz Konts un pieskarieties <em>Dzēst kontu</em>, pēc tam apstipriniet. Dzēšana ir neatgriezeniska. <a href=\"/lv/privacy#delete-account\">KIFF privātuma politika</a> apraksta, kas un kad tiek dzēsts un kā to pieprasīt pa e-pastu.</p><p>Jūs varat iesniegt sūdzību <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Igaunijas Datu aizsardzības inspekcijai (Andmekaitse Inspektsioon)</a> vai savas dzīvesvietas uzraudzības iestādei.</p><p><strong>Jūsu valsts.</strong> Dažu valstu tiesību akti prasa vairāk, nekā teikts šajā politikā. Ko tie papildina, angļu valodā un attiecīgās valsts valodā, ir lapā <a href=\"/privacy/countries\">Jūsu valsts</a>.</p></section><section id=\"more\"><h2>11. Drošība, bērni un izmaiņas</h2><p>Mūsu drošības pasākumi ir lapā <a href=\"/security\">/security</a> (angliski). tafs nav paredzēts bērniem, un mēs apzināti nevācam personas datus no bērniem, kas jaunāki par 16 gadiem. Mēs mainām šo politiku tā, kā <a href=\"/lv/privacy#changes\">KIFF privātuma politika</a> to nosaka attiecībā uz sevi.</p></section><section id=\"contact\"><h2>12. Kontakti</h2><p>Privātuma jautājumi un pieprasījumi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Oficiāli juridiski paziņojumi: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Lietotnes pašas noteikumi ir lapā <a href=\"/lv/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -102,261 +177,347 @@ func tafsPrivacyGoogleLV() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<section id=\"google\"><h2>6. Google lietotāju dati</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google lietotāju dati</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>Kad to lūdzat, tafs lietotnes sadaļā Pievienot lietotnes savieno taf ar jūsu Google kontu, piemēram, ar Google Sheets vai Google Calendar, ko izmanto tā darbs. Šajā sadaļā aprakstīts, ko tafs dara ar datiem, ko saņem no Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Kad to lūdzat, tafs lietotnes sadaļā Pievienot lietotnes savieno taf ar jūsu Google kontu, piemēram, ar Google Sheets vai Google Calendar, ko izmanto tā darbs. Šajā sadaļā aprakstīts, ko tafs dara ar datiem, ko saņem no Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Kad to lūdzat, tafs lietotnes sadaļā Pievienot lietotnes savieno taf ar jūsu Google kontu, piemēram, ar jūsu Gmail vai ar Google Calendar vai Google Sheets, ko izmanto tā darbs. Šajā sadaļā aprakstīts, ko tafs dara ar datiem, ko saņem no Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Kad to lūdzat, tafs lietotnes sadaļā Pievienot lietotnes savieno taf ar jūsu Google kontu, piemēram, ar jūsu Gmail vai ar Google Calendar vai Google Sheets, ko izmanto tā darbs. Šajā sadaļā aprakstīts, ko tafs dara ar datiem, ko saņem no Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><strong>Ko tas lasa un raksta:</strong> to, kas vajadzīgs taf darbam: izklājlapas, ko tas uztur aktuālas, vai notikumus kalendāros, ko tas pārvalda. Tas tos maina tikai tad, ja to atļauj taf Card, un viss, kas pārsniedz Card limitus, gaida jūsu apstiprinājumu.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Ko tas lasa un raksta:</strong> to, kas vajadzīgs taf darbam: izklājlapas, ko tas uztur aktuālas, vai notikumus kalendāros, ko tas pārvalda. Tas tos maina tikai tad, ja to atļauj taf Card, un viss, kas pārsniedz Card limitus, gaida jūsu apstiprinājumu.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li><strong>Ko tas lasa un raksta:</strong> to, kas vajadzīgs taf darbam. Jūsu Gmail tas lasa jūsu ziņas un pavedienus, lai atrastu tās, uz kurām jāatbild, un raksta melnrakstus; e-pastu tas sūta tikai tad, ja to atļauj taf Card. Google Calendar un Google Sheets tas lasa notikumus kalendāros, ko tas pārvalda, vai izklājlapas, ko tas uztur aktuālas, un maina tās tikai tad, ja to atļauj taf Card. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Ko tas lasa un raksta:</strong> to, kas vajadzīgs taf darbam. Jūsu Gmail tas lasa jūsu ziņas un pavedienus, lai atrastu tās, uz kurām jāatbild, un raksta melnrakstus; e-pastu tas sūta tikai tad, ja to atļauj taf Card. Google Calendar un Google Sheets tas lasa notikumus kalendāros, ko tas pārvalda, vai izklājlapas, ko tas uztur aktuālas, un maina tās tikai tad, ja to atļauj taf Card. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Google Tasks tas lasa uzdevumu sarakstus, ko tas pārvalda, un pievieno, pabeidz, pārvieto vai dzēš uzdevumus tikai tad, ja to atļauj taf Card. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Google Tasks tas lasa uzdevumu sarakstus, ko tas pārvalda, un pievieno, pabeidz, pārvieto vai dzēš uzdevumus tikai tad, ja to atļauj taf Card. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Viss, kas pārsniedz Card limitus, gaida jūsu apstiprinājumu.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Viss, kas pārsniedz Card limitus, gaida jūsu apstiprinājumu.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Kāpēc:</strong> tikai lai veiktu darbu, ko iestatījāt šim taf, un lai parādītu jums, ar kuru Google kontu tas ir savienots: tā e-pasta adresi, ko glabā kopā ar savienojumu, līdz to atvienojat.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Kāpēc:</strong> tikai lai veiktu darbu, ko iestatījāt šim taf, un lai parādītu jums, ar kuru Google kontu tas ir savienots: tā e-pasta adresi, ko glabā kopā ar savienojumu, līdz to atvienojat.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Kā savienojas katra Google lietotne:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Kā savienojas katra Google lietotne:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li>Caur mūsu pierakstīšanās partneri, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski): ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Caur mūsu pierakstīšanās partneri, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 135, Col: 153}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 139, Col: 153}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if len(googleInHouse("lv")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li>Caur paša tafs Google pierakstīšanos, bez cita uzņēmuma starpā: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Caur paša tafs Google pierakstīšanos, bez cita uzņēmuma starpā: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 138, Col: 112}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 142, Col: 112}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ".</li>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Lietotne, kas nosaukta abās vietās, savienojas vienā vai otrā veidā atkarībā no jūsu konta. Pašas Google pierakstīšanās lapa rāda, kuru veidu jūs atļaujat.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut.<ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> tafs lūdz tikai to piekļuvi, kas vajadzīga taf rīkiem. Ja šāda šaurāka piekļuve nav iespējama, tas lūdz lietotnes parasto piekļuvi un pasaka to pirms pierakstīšanās. Ja parastā piekļuve ietvertu personas datus, ko taf neizmanto, tafs nesavienojas.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> pierakstīšanās vienlaikus lūdz visu tālāk šai lietotnei norādīto piekļuvi, pat ja taf tikai lasa.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut. Pierakstīšanās vienlaikus lūdz visu tālāk šai lietotnei norādīto piekļuvi, pat ja taf tikai lasa.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut. tafs lūdz tikai to piekļuvi, kas vajadzīga taf rīkiem. Ja šāda šaurāka piekļuve nav iespējama, tas lūdz lietotnes parasto piekļuvi un pasaka to pirms pierakstīšanās. Ja parastā piekļuve ietvertu personas datus, ko taf neizmanto, tafs nesavienojas.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>Kā taf to izmanto:</strong> taf izmanto tikai rīkus, kas apstiprināti tā Card. Katrs izsaukums pirms jebkādas nosūtīšanas tiek pārbaudīts pret atļauju tieši šim rīkam un šiem argumentiem, un izsaukums ārpus jūsu dotās piekļuves tiek atteikts. Kuras darbības katru reizi prasa jūsu apstiprinājumu, nosaka Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>Piekļuve, ko lūdz paša tafs Google pierakstīšanās:</strong>")
+			for _, a := range googlePending("lv") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>Piekļuve, ko lūdz tafs:</strong>")
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 146, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("lv") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("lv"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lv").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 170, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lv").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 173, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 173, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Lai cik daudz atļautu pierakstīšanās, taf izmanto tikai rīkus, kas ir tā Card.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Lietotne, kas nosaukta abās vietās, savienojas vienā vai otrā veidā atkarībā no jūsu konta. Pašas Google pierakstīšanās lapa rāda, kuru veidu jūs atļaujat.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong><ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> jūsu Google pierakstīšanos glabā mūsu pierakstīšanās partneris, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski), un tā nekad netiek dota taf vai planque. Ne taf, ne tafs neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> planque, paša tafs savienojumu pakalpojums, glabā jūsu Google žetonu jūsu uzņēmumam, šifrētu ar AWS KMS Eiropas Savienībā (Īrijā), un izmanto to tikai izsaukumam, ko atļauj taf Card. Tas nekad netiek dots taf, un ne taf, ne AI modelis neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut.<ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> tafs lūdz tikai to piekļuvi, kas vajadzīga taf rīkiem. Ja šāda šaurāka piekļuve nav iespējama, tas lūdz lietotnes parasto piekļuvi un pasaka to pirms pierakstīšanās. Ja parastā piekļuve ietvertu personas datus, ko taf neizmanto, tafs nesavienojas.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> pierakstīšanās vienlaikus lūdz visu tālāk šai lietotnei norādīto piekļuvi, pat ja taf tikai lasa.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong> planque, paša tafs savienojumu pakalpojums, glabā jūsu Google žetonu jūsu uzņēmumam, šifrētu ar AWS KMS Eiropas Savienībā (Īrijā), un izmanto to tikai izsaukumam, ko atļauj taf Card. Tas nekad netiek dots taf, un ne taf, ne AI modelis neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut. Pierakstīšanās vienlaikus lūdz visu tālāk šai lietotnei norādīto piekļuvi, pat ja taf tikai lasa.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong> jūsu Google pierakstīšanos glabā mūsu pierakstīšanās partneris, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski), un tā nekad netiek dota taf vai planque. Ne taf, ne tafs neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Ko jūs atļaujat:</strong> jūs pierakstāties pašas Google lapā un izvēlaties, ko atļaut. tafs lūdz tikai to piekļuvi, kas vajadzīga taf rīkiem. Ja šāda šaurāka piekļuve nav iespējama, tas lūdz lietotnes parasto piekļuvi un pasaka to pirms pierakstīšanās. Ja parastā piekļuve ietvertu personas datus, ko taf neizmanto, tafs nesavienojas.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kā taf to izmanto:</strong> taf izmanto tikai rīkus, kas apstiprināti tā Card. Katrs izsaukums pirms jebkādas nosūtīšanas tiek pārbaudīts pret atļauju tieši šim rīkam un šiem argumentiem, un izsaukums ārpus jūsu dotās piekļuves tiek atteikts. Kuras darbības katru reizi prasa jūsu apstiprinājumu, nosaka Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("lv")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Piekļuve, ko lūdz paša tafs Google pierakstīšanās:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Piekļuve, ko lūdz tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("lv") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 185, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 188, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var20 string
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lv_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Lai cik daudz atļautu pierakstīšanās, taf izmanto tikai rīkus, kas ir tā Card.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem.<ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> tie iet arī caur mūsu pierakstīšanās partneri, kas veic katru izsaukumu.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> planque izsauc Google pats, tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos.</li></ul>Abi ir norādīti lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong><ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> jūsu Google pierakstīšanos glabā mūsu pierakstīšanās partneris, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski), un tā nekad netiek dota taf vai planque. Ne taf, ne tafs neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> planque, paša tafs savienojumu pakalpojums, glabā jūsu Google žetonu jūsu uzņēmumam, šifrētu ar AWS KMS Eiropas Savienībā (Īrijā), un izmanto to tikai izsaukumam, ko atļauj taf Card. Tas nekad netiek dots taf, un ne taf, ne AI modelis neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem. planque izsauc Google pats, tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos. AI modeļa nodrošinātājs ir norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong> planque, paša tafs savienojumu pakalpojums, glabā jūsu Google žetonu jūsu uzņēmumam, šifrētu ar AWS KMS Eiropas Savienībā (Īrijā), un izmanto to tikai izsaukumam, ko atļauj taf Card. Tas nekad netiek dots taf, un ne taf, ne AI modelis neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem. Tie iet arī caur mūsu pierakstīšanās partneri, kas veic katru izsaukumu. Abi ir norādīti lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kas glabā jūsu pierakstīšanos:</strong> jūsu Google pierakstīšanos glabā mūsu pierakstīšanās partneris, kas norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski), un tā nekad netiek dota taf vai planque. Ne taf, ne tafs neredz jūsu paroli vai jūsu Google žetonus. Cits jūsu taf, kam vajadzīga tāda pati piekļuve, atkārtoti izmanto pierakstīšanos, un katrs taf izmanto tikai rīkus, ko tam apstiprinājāt.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>AI apmācība:</strong> Google lietotāju dati netiek izmantoti AI modeļu apmācībai.</li><li><strong>Attēli:</strong> tafs neveido un nerediģē attēlus vai video: tā AI raksta tekstu. Tas nekad neizmanto Google API vai Google lietotāju datus, lai izveidotu, rediģētu vai kopīgotu kāda intīmus attēlus (intīmi attēli bez piekrišanas, NCII) vai jebkuru citu personas attēlu.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem.<ul><li><strong>Caur mūsu pierakstīšanās partneri:</strong> tie iet arī caur mūsu pierakstīšanās partneri, kas veic katru izsaukumu.</li><li><strong>Caur paša tafs Google pierakstīšanos:</strong> planque izsauc Google pats, tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos.</li></ul>Abi ir norādīti lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("lv")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem. planque izsauc Google pats, tāpēc neviens cits uzņēmums neveic izsaukumu un neglabā jūsu pierakstīšanos. AI modeļa nodrošinātājs ir norādīts lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kas vēl tos saņem:</strong> tas, ko taf nolasa no Google, nonāk pie AI modeļa, kas darbina taf, tikai pēc tam, kad to atļaujat (sk. <a href=\"#ai\">AI tafs</a>), un tas to glabā līdz 30 dienām saskaņā ar sava nodrošinātāja noteikumiem. Tie iet arī caur mūsu pierakstīšanās partneri, kas veic katru izsaukumu. Abi ir norādīti lapā <a href=\"/subprocessors\">/subprocessors</a> (angliski).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>AI apmācība:</strong> Google lietotāju dati netiek izmantoti AI modeļu apmācībai.</li><li><strong>Attēli:</strong> tafs neveido un nerediģē attēlus vai video: tā AI raksta tekstu. Tas nekad neizmanto Google API vai Google lietotāju datus, lai izveidotu, rediģētu vai kopīgotu kāda intīmus attēlus (intīmi attēli bez piekrišanas, NCII) vai jebkuru citu personas attēlu.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lv")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Cik ilgi un kur:</strong> jūsu izklājlapas un notikumi paliek jūsu Google kontā. Paša tafs krātuvē tas, ko atgriež rīks, tiek glabāts tikai līdz taf palaišanas beigām. planque, kas nodod tālāk katru izsaukumu, glabā to, ko atgriež Google, 24 stundas, lai atkārtots izsaukums saņemtu to pašu atbildi un nekad netiktu nosūtīts divreiz; pēc tam tas glabā tikai to, vai izsaukums tika nosūtīts. Sarunā tas, kas tikai nolasīts, tiek glabāts šifrēts, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā. Palaišanas ieraksts un tās saruna tiek glabāti 30 dienas, un taf piezīmes — līdz noņemat taf (sk. <a href=\"#retention\">Cik ilgi mēs tos glabājam</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Cik ilgi un kur:</strong> jūsu izklājlapas un notikumi paliek jūsu Google kontā. Paša tafs krātuvē tas, ko atgriež rīks, tiek glabāts tikai līdz taf palaišanas beigām. planque, kas nodod tālāk katru izsaukumu, glabā to, ko atgriež Google, 24 stundas, lai atkārtots izsaukums saņemtu to pašu atbildi un nekad netiktu nosūtīts divreiz; pēc tam tas glabā tikai to, vai izsaukums tika nosūtīts. Sarunā tas, kas tikai nolasīts, tiek glabāts šifrēts, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā. Palaišanas ieraksts un tās saruna tiek glabāti 30 dienas, un taf piezīmes — līdz noņemat taf (sk. <a href=\"#retention\">Cik ilgi mēs tos glabājam</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Cik ilgi un kur:</strong> jūsu melnraksti, notikumi un izklājlapas paliek jūsu Google kontā. Paša tafs krātuvē tas, ko atgriež rīks, tiek glabāts tikai līdz taf palaišanas beigām. planque, kas nodod tālāk katru izsaukumu, glabā to, ko atgriež Google, 24 stundas, lai atkārtots izsaukums saņemtu to pašu atbildi un nekad netiktu nosūtīts divreiz; pēc tam tas glabā tikai to, vai izsaukums tika nosūtīts. Sarunā tas, kas tikai nolasīts, tiek glabāts šifrēts, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā. Palaišanas ieraksts un tās saruna tiek glabāti 30 dienas, un taf piezīmes — līdz noņemat taf (sk. <a href=\"#retention\">Cik ilgi mēs tos glabājam</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Cik ilgi un kur:</strong> jūsu melnraksti, notikumi un izklājlapas paliek jūsu Google kontā. Paša tafs krātuvē tas, ko atgriež rīks, tiek glabāts tikai līdz taf palaišanas beigām. planque, kas nodod tālāk katru izsaukumu, glabā to, ko atgriež Google, 24 stundas, lai atkārtots izsaukums saņemtu to pašu atbildi un nekad netiktu nosūtīts divreiz; pēc tam tas glabā tikai to, vai izsaukums tika nosūtīts. Sarunā tas, kas tikai nolasīts, tiek glabāts šifrēts, izmantots, līdz saruna ir bijusi neaktīva stundu un ne ilgāk kā četras stundas pēc nolasīšanas, un pēc tam automātiski dzēsts dažu dienu laikā. Palaišanas ieraksts un tās saruna tiek glabāti 30 dienas, un taf piezīmes — līdz noņemat taf (sk. <a href=\"#retention\">Cik ilgi mēs tos glabājam</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Kā to apturēt:</strong><ul><li>Atvienojiet Google lietotnē, sadaļā Pievienot lietotnes vai taf Card cilnē. Tā Google rīki apstājas nekavējoties, un tafs lūdz Google nekavējoties atsaukt pierakstīšanos; tas var tikt pabeigts nedaudz vēlāk.</li><li>Noņemiet taf, un tā savienojumi beidzas kopā ar to. Google pierakstīšanās, ko vēl izmanto kāds cits jūsu taf, paliek, līdz tiek noņemts pēdējais.</li><li>Noņemiet tafs piekļuvi jebkurā laikā savā Google kontā vietnē <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Jūsu taf vairs nepiekļūst Google, un lietotne jums paziņo, ka Google savienojums ir izrakstīts.</li><li>Dzēsiet savu kontu: tā taf, sarunas, piezīmes, faili un savienojumi tiek dzēsti nekavējoties, un no to laika punkta kopijām 35 dienu laikā, un tā Google žetoni tiek atsaukti, kur to atļauj Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Kā to apturēt:</strong><ul><li>Atvienojiet Google lietotnē, sadaļā Pievienot lietotnes vai taf Card cilnē. Tā Google rīki apstājas nekavējoties, un tafs lūdz Google nekavējoties atsaukt pierakstīšanos; tas var tikt pabeigts nedaudz vēlāk.</li><li>Noņemiet taf, un tā savienojumi beidzas kopā ar to. Google pierakstīšanās, ko vēl izmanto kāds cits jūsu taf, paliek, līdz tiek noņemts pēdējais.</li><li>Noņemiet tafs piekļuvi jebkurā laikā savā Google kontā vietnē <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Jūsu taf vairs nepiekļūst Google, un lietotne jums paziņo, ka Google savienojums ir izrakstīts.</li><li>Dzēsiet savu kontu: tā taf, sarunas, piezīmes, faili un savienojumi tiek dzēsti nekavējoties, un no to laika punkta kopijām 35 dienu laikā, un tā Google žetoni tiek atsaukti, kur to atļauj Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

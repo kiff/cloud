@@ -224,8 +224,8 @@ func (m *Middleware) Wrap(next http.Handler) http.Handler {
 			resolved.Roles = append([]string(nil), id.Roles...)
 		}
 
-		if !m.keys.AllowsIdentity(r.Context(), id) {
-			WriteKeyRestricted(w)
+		if code := m.keys.Refusal(r, id); code != "" {
+			WriteRefusal(w, code)
 			return
 		}
 		ctx := WithIdentity(r.Context(), id)
@@ -280,8 +280,8 @@ func (m *Middleware) WrapPerson(next http.Handler) http.Handler {
 		}
 		// The session's own tenant, before it's cleared: a restricted key's
 		// session crosses no account it may not act on.
-		if !m.keys.AllowsIdentity(r.Context(), id) {
-			WriteKeyRestricted(w)
+		if code := m.keys.Refusal(r, id); code != "" {
+			WriteRefusal(w, code)
 			return
 		}
 		id.Tenant, id.Roles = "", nil
@@ -380,6 +380,9 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 			return Identity{}, ErrDevSessionRevoked
 		}
 		id.DeviceKey, id.DeviceSessionID, id.DeviceName, id.DeviceID, id.KeyStore = d.PublicKey, sess.ID, d.Name, d.ID, d.KeyStore
+		if m.keys.SessionOutlived(sess.Tenant, sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
+			return Identity{}, ErrDevSessionExpired
+		}
 		if terr := m.devices.Touch(ctx, d.ID, m.clock()); terr != nil {
 			m.logger.WarnContext(ctx, "auth: device touch failed", slog.String("device", d.ID), slog.String("err", terr.Error()))
 		}
@@ -387,6 +390,12 @@ func (m *Middleware) verifyDevSession(ctx context.Context, raw string) (Identity
 	}
 	if len(sess.DevicePublicKey) > 0 {
 		id.DeviceKey, id.DeviceSessionID, id.DeviceName = sess.DevicePublicKey, sess.ID, sess.Label
+	}
+	// A session holding a test key, on a tenant held to short sessions,
+	// lives TestKeySessionLifetime from when it was made, whatever its own
+	// expiry says (KeyRestriction.WithShortSessions).
+	if m.keys.SessionOutlived(sess.Tenant, sess.CreatedAt, m.clock(), id.DeviceKey, id.ApprovalKey) {
+		return Identity{}, ErrDevSessionExpired
 	}
 	return id, nil
 }

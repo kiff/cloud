@@ -72,7 +72,7 @@ func TestTafsInEveryLanguage(t *testing.T) {
 			}
 			for _, s := range []string{
 				w.H1, w.H1Em, w.Lede, w.Jobs[0], w.Taf.Big, w.Problem.Big, w.Problem.Giant, w.DoesLines[2][1],
-				w.Different.Big, w.Card.Question, w.Names.Big, w.Glosses[1], w.Why.Big, w.Why.Giant,
+				w.Different.Big, w.Shots.Card, w.Shots.Record, w.Shots.Pause, w.Shots.Video2, w.Shots.Video3, w.Names.Big, w.Glosses[1], w.Why.Big, w.Why.Giant,
 				w.Price.Big, w.priceLine(), w.topUp(), w.Price.Stickers[3], w.Cost.money(TafsSoloCents),
 				w.Get.Big, w.Get.Small, w.Get.Stickers[1], w.Tagline,
 				// Its head: the title, description and share tags say what tafs is.
@@ -169,7 +169,15 @@ func TestTafsEnglishAsDesigned(t *testing.T) {
 	for _, s := range []string{
 		"The assistant that runs <em>your company's routine work.</em>",
 		"Across the apps you already use. You set its limits, the actions that matter wait for your yes, and the AI never sees your passwords or keys.",
-		"Acknowledge every support ticket", "Save a customer who cancels", "Customer replies",
+		"Acknowledge every support ticket", "Save a customer who cancels",
+		// The real app screens beside the words (crops of Android captures), each with what it shows.
+		`/static/img/tafs/shots/card-light.png?v=`, `/static/img/tafs/shots/card-dark.webp?v=`,
+		"A taf's Card in the tafs app: refunds up to €50 each, more asks you first, at most €5,000 a day; anything outside it is refused.",
+		`data-play="Play the video" data-pause="Pause the video"`,
+		// The two videos, in their phones: muted, inline, loaded only once played, WebM first.
+		`<video muted playsinline loop preload="none" controls poster="https://`,
+		`/tafs/video-2.webm" type="video/webm">`, `/tafs/video-2.mp4" type="video/mp4">`, `/tafs/video-3.webm"`,
+		"A taf handles a refund request within its Card. Test data.",
 		"€12.50 a month to start, with 500 credits, VAT included. Runs on Claude Sonnet 5.5.",
 		">€12.50<", "Top up<br>from €11.49", "Heavy use<br>~€160 / month",
 		"No answer means no.", "Three French words", "Hand over the taf. Keep the keys in the planque. Kiff.",

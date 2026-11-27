@@ -3,6 +3,7 @@ package packs
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -381,4 +382,34 @@ func (m *Memory) DrawCredits(tenantID string, credits int64, at time.Time) int64
 		m.creditDraws = append(m.creditDraws, creditDraw{tenant: tenantID, credits: drawn, at: at.UTC()})
 	}
 	return drawn
+}
+
+// StorePacks is what SetAsideStorePacks would set aside on tenantID now.
+func (m *Memory) StorePacks(tenantID string) StorePacksSetAside {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.storePacks(tenantID, nil)
+}
+
+// SetAsideStorePacks is SetAsideStorePacksQ's, in memory.
+func (m *Memory) SetAsideStorePacks(tenantID string, at time.Time) StorePacksSetAside {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	t := at.UTC()
+	return m.storePacks(tenantID, &t)
+}
+
+func (m *Memory) storePacks(tenantID string, at *time.Time) StorePacksSetAside {
+	var out StorePacksSetAside
+	for _, c := range m.credits {
+		if c.TenantID != tenantID || !slices.Contains(StoreSources, c.Source) || c.RevokedAt != nil || c.CreditsLeft <= 0 {
+			continue
+		}
+		out.Packs, out.Credits = out.Packs+1, out.Credits+c.CreditsLeft
+		if at != nil {
+			t := *at
+			c.CreditsLeft, c.RevokedAt = 0, &t
+		}
+	}
+	return out
 }

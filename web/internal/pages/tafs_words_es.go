@@ -2,6 +2,31 @@ package pages
 
 // tafsES is /es/tafs.
 var tafsES = tafsWords{
+	Shots: tafsShots{
+		Card:   "La Card de un taf en la app tafs: reembolsos de hasta 50 € cada uno, más te pregunta antes, como máximo 5.000 € al día; todo lo demás se rechaza.",
+		Record: "El Registro en la app tafs: una reunión reservada por un taf, aprobada por ti, hecha, con su recibo de KIFF.",
+		Video2: "Un taf gestiona una solicitud de reembolso dentro de su Card. Datos de prueba.",
+		Video3: "Un taf reserva una reunión en Google Calendar. Datos de prueba.",
+		Play:   "Reproducir el vídeo",
+		Pause:  "Pausar el vídeo",
+	},
+	Explain: tafsExplain{
+		Open: "El código es abierto. Léelo en GitHub.",
+		Nodes: [4]tafsNode{
+			{"tafs", "Las apps, y los tafs que hacen tu trabajo rutinario."},
+			{"agents", "El entorno de ejecución en el que corre cada taf."},
+			{"cloud", "KIFF: tus Cards, sus decisiones y recibos firmados."},
+			{"planque", "Las claves que le das, selladas. Cada llamada comprobada."},
+		},
+		Proof:       "Qué se hizo, quién lo aprobó y la firma de KIFF sobre ello.",
+		ProofAlt:    "Un recibo en la app tafs: un reembolso de 3.000 €, aprobado una vez por ti, con el recibo de KIFF, firmado y comprobado.",
+		Control:     [3]string{"Te necesita: lo que espera tu respuesta, y hasta cuándo.", "La Card: lo que un taf puede hacer, lo que espera por ti y lo que nunca hace.", "Cada paso que te necesita pide tu huella."},
+		ControlAlt:  [3]string{"Un aviso en la app tafs: un reembolso de 100 € supera el límite de 50 € por llamada, con Responder.", "La Card de un taf en la app tafs: reembolsos de hasta 50 € cada uno, más te pregunta antes, como máximo 5.000 € al día; todo lo demás se rechaza.", "Una llamada retenida en la app tafs: espera un reembolso de 100 €, no se envía nada hasta que apruebes, con el botón para aprobar una vez con tu huella."},
+		PrivacyHead: "La IA nunca ve las contraseñas ni las claves que usan tus apps conectadas.",
+		Privacy:     [3]string{"Conexiones directas: planque guarda la clave o el inicio de sesión sellados y solo los abre para las llamadas de esa conexión. Ni el taf ni la IA los ven nunca.", "Conexiones gestionadas: nuestro socio de inicio de sesión guarda el inicio de sesión, nunca planque ni un taf.", "Tu propio Chrome: un taf nunca lee campos de contraseña, tarjeta o código. En una página de inicio de sesión se detiene y te pide que inicies sesión en tu propia pestaña."},
+		Partner:     "Quién es nuestro socio de inicio de sesión",
+		Step:        "Paso",
+	},
 	Cost:        tafsCostES,
 	Title:       "tafs: agentes de IA que hacen tu trabajo rutinario",
 	Description: "tafs es una app en la que agentes de IA, los tafs, hacen el trabajo rutinario de tu negocio, como responder correos, dentro de los límites que fijas en una Card. Lo que pase de ellos espera tu sí.",

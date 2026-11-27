@@ -77,6 +77,161 @@
     if (first && wide.matches) setTimeout(function () { go(first, false); }, 0);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
-  else start();
+  // Without this file, each video keeps its own controls.
+  // The two videos, each in a drawn phone. A video starts half a second after
+  // its phone is half in view, so the panel is read first; it pauses the
+  // moment the phone leaves the view or the tab is hidden. The button on the
+  // phone plays and pauses it by hand: once a visitor pauses a video, scrolling
+  // never restarts it. With reduced motion it still starts by itself, but plays
+  // once, without looping. Nothing loads before a video first plays
+  // (preload="none"). A play() the browser refuses is logged to the console.
+  function videos() {
+    var list = [].slice.call(document.querySelectorAll(".phone video"));
+    if (!list.length) return;
+    // Reduced motion still starts a video by itself, but it plays once, without
+    // looping, and stops on its last frame; the button plays it again.
+    var watch = "IntersectionObserver" in window;
+    if (still.matches) list.forEach(function (v) { v.loop = false; });
+    function button(v) { return v.parentNode.querySelector(".play"); }
+    function show(v) {
+      var b = button(v); if (!b) return;
+      var on = !v.paused;
+      b.setAttribute("aria-label", on ? b.dataset.pause : b.dataset.play);
+      b.classList.toggle("on", on);
+    }
+    function want(v) { return v.dataset.held !== "1" && v.dataset.seen === "1" && !document.hidden && v.dataset.ended !== "1"; }
+    function go(v) {
+      var p = v.play();
+      if (p && p.then) p.then(function () { if (!want(v) && v.dataset.hand !== "1") v.pause(); }, function (e) {
+        if (window.console) console.warn("tafs: a video didn't start by itself:", e && e.name, e && e.message);
+        show(v);
+      });
+    }
+    function stop(v) { clearTimeout(v._t); if (!v.paused) v.pause(); }
+    list.forEach(function (v) {
+      v.controls = false;
+      v.addEventListener("play", function () { show(v); });
+      v.addEventListener("pause", function () { show(v); });
+      v.addEventListener("ended", function () { if (!v.loop) v.dataset.ended = "1"; show(v); });
+      var b = button(v);
+      if (!b) return;
+      b.hidden = false;
+      show(v);
+      b.addEventListener("click", function () {
+        clearTimeout(v._t);
+        if (v.paused) { v.dataset.held = ""; v.dataset.hand = "1"; v.dataset.ended = ""; go(v); }
+        else { v.dataset.held = "1"; v.dataset.hand = ""; v.pause(); }
+      });
+    });
+    function out(v) { v.dataset.seen = ""; v.dataset.hand = ""; stop(v); }
+    if ("IntersectionObserver" in window) {
+      var seen = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var v = e.target;
+          if (e.intersectionRatio >= 0.5) {
+            if (v.dataset.seen === "1") return;
+            v.dataset.seen = "1";
+            clearTimeout(v._t);
+            if (watch && want(v)) v._t = setTimeout(function () { if (want(v)) go(v); }, 500);
+          } else out(v);
+        });
+      }, { threshold: [0, 0.5] });
+      list.forEach(function (v) { seen.observe(v); });
+    }
+    function away() { list.forEach(stop); }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { away(); return; }
+      if (watch) list.forEach(function (v) {
+        clearTimeout(v._t);
+        if (want(v)) v._t = setTimeout(function () { if (want(v)) go(v); }, 500);
+      });
+    });
+    addEventListener("pagehide", away);
+  }
+
+  // Screen 7's stickers open small explainers (details elements, so they work
+  // without this). Here: on a wide screen a hover opens one after 150 ms and
+  // leaving closes it unless it was clicked; Esc or a click outside closes it;
+  // one is open at a time; a card near the panel's foot opens upward. "Privacy
+  // first" shows one step at a time, every 3 s while open, with dots to choose
+  // one (a choice stops the timer); "Open code" draws its arcs once. With
+  // reduced motion the steps show together and nothing moves.
+  function explainers() {
+    var all = [].slice.call(document.querySelectorAll("details.ex"));
+    if (!all.length) return;
+    var hover = matchMedia("(hover: hover) and (pointer: fine)");
+    function place(d) {
+      d.classList.remove("up");
+      var card = d.querySelector(".ex-card"); if (!card) return;
+      var r = card.getBoundingClientRect();
+      if (r.bottom > innerHeight - 16 && r.height < d.getBoundingClientRect().top - 24) d.classList.add("up");
+    }
+    function shut(d) { d.open = false; d.dataset.pinned = ""; }
+    all.forEach(function (d) {
+      var sum = d.querySelector("summary"), li = d.parentNode, t;
+      d.addEventListener("toggle", function () {
+        li.style.zIndex = d.open ? "20" : "";
+        if (d.open) {
+          all.forEach(function (o) { if (o !== d && o.open) shut(o); });
+          place(d); steps(d, true); draw(d);
+        } else { steps(d, false); d.dataset.hovered = ""; d.dataset.pinned = ""; }
+      });
+      // A click on a card that a hover opened pins it open; otherwise a click
+      // toggles it as usual.
+      sum.addEventListener("click", function (e) {
+        clearTimeout(t);
+        if (d.open && d.dataset.pinned !== "1" && d.dataset.hovered === "1") { e.preventDefault(); d.dataset.pinned = "1"; return; }
+        d.dataset.pinned = d.open ? "" : "1";
+      });
+      li.addEventListener("mouseenter", function () {
+        if (!hover.matches) return;
+        clearTimeout(t); t = setTimeout(function () { if (!d.open) { d.dataset.hovered = "1"; d.open = true; } }, 150);
+      });
+      li.addEventListener("mouseleave", function () {
+        clearTimeout(t);
+        if (hover.matches && d.open && d.dataset.pinned !== "1") t = setTimeout(function () { d.open = false; }, 250);
+      });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      all.forEach(function (d) { if (d.open) { shut(d); d.querySelector("summary").focus(); } });
+    });
+    document.addEventListener("click", function (e) {
+      all.forEach(function (d) { if (d.open && !d.contains(e.target)) shut(d); });
+    });
+    function draw(d) {
+      var g = d.querySelector(".graph"); if (!g || still.matches) return;
+      g.classList.remove("draw"); void g.offsetWidth; g.classList.add("draw");
+    }
+    function steps(d, on) {
+      var ol = d.querySelector(".steps"); if (!ol) return;
+      clearInterval(ol._t);
+      if (still.matches) return;
+      var items = [].slice.call(ol.querySelectorAll(".step"));
+      var dots = ol.nextElementSibling && ol.nextElementSibling.classList.contains("dots") ? ol.nextElementSibling : null;
+      if (!dots) {
+        dots = document.createElement("div"); dots.className = "dots";
+        items.forEach(function (_, i) {
+          var b = document.createElement("button"); b.type = "button";
+          b.setAttribute("aria-label", (ol.dataset.step || "Step") + " " + (i + 1));
+          b.addEventListener("click", function (e) { e.stopPropagation(); clearInterval(ol._t); show(i); });
+          dots.appendChild(b);
+        });
+        ol.parentNode.insertBefore(dots, ol.nextSibling);
+        ol.classList.add("cycle");
+      }
+      function show(i) {
+        ol._i = i;
+        items.forEach(function (it, j) { it.classList.toggle("on", j === i); });
+        [].forEach.call(dots.children, function (b, j) { b.setAttribute("aria-current", j === i ? "true" : "false"); });
+      }
+      if (!on) return;
+      show(0);
+      ol._t = setInterval(function () { show((ol._i + 1) % items.length); }, 3000);
+    }
+  }
+
+  function boot() { start(); videos(); explainers(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
 })();

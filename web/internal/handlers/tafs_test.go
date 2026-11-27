@@ -44,7 +44,7 @@ func TestTafs(t *testing.T) {
 	// Its own header and footer, not the site's; no language menu; no
 	// font from anyone else.
 	for _, never := range []string{
-		`class="site-nav"`, `class="site-footer"`, "<details", "<select", "fonts.googleapis.com", "fonts.gstatic.com",
+		`class="site-nav"`, `class="site-footer"`, "<select", "fonts.googleapis.com", "fonts.gstatic.com",
 		// Nothing the product or the Terms don't back, and nothing of a closed test.
 		"closed test", "Closed test", "invitation", "Invitation", "Ask for access", "early access", "waitlist",
 		"free during the beta", "Free during the beta", "7-day trial", "7 days free", "Testing is free", "test mode",
@@ -56,6 +56,10 @@ func TestTafs(t *testing.T) {
 		if strings.Contains(body, never) {
 			t.Errorf("claims %q", never)
 		}
+	}
+	// Its only <details> are screen 7's four explainers, never a menu.
+	if n, ex := strings.Count(body, "<details"), strings.Count(body, `<details class="ex"`); n != ex || ex != 4 {
+		t.Errorf("%d <details>, %d of them screen 7's explainers (want 4 and 4)", n, ex)
 	}
 	if strings.Contains(strings.ToLower(body), "teammates") {
 		t.Errorf("the page calls tafs teammates")

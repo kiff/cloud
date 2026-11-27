@@ -365,7 +365,8 @@ func TestCreditPackPurchases(t *testing.T) {
 	}
 }
 
-// Solo through Apple: the one-week free trial is the trial; each renewal
+// Solo through Apple: a free trial, if Apple reported one (none is offered
+// on Solo today), is the trial; each renewal
 // is Solo with Apple's period; a failed renewal keeps the plan; expiry or
 // a refund ends it. Apple is the billing source throughout, and an older
 // event never overwrites a newer one.
@@ -555,7 +556,7 @@ func TestTestPurchases(t *testing.T) {
 			t.Fatalf("%s: %+v", name, valid)
 		}
 	}
-	// App Review's Solo, through Apple's free trial.
+	// App Review's Solo, through a free trial (none is offered on Solo today).
 	trial := txn("s-solo-review", r.catalog.Solo.AppleProduct, reviewToken, now, now.AddDate(0, 0, 7))
 	trial["offerType"], trial["offerDiscountType"] = 1, "FREE_TRIAL"
 	if res, err := r.p.Purchased(ctx, sandbox(trial), appstore.Caller{TenantID: review}); err != nil || res.Action != "trialing" {

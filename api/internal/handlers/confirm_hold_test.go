@@ -46,7 +46,7 @@ func TestADraftsConfirmAnswersOnlyItsHeldInstall(t *testing.T) {
 		Roles: membership.IdentityRoles(membership.RoleAdmin), DeviceKey: deviceDER, DeviceSessionID: "sess-phone", DeviceID: "dev_phone",
 		DeviceName: "Pixel", ApprovalKey: approvalDER}
 	win := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: "t1", Subject: "alice", DeviceID: "dev_phone", SessionID: "sess-phone",
-		OpenedAt: r.now, ExpiresAt: r.now.Add(auth.WindowLength), CapAt: r.now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER)}
+		OpenedAt: r.now, ExpiresAt: r.now.Add(auth.WindowLength), CapAt: r.now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER), Agent: "rae"}
 	if err := windows.Open(t.Context(), win); err != nil {
 		t.Fatal(err)
 	}

@@ -13,6 +13,8 @@ var downloadDE = downloadWords{
 	Sub:              "KI-Agenten für die Routinearbeit deines Unternehmens, jeder innerhalb einer Card, die du setzt. Alles Größere wartet auf deine Freigabe auf deinem Handy.",
 	Phones:           "Handy und Tablet",
 	Computer:         "Computer",
+	Browser:          "Browser",
+	Chrome:           "Lass deine tafs in deinem Chrome arbeiten, nur auf Websites, die du erlaubst. Jeden riskanten Schritt genehmigst du am Handy.",
 	NotYet:           "Bald verfügbar",
 	NotAvailable:     "Nicht verfügbar",
 	AvailableVersion: "Version %s",

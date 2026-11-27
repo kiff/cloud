@@ -2,6 +2,31 @@ package pages
 
 // tafsIT is /it/tafs.
 var tafsIT = tafsWords{
+	Shots: tafsShots{
+		Card:   "La Card di un taf nell'app tafs: rimborsi fino a 50 € ciascuno, oltre ti chiede prima, al massimo 5.000 € al giorno; tutto il resto è rifiutato.",
+		Record: "Il Registro nell'app tafs: una riunione prenotata da un taf, approvata da te, fatta, con la sua ricevuta KIFF.",
+		Video2: "Un taf gestisce una richiesta di rimborso entro la sua Card. Dati di prova.",
+		Video3: "Un taf prenota una riunione in Google Calendar. Dati di prova.",
+		Play:   "Riproduci il video",
+		Pause:  "Metti in pausa il video",
+	},
+	Explain: tafsExplain{
+		Open: "Il codice è aperto. Leggilo su GitHub.",
+		Nodes: [4]tafsNode{
+			{"tafs", "Le app, e i taf che fanno il tuo lavoro di routine."},
+			{"agents", "L'ambiente su cui gira ogni taf."},
+			{"cloud", "KIFF: le tue Card, le sue decisioni e ricevute firmate."},
+			{"planque", "Le chiavi che gli dai, sigillate. Ogni chiamata controllata."},
+		},
+		Proof:       "Cosa è stato fatto, chi l'ha approvato e la firma di KIFF.",
+		ProofAlt:    "Una ricevuta nell'app tafs: un rimborso di 3.000 €, approvato una volta da te, con la ricevuta di KIFF, firmata e verificata.",
+		Control:     [3]string{"Ti aspetta: cosa aspetta la tua risposta, e fino a quando.", "La Card: cosa può fare un taf, cosa aspetta te e cosa non fa mai.", "Ogni passo che ha bisogno di te chiede la tua impronta."},
+		ControlAlt:  [3]string{"Un avviso nell'app tafs: un rimborso di 100 € supera il limite di 50 € per chiamata, con Rispondi.", "La Card di un taf nell'app tafs: rimborsi fino a 50 € ciascuno, oltre ti chiede prima, al massimo 5.000 € al giorno; tutto il resto è rifiutato.", "Una chiamata in attesa nell'app tafs: un rimborso di 100 € aspetta, nulla viene inviato finché non approvi, con il pulsante per approvare una volta con la tua impronta."},
+		PrivacyHead: "L'IA non vede mai le password né le chiavi che usano le tue app collegate.",
+		Privacy:     [3]string{"Connessioni dirette: planque tiene la chiave o l'accesso sigillati e li apre solo per le chiamate di quella connessione. Il taf e l'IA non li vedono mai.", "Connessioni gestite: il nostro partner di accesso conserva l'accesso, mai planque né un taf.", "Il tuo Chrome: un taf non legge mai campi di password, carta o codice. Su una pagina di accesso si ferma e ti chiede di accedere nella tua scheda."},
+		Partner:     "Chi è il nostro partner di accesso",
+		Step:        "Passo",
+	},
 	Cost:        tafsCostIT,
 	Title:       "tafs: agenti IA che fanno il tuo lavoro di routine",
 	Description: "tafs è un'app in cui agenti IA, i tafs, fanno il lavoro di routine della tua azienda, come rispondere alle email, entro i limiti che fissi su una Card. Tutto ciò che li supera aspetta il tuo sì.",

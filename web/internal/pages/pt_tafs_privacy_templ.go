@@ -48,7 +48,7 @@ func TafsPrivacyPT() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · política de privacidade</p><h1>Política de Privacidade do tafs</h1><p class=\"legal-meta\"><strong>Última atualização:</strong> 25 de novembro de 2026.</p><p class=\"legal-disclaimer\">Esta política explica como o tafs, a app do KIFF para iPhone, iPad, Android e computadores, trata dados pessoais. O tafs faz parte do KIFF Cloud, pelo que a <a href=\"/pt/privacy\">Política de Privacidade do KIFF</a> também se lhe aplica, bem como a tudo o que esta página não abrange. Perguntas: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Quem somos</h2><p>O tafs é fornecido pela <strong>Kiff Agents OÜ</strong>, uma sociedade de responsabilidade limitada constituída na Estónia (número de registo 17372313, número de IVA EE102924327), com sede em Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estónia. O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) aplica-se ao nosso tratamento.</p></section><section id=\"scope\"><h2>2. O que esta política abrange</h2><p>A app tafs para iPhone, iPad, Android e computadores (Mac, Windows e Linux), e o serviço por trás dela, incluindo o Setup, que liga as ferramentas de uma empresa, e o planque, que guarda essas ligações. No tafs, uma empresa entrega um trabalho a um agente de IA, um taf, que trabalha dentro de Cards do KIFF.</p></section><section id=\"roles\"><h2>3. Os nossos papéis</h2><p>Somos o <strong>responsável pelo tratamento</strong> dos dados da sua conta e de início de sessão, e dos dados operacionais do nosso próprio serviço. Atuamos como <strong>subcontratante</strong>, por conta da sua empresa, do que o tafs guarda para ela: as execuções, os chats, os relatórios e as notas de memória de cada taf e os ficheiros que entrega. A sua empresa é a responsável pelo tratamento desses dados, e o <a href=\"/pt/legal/dpa\">DPA</a> rege essa relação.</p></section><section id=\"data\"><h2>4. O que o tafs recolhe</h2><ul><li><strong>A sua conta:</strong> inicia sessão no tafs com a sua conta KIFF. Num telemóvel ou tablet, a app guarda a sua sessão no Keychain do dispositivo (no Android, no seu armazenamento encriptado). Num computador, guarda-a selada para a sua conta de utilizador: num PC Windows, com a proteção de dados do próprio Windows; no Linux, no seu porta-chaves; num Mac, no seu Keychain. A sessão de um computador dura até 90 dias.</li><li><strong>O seu dispositivo:</strong> a app cria uma chave de assinatura que nunca sai do dispositivo: no Secure Enclave de um iPhone, iPad ou Mac, no Keystore de um dispositivo Android ou no TPM de um PC Windows. No Linux, e num Mac sem Secure Enclave, a chave é uma chave de software guardada no seu porta-chaves ou Keychain, e esse computador pode mostrar o que espera por si, mas não aprová-lo; aprova no seu telemóvel")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · política de privacidade</p><h1>Política de Privacidade do tafs</h1><p class=\"legal-meta\"><strong>Última atualização:</strong> 27 de novembro de 2026.</p><p class=\"legal-disclaimer\">Esta política explica como o tafs, a app do KIFF para iPhone, iPad, Android e computadores, trata dados pessoais. O tafs faz parte do KIFF Cloud, pelo que a <a href=\"/pt/privacy\">Política de Privacidade do KIFF</a> também se lhe aplica, bem como a tudo o que esta página não abrange. Perguntas: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Quem somos</h2><p>O tafs é fornecido pela <strong>Kiff Agents OÜ</strong>, uma sociedade de responsabilidade limitada constituída na Estónia (número de registo 17372313, número de IVA EE102924327), com sede em Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estónia. O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) aplica-se ao nosso tratamento.</p></section><section id=\"scope\"><h2>2. O que esta política abrange</h2><p>A app tafs para iPhone, iPad, Android e computadores (Mac, Windows e Linux), e o serviço por trás dela, incluindo o Setup, que liga as ferramentas de uma empresa, e o planque, que guarda essas ligações. No tafs, uma empresa entrega um trabalho a um agente de IA, um taf, que trabalha dentro de Cards do KIFF.</p></section><section id=\"roles\"><h2>3. Os nossos papéis</h2><p>Somos o <strong>responsável pelo tratamento</strong> dos dados da sua conta e de início de sessão, e dos dados operacionais do nosso próprio serviço. Atuamos como <strong>subcontratante</strong>, por conta da sua empresa, do que o tafs guarda para ela: as execuções, os chats, os relatórios e as notas de memória de cada taf e os ficheiros que entrega. A sua empresa é a responsável pelo tratamento desses dados, e o <a href=\"/pt/legal/dpa\">DPA</a> rege essa relação.</p></section><section id=\"data\"><h2>4. O que o tafs recolhe</h2><ul><li><strong>A sua conta:</strong> inicia sessão no tafs com a sua conta KIFF. Num telemóvel ou tablet, a app guarda a sua sessão no Keychain do dispositivo (no Android, no seu armazenamento encriptado). Num computador, guarda-a selada para a sua conta de utilizador: num PC Windows, com a proteção de dados do próprio Windows; no Linux, no seu porta-chaves; num Mac, no seu Keychain. A sessão de um computador dura até 90 dias.</li><li><strong>O seu dispositivo:</strong> a app cria uma chave de assinatura que nunca sai do dispositivo: no Secure Enclave de um iPhone, iPad ou Mac, no Keystore de um dispositivo Android ou no TPM de um PC Windows. No Linux, e num Mac sem Secure Enclave, a chave é uma chave de software guardada no seu porta-chaves ou Keychain, e esse computador pode mostrar o que espera por si, mas não aprová-lo; aprova no seu telemóvel")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,7 +61,69 @@ func TafsPrivacyPT() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Um PC Windows sem TPM não pode iniciar sessão no tafs. O KIFF guarda a metade pública da chave, o nome e a plataforma do dispositivo, e quando foi adicionado e usado pela última vez, para poder verificar as suas respostas a chamadas retidas e as suas aprovações de ligações.</li><li><strong>O seu relógio:</strong> um relógio não tem palavra-passe nem chave, comunica apenas com o telemóvel emparelhado e nunca aprova. Envia o que diz ao Coach, ou ao taf que escolheu, apenas como texto, através do telemóvel, depois de ter autorizado a IA. O próprio serviço de voz do relógio, da Apple ou da Google, converte as suas palavras nesse texto. No Wear OS, se parar antes de terminar, é o reconhecimento de voz do telemóvel que o faz, no próprio telemóvel. Só pode recusar, bloquear ou enviar ao Coach ou a um taf enquanto tiver um bloqueio de ecrã ou um código de acesso e estiver desbloqueado. O que envia a um taf vai para o chat desse taf, como se o tivesse escrito no telemóvel. A conversa de um taf, montantes incluídos, é lida através do telemóvel sempre que está aberta, e o relógio guarda apenas as mensagens recentes que a sua secção abaixo descreve. Com as apps fechadas, o telemóvel passa as novas respostas e mensagens ao relógio pela ligação própria do sistema entre telemóvel e relógio (a da Apple num Apple Watch, a dos serviços Google Play no Wear OS), que as guarda no telemóvel e no relógio apenas até o relógio as receber; a notificação que acorda o telemóvel não leva palavras. Uma resposta que chegue enquanto não está a olhar para o relógio também aparece como notificação, no iPhone e no Apple Watch ou no relógio Wear OS, com as suas palavras mas nunca um montante, e fica até a dispensar; um relógio Wear OS bloqueado mostra apenas que há uma resposta pronta.</li><li><strong>Apple Watch:</strong> mostra os seus tafs e as respetivas páginas sem os guardar. Guarda a sua Caixa de entrada, num ficheiro que não consegue ler enquanto está bloqueado: cada chamada retida como o nome do seu taf e o que pede, nunca um montante, e as respostas do Coach ao que enviou a partir do relógio, como texto. Se terminar a sessão no relógio, guarda também que o fez, até voltar a iniciar sessão no relógio. Fora isso, não guarda nada se o relógio não tiver código de acesso. A Caixa de entrada é apagada quando termina a sessão no relógio ou o iPhone termina a sessão, ou da próxima vez que a app abre ou fecha sem código de acesso. Não faz gravações, e as únicas notificações que mostra são as do iPhone. Para que uma conversa abra de imediato, guarda também as últimas 30 mensagens de cada uma de até 20 conversas que abriu nele, do Coach e dos seus tafs, só como texto e nunca um montante, bloqueadas como a Caixa de entrada; são apagadas quando a Caixa de entrada é apagada e quando uma conversa não é aberta há 30 dias. Se guardar uma mensagem ao Coach para mais tarde, também guarda essa única mensagem, como texto, num ficheiro próprio, bloqueado como o da Caixa de entrada, e envia-a quando o iPhone voltar a estar disponível. É apagada depois de enviada, quando a apagar, quando o utilizador ou o iPhone terminarem a sessão, ou se o relógio deixar de ter código.</li><li><strong>Wear OS:</strong> mostra o email da sua conta e o calendário de hoje sem os guardar. Para abrir de imediato, guarda, cifrados, o número do que espera por si, e o nome de cada taf e se está bloqueado ou em pausa: nunca um montante, os detalhes de uma chamada retida ou a conversa de um taf. Isso é apagado quando termina a sessão, quando o relógio bloqueia ou o tira do pulso, e ao fim de 24 horas. Guarda a sua Caixa de entrada, onde cada linha é o nome de um taf e o que diz, nunca um montante, e uma mensagem guardada para mais tarde, como texto. Terminar a sessão, no relógio ou no telemóvel, apaga tudo isso. Para o seu mosaico, guarda também o número do que espera por si, mostrado apenas enquanto o relógio está desbloqueado, e apagado quando termina a sessão, ou da próxima vez que o mosaico é mostrado enquanto o relógio está bloqueado ou não tem bloqueio de ecrã. Depois de terminar a sessão no relógio, guarda uma nota disso, até voltar a iniciar sessão. A Caixa de entrada também é apagada da próxima vez que a app abre ou fecha enquanto o relógio está bloqueado ou não tem bloqueio de ecrã. Uma mensagem guardada para mais tarde fica até a enviar ou eliminar, já que pediu que fosse enviada. Se o serviço de voz do relógio parar antes de terminar, o relógio envia a gravação para o telemóvel, que a converte em texto no próprio telemóvel, nunca num servidor. A gravação é apagada em ambos assim que o texto regressa ou cancela, e no máximo ao fim de 2 minutos. Só o texto segue para o Coach ou para o seu taf. O resultado de um taf pode ficar nas notificações do relógio até o dispensar ou terminar a sessão no relógio. Para que uma conversa abra de imediato, guarda também as últimas 30 mensagens de cada uma de até 20 conversas que abriu nele, do Coach e dos seus tafs, só como texto e nunca um montante, encriptadas; são apagadas quando termina sessão, no relógio ou no telemóvel, e quando uma conversa não é aberta há 30 dias, e um relógio sem bloqueio de ecrã não guarda nenhuma. Uma mensagem guardada para mais tarde também é apagada se o relógio deixar de ter bloqueio de ecrã.</li><li><strong>Chaves de acesso:</strong> quando aprova com uma chave de acesso no seu computador, como o Windows Hello ou uma chave de segurança, o seu rosto, impressão digital ou PIN fica no próprio sistema do computador. O KIFF guarda a chave pública da chave de acesso, o seu ID, um contador e um nome, nunca nada secreto, e recusa uma chave de acesso que se sincronize com outros dispositivos.</li><li><strong>Alertas:</strong> num telemóvel, num tablet ou num Mac que execute a app para iPad, se os ativar, guardamos o token push do dispositivo com o seu ID de pessoa no KIFF, e a língua que a app mostrou. Um alerta passa pela Apple ou pela Google apenas com qual o taf e o que pretende e, no alerta de uma porta, o nome ou o endereço de email de quem escreveu: nunca um montante nem os detalhes de um pedido. A app acrescenta-os no próprio dispositivo, a partir do KIFF, pelo que o alerta de um telemóvel desbloqueado pode mostrar um montante, um comerciante ou uma pessoa. Num telemóvel Android bloqueado, mostra apenas «Um taf precisa de si», e num iPhone bloqueado também, a menos que tenha definido as pré-visualizações para serem mostradas sempre. Num PC Windows, num computador Linux ou num Mac com a app para macOS 12, os alertas são criados pela própria app enquanto está em execução, sem token push e sem passar por nenhuma outra empresa. No Windows e no Linux, mostram qual o taf, o que pretende fazer, o montante, o motivo e o prazo; na app para macOS 12, mostram as palavras do KIFF para a chamada, depois de os ativar, e um ecrã bloqueado mostra o que a definição de pré-visualização do Mac permitir. No Windows, estão desativados até os ativar e, com o ecrã bloqueado, mostram apenas «Um taf precisa de si». Um alerta mostrado antes de o ecrã ser bloqueado mantém os seus detalhes na lista de notificações do Windows. No Linux, estão ativados até os desativar, e o que um ecrã bloqueado mostra depende do seu ambiente de trabalho. Um telemóvel que passa atualizações para um relógio mantém o seu token push registado mesmo com os alertas desativados, apenas para que uma notificação push silenciosa o possa acordar e passar as atualizações para o relógio; essa notificação não leva palavras e não mostra nada.</li><li><strong>Língua:</strong> o serviço tafs guarda a língua da conta, a de quem falou por último com o Coach, durante três meses, no máximo, para que os relatórios de um taf cheguem nessa língua.</li><li><strong>As suas ferramentas:</strong> quando liga uma ferramenta, inicia sessão no próprio fornecedor da ferramenta. Numa app em que o planque inicia sessão por si próprio, como o Stripe, ou com uma chave que você dá, o planque guarda esse token ou essa chave para a sua empresa, encriptados. Numa ligação gerida, a Composio, o serviço de ligações com que o planque trabalha, guarda o início de sessão, e o planque guarda apenas o registo da ligação e as ferramentas que aprovou (ver <a href=\"#google\">Dados de utilizador do Google</a>). O registo de uma ligação pode incluir a conta com que foi iniciada a sessão (o nome ou o email), para que a app lhe possa mostrar qual é. O KIFF usa ligações geridas apenas para as apps indicadas em <a href=\"/pt/subprocessors#composio\">/subprocessors</a>.</li><li><strong>O seu navegador (Chrome):</strong> se associar a extensão tafs ao seu telemóvel, um taf pode trabalhar no perfil do Chrome que associou, apenas nos sites que a sua ligação indica. Abre os seus próprios separadores num grupo de separadores que pode ver, pausar ou parar, e pausa quando toca num deles. Um taf que inicie a partir do painel lateral da extensão trabalha antes no separador em que está nessa janela, se estiver num dos sites da sua ligação: o separador junta-se ao seu grupo e é tratado como um dos seus, e fica aberto quando o taf para. Só se junta a esse separador quando essa página é a primeira de que precisa. Aí pode clicar e escrever, só nos seus próprios sites. Nesse separador lê a página onde está, e abre qualquer outra página num separador próprio; só um passo que dê aí, como um clique, pode mudar o seu separador de página, e apenas dentro dos sites dele. Lê essas páginas como texto e campos de formulário, sem os campos de palavra-passe, cartão e código, nunca os seus outros separadores nem outros sites. Esse texto vai para o nosso fornecedor de IA como parte da execução e é guardado com a execução como o resultado de qualquer ferramenta. Cada passo fica no Registo com o seu site e o nome do campo, nunca com o que foi escrito num campo secreto. Por cada alteração que um taf faz, o KIFF guarda a página antes e depois, como texto sem esses campos, durante 30 dias no máximo, e apaga-a antes se desligar a ligação ou eliminar a sua conta. Estas páginas podem mostrar dados de outras pessoas, como os seus clientes; o KIFF trata-os por si, como subcontratante. A extensão guarda no seu computador a sua própria chave, a sua sessão na KIFF e a lista dos chats com o Coach iniciados nela, nunca as suas palavras-passe: numa página de início de sessão, o taf para e pede-lhe que inicie sessão você mesmo, no seu próprio separador. Também pode falar com o Coach a partir do painel lateral da extensão. O Coach só lê a página depois de o permitir na extensão, com um consentimento próprio que pode retirar aí, e pode sempre enviar uma mensagem sem a página. Quando lhe envia uma mensagem a partir daí, a página da frente vai com essa mensagem, só como o seu texto visível, nunca o que escreveu, exceto num site de banco, pagamentos, correio ou saúde ou num site que desativou para o Coach. Os valores dos campos e as palavras-passe não são lidos; os números de cartão são cortados aos últimos quatro dígitos; as chaves e os segredos identificados são ocultados. Os códigos de utilização única identificados como tal em inglês, francês, espanhol ou alemão no texto da página também são ocultados. Vai para o nosso fornecedor de IA só para essa mensagem; o tafs guarda a página só até a resposta estar feita, e guarda o nome do site com o seu chat, mostrado como «A ler:», durante 30 dias. A resposta do Coach pode citar a página e é guardada com o seu chat como qualquer resposta. O mesmo vale para uma mensagem que envie aí a um taf, com o mesmo consentimento, mas só num dos sites desse taf: noutros nada é lido, nessa vez o taf só lê, e a resposta dele pode citar a página. Num taf, o texto da página é guardado com a sua execução apenas até essa execução terminar. O painel lateral mostra os chats iniciados nesse Chrome desde que o associou; os seus outros chats ficam no telemóvel e nos seus outros dispositivos. Quando um taf trabalha nesse Chrome por uma mensagem que enviou de outro dispositivo, o painel mostra também essa execução: a mensagem, os seus passos e a sua resposta, nunca o resto desse chat, até eliminar esse chat, desassociar o Chrome ou mudar o taf para outro Chrome. Também pode anexar ficheiros a uma mensagem lá: tal como os ficheiros anexados nas apps tafs, vão para o nosso fornecedor de IA com essa mensagem e são guardados com ela 30 dias, ou menos se o chat for removido (um ficheiro que nenhuma mensagem usa, cerca de uma hora), e só quem anexou um ficheiro o pode abrir. Guarda também a associação com o seu telemóvel, os sites que desativou para o Coach e um identificador aleatório deste perfil do Chrome, enviado à KIFF a cada associação para que o seu telemóvel reconheça este Chrome. Desinstalar apaga tudo; desassociar apaga tudo exceto esse identificador e os sites desativados para o Coach. Um taf nunca paga sem a sua aprovação no telemóvel. Por cada passo que age (um clique, escrever, enviar), incluindo um que aprovou, guarda também uma captura de ecrã da página, tirada mesmo antes da ação, para o registo; nunca de uma página que apenas lê, nunca num site de banco, carteira, gestor de palavras-passe, pagamentos, saúde ou administração pública, e com os campos de palavra-passe, cartão e código ocultos antes de a tirar. Também é tapado o texto que parece um número de cartão ou uma chave, mas algo escrito de outra forma pode continuar visível. As capturas de ecrã são guardadas em armazenamento cifrado, ligadas a esse passo, durante 30 dias, e depois apagadas automaticamente, ou mais cedo quando desliga a ligação, desassocia este Chrome ou elimina a sua conta, e nunca vão para o nosso fornecedor de IA. Vê cada uma sob o seu passo na Atividade do taf. O tafs reconhece os sites de bancos, carteiras, gestores de palavras-passe, pagamentos, correio, saúde e administração pública por uma lista e por palavras do seu endereço, por isso um site que não reconheça é tratado como qualquer outro.</li><li><strong>O trabalho dos seus tafs:</strong> as execuções, os chats, os relatórios e as notas de memória de cada taf e os ficheiros que entrega, guardados como subcontratante. Todos os membros da sua conta podem ver os ficheiros entregues pelos seus tafs.</li><li><strong>Portas:</strong> quando abre uma porta para que as pessoas possam escrever a um taf por email, Slack ou Telegram, o serviço tafs guarda cada remetente que associar, pelo seu endereço de email, ID de membro do Slack ou ID de utilizador do Telegram (um número de telefone numa porta do WhatsApp), com o nome que lhe der, até remover a porta ou o taf. Uma mensagem de alguém que não associou fica à sua espera como pedido de contacto, com quem a escreveu e o que diz, até 30 dias depois do último. A mensagem de um remetente associado entra no chat do taf e é guardada como o resto do chat. O Slack e o Telegram transportam as mensagens segundo as suas próprias condições.</li><li><strong>Compras:</strong> o Solo e os pacotes de créditos são vendidos pela Apple através da App Store, ou pela Google através da faturação do Google Play. Dizem-nos o que foi comprado, para que conta KIFF (um ID aleatório), quando, e as respetivas referências de transação ou de encomenda. Não nos dão o seu ID Apple ou a sua conta Google, nome, endereço de email nem cartão.</li></ul><p>A app não tem rastreadores de análise nem de publicidade.</p></section><section id=\"ai\"><h2>5. A IA no tafs</h2><p>O tafs usa a IA Claude da Anthropic para o Coach e os seus tafs. A Anthropic, ou um dos fornecedores de nuvem da nossa página de subcontratantes, executa-a para nós. Essa página diz qual, e onde. A app pede-lhe autorização antes de qualquer coisa seguir para ela.</p><ul><li>O que lhe é enviado: o que escreve ao Coach e aos seus tafs, os ficheiros que anexa, o que as suas apps ligadas devolvem a um taf enquanto trabalha e o que está no seu ecrã enquanto o Coach o ajuda na app.</li><li>A partir do Chrome: a página da frente, quando escreve ao Coach no painel lateral da extensão, depois de deixar o Coach ler páginas aí. Também quando escreve aí a um taf, num dos sites dele.</li><li>O que nunca é enviado: as palavras-passe e chaves que as suas apps ligadas usam, nem a sua impressão digital.</li><li>A empresa que a executa usa-o para responder e apaga-o no prazo de 30 dias, salvo se for assinalado como contrário às suas regras de utilização ou se a lei exigir que seja guardado.</li><li>Nada é enviado até que o permita. Pode retirar a autorização em Conta.</li></ul><p>Quando retira a autorização, o Coach e os seus tafs deixam de lhe responder, e um taf cujas execuções dependem do seu consentimento fica em pausa. O tafs guarda um registo de cada consentimento que dá ou retira, com a data e a versão do seu texto, durante 10 anos a partir da última alteração, para mostrar o que aceitou; eliminar a sua conta apaga-o mais cedo. A <a href=\"/pt/privacy#ai-in-tafs\">Política de Privacidade do KIFF</a> tem os detalhes.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Um PC Windows sem TPM não pode iniciar sessão no tafs. O KIFF guarda a metade pública da chave, o nome e a plataforma do dispositivo, e quando foi adicionado e usado pela última vez, para poder verificar as suas respostas a chamadas retidas e as suas aprovações de ligações.</li><li><strong>O seu relógio:</strong> um relógio não tem palavra-passe nem chave, comunica apenas com o telemóvel emparelhado e nunca aprova. Envia o que diz ao Coach, ou ao taf que escolheu, apenas como texto, através do telemóvel, depois de ter autorizado a IA. O próprio serviço de voz do relógio, da Apple ou da Google, converte as suas palavras nesse texto. No Wear OS, se parar antes de terminar, é o reconhecimento de voz do telemóvel que o faz, no próprio telemóvel. Só pode recusar, bloquear ou enviar ao Coach ou a um taf enquanto tiver um bloqueio de ecrã ou um código de acesso e estiver desbloqueado. O que envia a um taf vai para o chat desse taf, como se o tivesse escrito no telemóvel. A conversa de um taf, montantes incluídos, é lida através do telemóvel sempre que está aberta, e o relógio guarda apenas as mensagens recentes que a sua secção abaixo descreve. Com as apps fechadas, o telemóvel passa as novas respostas e mensagens ao relógio pela ligação própria do sistema entre telemóvel e relógio (a da Apple num Apple Watch, a dos serviços Google Play no Wear OS), que as guarda no telemóvel e no relógio apenas até o relógio as receber; a notificação que acorda o telemóvel não leva palavras. Uma resposta que chegue enquanto não está a olhar para o relógio também aparece como notificação, no iPhone e no Apple Watch ou no relógio Wear OS, com as suas palavras mas nunca um montante, e fica até a dispensar; um relógio Wear OS bloqueado mostra apenas que há uma resposta pronta.</li><li><strong>Apple Watch:</strong> mostra os seus tafs e as respetivas páginas sem os guardar. Guarda a sua Caixa de entrada, num ficheiro que não consegue ler enquanto está bloqueado: cada chamada retida como o nome do seu taf e o que pede, nunca um montante, e as respostas do Coach ao que enviou a partir do relógio, como texto. Se terminar a sessão no relógio, guarda também que o fez, até voltar a iniciar sessão no relógio. Fora isso, não guarda nada se o relógio não tiver código de acesso. A Caixa de entrada é apagada quando termina a sessão no relógio ou o iPhone termina a sessão, ou da próxima vez que a app abre ou fecha sem código de acesso. Não faz gravações, e as únicas notificações que mostra são as do iPhone. Para que uma conversa abra de imediato, guarda também as últimas 30 mensagens de cada uma de até 20 conversas que abriu nele, do Coach e dos seus tafs, só como texto e nunca um montante, bloqueadas como a Caixa de entrada; são apagadas quando a Caixa de entrada é apagada e quando uma conversa não é aberta há 30 dias. Se guardar uma mensagem ao Coach para mais tarde, também guarda essa única mensagem, como texto, num ficheiro próprio, bloqueado como o da Caixa de entrada, e envia-a quando o iPhone voltar a estar disponível. É apagada depois de enviada, quando a apagar, quando o utilizador ou o iPhone terminarem a sessão, ou se o relógio deixar de ter código.</li><li><strong>Wear OS:</strong> mostra o email da sua conta e o calendário de hoje sem os guardar. Para abrir de imediato, guarda, cifrados, o número do que espera por si, e o nome de cada taf e se está bloqueado ou em pausa: nunca um montante, os detalhes de uma chamada retida ou a conversa de um taf. Isso é apagado quando termina a sessão, quando o relógio bloqueia ou o tira do pulso, e ao fim de 24 horas. Guarda a sua Caixa de entrada, onde cada linha é o nome de um taf e o que diz, nunca um montante, e uma mensagem guardada para mais tarde, como texto. Terminar a sessão, no relógio ou no telemóvel, apaga tudo isso. Para o seu mosaico, guarda também o número do que espera por si, mostrado apenas enquanto o relógio está desbloqueado, e apagado quando termina a sessão, ou da próxima vez que o mosaico é mostrado enquanto o relógio está bloqueado ou não tem bloqueio de ecrã. Depois de terminar a sessão no relógio, guarda uma nota disso, até voltar a iniciar sessão. A Caixa de entrada também é apagada da próxima vez que a app abre ou fecha enquanto o relógio está bloqueado ou não tem bloqueio de ecrã. Uma mensagem guardada para mais tarde fica até a enviar ou eliminar, já que pediu que fosse enviada. Se o serviço de voz do relógio parar antes de terminar, o relógio envia a gravação para o telemóvel, que a converte em texto no próprio telemóvel, nunca num servidor. A gravação é apagada em ambos assim que o texto regressa ou cancela, e no máximo ao fim de 2 minutos. Só o texto segue para o Coach ou para o seu taf. O resultado de um taf pode ficar nas notificações do relógio até o dispensar ou terminar a sessão no relógio. Para que uma conversa abra de imediato, guarda também as últimas 30 mensagens de cada uma de até 20 conversas que abriu nele, do Coach e dos seus tafs, só como texto e nunca um montante, encriptadas; são apagadas quando termina sessão, no relógio ou no telemóvel, e quando uma conversa não é aberta há 30 dias, e um relógio sem bloqueio de ecrã não guarda nenhuma. Uma mensagem guardada para mais tarde também é apagada se o relógio deixar de ter bloqueio de ecrã.</li><li><strong>Chaves de acesso:</strong> quando aprova com uma chave de acesso no seu computador, como o Windows Hello ou uma chave de segurança, o seu rosto, impressão digital ou PIN fica no próprio sistema do computador. O KIFF guarda a chave pública da chave de acesso, o seu ID, um contador e um nome, nunca nada secreto, e recusa uma chave de acesso que se sincronize com outros dispositivos.</li><li><strong>Alertas:</strong> num telemóvel, num tablet ou num Mac que execute a app para iPad, se os ativar, guardamos o token push do dispositivo com o seu ID de pessoa no KIFF, e a língua que a app mostrou. Um alerta passa pela Apple ou pela Google apenas com qual o taf e o que pretende e, no alerta de uma porta, o nome ou o endereço de email de quem escreveu: nunca um montante nem os detalhes de um pedido. A app acrescenta-os no próprio dispositivo, a partir do KIFF, pelo que o alerta de um telemóvel desbloqueado pode mostrar um montante, um comerciante ou uma pessoa. Num telemóvel Android bloqueado, mostra apenas «Um taf precisa de si», e num iPhone bloqueado também, a menos que tenha definido as pré-visualizações para serem mostradas sempre. Num PC Windows, num computador Linux ou num Mac com a app para macOS 12, os alertas são criados pela própria app enquanto está em execução, sem token push e sem passar por nenhuma outra empresa. No Windows e no Linux, mostram qual o taf, o que pretende fazer, o montante, o motivo e o prazo; na app para macOS 12, mostram as palavras do KIFF para a chamada, depois de os ativar, e um ecrã bloqueado mostra o que a definição de pré-visualização do Mac permitir. No Windows, estão desativados até os ativar e, com o ecrã bloqueado, mostram apenas «Um taf precisa de si». Um alerta mostrado antes de o ecrã ser bloqueado mantém os seus detalhes na lista de notificações do Windows. No Linux, estão ativados até os desativar, e o que um ecrã bloqueado mostra depende do seu ambiente de trabalho. Um telemóvel que passa atualizações para um relógio mantém o seu token push registado mesmo com os alertas desativados, apenas para que uma notificação push silenciosa o possa acordar e passar as atualizações para o relógio; essa notificação não leva palavras e não mostra nada.</li><li><strong>Língua:</strong> o serviço tafs guarda a língua da conta, a de quem falou por último com o Coach, durante três meses, no máximo, para que os relatórios de um taf cheguem nessa língua.</li><li><strong>As suas ferramentas:</strong> quando liga uma ferramenta, inicia sessão no próprio fornecedor da ferramenta. Numa app em que o planque inicia sessão por si próprio, como o Stripe, ou com uma chave que você dá, o planque guarda esse token ou essa chave para a sua empresa, encriptados. Numa ligação gerida, a Composio, o serviço de ligações com que o planque trabalha, guarda o início de sessão, e o planque guarda apenas o registo da ligação e as ferramentas que aprovou (ver <a href=\"#google\">Dados de utilizador do Google</a>). O registo de uma ligação pode incluir a conta com que foi iniciada a sessão (o nome ou o email), para que a app lhe possa mostrar qual é. O KIFF usa ligações geridas apenas para as apps indicadas em <a href=\"/pt/subprocessors#composio\">/subprocessors</a>.</li><li><strong>O seu navegador (Chrome):</strong> se associar a extensão tafs ao seu telemóvel, um taf pode trabalhar no perfil do Chrome que associou, apenas nos sites que a sua ligação indica. Abre os seus próprios separadores num grupo de separadores que pode ver, pausar ou parar, e pausa quando toca num deles. Um taf que inicie a partir do painel lateral da extensão trabalha antes no separador em que está nessa janela, se estiver num dos sites da sua ligação: o separador junta-se ao seu grupo e é tratado como um dos seus, e fica aberto quando o taf para. Só se junta a esse separador quando essa página é a primeira de que precisa. Aí pode clicar e escrever, só nos seus próprios sites. Nesse separador lê a página onde está, e abre qualquer outra página num separador próprio; só um passo que dê aí, como um clique, pode mudar o seu separador de página, e apenas dentro dos sites dele. Lê essas páginas como texto e campos de formulário, sem os campos de palavra-passe, cartão e código, nunca os seus outros separadores nem outros sites. Esse texto vai para o nosso fornecedor de IA como parte da execução e é guardado com a execução como o resultado de qualquer ferramenta. Cada passo fica no Registo com o seu site e o nome do campo, nunca com o que foi escrito num campo secreto. Por cada alteração que um taf faz, o KIFF guarda a página antes e depois, como texto sem esses campos, durante 30 dias no máximo, e apaga-a antes se desligar a ligação ou eliminar a sua conta. Estas páginas podem mostrar dados de outras pessoas, como os seus clientes; o KIFF trata-os por si, como subcontratante. A extensão guarda no seu computador a sua própria chave, a sua sessão na KIFF e a lista dos chats com o Coach iniciados nela, nunca as suas palavras-passe: numa página de início de sessão, o taf para e pede-lhe que inicie sessão você mesmo, no seu próprio separador. Também pode falar com o Coach a partir do painel lateral da extensão. O Coach só lê a página depois de o permitir na extensão, com um consentimento próprio que pode retirar aí, e pode sempre enviar uma mensagem sem a página. Quando lhe envia uma mensagem a partir daí, a página da frente vai com essa mensagem, só como o seu texto visível, nunca o que escreveu, exceto num site de banco, pagamentos, correio ou saúde ou num site que desativou para o Coach. Os valores dos campos e as palavras-passe não são lidos; os números de cartão são cortados aos últimos quatro dígitos; as chaves e os segredos identificados são ocultados. Os códigos de utilização única identificados como tal em inglês, francês, espanhol ou alemão no texto da página também são ocultados. Vai para o nosso fornecedor de IA só para essa mensagem; o tafs guarda a página só até a resposta estar feita, e guarda o nome do site com o seu chat, mostrado como «A ler:», durante 30 dias. A resposta do Coach pode citar a página e é guardada com o seu chat como qualquer resposta. O mesmo vale para uma mensagem que envie aí a um taf, com o mesmo consentimento, mas só num dos sites desse taf: noutros nada é lido, nessa vez o taf só lê, e a resposta dele pode citar a página. Num taf, o texto da página é guardado com a sua execução apenas até essa execução terminar. O painel lateral mostra os chats iniciados nesse Chrome desde que o associou; os seus outros chats ficam no telemóvel e nos seus outros dispositivos. Quando um taf trabalha nesse Chrome por uma mensagem que enviou de outro dispositivo, o painel mostra também essa execução: a mensagem, os seus passos e a sua resposta, nunca o resto desse chat, até eliminar esse chat, desassociar o Chrome ou mudar o taf para outro Chrome. Também pode anexar ficheiros a uma mensagem lá: tal como os ficheiros anexados nas apps tafs, vão para o nosso fornecedor de IA com essa mensagem e são guardados com ela 30 dias, ou menos se o chat for removido (um ficheiro que nenhuma mensagem usa, cerca de uma hora), e só quem anexou um ficheiro o pode abrir. Guarda também a associação com o seu telemóvel, os sites que desativou para o Coach e um identificador aleatório deste perfil do Chrome, enviado à KIFF a cada associação para que o seu telemóvel reconheça este Chrome. Desinstalar apaga tudo; desassociar apaga tudo exceto esse identificador e os sites desativados para o Coach. Um taf nunca paga sem a sua aprovação no telemóvel. Por cada passo que age (um clique, escrever, enviar), incluindo um que aprovou, guarda também uma captura de ecrã da página, tirada mesmo antes da ação, para o registo; nunca de uma página que apenas lê, nunca num site de banco, carteira, gestor de palavras-passe, pagamentos, saúde ou administração pública, e com os campos de palavra-passe, cartão e código ocultos antes de a tirar. Também é tapado o texto que parece um número de cartão ou uma chave, mas algo escrito de outra forma pode continuar visível. As capturas de ecrã são guardadas em armazenamento cifrado, ligadas a esse passo, durante 30 dias, e depois apagadas automaticamente, ou mais cedo quando desliga a ligação, desassocia este Chrome ou elimina a sua conta, e nunca vão para o nosso fornecedor de IA. Vê cada uma sob o seu passo na Atividade do taf. O tafs reconhece os sites de bancos, carteiras, gestores de palavras-passe, pagamentos, correio, saúde e administração pública por uma lista e por palavras do seu endereço, por isso um site que não reconheça é tratado como qualquer outro.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if HostedBrowserForCustomers {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("pt").Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 45, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("pt").Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 45, Col: 93}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("pt").Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 47, Col: 44}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("pt").Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 47, Col: 82}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>O trabalho dos seus tafs:</strong> as execuções, os chats, os relatórios e as notas de memória de cada taf e os ficheiros que entrega, guardados como subcontratante. Todos os membros da sua conta podem ver os ficheiros entregues pelos seus tafs.</li><li><strong>Portas:</strong> quando abre uma porta para que as pessoas possam escrever a um taf por email, Slack ou Telegram, o serviço tafs guarda cada remetente que associar, pelo seu endereço de email, ID de membro do Slack ou ID de utilizador do Telegram (um número de telefone numa porta do WhatsApp), com o nome que lhe der, até remover a porta ou o taf. Uma mensagem de alguém que não associou fica à sua espera como pedido de contacto, com quem a escreveu e o que diz, até 30 dias depois do último. A mensagem de um remetente associado entra no chat do taf e é guardada como o resto do chat. O Slack e o Telegram transportam as mensagens segundo as suas próprias condições.</li><li><strong>Compras:</strong> o Solo e os pacotes de créditos são vendidos pela Apple através da App Store, ou pela Google através da faturação do Google Play. Dizem-nos o que foi comprado, para que conta KIFF (um ID aleatório), quando, e as respetivas referências de transação ou de encomenda. Não nos dão o seu ID Apple ou a sua conta Google, nome, endereço de email nem cartão.</li></ul><p>A app não tem rastreadores de análise nem de publicidade.</p></section><section id=\"ai\"><h2>5. A IA no tafs</h2><p>O tafs usa a IA Claude da Anthropic para o Coach e os seus tafs. A Anthropic, ou um dos fornecedores de nuvem da nossa página de subcontratantes, executa-a para nós. Essa página diz qual, e onde. A app pede-lhe autorização antes de qualquer coisa seguir para ela.</p><ul><li>O que lhe é enviado: o que escreve ao Coach e aos seus tafs, os ficheiros que anexa, o que as suas apps ligadas devolvem a um taf enquanto trabalha e o que está no seu ecrã enquanto o Coach o ajuda na app.</li><li>A partir do Chrome: a página da frente, quando escreve ao Coach no painel lateral da extensão, depois de deixar o Coach ler páginas aí. Também quando escreve aí a um taf, num dos sites dele.</li><li>O que nunca é enviado: as palavras-passe e chaves que as suas apps ligadas usam, nem a sua impressão digital.</li><li>A empresa que a executa usa-o para responder e apaga-o no prazo de 30 dias, salvo se for assinalado como contrário às suas regras de utilização ou se a lei exigir que seja guardado.</li><li>Nada é enviado até que o permita. Pode retirar a autorização em Conta.</li></ul><p>Quando retira a autorização, o Coach e os seus tafs deixam de lhe responder, e um taf cujas execuções dependem do seu consentimento fica em pausa. O tafs guarda um registo de cada consentimento que dá ou retira, com a data e a versão do seu texto, durante 10 anos a partir da última alteração, para mostrar o que aceitou; eliminar a sua conta apaga-o mais cedo. A <a href=\"/pt/privacy#ai-in-tafs\">Política de Privacidade do KIFF</a> tem os detalhes.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +131,20 @@ func TafsPrivacyPT() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section id=\"sharing\"><h2>7. Quem mais recebe dados</h2><p>Não vendemos os seus dados pessoais nem os partilhamos para fins publicitários.</p><p>Para o tafs, recorremos a estas empresas: Amazon Web Services (alojamento, incluindo o armazenamento do tafs e as ligações do planque), Clerk (início de sessão nas contas KIFF), Anthropic (o modelo de IA, executado pela Anthropic, Amazon Web Services, Google Cloud ou Microsoft Azure), Composio (os inícios de sessão das ligações geridas, e as chamadas que o planque lhe pede para fazer), Apple (alertas push), Google (alertas push no Android, e a faturação do Google Play) e Resend (a porta de email de um taf). A lista oficial e atual, com o que cada uma trata e onde, está em <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</p><p>Algumas delas estão fora do Espaço Económico Europeu, sobretudo nos Estados Unidos. A <a href=\"/pt/privacy#transfers\">Política de Privacidade do KIFF</a> diz como essas transferências são salvaguardadas.</p><p><strong>O seu país.</strong> Em alguns países, a lei pede mais do que esta política diz. O que acrescenta está, em inglês e na língua do país, em <a href=\"/privacy/countries\">O seu país</a>.</p></section><section id=\"retention\"><h2>8. Durante quanto tempo os guardamos</h2><ul><li>O que as suas ferramentas devolvem a um taf: só até a execução terminar. Num chat, o que ele apenas leu é guardado, encriptado, para as mensagens seguintes, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias.</li><li>As execuções e os chats de um taf, com o resumo de cada chat: 30 dias. As suas notas de memória: até o taf ser removido. Pode eliminar mais cedo um chat seu com o Coach: as mensagens e os ficheiros que adicionou são eliminados de imediato, enquanto o registo de que cada uma das suas execuções aconteceu, quando e quanto custou fica durante esses 30 dias. Se denunciar uma resposta, a KIFF guarda essa resposta, o seu motivo e a sua nota durante 180 dias, ou até eliminar esse chat ou a sua conta. A KIFF também os envia por email à equipa que lê as denúncias, onde esse email é guardado como o correio de apoio da KIFF.</li><li>As notas curtas do Coach para a sua próxima resposta, por exemplo porque não foi possível fazer uma ligação num chat, ou que um Card foi aprovado: até essa resposta as recolher, no máximo 7 dias; depois, como parte desse chat, enquanto o chat for guardado. Uma cópia fica 24 horas para que uma mensagem reenviada receba a mesma nota. A nota de um chat só é usada nesse chat.</li><li>Os ficheiros que anexa num chat: com a mensagem a que estão anexados, 30 dias, ou menos se o chat for removido, e em qualquer caso no prazo de 38 dias. Um ficheiro que nenhuma mensagem usa é removido cerca de uma hora depois de o carregar. Eliminar a sua conta elimina-os.</li><li>Ficheiros entregues pelos seus tafs: 30 dias a partir da execução que os criou, depois apagados automaticamente no prazo de um dia. Qualquer membro da sua conta pode eliminar um mais cedo com «Eliminar agora»: o próprio ficheiro desaparece de imediato, sem ficar nenhuma cópia; o seu nome, o seu tamanho e o taf e a execução que o criaram podem ficar até 35 dias nas cópias encriptadas de recuperação para um ponto no tempo do armazenamento do tafs, usadas apenas para o restaurar após uma falha. Remover um taf ou eliminar a sua conta elimina os seus ficheiros. Partilhar um ficheiro envia o próprio ficheiro, e a cópia partilhada fica na app com que a partilhou. Para descarregar um ficheiro, criamos para um membro da sua conta com sessão iniciada uma ligação que deixa de funcionar ao fim de um minuto; não criamos nenhuma outra ligação para ele.</li><li>O que uma ferramenta devolveu, no registo do planque de cada chamada: 24 horas. Depois disso, o registo guarda apenas se a chamada foi enviada, para que nunca seja enviada duas vezes.</li><li>O token ou a chave de uma ligação no planque, ou o início de sessão de uma ligação gerida na Composio: até você a desligar. Se outra das suas ligações puder usar a mesma conta nesse fornecedor, é guardado, sem ser usado, até desligar também essa, e depois revogado. O registo das suas aprovações: até a conta terminar.</li><li>O token push de um dispositivo: até terminar a sessão na app, remover o dispositivo ou a Apple ou a Google comunicarem que o token deixou de existir. A chave pública, o nome, a plataforma e as datas de um dispositivo: enquanto o usa; depois de terminar a sessão desse dispositivo, é marcado como removido e guardado até a conta ser eliminada, para que o KIFF possa recusar uma resposta tardia dele e mostrar que dispositivo assinou uma resposta anterior. A chave pública, o ID e o nome de uma chave de acesso: tal como os do seu dispositivo. A sessão de um computador: até 90 dias, ou até terminar a sessão.</li><li>A sua conta: até ser eliminada. Registos dos serviços: 30 dias. Os armazenamentos do tafs e do planque guardam durante 35 dias cópias encriptadas de recuperação para um ponto no tempo, usadas apenas para restaurar um armazenamento após uma falha.</li></ul><p>Tudo o resto está na <a href=\"/pt/privacy#retention\">secção de Conservação do KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Fundamentos de licitude</h2><p>Execução de um contrato, para operar a sua conta e os seus tafs. Interesses legítimos, para a segurança, a prevenção de fraude e a deteção de abusos. Consentimento, para a IA no tafs (<a href=\"#ai\">secção 5</a>). Obrigação jurídica, para os registos fiscais. A <a href=\"/pt/privacy#lawful-bases\">Política de Privacidade do KIFF</a> tem os detalhes.</p></section><section id=\"rights\"><h2>10. Os seus direitos</h2><p>Ao abrigo do RGPD, pode pedir o acesso aos seus dados, a sua retificação, o seu apagamento, a limitação do tratamento ou uma cópia portável, opor-se ao tratamento baseado em interesses legítimos e retirar o consentimento. Envie um email para <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; respondemos sem demora injustificada e, no máximo, no prazo de um mês; num pedido complexo podemos precisar de mais dois meses, e dizemos-lhe isso dentro do primeiro mês. Na app, Conta → Exportar os meus chats transfere os seus próprios chats e notas.</p><p>Para eliminar a sua conta tafs, abra a app, vá a Conta e toque em <em>Eliminar conta</em>, e depois confirme. Não pode ser desfeito. A <a href=\"/pt/privacy#delete-account\">Política de Privacidade do KIFF</a> diz o que é eliminado e quando, e como o pedir por email.</p><p>Pode apresentar uma reclamação à <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspeção de Proteção de Dados da Estónia (Andmekaitse Inspektsioon)</a>, ou à autoridade de controlo do local onde vive.</p><p><strong>O seu país.</strong> Em alguns países, a lei pede mais do que esta política diz. O que acrescenta está, em inglês e na língua do país, em <a href=\"/privacy/countries\">O seu país</a>.</p></section><section id=\"more\"><h2>11. Segurança, crianças e alterações</h2><p>As nossas medidas de segurança estão em <a href=\"/pt/security\">/pt/security</a>. O tafs não se dirige a crianças, e não recolhemos conscientemente dados pessoais de crianças com menos de 16 anos. Alteramos esta política da forma que a <a href=\"/pt/privacy#changes\">Política de Privacidade do KIFF</a> prevê para a sua própria.</p></section><section id=\"contact\"><h2>12. Contacto</h2><p>Perguntas e pedidos sobre privacidade: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Notificações legais formais: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Os termos da própria app estão em <a href=\"/pt/tafs/terms\">/pt/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Quem mais recebe dados</h2><p>Não vendemos os seus dados pessoais nem os partilhamos para fins publicitários.</p><p>Para o tafs, recorremos a estas empresas: Amazon Web Services (alojamento, incluindo o armazenamento do tafs e as ligações do planque), Clerk (início de sessão nas contas KIFF), Anthropic (o modelo de IA, executado pela Anthropic, Amazon Web Services, Google Cloud ou Microsoft Azure), Composio (os inícios de sessão das ligações geridas, e as chamadas que o planque lhe pede para fazer), Apple (alertas push), Google (alertas push no Android, e a faturação do Google Play) e Resend (a porta de email de um taf). A lista oficial e atual, com o que cada uma trata e onde, está em <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</p><p>Algumas delas estão fora do Espaço Económico Europeu, sobretudo nos Estados Unidos. A <a href=\"/pt/privacy#transfers\">Política de Privacidade do KIFF</a> diz como essas transferências são salvaguardadas.</p><p><strong>O seu país.</strong> Em alguns países, a lei pede mais do que esta política diz. O que acrescenta está, em inglês e na língua do país, em <a href=\"/privacy/countries\">O seu país</a>.</p></section><section id=\"retention\"><h2>8. Durante quanto tempo os guardamos</h2><ul><li>O que as suas ferramentas devolvem a um taf: só até a execução terminar. Num chat, o que ele apenas leu é guardado, encriptado, para as mensagens seguintes, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias.</li><li>As execuções e os chats de um taf, com o resumo de cada chat: 30 dias. As suas notas de memória: até o taf ser removido. Pode eliminar mais cedo um chat seu com o Coach: as mensagens e os ficheiros que adicionou são eliminados de imediato, enquanto o registo de que cada uma das suas execuções aconteceu, quando e quanto custou fica durante esses 30 dias. Se denunciar uma resposta, a KIFF guarda essa resposta, o seu motivo e a sua nota durante 180 dias, ou até eliminar esse chat ou a sua conta. A KIFF também os envia por email à equipa que lê as denúncias, onde esse email é guardado como o correio de apoio da KIFF.</li><li>As notas curtas do Coach para a sua próxima resposta, por exemplo porque não foi possível fazer uma ligação num chat, ou que um Card foi aprovado: até essa resposta as recolher, no máximo 7 dias; depois, como parte desse chat, enquanto o chat for guardado. Uma cópia fica 24 horas para que uma mensagem reenviada receba a mesma nota. A nota de um chat só é usada nesse chat.</li><li>Os ficheiros que anexa num chat: com a mensagem a que estão anexados, 30 dias, ou menos se o chat for removido, e em qualquer caso no prazo de 38 dias. Um ficheiro que nenhuma mensagem usa é removido cerca de uma hora depois de o carregar. Eliminar a sua conta elimina-os.</li><li>Ficheiros entregues pelos seus tafs: 30 dias a partir da execução que os criou, depois apagados automaticamente no prazo de um dia. Qualquer membro da sua conta pode eliminar um mais cedo com «Eliminar agora»: o próprio ficheiro desaparece de imediato, sem ficar nenhuma cópia; o seu nome, o seu tamanho e o taf e a execução que o criaram podem ficar até 35 dias nas cópias encriptadas de recuperação para um ponto no tempo do armazenamento do tafs, usadas apenas para o restaurar após uma falha. Remover um taf ou eliminar a sua conta elimina os seus ficheiros. Partilhar um ficheiro envia o próprio ficheiro, e a cópia partilhada fica na app com que a partilhou. Para descarregar um ficheiro, criamos para um membro da sua conta com sessão iniciada uma ligação que deixa de funcionar ao fim de um minuto; não criamos nenhuma outra ligação para ele.</li><li>O que uma ferramenta devolveu, no registo do planque de cada chamada: 24 horas. Depois disso, o registo guarda apenas se a chamada foi enviada, para que nunca seja enviada duas vezes.</li><li>O token ou a chave de uma ligação no planque, ou o início de sessão de uma ligação gerida na Composio: até você a desligar. Se outra das suas ligações puder usar a mesma conta nesse fornecedor, é guardado, sem ser usado, até desligar também essa, e depois revogado. ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("pt"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 83, Col: 311}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " O registo das suas aprovações: até a conta terminar.</li><li>O token push de um dispositivo: até terminar a sessão na app, remover o dispositivo ou a Apple ou a Google comunicarem que o token deixou de existir. A chave pública, o nome, a plataforma e as datas de um dispositivo: enquanto o usa; depois de terminar a sessão desse dispositivo, é marcado como removido e guardado até a conta ser eliminada, para que o KIFF possa recusar uma resposta tardia dele e mostrar que dispositivo assinou uma resposta anterior. A chave pública, o ID e o nome de uma chave de acesso: tal como os do seu dispositivo. A sessão de um computador: até 90 dias, ou até terminar a sessão.</li><li>A sua conta: até ser eliminada. Registos dos serviços: 30 dias. Os armazenamentos do tafs e do planque guardam durante 35 dias cópias encriptadas de recuperação para um ponto no tempo, usadas apenas para restaurar um armazenamento após uma falha.</li></ul><p>Tudo o resto está na <a href=\"/pt/privacy#retention\">secção de Conservação do KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Fundamentos de licitude</h2><p>Execução de um contrato, para operar a sua conta e os seus tafs. Interesses legítimos, para a segurança, a prevenção de fraude e a deteção de abusos. Consentimento, para a IA no tafs (<a href=\"#ai\">secção 5</a>). Obrigação jurídica, para os registos fiscais. A <a href=\"/pt/privacy#lawful-bases\">Política de Privacidade do KIFF</a> tem os detalhes.</p></section><section id=\"rights\"><h2>10. Os seus direitos</h2><p>Ao abrigo do RGPD, pode pedir o acesso aos seus dados, a sua retificação, o seu apagamento, a limitação do tratamento ou uma cópia portável, opor-se ao tratamento baseado em interesses legítimos e retirar o consentimento. Envie um email para <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; respondemos sem demora injustificada e, no máximo, no prazo de um mês; num pedido complexo podemos precisar de mais dois meses, e dizemos-lhe isso dentro do primeiro mês. Na app, Conta → Exportar os meus chats transfere os seus próprios chats e notas.</p><p>Para eliminar a sua conta tafs, abra a app, vá a Conta e toque em <em>Eliminar conta</em>, e depois confirme. Não pode ser desfeito. A <a href=\"/pt/privacy#delete-account\">Política de Privacidade do KIFF</a> diz o que é eliminado e quando, e como o pedir por email.</p><p>Pode apresentar uma reclamação à <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspeção de Proteção de Dados da Estónia (Andmekaitse Inspektsioon)</a>, ou à autoridade de controlo do local onde vive.</p><p><strong>O seu país.</strong> Em alguns países, a lei pede mais do que esta política diz. O que acrescenta está, em inglês e na língua do país, em <a href=\"/privacy/countries\">O seu país</a>.</p></section><section id=\"more\"><h2>11. Segurança, crianças e alterações</h2><p>As nossas medidas de segurança estão em <a href=\"/pt/security\">/pt/security</a>. O tafs não se dirige a crianças, e não recolhemos conscientemente dados pessoais de crianças com menos de 16 anos. Alteramos esta política da forma que a <a href=\"/pt/privacy#changes\">Política de Privacidade do KIFF</a> prevê para a sua própria.</p></section><section id=\"contact\"><h2>12. Contacto</h2><p>Perguntas e pedidos sobre privacidade: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Notificações legais formais: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Os termos da própria app estão em <a href=\"/pt/tafs/terms\">/pt/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -101,261 +176,347 @@ func tafsPrivacyGooglePT() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<section id=\"google\"><h2>6. Dados de utilizador do Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Dados de utilizador do Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo às Google Sheets ou ao Google Calendar que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo às Google Sheets ou ao Google Calendar que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo ao seu Gmail, ou ao Google Calendar ou às Google Sheets que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Quando lho pede, o tafs liga um taf à sua conta Google, por exemplo ao seu Gmail, ou ao Google Calendar ou às Google Sheets que o seu trabalho usa, em Ligar apps, na app. Esta secção diz o que o tafs faz com os dados que recebe da Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa: as folhas de cálculo que mantém atualizadas, ou os eventos dos calendários de que trata. Só os altera quando o Card do taf o permite, e o que passar dos limites do Card espera pela sua aprovação.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa: as folhas de cálculo que mantém atualizadas, ou os eventos dos calendários de que trata. Só os altera quando o Card do taf o permite, e o que passar dos limites do Card espera pela sua aprovação.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa. No seu Gmail, lê as suas mensagens e conversas para encontrar as que precisam de resposta, e escreve rascunhos; só envia emails quando o Card do taf o permite. No Google Calendar e nas Google Sheets, lê os eventos dos calendários de que trata, ou as folhas de cálculo que mantém atualizadas, e só os altera quando o Card do taf o permite. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>O que lê e escreve:</strong> o que o trabalho do taf precisa. No seu Gmail, lê as suas mensagens e conversas para encontrar as que precisam de resposta, e escreve rascunhos; só envia emails quando o Card do taf o permite. No Google Calendar e nas Google Sheets, lê os eventos dos calendários de que trata, ou as folhas de cálculo que mantém atualizadas, e só os altera quando o Card do taf o permite. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "No Google Tasks, lê as listas de tarefas de que trata, e só adiciona, conclui, move ou apaga tarefas quando o Card do taf o permite. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "No Google Tasks, lê as listas de tarefas de que trata, e só adiciona, conclui, move ou apaga tarefas quando o Card do taf o permite. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "O que passar dos limites do Card espera pela sua aprovação.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "O que passar dos limites do Card espera pela sua aprovação.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Porquê:</strong> apenas para fazer o trabalho que configurou para esse taf, e para lhe mostrar a que conta Google está ligado: o respetivo email, guardado com a ligação até a desligar.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Porquê:</strong> apenas para fazer o trabalho que configurou para esse taf, e para lhe mostrar a que conta Google está ligado: o respetivo email, guardado com a ligação até a desligar.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Como se liga cada app Google:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Como se liga cada app Google:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li>Através do nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Através do nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 134, Col: 152}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 138, Col: 152}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if len(googleInHouse("pt")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li>Através do próprio início de sessão Google do tafs, sem nenhuma outra empresa pelo meio: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Através do próprio início de sessão Google do tafs, sem nenhuma outra empresa pelo meio: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 137, Col: 135}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 141, Col: 135}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ".</li>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Uma app que conste de ambos liga-se de uma forma ou de outra, consoante a sua conta. A própria página de início de sessão da Google mostra a qual dá permissão.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir.<ul><li><strong>Através do nosso parceiro de início de sessão:</strong> o tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>Como um taf os usa:</strong> um taf usa apenas as ferramentas aprovadas no seu Card. Cada chamada é verificada face a uma autorização para essa ferramenta exata e esses argumentos antes de qualquer coisa ser enviada, e uma chamada fora do acesso que deu é recusada. As ações que pedem a sua aprovação de cada vez são definidas no Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>O acesso que o próprio início de sessão Google do tafs pede:</strong>")
+			for _, a := range googlePending("pt") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>O acesso que o tafs pede:</strong>")
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 145, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("pt") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("pt"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 145, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("pt").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 169, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 145, Col: 75}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("pt").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 172, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 172, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 149, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Por muito que um início de sessão permita, o taf só usa as ferramentas do seu Card.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Uma app que conste de ambos liga-se de uma forma ou de outra, consoante a sua conta. A própria página de início de sessão da Google mostra a qual dá permissão.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Quem guarda o seu início de sessão:</strong><ul><li><strong>Através do nosso parceiro de início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir.<ul><li><strong>Através do nosso parceiro de início de sessão:</strong> o tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Quem guarda o seu início de sessão:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O início de sessão pede de uma só vez todo o acesso indicado abaixo para essa app, mesmo quando o taf apenas lê.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Quem guarda o seu início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>O que permite:</strong> inicia sessão na própria página da Google e escolhe o que permitir. O tafs pede apenas o acesso de que as ferramentas do taf precisam. Se esse acesso mais restrito não for possível, pede o acesso habitual da app, e di-lo antes de iniciar sessão. Se o acesso habitual incluir dados pessoais que o taf não usa, o tafs não liga.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Como um taf os usa:</strong> um taf usa apenas as ferramentas aprovadas no seu Card. Cada chamada é verificada face a uma autorização para essa ferramenta exata e esses argumentos antes de qualquer coisa ser enviada, e uma chamada fora do acesso que deu é recusada. As ações que pedem a sua aprovação de cada vez são definidas no Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("pt")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>O acesso que o próprio início de sessão Google do tafs pede:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>O acesso que o tafs pede:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("pt") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 184, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 187, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var20 string
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `pt_tafs_privacy.templ`, Line: 187, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Por muito que um início de sessão permita, o taf só usa as ferramentas do seu Card.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor.<ul><li><strong>Através do nosso parceiro de início de sessão:</strong> passa também pelo nosso parceiro de início de sessão, que faz cada chamada.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão.</li></ul>Ambos constam de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Quem guarda o seu início de sessão:</strong><ul><li><strong>Através do nosso parceiro de início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. O planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão. O fornecedor do modelo de IA consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Quem guarda o seu início de sessão:</strong> o planque, o serviço de ligações do próprio tafs, guarda o seu token Google para a sua empresa, encriptado com AWS KMS na União Europeia (Irlanda), e usa-o apenas para fazer uma chamada que o Card do taf permite. Nunca é dado a um taf, e nem o taf nem o modelo de IA veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. Passa também pelo nosso parceiro de início de sessão, que faz cada chamada. Ambos constam de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Quem guarda o seu início de sessão:</strong> o seu início de sessão Google é guardado pelo nosso parceiro de início de sessão, que consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>, e nunca é dado a um taf nem ao planque. Nem o taf nem o tafs veem a sua palavra-passe ou os seus tokens Google. Outro dos seus tafs que precise do mesmo acesso reutiliza o início de sessão, e cada taf usa apenas as ferramentas que aprovou para ele.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>Treino de IA:</strong> os dados de utilizador do Google não são usados para treinar modelos de IA.</li><li><strong>Imagens:</strong> o tafs não cria nem edita imagens ou vídeos: a sua IA escreve texto. Nunca usa as APIs do Google nem os dados de utilizador do Google para criar, editar ou partilhar imagens íntimas de alguém (imagens íntimas não consentidas, NCII), nem qualquer outra imagem de uma pessoa.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor.<ul><li><strong>Através do nosso parceiro de início de sessão:</strong> passa também pelo nosso parceiro de início de sessão, que faz cada chamada.</li><li><strong>Através do próprio início de sessão Google do tafs:</strong> o planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão.</li></ul>Ambos constam de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("pt")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. O planque chama a Google diretamente, por isso nenhuma outra empresa faz a chamada nem guarda o seu início de sessão. O fornecedor do modelo de IA consta de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Quem mais os recebe:</strong> o que um taf lê da Google vai para o modelo de IA que faz funcionar o taf, só depois de o permitir (ver <a href=\"#ai\">A IA no tafs</a>), que o guarda até 30 dias ao abrigo dos termos do seu fornecedor. Passa também pelo nosso parceiro de início de sessão, que faz cada chamada. Ambos constam de <a href=\"/pt/subprocessors\">/pt/subprocessors</a>.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Treino de IA:</strong> os dados de utilizador do Google não são usados para treinar modelos de IA.</li><li><strong>Imagens:</strong> o tafs não cria nem edita imagens ou vídeos: a sua IA escreve texto. Nunca usa as APIs do Google nem os dados de utilizador do Google para criar, editar ou partilhar imagens íntimas de alguém (imagens íntimas não consentidas, NCII), nem qualquer outra imagem de uma pessoa.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("pt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Durante quanto tempo, e onde:</strong> as suas folhas de cálculo e os seus eventos ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href=\"#retention\">Durante quanto tempo os guardamos</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Durante quanto tempo, e onde:</strong> as suas folhas de cálculo e os seus eventos ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href=\"#retention\">Durante quanto tempo os guardamos</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Durante quanto tempo, e onde:</strong> os seus rascunhos, eventos e folhas de cálculo ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href=\"#retention\">Durante quanto tempo os guardamos</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Durante quanto tempo, e onde:</strong> os seus rascunhos, eventos e folhas de cálculo ficam na sua conta Google. No armazenamento do próprio tafs, o que uma ferramenta devolve só é guardado até a execução do taf terminar. O planque, que transmite cada chamada, guarda o que a Google devolve durante 24 horas, para que uma chamada repetida obtenha a mesma resposta e nunca seja enviada duas vezes; depois disso, guarda apenas se a chamada foi enviada. Num chat, o que foi apenas lido é guardado, encriptado, usado até o chat estar uma hora inativo e, no máximo, quatro horas após a leitura, sendo depois eliminado automaticamente, no prazo de alguns dias. O registo de uma execução e o seu chat são guardados 30 dias, e as notas de um taf até remover o taf (ver <a href=\"#retention\">Durante quanto tempo os guardamos</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Pôr-lhe fim:</strong><ul><li>Desligue a Google na app, em Ligar apps ou no separador Card do taf. As suas ferramentas Google param de imediato, e o tafs pede de imediato à Google que revogue o início de sessão; isso pode concluir-se um pouco mais tarde.</li><li>Remova um taf, e as suas ligações terminam com ele. Um início de sessão Google que outro dos seus tafs ainda usa mantém-se até o último deles ser removido.</li><li>Retire o acesso do tafs em qualquer altura na sua Conta Google, em <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Os seus tafs deixam de chegar à Google, e a app indica-lhe que a sessão da ligação à Google foi terminada.</li><li>Elimine a sua conta: os seus tafs, chats, notas, ficheiros e ligações são apagados de imediato, e das suas cópias de recuperação para um ponto no tempo no prazo de 35 dias, e os seus tokens Google são revogados quando a Google o permite.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Pôr-lhe fim:</strong><ul><li>Desligue a Google na app, em Ligar apps ou no separador Card do taf. As suas ferramentas Google param de imediato, e o tafs pede de imediato à Google que revogue o início de sessão; isso pode concluir-se um pouco mais tarde.</li><li>Remova um taf, e as suas ligações terminam com ele. Um início de sessão Google que outro dos seus tafs ainda usa mantém-se até o último deles ser removido.</li><li>Retire o acesso do tafs em qualquer altura na sua Conta Google, em <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Os seus tafs deixam de chegar à Google, e a app indica-lhe que a sessão da ligação à Google foi terminada.</li><li>Elimine a sua conta: os seus tafs, chats, notas, ficheiros e ligações são apagados de imediato, e das suas cópias de recuperação para um ponto no tempo no prazo de 35 dias, e os seus tokens Google são revogados quando a Google o permite.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

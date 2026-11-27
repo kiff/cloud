@@ -172,9 +172,11 @@ templ Download(v DownloadView) {
 				if v.phone() {
 					@downloadPhones(v)
 					@downloadComputers(v)
+					@downloadBrowser(v)
 					@downloadWatches(v)
 				} else {
 					@downloadComputers(v)
+					@downloadBrowser(v)
 					@downloadWatches(v)
 					@downloadPhones(v)
 					<figure class="dl-qr">
@@ -257,6 +259,22 @@ templ downloadComputers(v DownloadView) {
 				}
 			</div>
 		}
+	</div>
+}
+
+// ChromeWebStoreURL is tafs's listing on the Chrome Web Store.
+const ChromeWebStoreURL = "https://chromewebstore.google.com/detail/tafs/lgdfeikagklmfjobgednngcjjhgknfdl"
+
+// downloadBrowser is the Chrome extension: Google's "Available in the Chrome
+// Web Store" badge as supplied (English only, resized, never altered), linking
+// to the listing, and the listing's own short description.
+templ downloadBrowser(v DownloadView) {
+	<h2 class="dl-group">{ v.words().Browser }</h2>
+	<div class="dl-stores">
+		<div class="dl-store dl-chrome">
+			<a href={ templ.SafeURL(ChromeWebStoreURL) } class="dl-badge dl-cws" rel="noopener"><img src="/static/img/download/chrome-web-store-badge.png" alt="Available in the Chrome Web Store" width="206" height="62"/></a>
+			<p class="k-small">{ v.words().Chrome }</p>
+		</div>
 	</div>
 }
 

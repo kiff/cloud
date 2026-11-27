@@ -19,11 +19,12 @@ import (
 	"github.com/kiff/cloud/api/internal/mandate"
 )
 
-// kiff/tafs#494: inside an approval window a tap issues a holder's first
-// Card, or reissues one that widens nothing; a reissue that raises an
-// aggregate, or a second Card beside one in force, is refused with
-// critical_key_required: the approval key, behind the fingerprint. With the
-// real handler.
+// kiff/tafs#494: inside an approval window a tap issues or reissues Cards
+// only for the taf whose step opened it; another taf's Card is refused with
+// window_scope. For that taf, its first Card is a tap; a reissue that raises
+// an aggregate, or a second Card beside one in force, is refused with
+// critical_key_required: the approval key, behind the fingerprint, which
+// works anywhere. With the real handler.
 func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	t.Parallel()
 	now := time.Date(2026, 11, 5, 12, 0, 0, 0, time.UTC)
@@ -72,45 +73,71 @@ func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 		})
 		return b
 	}
-	// The window, opened with the approval key.
-	opening, _ := json.Marshal(auth.OpenWindow{Message: auth.WindowMessage, Session: "sess-phone", Device: "dev_phone",
-		Expires: now.Add(5 * time.Minute).Format(time.RFC3339), Nonce: strings.Repeat("n", 24)})
+	// The window, opened with the approval key from agent-a's step.
 	win := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: "tenant-1", Subject: "user-abc", DeviceID: "dev_phone", SessionID: "sess-phone",
-		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER)}
-	_ = opening
+		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER), Agent: "agent-a"}
 	if err := windows.Open(t.Context(), win); err != nil {
 		t.Fatal(err)
 	}
-	// A new Card, inside the window: issued.
-	if code, body := post("/v1/me/mandates", card("card-w", 500000, 1), sign(deviceKey, "/v1/me/mandates", card("card-w", 500000, 1), win.ID)); code != http.StatusCreated {
-		t.Fatalf("a new Card inside the window: %d %s", code, body)
+	tap := func(body []byte) (int, string) {
+		return post("/v1/me/mandates", body, sign(deviceKey, "/v1/me/mandates", body, win.ID))
 	}
-	// The same Card reissued with a higher limit, inside the window: refused, and the Card unchanged.
-	if code, body := post("/v1/me/mandates", card("card-w", 900000, 2), sign(deviceKey, "/v1/me/mandates", card("card-w", 900000, 2), win.ID)); code != http.StatusForbidden || !strings.Contains(body, "critical_key_required") {
-		t.Fatalf("a reissue inside the window: %d %s", code, body)
+	count := func() int { ms, _ := store.List(t.Context(), "tenant-1"); return len(ms) }
+	// Another taf's first Card, inside agent-a's window: window_scope, nothing issued.
+	if code, body := tap(cardFor("card-b", "agent-b", 500000, 1)); code != http.StatusForbidden || !strings.Contains(body, `"error":"critical_key_required"`) || !strings.Contains(body, `"reason":"window_scope"`) {
+		t.Fatalf("another taf's Card inside the window: %d %s", code, body)
+	}
+	if count() != 0 {
+		t.Fatalf("a tap issued another taf's Card")
+	}
+	// agent-a's first Card, inside its own window: a tap.
+	if code, body := tap(card("card-w", 500000, 1)); code != http.StatusCreated {
+		t.Fatalf("the window's taf's first Card: %d %s", code, body)
+	}
+	// The same Card reissued with a higher limit: critical_key_required, unchanged.
+	if code, body := tap(card("card-w", 900000, 2)); code != http.StatusForbidden || !strings.Contains(body, "critical_key_required") {
+		t.Fatalf("a widening reissue inside the window: %d %s", code, body)
 	}
 	ms, _ := store.List(t.Context(), "tenant-1")
 	if len(ms) != 1 || ms[0].Aggregates[0].Limit != 500000 {
 		t.Fatalf("the Card after the refused reissue: %+v", ms)
 	}
-	// The widening rule: a reissue that only narrows is a tap.
-	if code, body := post("/v1/me/mandates", card("card-w", 400000, 4), sign(deviceKey, "/v1/me/mandates", card("card-w", 400000, 4), win.ID)); code != http.StatusCreated {
+	// A reissue that only narrows is a tap.
+	if code, body := tap(card("card-w", 400000, 4)); code != http.StatusCreated {
 		t.Fatalf("a narrowing reissue inside the window: %d %s", code, body)
 	}
-	// A second Card for a holder that holds one already adds authority
-	// beside it: refused, nothing issued.
-	if code, body := post("/v1/me/mandates", card("card-x", 9000000, 5), sign(deviceKey, "/v1/me/mandates", card("card-x", 9000000, 5), win.ID)); code != http.StatusForbidden || !strings.Contains(body, "new_card") {
+	// A second Card beside the one agent-a holds widens: refused, as today.
+	if code, body := tap(card("card-x", 9000000, 5)); code != http.StatusForbidden || !strings.Contains(body, "critical_key_required") || !strings.Contains(body, "new_card") {
 		t.Fatalf("a second Card beside the first, inside the window: %d %s", code, body)
 	}
-	if ms, _ := store.List(t.Context(), "tenant-1"); len(ms) != 1 {
-		t.Fatalf("a second Card was issued: %+v", ms)
+	if count() != 1 {
+		t.Fatalf("a second Card was issued")
 	}
-	// Another taf's first Card, inside the window: issued.
-	if code, body := post("/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), sign(deviceKey, "/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), win.ID)); code != http.StatusCreated {
-		t.Fatalf("another taf's first Card inside the window: %d %s", code, body)
+	// A window opened for no taf issues no Card.
+	nobody := win
+	nobody.ID, nobody.Agent = auth.NewWindowID(), ""
+	if err := windows.Open(t.Context(), nobody); err != nil {
+		t.Fatal(err)
 	}
-	// The reissue with the approval key: as today.
+	if code, body := post("/v1/me/mandates", card("card-w", 300000, 6), sign(deviceKey, "/v1/me/mandates", card("card-w", 300000, 6), nobody.ID)); code != http.StatusForbidden || !strings.Contains(body, `"error":"critical_key_required"`) || !strings.Contains(body, `"reason":"window_scope"`) {
+		t.Fatalf("a tap in a window opened for no taf: %d %s", code, body)
+	}
+	// The approval key works anywhere: another taf's Card, and the widening reissue.
+	if code, body := post("/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 7), sign(approvalKey, "/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 7), "")); code != http.StatusCreated {
+		t.Fatalf("another taf's Card with the approval key: %d %s", code, body)
+	}
 	if code, body := post("/v1/me/mandates", card("card-w", 900000, 3), sign(approvalKey, "/v1/me/mandates", card("card-w", 900000, 3), "")); code != http.StatusCreated {
 		t.Fatalf("a reissue with the approval key: %d %s", code, body)
+	}
+	// A phone session with no approval key (the CI test phone's): its device
+	// key signs approvals outside any window, as it always has.
+	keyless := phone
+	keyless.ApprovalKey = nil
+	req := httptest.NewRequest(http.MethodPost, "/v1/me/mandates", bytes.NewReader(cardFor("card-c", "agent-c", 500000, 8)))
+	req.Header.Set(auth.DeviceSignatureHeader, sign(deviceKey, "/v1/me/mandates", cardFor("card-c", "agent-c", 500000, 8), ""))
+	rec := httptest.NewRecorder()
+	policed.ServeHTTP(rec, req.WithContext(auth.WithIdentity(req.Context(), keyless)))
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("a new Card from a session with no approval key: %d %s", rec.Code, rec.Body)
 	}
 }

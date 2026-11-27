@@ -344,3 +344,55 @@ func (p *Postgres) SettleRun(ctx context.Context, tenantID, run string, from, to
 	}
 	return s, nil
 }
+
+// StoreSources are the stores whose packs Reset store billing sets aside.
+var StoreSources = []Source{SourceApple, SourceGoogle}
+
+// StorePacksSetAside is what Reset store billing set aside on an account:
+// the packs it bought through the App Store or Google Play that still had
+// credits, and those credits.
+type StorePacksSetAside struct {
+	Packs   int   `json:"packs"`
+	Credits int64 `json:"credits"`
+}
+
+// RowQuerier is a pool or a transaction.
+type RowQuerier interface {
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+}
+
+// SetAsideStorePacksQ sets aside, on q (Reset store billing's transaction),
+// tenantID's packs bought through the App Store or Google Play that still
+// have credits: they're kept, with no credits left and revoked at at, as a
+// refunded pack is, so they're no longer drawn or shown. A store's later
+// word on one (a refund, the app sending its transaction again) finds it
+// recorded and doesn't bring it back. Bonuses and Stripe's packs stay.
+//
+// It takes every App Store and Google Play pack on the account, whatever
+// environment it was bought in: packs don't record whether a purchase was a
+// sandbox or test one. That's safe only because its one caller, Reset store
+// billing, runs on App Review's and the store test accounts alone
+// (KIFF_APPLE_SANDBOX_TENANTS, KIFF_GOOGLE_TEST_TENANTS), whose store
+// purchases are test ones, and refuses any other account before writing
+// anything. Never call it for a paying customer: their bought credits would
+// be lost.
+func SetAsideStorePacksQ(ctx context.Context, q RowQuerier, tenantID string, at time.Time) (StorePacksSetAside, error) {
+	sources := make([]string, len(StoreSources))
+	for i, s := range StoreSources {
+		sources[i] = string(s)
+	}
+	var out StorePacksSetAside
+	if err := q.QueryRow(ctx, `
+		WITH aside AS (
+			UPDATE cloud_meta.credit_packs p SET credits_left = 0, revoked_at = $3
+			  FROM (SELECT id, credits_left FROM cloud_meta.credit_packs
+			         WHERE tenant_id = $1 AND source = ANY($2::text[]) AND revoked_at IS NULL AND credits_left > 0
+			         FOR UPDATE) old
+			 WHERE p.id = old.id
+			RETURNING old.credits_left)
+		SELECT count(*), COALESCE(SUM(credits_left), 0)::bigint FROM aside`,
+		tenantID, sources, at.UTC()).Scan(&out.Packs, &out.Credits); err != nil {
+		return StorePacksSetAside{}, fmt.Errorf("packs: set aside store packs: %w", err)
+	}
+	return out, nil
+}

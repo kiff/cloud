@@ -2,6 +2,31 @@ package pages
 
 // tafsDE is /de/tafs.
 var tafsDE = tafsWords{
+	Shots: tafsShots{
+		Card:   "Die Card eines tafs in der tafs-App: Erstattungen bis 50 € pro Stück, mehr fragt dich zuerst, höchstens 5.000 € am Tag; alles andere wird abgelehnt.",
+		Record: "Das Protokoll in der tafs-App: ein von einem taf gebuchter Termin, von dir freigegeben, erledigt, mit KIFFs Beleg.",
+		Video2: "Ein taf bearbeitet eine Erstattungsanfrage innerhalb seiner Card. Testdaten.",
+		Video3: "Ein taf bucht einen Termin in Google Kalender. Testdaten.",
+		Play:   "Video abspielen",
+		Pause:  "Video anhalten",
+	},
+	Explain: tafsExplain{
+		Open: "Der Code ist offen. Lies ihn auf GitHub.",
+		Nodes: [4]tafsNode{
+			{"tafs", "Die Apps und die tafs, die deine Routinearbeit erledigen."},
+			{"agents", "Die Laufzeit, auf der jeder taf läuft."},
+			{"cloud", "KIFF: deine Cards, seine Entscheidungen und signierte Belege."},
+			{"planque", "Die Schlüssel, die du ihm gibst, versiegelt. Jeder Aufruf geprüft."},
+		},
+		Proof:       "Was getan wurde, wer es freigegeben hat, und KIFFs Signatur darauf.",
+		ProofAlt:    "Ein Beleg in der tafs-App: eine Erstattung von 3.000 €, einmal von dir freigegeben, mit KIFFs Beleg, signiert und geprüft.",
+		Control:     [3]string{"Braucht dich: was auf deine Antwort wartet, und bis wann.", "Die Card: was ein taf darf, was auf dich wartet und was er nie tut.", "Jeder Schritt, der dich braucht, fragt nach deinem Fingerabdruck."},
+		ControlAlt:  [3]string{"Ein Hinweis in der tafs-App: eine Erstattung von 100 € liegt über der Grenze von 50 € pro Aufruf, mit Antworten.", "Die Card eines tafs in der tafs-App: Erstattungen bis 50 € pro Stück, mehr fragt dich zuerst, höchstens 5.000 € am Tag; alles andere wird abgelehnt.", "Ein angehaltener Aufruf in der tafs-App: eine Erstattung von 100 € wartet, nichts wird gesendet, bis du freigibst, mit der Freigabe per Fingerabdruck."},
+		PrivacyHead: "Die KI sieht nie die Passwörter oder Schlüssel, die deine verbundenen Apps verwenden.",
+		Privacy:     [3]string{"Direkte Verbindungen: planque hält den Schlüssel oder die Anmeldung versiegelt und öffnet sie nur für die Aufrufe dieser Verbindung. Der taf und die KI sehen sie nie.", "Verwaltete Verbindungen: unser Anmeldepartner hält die Anmeldung, nie planque oder ein taf.", "Dein eigenes Chrome: ein taf liest nie Passwort-, Karten- oder Codefelder. Auf einer Anmeldeseite hält er an und bittet dich, dich in deinem eigenen Tab anzumelden."},
+		Partner:     "Wer unser Anmeldepartner ist",
+		Step:        "Schritt",
+	},
 	Cost:        tafsCostDE,
 	Title:       "tafs: KI-Agenten, die deine Routinearbeit erledigen",
 	Description: "tafs ist eine App, in der KI-Agenten, die tafs, die Routinearbeit deines Unternehmens erledigen, etwa E-Mails beantworten, innerhalb der Limits, die du auf einer Card setzt. Alles darüber wartet auf dein Ja.",

@@ -704,11 +704,41 @@ func (a *agent) tool(ctx context.Context, name string) (Tool, error) {
 	return Tool{}, mcp.UnknownTool(name)
 }
 
+// ArgsDepthMax is how deep a call's arguments may nest: the arguments object
+// is level 1. A held call's arguments go to every app that shows it, and a
+// desktop JSON reader stops at 64 levels (Windows) or 128 (Linux), failing
+// the whole Needs-you list, so a deeper call is refused before it's held.
+const ArgsDepthMax = 32
+
+// argsDepthOver says whether raw nests deeper than ArgsDepthMax, reading only
+// its delimiters and stopping at the first level past it.
+func argsDepthOver(raw json.RawMessage) bool {
+	dec := json.NewDecoder(strings.NewReader(string(raw)))
+	depth := 0
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return false // the decode below says what's wrong with it
+		}
+		switch tok {
+		case json.Delim('{'), json.Delim('['):
+			if depth++; depth > ArgsDepthMax {
+				return true
+			}
+		case json.Delim('}'), json.Delim(']'):
+			depth--
+		}
+	}
+}
+
 // splitArgs takes kiff_operation_id, kiff_about and kiff_reason out of the
 // tool's arguments.
 func splitArgs(raw json.RawMessage) (map[string]any, string, TafWords, error) {
 	args := map[string]any{}
 	if len(raw) > 0 && string(raw) != "null" {
+		if argsDepthOver(raw) {
+			return nil, "", TafWords{}, fmt.Errorf("arguments nest deeper than %d levels: send them flatter", ArgsDepthMax)
+		}
 		dec := json.NewDecoder(strings.NewReader(string(raw)))
 		dec.UseNumber()
 		if err := dec.Decode(&args); err != nil {
@@ -847,6 +877,13 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	}
 	if err != nil {
 		return nil, "", invalid(err.Error())
+	}
+	// A call that doesn't fit its tool's schema is refused before anything is
+	// decided, held or stored (schema_check.go): for now, planque's browser tools.
+	if schemaChecked(t, a.g.Relays, a.me.TenantID) {
+		if why := toolSchemaRefusal(t, args); why != "" {
+			return nil, "", invalid(why)
+		}
 	}
 	if args, err = t.withFixed(args); err != nil {
 		return nil, "", err

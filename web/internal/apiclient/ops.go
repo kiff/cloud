@@ -379,7 +379,20 @@ type OpsStoreReset struct {
 	AppleReset         bool   `json:"apple_reset"`
 	GoogleReset        bool   `json:"google_reset"`
 	ResetAt            string `json:"reset_at"`
-	From               string `json:"from"`
+	// Trial is "not_started" (as a new sign-up), "running" or "ended";
+	// NoPlanAllowanceFrom, when Coach's no-plan allowance counts from.
+	Trial               string `json:"trial"`
+	NoPlanAllowanceFrom string `json:"no_plan_allowance_from"`
+	From                string `json:"from"`
+	// PacksSetAside is what the reset set aside of the account's App Store
+	// and Google Play packs (its store test purchases).
+	PacksSetAside *OpsStorePacksSetAside `json:"packs_set_aside"`
+}
+
+// OpsStorePacksSetAside is a count of packs and their credits.
+type OpsStorePacksSetAside struct {
+	Packs   int   `json:"packs"`
+	Credits int64 `json:"credits"`
 }
 
 // OpsResetStoreBillingBearer puts a review or test account back to no plan

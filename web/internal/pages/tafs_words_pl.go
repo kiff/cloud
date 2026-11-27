@@ -2,6 +2,31 @@ package pages
 
 // tafsPL is /pl/tafs.
 var tafsPL = tafsWords{
+	Shots: tafsShots{
+		Card:   "Card tafa w aplikacji tafs: zwroty do 50 € każdy, większe najpierw pytają Ciebie, najwyżej 5000 € dziennie; wszystko inne jest odrzucane.",
+		Record: "Rejestr w aplikacji tafs: spotkanie zarezerwowane przez tafa, zatwierdzone przez Ciebie, wykonane, z potwierdzeniem KIFF.",
+		Video2: "Taf obsługuje prośbę o zwrot w granicach swojej Card. Dane testowe.",
+		Video3: "Taf rezerwuje spotkanie w Kalendarzu Google. Dane testowe.",
+		Play:   "Odtwórz wideo",
+		Pause:  "Wstrzymaj wideo",
+	},
+	Explain: tafsExplain{
+		Open: "Kod jest otwarty. Przeczytaj go na GitHubie.",
+		Nodes: [4]tafsNode{
+			{"tafs", "Aplikacje i tafy, które wykonują Twoją rutynową pracę."},
+			{"agents", "Środowisko, w którym działa każdy taf."},
+			{"cloud", "KIFF: Twoje Cards, jego decyzje i podpisane potwierdzenia."},
+			{"planque", "Klucze, które mu dajesz, zapieczętowane. Każde wywołanie sprawdzone."},
+		},
+		Proof:       "Co zrobiono, kto to zatwierdził i podpis KIFF.",
+		ProofAlt:    "Potwierdzenie w aplikacji tafs: zwrot 3000 €, zatwierdzony przez Ciebie jednorazowo, z potwierdzeniem KIFF, podpisanym i sprawdzonym.",
+		Control:     [3]string{"Czeka na Ciebie: co czeka na Twoją odpowiedź i do kiedy.", "Card: co taf może zrobić, co czeka na Ciebie i czego nigdy nie robi.", "Każdy krok, który wymaga Twojej decyzji, prosi o odcisk palca."},
+		ControlAlt:  [3]string{"Alert w aplikacji tafs: zwrot 100 € przekracza limit 50 € na jedno wywołanie, z przyciskiem Odpowiedz.", "Card tafa w aplikacji tafs: zwroty do 50 € każdy, większe najpierw pytają Ciebie, najwyżej 5000 € dziennie; wszystko inne jest odrzucane.", "Wstrzymane wywołanie w aplikacji tafs: czeka zwrot 100 €, nic nie zostanie wysłane, dopóki nie zatwierdzisz, z przyciskiem do jednorazowego zatwierdzenia odciskiem palca."},
+		PrivacyHead: "AI nigdy nie widzi haseł ani kluczy, których używają Twoje połączone aplikacje.",
+		Privacy:     [3]string{"Połączenia bezpośrednie: planque trzyma klucz lub logowanie zapieczętowane i otwiera je tylko dla wywołań tego połączenia. Taf i AI nigdy ich nie widzą.", "Połączenia zarządzane: logowanie przechowuje nasz partner logowania, nigdy planque ani taf.", "Twój własny Chrome: taf nigdy nie czyta pól z hasłem, kartą ani kodem. Na stronie logowania zatrzymuje się i prosi, żebyś zalogował się we własnej karcie."},
+		Partner:     "Kim jest nasz partner logowania",
+		Step:        "Krok",
+	},
 	Cost:        tafsCostPL,
 	Title:       "tafs: agenci AI, którzy wykonują Twoją rutynową pracę",
 	Description: "tafs to aplikacja, w której agenci AI, zwani tafs, wykonują rutynową pracę Twojej firmy, na przykład odpowiadają na e-maile, w granicach limitów, które ustawiasz na Card. Wszystko ponad limity czeka na Twoje „tak”.",

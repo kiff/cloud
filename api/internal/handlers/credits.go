@@ -27,7 +27,7 @@ type RunLedger interface {
 	Runs(ctx context.Context, tenantID, runtimeAgent string, scope *meter.TaskScope, from, to time.Time, page *meter.RunPage, limit int) ([]meter.RunEntry, *meter.RunPage, error)
 	Tafs(ctx context.Context, tenantID string) ([]string, error)
 	SetupSpent(ctx context.Context, tenantID string, from, to time.Time) (int64, error)
-	NoPlanSetupSpent(ctx context.Context, tenantID string) (int64, error)
+	NoPlanSetupSpent(ctx context.Context, tenantID string, since time.Time) (int64, error)
 }
 
 // CreditsHandler is the credits a run uses, and the account's balance of
