@@ -27,8 +27,10 @@ type downloadWords struct {
 	DescAvailable, DescComingOne, DescComingMany, And string
 	// Head and Sub open the page.
 	Head, Sub string
-	// Phones and Computer head the two groups.
-	Phones, Computer string
+	// Phones and Computer head the two groups, and Browser the Chrome
+	// extension's; Chrome is the extension's line, the Chrome Web Store
+	// listing's own short description, word for word.
+	Phones, Computer, Browser, Chrome string
 	// NotYet stands for a computer's app that has no file yet: it's coming,
 	// with no download.
 	NotYet string
@@ -79,6 +81,8 @@ var downloadEN = downloadWords{
 	Sub:            "AI agents for your business's routine jobs, each inside a Card you set. Anything bigger waits for your approval on your phone.",
 	Phones:         "Phone and tablet",
 	Computer:       "Computer",
+	Browser:        "Browser",
+	Chrome:         "Let your tafs work in your own Chrome, only on the sites you allow, with every risky step approved on your phone.",
 	NotYet:         "Coming soon",
 	NotAvailable:   "Not available",
 	// The released file's lines.

@@ -13,6 +13,8 @@ var downloadNL = downloadWords{
 	Sub:              "AI-agents voor het routinewerk van je bedrijf, elk binnen een Card die jij instelt. Alles wat groter is, wacht op jouw goedkeuring op je telefoon.",
 	Phones:           "Telefoon en tablet",
 	Computer:         "Computer",
+	Browser:          "Browser",
+	Chrome:           "Laat je tafs werken in je eigen Chrome, alleen op de sites die je toestaat, met elke riskante stap goedgekeurd op je telefoon.",
 	NotYet:           "Binnenkort beschikbaar",
 	NotAvailable:     "Niet beschikbaar",
 	AvailableVersion: "Versie %s",

@@ -13,6 +13,8 @@ var downloadES = downloadWords{
 	Sub:              "Agentes de IA para el trabajo rutinario de tu negocio, cada uno dentro de una Card que tú fijas. Lo que sea mayor espera tu aprobación en tu móvil.",
 	Phones:           "Móvil y tableta",
 	Computer:         "Ordenador",
+	Browser:          "Navegador",
+	Chrome:           "Deja que tus tafs trabajen en tu propio Chrome, solo en los sitios que permites, con cada paso arriesgado aprobado en tu teléfono.",
 	NotYet:           "Muy pronto",
 	NotAvailable:     "No disponible",
 	AvailableVersion: "Versión %s",

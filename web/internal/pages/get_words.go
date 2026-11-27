@@ -36,7 +36,7 @@ var getEN = getWords{
 	OlderMac:   "On an older Mac with macOS 12? →",
 	WearOS:     "Soon on Google Play",
 	AppleWatch: "Comes with the iPhone app",
-	Notice: "Google Play, the Google Play logo, Wear OS and Pixel Watch are trademarks of Google LLC. " +
+	Notice: "Google Play, the Google Play logo, Chrome, Wear OS and Pixel Watch are trademarks of Google LLC. " +
 		"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions. App Store is a service mark of Apple Inc. " +
 		"Galaxy Watch is a trademark of Samsung Electronics Co., Ltd. " +
 		"Windows is a trademark of the Microsoft group of companies. " +
@@ -53,7 +53,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Älterer Mac mit macOS 12? →",
 		WearOS:     "Bald bei Google Play",
 		AppleWatch: "Kommt mit der iPhone-App",
-		Notice: "Google Play, das Google Play-Logo, Wear OS und Pixel Watch sind Marken von Google LLC. " +
+		Notice: "Google Play, das Google Play-Logo, Chrome, Wear OS und Pixel Watch sind Marken von Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac und macOS sind Marken von Apple Inc., die in den USA und weiteren Ländern und Regionen eingetragen sind. App Store ist eine Dienstleistungsmarke von Apple Inc. " +
 			"Galaxy Watch ist eine Marke von Samsung Electronics Co., Ltd. " +
 			"Windows ist eine Marke der Microsoft-Unternehmensgruppe. " +
@@ -67,7 +67,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "¿Tienes un Mac antiguo con macOS 12? →",
 		WearOS:     "Pronto en Google Play",
 		AppleWatch: "Llega con la app para iPhone",
-		Notice: "Google Play, el logotipo de Google Play, Wear OS y Pixel Watch son marcas comerciales de Google LLC. " +
+		Notice: "Google Play, el logotipo de Google Play, Chrome, Wear OS y Pixel Watch son marcas comerciales de Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac y macOS son marcas comerciales de Apple Inc., registradas en EE. UU. y en otros países y regiones. App Store es una marca de servicio de Apple Inc. " +
 			"Galaxy Watch es una marca comercial de Samsung Electronics Co., Ltd. " +
 			"Windows es una marca comercial del grupo de empresas Microsoft. " +
@@ -81,7 +81,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Un Mac plus ancien sous macOS 12 ? →",
 		WearOS:     "Bientôt sur Google Play",
 		AppleWatch: "Arrive avec l'app iPhone",
-		Notice: "Google Play, le logo Google Play, Wear OS et Pixel Watch sont des marques de Google LLC. " +
+		Notice: "Google Play, le logo Google Play, Chrome, Wear OS et Pixel Watch sont des marques de Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac et macOS sont des marques d'Apple Inc., déposées aux États-Unis et dans d'autres pays et régions. App Store est une marque de service d'Apple Inc. " +
 			"Galaxy Watch est une marque de Samsung Electronics Co., Ltd. " +
 			"Windows est une marque du groupe de sociétés Microsoft. " +
@@ -95,7 +95,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Hai un Mac meno recente con macOS 12? →",
 		WearOS:     "Presto su Google Play",
 		AppleWatch: "Arriva con l'app per iPhone",
-		Notice: "Google Play, il logo Google Play, Wear OS e Pixel Watch sono marchi di Google LLC. " +
+		Notice: "Google Play, il logo Google Play, Chrome, Wear OS e Pixel Watch sono marchi di Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac e macOS sono marchi di Apple Inc., registrati negli Stati Uniti e in altri paesi e regioni. App Store è un marchio di servizio di Apple Inc. " +
 			"Galaxy Watch è un marchio di Samsung Electronics Co., Ltd. " +
 			"Windows è un marchio del gruppo di società Microsoft. " +
@@ -109,7 +109,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Oudere Mac met macOS 12? →",
 		WearOS:     "Binnenkort op Google Play",
 		AppleWatch: "Komt met de iPhone-app",
-		Notice: "Google Play, het Google Play-logo, Wear OS en Pixel Watch zijn handelsmerken van Google LLC. " +
+		Notice: "Google Play, het Google Play-logo, Chrome, Wear OS en Pixel Watch zijn handelsmerken van Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac en macOS zijn handelsmerken van Apple Inc., gedeponeerd in de VS en andere landen en regio's. App Store is een dienstmerk van Apple Inc. " +
 			"Galaxy Watch is een handelsmerk van Samsung Electronics Co., Ltd. " +
 			"Windows is een handelsmerk van de Microsoft-groep. " +
@@ -123,7 +123,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Starszy Mac z macOS 12? →",
 		WearOS:     "Wkrótce w Google Play",
 		AppleWatch: "Pojawi się z aplikacją na iPhone'a",
-		Notice: "Google Play, logo Google Play, Wear OS i Pixel Watch są znakami towarowymi Google LLC. " +
+		Notice: "Google Play, logo Google Play, Chrome, Wear OS i Pixel Watch są znakami towarowymi Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac i macOS są znakami towarowymi Apple Inc., zarejestrowanymi w USA oraz w innych krajach i regionach. App Store jest znakiem usługowym Apple Inc. " +
 			"Galaxy Watch jest znakiem towarowym Samsung Electronics Co., Ltd. " +
 			"Windows jest znakiem towarowym grupy firm Microsoft. " +
@@ -137,7 +137,7 @@ var getByLang = map[string]getWords{
 		OlderMac:   "Tem um Mac mais antigo com macOS 12? →",
 		WearOS:     "Em breve no Google Play",
 		AppleWatch: "Chega com a app para iPhone",
-		Notice: "Google Play, o logótipo Google Play, Wear OS e Pixel Watch são marcas comerciais da Google LLC. " +
+		Notice: "Google Play, o logótipo Google Play, Chrome, Wear OS e Pixel Watch são marcas comerciais da Google LLC. " +
 			"Apple, Apple Watch, iPhone, iPad, iPadOS, Mac e macOS são marcas comerciais da Apple Inc., registadas nos EUA e noutros países e regiões. App Store é uma marca de serviço da Apple Inc. " +
 			"Galaxy Watch é uma marca comercial da Samsung Electronics Co., Ltd. " +
 			"Windows é uma marca comercial do grupo de empresas Microsoft. " +

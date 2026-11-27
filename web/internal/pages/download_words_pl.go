@@ -13,6 +13,8 @@ var downloadPL = downloadWords{
 	Sub:              "Agenci AI do rutynowej pracy Twojej firmy, każdy w ramach Card, którą ustawiasz. Wszystko większe czeka na Twoje zatwierdzenie w telefonie.",
 	Phones:           "Telefon i tablet",
 	Computer:         "Komputer",
+	Browser:          "Przeglądarka",
+	Chrome:           "Pozwól swoim tafs pracować w Twoim Chrome, tylko na dozwolonych witrynach, a każdy ryzykowny krok zatwierdzaj na telefonie.",
 	NotYet:           "Wkrótce dostępne",
 	NotAvailable:     "Niedostępne",
 	AvailableVersion: "Wersja %s",
