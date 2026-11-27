@@ -73,13 +73,17 @@ func TestSerbianAndChineseWordsMatchTheirPages(t *testing.T) {
 	}
 }
 
-// The English /tafs/privacy says a sign-in is revoked only where the vendor offers a way to.
+// The English /tafs/privacy says, right after "then revoked", that a sign-in is revoked only where
+// the vendor offers a way to, and that a key keeps working at its vendor until the owner deletes it there.
 func TestTafsPrivacySaysRevokingDependsOnTheVendor(t *testing.T) {
 	var b strings.Builder
 	if err := TafsPrivacy().Render(context.Background(), &b); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(b.String(), "then revoked. The record of its approvals: until the account ends. Revoking depends on the vendor") {
-		t.Errorf("/tafs/privacy lacks the revoke note after the connection line")
+	if !strings.Contains(b.String(), "then revoked. Revoking depends on the vendor") {
+		t.Errorf("/tafs/privacy lacks the revoke note right after \"then revoked\"")
+	}
+	if !strings.Contains(b.String(), "A key you gave us is deleted here too, and keeps working at its vendor until you delete it there. The record of its approvals: until the account ends.") {
+		t.Errorf("/tafs/privacy lacks the key's half of the revoke note")
 	}
 }
