@@ -46,6 +46,49 @@ main:focus { outline: none; }
 .idx, .hint, .bar { display: none; }
 
 /* stickers */
+/* Screen 7's stickers open small explainers (a details element each). */
+.pill-x { list-style: none; }
+.ex > summary { list-style: none; cursor: pointer; }
+.ex > summary::-webkit-details-marker { display: none; }
+.ex > summary::after { content: "+"; font-weight: 900; margin-left: 2px; }
+.ex[open] > summary::after { content: "−"; }
+.ex > summary:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+.ex-card { margin-top: 12px; width: min(420px, 86vw); padding: 18px; border-radius: 20px; background: var(--paper); color: var(--ink);
+  box-shadow: 0 0 0 3px var(--ink), 0 18px 40px rgb(0 0 0 / .25); font-size: .95rem; line-height: 1.4; text-align: left; text-transform: none; }
+.ex-line, .ex-head { margin: 0 0 12px; font-weight: 700; }
+.ex-head { font-size: 1.05rem; }
+.ex-shots { list-style: none; display: grid; gap: 14px; margin: 0; padding: 0; }
+.ex-shot img, .ex-shots img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.ex-shots p { margin: 6px 0 0; }
+.graph { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 34px 40px; padding: 4px; }
+.graph .arcs { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.graph .arcs path { fill: none; stroke: var(--ink); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-dasharray: 4 5; }
+.node { position: relative; display: grid; gap: 4px; padding: 10px 12px; border-radius: 14px; background: var(--white); color: var(--ink);
+  box-shadow: 0 0 0 2px var(--ink); text-decoration: none; }
+.node:hover .nm, .node:focus-visible .nm { text-decoration: underline; }
+.node .nm { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+.node .mark { width: 18px; height: 18px; flex: none; }
+.node .ln { font-size: .82rem; line-height: 1.3; }
+.n2 { grid-column: 2; grid-row: 2; } .n3 { grid-column: 1; grid-row: 2; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.step { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+.step .num { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 800; }
+.step p { margin: 4px 0 0; }
+.step a { color: inherit; text-decoration: underline; }
+.dots { display: flex; gap: 8px; margin-top: 12px; }
+.dots button { width: 12px; height: 12px; padding: 0; border-radius: 50%; border: 2px solid var(--ink); background: transparent; cursor: pointer; }
+.dots button[aria-current="true"] { background: var(--ink); }
+/* With the script and motion: one step at a time, sliding in. */
+.steps.cycle .step { display: none; }
+.steps.cycle .step.on { display: grid; animation: ex-in .35s ease-out; }
+@keyframes ex-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.graph.draw .arcs path { animation: ex-dash .6s ease-out both; }
+@keyframes ex-dash { from { stroke-dashoffset: 60; opacity: 0; } to { stroke-dashoffset: 0; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .steps.cycle .step { display: grid; } .steps.cycle .step.on { animation: none; }
+  .graph.draw .arcs path { animation: none; }
+}
+
 .stickers, .lang-row { list-style: none; display: flex; flex-wrap: wrap; gap: 20px 12px; }
 .st { position: relative; z-index: 4; transform: rotate(calc(var(--r0, 0deg) / 2)); }
 .pill { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-weight: 800; font-size: 1.05rem; line-height: 1.2;
@@ -254,6 +297,12 @@ main:focus { outline: none; }
   .tf-js .hero .small { margin-top: 14px !important; font-size: clamp(1rem, 2.2vh, 1.2rem); }
   .tf-js .hero .small { max-width: 34vw; }
   .tf-js .pill { max-width: 30vw; }
+  .tf-js .pill-x { z-index: 6; }
+  .tf-js .pill-x:has(.ex[open]) { z-index: 9; }
+  .tf-js .ex-card { position: absolute; top: calc(100% + 10px); right: -40px; max-height: calc(100vh - var(--y, 0px) - 120px); overflow: auto; }
+  .tf-js .ex.up .ex-card { top: auto; bottom: calc(100% + 10px); }
+  .tf-js .ex-shots { grid-template-columns: repeat(3, 1fr); }
+  .tf-js .ex-card:has(.ex-shots) { width: min(640px, 52vw); }
   .tf-js .lines3, .tf-js .words { position: absolute; left: 7vw; top: 50%; transform: translateY(-50%); }
   .tf-js .lines3 { font-size: min(9vh, 7rem, calc(82vw / var(--n, 6))); }
   .tf-js .lines3 span { white-space: nowrap; }

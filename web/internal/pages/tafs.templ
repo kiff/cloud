@@ -108,10 +108,18 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						@tafsCopy(w.Why)
 						@tafsGiant(w.Why)
 						<ul class="stickers">
-							<li class="st pill" style="--x:62%;--y:14%;--r0:-7deg;--c:var(--mint)" data-x=".6" data-r="-12">{ w.Why.Stickers[0] }</li>
-							<li class="st pill" style="--x:72%;--y:28%;--r0:5deg;--c:var(--lemon)" data-x="1" data-r="10">{ w.Why.Stickers[1] }</li>
-							<li class="st pill" style="--x:60%;--y:42%;--r0:8deg;--c:var(--white)" data-x=".4" data-r="14">{ w.Why.Stickers[2] }</li>
-							<li class="st pill" style="--x:74%;--y:54%;--r0:-5deg;--c:var(--straw);--t:#fff" data-x="1.2" data-r="-14">{ w.Why.Stickers[3] }</li>
+							@tafsBubble(0, w.Why.Stickers[0], "--x:62%;--y:14%;--r0:-7deg;--c:var(--mint)", ".6", "-12") {
+								@tafsExplainer0(w.Explain)
+							}
+							@tafsBubble(1, w.Why.Stickers[1], "--x:72%;--y:28%;--r0:5deg;--c:var(--lemon)", "1", "10") {
+								@tafsExplainer1(w.Explain)
+							}
+							@tafsBubble(2, w.Why.Stickers[2], "--x:60%;--y:42%;--r0:8deg;--c:var(--white)", ".4", "14") {
+								@tafsExplainer2(w.Explain)
+							}
+							@tafsBubble(3, w.Why.Stickers[3], "--x:74%;--y:54%;--r0:-5deg;--c:var(--straw);--t:#fff", "1.2", "-14") {
+								@tafsExplainer3(w.Explain, templ.SafeURL(string(w.path("/subprocessors"))+"#composio"))
+							}
 						</ul>
 						@tafsShot("record", w.Shots.Record, "760", "178", "--x:34%;--y:54%;--r0:-3deg;--w:min(28vw,380px)", ".8", "-6")
 						@tafsIdx(7, w.Why)
@@ -274,6 +282,95 @@ templ tafsBadge(id, fill, ink, ring, mid, place, dx, dr string) {
 // proves: light and dark (the visitor's own theme), WebP with a PNG fallback,
 // its edge faded so it reads as part of the screen. width and height are the
 // crop's own, so nothing moves when it loads.
+// tafsBubble is one of screen 7's stickers, opening its explainer: a
+// details element, so it opens by tap, click or keyboard without the script;
+// js/tafs.js adds hover on a wide screen, Esc, a click outside, and one open
+// at a time.
+templ tafsBubble(i int, label, place, dx, dr string) {
+	<li class="st pill-x" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
+		<details class="ex" id={ "ex" + string(rune('0'+i)) }>
+			<summary class="pill">{ label }</summary>
+			<div class="ex-card">
+				{ children... }
+			</div>
+		</details>
+	</li>
+}
+
+// tafsMark is GitHub's mark, unaltered, in one colour.
+templ tafsMark() {
+	<svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+}
+
+// "You stay in control": the alert, the Card and the held call.
+templ tafsExplainer0(e tafsExplain) {
+	<ul class="ex-shots">
+		for i, name := range [3]string{"alert", "card", "held"} {
+			<li>
+				@tafsPicture(name, e.ControlAlt[i])
+				<p>{ e.Control[i] }</p>
+			</li>
+		}
+	</ul>
+}
+
+// "Proof of everything": a receipt's one line.
+templ tafsExplainer1(e tafsExplain) {
+	<p class="ex-line">{ e.Proof }</p>
+	<div class="ex-shot">
+		@tafsPicture("receipt", e.ProofAlt)
+	</div>
+}
+
+// "Open code": the four public repos and how they call each other.
+templ tafsExplainer2(e tafsExplain) {
+	<p class="ex-line">{ e.Open }</p>
+	<div class="graph">
+		<svg class="arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+			<path d="M41 22 H59"></path>
+			<path d="M75 40 V60"></path>
+			<path d="M41 78 H59"></path>
+			<path d="M25 40 V60"></path>
+		</svg>
+		for i, n := range e.Nodes {
+			<a class={ "node n" + string(rune('0'+i)) } href={ templ.SafeURL("https://github.com/kiff/" + tafsRepos[i]) } rel="noopener">
+				<span class="nm">
+					@tafsMark()
+					{ n.Name }
+				</span>
+				<span class="ln">{ n.Line }</span>
+			</a>
+		}
+	</div>
+}
+
+// "Privacy first": who holds what, one step per route.
+templ tafsExplainer3(e tafsExplain, sub templ.SafeURL) {
+	<p class="ex-head">{ e.PrivacyHead }</p>
+	<ol class="steps" data-step={ e.Step }>
+		for i, t := range e.Privacy {
+			<li class={ "step s" + string(rune('0'+i)) }>
+				<span class="num" aria-hidden="true">{ string(rune('1'+i)) }</span>
+				<p>
+					{ t }
+					if i == 1 {
+						{ " " }<a href={ sub }>{ e.Partner }</a>
+					}
+				</p>
+			</li>
+		}
+	</ol>
+}
+
+// tafsPicture is a crop as a plain picture, loaded only once shown.
+templ tafsPicture(name, alt string) {
+	<picture>
+		<source srcset={ assets.URL("img/tafs/shots/" + name + "-dark.webp") } type="image/webp" media="(prefers-color-scheme: dark)"/>
+		<source srcset={ assets.URL("img/tafs/shots/" + name + "-light.webp") } type="image/webp"/>
+		<img src={ assets.URL("img/tafs/shots/" + name + "-light.png") } alt={ alt } loading="lazy" decoding="async"/>
+	</picture>
+}
+
 templ tafsShot(name, alt, width, height, place, dx, dr string) {
 	<figure class="st shot" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
 		<picture>

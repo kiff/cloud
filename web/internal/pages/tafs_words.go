@@ -95,6 +95,8 @@ type tafsWords struct {
 	// Shots are the real app screens beside the screens' words, and the two
 	// videos' captions (tafsShot, tafsPhone).
 	Shots tafsShots
+	// Explain is what screen 7's stickers open (tafs_explain.go).
+	Explain tafsExplain
 }
 
 // tafsShots says what each real app screen on the page shows, for a screen
