@@ -13,9 +13,9 @@ import (
 // of every Card it revises is the same as or narrower than the Card in
 // force (mandate.Widens, which fails closed). Anything that widens is
 // critical: the phone's approval key, behind its fingerprint, every time.
-// A new Card is routine only for a holder with no Card in force (a new
-// taf's first Cards); beside one it holds already, it widens. Retiring a
-// Card only narrows.
+// A new Card always widens: it gives a taf authority it didn't have, a new
+// taf's first Card as much as a second one beside a Card in force, so no
+// window covers it. Retiring a Card only narrows.
 
 // cardWidening is one way a change widens a Card in force, with the Card.
 type cardWidening struct {
@@ -36,8 +36,7 @@ func (h *MandatesHandler) widensInForce(ctx context.Context, tenantID string, ca
 			byID[m.ID] = m
 		}
 	}
-	// Who holds a Card in force already: a new Card for one of them adds
-	// authority beside it, whatever its own terms.
+	// Who holds a Card in force already, for the words.
 	holds := map[string]bool{}
 	for _, m := range byID {
 		for _, h := range m.HolderList() {
@@ -48,13 +47,15 @@ func (h *MandatesHandler) widensInForce(ctx context.Context, tenantID string, ca
 	for _, c := range cards {
 		cur, ok := byID[c.ID]
 		if !ok {
+			// A Card not in force gives authority, whoever holds it.
+			words := "Issues a new Card: authority its taf didn't have"
 			for _, h := range c.HolderList() {
 				if holds[h] {
-					out = append(out, cardWidening{Card: c.ID, Widening: mandate.Widening{Kind: "new_card",
-						Words: "Adds a Card beside the ones its holder already has"}})
+					words = "Adds a Card beside the ones its holder already has"
 					break
 				}
 			}
+			out = append(out, cardWidening{Card: c.ID, Widening: mandate.Widening{Kind: "new_card", Words: words}})
 			continue
 		}
 		for _, w := range mandate.Widens(&cur, mandate.AsIssuedOver(c, &cur)) {
@@ -76,6 +77,6 @@ func windowSigned(r *http.Request) bool {
 // app can say why it asks for the fingerprint.
 func criticalKeyRequired(w http.ResponseWriter, ws []cardWidening) {
 	writeJSON(w, http.StatusForbidden, map[string]any{"error": "critical_key_required",
-		"detail": "this widens a Card in force: sign it with the phone's approval key, behind its fingerprint or face",
+		"detail": "this issues a new Card or widens one in force: sign it with the phone's approval key, behind its fingerprint or face",
 		"widens": ws})
 }

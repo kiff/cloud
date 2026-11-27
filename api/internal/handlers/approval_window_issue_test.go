@@ -19,11 +19,11 @@ import (
 	"github.com/kiff/cloud/api/internal/mandate"
 )
 
-// kiff/tafs#494: inside an approval window a tap issues a holder's first
-// Card, or reissues one that widens nothing; a reissue that raises an
-// aggregate, or a second Card beside one in force, is refused with
-// critical_key_required: the approval key, behind the fingerprint. With the
-// real handler.
+// kiff/tafs#494: inside an approval window a tap reissues a Card only when
+// the reissue widens nothing. A new Card (a holder's first one included), a
+// reissue that raises an aggregate, or a second Card beside one in force is
+// refused with critical_key_required: the approval key, behind the
+// fingerprint. With the real handler.
 func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	t.Parallel()
 	now := time.Date(2026, 11, 5, 12, 0, 0, 0, time.UTC)
@@ -81,9 +81,17 @@ func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	if err := windows.Open(t.Context(), win); err != nil {
 		t.Fatal(err)
 	}
-	// A new Card, inside the window: issued.
-	if code, body := post("/v1/me/mandates", card("card-w", 500000, 1), sign(deviceKey, "/v1/me/mandates", card("card-w", 500000, 1), win.ID)); code != http.StatusCreated {
+	// A new Card, inside the window: refused, nothing issued. Its words say why.
+	if code, body := post("/v1/me/mandates", card("card-w", 500000, 1), sign(deviceKey, "/v1/me/mandates", card("card-w", 500000, 1), win.ID)); code != http.StatusForbidden ||
+		!strings.Contains(body, "critical_key_required") || !strings.Contains(body, "new_card") {
 		t.Fatalf("a new Card inside the window: %d %s", code, body)
+	}
+	if ms, _ := store.List(t.Context(), "tenant-1"); len(ms) != 0 {
+		t.Fatalf("a tap issued a new Card: %+v", ms)
+	}
+	// The same new Card, with the approval key: issued.
+	if code, body := post("/v1/me/mandates", card("card-w", 500000, 1), sign(approvalKey, "/v1/me/mandates", card("card-w", 500000, 1), "")); code != http.StatusCreated {
+		t.Fatalf("a new Card with the approval key: %d %s", code, body)
 	}
 	// The same Card reissued with a higher limit, inside the window: refused, and the Card unchanged.
 	if code, body := post("/v1/me/mandates", card("card-w", 900000, 2), sign(deviceKey, "/v1/me/mandates", card("card-w", 900000, 2), win.ID)); code != http.StatusForbidden || !strings.Contains(body, "critical_key_required") {
@@ -105,9 +113,21 @@ func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	if ms, _ := store.List(t.Context(), "tenant-1"); len(ms) != 1 {
 		t.Fatalf("a second Card was issued: %+v", ms)
 	}
-	// Another taf's first Card, inside the window: issued.
-	if code, body := post("/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), sign(deviceKey, "/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), win.ID)); code != http.StatusCreated {
+	// Another taf's first Card, inside the window: refused too.
+	if code, body := post("/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), sign(deviceKey, "/v1/me/mandates", cardFor("card-b", "agent-b", 500000, 5), win.ID)); code != http.StatusForbidden || !strings.Contains(body, "new_card") {
 		t.Fatalf("another taf's first Card inside the window: %d %s", code, body)
+	}
+	// A phone session with no approval key (the CI test phone's): its device
+	// key signs approvals, outside any window, as it always has; a new Card
+	// is issued.
+	keyless := phone
+	keyless.ApprovalKey = nil
+	req := httptest.NewRequest(http.MethodPost, "/v1/me/mandates", bytes.NewReader(cardFor("card-c", "agent-c", 500000, 6)))
+	req.Header.Set(auth.DeviceSignatureHeader, sign(deviceKey, "/v1/me/mandates", cardFor("card-c", "agent-c", 500000, 6), ""))
+	rec := httptest.NewRecorder()
+	policed.ServeHTTP(rec, req.WithContext(auth.WithIdentity(req.Context(), keyless)))
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("a new Card from a session with no approval key: %d %s", rec.Code, rec.Body)
 	}
 	// The reissue with the approval key: as today.
 	if code, body := post("/v1/me/mandates", card("card-w", 900000, 3), sign(approvalKey, "/v1/me/mandates", card("card-w", 900000, 3), "")); code != http.StatusCreated {
