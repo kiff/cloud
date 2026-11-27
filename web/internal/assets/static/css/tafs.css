@@ -148,7 +148,10 @@ main:focus { outline: none; }
 /* A video in a drawn phone: CSS only, its island by ::before. js/tafs.js
    plays it while it's in view; with no script or reduced motion, its own
    controls and the play button. */
-.phone { position: relative; margin: 0; width: var(--w, min(28vh, 260px)); max-width: 62vw; aspect-ratio: 9 / 19.5;
+/* The phone's screen has the videos' own shape (406 × 720), so nothing of the
+   app is cropped; on a wide screen it takes the panel's height below the
+   header (--pw), its caption beside it. */
+.phone { --pw: min(calc((100vh - 110px) * 406 / 720), 400px); position: relative; margin: 0; width: var(--w, min(28vh, 260px)); max-width: 62vw; aspect-ratio: 406 / 720;
   padding: 9px; border-radius: 40px; background: #0b0a0e; box-shadow: 0 0 0 2px #3a3842, 0 22px 60px rgba(0,0,0,.45); }
 .phone::before { content: ""; position: absolute; z-index: 2; top: 17px; left: 50%; width: 30%; height: 22px;
   transform: translateX(-50%); border-radius: 999px; background: black; }
@@ -169,7 +172,7 @@ main:focus { outline: none; }
 @media (max-width: 899px), (max-height: 559px) {
   .shot, .phone { margin: 22px auto 0; }
   .shot { width: min(86vw, 420px); }
-  .phone { width: min(56vw, 230px); }
+  .phone { width: min(80vw, 340px); }
   .phone { margin-bottom: 56px; }
 }
 .ask { width: 290px; max-width: 80vw; border-radius: 18px; background: var(--ink); color: var(--white); padding: 15px 16px; display: grid; gap: 3px; box-shadow: 0 0 0 3px var(--white); }
@@ -297,6 +300,8 @@ main:focus { outline: none; }
   .tf-js .hero .small { margin-top: 14px !important; font-size: clamp(1rem, 2.2vh, 1.2rem); }
   .tf-js .hero .small { max-width: 34vw; }
   .tf-js .pill { max-width: 30vw; }
+  .tf-js .phone { width: var(--pw); max-width: none; }
+  .tf-js .phone figcaption { left: auto; right: calc(100% + 18px); top: auto; bottom: 8px; width: 190px; text-align: right; }
   .tf-js .pill-x { z-index: 6; }
   /* The card stands straight, whatever its sticker's tilt. */
   .tf-js .ex-card { position: absolute; top: calc(100% + 10px); right: -40px; max-height: calc(100vh - var(--y, 0px) - 120px); overflow: auto;
