@@ -208,7 +208,6 @@ func (h *DeviceVerifyHandler) verify(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			if werr == nil && open.ID == req.Window && open.Tenant == d.Tenant && open.Subject == d.Subject && h.openedByCurrentKey(r.Context(), open, now) {
-				_ = h.windows.Restart(r.Context(), open.ID, open.Restarted(now))
 				window["open"], window["expires"] = true, open.Restarted(now).UTC().Format(time.RFC3339)
 				h.recordApproval(r.Context(), id.Tenant, d.ID, open.ID, message, req.Signature, capability, now)
 			}

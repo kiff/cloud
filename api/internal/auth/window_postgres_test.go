@@ -41,12 +41,12 @@ func TestPostgresWindowStore(t *testing.T) {
 	}
 	store := auth.NewPostgresWindowStore(pool)
 	w := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: tenantID, Subject: "human-1", DeviceID: phone.ID, SessionID: "sess-1",
-		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: "3f2a 91c0 7b1e 0d44"}
+		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: "3f2a 91c0 7b1e 0d44", Agent: "rae"}
 	if err := store.Open(ctx, w); err != nil {
 		t.Fatalf("open: %v", err)
 	}
 	got, err := store.Get(ctx, w.ID)
-	if err != nil || got.ID != w.ID || got.DeviceID != phone.ID || !got.OpenedAt.Equal(now) || !got.CapAt.Equal(w.CapAt) || got.OpenedBy != w.OpenedBy || got.ClosedAt != nil {
+	if err != nil || got.ID != w.ID || got.DeviceID != phone.ID || !got.OpenedAt.Equal(now) || !got.CapAt.Equal(w.CapAt) || got.OpenedBy != w.OpenedBy || got.Agent != "rae" || got.ClosedAt != nil {
 		t.Fatalf("read back: %v %+v", err, got)
 	}
 	if _, err := store.Get(ctx, "win_none"); !errors.Is(err, auth.ErrWindowNotFound) {
@@ -61,11 +61,11 @@ func TestPostgresWindowStore(t *testing.T) {
 	if _, err := store.OpenFor(ctx, other.ID, now); !errors.Is(err, auth.ErrWindowNotFound) {
 		t.Errorf("the other device: %v", err)
 	}
-	// Restarted at 4 minutes: open at 8; a restart of none is not found.
-	if err := store.Restart(ctx, w.ID, now.Add(9*time.Minute)); err != nil {
+	// The store's Restart moves the expiry, never past the cap; a restart of none is not found.
+	if err := store.Restart(ctx, w.ID, now.Add(4*time.Minute)); err != nil {
 		t.Fatal(err)
 	}
-	if o, err := store.OpenFor(ctx, phone.ID, now.Add(8*time.Minute)); err != nil || !o.ExpiresAt.Equal(now.Add(9*time.Minute)) {
+	if o, err := store.OpenFor(ctx, phone.ID, now.Add(3*time.Minute)); err != nil || !o.ExpiresAt.Equal(now.Add(4*time.Minute)) {
 		t.Errorf("restarted: %v %v", err, o.ExpiresAt)
 	}
 	if err := store.Restart(ctx, "win_none", now); !errors.Is(err, auth.ErrWindowNotFound) {
