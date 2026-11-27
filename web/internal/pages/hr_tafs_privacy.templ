@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleHR() {
 						if len(googleInHouse("hr")) > 0 {
 							<li>Putem tafsove vlastite Google prijave, bez ikakvog drugog poduzeća između: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("hr") {
+							<li>
+								{ a.Name }{ googlePendingSep("hr") }{ googlePendingWords("hr").Line }
+								{ googlePendingWords("hr").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Aplikacija navedena pod oba načina povezuje se na jedan ili drugi način, ovisno o vašem računu. Googleova vlastita stranica za prijavu pokazuje koji od njih dopuštate.

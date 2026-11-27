@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleET() {
 						if len(googleInHouse("et")) > 0 {
 							<li>tafsi enda Google'i sisselogimise kaudu, ilma ühegi teise ettevõtteta vahel: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("et") {
+							<li>
+								{ a.Name }{ googlePendingSep("et") }{ googlePendingWords("et").Line }
+								{ googlePendingWords("et").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Mõlema all nimetatud rakendus ühendub ühel või teisel viisil, olenevalt teie kontost. Google'i enda sisselogimisleht näitab, kumba te lubate.

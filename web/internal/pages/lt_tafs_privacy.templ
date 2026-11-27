@@ -140,6 +140,17 @@ templ tafsPrivacyGoogleLT() {
 						if len(googleInHouse("lt")) > 0 {
 							<li>Per paties tafs Google prisijungimą, be jokios kitos įmonės tarpininkavimo: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("lt") {
+							<li>
+								{ a.Name }{ googlePendingSep("lt") }{ googlePendingWords("lt").Line }
+								{ googlePendingWords("lt").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Programėlė, nurodyta abiejose vietose, jungiasi vienu ar kitu būdu, priklausomai nuo jūsų paskyros. Pačios Google prisijungimo puslapis rodo, kurį būdą leidžiate.

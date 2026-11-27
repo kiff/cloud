@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleCA() {
 						if len(googleInHouse("ca")) > 0 {
 							<li>A través de l'inici de sessió de Google del mateix tafs, sense cap altra empresa pel mig: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ca") {
+							<li>
+								{ a.Name }{ googlePendingSep("ca") }{ googlePendingWords("ca").Line }
+								{ googlePendingWords("ca").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Una aplicació nomenada en tots dos casos es connecta d'una manera o l'altra, segons el vostre compte. La pàgina d'inici de sessió del mateix Google mostra quina esteu permetent.

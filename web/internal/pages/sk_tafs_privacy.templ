@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleSK() {
 						if len(googleInHouse("sk")) > 0 {
 							<li>Prostredníctvom vlastného prihlásenia Google v tafs, bez akejkoľvek inej spoločnosti medzi nimi: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("sk") {
+							<li>
+								{ a.Name }{ googlePendingSep("sk") }{ googlePendingWords("sk").Line }
+								{ googlePendingWords("sk").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Aplikácia uvedená pod oboma spôsobmi sa pripája jedným alebo druhým spôsobom, v závislosti od vášho účtu. Vlastná prihlasovacia stránka Google ukazuje, ktorý z nich povoľujete.

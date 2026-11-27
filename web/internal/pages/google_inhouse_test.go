@@ -67,9 +67,10 @@ const limitedUse = "Google API Services User Data Policy</a>, including the Limi
 // While no Google app is in-house, §6 keeps the managed text it has always
 // had: Gmail as the example, the sign-in partner, and no scopes.
 func TestGoogleSectionStaysManagedWhileNoGoogleAppIsInHouse(t *testing.T) {
-	saved := InHouseApps
-	defer func() { InHouseApps = saved }()
+	saved, savedPending := InHouseApps, PendingInHouseApps
+	defer func() { InHouseApps, PendingInHouseApps = saved, savedPending }()
 	InHouseApps = []string{"Stripe"}
+	PendingInHouseApps = nil
 	for lang := range googleSections {
 		s := renderGoogleSection(t, lang)
 		if !strings.Contains(s, "Gmail") || strings.Contains(s, "googleapis.com/auth") || strings.Contains(s, "AWS KMS") {
@@ -270,10 +271,11 @@ func TestGoogleSectionNamesEachRouteWhileBothAreUsed(t *testing.T) {
 // the sign-in partner, covers Gmail, Calendar and Sheets, and never says "no
 // other company".
 func TestGoogleSectionNamesTheManagedGoogleApps(t *testing.T) {
-	saved, savedManaged := InHouseApps, ManagedApps
-	defer func() { InHouseApps, ManagedApps = saved, savedManaged }()
+	saved, savedManaged, savedPending := InHouseApps, ManagedApps, PendingInHouseApps
+	defer func() { InHouseApps, ManagedApps, PendingInHouseApps = saved, savedManaged, savedPending }()
 	ManagedApps = []string{"Gmail", "Google Calendar", "Google Sheets"}
 	InHouseApps = nil
+	PendingInHouseApps = nil
 	for lang := range googleSections {
 		s := renderGoogleSection(t, lang)
 		w := googleRouteWords[lang]

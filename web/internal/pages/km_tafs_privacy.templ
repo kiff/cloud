@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleKM() {
 						if len(googleInHouse("km")) > 0 {
 							<li>តាមរយៈការចូល Google ផ្ទាល់របស់ tafs ដោយគ្មានក្រុមហ៊ុនផ្សេងនៅចន្លោះ: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("km") {
+							<li>
+								{ a.Name }{ googlePendingSep("km") }{ googlePendingWords("km").Line }
+								{ googlePendingWords("km").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						កម្មវិធីដែលមានឈ្មោះក្រោមទាំងពីរភ្ជាប់តាមរបៀបមួយ ឬមួយទៀត អាស្រ័យលើគណនីរបស់អ្នក។ ទំព័រចូលរបស់ Google ផ្ទាល់បង្ហាញថាអ្នកកំពុងអនុញ្ញាតមួយណា។

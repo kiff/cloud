@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleBG() {
 						if len(googleInHouse("bg")) > 0 {
 							<li>Чрез собствения вход с Google на tafs, без друга компания по средата: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("bg") {
+							<li>
+								{ a.Name }{ googlePendingSep("bg") }{ googlePendingWords("bg").Line }
+								{ googlePendingWords("bg").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Приложение, посочено и в двата списъка, се свързва по единия или по другия начин в зависимост от вашия акаунт. Собствената страница за вход на Google показва кой от двата разрешавате.

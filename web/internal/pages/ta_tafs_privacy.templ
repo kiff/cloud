@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleTA() {
 						if len(googleInHouse("ta")) > 0 {
 							<li>tafs இன் சொந்த Google உள்நுழைவு வழியாக, இடையில் வேறு நிறுவனம் இல்லாமல்: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ta") {
+							<li>
+								{ a.Name }{ googlePendingSep("ta") }{ googlePendingWords("ta").Line }
+								{ googlePendingWords("ta").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						இரண்டிலும் பெயரிடப்பட்ட செயலி உங்கள் கணக்கைப் பொறுத்து ஒரு வழியிலோ மற்றதிலோ இணைகிறது. நீங்கள் எதை அனுமதிக்கிறீர்கள் என்பதை Google இன் சொந்த உள்நுழைவுப் பக்கம் காட்டுகிறது.

@@ -138,6 +138,17 @@ templ tafsPrivacyGoogleTK() {
 						if len(googleInHouse("tk")) > 0 {
 							<li>tafs-yň öz Google girişi arkaly, aradaky başga kompaniýa bolmazdan: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("tk") {
+							<li>
+								{ a.Name }{ googlePendingSep("tk") }{ googlePendingWords("tk").Line }
+								{ googlePendingWords("tk").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Iki ýerde hem atlandyrylan programma hasabyňyza baglylykda ýa-da bir usulda, ýa-da beýleki usulda birigýär. Google-yň öz giriş sahypasy haýsyna rugsat berýändigiňizi görkezýär.

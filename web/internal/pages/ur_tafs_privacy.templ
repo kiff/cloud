@@ -138,6 +138,17 @@ templ tafsPrivacyGoogleUR() {
 						if len(googleInHouse("ur")) > 0 {
 							<li>tafs کے اپنے Google سائن اِن کے ذریعے، بیچ میں کسی اور کمپنی کے بغیر: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ur") {
+							<li>
+								{ a.Name }{ googlePendingSep("ur") }{ googlePendingWords("ur").Line }
+								{ googlePendingWords("ur").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						جو ایپ دونوں کے تحت نامزد ہے وہ آپ کے اکاؤنٹ کے مطابق ایک یا دوسرے طریقے سے جڑتی ہے۔ Google کا اپنا سائن اِن صفحہ دکھاتا ہے کہ آپ کسے اجازت دے رہے ہیں۔

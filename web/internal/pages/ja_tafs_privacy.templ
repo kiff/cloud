@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleJA() {
 						if len(googleInHouse("ja")) > 0 {
 							<li>他の会社を介さない、tafs自身のGoogleサインインを通じて: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ja") {
+							<li>
+								{ a.Name }{ googlePendingSep("ja") }{ googlePendingWords("ja").Line }
+								{ googlePendingWords("ja").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						両方に記載されたアプリは、あなたのアカウントに応じて、どちらか一方の方法で接続します。どちらを許可しているかは、Google自身のサインインページに表示されます。

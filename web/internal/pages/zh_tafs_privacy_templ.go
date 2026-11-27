@@ -194,169 +194,255 @@ func tafsPrivacyGoogleZH() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "兩處都列出的應用程式，依您的帳戶以其中一種方式連接。Google 自己的登入頁面顯示您正在允許哪一種。")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。<ul><li><strong>透過我們的登入夥伴：</strong>tafs 只要求 taf 的工具所需的存取。若無法取得該較窄的存取，它會要求該應用程式的一般存取，並在您登入前說明。若一般存取包含 taf 不使用的個人資料，tafs 不會連接。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>該登入一次要求下列列出的該應用程式的全部存取，即使 taf 只讀取。</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("zh")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。該登入一次要求下列列出的該應用程式的全部存取，即使 taf 只讀取。</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。tafs 只要求 taf 的工具所需的存取。若無法取得該較窄的存取，它會要求該應用程式的一般存取，並在您登入前說明。若一般存取包含 taf 不使用的個人資料，tafs 不會連接。</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>taf 如何使用它：</strong>taf 只使用其 Card 上核准的工具。每次呼叫在送出任何內容之前，都會對照針對該確切工具與該等引數的許可檢查，且超出您所給存取的呼叫會被拒絕。哪些動作每次都要詢問您的核准，設定在 Card 上。</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("zh")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>tafs 自己的 Google 登入所要求的存取：</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>tafs 所要求的存取：</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("zh") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+			for _, a := range googlePending("zh") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 170, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 142, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("zh"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 142, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("zh").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 142, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("zh").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 143, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 173, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 146, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>：")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 173, Col: 46}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var12 string
+					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 146, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>無論登入允許多少，taf 只使用其 Card 上的工具。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "兩處都列出的應用程式，依您的帳戶以其中一種方式連接。Google 自己的登入頁面顯示您正在允許哪一種。")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>誰保管您的登入：</strong><ul><li><strong>透過我們的登入夥伴：</strong>您的 Google 登入由我們的登入夥伴保管（列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）），從不交給 taf 或 planque。taf 與 tafs 都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>planque（tafs 自己的連線服務）為貴公司保管您的 Google 權杖，以歐盟（愛爾蘭）的 AWS KMS 加密，並僅用於進行 taf 的 Card 允許的呼叫。它從不交給 taf，且 taf 與 AI 模型都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。<ul><li><strong>透過我們的登入夥伴：</strong>tafs 只要求 taf 的工具所需的存取。若無法取得該較窄的存取，它會要求該應用程式的一般存取，並在您登入前說明。若一般存取包含 taf 不使用的個人資料，tafs 不會連接。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>該登入一次要求下列列出的該應用程式的全部存取，即使 taf 只讀取。</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("zh")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>誰保管您的登入：</strong>planque（tafs 自己的連線服務）為貴公司保管您的 Google 權杖，以歐盟（愛爾蘭）的 AWS KMS 加密，並僅用於進行 taf 的 Card 允許的呼叫。它從不交給 taf，且 taf 與 AI 模型都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。該登入一次要求下列列出的該應用程式的全部存取，即使 taf 只讀取。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>誰保管您的登入：</strong>您的 Google 登入由我們的登入夥伴保管（列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）），從不交給 taf 或 planque。taf 與 tafs 都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>您允許什麼：</strong>您在 Google 自己的頁面登入並選擇要允許的內容。tafs 只要求 taf 的工具所需的存取。若無法取得該較窄的存取，它會要求該應用程式的一般存取，並在您登入前說明。若一般存取包含 taf 不使用的個人資料，tafs 不會連接。</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>taf 如何使用它：</strong>taf 只使用其 Card 上核准的工具。每次呼叫在送出任何內容之前，都會對照針對該確切工具與該等引數的許可檢查，且超出您所給存取的呼叫會被拒絕。哪些動作每次都要詢問您的核准，設定在 Card 上。</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("zh")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>tafs 自己的 Google 登入所要求的存取：</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>tafs 所要求的存取：</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("zh") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 181, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 184, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>：")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_tafs_privacy.templ`, Line: 184, Col: 46}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>無論登入允許多少，taf 只使用其 Card 上的工具。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。<ul><li><strong>透過我們的登入夥伴：</strong>它也會經過我們的登入夥伴，由其進行每次呼叫。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>planque 自行呼叫 Google，因此沒有其他公司進行該呼叫或保管您的登入。</li></ul>兩者皆列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>誰保管您的登入：</strong><ul><li><strong>透過我們的登入夥伴：</strong>您的 Google 登入由我們的登入夥伴保管（列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）），從不交給 taf 或 planque。taf 與 tafs 都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>planque（tafs 自己的連線服務）為貴公司保管您的 Google 權杖，以歐盟（愛爾蘭）的 AWS KMS 加密，並僅用於進行 taf 的 Card 允許的呼叫。它從不交給 taf，且 taf 與 AI 模型都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("zh")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。planque 自行呼叫 Google，因此沒有其他公司進行該呼叫或保管您的登入。AI 模型的提供者列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>誰保管您的登入：</strong>planque（tafs 自己的連線服務）為貴公司保管您的 Google 權杖，以歐盟（愛爾蘭）的 AWS KMS 加密，並僅用於進行 taf 的 Card 允許的呼叫。它從不交給 taf，且 taf 與 AI 模型都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。它也會經過我們的登入夥伴，由其進行每次呼叫。兩者皆列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>誰保管您的登入：</strong>您的 Google 登入由我們的登入夥伴保管（列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）），從不交給 taf 或 planque。taf 與 tafs 都看不到您的密碼或 Google 權杖。您另一個需要相同存取的 taf 重複使用該登入，且每個 taf 只使用您為它核准的工具。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>AI 訓練：</strong>Google 使用者資料不用於訓練 AI 模型。</li><li><strong>圖像：</strong>tafs 不建立或編輯圖像或影片：其 AI 撰寫文字。它從不使用 Google API 或 Google 使用者資料來建立、編輯或分享任何人的私密影像（未經同意的私密影像，NCII），或任何其他人物影像。</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。<ul><li><strong>透過我們的登入夥伴：</strong>它也會經過我們的登入夥伴，由其進行每次呼叫。</li><li><strong>透過 tafs 自己的 Google 登入：</strong>planque 自行呼叫 Google，因此沒有其他公司進行該呼叫或保管您的登入。</li></ul>兩者皆列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("zh")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。planque 自行呼叫 Google，因此沒有其他公司進行該呼叫或保管您的登入。AI 模型的提供者列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>還有誰收到：</strong>taf 從 Google 讀取的內容，只在您允許後才送往執行該 taf 的 AI 模型（見 <a href=\"#ai\">tafs 中的 AI</a>），依其提供者的條款保存最多 30 天。它也會經過我們的登入夥伴，由其進行每次呼叫。兩者皆列於 <a href=\"/subprocessors\">/subprocessors</a> （英文）。</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>AI 訓練：</strong>Google 使用者資料不用於訓練 AI 模型。</li><li><strong>圖像：</strong>tafs 不建立或編輯圖像或影片：其 AI 撰寫文字。它從不使用 Google API 或 Google 使用者資料來建立、編輯或分享任何人的私密影像（未經同意的私密影像，NCII），或任何其他人物影像。</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("zh")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>保存多久，與在何處：</strong>您的試算表與事件留在您的 Google 帳戶中。在 tafs 自己的儲存空間中，工具回傳的內容只保存到 taf 的執行結束。轉送每次呼叫的 planque，將 Google 回傳的內容保存 24 小時，讓重複的呼叫得到相同的回答且永不被送出兩次；之後它只保存呼叫是否已送出。在對話中，只被讀取的內容以加密方式保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除。執行的記錄及其對話保存 30 天，taf 的備註則保存到您移除該 taf（見 <a href=\"#retention\">我們保存多久</a>）。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>保存多久，與在何處：</strong>您的試算表與事件留在您的 Google 帳戶中。在 tafs 自己的儲存空間中，工具回傳的內容只保存到 taf 的執行結束。轉送每次呼叫的 planque，將 Google 回傳的內容保存 24 小時，讓重複的呼叫得到相同的回答且永不被送出兩次；之後它只保存呼叫是否已送出。在對話中，只被讀取的內容以加密方式保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除。執行的記錄及其對話保存 30 天，taf 的備註則保存到您移除該 taf（見 <a href=\"#retention\">我們保存多久</a>）。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>保存多久，與在何處：</strong>您的草稿、事件與試算表留在您的 Google 帳戶中。在 tafs 自己的儲存空間中，工具回傳的內容只保存到 taf 的執行結束。轉送每次呼叫的 planque，將 Google 回傳的內容保存 24 小時，讓重複的呼叫得到相同的回答且永不被送出兩次；之後它只保存呼叫是否已送出。在對話中，只被讀取的內容以加密方式保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除。執行的記錄及其對話保存 30 天，taf 的備註則保存到您移除該 taf（見 <a href=\"#retention\">我們保存多久</a>）。</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>保存多久，與在何處：</strong>您的草稿、事件與試算表留在您的 Google 帳戶中。在 tafs 自己的儲存空間中，工具回傳的內容只保存到 taf 的執行結束。轉送每次呼叫的 planque，將 Google 回傳的內容保存 24 小時，讓重複的呼叫得到相同的回答且永不被送出兩次；之後它只保存呼叫是否已送出。在對話中，只被讀取的內容以加密方式保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除。執行的記錄及其對話保存 30 天，taf 的備註則保存到您移除該 taf（見 <a href=\"#retention\">我們保存多久</a>）。</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>停止它：</strong><ul><li>在應用程式中中斷 Google，於「連接應用程式」或該 taf 的 Card 分頁。其 Google 工具立即停止，且 tafs 立即要求 Google 撤銷該登入；該撤銷可能稍後才完成。</li><li>移除 taf，其連線隨之結束。您另一個 taf 仍在使用的 Google 登入會保留，直到最後一個消失。</li><li>隨時在您的 Google 帳戶中移除 tafs 的存取，網址為 <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>。您的 taf 停止存取 Google，且應用程式會告訴您 Google 連線已登出。</li><li>刪除您的帳戶：其 taf、對話、備註、檔案與連線立即清除，並在 35 天內從其時間點副本中清除，且其 Google 權杖在 Google 允許之處被撤銷。</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>停止它：</strong><ul><li>在應用程式中中斷 Google，於「連接應用程式」或該 taf 的 Card 分頁。其 Google 工具立即停止，且 tafs 立即要求 Google 撤銷該登入；該撤銷可能稍後才完成。</li><li>移除 taf，其連線隨之結束。您另一個 taf 仍在使用的 Google 登入會保留，直到最後一個消失。</li><li>隨時在您的 Google 帳戶中移除 tafs 的存取，網址為 <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>。您的 taf 停止存取 Google，且應用程式會告訴您 Google 連線已登出。</li><li>刪除您的帳戶：其 taf、對話、備註、檔案與連線立即清除，並在 35 天內從其時間點副本中清除，且其 Google 權杖在 Google 允許之處被撤銷。</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

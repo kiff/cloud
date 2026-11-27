@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleBN() {
 						if len(googleInHouse("bn")) > 0 {
 							<li>tafs-এর নিজস্ব Google সাইন-ইনের মাধ্যমে, মাঝে অন্য কোনো কোম্পানি ছাড়া: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("bn") {
+							<li>
+								{ a.Name }{ googlePendingSep("bn") }{ googlePendingWords("bn").Line }
+								{ googlePendingWords("bn").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						উভয়ের অধীনে নামকরা একটি অ্যাপ আপনার অ্যাকাউন্টের উপর নির্ভর করে একভাবে বা অন্যভাবে সংযুক্ত হয়। Google-এর নিজস্ব সাইন-ইন পৃষ্ঠা দেখায় আপনি কোনটিকে অনুমতি দিচ্ছেন।

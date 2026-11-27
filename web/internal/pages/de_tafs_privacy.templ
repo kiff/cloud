@@ -136,6 +136,17 @@ templ tafsPrivacyGoogleDE() {
 						if len(googleInHouse("de")) > 0 {
 							<li>Über die eigene Google-Anmeldung von tafs, ohne ein anderes Unternehmen dazwischen: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("de") {
+							<li>
+								{ a.Name }{ googlePendingSep("de") }{ googlePendingWords("de").Line }
+								{ googlePendingWords("de").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Eine App, die unter beiden steht, verbindet sich je nach deinem Konto auf dem einen oder dem anderen Weg. Googles eigene Anmeldeseite zeigt, welchem du es erlaubst.

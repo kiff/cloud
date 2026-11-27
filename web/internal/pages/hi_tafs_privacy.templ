@@ -138,6 +138,17 @@ templ tafsPrivacyGoogleHI() {
 						if len(googleInHouse("hi")) > 0 {
 							<li>tafs के अपने Google साइन-इन के ज़रिए, बीच में किसी और कंपनी के बिना: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("hi") {
+							<li>
+								{ a.Name }{ googlePendingSep("hi") }{ googlePendingWords("hi").Line }
+								{ googlePendingWords("hi").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						जो ऐप दोनों के अंतर्गत नामित है, वह आपके खाते के आधार पर एक या दूसरे तरीके से जुड़ता है। Google का अपना साइन-इन पृष्ठ दिखाता है कि आप किसे अनुमति दे रहे हैं।

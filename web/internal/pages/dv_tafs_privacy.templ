@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleDV() {
 						if len(googleInHouse("dv")) > 0 {
 							<li>tafs ގެ އަމިއްލަ Google ލޮގިން މެދުވެރިކޮށް، މެދުގައި އެހެން ކުންފުންޏެއް ނެތި: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("dv") {
+							<li>
+								{ a.Name }{ googlePendingSep("dv") }{ googlePendingWords("dv").Line }
+								{ googlePendingWords("dv").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						ދެކަމުގައިވެސް ނަންދީފައިވާ އެޕެއް ތިބާގެ އެކައުންޓަށް ބަރޯސާވެ އެއް ގޮތަކުން ނުވަތަ އަނެއް ގޮތަކުން ގުޅެއެވެ. Google ގެ އަމިއްލަ ލޮގިން ސަފްހާއިން ތިބާ ހުއްދަ ދެނީ ކޮންކަމަކަށްތޯ ދައްކައެވެ.

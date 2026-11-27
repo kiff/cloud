@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleEL() {
 						if len(googleInHouse("el")) > 0 {
 							<li>Μέσω της δικής του σύνδεσης Google του tafs, χωρίς καμία άλλη εταιρεία στη μέση: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("el") {
+							<li>
+								{ a.Name }{ googlePendingSep("el") }{ googlePendingWords("el").Line }
+								{ googlePendingWords("el").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Μια εφαρμογή που αναφέρεται και στις δύο συνδέεται με τον έναν ή τον άλλο τρόπο, ανάλογα με τον λογαριασμό σας. Η σελίδα σύνδεσης της ίδιας της Google δείχνει ποιον από τους δύο επιτρέπετε.

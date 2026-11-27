@@ -194,169 +194,255 @@ func tafsPrivacyGoogleVI() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Một ứng dụng được nêu ở cả hai kết nối theo cách này hoặc cách kia, tùy tài khoản của bạn. Trang đăng nhập riêng của Google cho thấy bạn đang cho phép cách nào.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. Phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>Một taf dùng nó ra sao:</strong> một taf chỉ dùng các công cụ được phê duyệt trên Card của nó. Mọi lệnh gọi được kiểm tra theo một giấy phép cho đúng công cụ và các đối số đó trước khi bất cứ thứ gì được gửi, và một lệnh gọi ngoài quyền truy cập bạn đã cấp bị từ chối. Những hành động nào hỏi phê duyệt của bạn mỗi lần được đặt trên Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>Quyền truy cập mà phương thức đăng nhập Google của chính tafs yêu cầu:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>Quyền truy cập mà tafs yêu cầu:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("vi") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+			for _, a := range googlePending("vi") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 170, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("vi"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 143, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 173, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 146, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 173, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var12 string
+					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 146, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Dù một phương thức đăng nhập cho phép bao nhiêu, taf chỉ dùng các công cụ trên Card của nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Một ứng dụng được nêu ở cả hai kết nối theo cách này hoặc cách kia, tùy tài khoản của bạn. Trang đăng nhập riêng của Google cho thấy bạn đang cho phép cách nào.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong><ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. Phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Một taf dùng nó ra sao:</strong> một taf chỉ dùng các công cụ được phê duyệt trên Card của nó. Mọi lệnh gọi được kiểm tra theo một giấy phép cho đúng công cụ và các đối số đó trước khi bất cứ thứ gì được gửi, và một lệnh gọi ngoài quyền truy cập bạn đã cấp bị từ chối. Những hành động nào hỏi phê duyệt của bạn mỗi lần được đặt trên Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("vi")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Quyền truy cập mà phương thức đăng nhập Google của chính tafs yêu cầu:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Quyền truy cập mà tafs yêu cầu:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("vi") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 181, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 184, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 184, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Dù một phương thức đăng nhập cho phép bao nhiêu, taf chỉ dùng các công cụ trên Card của nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn.</li></ul>Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong><ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn. Nhà cung cấp mô hình AI được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. Nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi. Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>Huấn luyện AI:</strong> dữ liệu người dùng Google không được dùng để huấn luyện các mô hình AI.</li><li><strong>Hình ảnh:</strong> tafs không tạo hay chỉnh sửa hình ảnh hoặc video: AI của nó viết văn bản. Nó không bao giờ dùng API của Google hay dữ liệu người dùng Google để tạo, chỉnh sửa hoặc chia sẻ hình ảnh thân mật của bất kỳ ai (hình ảnh thân mật không có sự đồng ý, NCII), hay bất kỳ hình ảnh nào khác của một người.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn.</li></ul>Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("vi")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn. Nhà cung cấp mô hình AI được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. Nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi. Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Huấn luyện AI:</strong> dữ liệu người dùng Google không được dùng để huấn luyện các mô hình AI.</li><li><strong>Hình ảnh:</strong> tafs không tạo hay chỉnh sửa hình ảnh hoặc video: AI của nó viết văn bản. Nó không bao giờ dùng API của Google hay dữ liệu người dùng Google để tạo, chỉnh sửa hoặc chia sẻ hình ảnh thân mật của bất kỳ ai (hình ảnh thân mật không có sự đồng ý, NCII), hay bất kỳ hình ảnh nào khác của một người.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Bao lâu, và ở đâu:</strong> các bảng tính và sự kiện của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Bao lâu, và ở đâu:</strong> các bảng tính và sự kiện của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Bao lâu, và ở đâu:</strong> các bản nháp, sự kiện và bảng tính của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Bao lâu, và ở đâu:</strong> các bản nháp, sự kiện và bảng tính của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Dừng nó:</strong><ul><li>Ngắt Google trong ứng dụng, trong Kết nối ứng dụng hoặc trên tab Card của taf. Các công cụ Google của nó dừng ngay, và tafs yêu cầu Google thu hồi thông tin đăng nhập ngay; việc đó có thể hoàn tất muộn hơn một chút.</li><li>Gỡ một taf, và các kết nối của nó kết thúc cùng nó. Một thông tin đăng nhập Google mà taf khác của bạn vẫn dùng ở lại cho đến khi taf cuối cùng biến mất.</li><li>Gỡ quyền truy cập của tafs bất cứ lúc nào trong Tài khoản Google của bạn, tại <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Các taf của bạn ngừng tiếp cận Google, và ứng dụng cho bạn biết kết nối Google đã đăng xuất.</li><li>Xóa tài khoản của bạn: các taf, cuộc trò chuyện, ghi chú, tệp và kết nối của nó bị xóa ngay, và khỏi các bản sao theo thời điểm của chúng trong vòng 35 ngày, và các mã thông báo Google của nó bị thu hồi ở nơi Google cho phép.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Dừng nó:</strong><ul><li>Ngắt Google trong ứng dụng, trong Kết nối ứng dụng hoặc trên tab Card của taf. Các công cụ Google của nó dừng ngay, và tafs yêu cầu Google thu hồi thông tin đăng nhập ngay; việc đó có thể hoàn tất muộn hơn một chút.</li><li>Gỡ một taf, và các kết nối của nó kết thúc cùng nó. Một thông tin đăng nhập Google mà taf khác của bạn vẫn dùng ở lại cho đến khi taf cuối cùng biến mất.</li><li>Gỡ quyền truy cập của tafs bất cứ lúc nào trong Tài khoản Google của bạn, tại <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Các taf của bạn ngừng tiếp cận Google, và ứng dụng cho bạn biết kết nối Google đã đăng xuất.</li><li>Xóa tài khoản của bạn: các taf, cuộc trò chuyện, ghi chú, tệp và kết nối của nó bị xóa ngay, và khỏi các bản sao theo thời điểm của chúng trong vòng 35 ngày, và các mã thông báo Google của nó bị thu hồi ở nơi Google cho phép.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

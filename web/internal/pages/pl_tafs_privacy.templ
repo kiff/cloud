@@ -136,6 +136,17 @@ templ tafsPrivacyGooglePL() {
 						if len(googleInHouse("pl")) > 0 {
 							<li>Przez własne logowanie Google tafs, bez żadnej innej firmy pośrodku: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("pl") {
+							<li>
+								{ a.Name }{ googlePendingSep("pl") }{ googlePendingWords("pl").Line }
+								{ googlePendingWords("pl").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Aplikacja wymieniona w obu łączy się w jeden lub drugi sposób, zależnie od Twojego konta. Sama strona logowania Google pokazuje, któremu dajesz dostęp.

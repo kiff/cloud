@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleSQ() {
 						if len(googleInHouse("sq")) > 0 {
 							<li>Përmes hyrjes së vet Google të tafs, pa asnjë kompani tjetër në mes: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("sq") {
+							<li>
+								{ a.Name }{ googlePendingSep("sq") }{ googlePendingWords("sq").Line }
+								{ googlePendingWords("sq").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Një aplikacion i emërtuar në të dyja lidhet në një mënyrë ose tjetrën, sipas llogarisë suaj. Faqja e vet e hyrjes e Google tregon cilën po lejoni.

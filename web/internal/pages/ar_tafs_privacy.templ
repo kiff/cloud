@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleAR() {
 						if len(googleInHouse("ar")) > 0 {
 							<li>عبر تسجيل دخول Google الخاص بـ tafs نفسه، دون أي شركة أخرى بينهما: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ar") {
+							<li>
+								{ a.Name }{ googlePendingSep("ar") }{ googlePendingWords("ar").Line }
+								{ googlePendingWords("ar").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						التطبيق المذكور في الاثنين يتصل بإحدى الطريقتين، بحسب حسابك. وتُظهر صفحة تسجيل الدخول الخاصة بـ Google نفسها أيّهما تسمح به.

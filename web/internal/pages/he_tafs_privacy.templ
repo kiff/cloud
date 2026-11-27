@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleHE() {
 						if len(googleInHouse("he")) > 0 {
 							<li>דרך ההתחברות העצמית של tafs ל-Google, בלי חברה אחרת באמצע: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("he") {
+							<li>
+								{ a.Name }{ googlePendingSep("he") }{ googlePendingWords("he").Line }
+								{ googlePendingWords("he").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						אפליקציה שנקובה תחת שתי הדרכים מתחברת בדרך אחת או באחרת, בהתאם לחשבון שלכם. דף ההתחברות של Google עצמה מראה איזו מהן אתם מתירים.

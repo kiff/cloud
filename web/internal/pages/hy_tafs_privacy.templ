@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleHY() {
 						if len(googleInHouse("hy")) > 0 {
 							<li>tafs-ի սեփական Google մուտքի միջոցով, առանց այլ ընկերության միջանկյալ: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("hy") {
+							<li>
+								{ a.Name }{ googlePendingSep("hy") }{ googlePendingWords("hy").Line }
+								{ googlePendingWords("hy").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Երկուսում էլ նշված հավելվածը միանում է այս կամ այն եղանակով՝ կախված ձեր հաշվից։ Google-ի սեփական մուտքի էջը ցույց է տալիս, թե որին եք թույլատրում։
