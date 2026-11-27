@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleMK() {
 						if len(googleInHouse("mk")) > 0 {
 							<li>Преку сопствената Google најава на tafs, без друга компанија помеѓу: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("mk") {
+							<li>
+								{ a.Name }{ googlePendingSep("mk") }{ googlePendingWords("mk").Line }
+								{ googlePendingWords("mk").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Апликација наведена под двете се поврзува на еден или на друг начин, во зависност од вашата сметка. Страницата за најава на самиот Google покажува која ја дозволувате.

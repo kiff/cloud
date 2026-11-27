@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleTR() {
 						if len(googleInHouse("tr")) > 0 {
 							<li>araya başka bir şirket girmeden, tafs'ın kendi Google girişi üzerinden: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("tr") {
+							<li>
+								{ a.Name }{ googlePendingSep("tr") }{ googlePendingWords("tr").Line }
+								{ googlePendingWords("tr").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Her iki başlık altında adı geçen bir uygulama, hesabınıza bağlı olarak bir yoldan ya da diğerinden bağlanır. Google'ın kendi giriş sayfası hangisine izin verdiğinizi gösterir.

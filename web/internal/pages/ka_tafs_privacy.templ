@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleKA() {
 						if len(googleInHouse("ka")) > 0 {
 							<li>tafs-ის საკუთარი Google შესვლის გავლით, სხვა კომპანიის გარეშე შუაში: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ka") {
+							<li>
+								{ a.Name }{ googlePendingSep("ka") }{ googlePendingWords("ka").Line }
+								{ googlePendingWords("ka").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						აპი, რომელიც ორივეშია დასახელებული, ერთი ან მეორე გზით უკავშირდება, თქვენი ანგარიშის მიხედვით. Google-ის საკუთარი შესვლის გვერდი გაჩვენებთ, რომელს ანიჭებთ ნებას.

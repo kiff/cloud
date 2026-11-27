@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleZH() {
 						if len(googleInHouse("zh")) > 0 {
 							<li>透過 tafs 自己的 Google 登入，中間沒有其他公司: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("zh") {
+							<li>
+								{ a.Name }{ googlePendingSep("zh") }{ googlePendingWords("zh").Line }
+								{ googlePendingWords("zh").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						兩處都列出的應用程式，依您的帳戶以其中一種方式連接。Google 自己的登入頁面顯示您正在允許哪一種。

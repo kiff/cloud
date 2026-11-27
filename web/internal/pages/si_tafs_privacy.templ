@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleSI() {
 						if len(googleInHouse("si")) > 0 {
 							<li>tafs හි ම Google පිවිසුම හරහා, අතරමැදි වෙනත් සමාගමක් නොමැතිව: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("si") {
+							<li>
+								{ a.Name }{ googlePendingSep("si") }{ googlePendingWords("si").Line }
+								{ googlePendingWords("si").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						දෙකෙහිම නම් කර ඇති යෙදුමක් ඔබේ ගිණුම අනුව එක් ආකාරයකින් හෝ අනෙක් ආකාරයෙන් සම්බන්ධ වේ. Google හි ම පිවිසුම් පිටුව ඔබ ඉඩ දෙන්නේ කුමක්දැයි පෙන්වයි.

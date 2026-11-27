@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleLO() {
 						if len(googleInHouse("lo")) > 0 {
 							<li>ຜ່ານການເຂົ້າສູ່ລະບົບ Google ຂອງ tafs ເອງ, ໂດຍບໍ່ມີບໍລິສັດອື່ນຢູ່ລະຫວ່າງ: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("lo") {
+							<li>
+								{ a.Name }{ googlePendingSep("lo") }{ googlePendingWords("lo").Line }
+								{ googlePendingWords("lo").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						ແອັບທີ່ມີຊື່ໃນທັງສອງເຊື່ອມຕໍ່ວິທີໃດວິທີໜຶ່ງ, ຂຶ້ນກັບບັນຊີຂອງທ່ານ. ໜ້າເຂົ້າສູ່ລະບົບຂອງ Google ເອງສະແດງວ່າທ່ານກຳລັງອະນຸຍາດອັນໃດ.

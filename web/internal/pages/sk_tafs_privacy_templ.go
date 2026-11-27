@@ -194,169 +194,255 @@ func tafsPrivacyGoogleSK() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Aplikácia uvedená pod oboma spôsobmi sa pripája jedným alebo druhým spôsobom, v závislosti od vášho účtu. Vlastná prihlasovacia stránka Google ukazuje, ktorý z nich povoľujete.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte.<ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> tafs žiada len o prístup, ktorý potrebujú nástroje tafu. Ak tento užší prístup nie je možný, požiada o obvyklý prístup aplikácie a povie to skôr, než sa prihlásite. Ak by obvyklý prístup zahŕňal osobné údaje, ktoré taf nepoužíva, tafs sa nepripojí.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> prihlásenie žiada naraz o celý prístup uvedený nižšie pre danú aplikáciu, aj keď taf iba číta.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("sk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte. Prihlásenie žiada naraz o celý prístup uvedený nižšie pre danú aplikáciu, aj keď taf iba číta.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte. tafs žiada len o prístup, ktorý potrebujú nástroje tafu. Ak tento užší prístup nie je možný, požiada o obvyklý prístup aplikácie a povie to skôr, než sa prihlásite. Ak by obvyklý prístup zahŕňal osobné údaje, ktoré taf nepoužíva, tafs sa nepripojí.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>Ako ich taf používa:</strong> taf používa len nástroje schválené v jeho Card. Každé volanie sa pred odoslaním čohokoľvek overí voči povoleniu pre presne tento nástroj a tieto argumenty a volanie mimo prístupu, ktorý ste udelili, sa odmietne. Ktoré akcie si zakaždým vyžiadajú vaše schválenie, sa nastavuje v Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("sk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>Prístup, o ktorý žiada vlastné prihlásenie Google v tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>Prístup, o ktorý tafs žiada:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("sk") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+			for _, a := range googlePending("sk") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 170, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 142, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("sk"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 142, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sk").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 142, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sk").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 143, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 173, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 146, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 173, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var12 string
+					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 146, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Bez ohľadu na to, koľko prihlásenie povoľuje, taf používa len nástroje vo svojej Card.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Aplikácia uvedená pod oboma spôsobmi sa pripája jedným alebo druhým spôsobom, v závislosti od vášho účtu. Vlastná prihlasovacia stránka Google ukazuje, ktorý z nich povoľujete.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Kto uchováva vaše prihlásenie:</strong><ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> vaše prihlásenie Google uchováva náš partner pre prihlasovanie, uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine), a nikdy sa neposkytuje tafu ani službe planque. Taf ani tafs nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> planque, vlastná služba tafs na pripojenia, uchováva váš token Google pre vašu spoločnosť, šifrovaný pomocou AWS KMS v Európskej únii (Írsko), a používa ho len na uskutočnenie volania, ktoré Card tafu povoľuje. Nikdy sa neposkytuje tafu a taf ani model AI nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte.<ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> tafs žiada len o prístup, ktorý potrebujú nástroje tafu. Ak tento užší prístup nie je možný, požiada o obvyklý prístup aplikácie a povie to skôr, než sa prihlásite. Ak by obvyklý prístup zahŕňal osobné údaje, ktoré taf nepoužíva, tafs sa nepripojí.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> prihlásenie žiada naraz o celý prístup uvedený nižšie pre danú aplikáciu, aj keď taf iba číta.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Kto uchováva vaše prihlásenie:</strong> planque, vlastná služba tafs na pripojenia, uchováva váš token Google pre vašu spoločnosť, šifrovaný pomocou AWS KMS v Európskej únii (Írsko), a používa ho len na uskutočnenie volania, ktoré Card tafu povoľuje. Nikdy sa neposkytuje tafu a taf ani model AI nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte. Prihlásenie žiada naraz o celý prístup uvedený nižšie pre danú aplikáciu, aj keď taf iba číta.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kto uchováva vaše prihlásenie:</strong> vaše prihlásenie Google uchováva náš partner pre prihlasovanie, uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine), a nikdy sa neposkytuje tafu ani službe planque. Taf ani tafs nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Čo povoľujete:</strong> prihlasujete sa na vlastnej stránke Google a vyberáte, čo povolíte. tafs žiada len o prístup, ktorý potrebujú nástroje tafu. Ak tento užší prístup nie je možný, požiada o obvyklý prístup aplikácie a povie to skôr, než sa prihlásite. Ak by obvyklý prístup zahŕňal osobné údaje, ktoré taf nepoužíva, tafs sa nepripojí.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Ako ich taf používa:</strong> taf používa len nástroje schválené v jeho Card. Každé volanie sa pred odoslaním čohokoľvek overí voči povoleniu pre presne tento nástroj a tieto argumenty a volanie mimo prístupu, ktorý ste udelili, sa odmietne. Ktoré akcie si zakaždým vyžiadajú vaše schválenie, sa nastavuje v Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("sk")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Prístup, o ktorý žiada vlastné prihlásenie Google v tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Prístup, o ktorý tafs žiada:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("sk") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 181, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 184, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sk_tafs_privacy.templ`, Line: 184, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Bez ohľadu na to, koľko prihlásenie povoľuje, taf používa len nástroje vo svojej Card.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa.<ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> prechádza to aj cez nášho partnera pre prihlasovanie, ktorý uskutočňuje každé volanie.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> planque volá Google sám, takže žiadna iná spoločnosť nevykonáva volanie ani neuchováva vaše prihlásenie.</li></ul>Obaja sú uvedení na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Kto uchováva vaše prihlásenie:</strong><ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> vaše prihlásenie Google uchováva náš partner pre prihlasovanie, uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine), a nikdy sa neposkytuje tafu ani službe planque. Taf ani tafs nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> planque, vlastná služba tafs na pripojenia, uchováva váš token Google pre vašu spoločnosť, šifrovaný pomocou AWS KMS v Európskej únii (Írsko), a používa ho len na uskutočnenie volania, ktoré Card tafu povoľuje. Nikdy sa neposkytuje tafu a taf ani model AI nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa. planque volá Google sám, takže žiadna iná spoločnosť nevykonáva volanie ani neuchováva vaše prihlásenie. Poskytovateľ modelu AI je uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Kto uchováva vaše prihlásenie:</strong> planque, vlastná služba tafs na pripojenia, uchováva váš token Google pre vašu spoločnosť, šifrovaný pomocou AWS KMS v Európskej únii (Írsko), a používa ho len na uskutočnenie volania, ktoré Card tafu povoľuje. Nikdy sa neposkytuje tafu a taf ani model AI nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa. Prechádza to aj cez nášho partnera pre prihlasovanie, ktorý uskutočňuje každé volanie. Obaja sú uvedení na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Kto uchováva vaše prihlásenie:</strong> vaše prihlásenie Google uchováva náš partner pre prihlasovanie, uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine), a nikdy sa neposkytuje tafu ani službe planque. Taf ani tafs nevidia vaše heslo ani vaše tokeny Google. Iný z vašich tafov, ktorý potrebuje rovnaký prístup, prihlásenie použije znova a každý taf používa len nástroje, ktoré ste preň schválili.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>Trénovanie AI:</strong> údaje používateľov Google sa nepoužívajú na trénovanie modelov AI.</li><li><strong>Obrázky:</strong> tafs nevytvára ani neupravuje obrázky ani video: jeho AI píše text. Nikdy nepoužíva rozhrania API Google ani údaje používateľov Google na vytváranie, úpravu alebo zdieľanie intímnych snímok kohokoľvek (intímne snímky bez súhlasu, NCII) ani akéhokoľvek iného obrázka osoby.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa.<ul><li><strong>Prostredníctvom nášho partnera pre prihlasovanie:</strong> prechádza to aj cez nášho partnera pre prihlasovanie, ktorý uskutočňuje každé volanie.</li><li><strong>Prostredníctvom vlastného prihlásenia Google v tafs:</strong> planque volá Google sám, takže žiadna iná spoločnosť nevykonáva volanie ani neuchováva vaše prihlásenie.</li></ul>Obaja sú uvedení na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("sk")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa. planque volá Google sám, takže žiadna iná spoločnosť nevykonáva volanie ani neuchováva vaše prihlásenie. Poskytovateľ modelu AI je uvedený na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kto ďalší ich dostáva:</strong> to, čo taf prečíta z Google, ide do modelu AI, ktorý taf poháňa, a to až po tom, čo to povolíte (pozri <a href=\"#ai\">AI v tafs</a>), a ten to uchováva najviac 30 dní podľa podmienok svojho poskytovateľa. Prechádza to aj cez nášho partnera pre prihlasovanie, ktorý uskutočňuje každé volanie. Obaja sú uvedení na stránke <a href=\"/subprocessors\">/subprocessors</a> (v angličtine).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Trénovanie AI:</strong> údaje používateľov Google sa nepoužívajú na trénovanie modelov AI.</li><li><strong>Obrázky:</strong> tafs nevytvára ani neupravuje obrázky ani video: jeho AI píše text. Nikdy nepoužíva rozhrania API Google ani údaje používateľov Google na vytváranie, úpravu alebo zdieľanie intímnych snímok kohokoľvek (intímne snímky bez súhlasu, NCII) ani akéhokoľvek iného obrázka osoby.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Ako dlho a kde:</strong> vaše tabuľky a udalosti zostávajú vo vašom účte Google. Vo vlastnom úložisku tafs sa to, čo nástroj vráti, uchováva len do skončenia behu tafu. planque, ktorý každé volanie odovzdáva ďalej, uchováva to, čo Google vráti, 24 hodín, aby opakované volanie dostalo rovnakú odpoveď a nikdy sa neodoslalo dvakrát; potom uchováva len to, či bolo volanie odoslané. V chate sa to, čo bolo len prečítané, uchováva v šifrovanej podobe, používa sa, kým chat nie je hodinu nečinný, a najviac štyri hodiny po prečítaní, potom sa automaticky vymaže, do niekoľkých dní. Záznam o behu a jeho chat sa uchovávajú 30 dní a poznámky tafu, kým taf neodstránite (pozri <a href=\"#retention\">Ako dlho ich uchovávame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Ako dlho a kde:</strong> vaše tabuľky a udalosti zostávajú vo vašom účte Google. Vo vlastnom úložisku tafs sa to, čo nástroj vráti, uchováva len do skončenia behu tafu. planque, ktorý každé volanie odovzdáva ďalej, uchováva to, čo Google vráti, 24 hodín, aby opakované volanie dostalo rovnakú odpoveď a nikdy sa neodoslalo dvakrát; potom uchováva len to, či bolo volanie odoslané. V chate sa to, čo bolo len prečítané, uchováva v šifrovanej podobe, používa sa, kým chat nie je hodinu nečinný, a najviac štyri hodiny po prečítaní, potom sa automaticky vymaže, do niekoľkých dní. Záznam o behu a jeho chat sa uchovávajú 30 dní a poznámky tafu, kým taf neodstránite (pozri <a href=\"#retention\">Ako dlho ich uchovávame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Ako dlho a kde:</strong> vaše koncepty, udalosti a tabuľky zostávajú vo vašom účte Google. Vo vlastnom úložisku tafs sa to, čo nástroj vráti, uchováva len do skončenia behu tafu. planque, ktorý každé volanie odovzdáva ďalej, uchováva to, čo Google vráti, 24 hodín, aby opakované volanie dostalo rovnakú odpoveď a nikdy sa neodoslalo dvakrát; potom uchováva len to, či bolo volanie odoslané. V chate sa to, čo bolo len prečítané, uchováva v šifrovanej podobe, používa sa, kým chat nie je hodinu nečinný, a najviac štyri hodiny po prečítaní, potom sa automaticky vymaže, do niekoľkých dní. Záznam o behu a jeho chat sa uchovávajú 30 dní a poznámky tafu, kým taf neodstránite (pozri <a href=\"#retention\">Ako dlho ich uchovávame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Ako dlho a kde:</strong> vaše koncepty, udalosti a tabuľky zostávajú vo vašom účte Google. Vo vlastnom úložisku tafs sa to, čo nástroj vráti, uchováva len do skončenia behu tafu. planque, ktorý každé volanie odovzdáva ďalej, uchováva to, čo Google vráti, 24 hodín, aby opakované volanie dostalo rovnakú odpoveď a nikdy sa neodoslalo dvakrát; potom uchováva len to, či bolo volanie odoslané. V chate sa to, čo bolo len prečítané, uchováva v šifrovanej podobe, používa sa, kým chat nie je hodinu nečinný, a najviac štyri hodiny po prečítaní, potom sa automaticky vymaže, do niekoľkých dní. Záznam o behu a jeho chat sa uchovávajú 30 dní a poznámky tafu, kým taf neodstránite (pozri <a href=\"#retention\">Ako dlho ich uchovávame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Ako to zastaviť:</strong><ul><li>Odpojte Google v aplikácii, v časti Pripojiť aplikácie alebo na karte Card tafu. Jeho nástroje Google sa okamžite zastavia a tafs okamžite požiada Google o zrušenie prihlásenia; to sa môže dokončiť o niečo neskôr.</li><li>Odstráňte taf a jeho pripojenia zaniknú spolu s ním. Prihlásenie Google, ktoré ešte používa iný z vašich tafov, zostáva, kým sa neodstráni posledný z nich.</li><li>Kedykoľvek odoberte prístup tafs vo svojom účte Google na adrese <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Vaše tafy sa prestanú dostávať ku Google a aplikácia vám oznámi, že pripojenie Google je odhlásené.</li><li>Odstráňte svoj účet: jeho tafy, chaty, poznámky, súbory a pripojenia sa okamžite vymažú, a z ich kópií k určitému bodu v čase do 35 dní, a jeho tokeny Google sa zrušia tam, kde to Google umožňuje.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ako to zastaviť:</strong><ul><li>Odpojte Google v aplikácii, v časti Pripojiť aplikácie alebo na karte Card tafu. Jeho nástroje Google sa okamžite zastavia a tafs okamžite požiada Google o zrušenie prihlásenia; to sa môže dokončiť o niečo neskôr.</li><li>Odstráňte taf a jeho pripojenia zaniknú spolu s ním. Prihlásenie Google, ktoré ešte používa iný z vašich tafov, zostáva, kým sa neodstráni posledný z nich.</li><li>Kedykoľvek odoberte prístup tafs vo svojom účte Google na adrese <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Vaše tafy sa prestanú dostávať ku Google a aplikácia vám oznámi, že pripojenie Google je odhlásené.</li><li>Odstráňte svoj účet: jeho tafy, chaty, poznámky, súbory a pripojenia sa okamžite vymažú, a z ich kópií k určitému bodu v čase do 35 dní, a jeho tokeny Google sa zrušia tam, kde to Google umožňuje.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

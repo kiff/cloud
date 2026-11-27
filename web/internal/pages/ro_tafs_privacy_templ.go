@@ -194,169 +194,255 @@ func tafsPrivacyGoogleRO() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "O aplicație enumerată la ambele se conectează într-un fel sau altul, în funcție de contul dumneavoastră. Pagina de autentificare proprie a Google arată pe care o permiteți.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți.<ul><li><strong>Prin partenerul nostru de autentificare:</strong> tafs solicită numai accesul de care au nevoie instrumentele tafului. Dacă acest acces mai restrâns nu este posibil, solicită accesul obișnuit al aplicației și spune acest lucru înainte să vă autentificați. Dacă accesul obișnuit ar include date cu caracter personal pe care taful nu le utilizează, tafs nu se conectează.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> autentificarea solicită dintr-odată tot accesul enumerat mai jos pentru aplicația respectivă, chiar și atunci când taful doar citește.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("ro")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți. Autentificarea solicită dintr-odată tot accesul enumerat mai jos pentru aplicația respectivă, chiar și atunci când taful doar citește.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți. tafs solicită numai accesul de care au nevoie instrumentele tafului. Dacă acest acces mai restrâns nu este posibil, solicită accesul obișnuit al aplicației și spune acest lucru înainte să vă autentificați. Dacă accesul obișnuit ar include date cu caracter personal pe care taful nu le utilizează, tafs nu se conectează.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>Cum le utilizează un taf:</strong> un taf utilizează numai instrumentele aprobate pe Cardul său. Fiecare apel este verificat în raport cu o autorizație pentru exact acel instrument și acele argumente înainte de a se trimite ceva, iar un apel din afara accesului pe care l-ați acordat este refuzat. Ce acțiuni solicită aprobarea dumneavoastră de fiecare dată se stabilește pe Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("ro")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>Accesul solicitat de autentificarea Google proprie a tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>Accesul solicitat de tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("ro") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+			for _, a := range googlePending("ro") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 170, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 142, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("ro"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 142, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("ro").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 142, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("ro").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 143, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 173, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 146, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 173, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var12 string
+					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 146, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Indiferent cât de mult permite o autentificare, taful utilizează numai instrumentele de pe Cardul său.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "O aplicație enumerată la ambele se conectează într-un fel sau altul, în funcție de contul dumneavoastră. Pagina de autentificare proprie a Google arată pe care o permiteți.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Cine vă păstrează autentificarea:</strong><ul><li><strong>Prin partenerul nostru de autentificare:</strong> autentificarea dumneavoastră Google este păstrată de partenerul nostru de autentificare, enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză), și nu este dată niciodată unui taf sau lui planque. Nici taful, nici tafs nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> planque, serviciul de conectare propriu al tafs, păstrează tokenul dumneavoastră Google pentru compania dumneavoastră, criptat cu AWS KMS în Uniunea Europeană (Irlanda), și îl utilizează numai pentru a efectua un apel permis de Cardul tafului. Acesta nu este dat niciodată unui taf, iar nici taful, nici modelul IA nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți.<ul><li><strong>Prin partenerul nostru de autentificare:</strong> tafs solicită numai accesul de care au nevoie instrumentele tafului. Dacă acest acces mai restrâns nu este posibil, solicită accesul obișnuit al aplicației și spune acest lucru înainte să vă autentificați. Dacă accesul obișnuit ar include date cu caracter personal pe care taful nu le utilizează, tafs nu se conectează.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> autentificarea solicită dintr-odată tot accesul enumerat mai jos pentru aplicația respectivă, chiar și atunci când taful doar citește.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("ro")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Cine vă păstrează autentificarea:</strong> planque, serviciul de conectare propriu al tafs, păstrează tokenul dumneavoastră Google pentru compania dumneavoastră, criptat cu AWS KMS în Uniunea Europeană (Irlanda), și îl utilizează numai pentru a efectua un apel permis de Cardul tafului. Acesta nu este dat niciodată unui taf, iar nici taful, nici modelul IA nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți. Autentificarea solicită dintr-odată tot accesul enumerat mai jos pentru aplicația respectivă, chiar și atunci când taful doar citește.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Cine vă păstrează autentificarea:</strong> autentificarea dumneavoastră Google este păstrată de partenerul nostru de autentificare, enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză), și nu este dată niciodată unui taf sau lui planque. Nici taful, nici tafs nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Ce permiteți:</strong> vă autentificați pe pagina proprie a Google și alegeți ce permiteți. tafs solicită numai accesul de care au nevoie instrumentele tafului. Dacă acest acces mai restrâns nu este posibil, solicită accesul obișnuit al aplicației și spune acest lucru înainte să vă autentificați. Dacă accesul obișnuit ar include date cu caracter personal pe care taful nu le utilizează, tafs nu se conectează.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Cum le utilizează un taf:</strong> un taf utilizează numai instrumentele aprobate pe Cardul său. Fiecare apel este verificat în raport cu o autorizație pentru exact acel instrument și acele argumente înainte de a se trimite ceva, iar un apel din afara accesului pe care l-ați acordat este refuzat. Ce acțiuni solicită aprobarea dumneavoastră de fiecare dată se stabilește pe Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("ro")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Accesul solicitat de autentificarea Google proprie a tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Accesul solicitat de tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("ro") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 181, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 184, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ro_tafs_privacy.templ`, Line: 184, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Indiferent cât de mult permite o autentificare, taful utilizează numai instrumentele de pe Cardul său.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său.<ul><li><strong>Prin partenerul nostru de autentificare:</strong> datele trec și prin partenerul nostru de autentificare, care efectuează fiecare apel.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> planque apelează el însuși Google, astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră.</li></ul>Ambele sunt enumerate pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Cine vă păstrează autentificarea:</strong><ul><li><strong>Prin partenerul nostru de autentificare:</strong> autentificarea dumneavoastră Google este păstrată de partenerul nostru de autentificare, enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză), și nu este dată niciodată unui taf sau lui planque. Nici taful, nici tafs nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> planque, serviciul de conectare propriu al tafs, păstrează tokenul dumneavoastră Google pentru compania dumneavoastră, criptat cu AWS KMS în Uniunea Europeană (Irlanda), și îl utilizează numai pentru a efectua un apel permis de Cardul tafului. Acesta nu este dat niciodată unui taf, iar nici taful, nici modelul IA nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("ro")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său. planque apelează el însuși Google, astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră. Furnizorul modelului IA este enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Cine vă păstrează autentificarea:</strong> planque, serviciul de conectare propriu al tafs, păstrează tokenul dumneavoastră Google pentru compania dumneavoastră, criptat cu AWS KMS în Uniunea Europeană (Irlanda), și îl utilizează numai pentru a efectua un apel permis de Cardul tafului. Acesta nu este dat niciodată unui taf, iar nici taful, nici modelul IA nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său. Datele trec și prin partenerul nostru de autentificare, care efectuează fiecare apel. Ambii sunt enumerați pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Cine vă păstrează autentificarea:</strong> autentificarea dumneavoastră Google este păstrată de partenerul nostru de autentificare, enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză), și nu este dată niciodată unui taf sau lui planque. Nici taful, nici tafs nu vă văd parola sau tokenurile Google. Un alt taf al dumneavoastră care are nevoie de același acces reutilizează autentificarea, iar fiecare taf utilizează numai instrumentele pe care le-ați aprobat pentru el.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>Antrenarea IA:</strong> datele utilizatorilor Google nu sunt utilizate pentru antrenarea modelelor IA.</li><li><strong>Imagini:</strong> tafs nu creează și nu editează imagini sau videoclipuri: IA sa scrie text. Nu utilizează niciodată API-urile Google sau datele utilizatorilor Google pentru a crea, edita sau partaja imagini intime ale cuiva (imagini intime fără consimțământ, NCII) ori orice altă imagine a unei persoane.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său.<ul><li><strong>Prin partenerul nostru de autentificare:</strong> datele trec și prin partenerul nostru de autentificare, care efectuează fiecare apel.</li><li><strong>Prin autentificarea Google proprie a tafs:</strong> planque apelează el însuși Google, astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră.</li></ul>Ambele sunt enumerate pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("ro")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său. planque apelează el însuși Google, astfel încât nicio altă companie nu efectuează apelul și nu păstrează autentificarea dumneavoastră. Furnizorul modelului IA este enumerat pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Cine le mai primește:</strong> ceea ce citește un taf din Google ajunge la modelul IA care rulează taful, numai după ce permiteți acest lucru (a se vedea <a href=\"#ai\">IA din tafs</a>), care le păstrează cel mult 30 de zile în conformitate cu termenii furnizorului său. Datele trec și prin partenerul nostru de autentificare, care efectuează fiecare apel. Ambii sunt enumerați pe <a href=\"/subprocessors\">/subprocessors</a> (în engleză).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Antrenarea IA:</strong> datele utilizatorilor Google nu sunt utilizate pentru antrenarea modelelor IA.</li><li><strong>Imagini:</strong> tafs nu creează și nu editează imagini sau videoclipuri: IA sa scrie text. Nu utilizează niciodată API-urile Google sau datele utilizatorilor Google pentru a crea, edita sau partaja imagini intime ale cuiva (imagini intime fără consimțământ, NCII) ori orice altă imagine a unei persoane.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("ro")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Cât timp și unde:</strong> foile de calcul și evenimentele dumneavoastră rămân în contul dumneavoastră Google. În spațiul de stocare propriu al tafs, ceea ce returnează un instrument este păstrat numai până la încheierea rulării tafului. planque, care transmite mai departe fiecare apel, păstrează ceea ce returnează Google timp de 24 de ore, astfel încât un apel repetat să primească același răspuns și să nu fie niciodată trimis de două ori; după aceea, păstrează numai dacă apelul a fost trimis. Într-o conversație, ceea ce a fost doar citit este păstrat criptat, utilizat până când conversația a fost inactivă timp de o oră și cel mult patru ore după citire, apoi șters automat, în câteva zile. Înregistrarea unei rulări și conversația acesteia sunt păstrate 30 de zile, iar notele unui taf până când eliminați taful (a se vedea <a href=\"#retention\">Cât timp le păstrăm</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Cât timp și unde:</strong> foile de calcul și evenimentele dumneavoastră rămân în contul dumneavoastră Google. În spațiul de stocare propriu al tafs, ceea ce returnează un instrument este păstrat numai până la încheierea rulării tafului. planque, care transmite mai departe fiecare apel, păstrează ceea ce returnează Google timp de 24 de ore, astfel încât un apel repetat să primească același răspuns și să nu fie niciodată trimis de două ori; după aceea, păstrează numai dacă apelul a fost trimis. Într-o conversație, ceea ce a fost doar citit este păstrat criptat, utilizat până când conversația a fost inactivă timp de o oră și cel mult patru ore după citire, apoi șters automat, în câteva zile. Înregistrarea unei rulări și conversația acesteia sunt păstrate 30 de zile, iar notele unui taf până când eliminați taful (a se vedea <a href=\"#retention\">Cât timp le păstrăm</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Cât timp și unde:</strong> ciornele, evenimentele și foile de calcul ale dumneavoastră rămân în contul dumneavoastră Google. În spațiul de stocare propriu al tafs, ceea ce returnează un instrument este păstrat numai până la încheierea rulării tafului. planque, care transmite mai departe fiecare apel, păstrează ceea ce returnează Google timp de 24 de ore, astfel încât un apel repetat să primească același răspuns și să nu fie niciodată trimis de două ori; după aceea, păstrează numai dacă apelul a fost trimis. Într-o conversație, ceea ce a fost doar citit este păstrat criptat, utilizat până când conversația a fost inactivă timp de o oră și cel mult patru ore după citire, apoi șters automat, în câteva zile. Înregistrarea unei rulări și conversația acesteia sunt păstrate 30 de zile, iar notele unui taf până când eliminați taful (a se vedea <a href=\"#retention\">Cât timp le păstrăm</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Cât timp și unde:</strong> ciornele, evenimentele și foile de calcul ale dumneavoastră rămân în contul dumneavoastră Google. În spațiul de stocare propriu al tafs, ceea ce returnează un instrument este păstrat numai până la încheierea rulării tafului. planque, care transmite mai departe fiecare apel, păstrează ceea ce returnează Google timp de 24 de ore, astfel încât un apel repetat să primească același răspuns și să nu fie niciodată trimis de două ori; după aceea, păstrează numai dacă apelul a fost trimis. Într-o conversație, ceea ce a fost doar citit este păstrat criptat, utilizat până când conversația a fost inactivă timp de o oră și cel mult patru ore după citire, apoi șters automat, în câteva zile. Înregistrarea unei rulări și conversația acesteia sunt păstrate 30 de zile, iar notele unui taf până când eliminați taful (a se vedea <a href=\"#retention\">Cât timp le păstrăm</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Oprirea:</strong><ul><li>Deconectați Google în aplicație, în Conectează aplicații sau în fila Card a tafului. Instrumentele Google ale acestuia se opresc imediat, iar tafs îi cere imediat Google să revoce autentificarea; aceasta se poate finaliza puțin mai târziu.</li><li>Eliminați un taf, iar conexiunile sale încetează odată cu el. O autentificare Google pe care o mai utilizează un alt taf al dumneavoastră rămâne până la eliminarea ultimului dintre ele.</li><li>Eliminați oricând accesul tafs din contul dumneavoastră Google, la <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Tafurile dumneavoastră nu mai ajung la Google, iar aplicația vă anunță că conexiunea Google este deconectată.</li><li>Ștergeți-vă contul: tafurile, conversațiile, notele, fișierele și conexiunile acestuia sunt șterse imediat, și din copiile acestora pentru recuperarea la un moment dat în termen de 35 de zile, iar tokenurile sale Google sunt revocate acolo unde Google permite acest lucru.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Oprirea:</strong><ul><li>Deconectați Google în aplicație, în Conectează aplicații sau în fila Card a tafului. Instrumentele Google ale acestuia se opresc imediat, iar tafs îi cere imediat Google să revoce autentificarea; aceasta se poate finaliza puțin mai târziu.</li><li>Eliminați un taf, iar conexiunile sale încetează odată cu el. O autentificare Google pe care o mai utilizează un alt taf al dumneavoastră rămâne până la eliminarea ultimului dintre ele.</li><li>Eliminați oricând accesul tafs din contul dumneavoastră Google, la <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Tafurile dumneavoastră nu mai ajung la Google, iar aplicația vă anunță că conexiunea Google este deconectată.</li><li>Ștergeți-vă contul: tafurile, conversațiile, notele, fișierele și conexiunile acestuia sunt șterse imediat, și din copiile acestora pentru recuperarea la un moment dat în termen de 35 de zile, iar tokenurile sale Google sunt revocate acolo unde Google permite acest lucru.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleHU() {
 						if len(googleInHouse("hu")) > 0 {
 							<li>A tafs saját Google-bejelentkezésén keresztül, más vállalat közbeiktatása nélkül: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("hu") {
+							<li>
+								{ a.Name }{ googlePendingSep("hu") }{ googlePendingWords("hu").Line }
+								{ googlePendingWords("hu").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						A mindkét helyen megnevezett alkalmazás a fiókjától függően az egyik vagy a másik módon kapcsolódik. A Google saját bejelentkezési oldala mutatja, melyiket engedélyezi.

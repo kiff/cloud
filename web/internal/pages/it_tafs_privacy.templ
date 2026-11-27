@@ -136,6 +136,17 @@ templ tafsPrivacyGoogleIT() {
 						if len(googleInHouse("it")) > 0 {
 							<li>Tramite l'accesso Google di tafs stesso, senza nessun'altra società in mezzo: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("it") {
+							<li>
+								{ a.Name }{ googlePendingSep("it") }{ googlePendingWords("it").Line }
+								{ googlePendingWords("it").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Un'app che compare in entrambi si collega in un modo o nell'altro, a seconda del tuo account. La pagina di accesso di Google stessa mostra a quale dai il consenso.

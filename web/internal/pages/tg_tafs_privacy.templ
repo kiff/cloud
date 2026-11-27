@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleTG() {
 						if len(googleInHouse("tg")) > 0 {
 							<li>Тавассути воридшавии Google-и худи tafs, бидуни ширкати дигар дар байн: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("tg") {
+							<li>
+								{ a.Name }{ googlePendingSep("tg") }{ googlePendingWords("tg").Line }
+								{ googlePendingWords("tg").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Барномае, ки дар ҳар дуи онҳо номбар шудааст, вобаста ба ҳисоби шумо ба як роҳ ё роҳи дигар пайваст мешавад. Саҳифаи воридшавии худи Google нишон медиҳад, ки шумо чиро иҷозат медиҳед.

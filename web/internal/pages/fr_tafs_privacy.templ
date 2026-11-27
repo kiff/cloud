@@ -136,6 +136,17 @@ templ tafsPrivacyGoogleFR() {
 						if len(googleInHouse("fr")) > 0 {
 							<li>Par l'authentification Google propre à tafs, sans aucune autre société entre les deux : { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("fr") {
+							<li>
+								{ a.Name }{ googlePendingSep("fr") }{ googlePendingWords("fr").Line }
+								{ googlePendingWords("fr").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Une app citée dans les deux se connecte d'une façon ou de l'autre, selon votre compte. La page d'authentification de Google elle-même indique laquelle vous autorisez.

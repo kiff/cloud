@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleID() {
 						if len(googleInHouse("id")) > 0 {
 							<li>Melalui login Google milik tafs sendiri, tanpa perusahaan lain di tengah: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("id") {
+							<li>
+								{ a.Name }{ googlePendingSep("id") }{ googlePendingWords("id").Line }
+								{ googlePendingWords("id").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Aplikasi yang disebut di keduanya terhubung dengan salah satu cara, tergantung akun Anda. Halaman login Google sendiri menunjukkan yang mana yang Anda izinkan.

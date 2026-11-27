@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleNL() {
 						if len(googleInHouse("nl")) > 0 {
 							<li>Via de eigen Google-login van tafs, zonder ander bedrijf ertussen: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("nl") {
+							<li>
+								{ a.Name }{ googlePendingSep("nl") }{ googlePendingWords("nl").Line }
+								{ googlePendingWords("nl").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Een app die onder allebei staat, koppelt op de ene of de andere manier, afhankelijk van je account. De inlogpagina van Google zelf laat zien aan welke je toegang geeft.

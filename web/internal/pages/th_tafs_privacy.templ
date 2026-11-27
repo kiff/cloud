@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleTH() {
 						if len(googleInHouse("th")) > 0 {
 							<li>ผ่านการลงชื่อเข้าใช้ Google ของ tafs เอง โดยไม่มีบริษัทอื่นคั่นกลาง: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("th") {
+							<li>
+								{ a.Name }{ googlePendingSep("th") }{ googlePendingWords("th").Line }
+								{ googlePendingWords("th").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						แอปที่ระบุไว้ทั้งสองแห่งเชื่อมต่อด้วยวิธีใดวิธีหนึ่ง ขึ้นกับบัญชีของคุณ หน้าลงชื่อเข้าใช้ของ Google เองแสดงว่าคุณกำลังอนุญาตวิธีใด

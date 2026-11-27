@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleDZ() {
 						if len(googleInHouse("dz")) > 0 {
 							<li>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ། བར་ན་ལས་ཁུངས་གཞན་མེད་པར: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("dz") {
+							<li>
+								{ a.Name }{ googlePendingSep("dz") }{ googlePendingWords("dz").Line }
+								{ googlePendingWords("dz").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						གཉིས་ཀྱི་ནང་མིང་བཀོད་པའི་ཨེཔ་ཅིག་ཁྱོད་ཀྱི་རྩིས་ཐོ་ལུ་བརྟེན་ཏེ་ཐབས་ལམ་གཅིག་ཡང་ན་གཞན་ཅིག་གིས་མཐུདཔ་ཨིན། Google རང་གི་ནང་འཛུལ་ཤོག་ལེབ་གིས་ཁྱོད་ཀྱིས་ཅི་ལུ་ཆོག་ཐམ་བྱིན་དོ་ཡོདཔ་སྟོན།

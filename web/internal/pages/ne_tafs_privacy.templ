@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleNE() {
 						if len(googleInHouse("ne")) > 0 {
 							<li>tafs को आफ्नै Google साइन इन मार्फत, बीचमा अरू कुनै कम्पनीबिना: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ne") {
+							<li>
+								{ a.Name }{ googlePendingSep("ne") }{ googlePendingWords("ne").Line }
+								{ googlePendingWords("ne").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						दुवैमा नाम भएको एप तपाईंको खातामा निर्भर गर्दै एउटा वा अर्को तरिकाले जोडिन्छ। Google को आफ्नै साइन इन पृष्ठले तपाईंले कुन अनुमति दिँदै हुनुहुन्छ देखाउँछ।

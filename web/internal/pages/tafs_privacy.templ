@@ -139,6 +139,17 @@ templ tafsPrivacyGoogle() {
 						if len(googleInHouse("en")) > 0 {
 							<li>Through tafs's own Google sign-in, with no other company in between: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("en") {
+							<li>
+								{ a.Name }{ googlePendingSep("en") }{ googlePendingWords("en").Line }
+								{ googlePendingWords("en").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						An app named under both connects one way or the other, depending on your account. Google's own sign-in page shows which one you're allowing.

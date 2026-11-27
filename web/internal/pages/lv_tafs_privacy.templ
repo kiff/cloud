@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleLV() {
 						if len(googleInHouse("lv")) > 0 {
 							<li>Caur paša tafs Google pierakstīšanos, bez cita uzņēmuma starpā: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("lv") {
+							<li>
+								{ a.Name }{ googlePendingSep("lv") }{ googlePendingWords("lv").Line }
+								{ googlePendingWords("lv").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Lietotne, kas nosaukta abās vietās, savienojas vienā vai otrā veidā atkarībā no jūsu konta. Pašas Google pierakstīšanās lapa rāda, kuru veidu jūs atļaujat.

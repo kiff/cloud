@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleMN() {
 						if len(googleInHouse("mn")) > 0 {
 							<li>tafs-ийн өөрийн Google нэвтрэлтээр, дунд нь өөр компанигүйгээр: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("mn") {
+							<li>
+								{ a.Name }{ googlePendingSep("mn") }{ googlePendingWords("mn").Line }
+								{ googlePendingWords("mn").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Хоёуланд нь нэрлэгдсэн апп таны бүртгэлээс хамаарч нэг арга эсвэл нөгөө аргаар холбогдоно. Google-ийн өөрийн нэвтрэх хуудас та алийг зөвшөөрч байгааг харуулна.

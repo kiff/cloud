@@ -195,169 +195,255 @@ func tafsPrivacyGoogleTK() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Iki ýerde hem atlandyrylan programma hasabyňyza baglylykda ýa-da bir usulda, ýa-da beýleki usulda birigýär. Google-yň öz giriş sahypasy haýsyna rugsat berýändigiňizi görkezýär.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz.<ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> tafs diňe taf-yň gurallarynyň talap edýän elýeterliligini soraýar. Eger şol has dar elýeterlilik mümkin bolmasa, ol programmanyň adaty elýeterligini soraýar we girmezden öň muny aýdýar. Eger adaty elýeterlilik taf-yň ulanmaýan şahsy maglumatlaryny öz içine alsa, tafs birikdirmeýär.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> giriş, taf diňe okasa-da, şol programma üçin aşakda sanalan ähli elýeterliligi birden soraýar.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("tk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz. Giriş, taf diňe okasa-da, şol programma üçin aşakda sanalan ähli elýeterliligi birden soraýar.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz. tafs diňe taf-yň gurallarynyň talap edýän elýeterliligini soraýar. Eger şol has dar elýeterlilik mümkin bolmasa, ol programmanyň adaty elýeterligini soraýar we girmezden öň muny aýdýar. Eger adaty elýeterlilik taf-yň ulanmaýan şahsy maglumatlaryny öz içine alsa, tafs birikdirmeýär.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li><strong>taf muny nähili ulanýar:</strong> taf diňe öz Card-ynda tassyklanan gurallary ulanýar. Her çagyryş hiç zat iberilmezden öň şol takyk gural we şol argumentler üçin rugsatnama bilen barlanýar, we beren elýeterliligiňizden daşardaky çagyryş ret edilýär. Haýsy hereketleriň her gezek tassyklamaňyzy soraýandygy Card-da belleýär.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("tk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<strong>tafs-yň öz Google girişiniň soraýan elýeterligi:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<strong>tafs-yň soraýan elýeterligi:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("tk") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li>")
+			for _, a := range googlePending("tk") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 171, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 143, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<ul>")
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("tk"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 143, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tk").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 143, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tk").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 144, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var8 string
-					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var11 string
+					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 174, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 147, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var9 string
-					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 174, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+					var templ_7745c5c3_Var12 string
+					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 147, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</ul>Giriş näçe rugsat berse-de, taf diňe öz Card-ynda bolan gurallary ulanýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Iki ýerde hem atlandyrylan programma hasabyňyza baglylykda ýa-da bir usulda, ýa-da beýleki usulda birigýär. Google-yň öz giriş sahypasy haýsyna rugsat berýändigiňizi görkezýär.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Girişiňizi kim saklaýar:</strong><ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> siziň Google girişiňizi biziň giriş hyzmatdaşymyz saklaýar, ol <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar, we ol hiç haçan taf-a ýa-da planque-a berilmeýär. Ne taf, ne-de tafs paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> tafs-yň öz birikme hyzmaty planque Google belgiňizi kompaniýaňyz üçin, Ýewropa Bileleşiginde (Irlandiýa) AWS KMS bilen şifrlenen görnüşde saklaýar we ony diňe taf-yň Card-y rugsat berýän çagyryşy etmek üçin ulanýar. Ol hiç haçan taf-a berilmeýär, we ne taf, ne-de AI modeli paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz.<ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> tafs diňe taf-yň gurallarynyň talap edýän elýeterliligini soraýar. Eger şol has dar elýeterlilik mümkin bolmasa, ol programmanyň adaty elýeterligini soraýar we girmezden öň muny aýdýar. Eger adaty elýeterlilik taf-yň ulanmaýan şahsy maglumatlaryny öz içine alsa, tafs birikdirmeýär.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> giriş, taf diňe okasa-da, şol programma üçin aşakda sanalan ähli elýeterliligi birden soraýar.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("tk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Girişiňizi kim saklaýar:</strong> tafs-yň öz birikme hyzmaty planque Google belgiňizi kompaniýaňyz üçin, Ýewropa Bileleşiginde (Irlandiýa) AWS KMS bilen şifrlenen görnüşde saklaýar we ony diňe taf-yň Card-y rugsat berýän çagyryşy etmek üçin ulanýar. Ol hiç haçan taf-a berilmeýär, we ne taf, ne-de AI modeli paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz. Giriş, taf diňe okasa-da, şol programma üçin aşakda sanalan ähli elýeterliligi birden soraýar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Girişiňizi kim saklaýar:</strong> siziň Google girişiňizi biziň giriş hyzmatdaşymyz saklaýar, ol <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar, we ol hiç haçan taf-a ýa-da planque-a berilmeýär. Ne taf, ne-de tafs paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Siz näme rugsat berýärsiňiz:</strong> siz Google-yň öz sahypasynda girýärsiňiz we nämä rugsat berýändigiňizi saýlaýarsyňyz. tafs diňe taf-yň gurallarynyň talap edýän elýeterliligini soraýar. Eger şol has dar elýeterlilik mümkin bolmasa, ol programmanyň adaty elýeterligini soraýar we girmezden öň muny aýdýar. Eger adaty elýeterlilik taf-yň ulanmaýan şahsy maglumatlaryny öz içine alsa, tafs birikdirmeýär.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>taf muny nähili ulanýar:</strong> taf diňe öz Card-ynda tassyklanan gurallary ulanýar. Her çagyryş hiç zat iberilmezden öň şol takyk gural we şol argumentler üçin rugsatnama bilen barlanýar, we beren elýeterliligiňizden daşardaky çagyryş ret edilýär. Haýsy hereketleriň her gezek tassyklamaňyzy soraýandygy Card-da belleýär.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("tk")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>tafs-yň öz Google girişiniň soraýan elýeterligi:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>tafs-yň soraýan elýeterligi:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("tk") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 182, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 185, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 185, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Giriş näçe rugsat berse-de, taf diňe öz Card-ynda bolan gurallary ulanýar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar.<ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> ol şeýle hem her çagyryşy edýän giriş hyzmatdaşymyzdan geçýär.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> planque Google-y özi çagyrýar, şonuň üçin başga hiç bir kompaniýa çagyryşy etmeýär ýa-da girişiňizi saklamaýar.</li></ul>Ikisi hem <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Girişiňizi kim saklaýar:</strong><ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> siziň Google girişiňizi biziň giriş hyzmatdaşymyz saklaýar, ol <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar, we ol hiç haçan taf-a ýa-da planque-a berilmeýär. Ne taf, ne-de tafs paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> tafs-yň öz birikme hyzmaty planque Google belgiňizi kompaniýaňyz üçin, Ýewropa Bileleşiginde (Irlandiýa) AWS KMS bilen şifrlenen görnüşde saklaýar we ony diňe taf-yň Card-y rugsat berýän çagyryşy etmek üçin ulanýar. Ol hiç haçan taf-a berilmeýär, we ne taf, ne-de AI modeli paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("tk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar. planque Google-y özi çagyrýar, şonuň üçin başga hiç bir kompaniýa çagyryşy etmeýär ýa-da girişiňizi saklamaýar. AI modeliniň üpjün edijisi <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Girişiňizi kim saklaýar:</strong> tafs-yň öz birikme hyzmaty planque Google belgiňizi kompaniýaňyz üçin, Ýewropa Bileleşiginde (Irlandiýa) AWS KMS bilen şifrlenen görnüşde saklaýar we ony diňe taf-yň Card-y rugsat berýän çagyryşy etmek üçin ulanýar. Ol hiç haçan taf-a berilmeýär, we ne taf, ne-de AI modeli paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar. Ol şeýle hem her çagyryşy edýän giriş hyzmatdaşymyzdan geçýär. Ikisi hem <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Girişiňizi kim saklaýar:</strong> siziň Google girişiňizi biziň giriş hyzmatdaşymyz saklaýar, ol <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar, we ol hiç haçan taf-a ýa-da planque-a berilmeýär. Ne taf, ne-de tafs paroluňyzy ýa-da Google belgileriňizi görmeýär. Şol bir elýeterlilige mätäç beýleki taf-yňyz girişi gaýtadan ulanýar, we her taf diňe onuň üçin tassyklan gurallaryňyzy ulanýar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>AI-y öwretmek:</strong> Google ulanyjy maglumatlary AI modellerini öwretmek üçin ulanylmaýar.</li><li><strong>Suratlar:</strong> tafs surat ýa-da wideo döretmeýär ýa-da redaktirlemeýär: onuň AI-sy tekst ýazýar. Ol hiç haçan Google API-lerini ýa-da Google ulanyjy maglumatlaryny islendik adamyň ýakyn suratlaryny (razylyksyz ýakyn suratlar, NCII) ýa-da adamyň başga bir suratyny döretmek, redaktirlemek ýa-da paýlaşmak üçin ulanmaýar.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar.<ul><li><strong>Giriş hyzmatdaşymyz arkaly:</strong> ol şeýle hem her çagyryşy edýän giriş hyzmatdaşymyzdan geçýär.</li><li><strong>tafs-yň öz Google girişi arkaly:</strong> planque Google-y özi çagyrýar, şonuň üçin başga hiç bir kompaniýa çagyryşy etmeýär ýa-da girişiňizi saklamaýar.</li></ul>Ikisi hem <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("tk")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar. planque Google-y özi çagyrýar, şonuň üçin başga hiç bir kompaniýa çagyryşy etmeýär ýa-da girişiňizi saklamaýar. AI modeliniň üpjün edijisi <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Ony ýene kim alýar:</strong> taf-yň Google-dan okaýan zady, diňe siz rugsat berenizden soň (seret: <a href=\"#ai\">tafs-daky AI</a>), taf-y işledýän AI modeline gidýär, ol ony öz üpjün edijisiniň şertlerine görä 30 güne çenli saklaýar. Ol şeýle hem her çagyryşy edýän giriş hyzmatdaşymyzdan geçýär. Ikisi hem <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) sanalýar.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>AI-y öwretmek:</strong> Google ulanyjy maglumatlary AI modellerini öwretmek üçin ulanylmaýar.</li><li><strong>Suratlar:</strong> tafs surat ýa-da wideo döretmeýär ýa-da redaktirlemeýär: onuň AI-sy tekst ýazýar. Ol hiç haçan Google API-lerini ýa-da Google ulanyjy maglumatlaryny islendik adamyň ýakyn suratlaryny (razylyksyz ýakyn suratlar, NCII) ýa-da adamyň başga bir suratyny döretmek, redaktirlemek ýa-da paýlaşmak üçin ulanmaýar.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("tk")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Näçe wagt we nirede:</strong> hasaplaýyş jedwelleriňiz we wakalaryňyz Google hasabyňyzda galýar. tafs-yň öz saklaýjysynda guralyň gaýtaran zady diňe taf-yň işlemesi gutarýança saklanýar. Her çagyryşy geçirýän planque Google-yň gaýtaran zadyny 24 sagat saklaýar, şonuň üçin gaýtalanan çagyryş şol bir jogaby alýar we hiç haçan iki gezek iberilmeýär; ondan soň ol diňe çagyryşyň iberilendigini saklaýar. Söhbetdeşlikde diňe okalan zat şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar. Işlemäniň ýazgysy we onuň söhbetdeşligi 30 gün saklanýar, taf-yň bellikleri bolsa siz taf-y aýyrýançaňyz (seret: <a href=\"#retention\">Ony näçe wagt saklaýarys</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Näçe wagt we nirede:</strong> hasaplaýyş jedwelleriňiz we wakalaryňyz Google hasabyňyzda galýar. tafs-yň öz saklaýjysynda guralyň gaýtaran zady diňe taf-yň işlemesi gutarýança saklanýar. Her çagyryşy geçirýän planque Google-yň gaýtaran zadyny 24 sagat saklaýar, şonuň üçin gaýtalanan çagyryş şol bir jogaby alýar we hiç haçan iki gezek iberilmeýär; ondan soň ol diňe çagyryşyň iberilendigini saklaýar. Söhbetdeşlikde diňe okalan zat şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar. Işlemäniň ýazgysy we onuň söhbetdeşligi 30 gün saklanýar, taf-yň bellikleri bolsa siz taf-y aýyrýançaňyz (seret: <a href=\"#retention\">Ony näçe wagt saklaýarys</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Näçe wagt we nirede:</strong> garalamalaryňyz, wakalaryňyz we hasaplaýyş jedwelleriňiz Google hasabyňyzda galýar. tafs-yň öz saklaýjysynda guralyň gaýtaran zady diňe taf-yň işlemesi gutarýança saklanýar. Her çagyryşy geçirýän planque Google-yň gaýtaran zadyny 24 sagat saklaýar, şonuň üçin gaýtalanan çagyryş şol bir jogaby alýar we hiç haçan iki gezek iberilmeýär; ondan soň ol diňe çagyryşyň iberilendigini saklaýar. Söhbetdeşlikde diňe okalan zat şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar. Işlemäniň ýazgysy we onuň söhbetdeşligi 30 gün saklanýar, taf-yň bellikleri bolsa siz taf-y aýyrýançaňyz (seret: <a href=\"#retention\">Ony näçe wagt saklaýarys</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Näçe wagt we nirede:</strong> garalamalaryňyz, wakalaryňyz we hasaplaýyş jedwelleriňiz Google hasabyňyzda galýar. tafs-yň öz saklaýjysynda guralyň gaýtaran zady diňe taf-yň işlemesi gutarýança saklanýar. Her çagyryşy geçirýän planque Google-yň gaýtaran zadyny 24 sagat saklaýar, şonuň üçin gaýtalanan çagyryş şol bir jogaby alýar we hiç haçan iki gezek iberilmeýär; ondan soň ol diňe çagyryşyň iberilendigini saklaýar. Söhbetdeşlikde diňe okalan zat şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar. Işlemäniň ýazgysy we onuň söhbetdeşligi 30 gün saklanýar, taf-yň bellikleri bolsa siz taf-y aýyrýançaňyz (seret: <a href=\"#retention\">Ony näçe wagt saklaýarys</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Ony togtatmak:</strong><ul><li>Programmada Connect apps bölüminde ýa-da taf-yň Card goýmasynda Google-y aýyryň. Onuň Google gurallary derrew togtaýar, we tafs Google-dan girişi derrew ýatyrmagy haýyş edýär; bu birneme soň tamamlanyp biler.</li><li>taf-y aýyryň, onuň birikmeleri onuň bilen gutarýar. Başga taf-yňyzyň henizem ulanýan Google girişi iň soňky taf gidýänçä galýar.</li><li>tafs-yň elýeterligini islendik wagt Google Account-yňyzda aýyryp bilersiňiz, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> salgysynda. taf-laryňyz Google-a ýetmegini bes edýär, we programma size Google birikmesiniň çykarylandygyny aýdýar.</li><li>Hasabyňyzy pozuň: onuň taf-lary, söhbetdeşlikleri, bellikleri, faýllary we birikmeleri derrew, we wagt nokatlaýyn nusgalaryndan 35 gün içinde pozulýar, we onuň Google belgileri Google rugsat berýän ýerinde ýatyrylýar.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ony togtatmak:</strong><ul><li>Programmada Connect apps bölüminde ýa-da taf-yň Card goýmasynda Google-y aýyryň. Onuň Google gurallary derrew togtaýar, we tafs Google-dan girişi derrew ýatyrmagy haýyş edýär; bu birneme soň tamamlanyp biler.</li><li>taf-y aýyryň, onuň birikmeleri onuň bilen gutarýar. Başga taf-yňyzyň henizem ulanýan Google girişi iň soňky taf gidýänçä galýar.</li><li>tafs-yň elýeterligini islendik wagt Google Account-yňyzda aýyryp bilersiňiz, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> salgysynda. taf-laryňyz Google-a ýetmegini bes edýär, we programma size Google birikmesiniň çykarylandygyny aýdýar.</li><li>Hasabyňyzy pozuň: onuň taf-lary, söhbetdeşlikleri, bellikleri, faýllary we birikmeleri derrew, we wagt nokatlaýyn nusgalaryndan 35 gün içinde pozulýar, we onuň Google belgileri Google rugsat berýän ýerinde ýatyrylýar.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

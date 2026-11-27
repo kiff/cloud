@@ -136,6 +136,17 @@ templ tafsPrivacyGooglePTBR() {
 						if len(googleInHouse("pt-br")) > 0 {
 							<li>Pelo próprio login do Google do tafs, sem nenhuma outra empresa no meio: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("pt-br") {
+							<li>
+								{ a.Name }{ googlePendingSep("pt-br") }{ googlePendingWords("pt-br").Line }
+								{ googlePendingWords("pt-br").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Um app que consta nas duas listas se conecta de um jeito ou de outro, dependendo da sua conta. A própria página de login do Google mostra a qual você está dando permissão.

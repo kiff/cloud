@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleKO() {
 						if len(googleInHouse("ko")) > 0 {
 							<li>다른 회사를 거치지 않는 tafs 자체 Google 로그인을 통해: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ko") {
+							<li>
+								{ a.Name }{ googlePendingSep("ko") }{ googlePendingWords("ko").Line }
+								{ googlePendingWords("ko").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						양쪽에 모두 기재된 앱은 이용자의 계정에 따라 둘 중 한 방식으로 연결됩니다. 어느 쪽을 허용하는지는 Google 자체의 로그인 페이지에 표시됩니다.

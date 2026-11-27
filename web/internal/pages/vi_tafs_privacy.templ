@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleVI() {
 						if len(googleInHouse("vi")) > 0 {
 							<li>Qua chính phương thức đăng nhập Google của tafs, không có công ty nào khác ở giữa: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("vi") {
+							<li>
+								{ a.Name }{ googlePendingSep("vi") }{ googlePendingWords("vi").Line }
+								{ googlePendingWords("vi").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Một ứng dụng được nêu ở cả hai kết nối theo cách này hoặc cách kia, tùy tài khoản của bạn. Trang đăng nhập riêng của Google cho thấy bạn đang cho phép cách nào.

@@ -137,6 +137,17 @@ templ tafsPrivacyGoogleRO() {
 						if len(googleInHouse("ro")) > 0 {
 							<li>Prin autentificarea Google proprie a tafs, fără nicio altă companie intermediară: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("ro") {
+							<li>
+								{ a.Name }{ googlePendingSep("ro") }{ googlePendingWords("ro").Line }
+								{ googlePendingWords("ro").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						O aplicație enumerată la ambele se conectează într-un fel sau altul, în funcție de contul dumneavoastră. Pagina de autentificare proprie a Google arată pe care o permiteți.

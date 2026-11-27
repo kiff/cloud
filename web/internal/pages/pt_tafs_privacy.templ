@@ -136,6 +136,17 @@ templ tafsPrivacyGooglePT() {
 						if len(googleInHouse("pt")) > 0 {
 							<li>Através do próprio início de sessão Google do tafs, sem nenhuma outra empresa pelo meio: { appList(googleInHouseNames()) }.</li>
 						}
+						for _, a := range googlePending("pt") {
+							<li>
+								{ a.Name }{ googlePendingSep("pt") }{ googlePendingWords("pt").Line }
+								{ googlePendingWords("pt").AsksFor }
+								<ul>
+									for _, s := range a.Scopes {
+										<li><code>{ s.ID }</code>: { s.What }</li>
+									}
+								</ul>
+							</li>
+						}
 					</ul>
 					if googleBoth() {
 						Uma app que conste de ambos liga-se de uma forma ou de outra, consoante a sua conta. A própria página de início de sessão da Google mostra a qual dá permissão.
