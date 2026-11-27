@@ -3,9 +3,11 @@ name: managed apps disclosed
 # The apps a customer may connect as a managed connection (Composio, US) are
 # disclosed on /subprocessors from web/internal/pages/managed_apps.json.
 # planque keeps a copy and refuses a managed sign-in for any app not on it
-# (kiff/planque internal/planque/managed_apps.json). This check fails when
-# planque's copy names an app this list doesn't: an app may be disclosed here
-# before planque lets it through, never the other way round. It runs hourly
+# (kiff/planque internal/planque/managed_apps.json). Either file is a JSON
+# array of names (only those apps) or {"all": true, "except": [...]} (every
+# app but those). This check fails when planque allows an app this file
+# doesn't: an app may be disclosed here before planque lets it through, never
+# the other way round. It runs hourly
 # too, since a change in planque doesn't run this repository's checks.
 
 on:
@@ -47,16 +49,37 @@ jobs:
           fi
           python3 -I - planque.json web/internal/pages/managed_apps.json <<'EOF'
           import json, sys
-          planque = json.load(open(sys.argv[1], encoding="utf-8"))
-          disclosed = json.load(open(sys.argv[2], encoding="utf-8"))
-          for name, v in (("planque", planque), ("the disclosed list", disclosed)):
-              if not isinstance(v, list) or not all(isinstance(a, str) for a in v):
-                  sys.exit(f"::error::{name}'s managed_apps.json isn't a JSON array of names")
-          undisclosed = sorted(set(planque) - set(disclosed))
-          if undisclosed:
-              sys.exit("::error::planque allows managed connections to apps /subprocessors doesn't name: " + ", ".join(undisclosed))
-          waiting = sorted(set(disclosed) - set(planque))
-          if waiting:
-              print("::notice::disclosed, not yet allowed in planque: " + ", ".join(waiting))
-          print("planque's list is within the disclosed list.")
+
+          def read(name, path):
+              v = json.load(open(path, encoding="utf-8"))
+              if isinstance(v, list) and all(isinstance(a, str) for a in v):
+                  return False, set(v), set()
+              if (isinstance(v, dict) and v.get("all") is True and set(v) <= {"all", "named", "except"}
+                      and all(isinstance(a, str) for k in ("named", "except") for a in v.get(k, []))
+                      and v.get("except")):
+                  return True, set(v.get("named", [])), set(v["except"])
+              sys.exit(f"::error::{name}'s managed_apps.json is neither a JSON array of names nor {{\"all\": true, \"except\": [...]}}")
+
+          p_all, p_named, p_except = read("planque", sys.argv[1])
+          d_all, d_named, d_except = read("the disclosed list", sys.argv[2])
+          if not d_all:
+              if p_all:
+                  sys.exit("::error::planque allows every managed app, but /subprocessors names only a list")
+              undisclosed = sorted(p_named - d_named)
+              if undisclosed:
+                  sys.exit("::error::planque allows managed connections to apps /subprocessors doesn't name: " + ", ".join(undisclosed))
+              waiting = sorted(d_named - p_named)
+              if waiting:
+                  print("::notice::disclosed, not yet allowed in planque: " + ", ".join(waiting))
+          else:
+              if p_all:
+                  missing = sorted(d_except - p_except)
+                  if missing:
+                      sys.exit("::error::planque allows apps /subprocessors excludes: " + ", ".join(missing))
+              else:
+                  excluded = sorted(p_named & d_except)
+                  if excluded:
+                      sys.exit("::error::planque allows apps /subprocessors excludes: " + ", ".join(excluded))
+                  print("::notice::/subprocessors allows every app but its exceptions; planque still allows only its list.")
+          print("planque allows nothing /subprocessors doesn't disclose.")
           EOF
