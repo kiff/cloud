@@ -8,6 +8,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/kiff/cloud/web/internal/components"
+	"github.com/kiff/cloud/web/internal/content/videos"
 )
 
 // /tafs, the product page (owner-approved design, 13 Nov 2026): nine
@@ -90,6 +91,22 @@ type tafsWords struct {
 	// account, for Google's review of the sign-in: open on every language's
 	// page, never in a fold, and off the first screen.
 	Google tafsGoogle
+
+	// Shots are the real app screens beside the screens' words, and the two
+	// videos' captions (tafsShot, tafsPhone).
+	Shots tafsShots
+}
+
+// tafsShots says what each real app screen on the page shows, for a screen
+// reader, and what each video shows. Each crop is a piece of the app as it is
+// today, captured with test data only; its alt text says what it shows, never
+// more than it shows.
+type tafsShots struct {
+	// The crops: a Card's limits (5) and a line of the Record (7).
+	Card, Record string
+	// The videos' captions (4, 9), shown under each phone; and the names of
+	// the button on each phone that plays or pauses its video.
+	Video2, Video3, Play, Pause string
 }
 
 // tafsGoogle is the footer's Google band: its heading, its line, and the
@@ -235,3 +252,7 @@ func (w tafsWords) doesFit() templ.Attributes {
 	}
 	return tafsFit(lines...)
 }
+
+// tafsVideoURL is one of the page's videos (or its poster) in KIFF's own
+// video bucket, beside the /videos gallery's: no player and no third party.
+func tafsVideoURL(name string) string { return videos.BaseURL + "/tafs/" + name }

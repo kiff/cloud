@@ -2,6 +2,14 @@ package pages
 
 // tafsNL is /nl/tafs.
 var tafsNL = tafsWords{
+	Shots: tafsShots{
+		Card:   "De Card van een taf in de tafs-app: terugbetalingen tot € 50 per stuk, meer vraagt het eerst aan jou, hoogstens € 5.000 per dag; al het andere wordt geweigerd.",
+		Record: "Het Logboek in de tafs-app: een afspraak geboekt door een taf, door jou goedgekeurd, gedaan, met het KIFF-bewijs.",
+		Video2: "Een taf handelt een terugbetalingsverzoek af binnen zijn Card. Testgegevens.",
+		Video3: "Een taf boekt een afspraak in Google Agenda. Testgegevens.",
+		Play:   "Video afspelen",
+		Pause:  "Video pauzeren",
+	},
 	Cost:        tafsCostNL,
 	Title:       "tafs: AI-agents die je routinewerk doen",
 	Description: "tafs is een app waarin AI-agents, tafs genoemd, het routinewerk van je bedrijf doen, zoals e-mail beantwoorden, binnen de limieten die jij op een Card zet. Alles daarboven wacht op jouw ja.",

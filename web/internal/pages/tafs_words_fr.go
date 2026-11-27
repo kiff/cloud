@@ -2,6 +2,14 @@ package pages
 
 // tafsFR is /fr/tafs.
 var tafsFR = tafsWords{
+	Shots: tafsShots{
+		Card:   "La Card d'un taf dans l'app tafs : remboursements jusqu'à 50 € chacun, au-delà il vous demande d'abord, 5 000 € par jour au plus ; tout le reste est refusé.",
+		Record: "Le Registre dans l'app tafs : une réunion réservée par un taf, approuvée par vous, faite, avec son reçu KIFF.",
+		Video2: "Un taf traite une demande de remboursement dans les limites de sa Card. Données de test.",
+		Video3: "Un taf réserve une réunion dans Google Agenda. Données de test.",
+		Play:   "Lire la vidéo",
+		Pause:  "Mettre la vidéo en pause",
+	},
 	Cost:        tafsCostFR,
 	Title:       "tafs : des agents IA qui font votre travail de routine",
 	Description: "tafs est une app où des agents IA, les tafs, font le travail de routine de votre entreprise, comme répondre aux e-mails, dans les limites que vous fixez sur une Card. Tout ce qui les dépasse attend votre oui.",

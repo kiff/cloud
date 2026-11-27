@@ -76,7 +76,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<span>{ w.DoesLines[1][0] } <i class="lemon">{ w.DoesLines[1][1] }</i></span>
 							<span>{ w.DoesLines[2][0] } <i class="straw">{ w.DoesLines[2][1] }</i></span>
 						</h2>
-						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:78%;--y:12%;--s:150px", ".9", "36")
+						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:66%;--y:68%;--s:150px", ".9", "36")
+						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:79%;--y:59%;--r0:3deg;--w:min(13vh,120px)", ".5", "6")
 						@tafsIdx(4, w.Does)
 					</section>
 					<section class="p diff">
@@ -86,22 +87,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<p class="kcap"><b>{ w.Card.Label }</b> { w.CardLine }</p>
 						</div>
 						@tafsGiant(w.Different)
-						<div class="st" style="--x:52%;--y:12%;--r0:-5deg" data-x=".55" data-r="-8">
-							<div class="kcard" role="group" aria-label={ w.Card.Label }>
-								<div class="h"><b>{ w.Card.Title }</b><span>{ w.Card.Signed }</span></div>
-								<ul class="ls">
-									<li><i class="mint">{ w.Card.Rows[0][0] }</i><span>{ w.Card.Rows[0][1] }</span></li>
-									<li><i class="lemon">{ w.Card.Rows[1][0] }</i><span>{ w.Card.Rows[1][1] }</span></li>
-									<li><i class="straw">{ w.Card.Rows[2][0] }</i><span>{ w.Card.Rows[2][1] }</span></li>
-								</ul>
-							</div>
-						</div>
-						<div class="st ast" style="--x:68%;--y:47%;--r0:6deg" data-x="1" data-r="12">
-							<div class="ask" role="group" aria-label={ w.Card.AskLabel }>
-								<small>{ w.Card.Needs }</small><b>{ w.Card.Question }</b><span>{ w.Card.Why }</span>
-								<div class="yn" aria-hidden="true"><i>{ w.Card.No }</i><i>{ w.Card.Yes }</i></div>
-							</div>
-						</div>
+						// The Card, as the app shows it today (a crop of a real screen).
+						@tafsShot("card", w.Shots.Card, "760", "858", "--x:50%;--y:10%;--r0:-4deg;--w:min(30vw,380px)", ".55", "-8")
 						@tafsBadge("c5", "var(--lemon)", "var(--ink)", w.Different.Ring, "kiff", "--x:86%;--y:12%;--s:150px", "1.2", "-40")
 						@tafsIdx(5, w.Different)
 					</section>
@@ -126,6 +113,7 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<li class="st pill" style="--x:60%;--y:42%;--r0:8deg;--c:var(--white)" data-x=".4" data-r="14">{ w.Why.Stickers[2] }</li>
 							<li class="st pill" style="--x:74%;--y:54%;--r0:-5deg;--c:var(--straw);--t:#fff" data-x="1.2" data-r="-14">{ w.Why.Stickers[3] }</li>
 						</ul>
+						@tafsShot("record", w.Shots.Record, "760", "178", "--x:34%;--y:54%;--r0:-3deg;--w:min(28vw,380px)", ".8", "-6")
 						@tafsIdx(7, w.Why)
 					</section>
 					<section class="p price" id="pricing">
@@ -196,6 +184,7 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						</div>
 						@tafsGiant(w.Get)
 						<img class="st mascot" src={ assets.URL("img/tafs/tafs-mascot-512.png") } alt="" width="512" height="512" loading="lazy" style="--x:62%;--y:14%;--r0:-8deg" data-x=".8" data-r="-14"/>
+						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:9%;--y:47%;--r0:-3deg;--w:min(18vh,160px)", ".6", "-6")
 						@tafsIdx(9, w.Get)
 					</section>
 				</div>
@@ -279,4 +268,34 @@ templ tafsBadge(id, fill, ink, ring, mid, place, dx, dr string) {
 		<g class="spin"><text fill={ ink }><textPath href={ "#" + id } { tafsRing(ring, 360)... }>{ ring }</textPath></text></g>
 		<text class="mid" x="80" y="88" text-anchor="middle" fill={ ink }>{ mid }</text>
 	</svg>
+}
+
+// tafsShot is a crop of a real app screen, a sticker beside the words it
+// proves: light and dark (the visitor's own theme), WebP with a PNG fallback,
+// its edge faded so it reads as part of the screen. width and height are the
+// crop's own, so nothing moves when it loads.
+templ tafsShot(name, alt, width, height, place, dx, dr string) {
+	<figure class="st shot" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
+		<picture>
+			<source srcset={ assets.URL("img/tafs/shots/" + name + "-dark.webp") } type="image/webp" media="(prefers-color-scheme: dark)"/>
+			<source srcset={ assets.URL("img/tafs/shots/" + name + "-light.webp") } type="image/webp"/>
+			<img src={ assets.URL("img/tafs/shots/" + name + "-light.png") } alt={ alt } width={ width } height={ height } loading="lazy" decoding="async"/>
+		</picture>
+	</figure>
+}
+
+// tafsPhone is a video in a drawn phone, from KIFF's own video bucket, muted,
+// as browsers play only muted video by themselves: js/tafs.js plays it while
+// it's in view and pauses it when it leaves. With no script, or with reduced
+// motion, it shows its poster and plays only when asked. Nothing loads before
+// it plays (preload="none").
+templ tafsPhone(name, caption, play, pause, place, dx, dr string) {
+	<figure class="st phone" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
+		<video muted playsinline loop preload="none" controls poster={ tafsVideoURL(name + ".jpg") } aria-label={ caption }>
+			<source src={ tafsVideoURL(name + ".webm") } type="video/webm"/>
+			<source src={ tafsVideoURL(name + ".mp4") } type="video/mp4"/>
+		</video>
+		<button class="play" type="button" hidden aria-label={ play } data-play={ play } data-pause={ pause }><span aria-hidden="true"></span></button>
+		<figcaption>{ caption }</figcaption>
+	</figure>
 }

@@ -2,6 +2,14 @@ package pages
 
 // tafsES is /es/tafs.
 var tafsES = tafsWords{
+	Shots: tafsShots{
+		Card:   "La Card de un taf en la app tafs: reembolsos de hasta 50 € cada uno, más te pregunta antes, como máximo 5.000 € al día; todo lo demás se rechaza.",
+		Record: "El Registro en la app tafs: una reunión reservada por un taf, aprobada por ti, hecha, con su recibo de KIFF.",
+		Video2: "Un taf gestiona una solicitud de reembolso dentro de su Card. Datos de prueba.",
+		Video3: "Un taf reserva una reunión en Google Calendar. Datos de prueba.",
+		Play:   "Reproducir el vídeo",
+		Pause:  "Pausar el vídeo",
+	},
 	Cost:        tafsCostES,
 	Title:       "tafs: agentes de IA que hacen tu trabajo rutinario",
 	Description: "tafs es una app en la que agentes de IA, los tafs, hacen el trabajo rutinario de tu negocio, como responder correos, dentro de los límites que fijas en una Card. Lo que pase de ellos espera tu sí.",

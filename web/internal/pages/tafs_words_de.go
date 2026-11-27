@@ -2,6 +2,14 @@ package pages
 
 // tafsDE is /de/tafs.
 var tafsDE = tafsWords{
+	Shots: tafsShots{
+		Card:   "Die Card eines tafs in der tafs-App: Erstattungen bis 50 € pro Stück, mehr fragt dich zuerst, höchstens 5.000 € am Tag; alles andere wird abgelehnt.",
+		Record: "Das Protokoll in der tafs-App: ein von einem taf gebuchter Termin, von dir freigegeben, erledigt, mit KIFFs Beleg.",
+		Video2: "Ein taf bearbeitet eine Erstattungsanfrage innerhalb seiner Card. Testdaten.",
+		Video3: "Ein taf bucht einen Termin in Google Kalender. Testdaten.",
+		Play:   "Video abspielen",
+		Pause:  "Video anhalten",
+	},
 	Cost:        tafsCostDE,
 	Title:       "tafs: KI-Agenten, die deine Routinearbeit erledigen",
 	Description: "tafs ist eine App, in der KI-Agenten, die tafs, die Routinearbeit deines Unternehmens erledigen, etwa E-Mails beantworten, innerhalb der Limits, die du auf einer Card setzt. Alles darüber wartet auf dein Ja.",
