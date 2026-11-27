@@ -87,7 +87,7 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<p class="kcap"><b>{ w.Card.Label }</b> { w.CardLine }</p>
 						</div>
 						@tafsGiant(w.Different)
-						// The Card and the approval, as the app shows them today (crops of real screens).
+						// The Card, as the app shows it today (a crop of a real screen).
 						@tafsShot("card", w.Shots.Card, "760", "858", "--x:50%;--y:10%;--r0:-4deg;--w:min(30vw,380px)", ".55", "-8")
 						@tafsBadge("c5", "var(--lemon)", "var(--ink)", w.Different.Ring, "kiff", "--x:86%;--y:12%;--s:150px", "1.2", "-40")
 						@tafsIdx(5, w.Different)
