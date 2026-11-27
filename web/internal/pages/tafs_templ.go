@@ -385,7 +385,7 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsShot("coach", w.Shots.Coach, "1290", "1000", "--x:50%;--y:30%;--r0:-3deg;--w:min(30vw,380px)", ".75", "-6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsShot("coach", w.Shots.Coach, "760", "193", "--x:50%;--y:30%;--r0:-3deg;--w:min(30vw,380px)", ".75", "-6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -593,11 +593,11 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:84%;--y:12%;--s:150px", ".9", "36").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:66%;--y:68%;--s:150px", ".9", "36").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, "--x:64%;--y:9%;--r0:3deg", ".5", "6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, "--x:79%;--y:59%;--r0:3deg;--w:min(13vh,120px)", ".5", "6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -665,11 +665,11 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsShot("card", w.Shots.Card, "1290", "1100", "--x:50%;--y:10%;--r0:-4deg;--w:min(30vw,380px)", ".55", "-8").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsShot("card", w.Shots.Card, "760", "858", "--x:50%;--y:10%;--r0:-4deg;--w:min(30vw,380px)", ".55", "-8").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsShot("approve", w.Shots.Approve, "1290", "900", "--x:68%;--y:46%;--r0:5deg;--w:min(24vw,320px)", "1", "12").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsShot("approve", w.Shots.Approve, "760", "558", "--x:76%;--y:58%;--r0:5deg;--w:min(21vw,290px)", "1", "12").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -822,7 +822,7 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsShot("record", w.Shots.Record, "1290", "560", "--x:66%;--y:66%;--r0:-3deg;--w:min(30vw,400px)", ".8", "-6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsShot("record", w.Shots.Record, "760", "178", "--x:34%;--y:54%;--r0:-3deg;--w:min(28vw,380px)", ".8", "-6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1287,7 +1287,7 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, "--x:80%;--y:9%;--r0:-3deg", ".6", "-6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, "--x:9%;--y:47%;--r0:-3deg;--w:min(18vh,160px)", ".6", "-6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
