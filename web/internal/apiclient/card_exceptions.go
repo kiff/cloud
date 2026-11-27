@@ -59,9 +59,8 @@ type CardException struct {
 	Summary    string `json:"summary,omitempty"`
 	AmountText string `json:"amount_text,omitempty"`
 	ReasonText string `json:"reason_text,omitempty"`
-	// Details are KIFF's own lines for the arguments ("charge: ch_1"), every
-	// one in full, a list or object indented below its name, but the amount
-	// and the gateway's own.
+	// Details are KIFF's own line for each argument ("charge: ch_…"), but
+	// the amount and KIFF's operation id.
 	Details []string `json:"details,omitempty"`
 	// Arguments are what a held gateway call will be sent with, as the
 	// agent sent them, each value as raw JSON so a number keeps every

@@ -980,9 +980,6 @@ div.ac-srow { cursor:default; }
 .ny-block h4 { margin:0 0 8px; font-size:14px; font-weight:600; color:var(--fg-muted); }
 .ny-block p { margin:4px 0 0; }
 .ny-block .ny-args { margin:0; }
-/* A held call's details: a list's items and an object's fields are indented
- * below their name, so the spaces that lead a line are kept. */
-.ny-details code { white-space:pre-wrap; overflow-wrap:anywhere; }
 .ny-deadline { margin:0 0 10px; font-weight:600; }
 .ny-how { margin-top:10px; }
 .ny-how summary { cursor:pointer; min-height:32px; color:var(--fg-muted); font-size:14px; }

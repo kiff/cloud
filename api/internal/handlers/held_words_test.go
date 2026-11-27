@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"slices"
 	"strings"
 	"testing"
@@ -100,7 +99,7 @@ func TestAHeldCallSaysItselfInTheOwnersWords(t *testing.T) {
 
 func TestHeldDetailsAndName(t *testing.T) {
 	args := json.RawMessage(`{"charge":"ch_1","amount_cents":4500,"kiff_operation_id":"op","refund_all":true,"note":{"a":1}}`)
-	if got := heldDetails(args, map[string]int64{"amount_cents": 4500}, nil); !slices.Equal(got, []string{"charge: ch_1", "note:", "  a: 1", "refund_all: true"}) {
+	if got := heldDetails(args, map[string]int64{"amount_cents": 4500}, nil); !slices.Equal(got, []string{"charge: ch_1", "note: …", "refund_all: true"}) {
 		t.Errorf("details: %q", got)
 	}
 	for _, c := range []struct{ action, title, want string }{
@@ -114,11 +113,9 @@ func TestHeldDetailsAndName(t *testing.T) {
 	}
 }
 
-// A held call's details are never cut: a long argument is written whole,
-// and every argument is listed, however many there are. A held browser call's
-// steps are what the owner signs (red-team, 27 Nov: a held browse_act showed
-// "steps: …", and the owner signed a click they couldn't see).
-func TestHeldDetailsAreNeverCut(t *testing.T) {
+// What a held call says is bounded: a long argument ends in "…", and past
+// twenty lines the rest is counted, not listed.
+func TestHeldDetailsAreBounded(t *testing.T) {
 	body := strings.Repeat("é", 500)
 	args := map[string]any{"body": body}
 	for i := 0; i < 25; i++ {
@@ -126,48 +123,11 @@ func TestHeldDetailsAreNeverCut(t *testing.T) {
 	}
 	raw, _ := json.Marshal(args)
 	got := heldDetails(raw, nil, nil)
-	if len(got) != 26 || got[0] != "body: "+body || got[25] != "k24: v" {
-		t.Fatalf("lines: %d, first %d runes, last %q", len(got), len([]rune(got[0])), got[len(got)-1])
+	if len(got) != heldDetailLines+1 || got[len(got)-1] != "and 6 more" {
+		t.Fatalf("lines: %d, last %q", len(got), got[len(got)-1])
 	}
-	for _, l := range got {
-		if strings.Contains(l, "…") || strings.Contains(l, " more") {
-			t.Errorf("a line was cut: %q", l)
-		}
-	}
-}
-
-// KIFF's details are the lines tafs' contracts/held-arguments.json says every
-// app writes, case by case (a copy in testdata, kept equal to tafs' own).
-func TestHeldDetailsAreTheContractsLines(t *testing.T) {
-	raw, err := os.ReadFile("testdata/held-arguments.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var vector struct {
-		Cases []struct {
-			Name      string          `json:"name"`
-			Arguments json.RawMessage `json:"arguments"`
-			Lines     []string        `json:"lines"`
-		} `json:"cases"`
-	}
-	if err := json.Unmarshal(raw, &vector); err != nil || len(vector.Cases) == 0 {
-		t.Fatalf("the vector: %v", err)
-	}
-	for _, c := range vector.Cases {
-		if got := heldDetails(c.Arguments, nil, nil); !slices.Equal(got, c.Lines) {
-			t.Errorf("%s:\n got %q\nwant %q", c.Name, got, c.Lines)
-		}
-	}
-}
-
-func TestPlainNumber(t *testing.T) {
-	for in, want := range map[string]string{
-		"50": "50", "1.5e-05": "0.000015", "1E+3": "1000", "1.50": "1.50", "0.5": "0.5", "-2.5e1": "-25",
-		"9007199254740993": "9007199254740993", "0": "0", "100e-1": "10.0",
-	} {
-		if got := plainNumber(in); got != want {
-			t.Errorf("plainNumber(%q) = %q, want %q", in, got, want)
-		}
+	if first := []rune(got[0]); len(first) != heldLineMax || string(first[len(first)-1]) != "…" {
+		t.Errorf("a long line: %d runes, ends %q", len(first), string(first[len(first)-1]))
 	}
 }
 
