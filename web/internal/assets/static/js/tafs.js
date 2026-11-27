@@ -83,39 +83,67 @@
   // it plays (preload="none"). With reduced motion, or where the browser won't
   // play it, the poster stays and the play button plays it with its controls.
   // Without this file, the video keeps its own controls.
+  // The two videos, each in a drawn phone. A video starts half a second after
+  // its phone is half in view, so the panel is read first; it pauses the
+  // moment the phone leaves the view or the tab is hidden. The button on the
+  // phone plays and pauses it by hand: once a visitor pauses a video, scrolling
+  // never restarts it. With reduced motion nothing starts on its own. Nothing
+  // loads before a video first plays (preload="none").
   function videos() {
     var list = [].slice.call(document.querySelectorAll(".phone video"));
     if (!list.length) return;
+    var watch = !still.matches && "IntersectionObserver" in window;
     function button(v) { return v.parentNode.querySelector(".play"); }
-    function asked(v) {
-      var b = button(v);
-      if (b) b.hidden = true;
-      v.dataset.asked = "1";
-      v.controls = true;
-      var p = v.play();
-      if (p && p.catch) p.catch(function () {});
+    function show(v) {
+      var b = button(v); if (!b) return;
+      var on = !v.paused;
+      b.setAttribute("aria-label", on ? b.dataset.pause : b.dataset.play);
+      b.classList.toggle("on", on);
     }
-    function offer(v) { var b = button(v); if (b) b.hidden = false; }
+    function want(v) { return v.dataset.held !== "1" && v.dataset.seen === "1" && !document.hidden; }
+    function go(v) {
+      var p = v.play();
+      if (p && p.then) p.then(function () { if (!want(v) && v.dataset.hand !== "1") v.pause(); }, function () { show(v); });
+    }
+    function stop(v) { clearTimeout(v._t); if (!v.paused) v.pause(); }
     list.forEach(function (v) {
       v.controls = false;
+      v.addEventListener("play", function () { show(v); });
+      v.addEventListener("pause", function () { show(v); });
       var b = button(v);
-      if (b) b.addEventListener("click", function () { asked(v); });
-    });
-    if (still.matches || !("IntersectionObserver" in window)) { list.forEach(offer); return; }
-    var seen = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        var v = e.target;
-        if (v.dataset.asked) return;
-        if (e.intersectionRatio >= 0.5 && !document.hidden && !still.matches) {
-          var p = v.play();
-          if (p && p.catch) p.catch(function () { offer(v); });
-        } else if (!v.paused) v.pause();
+      if (!b) return;
+      b.hidden = false;
+      show(v);
+      b.addEventListener("click", function () {
+        clearTimeout(v._t);
+        if (v.paused) { v.dataset.held = ""; v.dataset.hand = "1"; go(v); }
+        else { v.dataset.held = "1"; v.dataset.hand = ""; v.pause(); }
       });
-    }, { threshold: [0, 0.5] });
-    list.forEach(function (v) { seen.observe(v); });
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) list.forEach(function (v) { if (!v.paused) v.pause(); });
     });
+    function out(v) { v.dataset.seen = ""; v.dataset.hand = ""; stop(v); }
+    if ("IntersectionObserver" in window) {
+      var seen = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var v = e.target;
+          if (e.intersectionRatio >= 0.5) {
+            if (v.dataset.seen === "1") return;
+            v.dataset.seen = "1";
+            clearTimeout(v._t);
+            if (watch && want(v)) v._t = setTimeout(function () { if (want(v)) go(v); }, 500);
+          } else out(v);
+        });
+      }, { threshold: [0, 0.5] });
+      list.forEach(function (v) { seen.observe(v); });
+    }
+    function away() { list.forEach(stop); }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { away(); return; }
+      if (watch) list.forEach(function (v) {
+        clearTimeout(v._t);
+        if (want(v)) v._t = setTimeout(function () { if (want(v)) go(v); }, 500);
+      });
+    });
+    addEventListener("pagehide", away);
   }
 
   function boot() { start(); videos(); }

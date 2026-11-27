@@ -3,13 +3,12 @@ package pages
 // tafsEN is /tafs in English, the source of every other language.
 var tafsEN = tafsWords{
 	Shots: tafsShots{
-		Coach:   "Coach in the tafs app, waiting for your approval and repeating the rule you agreed: up to 30 deals a day, then it asks you.",
-		Card:    "A taf's Card in the tafs app: refunds up to €50 each, more asks you first, at most €5,000 a day; anything outside it is refused.",
-		Approve: "Coach asks you to approve connecting Pipedrive for a taf, with Approve with your fingerprint and Decline.",
-		Record:  "The Record in the tafs app: a meeting booked by a taf, approved by you, done, with its KIFF receipt.",
-		Video2:  "A taf handles a refund request within its Card. Test data.",
-		Video3:  "A taf books a meeting in Google Calendar. Test data.",
-		Play:    "Play the video",
+		Card:   "A taf's Card in the tafs app: refunds up to €50 each, more asks you first, at most €5,000 a day; anything outside it is refused.",
+		Record: "The Record in the tafs app: a meeting booked by a taf, approved by you, done, with its KIFF receipt.",
+		Video2: "A taf handles a refund request within its Card. Test data.",
+		Video3: "A taf books a meeting in Google Calendar. Test data.",
+		Play:   "Play the video",
+		Pause:  "Pause the video",
 	},
 	Cost:        tafsCostEN,
 	Title:       "tafs: AI agents that do your routine work",

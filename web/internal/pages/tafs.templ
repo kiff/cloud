@@ -54,7 +54,6 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						@tafsCopy(w.Taf)
 						@tafsGiant(w.Taf)
 						@tafsBadge("c2", "var(--ink)", "var(--lemon)", w.Taf.Ring, "le taf", "--x:24%;--y:58%;--s:170px;--r0:-12deg", ".7", "30")
-						@tafsShot("coach", w.Shots.Coach, "760", "193", "--x:50%;--y:30%;--r0:-3deg;--w:min(30vw,380px)", ".75", "-6")
 						<p class="st tag" style="--x:70%;--y:14%;--r0:7deg;--c:var(--straw);--t:#fff" data-x="1" data-r="12">{ w.Taf.Stickers[0] }<br/>{ w.Taf.Stickers[1] }</p>
 						@tafsIdx(2, w.Taf)
 					</section>
@@ -78,7 +77,7 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<span>{ w.DoesLines[2][0] } <i class="straw">{ w.DoesLines[2][1] }</i></span>
 						</h2>
 						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:66%;--y:68%;--s:150px", ".9", "36")
-						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, "--x:79%;--y:59%;--r0:3deg;--w:min(13vh,120px)", ".5", "6")
+						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:79%;--y:59%;--r0:3deg;--w:min(13vh,120px)", ".5", "6")
 						@tafsIdx(4, w.Does)
 					</section>
 					<section class="p diff">
@@ -90,7 +89,6 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						@tafsGiant(w.Different)
 						// The Card and the approval, as the app shows them today (crops of real screens).
 						@tafsShot("card", w.Shots.Card, "760", "858", "--x:50%;--y:10%;--r0:-4deg;--w:min(30vw,380px)", ".55", "-8")
-						@tafsShot("approve", w.Shots.Approve, "760", "558", "--x:76%;--y:58%;--r0:5deg;--w:min(21vw,290px)", "1", "12")
 						@tafsBadge("c5", "var(--lemon)", "var(--ink)", w.Different.Ring, "kiff", "--x:86%;--y:12%;--s:150px", "1.2", "-40")
 						@tafsIdx(5, w.Different)
 					</section>
@@ -186,7 +184,7 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						</div>
 						@tafsGiant(w.Get)
 						<img class="st mascot" src={ assets.URL("img/tafs/tafs-mascot-512.png") } alt="" width="512" height="512" loading="lazy" style="--x:62%;--y:14%;--r0:-8deg" data-x=".8" data-r="-14"/>
-						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, "--x:9%;--y:47%;--r0:-3deg;--w:min(18vh,160px)", ".6", "-6")
+						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:9%;--y:47%;--r0:-3deg;--w:min(18vh,160px)", ".6", "-6")
 						@tafsIdx(9, w.Get)
 					</section>
 				</div>
@@ -291,13 +289,13 @@ templ tafsShot(name, alt, width, height, place, dx, dr string) {
 // it's in view and pauses it when it leaves. With no script, or with reduced
 // motion, it shows its poster and plays only when asked. Nothing loads before
 // it plays (preload="none").
-templ tafsPhone(name, caption, play, place, dx, dr string) {
+templ tafsPhone(name, caption, play, pause, place, dx, dr string) {
 	<figure class="st phone" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
 		<video muted playsinline loop preload="none" controls poster={ tafsVideoURL(name + ".jpg") } aria-label={ caption }>
 			<source src={ tafsVideoURL(name + ".webm") } type="video/webm"/>
 			<source src={ tafsVideoURL(name + ".mp4") } type="video/mp4"/>
 		</video>
-		<button class="play" type="button" hidden aria-label={ play }><span aria-hidden="true">▶</span></button>
+		<button class="play" type="button" hidden aria-label={ play } data-play={ play } data-pause={ pause }><span aria-hidden="true"></span></button>
 		<figcaption>{ caption }</figcaption>
 	</figure>
 }

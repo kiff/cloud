@@ -102,12 +102,11 @@ type tafsWords struct {
 // today, captured with test data only; its alt text says what it shows, never
 // more than it shows.
 type tafsShots struct {
-	// The crops: Coach's message (2), a Card's limits and an approval (5),
-	// and a line of the Record (7).
-	Coach, Card, Approve, Record string
-	// The videos' captions (4, 9), shown under each phone; and the play
-	// button's name, shown with reduced motion or when a browser won't play.
-	Video2, Video3, Play string
+	// The crops: a Card's limits (5) and a line of the Record (7).
+	Card, Record string
+	// The videos' captions (4, 9), shown under each phone; and the names of
+	// the button on each phone that plays or pauses its video.
+	Video2, Video3, Play, Pause string
 }
 
 // tafsGoogle is the footer's Google band: its heading, its line, and the

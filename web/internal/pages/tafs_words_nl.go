@@ -3,13 +3,12 @@ package pages
 // tafsNL is /nl/tafs.
 var tafsNL = tafsWords{
 	Shots: tafsShots{
-		Coach:   "Coach in de tafs-app wacht op je goedkeuring en herhaalt de afgesproken regel: tot 30 deals per dag, daarna vraagt hij het jou.",
-		Card:    "De Card van een taf in de tafs-app: terugbetalingen tot € 50 per stuk, meer vraagt het eerst aan jou, hoogstens € 5.000 per dag; al het andere wordt geweigerd.",
-		Approve: "Coach vraagt je de koppeling met Pipedrive voor een taf goed te keuren, met „Goedkeuren met je vingerafdruk” en „Afwijzen”.",
-		Record:  "Het Logboek in de tafs-app: een afspraak geboekt door een taf, door jou goedgekeurd, gedaan, met het KIFF-bewijs.",
-		Video2:  "Een taf handelt een terugbetalingsverzoek af binnen zijn Card. Testgegevens.",
-		Video3:  "Een taf boekt een afspraak in Google Agenda. Testgegevens.",
-		Play:    "Video afspelen",
+		Card:   "De Card van een taf in de tafs-app: terugbetalingen tot € 50 per stuk, meer vraagt het eerst aan jou, hoogstens € 5.000 per dag; al het andere wordt geweigerd.",
+		Record: "Het Logboek in de tafs-app: een afspraak geboekt door een taf, door jou goedgekeurd, gedaan, met het KIFF-bewijs.",
+		Video2: "Een taf handelt een terugbetalingsverzoek af binnen zijn Card. Testgegevens.",
+		Video3: "Een taf boekt een afspraak in Google Agenda. Testgegevens.",
+		Play:   "Video afspelen",
+		Pause:  "Video pauzeren",
 	},
 	Cost:        tafsCostNL,
 	Title:       "tafs: AI-agents die je routinewerk doen",
