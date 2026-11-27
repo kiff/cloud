@@ -142,6 +142,10 @@ Collect an approved call with the same tool, arguments and id. It is
 sent at most once. A call whose outcome is unknown is not resent: check
 with the tool.
 
+A call's arguments nest at most 32 levels deep, counting the arguments
+object as the first. A deeper call is refused as invalid before anything
+is decided or held, so every app can show what the owner approves.
+
 ## What the agent sees
 
 - Each tool's description ends with what the agent's Card allows.
