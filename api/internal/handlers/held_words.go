@@ -395,25 +395,31 @@ func plainNumber(n string) string {
 	if strings.HasPrefix(n, "-") {
 		sign, n = "-", n[1:]
 	}
-	mant, exp := n, 0
+	mant, expText := n, ""
 	if i := strings.IndexAny(n, "eE"); i >= 0 {
-		e, err := strconv.Atoi(strings.TrimPrefix(n[i+1:], "+"))
+		mant, expText = n[:i], strings.TrimPrefix(n[i+1:], "+")
+	}
+	whole, frac, _ := strings.Cut(mant, ".")
+	digits := strings.TrimLeft(whole+frac, "0")
+	// A zero is one written digit, whatever its exponent ("0e500" is 0, and
+	// so is a zero whose exponent is too large to read).
+	if digits == "" {
+		return "0"
+	}
+	exp := 0
+	if expText != "" {
+		e, err := strconv.Atoi(expText)
 		if err != nil {
 			return sent
 		}
-		mant, exp = n[:i], e
+		exp = e
 	}
 	// Past these, the number can't be written in plainDigitsMax digits: no
 	// arithmetic on an exponent that large.
 	if exp > plainDigitsMax+len(mant) || exp < -plainDigitsMax-len(mant) {
 		return sent
 	}
-	whole, frac, _ := strings.Cut(mant, ".")
-	digits := strings.TrimLeft(whole+frac, "0")
 	scale := len(frac) - exp
-	if digits == "" {
-		return "0"
-	}
 	for strings.HasSuffix(digits, "0") {
 		digits, scale = digits[:len(digits)-1], scale-1
 	}

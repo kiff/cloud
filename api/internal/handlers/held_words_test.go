@@ -168,7 +168,7 @@ func TestPlainNumber(t *testing.T) {
 		"1e400": "1e400", "1e-400": "1e-400", "-2.5E+999999999": "-2.5E+999999999", "1e999999999999999999999": "1e999999999999999999999",
 		// The edge: 100 written digits, the 0 before a point counted.
 		"1e99": "1" + strings.Repeat("0", 99), "1e100": "1e100", "1e-99": "0." + strings.Repeat("0", 98) + "1", "1e-100": "1e-100",
-		"1.50e98": "15" + strings.Repeat("0", 97), "-0.0e5": "0", "1" + strings.Repeat("0", 150) + "e-150": "1",
+		"1.50e98": "15" + strings.Repeat("0", 97), "-0.0e5": "0", "0e500": "0", "0e99999999999999999999": "0", "1e99999999999999999999": "1e99999999999999999999", "-0.000E-999999999": "0", "1000e2147483647": "1000e2147483647", "1" + strings.Repeat("0", 150) + "e-150": "1",
 	} {
 		if got := plainNumber(in); got != want {
 			t.Errorf("plainNumber(%q) = %q, want %q", in, got, want)
