@@ -10,6 +10,7 @@ var tafsEN = tafsWords{
 		Play:   "Play the video",
 		Pause:  "Pause the video",
 	},
+	Explain:     tafsExplainEN,
 	Cost:        tafsCostEN,
 	Title:       "tafs: AI agents that do your routine work",
 	Description: "tafs is an app where AI agents, called tafs, do your business's routine work, such as answering email, within limits you set on a Card. Anything over the limits waits for your yes.",
