@@ -31,7 +31,7 @@ draft; a Card last issued directly has none.
 - `summary`: the tool's title ("Refund a payment");
 - `amount` (`{minor, unit, scale}`) and `amount_text` ("$45");
 - `reason_text`: why it's held ("$45 is over the $40 limit for one call");
-- `details`: one line per argument;
+- `details`: every argument written out in full, never shortened: a plain value on its line (`charge: ch_1`), a list's items (`1`, `2`, ...) and an object's fields below its name, two spaces deeper each level, keys sorted. A line break in a value is a space. A held browser call's steps are listed one by one;
 - `expires_at`, `answer_url` and `owner_answer`;
 - `taf_about` and `taf_reason`: the agent's own words. Label them as the
   agent's, never in place of KIFF's text;
