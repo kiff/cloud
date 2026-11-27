@@ -153,7 +153,7 @@ func privacyHeadZH() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">隱私權政策 · v0.1</p><h1>隱私權政策</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 25 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\">本政策說明 KIFF Cloud 如何在網站、儀表板、API 及適用於 iPhone、iPad、Android 與電腦的 tafs 應用程式上處理個人資料。問題請洽：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">隱私權政策 · v0.1</p><h1>隱私權政策</h1><p class=\"legal-meta\"><strong>最後更新：</strong>2026 年十一月 27 日。<strong>生效日期：</strong>2026 年五月 24 日。</p><p class=\"legal-disclaimer\">本政策說明 KIFF Cloud 如何在網站、儀表板、API 及適用於 iPhone、iPad、Android 與電腦的 tafs 應用程式上處理個人資料。問題請洽：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -282,7 +282,33 @@ func privacyCategoriesZH() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "。沒有 TPM 的 Windows PC 無法登入 tafs。KIFF 保存金鑰的公開部分、裝置的名稱與平台，以及新增與最後使用的時間，以便檢查您對被擱置呼叫的回覆及您對連線的核准。若您在電腦上以通行金鑰核准，例如 Windows Hello 或安全金鑰，您的臉部、指紋或 PIN 留在電腦自己的系統中；KIFF 保存通行金鑰的公開金鑰、其 ID、一個計數器與一個名稱，從不保存任何機密內容，並拒絕同步到其他裝置的通行金鑰。若您在手機、平板或執行 iPad 應用程式的 Mac 上開啟通知，我們保存裝置的推播權杖，連同您的 KIFF 個人 ID，以及應用程式所顯示的語言，讓其通知以該語言送達。tafs 服務也保存帳戶的語言（來自最後與 Coach 對話的人），最長三個月，讓 taf 的報告以該語言送達。手機的通知經由 Apple 或 Google 送出，只帶哪個 taf 與它想要什麼，而在門的通知中，帶有來信者的名字或電子郵件地址：從不含金額或請求的細節。應用程式在裝置本身從 KIFF 加上這些內容，因此已解鎖手機的通知可顯示金額、商家或人。在已鎖定的 Android 手機上，它只顯示「taf 需要您」，已鎖定的 iPhone 也是如此，除非您已把其預覽設為一律顯示。<strong>您的手錶：</strong>手錶不保存密碼或金鑰，只與您配對的手機溝通，且從不核准。在您允許 AI 之後，它僅以文字、透過手機，把您所說的話傳給 Coach 或您選擇的 taf。手錶自己的語音服務（Apple 或 Google 的）把您的話轉成該文字。在 Wear OS 上，若它在您說完之前停止，則由您手機自己的辨識器在手機上代為處理。手錶僅在有螢幕鎖定或密碼且已解鎖時，才能拒絕、停止或傳給 Coach 或 taf。您傳給 taf 的內容會進入該 taf 自己的對話，就像您在手機上寫的一樣。taf 的對話（含金額）每次開啟時都透過手機讀取，手錶只保存下方其各自段落所說明的最近訊息。在應用程式關閉時，您的手機會透過系統本身的手機與手錶連線（Apple Watch 上為 Apple 的，Wear OS 上為 Google Play 服務的），把新的回覆和訊息轉給手錶；該連線只會在手錶收下之前，把它們保留在手機和手錶上。喚醒手機的推播不含任何文字。在您沒有看手錶時送達的回覆，也會以通知顯示在您的 iPhone 和 Apple Watch 或 Wear OS 手錶上，顯示其文字但絕不顯示金額，並保留到您關閉為止；鎖定中的 Wear OS 手錶只會顯示有回覆已準備好。<strong>Apple Watch：</strong>它顯示您的 taf 及其頁面，但不保存。它保存您的收件匣，存在鎖定時無法讀取的檔案中：每個被擱置的呼叫記為其 taf 的名稱與所要求的事，從不含金額，以及 Coach 對您從手錶傳送內容的回覆（文字）。若您在手錶上登出，它也會保存您已登出這件事，直到您在手錶上再次登入。除此之外，除非手錶有密碼，否則它什麼也不保存。收件匣會在您於手錶登出或您的 iPhone 登出時，或下次應用程式在沒有密碼的情況下開啟或關閉時消失。它不錄音，且它顯示的唯一通知是您 iPhone 的通知。為了讓對話能立即開啟，它也會保存您在手錶上開啟的最多 20 個對話（Coach 與您的 taf 的對話）中，每個對話最近的 30 則訊息，僅限文字且從不含金額，並與收件匣一樣上鎖；收件匣刪除時，以及對話 30 天未開啟時，這些訊息就會刪除。<strong>Wear OS：</strong>它顯示您帳戶的電子郵件與今天的行事曆，但不保存。為了能立即開啟，它以加密方式保存等著您的事項數量，以及每個 taf 的名稱和它是否已停止或暫停：從不含金額、被擱置呼叫的細節或 taf 的對話。這些資料會在您登出、手錶鎖定或離開您的手腕時，以及 24 小時後清除。它保存您的收件匣，每一行是 taf 的名稱與它所說的話，從不含金額，以及一則留待稍後的訊息（文字）。在手錶或手機上登出，會清除全部。為了其磚（tile），它也保存等著您的事項數量，僅在手錶解鎖時顯示，並在您登出時，或下次磚在手錶鎖定或沒有螢幕鎖定的情況下顯示時清除。在您於手錶登出後，它會保存您已登出的記錄，直到您再次登入。收件匣也會在下次應用程式於手錶鎖定或沒有螢幕鎖定時開啟或關閉時消失。留待稍後的訊息會留著，直到您傳送或刪除，因為是您要求傳送它。若手錶的語音服務在您說完之前停止，手錶會把錄音傳給您的手機，由手機自己把它轉成文字，從不在伺服器上。錄音在文字回來或您取消後，於兩邊都會刪除，最長 2 分鐘。只有文字會繼續傳給 Coach 或您的 taf。taf 的結果可能留在手錶的通知中，直到您關閉它或在手錶上登出。為了讓對話能立即開啟，它也會保存您在手錶上開啟的最多 20 個對話（Coach 與您的 taf 的對話）中，每個對話最近的 30 則訊息，僅限文字且從不含金額，並加密；當您在手錶或手機上登出時，以及對話 30 天未開啟時，這些訊息就會刪除，而沒有螢幕鎖定的手錶完全不保存。在 Windows PC、Linux 電腦，或執行 macOS 12 應用程式的 Mac 上，通知由應用程式在執行時自行產生，沒有推播權杖，也不經過其他公司。在 Windows 與 Linux 上，通知顯示哪個 taf、它想做什麼、金額、原因與期限；在 macOS 12 應用程式上，當您開啟後，它們顯示 KIFF 對該呼叫的說法，而鎖定的螢幕顯示 Mac 預覽設定所允許的內容。在 Windows 上，通知預設關閉，直到您開啟，且在螢幕鎖定時只顯示「taf 需要您」。螢幕鎖定前已顯示的通知，其細節保留在 Windows 的通知清單中。在 Linux 上，通知預設開啟，直到您關閉，且鎖定的螢幕顯示什麼取決於您的桌面。當您連接工具時，您在該工具自己的提供者處登入。對於 planque 自行登入的應用程式（如 Stripe）或您提供的金鑰，planque 為貴公司加密保存該權杖或金鑰。對於受管理的連線，planque 合作的連線服務 Composio 保存登入，而 planque 只保存連線的記錄與您核准的工具（皆以處理者身分，見下文）。若您配對 tafs 擴充功能，taf 也能在您自己的 Chrome 中，讀取並操作您允許的網站頁面（以處理者身分；<a href=\"/zh/tafs/privacy\">tafs 隱私權政策</a>說明會讀取什麼、保存什麼，以及保存多久）。連線的記錄可包含所登入的帳戶（其名稱或電子郵件），讓應用程式能向您顯示是哪一個。KIFF 僅對 <a href=\"/subprocessors#composio\">/subprocessors</a> （英文） 所列的應用程式使用受管理的連線。應用程式沒有分析或廣告追蹤器。</li><li><strong>App Store 購買</strong> — 當您在 tafs 中購買 Solo 或額度包，Apple 將其賣給您：Apple 是登記賣方，收款並保管您的付款資料。Apple 告訴我們買了什麼、為哪個 KIFF 帳戶（應用程式附加在購買上的隨機 ID）、何時、Apple 的交易 ID，以及對 Solo 而言，期間何時結束或續訂。我們用它為您的帳戶加入額度或方案。Apple 不會給我們您的 Apple ID、姓名、電子郵件地址或信用卡。</li><li><strong>Google Play 購買</strong> — 在 Android 上，同樣的購買透過 Google Play 計費進行：Google 收款並保管您的付款資料。Google 告訴我們買了什麼、為哪個 KIFF 帳戶（相同的隨機 ID）、何時、購買的權杖與訂單 ID，以及對 Solo 而言，期間何時結束或續訂，我們以相同方式使用。Google 不會給我們您的 Google 帳戶、姓名、電子郵件地址或信用卡。</li></ul></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "。沒有 TPM 的 Windows PC 無法登入 tafs。KIFF 保存金鑰的公開部分、裝置的名稱與平台，以及新增與最後使用的時間，以便檢查您對被擱置呼叫的回覆及您對連線的核准。若您在電腦上以通行金鑰核准，例如 Windows Hello 或安全金鑰，您的臉部、指紋或 PIN 留在電腦自己的系統中；KIFF 保存通行金鑰的公開金鑰、其 ID、一個計數器與一個名稱，從不保存任何機密內容，並拒絕同步到其他裝置的通行金鑰。若您在手機、平板或執行 iPad 應用程式的 Mac 上開啟通知，我們保存裝置的推播權杖，連同您的 KIFF 個人 ID，以及應用程式所顯示的語言，讓其通知以該語言送達。tafs 服務也保存帳戶的語言（來自最後與 Coach 對話的人），最長三個月，讓 taf 的報告以該語言送達。手機的通知經由 Apple 或 Google 送出，只帶哪個 taf 與它想要什麼，而在門的通知中，帶有來信者的名字或電子郵件地址：從不含金額或請求的細節。應用程式在裝置本身從 KIFF 加上這些內容，因此已解鎖手機的通知可顯示金額、商家或人。在已鎖定的 Android 手機上，它只顯示「taf 需要您」，已鎖定的 iPhone 也是如此，除非您已把其預覽設為一律顯示。<strong>您的手錶：</strong>手錶不保存密碼或金鑰，只與您配對的手機溝通，且從不核准。在您允許 AI 之後，它僅以文字、透過手機，把您所說的話傳給 Coach 或您選擇的 taf。手錶自己的語音服務（Apple 或 Google 的）把您的話轉成該文字。在 Wear OS 上，若它在您說完之前停止，則由您手機自己的辨識器在手機上代為處理。手錶僅在有螢幕鎖定或密碼且已解鎖時，才能拒絕、停止或傳給 Coach 或 taf。您傳給 taf 的內容會進入該 taf 自己的對話，就像您在手機上寫的一樣。taf 的對話（含金額）每次開啟時都透過手機讀取，手錶只保存下方其各自段落所說明的最近訊息。在應用程式關閉時，您的手機會透過系統本身的手機與手錶連線（Apple Watch 上為 Apple 的，Wear OS 上為 Google Play 服務的），把新的回覆和訊息轉給手錶；該連線只會在手錶收下之前，把它們保留在手機和手錶上。喚醒手機的推播不含任何文字。在您沒有看手錶時送達的回覆，也會以通知顯示在您的 iPhone 和 Apple Watch 或 Wear OS 手錶上，顯示其文字但絕不顯示金額，並保留到您關閉為止；鎖定中的 Wear OS 手錶只會顯示有回覆已準備好。<strong>Apple Watch：</strong>它顯示您的 taf 及其頁面，但不保存。它保存您的收件匣，存在鎖定時無法讀取的檔案中：每個被擱置的呼叫記為其 taf 的名稱與所要求的事，從不含金額，以及 Coach 對您從手錶傳送內容的回覆（文字）。若您在手錶上登出，它也會保存您已登出這件事，直到您在手錶上再次登入。除此之外，除非手錶有密碼，否則它什麼也不保存。收件匣會在您於手錶登出或您的 iPhone 登出時，或下次應用程式在沒有密碼的情況下開啟或關閉時消失。它不錄音，且它顯示的唯一通知是您 iPhone 的通知。為了讓對話能立即開啟，它也會保存您在手錶上開啟的最多 20 個對話（Coach 與您的 taf 的對話）中，每個對話最近的 30 則訊息，僅限文字且從不含金額，並與收件匣一樣上鎖；收件匣刪除時，以及對話 30 天未開啟時，這些訊息就會刪除。<strong>Wear OS：</strong>它顯示您帳戶的電子郵件與今天的行事曆，但不保存。為了能立即開啟，它以加密方式保存等著您的事項數量，以及每個 taf 的名稱和它是否已停止或暫停：從不含金額、被擱置呼叫的細節或 taf 的對話。這些資料會在您登出、手錶鎖定或離開您的手腕時，以及 24 小時後清除。它保存您的收件匣，每一行是 taf 的名稱與它所說的話，從不含金額，以及一則留待稍後的訊息（文字）。在手錶或手機上登出，會清除全部。為了其磚（tile），它也保存等著您的事項數量，僅在手錶解鎖時顯示，並在您登出時，或下次磚在手錶鎖定或沒有螢幕鎖定的情況下顯示時清除。在您於手錶登出後，它會保存您已登出的記錄，直到您再次登入。收件匣也會在下次應用程式於手錶鎖定或沒有螢幕鎖定時開啟或關閉時消失。留待稍後的訊息會留著，直到您傳送或刪除，因為是您要求傳送它。若手錶的語音服務在您說完之前停止，手錶會把錄音傳給您的手機，由手機自己把它轉成文字，從不在伺服器上。錄音在文字回來或您取消後，於兩邊都會刪除，最長 2 分鐘。只有文字會繼續傳給 Coach 或您的 taf。taf 的結果可能留在手錶的通知中，直到您關閉它或在手錶上登出。為了讓對話能立即開啟，它也會保存您在手錶上開啟的最多 20 個對話（Coach 與您的 taf 的對話）中，每個對話最近的 30 則訊息，僅限文字且從不含金額，並加密；當您在手錶或手機上登出時，以及對話 30 天未開啟時，這些訊息就會刪除，而沒有螢幕鎖定的手錶完全不保存。在 Windows PC、Linux 電腦，或執行 macOS 12 應用程式的 Mac 上，通知由應用程式在執行時自行產生，沒有推播權杖，也不經過其他公司。在 Windows 與 Linux 上，通知顯示哪個 taf、它想做什麼、金額、原因與期限；在 macOS 12 應用程式上，當您開啟後，它們顯示 KIFF 對該呼叫的說法，而鎖定的螢幕顯示 Mac 預覽設定所允許的內容。在 Windows 上，通知預設關閉，直到您開啟，且在螢幕鎖定時只顯示「taf 需要您」。螢幕鎖定前已顯示的通知，其細節保留在 Windows 的通知清單中。在 Linux 上，通知預設開啟，直到您關閉，且鎖定的螢幕顯示什麼取決於您的桌面。當您連接工具時，您在該工具自己的提供者處登入。對於 planque 自行登入的應用程式（如 Stripe）或您提供的金鑰，planque 為貴公司加密保存該權杖或金鑰。對於受管理的連線，planque 合作的連線服務 Composio 保存登入，而 planque 只保存連線的記錄與您核准的工具（皆以處理者身分，見下文）。若您配對 tafs 擴充功能，taf 也能在您自己的 Chrome 中，讀取並操作您允許的網站頁面（以處理者身分；<a href=\"/zh/tafs/privacy\">tafs 隱私權政策</a>說明會讀取什麼、保存什麼，以及保存多久）。連線的記錄可包含所登入的帳戶（其名稱或電子郵件），讓應用程式能向您顯示是哪一個。KIFF 僅對 <a href=\"/subprocessors#composio\">/subprocessors</a> （英文） 所列的應用程式使用受管理的連線。應用程式沒有分析或廣告追蹤器。</li><li><strong>App Store 購買</strong> — 當您在 tafs 中購買 Solo 或額度包，Apple 將其賣給您：Apple 是登記賣方，收款並保管您的付款資料。Apple 告訴我們買了什麼、為哪個 KIFF 帳戶（應用程式附加在購買上的隨機 ID）、何時、Apple 的交易 ID，以及對 Solo 而言，期間何時結束或續訂。我們用它為您的帳戶加入額度或方案。Apple 不會給我們您的 Apple ID、姓名、電子郵件地址或信用卡。</li><li><strong>Google Play 購買</strong> — 在 Android 上，同樣的購買透過 Google Play 計費進行：Google 收款並保管您的付款資料。Google 告訴我們買了什麼、為哪個 KIFF 帳戶（相同的隨機 ID）、何時、購買的權杖與訂單 ID，以及對 Solo 而言，期間何時結束或續訂，我們以相同方式使用。Google 不會給我們您的 Google 帳戶、姓名、電子郵件地址或信用卡。</li><li><strong>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("zh").Label)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_privacy.templ`, Line: 143, Col: 42}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</strong> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("zh").Text)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `zh_privacy.templ`, Line: 143, Col: 80}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</li></ul></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -306,12 +332,12 @@ func privacyLawfulBasesZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"lawful-bases\"><h2>5. 處理的合法依據</h2><p>依 GDPR 第 6 條，我們依據下列合法依據：</p><ul><li><strong>履行契約</strong>（第 6(1)(b) 條）— 用於建立帳戶、驗證、代表您運行執行環境、計費（啟用時）及核心服務介面。</li><li><strong>正當利益</strong>（第 6(1)(f) 條）— 用於安全、防止詐欺、偵測濫用、營運遙測及保護服務。我們權衡自身利益與您的權利，並會應要求告知該權衡測試的結果。</li><li><strong>同意</strong>（第 6(1)(a) 條）— 用於 tafs 應用程式中的 AI：送往執行 Coach 與您的 taf 的 AI 模型的內容，如<a href=\"#ai-in-tafs\">下文</a>所述。在您允許之前不會送出任何內容，您可在「帳戶」中撤回。在使用任何分析 cookie、選擇性行銷通訊，或實質擴大我們使用您資料的新處理之前，我們也會徵求同意。我們不進行分析、廣告或非必要的追蹤。</li><li><strong>法律義務</strong>（第 6(1)(c) 條）— 用於稅務記錄（愛沙尼亞會計法 §12，7 年）、回應合法的主管機關要求，以及適用時反洗錢規則所要求的保存。</li></ul><h3 id=\"ai-in-tafs\">tafs 應用程式中的 AI</h3><p>在任何內容送往 AI 之前，tafs 應用程式會以這些文字詢問您：</p><ul><li>tafs 為 Coach 與您的 taf 使用 Anthropic 的 Claude AI。Claude 由 Anthropic 或我們子處理者頁面上列出的其中一家雲端供應商為我們運行。該頁面說明是哪一家，以及在哪裡。</li><li>Coach 與您的 taf 是 AI 代理：它們所寫的內容由 AI 產生，可能有誤。taf 寄到貴公司以外的訊息會說明是由 AI 代理撰寫。</li><li>送往它的內容：您寫給 Coach 與您的 taf 的內容、您附加的檔案、您連接的應用程式在 taf 工作時回傳給它的內容，以及 Coach 在應用程式中協助您時螢幕上的內容。</li><li>永不送出的內容：您連接的應用程式所使用的密碼與金鑰，或您的指紋。</li><li>運行它的公司用它來回答，並在 30 天內刪除，除非被標示為違反該公司的使用規則，或法律要求保留。</li><li>在您允許之前不會送出任何內容。您可以在「帳戶」中撤回。</li></ul><p>當下無人在場而執行的 taf（依其排程，或有東西進來時），依賴建立或接手它之人的同意，否則依賴首位管理帳戶 taf 並允許它的人的同意。</p><p><strong>當您撤回時，</strong>Coach 與您的 taf 會停止回覆您。其執行依賴您同意的 taf 會暫停：其排程停止，進來的內容等候。待再次給予同意，或管理帳戶 taf 的某人以自己的同意接手後，它才繼續。撤回不會改變先前已送出的內容。</p><p>Anthropic 列於 <a href=\"/subprocessors\">/subprocessors</a> （英文），連同其處理地點及何時可能將資料保存更久。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"lawful-bases\"><h2>5. 處理的合法依據</h2><p>依 GDPR 第 6 條，我們依據下列合法依據：</p><ul><li><strong>履行契約</strong>（第 6(1)(b) 條）— 用於建立帳戶、驗證、代表您運行執行環境、計費（啟用時）及核心服務介面。</li><li><strong>正當利益</strong>（第 6(1)(f) 條）— 用於安全、防止詐欺、偵測濫用、營運遙測及保護服務。我們權衡自身利益與您的權利，並會應要求告知該權衡測試的結果。</li><li><strong>同意</strong>（第 6(1)(a) 條）— 用於 tafs 應用程式中的 AI：送往執行 Coach 與您的 taf 的 AI 模型的內容，如<a href=\"#ai-in-tafs\">下文</a>所述。在您允許之前不會送出任何內容，您可在「帳戶」中撤回。在使用任何分析 cookie、選擇性行銷通訊，或實質擴大我們使用您資料的新處理之前，我們也會徵求同意。我們不進行分析、廣告或非必要的追蹤。</li><li><strong>法律義務</strong>（第 6(1)(c) 條）— 用於稅務記錄（愛沙尼亞會計法 §12，7 年）、回應合法的主管機關要求，以及適用時反洗錢規則所要求的保存。</li></ul><h3 id=\"ai-in-tafs\">tafs 應用程式中的 AI</h3><p>在任何內容送往 AI 之前，tafs 應用程式會以這些文字詢問您：</p><ul><li>tafs 為 Coach 與您的 taf 使用 Anthropic 的 Claude AI。Claude 由 Anthropic 或我們子處理者頁面上列出的其中一家雲端供應商為我們運行。該頁面說明是哪一家，以及在哪裡。</li><li>Coach 與您的 taf 是 AI 代理：它們所寫的內容由 AI 產生，可能有誤。taf 寄到貴公司以外的訊息會說明是由 AI 代理撰寫。</li><li>送往它的內容：您寫給 Coach 與您的 taf 的內容、您附加的檔案、您連接的應用程式在 taf 工作時回傳給它的內容，以及 Coach 在應用程式中協助您時螢幕上的內容。</li><li>永不送出的內容：您連接的應用程式所使用的密碼與金鑰，或您的指紋。</li><li>運行它的公司用它來回答，並在 30 天內刪除，除非被標示為違反該公司的使用規則，或法律要求保留。</li><li>在您允許之前不會送出任何內容。您可以在「帳戶」中撤回。</li></ul><p>當下無人在場而執行的 taf（依其排程，或有東西進來時），依賴建立或接手它之人的同意，否則依賴首位管理帳戶 taf 並允許它的人的同意。</p><p><strong>當您撤回時，</strong>Coach 與您的 taf 會停止回覆您。其執行依賴您同意的 taf 會暫停：其排程停止，進來的內容等候。待再次給予同意，或管理帳戶 taf 的某人以自己的同意接手後，它才繼續。撤回不會改變先前已送出的內容。</p><p>Anthropic 列於 <a href=\"/subprocessors\">/subprocessors</a> （英文），連同其處理地點及何時可能將資料保存更久。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -335,12 +361,12 @@ func privacySubprocessorsZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sub-processors\"><h2>6. 次處理者</h2><p>我們不出售您的個人資料，也不為廣告而分享。</p><p>我們聘用少數供應商來提供服務。官方現行清單見 <a href=\"/subprocessors\">/subprocessors</a> （英文）；該頁面在任何變更後 30 天內更新。我們要求每個次處理者依書面協議提供與我們同等的保護，包括個人資料離開歐盟時的歐盟標準契約條款。</p><p>對影響個人資料的次處理者之重大新增或替換，會事先通知活躍客戶，並附有異議權。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"sub-processors\"><h2>6. 次處理者</h2><p>我們不出售您的個人資料，也不為廣告而分享。</p><p>我們聘用少數供應商來提供服務。官方現行清單見 <a href=\"/subprocessors\">/subprocessors</a> （英文）；該頁面在任何變更後 30 天內更新。我們要求每個次處理者依書面協議提供與我們同等的保護，包括個人資料離開歐盟時的歐盟標準契約條款。</p><p>對影響個人資料的次處理者之重大新增或替換，會事先通知活躍客戶，並附有異議權。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -364,12 +390,12 @@ func privacyTransfersZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"transfers\"><h2>7. 國際傳輸</h2><p>我們的部分次處理者設立於歐洲經濟區以外，主要在美國。對每一項此類傳輸，我們依據下列至少一項保障：</p><ul><li><strong>歐盟—美國資料隱私框架</strong> — 用於已通過該框架認證的美國次處理者。適足性決定自 2023 年年中起生效；我們監控其狀態的任何變化。</li><li><strong>標準契約條款</strong> — 對我們直接的次處理者適用模組 2（控管者對處理者），在有鏈狀處理者時適用模組 3（處理者對次處理者）。我們使用執委會於 2021 年核准的 SCC。</li><li><strong>補充措施</strong> — 當風險評估顯示需要額外保障時（傳輸與靜態加密、存取記錄、資料最小化）。</li></ul><p>您可寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，要求適用於特定次處理者的具體傳輸工具。</p><p><strong>您所在的國家。</strong>部分國家的法律要求的比本政策所述更多。它們補充的內容，以英文及該國語言，載於<a href=\"/privacy/countries\">您所在的國家</a> （英文）。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section id=\"transfers\"><h2>7. 國際傳輸</h2><p>我們的部分次處理者設立於歐洲經濟區以外，主要在美國。對每一項此類傳輸，我們依據下列至少一項保障：</p><ul><li><strong>歐盟—美國資料隱私框架</strong> — 用於已通過該框架認證的美國次處理者。適足性決定自 2023 年年中起生效；我們監控其狀態的任何變化。</li><li><strong>標準契約條款</strong> — 對我們直接的次處理者適用模組 2（控管者對處理者），在有鏈狀處理者時適用模組 3（處理者對次處理者）。我們使用執委會於 2021 年核准的 SCC。</li><li><strong>補充措施</strong> — 當風險評估顯示需要額外保障時（傳輸與靜態加密、存取記錄、資料最小化）。</li></ul><p>您可寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，要求適用於特定次處理者的具體傳輸工具。</p><p><strong>您所在的國家。</strong>部分國家的法律要求的比本政策所述更多。它們補充的內容，以英文及該國語言，載於<a href=\"/privacy/countries\">您所在的國家</a> （英文）。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -393,12 +419,12 @@ func privacyRetentionZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"retention\"><h2>8. 保存期間</h2><p>我們保存個人資料的期間，是與我們處理它的目的及任何適用法律義務相符的最短期間。</p><ul><li><strong>帳戶與登入中繼資料</strong> — 直到帳戶被刪除。在 tafs 應用程式中，擁有者於「帳戶」→ <em>刪除帳戶</em> 刪除它。在網頁上建立的帳戶，透過寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> 刪除，於 GDPR 第 12(3) 條的一個月期限內。無論哪種方式，帳戶的金鑰立即停止。在 tafs 應用程式中刪除則無法復原：其 tafs 對話、備註與連線立即清除，KIFF 保存的內容在 30 天內清除。在網頁上刪除，我們保留其資料 30 天的寬限期，以防擁有者想要取回，然後清除。</li><li><strong>API 金鑰記錄</strong> — 直到帳戶刪除，包括金鑰被撤銷之後。屬於代理登入連線的金鑰，在該連線結束 30 天後隨之刪除。</li><li><strong>工作階段 cookie</strong> — 直到到期（預設 24 小時）或直到您登出。</li><li><strong>反向代理存取日誌</strong> — 最長 90 天，然後彙整或刪除。</li><li><strong>服務日誌</strong> — KIFF 的服務與 planque 運行時記錄的內容：錯誤與請求，可能指名帳戶、個人或代理。30 天，然後刪除。</li><li><strong>備份</strong> — KIFF 的資料庫每天加密備份，每份備份保存 7 天，因此已刪除的記錄在 7 天內從中消失。tafs 與 planque 的儲存空間保存加密的時間點副本 35 天，僅用於故障後還原儲存空間，因此已刪除的記錄在 35 天內從中消失。</li><li><strong>租戶稽核資料</strong> — 依客戶的租戶設定，以處理者身分保管。預設：在租戶存續期間保存；租戶刪除時刪除。見 <a href=\"/security#deletion\">/security#deletion</a> （英文）。</li><li><strong>透過 KIFF 閘道的呼叫</strong> — 呼叫的引數保存到它被送出、被拒絕或失敗為止，然後刪除；工具的結果 24 小時，然後刪除。決定記錄與引數的雜湊作為租戶稽核資料保存。見 <a href=\"/security#data-kept\">/security#data-kept</a> （英文）。</li><li><strong>使用量</strong> — 對每次透過閘道的呼叫，於結束後：哪個代理進行、工具，以及它算作一次動作還是免費（及原因）。對每次 taf 或 Coach 的執行，於結束後：taf、何時、其 AI 所用的額度，以及是否計入或為何不計入。保存到帳戶刪除；為計費而回報給我們付款處理者的內容，與計費記錄一併保存。</li><li><strong>代理登入連線</strong> — 哪個代理、應用程式名稱、誰允許、何時，以及最後使用：連線存續期間，然後在其結束 30 天後（在此期間仍列於儀表板），然後連同其權杖與 API 金鑰刪除。全部隨帳戶刪除。</li><li><strong>tafs</strong> — 裝置的推播權杖，直到您從應用程式登出、移除裝置，或 Apple 或 Google 回報該權杖已失效。裝置的公開金鑰、名稱、平台與日期，在您使用它期間；您將它登出後，標記為已移除並保存到帳戶被刪除，讓 KIFF 能拒絕來自它的遲到回覆，並顯示是哪個裝置簽署了先前的回覆。通行金鑰的公開金鑰、ID 與名稱，同其裝置保存。電腦保存其工作階段最長 90 天，或直到您登出。tafs 為貴公司保管的內容以處理者身分保存：taf 的執行與對話，連同對話的摘要（及 Setup 的），30 天；您的工具回傳的內容僅保存到執行結束（在對話中，只被讀取的內容以加密方式為其後續訊息保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除）；其記憶備註直到移除該 taf；它交付的檔案自產生它們的執行起 30 天，然後在一天內自動刪除，或若您帳戶中有人刪除則更早；planque 中連線的權杖或金鑰，或 Composio 中受管理連線的登入，直到您中斷它（若您的另一個連線可能使用該供應商處的同一帳戶，則保存而不使用，直到那一個也被中斷），而其核准的記錄直到帳戶結束；見 <a href=\"/legal/dpa#annex-4\">DPA 的附件 4</a> （英文）。</li><li><strong>計費記錄</strong> — 自財務年度結束起 7 年（愛沙尼亞會計法 §12）。</li><li><strong>App Store 與 Google Play 購買</strong> — Apple 或 Google 告訴我們的每筆購買資料，留在您的帳戶中直到帳戶被刪除。它們的銷售與付款報告，我們作為計費記錄保存 7 年，不指名您。</li><li><strong>支援往來信件</strong> — 自最後一次互動起 3 年，然後刪除。</li></ul></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section id=\"retention\"><h2>8. 保存期間</h2><p>我們保存個人資料的期間，是與我們處理它的目的及任何適用法律義務相符的最短期間。</p><ul><li><strong>帳戶與登入中繼資料</strong> — 直到帳戶被刪除。在 tafs 應用程式中，擁有者於「帳戶」→ <em>刪除帳戶</em> 刪除它。在網頁上建立的帳戶，透過寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> 刪除，於 GDPR 第 12(3) 條的一個月期限內。無論哪種方式，帳戶的金鑰立即停止。在 tafs 應用程式中刪除則無法復原：其 tafs 對話、備註與連線立即清除，KIFF 保存的內容在 30 天內清除。在網頁上刪除，我們保留其資料 30 天的寬限期，以防擁有者想要取回，然後清除。</li><li><strong>API 金鑰記錄</strong> — 直到帳戶刪除，包括金鑰被撤銷之後。屬於代理登入連線的金鑰，在該連線結束 30 天後隨之刪除。</li><li><strong>工作階段 cookie</strong> — 直到到期（預設 24 小時）或直到您登出。</li><li><strong>反向代理存取日誌</strong> — 最長 90 天，然後彙整或刪除。</li><li><strong>服務日誌</strong> — KIFF 的服務與 planque 運行時記錄的內容：錯誤與請求，可能指名帳戶、個人或代理。30 天，然後刪除。</li><li><strong>備份</strong> — KIFF 的資料庫每天加密備份，每份備份保存 7 天，因此已刪除的記錄在 7 天內從中消失。tafs 與 planque 的儲存空間保存加密的時間點副本 35 天，僅用於故障後還原儲存空間，因此已刪除的記錄在 35 天內從中消失。</li><li><strong>租戶稽核資料</strong> — 依客戶的租戶設定，以處理者身分保管。預設：在租戶存續期間保存；租戶刪除時刪除。見 <a href=\"/security#deletion\">/security#deletion</a> （英文）。</li><li><strong>透過 KIFF 閘道的呼叫</strong> — 呼叫的引數保存到它被送出、被拒絕或失敗為止，然後刪除；工具的結果 24 小時，然後刪除。決定記錄與引數的雜湊作為租戶稽核資料保存。見 <a href=\"/security#data-kept\">/security#data-kept</a> （英文）。</li><li><strong>使用量</strong> — 對每次透過閘道的呼叫，於結束後：哪個代理進行、工具，以及它算作一次動作還是免費（及原因）。對每次 taf 或 Coach 的執行，於結束後：taf、何時、其 AI 所用的額度，以及是否計入或為何不計入。保存到帳戶刪除；為計費而回報給我們付款處理者的內容，與計費記錄一併保存。</li><li><strong>代理登入連線</strong> — 哪個代理、應用程式名稱、誰允許、何時，以及最後使用：連線存續期間，然後在其結束 30 天後（在此期間仍列於儀表板），然後連同其權杖與 API 金鑰刪除。全部隨帳戶刪除。</li><li><strong>tafs</strong> — 裝置的推播權杖，直到您從應用程式登出、移除裝置，或 Apple 或 Google 回報該權杖已失效。裝置的公開金鑰、名稱、平台與日期，在您使用它期間；您將它登出後，標記為已移除並保存到帳戶被刪除，讓 KIFF 能拒絕來自它的遲到回覆，並顯示是哪個裝置簽署了先前的回覆。通行金鑰的公開金鑰、ID 與名稱，同其裝置保存。電腦保存其工作階段最長 90 天，或直到您登出。tafs 為貴公司保管的內容以處理者身分保存：taf 的執行與對話，連同對話的摘要（及 Setup 的），30 天；您的工具回傳的內容僅保存到執行結束（在對話中，只被讀取的內容以加密方式為其後續訊息保存，使用到對話閒置一小時為止，且最多為讀取後四小時，然後在幾天內自動刪除）；其記憶備註直到移除該 taf；它交付的檔案自產生它們的執行起 30 天，然後在一天內自動刪除，或若您帳戶中有人刪除則更早；planque 中連線的權杖或金鑰，或 Composio 中受管理連線的登入，直到您中斷它（若您的另一個連線可能使用該供應商處的同一帳戶，則保存而不使用，直到那一個也被中斷），而其核准的記錄直到帳戶結束；見 <a href=\"/legal/dpa#annex-4\">DPA 的附件 4</a> （英文）。</li><li><strong>計費記錄</strong> — 自財務年度結束起 7 年（愛沙尼亞會計法 §12）。</li><li><strong>App Store 與 Google Play 購買</strong> — Apple 或 Google 告訴我們的每筆購買資料，留在您的帳戶中直到帳戶被刪除。它們的銷售與付款報告，我們作為計費記錄保存 7 年，不指名您。</li><li><strong>支援往來信件</strong> — 自最後一次互動起 3 年，然後刪除。</li></ul></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -422,12 +448,12 @@ func privacyRightsZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section id=\"rights\"><h2>9. 您的權利</h2><p>依 GDPR，您對您的個人資料享有下列權利：</p><ul><li><strong>存取</strong>（第 15 條）— 確認我們是否處理您的資料，並取得副本。</li><li><strong>更正</strong>（第 16 條）— 更正不正確或不完整的資料。</li><li><strong>刪除</strong>（第 17 條）— 刪除您的資料，但法定保存的例外除外。</li><li><strong>限制</strong>（第 18 條）— 在爭議解決期間暫停處理。</li><li><strong>可攜性</strong>（第 20 條）— 以機器可讀格式匯出您提供的資料。</li><li><strong>反對</strong>（第 21 條）— 對基於正當利益的處理；除非我們能證明有更優先的理由，否則我們會停止。</li><li><strong>撤回同意</strong>（第 7(3) 條）— 對任何基於同意的處理，例如 tafs 應用程式中的 AI（在「帳戶」中，如<a href=\"#ai-in-tafs\">上文</a>）。撤回不影響先前合法的處理。</li></ul><p>若要行使上述任何權利，請寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。我們依第 12(3) 條及時回覆，最遲在一個月內；對複雜的請求，我們可再延長最多兩個月，並會告知您。</p><h3 id=\"export-chats\">您自己的 tafs 對話</h3><p>在 tafs 應用程式中，「帳戶」→「匯出我的對話」會下載您與每個 taf（包括 Coach）的自己的對話、您附加之檔案的名稱，以及您自己的備註，為可讀檔案與 JSON。只有您能匯出：管理員或帳戶擁有者不能，且 KIFF 的帳戶匯出不包含它們。</p><h3 id=\"delete-account\">刪除您的 tafs 帳戶</h3><p>tafs 是 KIFF 的應用程式。若要刪除您的 tafs 帳戶及其資料：</p><ol><li>開啟 tafs 應用程式並登入。</li><li>前往「帳戶」，然後點選 <em>刪除帳戶</em>。</li><li>確認。刪除帳戶無法復原。</li></ol><p><em>刪除帳戶</em> 會顯示給可以刪除公司帳戶的人，通常是其擁有者。若您看不到它，或不再有該應用程式，請以您登入所用的地址寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，我們會及時刪除您的資料，最遲在一個月內。</p><p>被刪除的內容：帳戶的金鑰立即停止。其 taf、對話、備註、附加檔案與連線立即清除，並在 35 天內從其時間點副本中清除。KIFF 為帳戶保存的內容在 30 天內清除，並在其後 7 天內從備份中清除。指名該帳戶的服務日誌在 30 天內消失。租戶稽核資料隨租戶刪除。各類資料見<a href=\"#retention\">保存期間</a>。</p><p id=\"delete-data\">若要刪除您的部分資料並保留帳戶：在應用程式中，刪除一則對話，其訊息與附加檔案隨之消失；移除一個 taf，其對話、備註與連線隨之消失。其他任何事項，請寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> 並說明要刪除什麼。我們會及時處理，最遲在一個月內。</p><p>您有權向監管機關提出申訴。我們的主要監管機關是<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。您也可向您居住之成員國的監管機關申訴。</p><p><strong>您所在的國家。</strong>部分國家的法律要求的比本政策所述更多。它們補充的內容，以英文及該國語言，載於<a href=\"/privacy/countries\">您所在的國家</a> （英文）。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<section id=\"rights\"><h2>9. 您的權利</h2><p>依 GDPR，您對您的個人資料享有下列權利：</p><ul><li><strong>存取</strong>（第 15 條）— 確認我們是否處理您的資料，並取得副本。</li><li><strong>更正</strong>（第 16 條）— 更正不正確或不完整的資料。</li><li><strong>刪除</strong>（第 17 條）— 刪除您的資料，但法定保存的例外除外。</li><li><strong>限制</strong>（第 18 條）— 在爭議解決期間暫停處理。</li><li><strong>可攜性</strong>（第 20 條）— 以機器可讀格式匯出您提供的資料。</li><li><strong>反對</strong>（第 21 條）— 對基於正當利益的處理；除非我們能證明有更優先的理由，否則我們會停止。</li><li><strong>撤回同意</strong>（第 7(3) 條）— 對任何基於同意的處理，例如 tafs 應用程式中的 AI（在「帳戶」中，如<a href=\"#ai-in-tafs\">上文</a>）。撤回不影響先前合法的處理。</li></ul><p>若要行使上述任何權利，請寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。我們依第 12(3) 條及時回覆，最遲在一個月內；對複雜的請求，我們可再延長最多兩個月，並會告知您。</p><h3 id=\"export-chats\">您自己的 tafs 對話</h3><p>在 tafs 應用程式中，「帳戶」→「匯出我的對話」會下載您與每個 taf（包括 Coach）的自己的對話、您附加之檔案的名稱，以及您自己的備註，為可讀檔案與 JSON。只有您能匯出：管理員或帳戶擁有者不能，且 KIFF 的帳戶匯出不包含它們。</p><h3 id=\"delete-account\">刪除您的 tafs 帳戶</h3><p>tafs 是 KIFF 的應用程式。若要刪除您的 tafs 帳戶及其資料：</p><ol><li>開啟 tafs 應用程式並登入。</li><li>前往「帳戶」，然後點選 <em>刪除帳戶</em>。</li><li>確認。刪除帳戶無法復原。</li></ol><p><em>刪除帳戶</em> 會顯示給可以刪除公司帳戶的人，通常是其擁有者。若您看不到它，或不再有該應用程式，請以您登入所用的地址寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，我們會及時刪除您的資料，最遲在一個月內。</p><p>被刪除的內容：帳戶的金鑰立即停止。其 taf、對話、備註、附加檔案與連線立即清除，並在 35 天內從其時間點副本中清除。KIFF 為帳戶保存的內容在 30 天內清除，並在其後 7 天內從備份中清除。指名該帳戶的服務日誌在 30 天內消失。租戶稽核資料隨租戶刪除。各類資料見<a href=\"#retention\">保存期間</a>。</p><p id=\"delete-data\">若要刪除您的部分資料並保留帳戶：在應用程式中，刪除一則對話，其訊息與附加檔案隨之消失；移除一個 taf，其對話、備註與連線隨之消失。其他任何事項，請寄電子郵件至 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> 並說明要刪除什麼。我們會及時處理，最遲在一個月內。</p><p>您有權向監管機關提出申訴。我們的主要監管機關是<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。您也可向您居住之成員國的監管機關申訴。</p><p><strong>您所在的國家。</strong>部分國家的法律要求的比本政策所述更多。它們補充的內容，以英文及該國語言，載於<a href=\"/privacy/countries\">您所在的國家</a> （英文）。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -451,12 +477,12 @@ func privacyCookiesZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var14 == nil {
-			templ_7745c5c3_Var14 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section id=\"cookies\"><h2>10. Cookie</h2><p>我們設定三個 cookie，全都是絕對必要的、第一方的、僅透過 HTTPS 送出，且頁面上的指令碼無法讀取。依歐盟 ePrivacy 規則，它們不需要同意；我們列出它們讓您知道它們的存在。<a href=\"/cookies\">Cookie 政策</a> （英文）有詳細說明。</p><ul><li><strong><code>kiff_session</code></strong> — 讓您保持登入。一個帶有您的登入 ID、電子郵件與姓名，以及儀表板為您使用之憑證的簽章工作階段 cookie。為 <code>.kiff.dev</code> 設定。持續 24 小時，或直到您登出。</li><li><strong><code>kiff_flash</code></strong> — 把一次性訊息帶到下一頁，例如「您的金鑰已建立」。已簽章；新金鑰永不在其中。為 <code>.kiff.dev</code> 設定。下一頁讀取後刪除，最長 5 分鐘。</li><li><strong><code>kiff_cb_attempts</code></strong> — 計算登入頁重新載入的次數，以停止循環的登入。只送到該頁。持續 5 分鐘，並在登入開始或成功時清除。</li></ul><p>我們不使用分析 cookie、廣告 cookie 或任何第三方追蹤器。若我們日後新增，會依 ePrivacy 與 EDPB 2023 年關於追蹤技術的指引，在設定 cookie 之前顯示同意橫幅。</p><p>若您透過 Clerk（我們的驗證次處理者）登入，Clerk 也會在其自己的前端網域（<code>clerk.kiff.dev</code>）設定 cookie。這些 cookie 是 Clerk 在其登入流程中辨識您所必需，除我們的政策外也受 Clerk 隱私權政策規範。詳情見次處理者清單。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<section id=\"cookies\"><h2>10. Cookie</h2><p>我們設定三個 cookie，全都是絕對必要的、第一方的、僅透過 HTTPS 送出，且頁面上的指令碼無法讀取。依歐盟 ePrivacy 規則，它們不需要同意；我們列出它們讓您知道它們的存在。<a href=\"/cookies\">Cookie 政策</a> （英文）有詳細說明。</p><ul><li><strong><code>kiff_session</code></strong> — 讓您保持登入。一個帶有您的登入 ID、電子郵件與姓名，以及儀表板為您使用之憑證的簽章工作階段 cookie。為 <code>.kiff.dev</code> 設定。持續 24 小時，或直到您登出。</li><li><strong><code>kiff_flash</code></strong> — 把一次性訊息帶到下一頁，例如「您的金鑰已建立」。已簽章；新金鑰永不在其中。為 <code>.kiff.dev</code> 設定。下一頁讀取後刪除，最長 5 分鐘。</li><li><strong><code>kiff_cb_attempts</code></strong> — 計算登入頁重新載入的次數，以停止循環的登入。只送到該頁。持續 5 分鐘，並在登入開始或成功時清除。</li></ul><p>我們不使用分析 cookie、廣告 cookie 或任何第三方追蹤器。若我們日後新增，會依 ePrivacy 與 EDPB 2023 年關於追蹤技術的指引，在設定 cookie 之前顯示同意橫幅。</p><p>若您透過 Clerk（我們的驗證次處理者）登入，Clerk 也會在其自己的前端網域（<code>clerk.kiff.dev</code>）設定 cookie。這些 cookie 是 Clerk 在其登入流程中辨識您所必需，除我們的政策外也受 Clerk 隱私權政策規範。詳情見次處理者清單。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -480,12 +506,12 @@ func privacySecurityZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<section id=\"security\"><h2>11. 安全</h2><p>我們的技術與組織安全措施記載於 <a href=\"/security\">/security</a> （英文）。包括資料庫層的租戶隔離、傳輸中的 TLS 1.2+、依受管理供應商預設的靜態加密，以及基於最小權限原則的存取控制。</p><p>我們依 GDPR 第 33 條，不無故延遲並於確認後 72 小時內，通知受影響的客戶個人資料外洩。通知包含外洩的性質、所涉資料主體與記錄的類別及大約數量、可能的後果，以及已採取或擬採取的措施。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section id=\"security\"><h2>11. 安全</h2><p>我們的技術與組織安全措施記載於 <a href=\"/security\">/security</a> （英文）。包括資料庫層的租戶隔離、傳輸中的 TLS 1.2+、依受管理供應商預設的靜態加密，以及基於最小權限原則的存取控制。</p><p>我們依 GDPR 第 33 條，不無故延遲並於確認後 72 小時內，通知受影響的客戶個人資料外洩。通知包含外洩的性質、所涉資料主體與記錄的類別及大約數量、可能的後果，以及已採取或擬採取的措施。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -509,12 +535,12 @@ func privacyChildrenZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<section id=\"children\"><h2>12. 兒童</h2><p>KIFF Cloud 是不以兒童為對象的開發者基礎設施產品。我們不會明知而蒐集 16 歲以下兒童的個人資料。若您認為有兒童向我們提供了個人資料，請聯絡 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，我們會刪除。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<section id=\"children\"><h2>12. 兒童</h2><p>KIFF Cloud 是不以兒童為對象的開發者基礎設施產品。我們不會明知而蒐集 16 歲以下兒童的個人資料。若您認為有兒童向我們提供了個人資料，請聯絡 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>，我們會刪除。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -538,12 +564,12 @@ func privacyAutomatedZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section id=\"automated\"><h2>13. 自動化決策</h2><p>KIFF Cloud 的執行環境對我們客戶傳送的資料做出確定性的政策決定。這些不是 GDPR 第 22 條意義上對您產生法律效果或類似重大影響的決定；它們是依客戶自己的政策執行、關於客戶行動（退款、訂單、訊息等）的決定。</p><p>使用 KIFF Cloud 做出影響其自身終端使用者之決定的客戶，自行負責遵守第 22 條。我們的治理收據旨在提供這些客戶證明人為監督所需的稽核軌跡，但提供該監督的法律義務在客戶。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"automated\"><h2>13. 自動化決策</h2><p>KIFF Cloud 的執行環境對我們客戶傳送的資料做出確定性的政策決定。這些不是 GDPR 第 22 條意義上對您產生法律效果或類似重大影響的決定；它們是依客戶自己的政策執行、關於客戶行動（退款、訂單、訊息等）的決定。</p><p>使用 KIFF Cloud 做出影響其自身終端使用者之決定的客戶，自行負責遵守第 22 條。我們的治理收據旨在提供這些客戶證明人為監督所需的稽核軌跡，但提供該監督的法律義務在客戶。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -567,12 +593,12 @@ func privacyChangesZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<section id=\"changes\"><h2>14. 本政策的變更</h2><p>我們可能不時更新本政策。重大變更會以電子郵件通知活躍客戶，並在本頁以醒目橫幅標示至少 30 天。非重大變更以新的「最後更新」日期發布。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section id=\"changes\"><h2>14. 本政策的變更</h2><p>我們可能不時更新本政策。重大變更會以電子郵件通知活躍客戶，並在本頁以醒目橫幅標示至少 30 天。非重大變更以新的「最後更新」日期發布。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -596,12 +622,12 @@ func privacyContactZH() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 聯絡我們</h2><p>隱私問題與權利請求：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p><p>寄給 Kiff Agents OÜ 的正式法律通知：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>，或郵寄至 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。</p><p>申訴的主要監管機關：<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 25 日。</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<section id=\"contact\"><h2>15. 聯絡我們</h2><p>隱私問題與權利請求：<a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>。</p><p>寄給 Kiff Agents OÜ 的正式法律通知：<a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>，或郵寄至 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia。</p><p>申訴的主要監管機關：<a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">愛沙尼亞資料保護監察局（Andmekaitse Inspektsioon）</a>。</p><hr><p class=\"legal-footnote\"><strong>文件版本：</strong>v0.1。<br><strong>最後更新：</strong>2026 年十一月 27 日。</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

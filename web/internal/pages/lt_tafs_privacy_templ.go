@@ -51,7 +51,7 @@ func TafsPrivacyLT() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · privatumo politika</p><h1>tafs privatumo politika</h1><p class=\"legal-meta\"><strong>Paskutinį kartą atnaujinta:</strong> 2026 m. lapkričio 25 d.</p><p class=\"legal-disclaimer\">Ši politika paaiškina, kaip tafs, KIFF programėlė, skirta iPhone, iPad, Android įrenginiams ir kompiuteriams, tvarko asmens duomenis. tafs yra KIFF Cloud dalis, todėl jai taip pat taikoma <a href=\"/lt/privacy\">KIFF privatumo politika</a>, kaip ir viskam, ko neapima šis puslapis. Klausimai: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Kas mes esame</h2><p>tafs teikia <strong>Kiff Agents OÜ</strong>, Estijoje įsteigta uždaroji akcinė bendrovė (registro kodas 17372313, PVM mokėtojo kodas EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estija. Mūsų duomenų tvarkymui taikomas ES Bendrasis duomenų apsaugos reglamentas (BDAR).</p></section><section id=\"scope\"><h2>2. Ką apima ši politika</h2><p>tafs programėlę, skirtą iPhone, iPad, Android įrenginiams ir kompiuteriams (Mac, Windows ir Linux), ir paslaugą, kuria ji grindžiama, įskaitant Setup, kuris prijungia įmonės įrankius, ir planque, kuris palaiko šiuos ryšius. tafs įmonė patiki darbą AI agentui, taf, kuris dirba KIFF Card ribose.</p></section><section id=\"roles\"><h2>3. Mūsų vaidmenys</h2><p>Esame jūsų paskyros ir prisijungimo duomenų, taip pat savo paslaugos veiklos duomenų <strong>valdytojas</strong>. Jūsų įmonės vardu veikiame kaip <strong>duomenų tvarkytojas</strong> to, ką tafs jai saugo: kiekvieno taf paleidimų, pokalbių, ataskaitų, atminties pastabų ir jų pateikiamų failų. Šių duomenų valdytoja yra jūsų įmonė, o šiuos santykius reglamentuoja <a href=\"/legal/dpa\">duomenų tvarkymo sutartis</a> (anglų kalba).</p></section><section id=\"data\"><h2>4. Ką renka tafs</h2><ul><li><strong>Jūsų paskyra:</strong> prie tafs prisijungiate naudodami savo KIFF paskyrą. Telefone ar planšetėje programėlė saugo jūsų sesiją įrenginio Keychain (Android įrenginyje – jo šifruotoje saugykloje). Kompiuteryje ji saugo ją užrakintą jūsų naudotojo paskyrai: Windows kompiuteryje – su pačios Windows duomenų apsauga, Linux – jūsų raktų saugykloje (keyring), Mac – jo Keychain. Kompiuterio sesija trunka iki 90 dienų.</li><li><strong>Jūsų įrenginys:</strong> programėlė sukuria pasirašymo raktą, kuris niekada nepalieka įrenginio: iPhone, iPad ar Mac Secure Enclave, Android įrenginio Keystore arba Windows kompiuterio TPM. Linux ir Mac be Secure Enclave raktas yra programinis raktas, saugomas jūsų keyring ar Keychain, ir toks kompiuteris gali rodyti, kas jūsų laukia, bet negali to patvirtinti; patvirtinate savo telefone")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · privatumo politika</p><h1>tafs privatumo politika</h1><p class=\"legal-meta\"><strong>Paskutinį kartą atnaujinta:</strong> 2026 m. lapkričio 27 d.</p><p class=\"legal-disclaimer\">Ši politika paaiškina, kaip tafs, KIFF programėlė, skirta iPhone, iPad, Android įrenginiams ir kompiuteriams, tvarko asmens duomenis. tafs yra KIFF Cloud dalis, todėl jai taip pat taikoma <a href=\"/lt/privacy\">KIFF privatumo politika</a>, kaip ir viskam, ko neapima šis puslapis. Klausimai: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Kas mes esame</h2><p>tafs teikia <strong>Kiff Agents OÜ</strong>, Estijoje įsteigta uždaroji akcinė bendrovė (registro kodas 17372313, PVM mokėtojo kodas EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estija. Mūsų duomenų tvarkymui taikomas ES Bendrasis duomenų apsaugos reglamentas (BDAR).</p></section><section id=\"scope\"><h2>2. Ką apima ši politika</h2><p>tafs programėlę, skirtą iPhone, iPad, Android įrenginiams ir kompiuteriams (Mac, Windows ir Linux), ir paslaugą, kuria ji grindžiama, įskaitant Setup, kuris prijungia įmonės įrankius, ir planque, kuris palaiko šiuos ryšius. tafs įmonė patiki darbą AI agentui, taf, kuris dirba KIFF Card ribose.</p></section><section id=\"roles\"><h2>3. Mūsų vaidmenys</h2><p>Esame jūsų paskyros ir prisijungimo duomenų, taip pat savo paslaugos veiklos duomenų <strong>valdytojas</strong>. Jūsų įmonės vardu veikiame kaip <strong>duomenų tvarkytojas</strong> to, ką tafs jai saugo: kiekvieno taf paleidimų, pokalbių, ataskaitų, atminties pastabų ir jų pateikiamų failų. Šių duomenų valdytoja yra jūsų įmonė, o šiuos santykius reglamentuoja <a href=\"/legal/dpa\">duomenų tvarkymo sutartis</a> (anglų kalba).</p></section><section id=\"data\"><h2>4. Ką renka tafs</h2><ul><li><strong>Jūsų paskyra:</strong> prie tafs prisijungiate naudodami savo KIFF paskyrą. Telefone ar planšetėje programėlė saugo jūsų sesiją įrenginio Keychain (Android įrenginyje – jo šifruotoje saugykloje). Kompiuteryje ji saugo ją užrakintą jūsų naudotojo paskyrai: Windows kompiuteryje – su pačios Windows duomenų apsauga, Linux – jūsų raktų saugykloje (keyring), Mac – jo Keychain. Kompiuterio sesija trunka iki 90 dienų.</li><li><strong>Jūsų įrenginys:</strong> programėlė sukuria pasirašymo raktą, kuris niekada nepalieka įrenginio: iPhone, iPad ar Mac Secure Enclave, Android įrenginio Keystore arba Windows kompiuterio TPM. Linux ir Mac be Secure Enclave raktas yra programinis raktas, saugomas jūsų keyring ar Keychain, ir toks kompiuteris gali rodyti, kas jūsų laukia, bet negali to patvirtinti; patvirtinate savo telefone")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -100,7 +100,33 @@ func TafsPrivacyLT() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>Jūsų taf darbas:</strong> kiekvieno taf paleidimai, pokalbiai, ataskaitos, atminties pastabos ir jų pateikiami failai, kuriuos saugome kaip duomenų tvarkytojas. Visi jūsų paskyros nariai mato failus, kuriuos pateikia jūsų taf.</li><li><strong>Durys:</strong> kai atidarote duris, kad žmonės galėtų rašyti taf el. paštu, per Slack ar Telegram, tafs paslauga saugo kiekvieną susietą siuntėją pagal jo el. pašto adresą, Slack nario ID ar Telegram naudotojo ID (WhatsApp durims – telefono numerį) su jūsų jam suteiktu vardu, kol pašalinsite duris ar taf. Žinutė nuo to, kurio nesusiejote, laukia jūsų kaip beldimas, su tuo, kas ją parašė ir ką ji sako, iki 30 dienų po paskutinio. Susieto siuntėjo žinutė patenka į taf pokalbį ir saugoma kaip likusi pokalbio dalis. Slack ir Telegram perduoda žinutes pagal savo sąlygas.</li><li><strong>Pirkimai:</strong> Solo ir kreditų paketus parduoda Apple per App Store arba Google per Google Play atsiskaitymą. Jie mums praneša, kas buvo nupirkta, kuriai KIFF paskyrai (atsitiktinis identifikatorius), kada, ir sandorio ar užsakymo nuorodas. Jie mums nepateikia jūsų Apple ID ar Google paskyros, vardo, el. pašto adreso ar kortelės.</li></ul><p>Programėlėje nėra analitikos ar reklamos sekiklių.</p></section><section id=\"ai\"><h2>5. AI tafs</h2><p>tafs naudoja Anthropic AI Claude Coach ir jūsų taf reikmėms. Mums jį vykdo Anthropic arba vienas iš debesijos paslaugų teikėjų, nurodytų mūsų subtvarkytojų puslapyje. Tame puslapyje nurodyta, kuris ir kur. Programėlė jūsų paklausia prieš ką nors jam išsiunčiant.</p><ul><li>Kas jam siunčiama: tai, ką rašote Coach ir savo taf, jūsų pridedami failai, tai, ką jūsų prijungtos programėlės grąžina taf jam dirbant, ir tai, kas yra jūsų ekrane, kai Coach jums padeda programėlėje.</li><li>Iš „Chrome“: priekinis puslapis, kai rašote „Coach“ plėtinio šoniniame skydelyje, kai ten leidžiate „Coach“ skaityti puslapius. Taip pat, kai ten rašote taf vienoje iš jo nuosavų svetainių.</li><li>Kas niekada nesiunčiama: slaptažodžiai ir raktai, kuriuos naudoja jūsų prijungtos programėlės, taip pat jūsų piršto atspaudas.</li><li>Įmonė, kuri jį vykdo, tai naudoja atsakymui ir ištrina per 30 dienų, nebent tai pažymima kaip jos naudojimo taisyklių pažeidimas arba saugoti reikalauja įstatymas.</li><li>Niekas nesiunčiama, kol to neleidžiate. Sutikimą galite atšaukti skiltyje „Paskyra“.</li></ul><p>Atšaukus sutikimą, Coach ir jūsų taf nustoja jums atsakinėti, o taf, kurio paleidimai grindžiami jūsų sutikimu, pristabdomas. tafs saugo kiekvieno jūsų duoto ar atšaukto sutikimo įrašą, su laiku ir jo teksto versija, 10 metų nuo paskutinio pakeitimo, kad parodytų, su kuo sutikote; ištrynus paskyrą jis ištrinamas anksčiau. Išsamiau – <a href=\"/lt/privacy#ai-in-tafs\">KIFF privatumo politikoje</a>.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("lt").Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 50, Col: 44}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("lt").Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 50, Col: 82}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Jūsų taf darbas:</strong> kiekvieno taf paleidimai, pokalbiai, ataskaitos, atminties pastabos ir jų pateikiami failai, kuriuos saugome kaip duomenų tvarkytojas. Visi jūsų paskyros nariai mato failus, kuriuos pateikia jūsų taf.</li><li><strong>Durys:</strong> kai atidarote duris, kad žmonės galėtų rašyti taf el. paštu, per Slack ar Telegram, tafs paslauga saugo kiekvieną susietą siuntėją pagal jo el. pašto adresą, Slack nario ID ar Telegram naudotojo ID (WhatsApp durims – telefono numerį) su jūsų jam suteiktu vardu, kol pašalinsite duris ar taf. Žinutė nuo to, kurio nesusiejote, laukia jūsų kaip beldimas, su tuo, kas ją parašė ir ką ji sako, iki 30 dienų po paskutinio. Susieto siuntėjo žinutė patenka į taf pokalbį ir saugoma kaip likusi pokalbio dalis. Slack ir Telegram perduoda žinutes pagal savo sąlygas.</li><li><strong>Pirkimai:</strong> Solo ir kreditų paketus parduoda Apple per App Store arba Google per Google Play atsiskaitymą. Jie mums praneša, kas buvo nupirkta, kuriai KIFF paskyrai (atsitiktinis identifikatorius), kada, ir sandorio ar užsakymo nuorodas. Jie mums nepateikia jūsų Apple ID ar Google paskyros, vardo, el. pašto adreso ar kortelės.</li></ul><p>Programėlėje nėra analitikos ar reklamos sekiklių.</p></section><section id=\"ai\"><h2>5. AI tafs</h2><p>tafs naudoja Anthropic AI Claude Coach ir jūsų taf reikmėms. Mums jį vykdo Anthropic arba vienas iš debesijos paslaugų teikėjų, nurodytų mūsų subtvarkytojų puslapyje. Tame puslapyje nurodyta, kuris ir kur. Programėlė jūsų paklausia prieš ką nors jam išsiunčiant.</p><ul><li>Kas jam siunčiama: tai, ką rašote Coach ir savo taf, jūsų pridedami failai, tai, ką jūsų prijungtos programėlės grąžina taf jam dirbant, ir tai, kas yra jūsų ekrane, kai Coach jums padeda programėlėje.</li><li>Iš „Chrome“: priekinis puslapis, kai rašote „Coach“ plėtinio šoniniame skydelyje, kai ten leidžiate „Coach“ skaityti puslapius. Taip pat, kai ten rašote taf vienoje iš jo nuosavų svetainių.</li><li>Kas niekada nesiunčiama: slaptažodžiai ir raktai, kuriuos naudoja jūsų prijungtos programėlės, taip pat jūsų piršto atspaudas.</li><li>Įmonė, kuri jį vykdo, tai naudoja atsakymui ir ištrina per 30 dienų, nebent tai pažymima kaip jos naudojimo taisyklių pažeidimas arba saugoti reikalauja įstatymas.</li><li>Niekas nesiunčiama, kol to neleidžiate. Sutikimą galite atšaukti skiltyje „Paskyra“.</li></ul><p>Atšaukus sutikimą, Coach ir jūsų taf nustoja jums atsakinėti, o taf, kurio paleidimai grindžiami jūsų sutikimu, pristabdomas. tafs saugo kiekvieno jūsų duoto ar atšaukto sutikimo įrašą, su laiku ir jo teksto versija, 10 metų nuo paskutinio pakeitimo, kad parodytų, su kuo sutikote; ištrynus paskyrą jis ištrinamas anksčiau. Išsamiau – <a href=\"/lt/privacy#ai-in-tafs\">KIFF privatumo politikoje</a>.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -108,7 +134,7 @@ func TafsPrivacyLT() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section id=\"sharing\"><h2>7. Kas dar gauna duomenis</h2><p>Mes neparduodame jūsų asmens duomenų ir nesidalijame jais reklamos tikslais.</p><p>tafs reikmėms naudojame šias įmones: Amazon Web Services (prieglobos paslaugos, įskaitant tafs saugyklą ir planque ryšius), Clerk (KIFF paskyrų prisijungimas), Anthropic (AI modelis, kurį vykdo Anthropic, Amazon Web Services, Google Cloud arba Microsoft Azure), Composio (valdomų ryšių prisijungimai ir užklausos, kurias planque prašo jos atlikti), Apple (push pranešimai), Google (push pranešimai Android įrenginiuose ir Google Play atsiskaitymas) ir Resend (taf el. pašto durys). Oficialus, dabartinis sąrašas, nurodantis, ką kiekviena jų paliečia ir kur, pateikiamas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</p><p>Kai kurios iš jų yra už Europos ekonominės erdvės ribų, daugiausia Jungtinėse Amerikos Valstijose. <a href=\"/lt/privacy#transfers\">KIFF privatumo politikoje</a> nurodyta, kaip šie perdavimai apsaugomi.</p><p><strong>Jūsų šalis.</strong> Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje <a href=\"/privacy/countries\">Jūsų šalis</a>.</p></section><section id=\"retention\"><h2>8. Kiek laiko juos saugome</h2><ul><li>Tai, ką jūsų įrankiai grąžina taf: tik iki paleidimo pabaigos. Pokalbyje tai, ką jis tik perskaitė, saugoma šifruota kitoms jo žinutėms, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas.</li><li>taf paleidimai ir pokalbiai su pokalbio santrauka: 30 dienų. Jo atminties pastabos: kol taf pašalinamas. Savo pokalbį su Coach galite ištrinti ir anksčiau: jo žinutės ir jūsų pridėti failai ištrinami iš karto, o įrašas, kad kiekvienas jo paleidimas įvyko, kada ir kiek kainavo, lieka tas 30 dienų. Jei pranešate apie atsakymą, KIFF tą atsakymą, jūsų priežastį ir pastabą saugo 180 dienų arba kol ištrinsite tą pokalbį ar savo paskyrą. KIFF taip pat el. paštu siunčia juos komandai, kuri skaito pranešimus, ir tas laiškas saugomas kaip KIFF pagalbos paštas.</li><li>Trumpos Coach pastabos kitam atsakymui, pavyzdžiui, kodėl pokalbyje nepavyko sukurti ryšio arba kad Card buvo patvirtinta: kol tas atsakymas jas paima, ne ilgiau kaip 7 dienas; po to – kaip to pokalbio dalis, tol, kol saugomas pokalbis. Kopija saugoma 24 valandas, kad pakartotinai išsiųsta žinutė gautų tą pačią pastabą. Pokalbio pastaba naudojama tik tame pokalbyje.</li><li>Failai, kuriuos pridedate pokalbyje: kartu su žinute, prie kurios jie pridėti, 30 dienų arba trumpiau, jei pokalbis pašalinamas, ir bet kuriuo atveju per 38 dienas. Failas, kurio nenaudoja jokia žinutė, pašalinamas maždaug po valandos nuo įkėlimo. Paskyros ištrynimas juos ištrina.</li><li>Failai, kuriuos pateikia jūsų taf: 30 dienų nuo tada, kai paleidimas juos sukūrė, o tada automatiškai ištrinami per dieną. Bet kuris jūsų paskyros narys gali failą ištrinti anksčiau mygtuku „Ištrinti dabar“: pats failas dingsta nedelsiant, kopija nesaugoma; jo pavadinimas, dydis ir taf bei paleidimas, kurie jį sukūrė, gali likti tafs saugyklos šifruotose laiko momento kopijose iki 35 dienų ir naudojami tik atkūrimui po gedimo. taf pašalinimas arba paskyros ištrynimas ištrina jo failus. Dalijantis failu siunčiamas pats failas, o bendrinama kopija lieka programėlėje, su kuria juo pasidalijote. Failui atsisiųsti sukuriame nuorodą prisijungusiam jūsų paskyros nariui, kuri nustoja veikti po vienos minutės; kitos nuorodos į jį nekuriame.</li><li>Tai, ką grąžino įrankis, planque įraše apie kiekvieną užklausą: 24 valandas. Po to įrašas saugo tik tai, ar užklausa buvo išsiųsta, kad ji niekada nebūtų išsiųsta du kartus.</li><li>Ryšio žetonas ar raktas planque arba valdomo ryšio prisijungimas Composio: kol jį atjungiate. Jei kitas jūsų ryšys gali naudoti tą pačią paskyrą pas tą teikėją, jis saugomas nenaudojamas, kol atjungiamas ir tas ryšys, o tada atšaukiamas. Jo patvirtinimų įrašas: kol baigiasi paskyra.</li><li>Įrenginio push žetonas: kol atsijungiate nuo programėlės, pašalinate įrenginį arba Apple ar Google praneša, kad žetono nebėra. Įrenginio viešasis raktas, pavadinimas, platforma ir datos: kol jį naudojate; jį atjungus, jis pažymimas kaip pašalintas ir saugomas iki paskyros ištrynimo, kad KIFF galėtų atmesti jo pavėluotą atsakymą ir parodyti, kuris įrenginys pasirašė ankstesnį. Prieigos rakto viešasis raktas, identifikatorius ir pavadinimas: kaip jo įrenginio. Kompiuterio sesija: iki 90 dienų arba kol atsijungiate.</li><li>Jūsų paskyra: kol ji ištrinama. Paslaugos žurnalai: 30 dienų. tafs ir planque saugyklos saugo šifruotas laiko momento kopijas 35 dienas; jos naudojamos tik saugyklai atkurti po gedimo.</li></ul><p>Visa kita – <a href=\"/lt/privacy#retention\">KIFF saugojimo skyriuje</a>.</p></section><section id=\"lawful-bases\"><h2>9. Teisiniai pagrindai</h2><p>Sutarties vykdymas – jūsų paskyrai ir jūsų taf veikti. Teisėti interesai – saugumui, sukčiavimo prevencijai ir piktnaudžiavimo nustatymui. Sutikimas – AI tafs (<a href=\"#ai\">5 skyrius</a>). Teisinė prievolė – mokesčių apskaitai. Išsamiau – <a href=\"/lt/privacy#lawful-bases\">KIFF privatumo politikoje</a>.</p></section><section id=\"rights\"><h2>10. Jūsų teisės</h2><p>Pagal BDAR galite prašyti susipažinti su savo duomenimis, juos ištaisyti, ištrinti, apriboti jų tvarkymą ar gauti perkeliamą kopiją, nesutikti su tvarkymu, grindžiamu teisėtais interesais, ir atšaukti sutikimą. Rašykite <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; atsakome nepagrįstai nedelsdami ir ne vėliau kaip per vieną mėnesį; dėl sudėtingo prašymo mums gali prireikti dar dviejų mėnesių, ir apie tai pranešame per pirmąjį mėnesį. Programėlėje „Paskyra“ → „Eksportuoti mano pokalbius“ atsisiunčia jūsų pačių pokalbius ir pastabas.</p><p>Norėdami ištrinti savo tafs paskyrą, atidarykite programėlę, eikite į „Paskyra“ ir palieskite <em>Ištrinti paskyrą</em>, tada patvirtinkite. To negalima atšaukti. <a href=\"/lt/privacy#delete-account\">KIFF privatumo politikoje</a> nurodyta, kas ir kada ištrinama ir kaip to paprašyti el. paštu.</p><p>Galite pateikti skundą <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estijos duomenų apsaugos inspekcijai (Andmekaitse Inspektsioon)</a> arba savo gyvenamosios vietos priežiūros institucijai.</p><p><strong>Jūsų šalis.</strong> Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje <a href=\"/privacy/countries\">Jūsų šalis</a>.</p></section><section id=\"more\"><h2>11. Saugumas, vaikai ir pakeitimai</h2><p>Mūsų saugumo priemonės aprašytos puslapyje <a href=\"/security\">/security</a> (anglų kalba). tafs nėra skirta vaikams, ir mes sąmoningai nerenkame jaunesnių nei 16 metų vaikų asmens duomenų. Šią politiką keičiame taip, kaip <a href=\"/lt/privacy#changes\">KIFF privatumo politika</a> nustato savo pakeitimams.</p></section><section id=\"contact\"><h2>12. Kontaktai</h2><p>Privatumo klausimai ir prašymai: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Oficialūs teisiniai pranešimai: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Pačios programėlės sąlygos pateikiamos puslapyje <a href=\"/lt/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Kas dar gauna duomenis</h2><p>Mes neparduodame jūsų asmens duomenų ir nesidalijame jais reklamos tikslais.</p><p>tafs reikmėms naudojame šias įmones: Amazon Web Services (prieglobos paslaugos, įskaitant tafs saugyklą ir planque ryšius), Clerk (KIFF paskyrų prisijungimas), Anthropic (AI modelis, kurį vykdo Anthropic, Amazon Web Services, Google Cloud arba Microsoft Azure), Composio (valdomų ryšių prisijungimai ir užklausos, kurias planque prašo jos atlikti), Apple (push pranešimai), Google (push pranešimai Android įrenginiuose ir Google Play atsiskaitymas) ir Resend (taf el. pašto durys). Oficialus, dabartinis sąrašas, nurodantis, ką kiekviena jų paliečia ir kur, pateikiamas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</p><p>Kai kurios iš jų yra už Europos ekonominės erdvės ribų, daugiausia Jungtinėse Amerikos Valstijose. <a href=\"/lt/privacy#transfers\">KIFF privatumo politikoje</a> nurodyta, kaip šie perdavimai apsaugomi.</p><p><strong>Jūsų šalis.</strong> Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje <a href=\"/privacy/countries\">Jūsų šalis</a>.</p></section><section id=\"retention\"><h2>8. Kiek laiko juos saugome</h2><ul><li>Tai, ką jūsų įrankiai grąžina taf: tik iki paleidimo pabaigos. Pokalbyje tai, ką jis tik perskaitė, saugoma šifruota kitoms jo žinutėms, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas.</li><li>taf paleidimai ir pokalbiai su pokalbio santrauka: 30 dienų. Jo atminties pastabos: kol taf pašalinamas. Savo pokalbį su Coach galite ištrinti ir anksčiau: jo žinutės ir jūsų pridėti failai ištrinami iš karto, o įrašas, kad kiekvienas jo paleidimas įvyko, kada ir kiek kainavo, lieka tas 30 dienų. Jei pranešate apie atsakymą, KIFF tą atsakymą, jūsų priežastį ir pastabą saugo 180 dienų arba kol ištrinsite tą pokalbį ar savo paskyrą. KIFF taip pat el. paštu siunčia juos komandai, kuri skaito pranešimus, ir tas laiškas saugomas kaip KIFF pagalbos paštas.</li><li>Trumpos Coach pastabos kitam atsakymui, pavyzdžiui, kodėl pokalbyje nepavyko sukurti ryšio arba kad Card buvo patvirtinta: kol tas atsakymas jas paima, ne ilgiau kaip 7 dienas; po to – kaip to pokalbio dalis, tol, kol saugomas pokalbis. Kopija saugoma 24 valandas, kad pakartotinai išsiųsta žinutė gautų tą pačią pastabą. Pokalbio pastaba naudojama tik tame pokalbyje.</li><li>Failai, kuriuos pridedate pokalbyje: kartu su žinute, prie kurios jie pridėti, 30 dienų arba trumpiau, jei pokalbis pašalinamas, ir bet kuriuo atveju per 38 dienas. Failas, kurio nenaudoja jokia žinutė, pašalinamas maždaug po valandos nuo įkėlimo. Paskyros ištrynimas juos ištrina.</li><li>Failai, kuriuos pateikia jūsų taf: 30 dienų nuo tada, kai paleidimas juos sukūrė, o tada automatiškai ištrinami per dieną. Bet kuris jūsų paskyros narys gali failą ištrinti anksčiau mygtuku „Ištrinti dabar“: pats failas dingsta nedelsiant, kopija nesaugoma; jo pavadinimas, dydis ir taf bei paleidimas, kurie jį sukūrė, gali likti tafs saugyklos šifruotose laiko momento kopijose iki 35 dienų ir naudojami tik atkūrimui po gedimo. taf pašalinimas arba paskyros ištrynimas ištrina jo failus. Dalijantis failu siunčiamas pats failas, o bendrinama kopija lieka programėlėje, su kuria juo pasidalijote. Failui atsisiųsti sukuriame nuorodą prisijungusiam jūsų paskyros nariui, kuri nustoja veikti po vienos minutės; kitos nuorodos į jį nekuriame.</li><li>Tai, ką grąžino įrankis, planque įraše apie kiekvieną užklausą: 24 valandas. Po to įrašas saugo tik tai, ar užklausa buvo išsiųsta, kad ji niekada nebūtų išsiųsta du kartus.</li><li>Ryšio žetonas ar raktas planque arba valdomo ryšio prisijungimas Composio: kol jį atjungiate. Jei kitas jūsų ryšys gali naudoti tą pačią paskyrą pas tą teikėją, jis saugomas nenaudojamas, kol atjungiamas ir tas ryšys, o tada atšaukiamas. Jo patvirtinimų įrašas: kol baigiasi paskyra.</li><li>Įrenginio push žetonas: kol atsijungiate nuo programėlės, pašalinate įrenginį arba Apple ar Google praneša, kad žetono nebėra. Įrenginio viešasis raktas, pavadinimas, platforma ir datos: kol jį naudojate; jį atjungus, jis pažymimas kaip pašalintas ir saugomas iki paskyros ištrynimo, kad KIFF galėtų atmesti jo pavėluotą atsakymą ir parodyti, kuris įrenginys pasirašė ankstesnį. Prieigos rakto viešasis raktas, identifikatorius ir pavadinimas: kaip jo įrenginio. Kompiuterio sesija: iki 90 dienų arba kol atsijungiate.</li><li>Jūsų paskyra: kol ji ištrinama. Paslaugos žurnalai: 30 dienų. tafs ir planque saugyklos saugo šifruotas laiko momento kopijas 35 dienas; jos naudojamos tik saugyklai atkurti po gedimo.</li></ul><p>Visa kita – <a href=\"/lt/privacy#retention\">KIFF saugojimo skyriuje</a>.</p></section><section id=\"lawful-bases\"><h2>9. Teisiniai pagrindai</h2><p>Sutarties vykdymas – jūsų paskyrai ir jūsų taf veikti. Teisėti interesai – saugumui, sukčiavimo prevencijai ir piktnaudžiavimo nustatymui. Sutikimas – AI tafs (<a href=\"#ai\">5 skyrius</a>). Teisinė prievolė – mokesčių apskaitai. Išsamiau – <a href=\"/lt/privacy#lawful-bases\">KIFF privatumo politikoje</a>.</p></section><section id=\"rights\"><h2>10. Jūsų teisės</h2><p>Pagal BDAR galite prašyti susipažinti su savo duomenimis, juos ištaisyti, ištrinti, apriboti jų tvarkymą ar gauti perkeliamą kopiją, nesutikti su tvarkymu, grindžiamu teisėtais interesais, ir atšaukti sutikimą. Rašykite <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; atsakome nepagrįstai nedelsdami ir ne vėliau kaip per vieną mėnesį; dėl sudėtingo prašymo mums gali prireikti dar dviejų mėnesių, ir apie tai pranešame per pirmąjį mėnesį. Programėlėje „Paskyra“ → „Eksportuoti mano pokalbius“ atsisiunčia jūsų pačių pokalbius ir pastabas.</p><p>Norėdami ištrinti savo tafs paskyrą, atidarykite programėlę, eikite į „Paskyra“ ir palieskite <em>Ištrinti paskyrą</em>, tada patvirtinkite. To negalima atšaukti. <a href=\"/lt/privacy#delete-account\">KIFF privatumo politikoje</a> nurodyta, kas ir kada ištrinama ir kaip to paprašyti el. paštu.</p><p>Galite pateikti skundą <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estijos duomenų apsaugos inspekcijai (Andmekaitse Inspektsioon)</a> arba savo gyvenamosios vietos priežiūros institucijai.</p><p><strong>Jūsų šalis.</strong> Kai kurių šalių įstatymai reikalauja daugiau, nei nurodyta šioje politikoje. Ką jie papildomai nustato, anglų kalba ir tos šalies kalba, rasite puslapyje <a href=\"/privacy/countries\">Jūsų šalis</a>.</p></section><section id=\"more\"><h2>11. Saugumas, vaikai ir pakeitimai</h2><p>Mūsų saugumo priemonės aprašytos puslapyje <a href=\"/security\">/security</a> (anglų kalba). tafs nėra skirta vaikams, ir mes sąmoningai nerenkame jaunesnių nei 16 metų vaikų asmens duomenų. Šią politiką keičiame taip, kaip <a href=\"/lt/privacy#changes\">KIFF privatumo politika</a> nustato savo pakeitimams.</p></section><section id=\"contact\"><h2>12. Kontaktai</h2><p>Privatumo klausimai ir prašymai: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Oficialūs teisiniai pranešimai: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Pačios programėlės sąlygos pateikiamos puslapyje <a href=\"/lt/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -141,90 +167,71 @@ func tafsPrivacyGoogleLT() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section id=\"google\"><h2>6. Google naudotojų duomenys</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"google\"><h2>6. Google naudotojų duomenys</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>Kai to paprašote, tafs prijungia taf prie jūsų Google paskyros, pavyzdžiui, prie Google Sheets ar Google Calendar, kuriuos naudoja jo darbas, programėlės skiltyje „Prijungti programėles“. Šiame skyriuje aprašyta, ką tafs daro su iš Google gautais duomenimis.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p>Kai to paprašote, tafs prijungia taf prie jūsų Google paskyros, pavyzdžiui, prie Google Sheets ar Google Calendar, kuriuos naudoja jo darbas, programėlės skiltyje „Prijungti programėles“. Šiame skyriuje aprašyta, ką tafs daro su iš Google gautais duomenimis.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>Kai to paprašote, tafs prijungia taf prie jūsų Google paskyros, pavyzdžiui, prie jūsų Gmail arba prie Google Calendar ar Google Sheets, kuriuos naudoja jo darbas, programėlės skiltyje „Prijungti programėles“. Šiame skyriuje aprašyta, ką tafs daro su iš Google gautais duomenimis.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Kai to paprašote, tafs prijungia taf prie jūsų Google paskyros, pavyzdžiui, prie jūsų Gmail arba prie Google Calendar ar Google Sheets, kuriuos naudoja jo darbas, programėlės skiltyje „Prijungti programėles“. Šiame skyriuje aprašyta, ką tafs daro su iš Google gautais duomenimis.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Ką jis skaito ir rašo:</strong> tai, ko reikia taf darbui: skaičiuokles, kurias jis atnaujina, ar įvykius kalendoriuose, kuriuos jis tvarko. Jis juos keičia tik tada, kai tai leidžia taf Card, o viskas, kas viršija Card ribas, laukia jūsų patvirtinimo.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li><strong>Ką jis skaito ir rašo:</strong> tai, ko reikia taf darbui: skaičiuokles, kurias jis atnaujina, ar įvykius kalendoriuose, kuriuos jis tvarko. Jis juos keičia tik tada, kai tai leidžia taf Card, o viskas, kas viršija Card ribas, laukia jūsų patvirtinimo.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Ką jis skaito ir rašo:</strong> tai, ko reikia taf darbui. Jūsų Gmail jis skaito jūsų laiškus ir gijas, kad rastų tuos, į kuriuos reikia atsakyti, ir rašo juodraščius; laiškus siunčia tik tada, kai tai leidžia taf Card. Google Calendar ir Google Sheets jis skaito įvykius kalendoriuose, kuriuos tvarko, ar skaičiuokles, kurias atnaujina, ir keičia juos tik tada, kai tai leidžia taf Card. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Ką jis skaito ir rašo:</strong> tai, ko reikia taf darbui. Jūsų Gmail jis skaito jūsų laiškus ir gijas, kad rastų tuos, į kuriuos reikia atsakyti, ir rašo juodraščius; laiškus siunčia tik tada, kai tai leidžia taf Card. Google Calendar ir Google Sheets jis skaito įvykius kalendoriuose, kuriuos tvarko, ar skaičiuokles, kurias atnaujina, ir keičia juos tik tada, kai tai leidžia taf Card. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Google Tasks jis skaito užduočių sąrašus, kuriuos tvarko, ir prideda, užbaigia, perkelia ar ištrina užduotis tik tada, kai tai leidžia taf Card. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Google Tasks jis skaito užduočių sąrašus, kuriuos tvarko, ir prideda, užbaigia, perkelia ar ištrina užduotis tik tada, kai tai leidžia taf Card. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Viskas, kas viršija Card ribas, laukia jūsų patvirtinimo.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Viskas, kas viršija Card ribas, laukia jūsų patvirtinimo.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Kodėl:</strong> tik tam, kad atliktų darbą, kurį nustatėte tam taf, ir kad parodytų jums, prie kurios Google paskyros jis prijungtas: jos el. pašto adresą, saugomą kartu su ryšiu, kol jį atjungiate.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li><strong>Kodėl:</strong> tik tam, kad atliktų darbą, kurį nustatėte tam taf, ir kad parodytų jums, prie kurios Google paskyros jis prijungtas: jos el. pašto adresą, saugomą kartu su ryšiu, kol jį atjungiate.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Kaip jungiasi kiekviena Google programėlė:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Kaip jungiasi kiekviena Google programėlė:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>Per mūsų prisijungimo partnerį, nurodytą puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba): ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Per mūsų prisijungimo partnerį, nurodytą puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 141, Col: 152}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 142, Col: 152}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("lt")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Per paties tafs Google prisijungimą, be jokios kitos įmonės tarpininkavimo: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 144, Col: 121}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -233,44 +240,41 @@ func tafsPrivacyGoogleLT() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("lt") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 148, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if len(googleInHouse("lt")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Per paties tafs Google prisijungimą, be jokios kitos įmonės tarpininkavimo: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("lt"))
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 148, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 145, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lt").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 148, Col: 75}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("lt") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 149, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lt").AsksFor)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("lt"))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 149, Col: 42}
 				}
@@ -278,210 +282,232 @@ func tafsPrivacyGoogleLT() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<ul>")
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lt").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 149, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("lt").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 150, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var13 string
-					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 152, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 153, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 152, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</ul></li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Programėlė, nurodyta abiejose vietose, jungiasi vienu ar kitu būdu, priklausomai nuo jūsų paskyros. Pačios Google prisijungimo puslapis rodo, kurį būdą leidžiate.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti.<ul><li><strong>Per mūsų prisijungimo partnerį:</strong> tafs prašo tik tos prieigos, kurios reikia taf įrankiams. Jei tokia siauresnė prieiga neįmanoma, jis prašo įprastos programėlės prieigos ir tai pasako prieš jums prisijungiant. Jei įprasta prieiga apimtų asmens duomenis, kurių taf nenaudoja, tafs neprisijungia.</li><li><strong>Per paties tafs Google prisijungimą:</strong> prisijungimas iš karto prašo visos toliau tai programėlei nurodytos prieigos, net jei taf tik skaito.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti. Prisijungimas iš karto prašo visos toliau tai programėlei nurodytos prieigos, net jei taf tik skaito.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti. tafs prašo tik tos prieigos, kurios reikia taf įrankiams. Jei tokia siauresnė prieiga neįmanoma, jis prašo įprastos programėlės prieigos ir tai pasako prieš jums prisijungiant. Jei įprasta prieiga apimtų asmens duomenis, kurių taf nenaudoja, tafs neprisijungia.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Kaip taf juos naudoja:</strong> taf naudoja tik savo Card patvirtintus įrankius. Prieš ką nors išsiunčiant, kiekviena užklausa tikrinama pagal leidimą būtent tam įrankiui ir tiems argumentams, o užklausa už jūsų suteiktos prieigos ribų atmetama. Kurie veiksmai kiekvieną kartą prašo jūsų patvirtinimo, nustatoma Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<strong>Prieiga, kurios prašo paties tafs Google prisijungimas:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<strong>Prieiga, kurios prašo tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("lt") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 187, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 190, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 153, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 190, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul>Kad ir kiek leistų prisijungimas, taf naudoja tik savo Card įrankius.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "Programėlė, nurodyta abiejose vietose, jungiasi vienu ar kitu būdu, priklausomai nuo jūsų paskyros. Pačios Google prisijungimo puslapis rodo, kurį būdą leidžiate.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kas saugo jūsų prisijungimą:</strong><ul><li><strong>Per mūsų prisijungimo partnerį:</strong> jūsų Google prisijungimą saugo mūsų prisijungimo partneris, nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba), ir jis niekada neperduodamas taf ar planque. Nei taf, nei tafs nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li><li><strong>Per paties tafs Google prisijungimą:</strong> planque, paties tafs ryšių paslauga, saugo jūsų Google žetoną jūsų įmonei, šifruotą su AWS KMS Europos Sąjungoje (Airijoje), ir naudoja jį tik užklausai, kurią leidžia taf Card. Jis niekada neperduodamas taf, o nei taf, nei AI modelis nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti.<ul><li><strong>Per mūsų prisijungimo partnerį:</strong> tafs prašo tik tos prieigos, kurios reikia taf įrankiams. Jei tokia siauresnė prieiga neįmanoma, jis prašo įprastos programėlės prieigos ir tai pasako prieš jums prisijungiant. Jei įprasta prieiga apimtų asmens duomenis, kurių taf nenaudoja, tafs neprisijungia.</li><li><strong>Per paties tafs Google prisijungimą:</strong> prisijungimas iš karto prašo visos toliau tai programėlei nurodytos prieigos, net jei taf tik skaito.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kas saugo jūsų prisijungimą:</strong> planque, paties tafs ryšių paslauga, saugo jūsų Google žetoną jūsų įmonei, šifruotą su AWS KMS Europos Sąjungoje (Airijoje), ir naudoja jį tik užklausai, kurią leidžia taf Card. Jis niekada neperduodamas taf, o nei taf, nei AI modelis nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti. Prisijungimas iš karto prašo visos toliau tai programėlei nurodytos prieigos, net jei taf tik skaito.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Kas saugo jūsų prisijungimą:</strong> jūsų Google prisijungimą saugo mūsų prisijungimo partneris, nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba), ir jis niekada neperduodamas taf ar planque. Nei taf, nei tafs nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Ką leidžiate:</strong> prisijungiate pačios Google puslapyje ir pasirenkate, ką leisti. tafs prašo tik tos prieigos, kurios reikia taf įrankiams. Jei tokia siauresnė prieiga neįmanoma, jis prašo įprastos programėlės prieigos ir tai pasako prieš jums prisijungiant. Jei įprasta prieiga apimtų asmens duomenis, kurių taf nenaudoja, tafs neprisijungia.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Kaip taf juos naudoja:</strong> taf naudoja tik savo Card patvirtintus įrankius. Prieš ką nors išsiunčiant, kiekviena užklausa tikrinama pagal leidimą būtent tam įrankiui ir tiems argumentams, o užklausa už jūsų suteiktos prieigos ribų atmetama. Kurie veiksmai kiekvieną kartą prašo jūsų patvirtinimo, nustatoma Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("lt")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<strong>Prieiga, kurios prašo paties tafs Google prisijungimas:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Prieiga, kurios prašo tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("lt") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 188, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 191, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `lt_tafs_privacy.templ`, Line: 191, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul>Kad ir kiek leistų prisijungimas, taf naudoja tik savo Card įrankius.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas.<ul><li><strong>Per mūsų prisijungimo partnerį:</strong> tai taip pat eina per mūsų prisijungimo partnerį, kuris atlieka kiekvieną užklausą.</li><li><strong>Per paties tafs Google prisijungimą:</strong> planque kreipiasi į Google pats, todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo.</li></ul>Abu nurodyti puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Kas saugo jūsų prisijungimą:</strong><ul><li><strong>Per mūsų prisijungimo partnerį:</strong> jūsų Google prisijungimą saugo mūsų prisijungimo partneris, nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba), ir jis niekada neperduodamas taf ar planque. Nei taf, nei tafs nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li><li><strong>Per paties tafs Google prisijungimą:</strong> planque, paties tafs ryšių paslauga, saugo jūsų Google žetoną jūsų įmonei, šifruotą su AWS KMS Europos Sąjungoje (Airijoje), ir naudoja jį tik užklausai, kurią leidžia taf Card. Jis niekada neperduodamas taf, o nei taf, nei AI modelis nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas. planque kreipiasi į Google pats, todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo. AI modelio teikėjas nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kas saugo jūsų prisijungimą:</strong> planque, paties tafs ryšių paslauga, saugo jūsų Google žetoną jūsų įmonei, šifruotą su AWS KMS Europos Sąjungoje (Airijoje), ir naudoja jį tik užklausai, kurią leidžia taf Card. Jis niekada neperduodamas taf, o nei taf, nei AI modelis nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas. Tai taip pat eina per mūsų prisijungimo partnerį, kuris atlieka kiekvieną užklausą. Abu nurodyti puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kas saugo jūsų prisijungimą:</strong> jūsų Google prisijungimą saugo mūsų prisijungimo partneris, nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba), ir jis niekada neperduodamas taf ar planque. Nei taf, nei tafs nemato jūsų slaptažodžio ar jūsų Google žetonų. Kitas jūsų taf, kuriam reikia tokios pat prieigos, pakartotinai naudoja prisijungimą, o kiekvienas taf naudoja tik tuos įrankius, kuriuos jam patvirtinote.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>AI mokymas:</strong> Google naudotojų duomenys nenaudojami AI modeliams mokyti.</li><li><strong>Vaizdai:</strong> tafs nekuria ir neredaguoja vaizdų ar vaizdo įrašų: jo AI rašo tekstą. Jis niekada nenaudoja Google API ar Google naudotojų duomenų kieno nors intymiems vaizdams kurti, redaguoti ar dalytis (intymūs vaizdai be sutikimo, NCII) ar bet kuriam kitam asmens vaizdui.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas.<ul><li><strong>Per mūsų prisijungimo partnerį:</strong> tai taip pat eina per mūsų prisijungimo partnerį, kuris atlieka kiekvieną užklausą.</li><li><strong>Per paties tafs Google prisijungimą:</strong> planque kreipiasi į Google pats, todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo.</li></ul>Abu nurodyti puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("lt")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas. planque kreipiasi į Google pats, todėl jokia kita įmonė neatlieka užklausos ir nesaugo jūsų prisijungimo. AI modelio teikėjas nurodytas puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kas dar juos gauna:</strong> tai, ką taf perskaito iš Google, patenka į taf veikiantį AI modelį tik jums tai leidus (žr. <a href=\"#ai\">AI tafs</a>), ir jis tai saugo iki 30 dienų pagal savo teikėjo sąlygas. Tai taip pat eina per mūsų prisijungimo partnerį, kuris atlieka kiekvieną užklausą. Abu nurodyti puslapyje <a href=\"/subprocessors\">/subprocessors</a> (anglų kalba).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>AI mokymas:</strong> Google naudotojų duomenys nenaudojami AI modeliams mokyti.</li><li><strong>Vaizdai:</strong> tafs nekuria ir neredaguoja vaizdų ar vaizdo įrašų: jo AI rašo tekstą. Jis niekada nenaudoja Google API ar Google naudotojų duomenų kieno nors intymiems vaizdams kurti, redaguoti ar dalytis (intymūs vaizdai be sutikimo, NCII) ar bet kuriam kitam asmens vaizdui.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("lt")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kiek laiko ir kur:</strong> jūsų skaičiuoklės ir įvykiai lieka jūsų Google paskyroje. Paties tafs saugykloje tai, ką grąžina įrankis, saugoma tik iki taf paleidimo pabaigos. planque, kuris perduoda kiekvieną užklausą, saugo tai, ką grąžina Google, 24 valandas, kad pakartota užklausa gautų tą patį atsakymą ir niekada nebūtų išsiųsta du kartus; po to jis saugo tik tai, ar užklausa buvo išsiųsta. Pokalbyje tai, kas tik perskaityta, saugoma šifruota, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas. Paleidimo įrašas ir jo pokalbis saugomi 30 dienų, o taf pastabos – kol pašalinate taf (žr. <a href=\"#retention\">Kiek laiko juos saugome</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Kiek laiko ir kur:</strong> jūsų skaičiuoklės ir įvykiai lieka jūsų Google paskyroje. Paties tafs saugykloje tai, ką grąžina įrankis, saugoma tik iki taf paleidimo pabaigos. planque, kuris perduoda kiekvieną užklausą, saugo tai, ką grąžina Google, 24 valandas, kad pakartota užklausa gautų tą patį atsakymą ir niekada nebūtų išsiųsta du kartus; po to jis saugo tik tai, ar užklausa buvo išsiųsta. Pokalbyje tai, kas tik perskaityta, saugoma šifruota, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas. Paleidimo įrašas ir jo pokalbis saugomi 30 dienų, o taf pastabos – kol pašalinate taf (žr. <a href=\"#retention\">Kiek laiko juos saugome</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kiek laiko ir kur:</strong> jūsų juodraščiai, įvykiai ir skaičiuoklės lieka jūsų Google paskyroje. Paties tafs saugykloje tai, ką grąžina įrankis, saugoma tik iki taf paleidimo pabaigos. planque, kuris perduoda kiekvieną užklausą, saugo tai, ką grąžina Google, 24 valandas, kad pakartota užklausa gautų tą patį atsakymą ir niekada nebūtų išsiųsta du kartus; po to jis saugo tik tai, ar užklausa buvo išsiųsta. Pokalbyje tai, kas tik perskaityta, saugoma šifruota, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas. Paleidimo įrašas ir jo pokalbis saugomi 30 dienų, o taf pastabos – kol pašalinate taf (žr. <a href=\"#retention\">Kiek laiko juos saugome</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Kiek laiko ir kur:</strong> jūsų juodraščiai, įvykiai ir skaičiuoklės lieka jūsų Google paskyroje. Paties tafs saugykloje tai, ką grąžina įrankis, saugoma tik iki taf paleidimo pabaigos. planque, kuris perduoda kiekvieną užklausą, saugo tai, ką grąžina Google, 24 valandas, kad pakartota užklausa gautų tą patį atsakymą ir niekada nebūtų išsiųsta du kartus; po to jis saugo tik tai, ar užklausa buvo išsiųsta. Pokalbyje tai, kas tik perskaityta, saugoma šifruota, naudojama, kol pokalbis valandą neaktyvus, ir ne ilgiau kaip keturias valandas po perskaitymo, o tada automatiškai ištrinama per kelias dienas. Paleidimo įrašas ir jo pokalbis saugomi 30 dienų, o taf pastabos – kol pašalinate taf (žr. <a href=\"#retention\">Kiek laiko juos saugome</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Kaip tai sustabdyti:</strong><ul><li>Atjunkite Google programėlėje, skiltyje „Prijungti programėles“ arba taf skirtuke „Card“. Jo Google įrankiai nedelsiant sustoja, o tafs paprašo Google nedelsiant atšaukti prisijungimą; tai gali būti užbaigta šiek tiek vėliau.</li><li>Pašalinkite taf, ir jo ryšiai baigiasi kartu su juo. Google prisijungimas, kurį dar naudoja kitas jūsų taf, lieka, kol pašalinamas paskutinis.</li><li>Bet kada pašalinkite tafs prieigą savo Google paskyroje adresu <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Jūsų taf nebepasiekia Google, o programėlė jums praneša, kad Google ryšys atjungtas.</li><li>Ištrinkite savo paskyrą: jos taf, pokalbiai, pastabos, failai ir ryšiai ištrinami nedelsiant, o iš jų laiko momento kopijų – per 35 dienas, ir jos Google žetonai atšaukiami, kur tai leidžia Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Kaip tai sustabdyti:</strong><ul><li>Atjunkite Google programėlėje, skiltyje „Prijungti programėles“ arba taf skirtuke „Card“. Jo Google įrankiai nedelsiant sustoja, o tafs paprašo Google nedelsiant atšaukti prisijungimą; tai gali būti užbaigta šiek tiek vėliau.</li><li>Pašalinkite taf, ir jo ryšiai baigiasi kartu su juo. Google prisijungimas, kurį dar naudoja kitas jūsų taf, lieka, kol pašalinamas paskutinis.</li><li>Bet kada pašalinkite tafs prieigą savo Google paskyroje adresu <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Jūsų taf nebepasiekia Google, o programėlė jums praneša, kad Google ryšys atjungtas.</li><li>Ištrinkite savo paskyrą: jos taf, pokalbiai, pastabos, failai ir ryšiai ištrinami nedelsiant, o iš jų laiko momento kopijų – per 35 dienas, ir jos Google žetonai atšaukiami, kur tai leidžia Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

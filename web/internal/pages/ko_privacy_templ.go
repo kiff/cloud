@@ -154,7 +154,7 @@ func privacyHeadKO() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">개인정보처리방침 · v0.1</p><h1>개인정보처리방침</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 11월 25일. <strong>시행일:</strong> 2026년 5월 24일.</p><p class=\"legal-disclaimer\">이 방침은 KIFF Cloud가 웹사이트, 대시보드, API, 그리고 iPhone, iPad, Android와 컴퓨터용 tafs 앱에서 개인정보를 처리하는 방식을 설명합니다. 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"legal-head\"><p class=\"legal-badge\">개인정보처리방침 · v0.1</p><h1>개인정보처리방침</h1><p class=\"legal-meta\"><strong>최종 업데이트:</strong> 2026년 11월 27일. <strong>시행일:</strong> 2026년 5월 24일.</p><p class=\"legal-disclaimer\">이 방침은 KIFF Cloud가 웹사이트, 대시보드, API, 그리고 iPhone, iPad, Android와 컴퓨터용 tafs 앱에서 개인정보를 처리하는 방식을 설명합니다. 문의: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -283,7 +283,33 @@ func privacyCategoriesKO() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " 합니다. TPM이 없는 Windows PC는 tafs에 로그인할 수 없습니다. KIFF는 보류된 호출에 대한 이용자의 응답과 연결 승인을 확인할 수 있도록 키의 공개 부분, 기기의 이름과 플랫폼, 기기가 추가된 시점과 마지막으로 사용된 시점을 보관합니다. 이용자가 Windows Hello나 보안 키처럼 컴퓨터에서 패스키로 승인하면, 얼굴, 지문 또는 PIN은 컴퓨터 자체의 시스템에 남습니다. KIFF는 패스키의 공개 키, ID, 카운터, 이름만 보관하고 비밀 정보는 절대 보관하지 않으며, 다른 기기와 동기화되는 패스키는 거부합니다. 이용자가 휴대폰, 태블릿 또는 iPad 앱을 실행하는 Mac에서 알림을 켜면, 당사는 그 기기의 알림이 그 언어로 오도록 기기의 푸시 토큰을 이용자의 KIFF 사용자 ID 및 앱이 표시한 언어와 함께 보관합니다. tafs 서비스는 taf의 보고서가 그 언어로 작성되도록, 마지막으로 Coach와 채팅한 사람의 언어를 계정의 언어로 최대 세 달간 보관합니다. 휴대폰의 알림은 어느 taf가 무엇을 원하는지만 담아 Apple 또는 Google을 거쳐 전달되며, 창구의 알림에는 연락해 온 사람의 이름 또는 이메일 주소가 담깁니다. 금액이나 요청의 세부 내용은 절대 담기지 않습니다. 앱이 기기 자체에서 KIFF로부터 그 내용을 받아 추가하므로, 잠금이 해제된 휴대폰의 알림에는 금액, 가맹점 또는 사람이 표시될 수 있습니다. 잠긴 Android 휴대폰에서는 \"taf에 내가 필요합니다\"만 표시되며, 잠긴 iPhone에서도 미리 보기를 항상 표시하도록 설정하지 않았다면 마찬가지입니다. <strong>워치:</strong> 워치는 비밀번호나 키를 보관하지 않고, 페어링된 휴대폰하고만 통신하며, 절대 승인하지 않습니다. 이용자가 AI 사용을 허용한 후에만, 이용자가 말한 내용을 텍스트로만 휴대폰을 거쳐 Coach 또는 이용자가 선택한 taf에게 보냅니다. 이용자의 말은 워치 자체의 음성 서비스(Apple 또는 Google의 서비스)가 그 텍스트로 바꿉니다. Wear OS에서는 이용자가 말을 마치기 전에 음성 서비스가 멈추면, 대신 휴대폰 자체의 음성 인식기가 휴대폰에서 이를 처리합니다. 워치는 화면 잠금이나 암호가 설정되어 있고 잠금이 해제된 동안에만 거절하거나, 차단하거나, Coach 또는 taf에게 보낼 수 있습니다. 이용자가 taf에게 보낸 내용은 휴대폰에서 쓴 것처럼 그 taf의 채팅에 들어갑니다. taf의 채팅은 금액을 포함해 열 때마다 휴대폰을 통해 읽어 오며, 워치는 아래 각 워치 항목에서 설명하는 최근 메시지만 보관합니다. 앱이 닫혀 있을 때는 휴대폰이 새 답변과 메시지를 시스템 자체의 휴대폰-워치 연결(Apple Watch에서는 Apple의 연결, Wear OS에서는 Google Play 서비스의 연결)을 통해 워치로 전달하며, 이 연결은 워치가 받아 갈 때까지만 휴대폰과 워치에 보관합니다. 휴대폰을 깨우는 푸시에는 아무 문구도 들어 있지 않습니다. 워치를 보고 있지 않을 때 도착한 답변은 iPhone과 Apple Watch 또는 Wear OS 워치에 알림으로도 표시됩니다. 내용은 보이지만 금액은 절대 보이지 않으며, 지울 때까지 남아 있습니다. 잠긴 Wear OS 워치에는 답변이 준비되었다는 것만 표시됩니다. <strong>Apple Watch:</strong> 이용자의 taf와 그 페이지를 보관하지 않고 표시합니다. 받은편지함은 워치가 잠겨 있는 동안에는 읽을 수 없는 파일에 보관합니다. 받은편지함에는 각 보류된 호출이 그 taf의 이름과 요청 내용으로만 들어가며 금액은 절대 들어가지 않고, 이용자가 워치에서 보낸 내용에 대한 Coach의 답장이 텍스트로 들어갑니다. 이용자가 워치에서 로그아웃하면, 워치에서 다시 로그인할 때까지 로그아웃했다는 사실도 보관합니다. 그 밖에는 워치에 암호가 설정되어 있지 않으면 아무것도 보관하지 않습니다. 받은편지함은 이용자가 워치에서 로그아웃하거나 iPhone이 로그아웃될 때, 또는 암호가 없는 상태에서 다음에 앱이 열리거나 닫힐 때 삭제됩니다. 녹음은 하지 않으며, 표시하는 알림은 iPhone의 알림뿐입니다. 스레드가 바로 열리도록, 워치에서 연 최대 20개 스레드(Coach와 이용자의 tafs) 각각의 최근 메시지 30개도 텍스트로만, 금액 없이, 받은편지함처럼 잠근 채 보관합니다. 받은편지함이 삭제될 때, 그리고 30일 동안 열지 않은 스레드는 삭제됩니다. <strong>Wear OS:</strong> 계정의 이메일과 오늘의 캘린더를 보관하지 않고 표시합니다. 바로 열리도록, 이용자를 기다리는 항목의 개수와 각 taf의 이름 및 차단 또는 일시 중지 여부를 암호화하여 보관합니다. 금액, 보류된 호출의 세부 내용, taf의 채팅은 절대 보관하지 않습니다. 이 정보는 이용자가 로그아웃할 때, 워치가 잠기거나 손목에서 벗겨질 때, 그리고 24시간이 지나면 지워집니다. 받은편지함을 보관하며, 각 줄은 taf의 이름과 그 taf가 하는 말이고 금액은 절대 들어가지 않습니다. 또한 나중에 보내도록 보관한 메시지 하나를 텍스트로 보관합니다. 워치나 휴대폰에서 로그아웃하면 이 모두가 지워집니다. 타일을 위해 이용자를 기다리는 항목의 개수도 보관하며, 이는 워치의 잠금이 해제된 동안에만 표시되고, 이용자가 로그아웃할 때, 또는 워치가 잠겨 있거나 화면 잠금이 없는 상태에서 다음에 타일이 표시될 때 지워집니다. 이용자가 워치에서 로그아웃하면, 다시 로그인할 때까지 로그아웃했다는 기록을 보관합니다. 받은편지함은 워치가 잠겨 있거나 화면 잠금이 없는 상태에서 다음에 앱이 열리거나 닫힐 때에도 삭제됩니다. 나중에 보내도록 보관한 메시지는 이용자가 보내 달라고 요청한 것이므로 이용자가 보내거나 삭제할 때까지 남아 있습니다. 이용자가 말을 마치기 전에 워치의 음성 서비스가 멈추면, 워치는 녹음을 휴대폰으로 보내고, 휴대폰은 서버가 아닌 휴대폰 자체에서 이를 텍스트로 바꿉니다. 녹음은 텍스트가 돌아오거나 이용자가 취소하면 양쪽에서 삭제되며, 늦어도 2분 후에는 삭제됩니다. Coach 또는 taf에게는 텍스트만 전달됩니다. taf의 결과는 이용자가 닫거나 워치에서 로그아웃할 때까지 워치의 알림에 남아 있을 수 있습니다. 스레드가 바로 열리도록, 워치에서 연 최대 20개 스레드(Coach와 이용자의 tafs) 각각의 최근 메시지 30개도 텍스트로만, 금액 없이, 암호화해 보관합니다. 워치나 휴대폰에서 로그아웃할 때, 그리고 30일 동안 열지 않은 스레드는 삭제되며, 화면 잠금이 없는 워치에는 아무것도 보관하지 않습니다. Windows PC, Linux 컴퓨터, 또는 macOS 12 앱을 쓰는 Mac에서는 앱이 실행되는 동안 앱 자체가 알림을 만들며, 푸시 토큰이 없고 다른 어떤 회사도 거치지 않습니다. Windows와 Linux에서는 어느 taf인지, 무엇을 하려는지, 금액, 이유, 기한이 표시됩니다. macOS 12 앱에서는 이용자가 알림을 켜면 그 호출에 대한 KIFF의 설명이 표시되며, 잠긴 화면에는 Mac의 미리 보기 설정이 허용하는 내용이 표시됩니다. Windows에서는 이용자가 켤 때까지 알림이 꺼져 있으며, 화면이 잠겨 있는 동안에는 \"taf에 내가 필요합니다\"만 표시됩니다. 화면이 잠기기 전에 표시된 알림은 Windows의 알림 목록에 세부 내용이 남습니다. Linux에서는 이용자가 끌 때까지 알림이 켜져 있으며, 잠긴 화면에 무엇이 표시되는지는 데스크톱 환경에 따라 다릅니다. 이용자가 도구를 연결할 때는 도구 제공업체의 자체 페이지에서 로그인합니다. Stripe처럼 planque가 직접 로그인하는 앱이나 이용자가 제공하는 키의 경우, planque가 그 토큰이나 키를 이용자의 회사를 위해 암호화하여 보관합니다. 관리형 연결의 경우, planque와 협력하는 연결 서비스인 Composio가 로그인 정보를 보관하고, planque는 연결 기록과 이용자가 승인한 도구만 보관합니다(모두 프로세서로서, 아래 참조). 이용자가 tafs 확장 프로그램을 페어링하면, taf는 이용자가 허용한 사이트의 페이지를 이용자 본인의 Chrome에서 읽고 조작할 수도 있습니다(프로세서로서. <a href=\"/ko/tafs/privacy\">tafs 개인정보 처리방침 페이지</a>에 무엇을 읽고, 무엇을 보관하며, 얼마나 오래 보관하는지가 나와 있습니다). 연결 기록에는 앱이 어떤 계정인지 보여 줄 수 있도록 로그인된 계정(그 이름 또는 이메일)이 포함될 수 있습니다. KIFF는 <a href=\"/subprocessors#composio\">/subprocessors</a>(영어)에 기재된 앱에 대해서만 관리형 연결을 사용합니다. 앱에는 분석 도구나 광고 추적기가 없습니다.</li><li><strong>App Store 구매</strong> — 이용자가 tafs에서 Solo나 크레딧 팩을 구매하면 Apple이 이용자에게 판매합니다. Apple은 공식 판매자(seller of record)로서 대금을 받고 이용자의 결제 정보를 보관합니다. Apple은 무엇이 구매되었는지, 어느 KIFF 계정(앱이 구매에 첨부하는 무작위 ID)을 위한 것인지, 언제 구매되었는지, Apple의 거래 ID, 그리고 Solo의 경우 기간이 끝나거나 갱신되는 시점을 당사에 알려 줍니다. 당사는 이를 이용하여 이용자의 계정에 크레딧 또는 요금제를 추가합니다. Apple은 이용자의 Apple ID, 이름, 이메일 주소 또는 카드를 당사에 제공하지 않습니다.</li><li><strong>Google Play 구매</strong> — Android에서는 같은 구매가 Google Play 결제를 통해 이루어집니다. Google이 대금을 받고 이용자의 결제 정보를 보관합니다. Google은 무엇이 구매되었는지, 어느 KIFF 계정(같은 무작위 ID)을 위한 것인지, 언제 구매되었는지, 구매의 토큰과 주문 ID, 그리고 Solo의 경우 기간이 끝나거나 갱신되는 시점을 당사에 알려 주며, 당사는 이를 같은 방식으로 이용합니다. Google은 이용자의 Google 계정, 이름, 이메일 주소 또는 카드를 당사에 제공하지 않습니다.</li></ul></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " 합니다. TPM이 없는 Windows PC는 tafs에 로그인할 수 없습니다. KIFF는 보류된 호출에 대한 이용자의 응답과 연결 승인을 확인할 수 있도록 키의 공개 부분, 기기의 이름과 플랫폼, 기기가 추가된 시점과 마지막으로 사용된 시점을 보관합니다. 이용자가 Windows Hello나 보안 키처럼 컴퓨터에서 패스키로 승인하면, 얼굴, 지문 또는 PIN은 컴퓨터 자체의 시스템에 남습니다. KIFF는 패스키의 공개 키, ID, 카운터, 이름만 보관하고 비밀 정보는 절대 보관하지 않으며, 다른 기기와 동기화되는 패스키는 거부합니다. 이용자가 휴대폰, 태블릿 또는 iPad 앱을 실행하는 Mac에서 알림을 켜면, 당사는 그 기기의 알림이 그 언어로 오도록 기기의 푸시 토큰을 이용자의 KIFF 사용자 ID 및 앱이 표시한 언어와 함께 보관합니다. tafs 서비스는 taf의 보고서가 그 언어로 작성되도록, 마지막으로 Coach와 채팅한 사람의 언어를 계정의 언어로 최대 세 달간 보관합니다. 휴대폰의 알림은 어느 taf가 무엇을 원하는지만 담아 Apple 또는 Google을 거쳐 전달되며, 창구의 알림에는 연락해 온 사람의 이름 또는 이메일 주소가 담깁니다. 금액이나 요청의 세부 내용은 절대 담기지 않습니다. 앱이 기기 자체에서 KIFF로부터 그 내용을 받아 추가하므로, 잠금이 해제된 휴대폰의 알림에는 금액, 가맹점 또는 사람이 표시될 수 있습니다. 잠긴 Android 휴대폰에서는 \"taf에 내가 필요합니다\"만 표시되며, 잠긴 iPhone에서도 미리 보기를 항상 표시하도록 설정하지 않았다면 마찬가지입니다. <strong>워치:</strong> 워치는 비밀번호나 키를 보관하지 않고, 페어링된 휴대폰하고만 통신하며, 절대 승인하지 않습니다. 이용자가 AI 사용을 허용한 후에만, 이용자가 말한 내용을 텍스트로만 휴대폰을 거쳐 Coach 또는 이용자가 선택한 taf에게 보냅니다. 이용자의 말은 워치 자체의 음성 서비스(Apple 또는 Google의 서비스)가 그 텍스트로 바꿉니다. Wear OS에서는 이용자가 말을 마치기 전에 음성 서비스가 멈추면, 대신 휴대폰 자체의 음성 인식기가 휴대폰에서 이를 처리합니다. 워치는 화면 잠금이나 암호가 설정되어 있고 잠금이 해제된 동안에만 거절하거나, 차단하거나, Coach 또는 taf에게 보낼 수 있습니다. 이용자가 taf에게 보낸 내용은 휴대폰에서 쓴 것처럼 그 taf의 채팅에 들어갑니다. taf의 채팅은 금액을 포함해 열 때마다 휴대폰을 통해 읽어 오며, 워치는 아래 각 워치 항목에서 설명하는 최근 메시지만 보관합니다. 앱이 닫혀 있을 때는 휴대폰이 새 답변과 메시지를 시스템 자체의 휴대폰-워치 연결(Apple Watch에서는 Apple의 연결, Wear OS에서는 Google Play 서비스의 연결)을 통해 워치로 전달하며, 이 연결은 워치가 받아 갈 때까지만 휴대폰과 워치에 보관합니다. 휴대폰을 깨우는 푸시에는 아무 문구도 들어 있지 않습니다. 워치를 보고 있지 않을 때 도착한 답변은 iPhone과 Apple Watch 또는 Wear OS 워치에 알림으로도 표시됩니다. 내용은 보이지만 금액은 절대 보이지 않으며, 지울 때까지 남아 있습니다. 잠긴 Wear OS 워치에는 답변이 준비되었다는 것만 표시됩니다. <strong>Apple Watch:</strong> 이용자의 taf와 그 페이지를 보관하지 않고 표시합니다. 받은편지함은 워치가 잠겨 있는 동안에는 읽을 수 없는 파일에 보관합니다. 받은편지함에는 각 보류된 호출이 그 taf의 이름과 요청 내용으로만 들어가며 금액은 절대 들어가지 않고, 이용자가 워치에서 보낸 내용에 대한 Coach의 답장이 텍스트로 들어갑니다. 이용자가 워치에서 로그아웃하면, 워치에서 다시 로그인할 때까지 로그아웃했다는 사실도 보관합니다. 그 밖에는 워치에 암호가 설정되어 있지 않으면 아무것도 보관하지 않습니다. 받은편지함은 이용자가 워치에서 로그아웃하거나 iPhone이 로그아웃될 때, 또는 암호가 없는 상태에서 다음에 앱이 열리거나 닫힐 때 삭제됩니다. 녹음은 하지 않으며, 표시하는 알림은 iPhone의 알림뿐입니다. 스레드가 바로 열리도록, 워치에서 연 최대 20개 스레드(Coach와 이용자의 tafs) 각각의 최근 메시지 30개도 텍스트로만, 금액 없이, 받은편지함처럼 잠근 채 보관합니다. 받은편지함이 삭제될 때, 그리고 30일 동안 열지 않은 스레드는 삭제됩니다. <strong>Wear OS:</strong> 계정의 이메일과 오늘의 캘린더를 보관하지 않고 표시합니다. 바로 열리도록, 이용자를 기다리는 항목의 개수와 각 taf의 이름 및 차단 또는 일시 중지 여부를 암호화하여 보관합니다. 금액, 보류된 호출의 세부 내용, taf의 채팅은 절대 보관하지 않습니다. 이 정보는 이용자가 로그아웃할 때, 워치가 잠기거나 손목에서 벗겨질 때, 그리고 24시간이 지나면 지워집니다. 받은편지함을 보관하며, 각 줄은 taf의 이름과 그 taf가 하는 말이고 금액은 절대 들어가지 않습니다. 또한 나중에 보내도록 보관한 메시지 하나를 텍스트로 보관합니다. 워치나 휴대폰에서 로그아웃하면 이 모두가 지워집니다. 타일을 위해 이용자를 기다리는 항목의 개수도 보관하며, 이는 워치의 잠금이 해제된 동안에만 표시되고, 이용자가 로그아웃할 때, 또는 워치가 잠겨 있거나 화면 잠금이 없는 상태에서 다음에 타일이 표시될 때 지워집니다. 이용자가 워치에서 로그아웃하면, 다시 로그인할 때까지 로그아웃했다는 기록을 보관합니다. 받은편지함은 워치가 잠겨 있거나 화면 잠금이 없는 상태에서 다음에 앱이 열리거나 닫힐 때에도 삭제됩니다. 나중에 보내도록 보관한 메시지는 이용자가 보내 달라고 요청한 것이므로 이용자가 보내거나 삭제할 때까지 남아 있습니다. 이용자가 말을 마치기 전에 워치의 음성 서비스가 멈추면, 워치는 녹음을 휴대폰으로 보내고, 휴대폰은 서버가 아닌 휴대폰 자체에서 이를 텍스트로 바꿉니다. 녹음은 텍스트가 돌아오거나 이용자가 취소하면 양쪽에서 삭제되며, 늦어도 2분 후에는 삭제됩니다. Coach 또는 taf에게는 텍스트만 전달됩니다. taf의 결과는 이용자가 닫거나 워치에서 로그아웃할 때까지 워치의 알림에 남아 있을 수 있습니다. 스레드가 바로 열리도록, 워치에서 연 최대 20개 스레드(Coach와 이용자의 tafs) 각각의 최근 메시지 30개도 텍스트로만, 금액 없이, 암호화해 보관합니다. 워치나 휴대폰에서 로그아웃할 때, 그리고 30일 동안 열지 않은 스레드는 삭제되며, 화면 잠금이 없는 워치에는 아무것도 보관하지 않습니다. Windows PC, Linux 컴퓨터, 또는 macOS 12 앱을 쓰는 Mac에서는 앱이 실행되는 동안 앱 자체가 알림을 만들며, 푸시 토큰이 없고 다른 어떤 회사도 거치지 않습니다. Windows와 Linux에서는 어느 taf인지, 무엇을 하려는지, 금액, 이유, 기한이 표시됩니다. macOS 12 앱에서는 이용자가 알림을 켜면 그 호출에 대한 KIFF의 설명이 표시되며, 잠긴 화면에는 Mac의 미리 보기 설정이 허용하는 내용이 표시됩니다. Windows에서는 이용자가 켤 때까지 알림이 꺼져 있으며, 화면이 잠겨 있는 동안에는 \"taf에 내가 필요합니다\"만 표시됩니다. 화면이 잠기기 전에 표시된 알림은 Windows의 알림 목록에 세부 내용이 남습니다. Linux에서는 이용자가 끌 때까지 알림이 켜져 있으며, 잠긴 화면에 무엇이 표시되는지는 데스크톱 환경에 따라 다릅니다. 이용자가 도구를 연결할 때는 도구 제공업체의 자체 페이지에서 로그인합니다. Stripe처럼 planque가 직접 로그인하는 앱이나 이용자가 제공하는 키의 경우, planque가 그 토큰이나 키를 이용자의 회사를 위해 암호화하여 보관합니다. 관리형 연결의 경우, planque와 협력하는 연결 서비스인 Composio가 로그인 정보를 보관하고, planque는 연결 기록과 이용자가 승인한 도구만 보관합니다(모두 프로세서로서, 아래 참조). 이용자가 tafs 확장 프로그램을 페어링하면, taf는 이용자가 허용한 사이트의 페이지를 이용자 본인의 Chrome에서 읽고 조작할 수도 있습니다(프로세서로서. <a href=\"/ko/tafs/privacy\">tafs 개인정보 처리방침 페이지</a>에 무엇을 읽고, 무엇을 보관하며, 얼마나 오래 보관하는지가 나와 있습니다). 연결 기록에는 앱이 어떤 계정인지 보여 줄 수 있도록 로그인된 계정(그 이름 또는 이메일)이 포함될 수 있습니다. KIFF는 <a href=\"/subprocessors#composio\">/subprocessors</a>(영어)에 기재된 앱에 대해서만 관리형 연결을 사용합니다. 앱에는 분석 도구나 광고 추적기가 없습니다.</li><li><strong>App Store 구매</strong> — 이용자가 tafs에서 Solo나 크레딧 팩을 구매하면 Apple이 이용자에게 판매합니다. Apple은 공식 판매자(seller of record)로서 대금을 받고 이용자의 결제 정보를 보관합니다. Apple은 무엇이 구매되었는지, 어느 KIFF 계정(앱이 구매에 첨부하는 무작위 ID)을 위한 것인지, 언제 구매되었는지, Apple의 거래 ID, 그리고 Solo의 경우 기간이 끝나거나 갱신되는 시점을 당사에 알려 줍니다. 당사는 이를 이용하여 이용자의 계정에 크레딧 또는 요금제를 추가합니다. Apple은 이용자의 Apple ID, 이름, 이메일 주소 또는 카드를 당사에 제공하지 않습니다.</li><li><strong>Google Play 구매</strong> — Android에서는 같은 구매가 Google Play 결제를 통해 이루어집니다. Google이 대금을 받고 이용자의 결제 정보를 보관합니다. Google은 무엇이 구매되었는지, 어느 KIFF 계정(같은 무작위 ID)을 위한 것인지, 언제 구매되었는지, 구매의 토큰과 주문 ID, 그리고 Solo의 경우 기간이 끝나거나 갱신되는 시점을 당사에 알려 주며, 당사는 이를 같은 방식으로 이용합니다. Google은 이용자의 Google 계정, 이름, 이메일 주소 또는 카드를 당사에 제공하지 않습니다.</li><li><strong>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("ko").Label)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_privacy.templ`, Line: 261, Col: 42}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</strong> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("ko").Text)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_privacy.templ`, Line: 261, Col: 80}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</li></ul></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -307,12 +333,12 @@ func privacyLawfulBasesKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"lawful-bases\"><h2>5. 적법한 처리 근거</h2><p>GDPR 제6조에 따라 당사는 다음의 적법한 처리 근거에 의존합니다.</p><ul><li><strong>계약의 이행</strong>(제6조 제1항 (b)호) — 계정 생성, 인증, 이용자를 대신한 런타임 운영, 결제(활성화된 경우), 핵심 서비스 화면을 위해.</li><li><strong>정당한 이익</strong>(제6조 제1항 (f)호) — 보안, 부정행위 방지, 남용 탐지, 운영 원격 측정, 서비스 보호를 위해. 당사는 당사의 이익과 이용자의 권리를 비교형량하며, 요청하면 그 비교형량 평가의 결과를 알려 드립니다.</li><li><strong>동의</strong>(제6조 제1항 (a)호) — tafs 앱의 AI를 위해. 즉 <a href=\"#ai-in-tafs\">아래</a>에 설명된 대로 Coach와 이용자의 taf를 움직이는 AI 모델에 보내는 내용을 위해. 이용자가 허용할 때까지 아무것도 보내지 않으며, 계정에서 동의를 철회할 수 있습니다. 당사가 분석 쿠키, 선택적 마케팅 커뮤니케이션, 또는 이용자 데이터의 이용을 실질적으로 확대하는 새로운 처리를 하기 전에 요청할 근거도 동의입니다. 당사는 분석, 광고, 필수적이지 않은 추적을 전혀 하지 않습니다.</li><li><strong>법적 의무</strong>(제6조 제1항 (c)호) — 세무 기록(에스토니아 회계법 §12, 7년), 적법한 당국 요청에 대한 응답, 그리고 해당하는 경우 자금세탁방지 규정이 요구하는 보유를 위해.</li></ul><h3 id=\"ai-in-tafs\">tafs 앱의 AI</h3><p>tafs 앱은 무엇이든 AI에 보내기 전에 다음과 같은 문구로 이용자에게 묻습니다.</p><ul><li>tafs는 Coach와 이용자의 taf에 Anthropic의 Claude AI를 사용합니다. Claude는 Anthropic 또는 저희 하위 처리자 페이지에 있는 클라우드 제공업체 중 하나가 저희를 위해 실행합니다. 어느 곳이 어디서 실행하는지는 그 페이지에 나와 있습니다.</li><li>Coach와 이용자의 taf는 AI 에이전트입니다. 이들이 쓰는 내용은 AI가 생성한 것이며 틀릴 수 있습니다. taf가 이용자의 회사 밖으로 보내는 메시지에는 AI 에이전트가 썼다는 사실이 표시됩니다.</li><li>AI에 보내는 것: 이용자가 Coach와 taf에게 쓴 내용, 이용자가 첨부한 파일, taf가 일하는 동안 연결된 앱이 taf에게 돌려준 내용, 그리고 Coach가 앱에서 이용자를 돕는 동안 화면에 표시된 내용.</li><li>절대 보내지 않는 것: 연결된 앱이 사용하는 비밀번호와 키, 이용자의 지문.</li><li>Claude를 실행하는 회사는 이를 답변하는 데 사용하고 30일 이내에 삭제합니다. 다만 그 회사의 이용 규칙 위반으로 표시되었거나 법률상 보관해야 하는 경우는 예외입니다.</li><li>이용자가 허용할 때까지 아무것도 보내지 않습니다. 계정에서 동의를 철회할 수 있습니다.</li></ul><p>그 순간에 아무도 없는 상태에서(일정에 따라, 또는 무언가가 들어왔을 때) 실행되는 taf는 그 taf를 만들었거나 넘겨받은 사람의 동의에, 그렇지 않으면 계정의 taf를 관리하는 사람 중 처음으로 이를 허용한 사람의 동의에 근거합니다.</p><p><strong>이용자가 동의를 철회하면</strong> Coach와 이용자의 taf는 이용자에게 응답하지 않습니다. 이용자의 동의에 따라 실행되던 taf는 일시 중지됩니다. 그 taf의 일정이 멈추고, 들어오는 것은 대기합니다. 동의가 다시 주어지거나, 계정의 taf를 관리하는 사람이 자신의 동의로 그 taf를 넘겨받으면 다시 진행됩니다. 동의를 철회해도 그 전에 보낸 것은 바뀌지 않습니다.</p><p>Anthropic은 처리 장소와 데이터를 더 오래 보관할 수 있는 경우와 함께 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 기재되어 있습니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"lawful-bases\"><h2>5. 적법한 처리 근거</h2><p>GDPR 제6조에 따라 당사는 다음의 적법한 처리 근거에 의존합니다.</p><ul><li><strong>계약의 이행</strong>(제6조 제1항 (b)호) — 계정 생성, 인증, 이용자를 대신한 런타임 운영, 결제(활성화된 경우), 핵심 서비스 화면을 위해.</li><li><strong>정당한 이익</strong>(제6조 제1항 (f)호) — 보안, 부정행위 방지, 남용 탐지, 운영 원격 측정, 서비스 보호를 위해. 당사는 당사의 이익과 이용자의 권리를 비교형량하며, 요청하면 그 비교형량 평가의 결과를 알려 드립니다.</li><li><strong>동의</strong>(제6조 제1항 (a)호) — tafs 앱의 AI를 위해. 즉 <a href=\"#ai-in-tafs\">아래</a>에 설명된 대로 Coach와 이용자의 taf를 움직이는 AI 모델에 보내는 내용을 위해. 이용자가 허용할 때까지 아무것도 보내지 않으며, 계정에서 동의를 철회할 수 있습니다. 당사가 분석 쿠키, 선택적 마케팅 커뮤니케이션, 또는 이용자 데이터의 이용을 실질적으로 확대하는 새로운 처리를 하기 전에 요청할 근거도 동의입니다. 당사는 분석, 광고, 필수적이지 않은 추적을 전혀 하지 않습니다.</li><li><strong>법적 의무</strong>(제6조 제1항 (c)호) — 세무 기록(에스토니아 회계법 §12, 7년), 적법한 당국 요청에 대한 응답, 그리고 해당하는 경우 자금세탁방지 규정이 요구하는 보유를 위해.</li></ul><h3 id=\"ai-in-tafs\">tafs 앱의 AI</h3><p>tafs 앱은 무엇이든 AI에 보내기 전에 다음과 같은 문구로 이용자에게 묻습니다.</p><ul><li>tafs는 Coach와 이용자의 taf에 Anthropic의 Claude AI를 사용합니다. Claude는 Anthropic 또는 저희 하위 처리자 페이지에 있는 클라우드 제공업체 중 하나가 저희를 위해 실행합니다. 어느 곳이 어디서 실행하는지는 그 페이지에 나와 있습니다.</li><li>Coach와 이용자의 taf는 AI 에이전트입니다. 이들이 쓰는 내용은 AI가 생성한 것이며 틀릴 수 있습니다. taf가 이용자의 회사 밖으로 보내는 메시지에는 AI 에이전트가 썼다는 사실이 표시됩니다.</li><li>AI에 보내는 것: 이용자가 Coach와 taf에게 쓴 내용, 이용자가 첨부한 파일, taf가 일하는 동안 연결된 앱이 taf에게 돌려준 내용, 그리고 Coach가 앱에서 이용자를 돕는 동안 화면에 표시된 내용.</li><li>절대 보내지 않는 것: 연결된 앱이 사용하는 비밀번호와 키, 이용자의 지문.</li><li>Claude를 실행하는 회사는 이를 답변하는 데 사용하고 30일 이내에 삭제합니다. 다만 그 회사의 이용 규칙 위반으로 표시되었거나 법률상 보관해야 하는 경우는 예외입니다.</li><li>이용자가 허용할 때까지 아무것도 보내지 않습니다. 계정에서 동의를 철회할 수 있습니다.</li></ul><p>그 순간에 아무도 없는 상태에서(일정에 따라, 또는 무언가가 들어왔을 때) 실행되는 taf는 그 taf를 만들었거나 넘겨받은 사람의 동의에, 그렇지 않으면 계정의 taf를 관리하는 사람 중 처음으로 이를 허용한 사람의 동의에 근거합니다.</p><p><strong>이용자가 동의를 철회하면</strong> Coach와 이용자의 taf는 이용자에게 응답하지 않습니다. 이용자의 동의에 따라 실행되던 taf는 일시 중지됩니다. 그 taf의 일정이 멈추고, 들어오는 것은 대기합니다. 동의가 다시 주어지거나, 계정의 taf를 관리하는 사람이 자신의 동의로 그 taf를 넘겨받으면 다시 진행됩니다. 동의를 철회해도 그 전에 보낸 것은 바뀌지 않습니다.</p><p>Anthropic은 처리 장소와 데이터를 더 오래 보관할 수 있는 경우와 함께 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 기재되어 있습니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -336,12 +362,12 @@ func privacySubprocessorsKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sub-processors\"><h2>6. 하위 프로세서</h2><p>당사는 이용자의 개인정보를 판매하지 않으며, 광고를 위해 공유하지 않습니다.</p><p>당사는 서비스를 제공하기 위해 소수의 업체를 이용합니다. 공식적인 최신 목록은 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 있으며, 변경이 있으면 30일 이내에 업데이트됩니다. 당사는 각 하위 프로세서에게 서면 계약에 따라 당사와 동등한 보호를 제공하도록 요구하며, 개인정보가 EU를 떠나는 경우 EU 표준계약조항을 포함합니다.</p><p>개인정보에 영향을 미치는 하위 프로세서의 중대한 추가 또는 교체는 활성 고객에게 사전에 통지하며, 고객은 이에 이의를 제기할 권리가 있습니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"sub-processors\"><h2>6. 하위 프로세서</h2><p>당사는 이용자의 개인정보를 판매하지 않으며, 광고를 위해 공유하지 않습니다.</p><p>당사는 서비스를 제공하기 위해 소수의 업체를 이용합니다. 공식적인 최신 목록은 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 있으며, 변경이 있으면 30일 이내에 업데이트됩니다. 당사는 각 하위 프로세서에게 서면 계약에 따라 당사와 동등한 보호를 제공하도록 요구하며, 개인정보가 EU를 떠나는 경우 EU 표준계약조항을 포함합니다.</p><p>개인정보에 영향을 미치는 하위 프로세서의 중대한 추가 또는 교체는 활성 고객에게 사전에 통지하며, 고객은 이에 이의를 제기할 권리가 있습니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -365,12 +391,12 @@ func privacyTransfersKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"transfers\"><h2>7. 국외 이전</h2><p>당사의 하위 프로세서 중 일부는 유럽경제지역 밖, 주로 미국에 설립되어 있습니다. 그러한 각 이전에 대해 당사는 다음 보호 조치 중 하나 이상에 의존합니다.</p><ul><li><strong>EU–미국 데이터 프라이버시 프레임워크</strong> — 프레임워크 인증을 받은 미국 하위 프로세서의 경우. 적정성 결정은 2023년 중반부터 시행되고 있으며, 당사는 그 지위의 변화를 지켜보고 있습니다.</li><li><strong>표준계약조항</strong> — 당사의 직접 하위 프로세서에 대해서는 모듈 2(컨트롤러-프로세서 간), 프로세서가 연쇄되는 경우에는 모듈 3(프로세서-하위 프로세서 간). 당사는 2021년 집행위원회가 승인한 표준계약조항을 사용합니다.</li><li><strong>보충 조치</strong> — 위험 평가 결과 추가적인 보호 조치가 필요한 경우(전송 중 및 저장 시 암호화, 접근 로깅, 데이터 최소화).</li></ul><p>특정 하위 프로세서에 적용되는 구체적인 이전 수단은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내 요청할 수 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section id=\"transfers\"><h2>7. 국외 이전</h2><p>당사의 하위 프로세서 중 일부는 유럽경제지역 밖, 주로 미국에 설립되어 있습니다. 그러한 각 이전에 대해 당사는 다음 보호 조치 중 하나 이상에 의존합니다.</p><ul><li><strong>EU–미국 데이터 프라이버시 프레임워크</strong> — 프레임워크 인증을 받은 미국 하위 프로세서의 경우. 적정성 결정은 2023년 중반부터 시행되고 있으며, 당사는 그 지위의 변화를 지켜보고 있습니다.</li><li><strong>표준계약조항</strong> — 당사의 직접 하위 프로세서에 대해서는 모듈 2(컨트롤러-프로세서 간), 프로세서가 연쇄되는 경우에는 모듈 3(프로세서-하위 프로세서 간). 당사는 2021년 집행위원회가 승인한 표준계약조항을 사용합니다.</li><li><strong>보충 조치</strong> — 위험 평가 결과 추가적인 보호 조치가 필요한 경우(전송 중 및 저장 시 암호화, 접근 로깅, 데이터 최소화).</li></ul><p>특정 하위 프로세서에 적용되는 구체적인 이전 수단은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내 요청할 수 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -394,12 +420,12 @@ func privacyRetentionKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"retention\"><h2>8. 보유 기간</h2><p>당사는 개인정보를 처리 목적과 적용되는 법적 의무에 부합하는 가장 짧은 기간 동안 보유합니다.</p><ul><li><strong>계정 및 로그인 메타데이터</strong> — 계정이 삭제될 때까지. tafs 앱에서는 소유자가 계정 → <em>계정 삭제</em>에서 삭제합니다. 웹에서 만든 계정은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내면 GDPR 제12조 제3항의 한 달 기간 안에 삭제됩니다. 어느 경우든 계정의 키는 즉시 작동을 멈춥니다. tafs 앱에서 삭제한 경우에는 되돌릴 수 없습니다. 그 계정의 tafs 채팅, 메모, 연결은 즉시 삭제되고, KIFF가 보관하는 것은 30일 이내에 삭제됩니다. 웹에서 삭제한 경우에는 소유자가 되돌리기를 원할 경우에 대비하여 30일의 유예 기간 동안 데이터를 보관한 후 삭제합니다.</li><li><strong>API 키 기록</strong> — 계정이 삭제될 때까지이며, 키가 취소된 후에도 마찬가지입니다. 에이전트 로그인 연결에 속한 키는 그 연결이 종료되고 30일 후 그 연결과 함께 삭제됩니다.</li><li><strong>세션 쿠키</strong> — 만료될 때까지(기본값 24시간) 또는 이용자가 로그아웃할 때까지.</li><li><strong>리버스 프록시 접속 로그</strong> — 최대 90일, 그 후 집계하거나 삭제합니다.</li><li><strong>서비스 로그</strong> — KIFF의 서비스와 planque가 운영 중에 기록하는 것으로, 오류와 요청이며 계정, 사람 또는 에이전트의 이름이 포함될 수 있습니다. 30일, 그 후 삭제합니다.</li><li><strong>백업</strong> — KIFF의 데이터베이스는 매일 암호화하여 백업되며, 각 백업은 7일간 보관되므로 삭제된 기록은 7일 이내에 백업에서도 사라집니다. tafs와 planque의 저장소는 암호화된 특정 시점 사본을 35일간 보관하며, 이는 장애 후 저장소를 복원하는 데에만 사용하므로 삭제된 기록은 35일 이내에 그 사본에서도 사라집니다.</li><li><strong>테넌트 감사 데이터</strong> — 고객의 테넌트 구성에 따라 프로세서로서 보관합니다. 기본값: 테넌트가 존속하는 동안 보유하며, 테넌트가 삭제되면 삭제합니다. <a href=\"/security#deletion\">/security#deletion</a>(영어)을 참조하십시오.</li><li><strong>KIFF 게이트웨이를 통한 호출</strong> — 호출의 인수는 호출이 보내지거나, 거절되거나, 실패할 때까지 보관한 후 삭제합니다. 도구의 결과는 24시간 보관한 후 삭제합니다. 결정 기록과 인수의 해시는 테넌트 감사 데이터로 보관합니다. <a href=\"/security#data-kept\">/security#data-kept</a>(영어)를 참조하십시오.</li><li><strong>사용량</strong> — 게이트웨이를 통한 각 호출에 대해서는 호출이 끝난 후 어느 에이전트가 호출했는지, 도구, 그리고 그 호출이 행동으로 집계되었는지 무료였는지(및 그 이유). taf 또는 Coach의 각 실행에 대해서는 실행이 끝난 후 taf, 시점, 그 AI가 사용한 크레딧, 그리고 크레딧이 집계되었는지 또는 집계되지 않은 이유. 계정이 삭제될 때까지 보관하며, 결제를 위해 당사의 결제 처리업체에 보고된 내용은 결제 기록과 함께 보관합니다.</li><li><strong>에이전트 로그인 연결</strong> — 어느 에이전트인지, 앱의 이름, 누가 허용했는지, 언제, 그리고 마지막 사용 시점. 연결이 유효한 동안, 그리고 연결이 종료된 후 30일간(그 기간 동안 대시보드에 계속 표시됩니다) 보관한 후 그 토큰 및 API 키와 함께 삭제합니다. 계정을 삭제하면 이 모두가 삭제됩니다.</li><li><strong>tafs</strong> — 기기의 푸시 토큰은 이용자가 앱에서 로그아웃하거나, 기기를 제거하거나, Apple 또는 Google이 토큰이 없어졌다고 알릴 때까지. 기기의 공개 키, 이름, 플랫폼, 날짜는 이용자가 기기를 사용하는 동안 보관하며, 기기를 로그아웃하면 제거된 것으로 표시하고 계정이 삭제될 때까지 보관하여, KIFF가 그 기기의 뒤늦은 응답을 거부하고 이전 응답에 어느 기기가 서명했는지 보여 줄 수 있게 합니다. 패스키의 공개 키, ID, 이름은 해당 기기와 같이 보관합니다. 컴퓨터는 세션을 최대 90일간, 또는 이용자가 로그아웃할 때까지 보관합니다. tafs가 이용자의 회사를 위해 보관하는 것은 프로세서로서 보관합니다. taf의 실행과 채팅(채팅의 요약 및 구성(Setup)의 요약 포함)은 30일간, 도구가 돌려준 내용은 실행이 끝날 때까지만(채팅에서 읽기만 한 내용은 다음 메시지를 위해 암호화하여 보관하며, 채팅이 한 시간 동안 사용되지 않을 때까지, 그리고 읽은 때부터 최대 네 시간까지 사용한 후 며칠 안에 자동으로 삭제합니다), 메모는 taf가 삭제될 때까지 보관합니다. taf가 전달하는 파일은 파일을 만든 실행으로부터 30일 후 하루 안에 자동으로 삭제하며, 계정의 누군가가 삭제하면 그보다 일찍 삭제합니다. planque에 있는 연결의 토큰 또는 키, 또는 Composio에 있는 관리형 연결의 로그인 정보는 이용자가 연결을 해제할 때까지 보관하며(이용자의 다른 연결이 그 업체의 같은 계정을 사용할 수 있는 경우, 그 연결도 해제될 때까지 사용하지 않은 채 보관합니다), 연결 승인 기록은 계정이 종료될 때까지 보관합니다. <a href=\"/legal/dpa#annex-4\">DPA 부속서 4</a>(영어)를 참조하십시오.</li><li><strong>결제 기록</strong> — 회계연도 말부터 7년(에스토니아 회계법 §12).</li><li><strong>App Store 및 Google Play 구매</strong> — Apple 또는 Google이 각 구매에 관해 당사에 알려 준 내용은 계정이 삭제될 때까지 이용자의 계정에 남습니다. 당사가 결제 기록으로 7년간 보관하는 이들의 판매 및 정산 보고서에는 이용자의 이름이 나오지 않습니다.</li><li><strong>지원 관련 서신</strong> — 마지막 연락으로부터 3년, 그 후 삭제합니다.</li></ul></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section id=\"retention\"><h2>8. 보유 기간</h2><p>당사는 개인정보를 처리 목적과 적용되는 법적 의무에 부합하는 가장 짧은 기간 동안 보유합니다.</p><ul><li><strong>계정 및 로그인 메타데이터</strong> — 계정이 삭제될 때까지. tafs 앱에서는 소유자가 계정 → <em>계정 삭제</em>에서 삭제합니다. 웹에서 만든 계정은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내면 GDPR 제12조 제3항의 한 달 기간 안에 삭제됩니다. 어느 경우든 계정의 키는 즉시 작동을 멈춥니다. tafs 앱에서 삭제한 경우에는 되돌릴 수 없습니다. 그 계정의 tafs 채팅, 메모, 연결은 즉시 삭제되고, KIFF가 보관하는 것은 30일 이내에 삭제됩니다. 웹에서 삭제한 경우에는 소유자가 되돌리기를 원할 경우에 대비하여 30일의 유예 기간 동안 데이터를 보관한 후 삭제합니다.</li><li><strong>API 키 기록</strong> — 계정이 삭제될 때까지이며, 키가 취소된 후에도 마찬가지입니다. 에이전트 로그인 연결에 속한 키는 그 연결이 종료되고 30일 후 그 연결과 함께 삭제됩니다.</li><li><strong>세션 쿠키</strong> — 만료될 때까지(기본값 24시간) 또는 이용자가 로그아웃할 때까지.</li><li><strong>리버스 프록시 접속 로그</strong> — 최대 90일, 그 후 집계하거나 삭제합니다.</li><li><strong>서비스 로그</strong> — KIFF의 서비스와 planque가 운영 중에 기록하는 것으로, 오류와 요청이며 계정, 사람 또는 에이전트의 이름이 포함될 수 있습니다. 30일, 그 후 삭제합니다.</li><li><strong>백업</strong> — KIFF의 데이터베이스는 매일 암호화하여 백업되며, 각 백업은 7일간 보관되므로 삭제된 기록은 7일 이내에 백업에서도 사라집니다. tafs와 planque의 저장소는 암호화된 특정 시점 사본을 35일간 보관하며, 이는 장애 후 저장소를 복원하는 데에만 사용하므로 삭제된 기록은 35일 이내에 그 사본에서도 사라집니다.</li><li><strong>테넌트 감사 데이터</strong> — 고객의 테넌트 구성에 따라 프로세서로서 보관합니다. 기본값: 테넌트가 존속하는 동안 보유하며, 테넌트가 삭제되면 삭제합니다. <a href=\"/security#deletion\">/security#deletion</a>(영어)을 참조하십시오.</li><li><strong>KIFF 게이트웨이를 통한 호출</strong> — 호출의 인수는 호출이 보내지거나, 거절되거나, 실패할 때까지 보관한 후 삭제합니다. 도구의 결과는 24시간 보관한 후 삭제합니다. 결정 기록과 인수의 해시는 테넌트 감사 데이터로 보관합니다. <a href=\"/security#data-kept\">/security#data-kept</a>(영어)를 참조하십시오.</li><li><strong>사용량</strong> — 게이트웨이를 통한 각 호출에 대해서는 호출이 끝난 후 어느 에이전트가 호출했는지, 도구, 그리고 그 호출이 행동으로 집계되었는지 무료였는지(및 그 이유). taf 또는 Coach의 각 실행에 대해서는 실행이 끝난 후 taf, 시점, 그 AI가 사용한 크레딧, 그리고 크레딧이 집계되었는지 또는 집계되지 않은 이유. 계정이 삭제될 때까지 보관하며, 결제를 위해 당사의 결제 처리업체에 보고된 내용은 결제 기록과 함께 보관합니다.</li><li><strong>에이전트 로그인 연결</strong> — 어느 에이전트인지, 앱의 이름, 누가 허용했는지, 언제, 그리고 마지막 사용 시점. 연결이 유효한 동안, 그리고 연결이 종료된 후 30일간(그 기간 동안 대시보드에 계속 표시됩니다) 보관한 후 그 토큰 및 API 키와 함께 삭제합니다. 계정을 삭제하면 이 모두가 삭제됩니다.</li><li><strong>tafs</strong> — 기기의 푸시 토큰은 이용자가 앱에서 로그아웃하거나, 기기를 제거하거나, Apple 또는 Google이 토큰이 없어졌다고 알릴 때까지. 기기의 공개 키, 이름, 플랫폼, 날짜는 이용자가 기기를 사용하는 동안 보관하며, 기기를 로그아웃하면 제거된 것으로 표시하고 계정이 삭제될 때까지 보관하여, KIFF가 그 기기의 뒤늦은 응답을 거부하고 이전 응답에 어느 기기가 서명했는지 보여 줄 수 있게 합니다. 패스키의 공개 키, ID, 이름은 해당 기기와 같이 보관합니다. 컴퓨터는 세션을 최대 90일간, 또는 이용자가 로그아웃할 때까지 보관합니다. tafs가 이용자의 회사를 위해 보관하는 것은 프로세서로서 보관합니다. taf의 실행과 채팅(채팅의 요약 및 구성(Setup)의 요약 포함)은 30일간, 도구가 돌려준 내용은 실행이 끝날 때까지만(채팅에서 읽기만 한 내용은 다음 메시지를 위해 암호화하여 보관하며, 채팅이 한 시간 동안 사용되지 않을 때까지, 그리고 읽은 때부터 최대 네 시간까지 사용한 후 며칠 안에 자동으로 삭제합니다), 메모는 taf가 삭제될 때까지 보관합니다. taf가 전달하는 파일은 파일을 만든 실행으로부터 30일 후 하루 안에 자동으로 삭제하며, 계정의 누군가가 삭제하면 그보다 일찍 삭제합니다. planque에 있는 연결의 토큰 또는 키, 또는 Composio에 있는 관리형 연결의 로그인 정보는 이용자가 연결을 해제할 때까지 보관하며(이용자의 다른 연결이 그 업체의 같은 계정을 사용할 수 있는 경우, 그 연결도 해제될 때까지 사용하지 않은 채 보관합니다), 연결 승인 기록은 계정이 종료될 때까지 보관합니다. <a href=\"/legal/dpa#annex-4\">DPA 부속서 4</a>(영어)를 참조하십시오.</li><li><strong>결제 기록</strong> — 회계연도 말부터 7년(에스토니아 회계법 §12).</li><li><strong>App Store 및 Google Play 구매</strong> — Apple 또는 Google이 각 구매에 관해 당사에 알려 준 내용은 계정이 삭제될 때까지 이용자의 계정에 남습니다. 당사가 결제 기록으로 7년간 보관하는 이들의 판매 및 정산 보고서에는 이용자의 이름이 나오지 않습니다.</li><li><strong>지원 관련 서신</strong> — 마지막 연락으로부터 3년, 그 후 삭제합니다.</li></ul></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -423,12 +449,12 @@ func privacyRightsKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section id=\"rights\"><h2>9. 이용자의 권리</h2><p>GDPR에 따라 이용자는 자신의 개인정보에 관하여 다음의 권리를 가집니다.</p><ul><li><strong>열람</strong>(제15조) — 당사가 이용자의 데이터를 처리하는지 여부의 확인과 그 사본.</li><li><strong>정정</strong>(제16조) — 부정확하거나 불완전한 데이터의 정정.</li><li><strong>삭제</strong>(제17조) — 법정 보유 의무에 따른 예외를 제외한 이용자 데이터의 삭제.</li><li><strong>처리 제한</strong>(제18조) — 분쟁이 해결되는 동안 처리를 멈추는 것.</li><li><strong>이동</strong>(제20조) — 이용자가 제공한 데이터를 기계가 읽을 수 있는 형식으로 내보내는 것.</li><li><strong>반대</strong>(제21조) — 정당한 이익에 근거한 처리에 대한 반대. 당사가 우선하는 근거를 입증할 수 없으면 처리를 멈춥니다.</li><li><strong>동의 철회</strong>(제7조 제3항) — tafs 앱의 AI처럼 동의에 근거한 모든 처리에 대해(<a href=\"#ai-in-tafs\">위</a>에서 설명한 대로 계정에서). 철회는 그 전의 적법한 처리에 영향을 미치지 않습니다.</li></ul><p>이러한 권리를 행사하려면 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내십시오. 당사는 제12조 제3항에 따라 부당한 지체 없이, 늦어도 한 달 이내에 답변합니다. 복잡한 요청의 경우 최대 두 달까지 연장할 수 있으며, 연장하는 경우 이를 알려 드립니다.</p><h3 id=\"export-chats\">이용자 본인의 tafs 채팅</h3><p>tafs 앱의 계정 → 내 채팅 내보내기로 각 taf와 나눈 이용자 본인의 채팅(Coach와의 채팅 포함), 이용자가 첨부한 파일의 이름, 이용자 본인의 메모를 읽을 수 있는 파일과 JSON으로 다운로드할 수 있습니다. 이를 내보낼 수 있는 사람은 이용자 본인뿐입니다. 관리자나 계정 소유자는 내보낼 수 없으며, KIFF의 계정 내보내기에도 포함되지 않습니다.</p><h3 id=\"delete-account\">tafs 계정 삭제</h3><p>tafs는 KIFF의 앱입니다. tafs 계정과 그 데이터를 삭제하려면:</p><ol><li>tafs 앱을 열고 로그인합니다.</li><li>계정으로 이동한 다음 <em>계정 삭제</em>를 누릅니다.</li><li>확인합니다. 계정 삭제는 되돌릴 수 없습니다.</li></ol><p><em>계정 삭제</em>는 회사의 계정을 삭제할 수 있는 사람(보통 그 소유자)에게 표시됩니다. 이 항목이 보이지 않거나 더 이상 앱이 없다면, 로그인에 사용하는 주소로 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>에 이메일을 보내십시오. 당사는 부당한 지체 없이, 늦어도 한 달 이내에 이용자의 데이터를 삭제합니다.</p><p>삭제되는 것: 계정의 키는 즉시 작동을 멈춥니다. 그 계정의 taf, 채팅, 메모, 첨부 파일, 연결은 즉시 삭제되고, 특정 시점 사본에서도 35일 이내에 삭제됩니다. KIFF가 그 계정을 위해 보관하는 것은 30일 이내에 삭제되고, 그 후 7일 이내에 백업에서도 삭제됩니다. 계정의 이름이 포함된 서비스 로그는 30일 이내에 사라집니다. 테넌트 감사 데이터는 테넌트와 함께 삭제됩니다. 데이터 종류별 내용은 <a href=\"#retention\">보유 기간</a>을 참조하십시오.</p><p id=\"delete-data\">계정은 유지하고 데이터의 일부만 삭제하려면: 앱에서 채팅을 삭제하면 그 메시지와 첨부 파일도 함께 삭제되고, taf를 삭제하면 그 채팅, 메모, 연결도 함께 삭제됩니다. 그 밖의 것은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내 무엇을 삭제할지 알려 주십시오. 당사는 부당한 지체 없이, 늦어도 한 달 이내에 삭제합니다.</p><p>이용자는 감독기관에 민원을 제기할 권리가 있습니다. 당사의 선임 감독기관은 <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>입니다. 이용자는 거주하는 회원국의 감독기관에도 민원을 제기할 수 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<section id=\"rights\"><h2>9. 이용자의 권리</h2><p>GDPR에 따라 이용자는 자신의 개인정보에 관하여 다음의 권리를 가집니다.</p><ul><li><strong>열람</strong>(제15조) — 당사가 이용자의 데이터를 처리하는지 여부의 확인과 그 사본.</li><li><strong>정정</strong>(제16조) — 부정확하거나 불완전한 데이터의 정정.</li><li><strong>삭제</strong>(제17조) — 법정 보유 의무에 따른 예외를 제외한 이용자 데이터의 삭제.</li><li><strong>처리 제한</strong>(제18조) — 분쟁이 해결되는 동안 처리를 멈추는 것.</li><li><strong>이동</strong>(제20조) — 이용자가 제공한 데이터를 기계가 읽을 수 있는 형식으로 내보내는 것.</li><li><strong>반대</strong>(제21조) — 정당한 이익에 근거한 처리에 대한 반대. 당사가 우선하는 근거를 입증할 수 없으면 처리를 멈춥니다.</li><li><strong>동의 철회</strong>(제7조 제3항) — tafs 앱의 AI처럼 동의에 근거한 모든 처리에 대해(<a href=\"#ai-in-tafs\">위</a>에서 설명한 대로 계정에서). 철회는 그 전의 적법한 처리에 영향을 미치지 않습니다.</li></ul><p>이러한 권리를 행사하려면 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내십시오. 당사는 제12조 제3항에 따라 부당한 지체 없이, 늦어도 한 달 이내에 답변합니다. 복잡한 요청의 경우 최대 두 달까지 연장할 수 있으며, 연장하는 경우 이를 알려 드립니다.</p><h3 id=\"export-chats\">이용자 본인의 tafs 채팅</h3><p>tafs 앱의 계정 → 내 채팅 내보내기로 각 taf와 나눈 이용자 본인의 채팅(Coach와의 채팅 포함), 이용자가 첨부한 파일의 이름, 이용자 본인의 메모를 읽을 수 있는 파일과 JSON으로 다운로드할 수 있습니다. 이를 내보낼 수 있는 사람은 이용자 본인뿐입니다. 관리자나 계정 소유자는 내보낼 수 없으며, KIFF의 계정 내보내기에도 포함되지 않습니다.</p><h3 id=\"delete-account\">tafs 계정 삭제</h3><p>tafs는 KIFF의 앱입니다. tafs 계정과 그 데이터를 삭제하려면:</p><ol><li>tafs 앱을 열고 로그인합니다.</li><li>계정으로 이동한 다음 <em>계정 삭제</em>를 누릅니다.</li><li>확인합니다. 계정 삭제는 되돌릴 수 없습니다.</li></ol><p><em>계정 삭제</em>는 회사의 계정을 삭제할 수 있는 사람(보통 그 소유자)에게 표시됩니다. 이 항목이 보이지 않거나 더 이상 앱이 없다면, 로그인에 사용하는 주소로 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>에 이메일을 보내십시오. 당사는 부당한 지체 없이, 늦어도 한 달 이내에 이용자의 데이터를 삭제합니다.</p><p>삭제되는 것: 계정의 키는 즉시 작동을 멈춥니다. 그 계정의 taf, 채팅, 메모, 첨부 파일, 연결은 즉시 삭제되고, 특정 시점 사본에서도 35일 이내에 삭제됩니다. KIFF가 그 계정을 위해 보관하는 것은 30일 이내에 삭제되고, 그 후 7일 이내에 백업에서도 삭제됩니다. 계정의 이름이 포함된 서비스 로그는 30일 이내에 사라집니다. 테넌트 감사 데이터는 테넌트와 함께 삭제됩니다. 데이터 종류별 내용은 <a href=\"#retention\">보유 기간</a>을 참조하십시오.</p><p id=\"delete-data\">계정은 유지하고 데이터의 일부만 삭제하려면: 앱에서 채팅을 삭제하면 그 메시지와 첨부 파일도 함께 삭제되고, taf를 삭제하면 그 채팅, 메모, 연결도 함께 삭제됩니다. 그 밖의 것은 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 이메일을 보내 무엇을 삭제할지 알려 주십시오. 당사는 부당한 지체 없이, 늦어도 한 달 이내에 삭제합니다.</p><p>이용자는 감독기관에 민원을 제기할 권리가 있습니다. 당사의 선임 감독기관은 <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>입니다. 이용자는 거주하는 회원국의 감독기관에도 민원을 제기할 수 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -452,12 +478,12 @@ func privacyCookiesKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var14 == nil {
-			templ_7745c5c3_Var14 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section id=\"cookies\"><h2>10. 쿠키</h2><p>당사는 쿠키 세 개를 설정합니다. 모두 꼭 필요한 퍼스트 파티 쿠키이며, HTTPS로만 전송되고 페이지의 스크립트가 읽을 수 없습니다. EU ePrivacy 규정상 이 쿠키에는 동의가 필요하지 않으며, 이용자가 그 존재를 알 수 있도록 나열합니다. 자세한 내용은 <a href=\"/cookies\">쿠키 정책</a>(영어)에 있습니다.</p><ul><li><strong><code>kiff_session</code></strong> — 로그인 상태를 유지합니다. 이용자의 로그인 ID, 이메일, 이름, 그리고 대시보드가 이용자를 위해 사용하는 자격 증명을 담은 서명된 세션 쿠키입니다. <code>.kiff.dev</code>에 설정됩니다. 24시간 또는 이용자가 로그아웃할 때까지 유지됩니다.</li><li><strong><code>kiff_flash</code></strong> — \"키가 만들어졌습니다\"와 같은 일회성 메시지를 다음 페이지로 전달합니다. 서명되어 있으며, 새 키는 절대 담기지 않습니다. <code>.kiff.dev</code>에 설정됩니다. 다음 페이지가 읽으면 삭제되며, 최대 5분간 유지됩니다.</li><li><strong><code>kiff_cb_attempts</code></strong> — 로그인 페이지가 얼마나 자주 새로 고쳐졌는지 세어, 반복되는 로그인을 멈춥니다. 그 페이지에만 전송됩니다. 5분간 유지되며, 로그인이 시작되거나 성공하면 지워집니다.</li></ul><p>당사는 분석 쿠키, 광고 쿠키 또는 제삼자 추적기를 전혀 사용하지 않습니다. 만약 이를 추가하게 되면, ePrivacy와 추적 기술에 관한 EDPB의 2023년 지침에 따라 쿠키를 설정하기 전에 동의 배너를 표시합니다.</p><p>이용자가 Clerk(당사의 인증 하위 프로세서)를 통해 로그인하면, Clerk도 자체 프런트엔드 도메인 (<code>clerk.kiff.dev</code>)에 쿠키를 설정합니다. 이 쿠키는 Clerk가 로그인 과정 전반에서 이용자를 인식하는 데 필요하며, 당사의 개인정보처리방침과 함께 Clerk의 개인정보처리방침이 적용됩니다. 자세한 내용은 하위 프로세서 목록을 참조하십시오.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<section id=\"cookies\"><h2>10. 쿠키</h2><p>당사는 쿠키 세 개를 설정합니다. 모두 꼭 필요한 퍼스트 파티 쿠키이며, HTTPS로만 전송되고 페이지의 스크립트가 읽을 수 없습니다. EU ePrivacy 규정상 이 쿠키에는 동의가 필요하지 않으며, 이용자가 그 존재를 알 수 있도록 나열합니다. 자세한 내용은 <a href=\"/cookies\">쿠키 정책</a>(영어)에 있습니다.</p><ul><li><strong><code>kiff_session</code></strong> — 로그인 상태를 유지합니다. 이용자의 로그인 ID, 이메일, 이름, 그리고 대시보드가 이용자를 위해 사용하는 자격 증명을 담은 서명된 세션 쿠키입니다. <code>.kiff.dev</code>에 설정됩니다. 24시간 또는 이용자가 로그아웃할 때까지 유지됩니다.</li><li><strong><code>kiff_flash</code></strong> — \"키가 만들어졌습니다\"와 같은 일회성 메시지를 다음 페이지로 전달합니다. 서명되어 있으며, 새 키는 절대 담기지 않습니다. <code>.kiff.dev</code>에 설정됩니다. 다음 페이지가 읽으면 삭제되며, 최대 5분간 유지됩니다.</li><li><strong><code>kiff_cb_attempts</code></strong> — 로그인 페이지가 얼마나 자주 새로 고쳐졌는지 세어, 반복되는 로그인을 멈춥니다. 그 페이지에만 전송됩니다. 5분간 유지되며, 로그인이 시작되거나 성공하면 지워집니다.</li></ul><p>당사는 분석 쿠키, 광고 쿠키 또는 제삼자 추적기를 전혀 사용하지 않습니다. 만약 이를 추가하게 되면, ePrivacy와 추적 기술에 관한 EDPB의 2023년 지침에 따라 쿠키를 설정하기 전에 동의 배너를 표시합니다.</p><p>이용자가 Clerk(당사의 인증 하위 프로세서)를 통해 로그인하면, Clerk도 자체 프런트엔드 도메인 (<code>clerk.kiff.dev</code>)에 쿠키를 설정합니다. 이 쿠키는 Clerk가 로그인 과정 전반에서 이용자를 인식하는 데 필요하며, 당사의 개인정보처리방침과 함께 Clerk의 개인정보처리방침이 적용됩니다. 자세한 내용은 하위 프로세서 목록을 참조하십시오.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -481,12 +507,12 @@ func privacySecurityKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<section id=\"security\"><h2>11. 보안</h2><p>당사의 기술적·관리적 보안 조치는 <a href=\"/security\">/security</a>(영어)에 문서화되어 있습니다. 여기에는 데이터베이스 계층에서의 테넌트 격리, 전송 중 TLS 1.2 이상, 관리형 제공업체의 기본 설정을 통한 저장 시 암호화, 그리고 최소 권한 원칙에 기반한 접근 통제가 포함됩니다.</p><p>당사는 GDPR 제33조에 따라 개인정보 침해를 부당한 지체 없이, 확인 후 72시간 이내에 영향을 받는 고객에게 통지합니다. 통지에는 침해의 성격, 관련된 정보주체와 기록의 범주 및 대략적인 수, 발생 가능한 결과, 그리고 취했거나 제안하는 조치가 포함됩니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section id=\"security\"><h2>11. 보안</h2><p>당사의 기술적·관리적 보안 조치는 <a href=\"/security\">/security</a>(영어)에 문서화되어 있습니다. 여기에는 데이터베이스 계층에서의 테넌트 격리, 전송 중 TLS 1.2 이상, 관리형 제공업체의 기본 설정을 통한 저장 시 암호화, 그리고 최소 권한 원칙에 기반한 접근 통제가 포함됩니다.</p><p>당사는 GDPR 제33조에 따라 개인정보 침해를 부당한 지체 없이, 확인 후 72시간 이내에 영향을 받는 고객에게 통지합니다. 통지에는 침해의 성격, 관련된 정보주체와 기록의 범주 및 대략적인 수, 발생 가능한 결과, 그리고 취했거나 제안하는 조치가 포함됩니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -510,12 +536,12 @@ func privacyChildrenKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<section id=\"children\"><h2>12. 아동</h2><p>KIFF Cloud는 아동을 대상으로 하지 않는 개발자 인프라 제품입니다. 당사는 16세 미만 아동의 개인정보를 알면서 수집하지 않습니다. 아동이 당사에 개인정보를 제공했다고 생각되면 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 연락해 주십시오. 당사는 이를 삭제합니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<section id=\"children\"><h2>12. 아동</h2><p>KIFF Cloud는 아동을 대상으로 하지 않는 개발자 인프라 제품입니다. 당사는 16세 미만 아동의 개인정보를 알면서 수집하지 않습니다. 아동이 당사에 개인정보를 제공했다고 생각되면 <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>로 연락해 주십시오. 당사는 이를 삭제합니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -539,12 +565,12 @@ func privacyAutomatedKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section id=\"automated\"><h2>13. 자동화된 의사결정</h2><p>KIFF Cloud의 런타임은 고객이 보낸 데이터에 대해 결정론적인 정책 결정을 내립니다. 이는 GDPR 제22조의 의미에서 이용자에게 법적 효과 또는 이와 유사한 중대한 효과를 미치는 이용자에 관한 결정이 아니며, 고객 자체의 정책에 따라 실행되는 고객의 행동(환불, 주문, 메시지 등)에 관한 결정입니다.</p><p>KIFF Cloud를 이용하여 자신의 최종 사용자에게 영향을 미치는 결정을 내리는 고객은 제22조 준수에 대해 스스로 책임을 집니다. 당사의 거버넌스 영수증은 그러한 고객이 사람의 감독을 입증하는 데 필요한 감사 추적을 제공하도록 설계되어 있지만, 그러한 감독을 제공할 법적 의무는 고객에게 있습니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"automated\"><h2>13. 자동화된 의사결정</h2><p>KIFF Cloud의 런타임은 고객이 보낸 데이터에 대해 결정론적인 정책 결정을 내립니다. 이는 GDPR 제22조의 의미에서 이용자에게 법적 효과 또는 이와 유사한 중대한 효과를 미치는 이용자에 관한 결정이 아니며, 고객 자체의 정책에 따라 실행되는 고객의 행동(환불, 주문, 메시지 등)에 관한 결정입니다.</p><p>KIFF Cloud를 이용하여 자신의 최종 사용자에게 영향을 미치는 결정을 내리는 고객은 제22조 준수에 대해 스스로 책임을 집니다. 당사의 거버넌스 영수증은 그러한 고객이 사람의 감독을 입증하는 데 필요한 감사 추적을 제공하도록 설계되어 있지만, 그러한 감독을 제공할 법적 의무는 고객에게 있습니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -568,12 +594,12 @@ func privacyChangesKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var18 == nil {
-			templ_7745c5c3_Var18 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<section id=\"changes\"><h2>14. 이 방침의 변경</h2><p>당사는 이 방침을 수시로 업데이트할 수 있습니다. 중대한 변경은 활성 고객에게 이메일로, 그리고 이 페이지에 최소 30일간 눈에 띄는 배너로 통지합니다. 중대하지 않은 변경은 새로운 \"최종 업데이트\" 날짜와 함께 게시합니다.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section id=\"changes\"><h2>14. 이 방침의 변경</h2><p>당사는 이 방침을 수시로 업데이트할 수 있습니다. 중대한 변경은 활성 고객에게 이메일로, 그리고 이 페이지에 최소 30일간 눈에 띄는 배너로 통지합니다. 중대하지 않은 변경은 새로운 \"최종 업데이트\" 날짜와 함께 게시합니다.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -597,12 +623,12 @@ func privacyContactKO() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var19 == nil {
-			templ_7745c5c3_Var19 = templ.NopComponent
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section id=\"contact\"><h2>15. 연락처</h2><p>개인정보 관련 문의와 권리 행사 요청: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Kiff Agents OÜ에 대한 공식 법적 통지: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, 또는 우편으로 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>민원을 위한 선임 감독기관: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 11월 25일.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<section id=\"contact\"><h2>15. 연락처</h2><p>개인정보 관련 문의와 권리 행사 요청: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p><p>Kiff Agents OÜ에 대한 공식 법적 통지: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>, 또는 우편으로 Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia.</p><p>민원을 위한 선임 감독기관: <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">에스토니아 데이터보호감독청(Andmekaitse Inspektsioon)</a>.</p><hr><p class=\"legal-footnote\"><strong>문서 버전:</strong> v0.1.<br><strong>최종 업데이트:</strong> 2026년 11월 27일.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
