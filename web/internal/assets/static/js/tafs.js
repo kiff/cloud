@@ -171,12 +171,18 @@
         if (d.open) {
           all.forEach(function (o) { if (o !== d && o.open) shut(o); });
           place(d); steps(d, true); draw(d);
-        } else steps(d, false);
+        } else { steps(d, false); d.dataset.hovered = ""; d.dataset.pinned = ""; }
       });
-      sum.addEventListener("click", function () { d.dataset.pinned = d.open ? "" : "1"; });
+      // A click on a card that a hover opened pins it open; otherwise a click
+      // toggles it as usual.
+      sum.addEventListener("click", function (e) {
+        clearTimeout(t);
+        if (d.open && d.dataset.pinned !== "1" && d.dataset.hovered === "1") { e.preventDefault(); d.dataset.pinned = "1"; return; }
+        d.dataset.pinned = d.open ? "" : "1";
+      });
       li.addEventListener("mouseenter", function () {
         if (!hover.matches) return;
-        clearTimeout(t); t = setTimeout(function () { if (!d.open) d.open = true; }, 150);
+        clearTimeout(t); t = setTimeout(function () { if (!d.open) { d.dataset.hovered = "1"; d.open = true; } }, 150);
       });
       li.addEventListener("mouseleave", function () {
         clearTimeout(t);

@@ -20,7 +20,7 @@ var tafsIT = tafsWords{
 		},
 		Proof:       "Cosa è stato fatto, chi l'ha approvato e la firma di KIFF.",
 		ProofAlt:    "Una ricevuta nell'app tafs: un rimborso di 3.000 €, approvato una volta da te, con la ricevuta di KIFF, firmata e verificata.",
-		Control:     [3]string{"Tocca a te: cosa aspetta la tua risposta, e fino a quando.", "La Card: cosa può fare un taf, cosa aspetta te e cosa non fa mai.", "Ogni passo che ha bisogno di te chiede la tua impronta."},
+		Control:     [3]string{"Ti aspetta: cosa aspetta la tua risposta, e fino a quando.", "La Card: cosa può fare un taf, cosa aspetta te e cosa non fa mai.", "Ogni passo che ha bisogno di te chiede la tua impronta."},
 		ControlAlt:  [3]string{"Un avviso nell'app tafs: un rimborso di 100 € supera il limite di 50 € per chiamata, con Rispondi.", "La Card di un taf nell'app tafs: rimborsi fino a 50 € ciascuno, oltre ti chiede prima, al massimo 5.000 € al giorno; tutto il resto è rifiutato.", "Una chiamata in attesa nell'app tafs: un rimborso di 100 € aspetta, nulla viene inviato finché non approvi, con il pulsante per approvare una volta con la tua impronta."},
 		PrivacyHead: "L'IA non vede mai le password né le chiavi che usano le tue app collegate.",
 		Privacy:     [3]string{"Connessioni dirette: planque tiene la chiave o l'accesso sigillati e li apre solo per le chiamate di quella connessione. Il taf e l'IA non li vedono mai.", "Connessioni gestite: il nostro partner di accesso conserva l'accesso, mai planque né un taf.", "Il tuo Chrome: un taf non legge mai campi di password, carta o codice. Su una pagina di accesso si ferma e ti chiede di accedere nella tua scheda."},

@@ -20,7 +20,7 @@ var tafsPL = tafsWords{
 		},
 		Proof:       "Co zrobiono, kto to zatwierdził i podpis KIFF.",
 		ProofAlt:    "Potwierdzenie w aplikacji tafs: zwrot 3000 €, zatwierdzony przez Ciebie jednorazowo, z potwierdzeniem KIFF, podpisanym i sprawdzonym.",
-		Control:     [3]string{"Czeka na Ciebie: co czeka na Twoją odpowiedź i do kiedy.", "Card: co taf może zrobić, co czeka na Ciebie i czego nigdy nie robi.", "Każdy krok, który Cię potrzebuje, prosi o odcisk palca."},
+		Control:     [3]string{"Czeka na Ciebie: co czeka na Twoją odpowiedź i do kiedy.", "Card: co taf może zrobić, co czeka na Ciebie i czego nigdy nie robi.", "Każdy krok, który wymaga Twojej decyzji, prosi o odcisk palca."},
 		ControlAlt:  [3]string{"Alert w aplikacji tafs: zwrot 100 € przekracza limit 50 € na jedno wywołanie, z przyciskiem Odpowiedz.", "Card tafa w aplikacji tafs: zwroty do 50 € każdy, większe najpierw pytają Ciebie, najwyżej 5000 € dziennie; wszystko inne jest odrzucane.", "Wstrzymane wywołanie w aplikacji tafs: czeka zwrot 100 €, nic nie zostanie wysłane, dopóki nie zatwierdzisz, z przyciskiem do jednorazowego zatwierdzenia odciskiem palca."},
 		PrivacyHead: "AI nigdy nie widzi haseł ani kluczy, których używają Twoje połączone aplikacje.",
 		Privacy:     [3]string{"Połączenia bezpośrednie: planque trzyma klucz lub logowanie zapieczętowane i otwiera je tylko dla wywołań tego połączenia. Taf i AI nigdy ich nie widzą.", "Połączenia zarządzane: logowanie przechowuje nasz partner logowania, nigdy planque ani taf.", "Twój własny Chrome: taf nigdy nie czyta pól z hasłem, kartą ani kodem. Na stronie logowania zatrzymuje się i prosi, żebyś zalogował się we własnej karcie."},
