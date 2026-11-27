@@ -167,6 +167,7 @@
     all.forEach(function (d) {
       var sum = d.querySelector("summary"), li = d.parentNode, t;
       d.addEventListener("toggle", function () {
+        li.style.zIndex = d.open ? "20" : "";
         if (d.open) {
           all.forEach(function (o) { if (o !== d && o.open) shut(o); });
           place(d); steps(d, true); draw(d);

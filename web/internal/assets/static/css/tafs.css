@@ -298,11 +298,12 @@ main:focus { outline: none; }
   .tf-js .hero .small { max-width: 34vw; }
   .tf-js .pill { max-width: 30vw; }
   .tf-js .pill-x { z-index: 6; }
-  .tf-js .pill-x:has(.ex[open]) { z-index: 9; }
-  .tf-js .ex-card { position: absolute; top: calc(100% + 10px); right: -40px; max-height: calc(100vh - var(--y, 0px) - 120px); overflow: auto; }
+  /* The card stands straight, whatever its sticker's tilt. */
+  .tf-js .ex-card { position: absolute; top: calc(100% + 10px); right: -40px; max-height: calc(100vh - var(--y, 0px) - 120px); overflow: auto;
+    transform: rotate(calc(-1 * (var(--r0, 0deg) + var(--tr, 0deg)))); transform-origin: top right; }
   .tf-js .ex.up .ex-card { top: auto; bottom: calc(100% + 10px); }
   .tf-js .ex-shots { grid-template-columns: repeat(3, 1fr); }
-  .tf-js .ex-card:has(.ex-shots) { width: min(640px, 52vw); }
+  .tf-js .ex-card:has(.ex-shots) { width: min(720px, 56vw); }
   .tf-js .lines3, .tf-js .words { position: absolute; left: 7vw; top: 50%; transform: translateY(-50%); }
   .tf-js .lines3 { font-size: min(9vh, 7rem, calc(82vw / var(--n, 6))); }
   .tf-js .lines3 span { white-space: nowrap; }
