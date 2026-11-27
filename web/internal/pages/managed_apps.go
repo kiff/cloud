@@ -22,7 +22,8 @@ import (
 // The file is either a JSON array of app names as people know them ("Google
 // Sheets"), the list mode, or an object {"all": true, "named": [...],
 // "except": [...]}, the all mode: any app a customer connects through
-// Composio, except the ones in "except". "named" keeps the apps other pages
+// Composio, except the ones in "except" (none, or a single app the owner
+// withdraws). "named" keeps the apps other pages
 // speak of by name (the Google section of the tafs privacy policy). An app is
 // allowed here, with the page's words, before planque lets it through.
 var ManagedApps, ManagedAll, ManagedExcept = func() ([]string, bool, []string) {
@@ -56,9 +57,6 @@ func mustManagedList(b []byte) managedList {
 	if !m.All {
 		panic(`pages: managed_apps.json: an object must say "all": true`)
 	}
-	if len(m.Except) == 0 {
-		panic(`pages: managed_apps.json: the all mode needs its "except" list`)
-	}
 	return m
 }
 
@@ -69,20 +67,21 @@ func mustManagedApps(b []byte) []string { return mustManagedList(b).Named }
 // ManagedApps is empty, Only with %s for the names while the list is short,
 // and Many, with %d for the count and %s for the link to the list below the
 // table, once it's longer than managedAppsInline. Apps names the list's
-// heading and the link's words. In the all mode, All is the row's line, with
-// %s for the link to the exceptions listed under the table, and Except names
-// that list's heading and the link's words.
-type managedLines struct{ None, Only, Many, Apps, All, Except string }
+// heading and the link's words. In the all mode, AllNone is the row's line
+// while nothing is excepted; with exceptions, All is the line, with %s for the
+// link to the exceptions listed under the table, and Except names that list's
+// heading and the link's words.
+type managedLines struct{ None, Only, Many, Apps, All, Except, AllNone string }
 
 var managedUseWords = map[string]managedLines{
-	"en": {"Not yet used for any customer's connection.", "Used only for: %s.", "Used only for the %d apps listed under %s.", "Apps connected through Composio", "Used for any service a customer connects through it, except those listed under %s.", "Services never connected through Composio"},
-	"de": {"Noch für keine Verbindung eines Kunden genutzt.", "Nur genutzt für: %s.", "Nur genutzt für die %d Apps unter %s.", "Über Composio verbundene Apps", "Genutzt für jeden Dienst, den ein Kunde darüber verbindet, außer denen unter %s.", "Dienste, die nie über Composio verbunden werden"},
-	"es": {"Aún no se usa para ninguna conexión de un cliente.", "Solo se usa para: %s.", "Solo se usa para las %d apps de %s.", "Apps conectadas a través de Composio", "Se usa para cualquier servicio que un cliente conecte a través de él, salvo los de %s.", "Servicios que nunca se conectan a través de Composio"},
-	"fr": {"Pas encore utilisé pour la connexion d'un client.", "Utilisé uniquement pour : %s.", "Utilisé uniquement pour les %d apps de la liste %s.", "Apps connectées via Composio", "Utilisé pour tout service qu'un client connecte par son intermédiaire, sauf ceux de la liste %s.", "Services jamais connectés via Composio"},
-	"it": {"Non ancora usato per il collegamento di alcun cliente.", "Usato solo per: %s.", "Usato solo per le %d app elencate in %s.", "App collegate tramite Composio", "Usato per qualsiasi servizio che un cliente collega tramite esso, tranne quelli elencati in %s.", "Servizi mai collegati tramite Composio"},
-	"nl": {"Nog voor geen enkele koppeling van een klant gebruikt.", "Alleen gebruikt voor: %s.", "Alleen gebruikt voor de %d apps onder %s.", "Apps gekoppeld via Composio", "Gebruikt voor elke dienst die een klant erlangs koppelt, behalve die onder %s.", "Diensten die nooit via Composio worden gekoppeld"},
-	"pl": {"Jeszcze nieużywany do żadnego połączenia klienta.", "Używany wyłącznie do: %s.", "Używany wyłącznie do %d aplikacji z listy %s.", "Aplikacje połączone przez Composio", "Używany do każdej usługi, którą klient łączy za jego pośrednictwem, z wyjątkiem tych z listy %s.", "Usługi nigdy nie łączone przez Composio"},
-	"pt": {"Ainda não é usado para a ligação de nenhum cliente.", "Usado apenas para: %s.", "Usado apenas para as %d apps listadas em %s.", "Apps ligadas através da Composio", "Usado para qualquer serviço que um cliente ligue através dele, exceto os listados em %s.", "Serviços nunca ligados através da Composio"},
+	"en": {"Not yet used for any customer's connection.", "Used only for: %s.", "Used only for the %d apps listed under %s.", "Apps connected through Composio", "Used for any service a customer connects through it, except those listed under %s.", "Services never connected through Composio", "Used for any service a customer connects through it."},
+	"de": {"Noch für keine Verbindung eines Kunden genutzt.", "Nur genutzt für: %s.", "Nur genutzt für die %d Apps unter %s.", "Über Composio verbundene Apps", "Genutzt für jeden Dienst, den ein Kunde darüber verbindet, außer denen unter %s.", "Dienste, die nie über Composio verbunden werden", "Genutzt für jeden Dienst, den ein Kunde darüber verbindet."},
+	"es": {"Aún no se usa para ninguna conexión de un cliente.", "Solo se usa para: %s.", "Solo se usa para las %d apps de %s.", "Apps conectadas a través de Composio", "Se usa para cualquier servicio que un cliente conecte a través de él, salvo los de %s.", "Servicios que nunca se conectan a través de Composio", "Se usa para cualquier servicio que un cliente conecte a través de él."},
+	"fr": {"Pas encore utilisé pour la connexion d'un client.", "Utilisé uniquement pour : %s.", "Utilisé uniquement pour les %d apps de la liste %s.", "Apps connectées via Composio", "Utilisé pour tout service qu'un client connecte par son intermédiaire, sauf ceux de la liste %s.", "Services jamais connectés via Composio", "Utilisé pour tout service qu'un client connecte par son intermédiaire."},
+	"it": {"Non ancora usato per il collegamento di alcun cliente.", "Usato solo per: %s.", "Usato solo per le %d app elencate in %s.", "App collegate tramite Composio", "Usato per qualsiasi servizio che un cliente collega tramite esso, tranne quelli elencati in %s.", "Servizi mai collegati tramite Composio", "Usato per qualsiasi servizio che un cliente collega tramite esso."},
+	"nl": {"Nog voor geen enkele koppeling van een klant gebruikt.", "Alleen gebruikt voor: %s.", "Alleen gebruikt voor de %d apps onder %s.", "Apps gekoppeld via Composio", "Gebruikt voor elke dienst die een klant erlangs koppelt, behalve die onder %s.", "Diensten die nooit via Composio worden gekoppeld", "Gebruikt voor elke dienst die een klant erlangs koppelt."},
+	"pl": {"Jeszcze nieużywany do żadnego połączenia klienta.", "Używany wyłącznie do: %s.", "Używany wyłącznie do %d aplikacji z listy %s.", "Aplikacje połączone przez Composio", "Używany do każdej usługi, którą klient łączy za jego pośrednictwem, z wyjątkiem tych z listy %s.", "Usługi nigdy nie łączone przez Composio", "Używany do każdej usługi, którą klient łączy za jego pośrednictwem."},
+	"pt": {"Ainda não é usado para a ligação de nenhum cliente.", "Usado apenas para: %s.", "Usado apenas para as %d apps listadas em %s.", "Apps ligadas através da Composio", "Usado para qualquer serviço que um cliente ligue através dele, exceto os listados em %s.", "Serviços nunca ligados através da Composio", "Usado para qualquer serviço que um cliente ligue através dele."},
 }
 
 // managedAppsInline is the longest list Composio's row names inline. A longer

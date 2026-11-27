@@ -49,8 +49,8 @@ func TestTheManagedAppsFileNamesEachAppOnce(t *testing.T) {
 	}
 }
 
-// Both forms read; an object that isn't the all mode, or has no exceptions
-// or an unknown field, doesn't.
+// Both forms read, the all mode with or without exceptions; an object that
+// isn't the all mode, or has an unknown field, doesn't.
 func TestTheManagedAppsFileReadsInEitherForm(t *testing.T) {
 	if m := mustManagedList([]byte(`["Gmail", "Notion"]`)); m.All || strings.Join(m.Named, "|") != "Gmail|Notion" || m.Except != nil {
 		t.Errorf("a list reads as the list mode: %+v", m)
@@ -58,7 +58,12 @@ func TestTheManagedAppsFileReadsInEitherForm(t *testing.T) {
 	if m := mustManagedList([]byte(`{"all": true, "named": ["Gmail"], "except": ["Gusto"]}`)); !m.All || m.Named[0] != "Gmail" || m.Except[0] != "Gusto" {
 		t.Errorf("an object reads as the all mode: %+v", m)
 	}
-	for _, bad := range []string{`{"all": false, "except": ["Gusto"]}`, `{"all": true}`, `{"all": true, "except": []}`, `{"all": true, "except": ["Gusto"], "extra": 1}`, `{}`} {
+	for _, good := range []string{`{"all": true}`, `{"all": true, "except": []}`} {
+		if m := mustManagedList([]byte(good)); !m.All || len(m.Except) != 0 {
+			t.Errorf("%s reads as the all mode with nothing excepted: %+v", good, m)
+		}
+	}
+	for _, bad := range []string{`{"all": false, "except": ["Gusto"]}`, `{"all": true, "except": ["Gusto"], "extra": 1}`, `{}`} {
 		func() {
 			defer func() {
 				if recover() == nil {
@@ -70,23 +75,44 @@ func TestTheManagedAppsFileReadsInEitherForm(t *testing.T) {
 	}
 }
 
-// The shipped file is the all mode: any app a customer connects through
-// Composio, except the listed services. It still names the three Google
-// apps and wave 1a's 15, which other pages speak of by name. planque's copy
-// is held within it by .github/workflows/managed-apps.yml.
+// The shipped file is the all mode with nothing excepted: any app a customer
+// connects through Composio (the owner, 27 Nov). It still names the three
+// Google apps and wave 1a's 15, which other pages speak of by name. planque's
+// copy is held within it by .github/workflows/managed-apps.yml.
 func TestTheManagedAppsAreTheShippedList(t *testing.T) {
 	want := []string{"Gmail", "Google Calendar", "Google Sheets",
 		"Airtable", "Asana", "Cal", "Calendly", "ClickUp", "Confluence", "Dropbox", "Excel",
 		"Jira", "Linear", "Monday", "Notion", "OneDrive", "Trello", "Wrike"}
 	m := mustManagedList(managedAppsJSON)
-	if !m.All || len(m.Except) == 0 {
-		t.Fatalf("managed_apps.json: want the all mode with exceptions, got %+v", m)
+	if !m.All || len(m.Except) != 0 {
+		t.Fatalf("managed_apps.json: want the all mode with nothing excepted, got %+v", m)
 	}
 	if strings.Join(m.Named, "|") != strings.Join(want, "|") {
 		t.Fatalf("managed_apps.json: named %q, want %q", m.Named, want)
 	}
 	if managedAppsListed() {
 		t.Error("in the all mode the named apps aren't listed under the table")
+	}
+}
+
+// In the all mode with nothing excepted, Composio's row says any service, and
+// nothing is listed under the table, in every language.
+func TestTheAllModeWithNoExceptionsListsNothing(t *testing.T) {
+	saved, savedAll, savedExcept := ManagedApps, ManagedAll, ManagedExcept
+	defer func() { ManagedApps, ManagedAll, ManagedExcept = saved, savedAll, savedExcept }()
+	ManagedApps, ManagedAll, ManagedExcept = []string{"Gmail", "Notion"}, true, nil
+	for lang := range subprocessorsLists {
+		w := managedUseWords[lang]
+		if w.AllNone == "" || strings.Contains(w.AllNone, "%") {
+			t.Fatalf("%s: the all-mode line is missing or malformed", lang)
+		}
+		s := renderSubprocessorsList(t, lang)
+		if !strings.Contains(s, ". "+w.AllNone+"</td>") {
+			t.Errorf("%s: the row doesn't say any service", lang)
+		}
+		if strings.Contains(s, `id="composio-except"`) || strings.Contains(s, `id="composio-apps"`) || strings.Contains(s, "<li>Notion</li>") || strings.Contains(s, "@composio") {
+			t.Errorf("%s: nothing should be listed under the table", lang)
+		}
 	}
 }
 

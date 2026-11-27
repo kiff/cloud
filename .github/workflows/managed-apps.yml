@@ -5,7 +5,7 @@ name: managed apps disclosed
 # planque keeps a copy and refuses a managed sign-in for any app not on it
 # (kiff/planque internal/planque/managed_apps.json). Either file is a JSON
 # array of names (only those apps) or {"all": true, "except": [...]} (every
-# app but those). This check fails when planque allows an app this file
+# app but those, none if empty). This check fails when planque allows an app this file
 # doesn't: an app may be disclosed here before planque lets it through, never
 # the other way round. It runs hourly
 # too, since a change in planque doesn't run this repository's checks.
@@ -55,9 +55,8 @@ jobs:
               if isinstance(v, list) and all(isinstance(a, str) for a in v):
                   return False, set(v), set()
               if (isinstance(v, dict) and v.get("all") is True and set(v) <= {"all", "named", "except"}
-                      and all(isinstance(a, str) for k in ("named", "except") for a in v.get(k, []))
-                      and v.get("except")):
-                  return True, set(v.get("named", [])), set(v["except"])
+                      and all(isinstance(a, str) for k in ("named", "except") for a in v.get(k, []))):
+                  return True, set(v.get("named", [])), set(v.get("except", []))
               sys.exit(f"::error::{name}'s managed_apps.json is neither a JSON array of names nor {{\"all\": true, \"except\": [...]}}")
 
           p_all, p_named, p_except = read("planque", sys.argv[1])
