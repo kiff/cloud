@@ -146,6 +146,14 @@ A call's arguments nest at most 32 levels deep, counting the arguments
 object as the first. A deeper call is refused as invalid before anything
 is decided or held, so every app can show what the owner approves.
 
+A planque browser tool's call is also checked against the tool's schema as
+it was registered, before anything is decided or held: a call that doesn't
+fit (a step with a key its kind doesn't take, or without one it requires)
+is refused as invalid, with where it doesn't fit. The check reads `type`,
+`required`, `properties`, `additionalProperties: false`, `items`, `enum`,
+`oneOf` of objects and simple bounds. A schema that uses anything else isn't
+checked. Other tools aren't checked yet.
+
 ## What the agent sees
 
 - Each tool's description ends with what the agent's Card allows.

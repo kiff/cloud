@@ -878,6 +878,13 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	if err != nil {
 		return nil, "", invalid(err.Error())
 	}
+	// A call that doesn't fit its tool's schema is refused before anything is
+	// decided, held or stored (schema_check.go): for now, planque's browser tools.
+	if schemaChecked(t, a.g.Relays, a.me.TenantID) {
+		if why := toolSchemaRefusal(t, args); why != "" {
+			return nil, "", invalid(why)
+		}
+	}
 	if args, err = t.withFixed(args); err != nil {
 		return nil, "", err
 	}
