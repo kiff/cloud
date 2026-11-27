@@ -77,22 +77,21 @@
     if (first && wide.matches) setTimeout(function () { go(first, false); }, 0);
   }
 
-  // The videos in their phones (tafsPhone): each plays while at least half of
-  // it is in view and pauses when it leaves, or when the tab is hidden. Muted,
-  // as browsers play only muted video by themselves, and nothing loads before
-  // it plays (preload="none"). With reduced motion, or where the browser won't
-  // play it, the poster stays and the play button plays it with its controls.
-  // Without this file, the video keeps its own controls.
+  // Without this file, each video keeps its own controls.
   // The two videos, each in a drawn phone. A video starts half a second after
   // its phone is half in view, so the panel is read first; it pauses the
   // moment the phone leaves the view or the tab is hidden. The button on the
   // phone plays and pauses it by hand: once a visitor pauses a video, scrolling
-  // never restarts it. With reduced motion nothing starts on its own. Nothing
-  // loads before a video first plays (preload="none").
+  // never restarts it. With reduced motion it still starts by itself, but plays
+  // once, without looping. Nothing loads before a video first plays
+  // (preload="none"). A play() the browser refuses is logged to the console.
   function videos() {
     var list = [].slice.call(document.querySelectorAll(".phone video"));
     if (!list.length) return;
-    var watch = !still.matches && "IntersectionObserver" in window;
+    // Reduced motion still starts a video by itself, but it plays once, without
+    // looping, and stops on its last frame; the button plays it again.
+    var watch = "IntersectionObserver" in window;
+    if (still.matches) list.forEach(function (v) { v.loop = false; });
     function button(v) { return v.parentNode.querySelector(".play"); }
     function show(v) {
       var b = button(v); if (!b) return;
@@ -100,23 +99,27 @@
       b.setAttribute("aria-label", on ? b.dataset.pause : b.dataset.play);
       b.classList.toggle("on", on);
     }
-    function want(v) { return v.dataset.held !== "1" && v.dataset.seen === "1" && !document.hidden; }
+    function want(v) { return v.dataset.held !== "1" && v.dataset.seen === "1" && !document.hidden && v.dataset.ended !== "1"; }
     function go(v) {
       var p = v.play();
-      if (p && p.then) p.then(function () { if (!want(v) && v.dataset.hand !== "1") v.pause(); }, function () { show(v); });
+      if (p && p.then) p.then(function () { if (!want(v) && v.dataset.hand !== "1") v.pause(); }, function (e) {
+        if (window.console) console.warn("tafs: a video didn't start by itself:", e && e.name, e && e.message);
+        show(v);
+      });
     }
     function stop(v) { clearTimeout(v._t); if (!v.paused) v.pause(); }
     list.forEach(function (v) {
       v.controls = false;
       v.addEventListener("play", function () { show(v); });
       v.addEventListener("pause", function () { show(v); });
+      v.addEventListener("ended", function () { if (!v.loop) v.dataset.ended = "1"; show(v); });
       var b = button(v);
       if (!b) return;
       b.hidden = false;
       show(v);
       b.addEventListener("click", function () {
         clearTimeout(v._t);
-        if (v.paused) { v.dataset.held = ""; v.dataset.hand = "1"; go(v); }
+        if (v.paused) { v.dataset.held = ""; v.dataset.hand = "1"; v.dataset.ended = ""; go(v); }
         else { v.dataset.held = "1"; v.dataset.hand = ""; v.pause(); }
       });
     });

@@ -589,11 +589,11 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:58%;--y:70%;--s:150px", ".9", "36").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:40%;--y:66%;--s:150px", ".9", "36").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:calc(91% - min(29vh, 250px));--y:11vh;--r0:3deg;--w:min(29vh,250px)", ".5", "6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:calc(98.5% - var(--pw));--y:84px;--r0:2deg", ".5", "6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -725,14 +725,14 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</dd></div></dl></div><p class=\"st pill\" style=\"--x:40%;--y:77%;--r0:-6deg;--c:var(--ink);--t:#fff\" data-x=\".9\" data-r=\"-10\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</dd></div></dl></div><p class=\"st pill\" style=\"--x:8%;--y:77%;--r0:-4deg;--c:var(--ink);--t:#fff\" data-x=\".9\" data-r=\"-10\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(w.Names.Stickers[0])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 104, Col: 130}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 104, Col: 129}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 			if templ_7745c5c3_Err != nil {
@@ -742,7 +742,7 @@ func tafsPage(w tafsWords, o OfferLinks) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:calc(88% - min(30vh, 260px));--y:9vh;--r0:-3deg;--w:min(30vh,260px)", ".6", "-6").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:calc(95% - var(--pw));--y:84px;--r0:-2deg", ".6", "-6").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -2791,9 +2791,10 @@ func tafsShot(name, alt, width, height, place, dx, dr string) templ.Component {
 
 // tafsPhone is a video in a drawn phone, from KIFF's own video bucket, muted,
 // as browsers play only muted video by themselves: js/tafs.js plays it while
-// it's in view and pauses it when it leaves. With no script, or with reduced
-// motion, it shows its poster and plays only when asked. Nothing loads before
-// it plays (preload="none").
+// it's in view and pauses it when it leaves; with reduced motion it plays once,
+// without looping. With no script it shows its poster and its own controls.
+// Nothing loads before it plays (preload="none"). The screen has the videos'
+// own shape (406 × 720), so nothing of the app is cropped.
 func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -2830,7 +2831,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var167 string
 		templ_7745c5c3_Var167, templ_7745c5c3_Err = templ.JoinStringErrs(tafsVideoURL(name + ".jpg"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 391, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 392, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var167))
 		if templ_7745c5c3_Err != nil {
@@ -2843,7 +2844,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var168 string
 		templ_7745c5c3_Var168, templ_7745c5c3_Err = templ.JoinStringErrs(caption)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 391, Col: 115}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 392, Col: 115}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var168))
 		if templ_7745c5c3_Err != nil {
@@ -2856,7 +2857,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var169 string
 		templ_7745c5c3_Var169, templ_7745c5c3_Err = templ.JoinStringErrs(tafsVideoURL(name + ".webm"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 392, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 393, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var169))
 		if templ_7745c5c3_Err != nil {
@@ -2869,7 +2870,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var170 string
 		templ_7745c5c3_Var170, templ_7745c5c3_Err = templ.JoinStringErrs(tafsVideoURL(name + ".mp4"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 393, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 394, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var170))
 		if templ_7745c5c3_Err != nil {
@@ -2882,7 +2883,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var171 string
 		templ_7745c5c3_Var171, templ_7745c5c3_Err = templ.JoinStringErrs(play)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 395, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 396, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var171))
 		if templ_7745c5c3_Err != nil {
@@ -2895,7 +2896,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var172 string
 		templ_7745c5c3_Var172, templ_7745c5c3_Err = templ.JoinStringErrs(play)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 395, Col: 80}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 396, Col: 80}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var172))
 		if templ_7745c5c3_Err != nil {
@@ -2908,7 +2909,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var173 string
 		templ_7745c5c3_Var173, templ_7745c5c3_Err = templ.JoinStringErrs(pause)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 395, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 396, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var173))
 		if templ_7745c5c3_Err != nil {
@@ -2921,7 +2922,7 @@ func tafsPhone(name, caption, play, pause, place, dx, dr string) templ.Component
 		var templ_7745c5c3_Var174 string
 		templ_7745c5c3_Var174, templ_7745c5c3_Err = templ.JoinStringErrs(caption)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 396, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tafs.templ`, Line: 397, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var174))
 		if templ_7745c5c3_Err != nil {

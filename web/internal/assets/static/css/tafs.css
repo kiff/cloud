@@ -8,6 +8,9 @@
   --straw: #ff4f7b; --lemon: #ffd23f; --mint: #2fd8a0; --blue: #3f6bff; --grape: #9b4dff; --orange: #ff8a2a; --red: #ff4d3d;
   --tf-font: "Schibsted Grotesk", system-ui, sans-serif;
   color-scheme: dark;
+  /* The wide stage's phone width: the panel's height below the header, at the
+     videos' own shape (406 x 720), up to 400 px. */
+  --pw: min(calc((100vh - 110px) * 406 / 720), 400px);
 }
 html, body.site { background: var(--ink); color: var(--white); font-family: var(--tf-font); font-size: 17px; line-height: 1.5; }
 body.site p, body.site h1, body.site h2, body.site dl, body.site dd, body.site ul { margin: 0; padding: 0; }
@@ -148,7 +151,11 @@ main:focus { outline: none; }
 /* A video in a drawn phone: CSS only, its island by ::before. js/tafs.js
    plays it while it's in view; with no script or reduced motion, its own
    controls and the play button. */
-.phone { position: relative; margin: 0; width: var(--w, min(28vh, 260px)); max-width: 62vw; aspect-ratio: 9 / 19.5;
+/* The phone's screen has the videos' own shape (406 × 720), so nothing of the
+   app is cropped; on a wide screen it takes the panel's height below the
+   header (--pw, on :root so screen 4's lines can size against it too), its
+   caption beside it. */
+.phone { position: relative; margin: 0; width: var(--w, min(28vh, 260px)); max-width: 62vw; aspect-ratio: 406 / 720;
   padding: 9px; border-radius: 40px; background: #0b0a0e; box-shadow: 0 0 0 2px #3a3842, 0 22px 60px rgba(0,0,0,.45); }
 .phone::before { content: ""; position: absolute; z-index: 2; top: 17px; left: 50%; width: 30%; height: 22px;
   transform: translateX(-50%); border-radius: 999px; background: black; }
@@ -169,7 +176,7 @@ main:focus { outline: none; }
 @media (max-width: 899px), (max-height: 559px) {
   .shot, .phone { margin: 22px auto 0; }
   .shot { width: min(86vw, 420px); }
-  .phone { width: min(56vw, 230px); }
+  .phone { width: min(80vw, 340px); }
   .phone { margin-bottom: 56px; }
 }
 .ask { width: 290px; max-width: 80vw; border-radius: 18px; background: var(--ink); color: var(--white); padding: 15px 16px; display: grid; gap: 3px; box-shadow: 0 0 0 3px var(--white); }
@@ -297,6 +304,8 @@ main:focus { outline: none; }
   .tf-js .hero .small { margin-top: 14px !important; font-size: clamp(1rem, 2.2vh, 1.2rem); }
   .tf-js .hero .small { max-width: 34vw; }
   .tf-js .pill { max-width: 30vw; }
+  .tf-js .phone { width: var(--pw); max-width: none; }
+  .tf-js .phone figcaption { left: auto; right: calc(100% + 18px); top: auto; bottom: 8px; width: 190px; text-align: right; }
   .tf-js .pill-x { z-index: 6; }
   /* The card stands straight, whatever its sticker's tilt. */
   .tf-js .ex-card { position: absolute; top: calc(100% + 10px); right: -40px; max-height: calc(100vh - var(--y, 0px) - 120px); overflow: auto;
@@ -309,7 +318,7 @@ main:focus { outline: none; }
   .tf-js .lines3 span { white-space: nowrap; }
   /* Screen 4 shares its width with the phone on the right: the three lines
      end before it, in every language. */
-  .tf-js .does .lines3 { font-size: min(9vh, 7rem, calc((81vw - min(29vh, 250px)) / var(--n, 6))); }
+  .tf-js .does .lines3 { font-size: min(9vh, 7rem, calc((81vw - var(--pw) - 18px - 24px) / var(--n, 6))); }
   .tf-js .words dl div { grid-template-columns: auto 1fr; align-items: baseline; gap: 22px; }
   .tf-js .mascot { width: min(380px, 40vh); }
   /* "Get it" in one screen (it's clipped to it): the buttons on the left, the

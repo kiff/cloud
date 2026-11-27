@@ -76,8 +76,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<span>{ w.DoesLines[1][0] } <i class="lemon">{ w.DoesLines[1][1] }</i></span>
 							<span>{ w.DoesLines[2][0] } <i class="straw">{ w.DoesLines[2][1] }</i></span>
 						</h2>
-						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:58%;--y:70%;--s:150px", ".9", "36")
-						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:calc(91% - min(29vh, 250px));--y:11vh;--r0:3deg;--w:min(29vh,250px)", ".5", "6")
+						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:40%;--y:66%;--s:150px", ".9", "36")
+						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:calc(98.5% - var(--pw));--y:84px;--r0:2deg", ".5", "6")
 						@tafsIdx(4, w.Does)
 					</section>
 					<section class="p diff">
@@ -101,8 +101,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 								<div><dt lang="fr">kiff</dt><dd>{ w.Glosses[2] }</dd></div>
 							</dl>
 						</div>
-						<p class="st pill" style="--x:40%;--y:77%;--r0:-6deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-10">{ w.Names.Stickers[0] }</p>
-						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:calc(88% - min(30vh, 260px));--y:9vh;--r0:-3deg;--w:min(30vh,260px)", ".6", "-6")
+						<p class="st pill" style="--x:8%;--y:77%;--r0:-4deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-10">{ w.Names.Stickers[0] }</p>
+						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:calc(95% - var(--pw));--y:84px;--r0:-2deg", ".6", "-6")
 						@tafsIdx(6, w.Names)
 					</section>
 					<section class="p why">
@@ -383,9 +383,10 @@ templ tafsShot(name, alt, width, height, place, dx, dr string) {
 
 // tafsPhone is a video in a drawn phone, from KIFF's own video bucket, muted,
 // as browsers play only muted video by themselves: js/tafs.js plays it while
-// it's in view and pauses it when it leaves. With no script, or with reduced
-// motion, it shows its poster and plays only when asked. Nothing loads before
-// it plays (preload="none").
+// it's in view and pauses it when it leaves; with reduced motion it plays once,
+// without looping. With no script it shows its poster and its own controls.
+// Nothing loads before it plays (preload="none"). The screen has the videos'
+// own shape (406 × 720), so nothing of the app is cropped.
 templ tafsPhone(name, caption, play, pause, place, dx, dr string) {
 	<figure class="st phone" { templ.Attributes{"style": place, "data-x": dx, "data-r": dr}... }>
 		<video muted playsinline loop preload="none" controls poster={ tafsVideoURL(name + ".jpg") } aria-label={ caption }>
