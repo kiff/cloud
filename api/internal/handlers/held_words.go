@@ -342,6 +342,9 @@ func visible(s string) string {
 	return b.String()
 }
 
+// plainDigitsMax is the most digits plainNumber writes a number out in.
+const plainDigitsMax = 100
+
 // heldLineMax bounds a held call's summary, in runes. Its details are never
 // cut: what the owner signs is every argument.
 const heldLineMax = 200
@@ -378,10 +381,16 @@ func argumentText(raw json.RawMessage) string {
 	return plainNumber(t)
 }
 
-// plainNumber is a JSON number written without an exponent, keeping its
-// digits and scale as Java's BigDecimal.toPlainString does: "1.5e-05" is
-// "0.000015", "1E+3" is "1000", "1.50" stays "1.50".
+// plainNumber is a JSON number written without an exponent and without
+// trailing zeros after its point, as every app writes it (the iPhone reads a
+// number as a Double, which keeps no scale): "1.5e-05" is "0.000015", "1E+3"
+// is "1000", "1.50" is "1.5", "2.0" is "2". One that would take more than
+// plainDigitsMax digits written so (counting the 0 before a point, and no
+// trailing zero) is written as sent, still exact: "1e99" is a 1 and 99 zeros,
+// "1e100" stays "1e100", and a taf's 1e999999999 is never a gigabyte of zeros
+// (tafs' contracts/held-arguments.json, case 7).
 func plainNumber(n string) string {
+	sent := n
 	sign := ""
 	if strings.HasPrefix(n, "-") {
 		sign, n = "-", n[1:]
@@ -390,9 +399,14 @@ func plainNumber(n string) string {
 	if i := strings.IndexAny(n, "eE"); i >= 0 {
 		e, err := strconv.Atoi(strings.TrimPrefix(n[i+1:], "+"))
 		if err != nil {
-			return sign + n
+			return sent
 		}
 		mant, exp = n[:i], e
+	}
+	// Past these, the number can't be written in plainDigitsMax digits: no
+	// arithmetic on an exponent that large.
+	if exp > plainDigitsMax+len(mant) || exp < -plainDigitsMax-len(mant) {
+		return sent
 	}
 	whole, frac, _ := strings.Cut(mant, ".")
 	digits := strings.TrimLeft(whole+frac, "0")
@@ -400,11 +414,23 @@ func plainNumber(n string) string {
 	if digits == "" {
 		return "0"
 	}
-	if scale <= 0 {
-		return sign + digits + strings.Repeat("0", -scale)
+	for strings.HasSuffix(digits, "0") {
+		digits, scale = digits[:len(digits)-1], scale-1
 	}
-	if len(digits) <= scale {
-		digits = strings.Repeat("0", scale-len(digits)+1) + digits
+	written := len(digits)
+	switch {
+	case scale <= 0:
+		written = len(digits) - scale
+	case scale >= len(digits):
+		written = scale + 1
+	}
+	switch {
+	case written > plainDigitsMax:
+		return sent
+	case scale <= 0:
+		return sign + digits + strings.Repeat("0", -scale)
+	case scale >= len(digits):
+		return sign + "0." + strings.Repeat("0", scale-len(digits)) + digits
 	}
 	return sign + digits[:len(digits)-scale] + "." + digits[len(digits)-scale:]
 }
