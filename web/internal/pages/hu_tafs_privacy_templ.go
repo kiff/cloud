@@ -132,7 +132,20 @@ func TafsPrivacyHU() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Kik kapnak még adatokat</h2><p>Személyes adatait nem adjuk el, és nem osztjuk meg hirdetési célokra.</p><p>A tafshoz a következő vállalatokat vesszük igénybe: Amazon Web Services (tárhely, beleértve a tafs adattárát és a planque kapcsolatait), Clerk (bejelentkezés a KIFF-fiókokba), Anthropic (az MI-modell, amelyet az Anthropic, az Amazon Web Services, a Google Cloud vagy a Microsoft Azure futtat), Composio (a kezelt kapcsolatok bejelentkezései, valamint azok a hívások, amelyek elvégzésére a planque kéri), Apple (push-értesítések), Google (push-értesítések Androidon és a Google Play számlázása) és Resend (egy taf e-mail-ajtaja). A hivatalos, naprakész lista – azzal együtt, hogy melyikük mihez fér hozzá és hol – a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon található.</p><p>Közülük néhányan az Európai Gazdasági Térségen kívül, főként az Egyesült Államokban működnek. Azt, hogy ezeket az adattovábbításokat milyen garanciák védik, <a href=\"/hu/privacy#transfers\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"retention\"><h2>8. Meddig őrizzük meg</h2><ul><li>Amit az Ön eszközei egy tafnak visszaküldenek: csak a futás végéig. Egy csevegésben azt, amit csak olvasott, titkosítva megőrizzük a következő üzeneteihez; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük.</li><li>Egy taf futásai és csevegései, a csevegés összefoglalójával együtt: 30 nap. A memóriajegyzetei: a taf eltávolításáig. Egy saját csevegésedet a Coachcsal korábban is törölheted: az üzenetei és a hozzáadott fájlok azonnal törlődnek, míg a feljegyzés arról, hogy minden futása megtörtént, mikor és mennyibe került, ezalatt a 30 nap alatt megmarad. Ha jelent egy választ, a KIFF azt a választ, az okát és a megjegyzését 180 napig őrzi meg, vagy amíg ki nem törli azt a csevegést vagy a fiókját. A KIFF e-mailben is elküldi őket a bejelentéseket olvasó csapatnak, ahol ezt az e-mailt a KIFF ügyfélszolgálati leveleihez hasonlóan őrzik.</li><li>A Coach rövid jegyzetei a következő válaszához, például arról, hogy egy csevegésben miért nem sikerült létrehozni egy kapcsolatot, vagy hogy egy Cardot jóváhagytak: amíg az a válasz fel nem használja őket, legfeljebb 7 napig; ezt követően az adott csevegés részeként, ameddig a csevegést megőrizzük. Egy másolatot 24 óráig megőrzünk, hogy egy újraküldött üzenet ugyanazt a jegyzetet kapja. Egy csevegés jegyzetét csak abban a csevegésben használjuk.</li><li>A csevegésben csatolt fájlok: azzal az üzenettel együtt, amelyhez csatolták őket, 30 napig, vagy rövidebb ideig, ha a csevegést eltávolítják, és minden esetben 38 napon belül törlődnek. Az olyan fájlt, amelyet egyetlen üzenet sem használ, a feltöltése után körülbelül egy órával eltávolítjuk. Fiókja törlése ezeket is törli.</li><li>A tafjai által átadott fájlok: attól számítva 30 napig, hogy a futás létrehozta őket, majd egy napon belül automatikusan töröljük őket. A fiókjához tartozó bárki korábban is törölheti bármelyiket a Törlés most funkcióval: maga a fájl azonnal megszűnik, másolat nélkül; a neve, a mérete, valamint az őt létrehozó taf és futás a tafs adattárának titkosított, időponthoz kötött másolataiban legfeljebb 35 napig megmaradhat, kizárólag hiba utáni helyreállítás céljára. Egy taf eltávolítása vagy fiókja törlése a fájljait is törli. Egy fájl megosztásakor maga a fájl kerül elküldésre, és a megosztott példány annál az alkalmazásnál marad, amellyel megosztotta. Egy fájl letöltéséhez a fiókja egy bejelentkezett tagja számára olyan hivatkozást hozunk létre, amely egy perc után megszűnik működni; más hivatkozást nem hozunk létre hozzá.</li><li>Amit egy eszköz visszaküldött, a planque által az egyes hívásokról vezetett nyilvántartásban: 24 óra. Ezt követően a nyilvántartás csak azt őrzi meg, hogy a hívást elküldték-e, így azt soha nem küldik el kétszer.</li><li>Egy kapcsolat tokenje vagy kulcsa a planque-ban, illetve egy kezelt kapcsolat bejelentkezése a Composiónál: amíg meg nem szünteti a kapcsolatot. Ha egy másik kapcsolata is használhatja ugyanazt a fiókot az adott szolgáltatónál, használaton kívül megőrizzük, amíg azt a kapcsolatot is meg nem szüntetik, majd visszavonjuk. A jóváhagyásainak nyilvántartása: a fiók megszűnéséig.</li><li>Egy készülék push-tokenje: amíg ki nem jelentkezik az alkalmazásból, el nem távolítja a készüléket, vagy az Apple vagy a Google nem jelzi, hogy a token megszűnt. Egy készülék nyilvános kulcsa, neve, platformja és dátumai: amíg használja; miután kijelentkeztette, eltávolítottként jelöljük meg, és a fiók törléséig megőrizzük, hogy a KIFF elutasíthassa a tőle érkező késői választ, és meg tudja mutatni, melyik készülék írt alá egy korábbit. Egy jelkulcs nyilvános kulcsa, azonosítója és neve: ugyanaddig, mint a készülékéé. Egy számítógép munkamenete: legfeljebb 90 napig, vagy amíg ki nem jelentkezik.</li><li>Az Ön fiókja: a törléséig. Szolgáltatási naplók: 30 nap. A tafs és a planque adattárai 35 napig őriznek titkosított, időponthoz kötött másolatokat, amelyeket kizárólag egy adattár hiba utáni helyreállítására használunk.</li></ul><p>Minden más <a href=\"/hu/privacy#retention\">a KIFF tájékoztatójának Adatmegőrzés című szakaszában</a> található.</p></section><section id=\"lawful-bases\"><h2>9. Jogalapok</h2><p>Szerződés teljesítése: fiókja és tafjai működtetéséhez. Jogos érdek: a biztonság, a csalásmegelőzés és a visszaélések észlelése érdekében. Hozzájárulás: a tafsban működő MI-hez (<a href=\"#ai\">5. szakasz</a>). Jogi kötelezettség: az adónyilvántartásokhoz. A részleteket <a href=\"/hu/privacy#lawful-bases\">a KIFF Adatvédelmi tájékoztatója</a> tartalmazza.</p></section><section id=\"rights\"><h2>10. Az Ön jogai</h2><p>A GDPR alapján kérheti az adataihoz való hozzáférést, azok helyesbítését, törlését, kezelésük korlátozását vagy hordozható másolatukat, tiltakozhat a jogos érdeken alapuló adatkezelés ellen, és visszavonhatja hozzájárulását. Írjon a <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> címre; indokolatlan késedelem nélkül, legkésőbb egy hónapon belül válaszolunk; összetett kérésnél további két hónapra lehet szükségünk, és ezt az első hónapban jelezzük. Az alkalmazásban a Fiók → Csevegéseim exportálása menüpont letölti a saját csevegéseit és jegyzeteit.</p><p>A tafs-fiókja törléséhez nyissa meg az alkalmazást, lépjen a Fiók menüpontra, koppintson a <em>Fiók törlése</em> lehetőségre, majd erősítse meg. Ez nem vonható vissza. Hogy mi és mikor törlődik, valamint hogyan kérheti ezt e-mailben, azt <a href=\"/hu/privacy#delete-account\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p>Panaszt tehet az <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Észt Adatvédelmi Felügyeletnél (Andmekaitse Inspektsioon)</a> vagy a lakóhelye szerinti felügyeleti hatóságnál.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"more\"><h2>11. Biztonság, gyermekek és módosítások</h2><p>Biztonsági intézkedéseinket a <a href=\"/security\">/security</a> (angolul) oldal ismerteti. A tafs nem gyermekeknek szól, és 16 év alatti gyermekektől tudatosan nem gyűjtünk személyes adatokat. Ezt a tájékoztatót úgy módosítjuk, ahogyan <a href=\"/hu/privacy#changes\">a KIFF Adatvédelmi tájékoztatója</a> a saját módosítására előírja.</p></section><section id=\"contact\"><h2>12. Kapcsolat</h2><p>Adatvédelmi kérdések és kérelmek: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Hivatalos jogi értesítések: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Az alkalmazás saját feltételei a <a href=\"/hu/tafs/terms\">/tafs/terms</a> oldalon találhatók.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Kik kapnak még adatokat</h2><p>Személyes adatait nem adjuk el, és nem osztjuk meg hirdetési célokra.</p><p>A tafshoz a következő vállalatokat vesszük igénybe: Amazon Web Services (tárhely, beleértve a tafs adattárát és a planque kapcsolatait), Clerk (bejelentkezés a KIFF-fiókokba), Anthropic (az MI-modell, amelyet az Anthropic, az Amazon Web Services, a Google Cloud vagy a Microsoft Azure futtat), Composio (a kezelt kapcsolatok bejelentkezései, valamint azok a hívások, amelyek elvégzésére a planque kéri), Apple (push-értesítések), Google (push-értesítések Androidon és a Google Play számlázása) és Resend (egy taf e-mail-ajtaja). A hivatalos, naprakész lista – azzal együtt, hogy melyikük mihez fér hozzá és hol – a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon található.</p><p>Közülük néhányan az Európai Gazdasági Térségen kívül, főként az Egyesült Államokban működnek. Azt, hogy ezeket az adattovábbításokat milyen garanciák védik, <a href=\"/hu/privacy#transfers\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"retention\"><h2>8. Meddig őrizzük meg</h2><ul><li>Amit az Ön eszközei egy tafnak visszaküldenek: csak a futás végéig. Egy csevegésben azt, amit csak olvasott, titkosítva megőrizzük a következő üzeneteihez; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük.</li><li>Egy taf futásai és csevegései, a csevegés összefoglalójával együtt: 30 nap. A memóriajegyzetei: a taf eltávolításáig. Egy saját csevegésedet a Coachcsal korábban is törölheted: az üzenetei és a hozzáadott fájlok azonnal törlődnek, míg a feljegyzés arról, hogy minden futása megtörtént, mikor és mennyibe került, ezalatt a 30 nap alatt megmarad. Ha jelent egy választ, a KIFF azt a választ, az okát és a megjegyzését 180 napig őrzi meg, vagy amíg ki nem törli azt a csevegést vagy a fiókját. A KIFF e-mailben is elküldi őket a bejelentéseket olvasó csapatnak, ahol ezt az e-mailt a KIFF ügyfélszolgálati leveleihez hasonlóan őrzik.</li><li>A Coach rövid jegyzetei a következő válaszához, például arról, hogy egy csevegésben miért nem sikerült létrehozni egy kapcsolatot, vagy hogy egy Cardot jóváhagytak: amíg az a válasz fel nem használja őket, legfeljebb 7 napig; ezt követően az adott csevegés részeként, ameddig a csevegést megőrizzük. Egy másolatot 24 óráig megőrzünk, hogy egy újraküldött üzenet ugyanazt a jegyzetet kapja. Egy csevegés jegyzetét csak abban a csevegésben használjuk.</li><li>A csevegésben csatolt fájlok: azzal az üzenettel együtt, amelyhez csatolták őket, 30 napig, vagy rövidebb ideig, ha a csevegést eltávolítják, és minden esetben 38 napon belül törlődnek. Az olyan fájlt, amelyet egyetlen üzenet sem használ, a feltöltése után körülbelül egy órával eltávolítjuk. Fiókja törlése ezeket is törli.</li><li>A tafjai által átadott fájlok: attól számítva 30 napig, hogy a futás létrehozta őket, majd egy napon belül automatikusan töröljük őket. A fiókjához tartozó bárki korábban is törölheti bármelyiket a Törlés most funkcióval: maga a fájl azonnal megszűnik, másolat nélkül; a neve, a mérete, valamint az őt létrehozó taf és futás a tafs adattárának titkosított, időponthoz kötött másolataiban legfeljebb 35 napig megmaradhat, kizárólag hiba utáni helyreállítás céljára. Egy taf eltávolítása vagy fiókja törlése a fájljait is törli. Egy fájl megosztásakor maga a fájl kerül elküldésre, és a megosztott példány annál az alkalmazásnál marad, amellyel megosztotta. Egy fájl letöltéséhez a fiókja egy bejelentkezett tagja számára olyan hivatkozást hozunk létre, amely egy perc után megszűnik működni; más hivatkozást nem hozunk létre hozzá.</li><li>Amit egy eszköz visszaküldött, a planque által az egyes hívásokról vezetett nyilvántartásban: 24 óra. Ezt követően a nyilvántartás csak azt őrzi meg, hogy a hívást elküldték-e, így azt soha nem küldik el kétszer.</li><li>Egy kapcsolat tokenje vagy kulcsa a planque-ban, illetve egy kezelt kapcsolat bejelentkezése a Composiónál: amíg meg nem szünteti a kapcsolatot. Ha egy másik kapcsolata is használhatja ugyanazt a fiókot az adott szolgáltatónál, használaton kívül megőrizzük, amíg azt a kapcsolatot is meg nem szüntetik, majd visszavonjuk. ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("hu"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 84, Col: 372}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " A jóváhagyásainak nyilvántartása: a fiók megszűnéséig.</li><li>Egy készülék push-tokenje: amíg ki nem jelentkezik az alkalmazásból, el nem távolítja a készüléket, vagy az Apple vagy a Google nem jelzi, hogy a token megszűnt. Egy készülék nyilvános kulcsa, neve, platformja és dátumai: amíg használja; miután kijelentkeztette, eltávolítottként jelöljük meg, és a fiók törléséig megőrizzük, hogy a KIFF elutasíthassa a tőle érkező késői választ, és meg tudja mutatni, melyik készülék írt alá egy korábbit. Egy jelkulcs nyilvános kulcsa, azonosítója és neve: ugyanaddig, mint a készülékéé. Egy számítógép munkamenete: legfeljebb 90 napig, vagy amíg ki nem jelentkezik.</li><li>Az Ön fiókja: a törléséig. Szolgáltatási naplók: 30 nap. A tafs és a planque adattárai 35 napig őriznek titkosított, időponthoz kötött másolatokat, amelyeket kizárólag egy adattár hiba utáni helyreállítására használunk.</li></ul><p>Minden más <a href=\"/hu/privacy#retention\">a KIFF tájékoztatójának Adatmegőrzés című szakaszában</a> található.</p></section><section id=\"lawful-bases\"><h2>9. Jogalapok</h2><p>Szerződés teljesítése: fiókja és tafjai működtetéséhez. Jogos érdek: a biztonság, a csalásmegelőzés és a visszaélések észlelése érdekében. Hozzájárulás: a tafsban működő MI-hez (<a href=\"#ai\">5. szakasz</a>). Jogi kötelezettség: az adónyilvántartásokhoz. A részleteket <a href=\"/hu/privacy#lawful-bases\">a KIFF Adatvédelmi tájékoztatója</a> tartalmazza.</p></section><section id=\"rights\"><h2>10. Az Ön jogai</h2><p>A GDPR alapján kérheti az adataihoz való hozzáférést, azok helyesbítését, törlését, kezelésük korlátozását vagy hordozható másolatukat, tiltakozhat a jogos érdeken alapuló adatkezelés ellen, és visszavonhatja hozzájárulását. Írjon a <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> címre; indokolatlan késedelem nélkül, legkésőbb egy hónapon belül válaszolunk; összetett kérésnél további két hónapra lehet szükségünk, és ezt az első hónapban jelezzük. Az alkalmazásban a Fiók → Csevegéseim exportálása menüpont letölti a saját csevegéseit és jegyzeteit.</p><p>A tafs-fiókja törléséhez nyissa meg az alkalmazást, lépjen a Fiók menüpontra, koppintson a <em>Fiók törlése</em> lehetőségre, majd erősítse meg. Ez nem vonható vissza. Hogy mi és mikor törlődik, valamint hogyan kérheti ezt e-mailben, azt <a href=\"/hu/privacy#delete-account\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p>Panaszt tehet az <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Észt Adatvédelmi Felügyeletnél (Andmekaitse Inspektsioon)</a> vagy a lakóhelye szerinti felügyeleti hatóságnál.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"more\"><h2>11. Biztonság, gyermekek és módosítások</h2><p>Biztonsági intézkedéseinket a <a href=\"/security\">/security</a> (angolul) oldal ismerteti. A tafs nem gyermekeknek szól, és 16 év alatti gyermekektől tudatosan nem gyűjtünk személyes adatokat. Ezt a tájékoztatót úgy módosítjuk, ahogyan <a href=\"/hu/privacy#changes\">a KIFF Adatvédelmi tájékoztatója</a> a saját módosítására előírja.</p></section><section id=\"contact\"><h2>12. Kapcsolat</h2><p>Adatvédelmi kérdések és kérelmek: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Hivatalos jogi értesítések: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Az alkalmazás saját feltételei a <a href=\"/hu/tafs/terms\">/tafs/terms</a> oldalon találhatók.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -164,347 +177,347 @@ func tafsPrivacyGoogleHU() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"google\"><h2>6. Google-felhasználói adatok</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google-felhasználói adatok</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p>Ha Ön kéri, a tafs az alkalmazás Alkalmazások csatlakoztatása részében összekapcsol egy tafot az Ön Google-fiókjával, például azzal a Google Sheetsszel vagy Google Calendarral, amelyet a feladata használ. Ez a szakasz azt ismerteti, mit tesz a tafs a Google-tól kapott adatokkal.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Ha Ön kéri, a tafs az alkalmazás Alkalmazások csatlakoztatása részében összekapcsol egy tafot az Ön Google-fiókjával, például azzal a Google Sheetsszel vagy Google Calendarral, amelyet a feladata használ. Ez a szakasz azt ismerteti, mit tesz a tafs a Google-tól kapott adatokkal.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Ha Ön kéri, a tafs az alkalmazás Alkalmazások csatlakoztatása részében összekapcsol egy tafot az Ön Google-fiókjával, például a Gmailjével, vagy azzal a Google Calendarral vagy Google Sheetsszel, amelyet a feladata használ. Ez a szakasz azt ismerteti, mit tesz a tafs a Google-tól kapott adatokkal.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Ha Ön kéri, a tafs az alkalmazás Alkalmazások csatlakoztatása részében összekapcsol egy tafot az Ön Google-fiókjával, például a Gmailjével, vagy azzal a Google Calendarral vagy Google Sheetsszel, amelyet a feladata használ. Ez a szakasz azt ismerteti, mit tesz a tafs a Google-tól kapott adatokkal.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li><strong>Mit olvas és ír:</strong> amire a taf feladatához szükség van: azokat a táblázatokat, amelyeket naprakészen tart, vagy azoknak a naptáraknak az eseményeit, amelyeket kezel. Ezeket csak ott módosítja, ahol a taf Cardja ezt megengedi, és minden, ami túllépi a Card korlátait, az Ön jóváhagyására vár.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Mit olvas és ír:</strong> amire a taf feladatához szükség van: azokat a táblázatokat, amelyeket naprakészen tart, vagy azoknak a naptáraknak az eseményeit, amelyeket kezel. Ezeket csak ott módosítja, ahol a taf Cardja ezt megengedi, és minden, ami túllépi a Card korlátait, az Ön jóváhagyására vár.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Mit olvas és ír:</strong> amire a taf feladatához szükség van. A Gmailjében elolvassa az üzeneteit és levélszálait, hogy megtalálja azokat, amelyekre válaszolni kell, és piszkozatokat ír; levelet csak ott küld, ahol a taf Cardja ezt megengedi. A Google Calendarban és a Google Sheetsben elolvassa azoknak a naptáraknak az eseményeit, amelyeket kezel, vagy azokat a táblázatokat, amelyeket naprakészen tart, és ezeket csak ott módosítja, ahol a taf Cardja ezt megengedi. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Mit olvas és ír:</strong> amire a taf feladatához szükség van. A Gmailjében elolvassa az üzeneteit és levélszálait, hogy megtalálja azokat, amelyekre válaszolni kell, és piszkozatokat ír; levelet csak ott küld, ahol a taf Cardja ezt megengedi. A Google Calendarban és a Google Sheetsben elolvassa azoknak a naptáraknak az eseményeit, amelyeket kezel, vagy azokat a táblázatokat, amelyeket naprakészen tart, és ezeket csak ott módosítja, ahol a taf Cardja ezt megengedi. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "A Google Tasksban elolvassa azokat a feladatlistákat, amelyeket kezel, és feladatokat csak ott ad hozzá, teljesít, helyez át vagy töröl, ahol a taf Cardja ezt megengedi. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "A Google Tasksban elolvassa azokat a feladatlistákat, amelyeket kezel, és feladatokat csak ott ad hozzá, teljesít, helyez át vagy töröl, ahol a taf Cardja ezt megengedi. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Minden, ami túllépi a Card korlátait, az Ön jóváhagyására vár.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Minden, ami túllépi a Card korlátait, az Ön jóváhagyására vár.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li><strong>Miért:</strong> kizárólag annak a feladatnak az elvégzéséhez, amelyet Ön az adott tafnak beállított, valamint azért, hogy megmutassa Önnek, melyik Google-fiókhoz kapcsolódik: annak e-mail-címét, amelyet a kapcsolattal együtt őrzünk meg, amíg Ön meg nem szünteti a kapcsolatot.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Miért:</strong> kizárólag annak a feladatnak az elvégzéséhez, amelyet Ön az adott tafnak beállított, valamint azért, hogy megmutassa Önnek, melyik Google-fiókhoz kapcsolódik: annak e-mail-címét, amelyet a kapcsolattal együtt őrzünk meg, amíg Ön meg nem szünteti a kapcsolatot.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Hogyan kapcsolódnak az egyes Google-alkalmazások:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Hogyan kapcsolódnak az egyes Google-alkalmazások:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Bejelentkezési partnerünkön keresztül, amely a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szerepel: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 139, Col: 160}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("hu")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>A tafs saját Google-bejelentkezésén keresztül, más vállalat közbeiktatása nélkül: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Bejelentkezési partnerünkön keresztül, amely a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szerepel: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 142, Col: 134}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 139, Col: 160}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("hu") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>")
+			if len(googleInHouse("hu")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>A tafs saját Google-bejelentkezésén keresztül, más vállalat közbeiktatása nélkül: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 142, Col: 134}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("hu"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("hu") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").Line)
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("hu"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").AsksFor)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var15 string
-					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "A mindkét helyen megnevezett alkalmazás a fiókjától függően az egyik vagy a másik módon kapcsolódik. A Google saját bejelentkezési oldala mutatja, melyiket engedélyezi.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "A mindkét helyen megnevezett alkalmazás a fiókjától függően az egyik vagy a másik módon kapcsolódik. A Google saját bejelentkezési oldala mutatja, melyiket engedélyezi.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez.<ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> a tafs csak azt a hozzáférést kéri, amelyre a taf eszközeinek szükségük van. Ha ez a szűkebb hozzáférés nem lehetséges, az alkalmazás szokásos hozzáférését kéri, és ezt a bejelentkezés előtt jelzi. Ha a szokásos hozzáférés olyan személyes adatokra is kiterjedne, amelyeket a taf nem használ, a tafs nem hozza létre a kapcsolatot.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a bejelentkezés egyszerre kéri az alább az adott alkalmazáshoz felsorolt összes hozzáférést, akkor is, ha a taf csak olvas.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez.<ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> a tafs csak azt a hozzáférést kéri, amelyre a taf eszközeinek szükségük van. Ha ez a szűkebb hozzáférés nem lehetséges, az alkalmazás szokásos hozzáférését kéri, és ezt a bejelentkezés előtt jelzi. Ha a szokásos hozzáférés olyan személyes adatokra is kiterjedne, amelyeket a taf nem használ, a tafs nem hozza létre a kapcsolatot.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a bejelentkezés egyszerre kéri az alább az adott alkalmazáshoz felsorolt összes hozzáférést, akkor is, ha a taf csak olvas.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez. A bejelentkezés egyszerre kéri az alább az adott alkalmazáshoz felsorolt összes hozzáférést, akkor is, ha a taf csak olvas.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez. A bejelentkezés egyszerre kéri az alább az adott alkalmazáshoz felsorolt összes hozzáférést, akkor is, ha a taf csak olvas.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez. A tafs csak azt a hozzáférést kéri, amelyre a taf eszközeinek szükségük van. Ha ez a szűkebb hozzáférés nem lehetséges, az alkalmazás szokásos hozzáférését kéri, és ezt a bejelentkezés előtt jelzi. Ha a szokásos hozzáférés olyan személyes adatokra is kiterjedne, amelyeket a taf nem használ, a tafs nem hozza létre a kapcsolatot.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Mit engedélyez:</strong> a Google saját oldalán jelentkezik be, és kiválasztja, mit engedélyez. A tafs csak azt a hozzáférést kéri, amelyre a taf eszközeinek szükségük van. Ha ez a szűkebb hozzáférés nem lehetséges, az alkalmazás szokásos hozzáférését kéri, és ezt a bejelentkezés előtt jelzi. Ha a szokásos hozzáférés olyan személyes adatokra is kiterjedne, amelyeket a taf nem használ, a tafs nem hozza létre a kapcsolatot.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Hogyan használja egy taf:</strong> egy taf csak a Cardján jóváhagyott eszközöket használja. Minden hívást, mielőtt bármit elküldenénk, egy éppen arra az eszközre és azokra az argumentumokra szóló engedéllyel vetünk össze, és az Ön által adott hozzáférésen kívül eső hívást elutasítjuk. Hogy mely műveletek kérnek minden alkalommal jóváhagyást Öntől, azt a Card határozza meg.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Hogyan használja egy taf:</strong> egy taf csak a Cardján jóváhagyott eszközöket használja. Minden hívást, mielőtt bármit elküldenénk, egy éppen arra az eszközre és azokra az argumentumokra szóló engedéllyel vetünk össze, és az Ön által adott hozzáférésen kívül eső hívást elutasítjuk. Hogy mely műveletek kérnek minden alkalommal jóváhagyást Öntől, azt a Card határozza meg.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<strong>A hozzáférés, amelyet a tafs saját Google-bejelentkezése kér:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>A hozzáférés, amelyet a tafs saját Google-bejelentkezése kér:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>A hozzáférés, amelyet a tafs kér:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>A hozzáférés, amelyet a tafs kér:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("hu") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var17 string
-				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var18 string
-					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var20 string
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul>Akármennyit enged is meg egy bejelentkezés, a taf csak a Cardján szereplő eszközöket használja.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Akármennyit enged is meg egy bejelentkezés, a taf csak a Cardján szereplő eszközöket használja.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Ki őrzi a bejelentkezését:</strong><ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> Google-bejelentkezését a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szereplő bejelentkezési partnerünk őrzi, és azt soha nem kapja meg sem egy taf, sem a planque. Sem a taf, sem a tafs nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a planque, a tafs saját kapcsolatszolgáltatása, az Ön vállalata számára őrzi a Google-tokenjét, az Európai Unióban (Írországban) AWS KMS-sel titkosítva, és kizárólag olyan hívás elvégzésére használja, amelyet a taf Cardja megenged. Azt soha nem kapja meg egy taf, és sem a taf, sem az MI-modell nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Ki őrzi a bejelentkezését:</strong><ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> Google-bejelentkezését a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szereplő bejelentkezési partnerünk őrzi, és azt soha nem kapja meg sem egy taf, sem a planque. Sem a taf, sem a tafs nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a planque, a tafs saját kapcsolatszolgáltatása, az Ön vállalata számára őrzi a Google-tokenjét, az Európai Unióban (Írországban) AWS KMS-sel titkosítva, és kizárólag olyan hívás elvégzésére használja, amelyet a taf Cardja megenged. Azt soha nem kapja meg egy taf, és sem a taf, sem az MI-modell nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Ki őrzi a bejelentkezését:</strong> a planque, a tafs saját kapcsolatszolgáltatása, az Ön vállalata számára őrzi a Google-tokenjét, az Európai Unióban (Írországban) AWS KMS-sel titkosítva, és kizárólag olyan hívás elvégzésére használja, amelyet a taf Cardja megenged. Azt soha nem kapja meg egy taf, és sem a taf, sem az MI-modell nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Ki őrzi a bejelentkezését:</strong> a planque, a tafs saját kapcsolatszolgáltatása, az Ön vállalata számára őrzi a Google-tokenjét, az Európai Unióban (Írországban) AWS KMS-sel titkosítva, és kizárólag olyan hívás elvégzésére használja, amelyet a taf Cardja megenged. Azt soha nem kapja meg egy taf, és sem a taf, sem az MI-modell nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Ki őrzi a bejelentkezését:</strong> Google-bejelentkezését a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szereplő bejelentkezési partnerünk őrzi, és azt soha nem kapja meg sem egy taf, sem a planque. Sem a taf, sem a tafs nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ki őrzi a bejelentkezését:</strong> Google-bejelentkezését a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szereplő bejelentkezési partnerünk őrzi, és azt soha nem kapja meg sem egy taf, sem a planque. Sem a taf, sem a tafs nem látja a jelszavát vagy a Google-tokenjeit. Ha egy másik tafjának ugyanarra a hozzáférésre van szüksége, újra felhasználja a bejelentkezést, és minden taf csak azokat az eszközöket használja, amelyeket Ön jóváhagyott számára.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg.<ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> az adatok a bejelentkezési partnerünkön is áthaladnak, amely az egyes hívásokat végzi.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a planque maga hívja a Google-t, így más vállalat nem indítja a hívást, és nem őrzi az Ön bejelentkezését.</li></ul>Mindkettő szerepel a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg.<ul><li><strong>Bejelentkezési partnerünkön keresztül:</strong> az adatok a bejelentkezési partnerünkön is áthaladnak, amely az egyes hívásokat végzi.</li><li><strong>A tafs saját Google-bejelentkezésén keresztül:</strong> a planque maga hívja a Google-t, így más vállalat nem indítja a hívást, és nem őrzi az Ön bejelentkezését.</li></ul>Mindkettő szerepel a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg. A planque maga hívja a Google-t, így más vállalat nem indítja a hívást, és nem őrzi az Ön bejelentkezését. Az MI-modell szolgáltatója a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szerepel.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg. A planque maga hívja a Google-t, így más vállalat nem indítja a hívást, és nem őrzi az Ön bejelentkezését. Az MI-modell szolgáltatója a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon szerepel.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg. Az adatok a bejelentkezési partnerünkön is áthaladnak, amely az egyes hívásokat végzi. Mindkettő szerepel a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Ki kapja még meg:</strong> amit egy taf a Google-ból olvas, az a tafot futtató MI-modellhez kerül, de csak miután Ön ezt engedélyezte (lásd: <a href=\"#ai\">Az MI a tafsban</a>), amely azt a szolgáltatója feltételei szerint legfeljebb 30 napig őrzi meg. Az adatok a bejelentkezési partnerünkön is áthaladnak, amely az egyes hívásokat végzi. Mindkettő szerepel a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>MI-tanítás:</strong> a Google-felhasználói adatokat nem használjuk MI-modellek tanítására.</li><li><strong>Képek:</strong> a tafs nem hoz létre és nem szerkeszt képeket vagy videókat: az MI-je szöveget ír. Soha nem használja a Google API-kat vagy a Google-felhasználói adatokat arra, hogy bárkiről intim képeket (beleegyezés nélküli intim képek, NCII) vagy egy személyről bármilyen más képet hozzon létre, szerkesszen vagy osszon meg.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>MI-tanítás:</strong> a Google-felhasználói adatokat nem használjuk MI-modellek tanítására.</li><li><strong>Képek:</strong> a tafs nem hoz létre és nem szerkeszt képeket vagy videókat: az MI-je szöveget ír. Soha nem használja a Google API-kat vagy a Google-felhasználói adatokat arra, hogy bárkiről intim képeket (beleegyezés nélküli intim képek, NCII) vagy egy személyről bármilyen más képet hozzon létre, szerkesszen vagy osszon meg.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("hu")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Meddig és hol:</strong> a táblázatai és eseményei az Ön Google-fiókjában maradnak. A tafs saját adattárában azt, amit egy eszköz visszaküld, csak a taf futásának végéig őrizzük meg. A planque, amely az egyes hívásokat továbbítja, 24 óráig megőrzi azt, amit a Google visszaküld, hogy egy megismételt hívás ugyanazt a választ kapja, és soha ne küldjék el kétszer; ezt követően csak azt őrzi meg, hogy a hívást elküldték-e. Egy csevegésben azt, amit csak olvasott, titkosítva őrizzük meg; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük. Egy futás nyilvántartását és a csevegését 30 napig, egy taf jegyzeteit pedig addig őrizzük meg, amíg Ön el nem távolítja a tafot (lásd: <a href=\"#retention\">Meddig őrizzük meg</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Meddig és hol:</strong> a táblázatai és eseményei az Ön Google-fiókjában maradnak. A tafs saját adattárában azt, amit egy eszköz visszaküld, csak a taf futásának végéig őrizzük meg. A planque, amely az egyes hívásokat továbbítja, 24 óráig megőrzi azt, amit a Google visszaküld, hogy egy megismételt hívás ugyanazt a választ kapja, és soha ne küldjék el kétszer; ezt követően csak azt őrzi meg, hogy a hívást elküldték-e. Egy csevegésben azt, amit csak olvasott, titkosítva őrizzük meg; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük. Egy futás nyilvántartását és a csevegését 30 napig, egy taf jegyzeteit pedig addig őrizzük meg, amíg Ön el nem távolítja a tafot (lásd: <a href=\"#retention\">Meddig őrizzük meg</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Meddig és hol:</strong> a piszkozatai, eseményei és táblázatai az Ön Google-fiókjában maradnak. A tafs saját adattárában azt, amit egy eszköz visszaküld, csak a taf futásának végéig őrizzük meg. A planque, amely az egyes hívásokat továbbítja, 24 óráig megőrzi azt, amit a Google visszaküld, hogy egy megismételt hívás ugyanazt a választ kapja, és soha ne küldjék el kétszer; ezt követően csak azt őrzi meg, hogy a hívást elküldték-e. Egy csevegésben azt, amit csak olvasott, titkosítva őrizzük meg; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük. Egy futás nyilvántartását és a csevegését 30 napig, egy taf jegyzeteit pedig addig őrizzük meg, amíg Ön el nem távolítja a tafot (lásd: <a href=\"#retention\">Meddig őrizzük meg</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Meddig és hol:</strong> a piszkozatai, eseményei és táblázatai az Ön Google-fiókjában maradnak. A tafs saját adattárában azt, amit egy eszköz visszaküld, csak a taf futásának végéig őrizzük meg. A planque, amely az egyes hívásokat továbbítja, 24 óráig megőrzi azt, amit a Google visszaküld, hogy egy megismételt hívás ugyanazt a választ kapja, és soha ne küldjék el kétszer; ezt követően csak azt őrzi meg, hogy a hívást elküldték-e. Egy csevegésben azt, amit csak olvasott, titkosítva őrizzük meg; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük. Egy futás nyilvántartását és a csevegését 30 napig, egy taf jegyzeteit pedig addig őrizzük meg, amíg Ön el nem távolítja a tafot (lásd: <a href=\"#retention\">Meddig őrizzük meg</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Leállítás:</strong><ul><li>Szüntesse meg a Google-kapcsolatot az alkalmazásban, az Alkalmazások csatlakoztatása részben vagy a taf Card lapján. A Google-eszközei azonnal leállnak, és a tafs azonnal kéri a Google-t, hogy vonja vissza a bejelentkezést; ez kicsit később is teljesülhet.</li><li>Távolítson el egy tafot, és a kapcsolatai vele együtt megszűnnek. Az a Google-bejelentkezés, amelyet egy másik tafja még használ, megmarad, amíg az utolsó ilyen taf is el nem tűnik.</li><li>A tafs hozzáférését bármikor megszüntetheti a Google-fiókjában, a <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> címen. A tafjai nem érik el többé a Google-t, és az alkalmazás jelzi Önnek, hogy a Google-kapcsolat kijelentkezett.</li><li>Törölje a fiókját: annak tafjai, csevegései, jegyzetei, fájljai és kapcsolatai azonnal, az időponthoz kötött másolataikból pedig 35 napon belül törlődnek, Google-tokenjeit pedig visszavonjuk, ahol a Google ezt lehetővé teszi.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Leállítás:</strong><ul><li>Szüntesse meg a Google-kapcsolatot az alkalmazásban, az Alkalmazások csatlakoztatása részben vagy a taf Card lapján. A Google-eszközei azonnal leállnak, és a tafs azonnal kéri a Google-t, hogy vonja vissza a bejelentkezést; ez kicsit később is teljesülhet.</li><li>Távolítson el egy tafot, és a kapcsolatai vele együtt megszűnnek. Az a Google-bejelentkezés, amelyet egy másik tafja még használ, megmarad, amíg az utolsó ilyen taf is el nem tűnik.</li><li>A tafs hozzáférését bármikor megszüntetheti a Google-fiókjában, a <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> címen. A tafjai nem érik el többé a Google-t, és az alkalmazás jelzi Önnek, hogy a Google-kapcsolat kijelentkezett.</li><li>Törölje a fiókját: annak tafjai, csevegései, jegyzetei, fájljai és kapcsolatai azonnal, az időponthoz kötött másolataikból pedig 35 napon belül törlődnek, Google-tokenjeit pedig visszavonjuk, ahol a Google ezt lehetővé teszi.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
