@@ -61,7 +61,43 @@ func TafsPrivacySQ() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Një PC Windows pa TPM nuk mund të hyjë në tafs. KIFF ruan gjysmën publike të çelësit, emrin dhe platformën e pajisjes dhe kur u shtua e kur u përdor së fundi, që të mund të kontrollojë përgjigjet tuaja ndaj thirrjeve të mbajtura dhe miratimet tuaja të lidhjeve.</li><li><strong>Ora juaj:</strong> një orë nuk mban fjalëkalim ose çelës, flet vetëm me telefonin tuaj të çiftuar dhe nuk miraton kurrë. Dërgon atë që thoni te Coach, ose te taf-i që zgjodhët, vetëm si tekst, përmes telefonit, pasi të keni lejuar AI-n. Shërbimi i vet i të folurit i orës, i Apple ose i Google, i kthen fjalët tuaja në atë tekst. Në Wear OS, nëse ndalon para se të mbaroni, e bën në vend të tij njohësi i vetë telefonit tuaj, në telefon. Mund të refuzojë, të ndalojë ose të dërgojë te Coach ose një taf vetëm kur ka kyçje ekrani ose kod dhe është i zhbllokuar. Ajo që i dërgoni një taf-i shkon në bisedën e vet të atij taf-i, sikur ta kishit shkruar në telefon. Biseda e një taf-i, përfshirë shumat, lexohet përmes telefonit sa herë që hapet, dhe ora mban vetëm mesazhet e fundit që përshkruan seksioni i saj më poshtë. Kur aplikacionet janë të mbyllura, telefoni ia kalon orës përgjigjet dhe mesazhet e reja përmes lidhjes së vetë sistemit mes telefonit dhe orës (asaj të Apple në një Apple Watch, asaj të shërbimeve Google Play në Wear OS), e cila i mban në telefon dhe në orë vetëm derisa ora t'i marrë; njoftimi që zgjon telefonin nuk mbart fjalë. Një përgjigje që vjen ndërsa nuk e shikoni orën shfaqet edhe si njoftim, në iPhone dhe Apple Watch ose në orën tuaj me Wear OS, me fjalët e saj por kurrë me një shumë, dhe mbetet derisa ta hiqni; një orë me Wear OS e kyçur tregon vetëm se një përgjigje është gati.</li><li><strong>Apple Watch:</strong> tregon taf-et tuaja dhe faqet e tyre pa i mbajtur. Mban Kutinë tuaj, në një skedar që nuk mund ta lexojë kur është i kyçur: çdo thirrje e mbajtur si emri i taf-it të saj dhe çfarë kërkon, kurrë një shumë, dhe përgjigjet e Coach ndaj asaj që dërguat nga ora, si tekst. Nëse dilni në orë, mban edhe faktin që dolët, derisa të hyni përsëri në orë. Veç kësaj, nuk mban asgjë nëse ora nuk ka kod. Kutia hiqet kur dilni në orë ose iPhone-i juaj del, ose herën tjetër që aplikacioni hapet ose mbyllet pa kod. Nuk bën asnjë regjistrim, dhe të vetmet njoftime që tregon janë ato të iPhone-it tuaj. Që një bisedë të hapet menjëherë, mban edhe 30 mesazhet e fundit të secilës prej deri në 20 bisedave që keni hapur në të, të Coach-it dhe të tafs-ave tuaj, vetëm si tekst dhe kurrë një shumë, të kyçura si Kutia; fshihen kur fshihet Kutia dhe kur një bisedë nuk është hapur për 30 ditë. Nëse e ruani një mesazh për Coach për më vonë, ajo ruan edhe atë një mesazh, si tekst, në një skedar më vete, të kyçur si ai i Kutisë hyrëse, dhe e dërgon kur iPhone-i juaj të jetë sërish i disponueshëm. Fshihet pasi dërgohet, kur e fshini, kur ju ose iPhone-i juaj dilni, ose nëse ora nuk ka më kod kalimi.</li><li><strong>Wear OS:</strong> tregon emailin e llogarisë suaj dhe kalendarin e sotëm pa i mbajtur. Që të hapet menjëherë, mban, të enkriptuar, numrin e asaj që ju pret dhe emrin e çdo taf-i dhe nëse është i ndaluar apo i pezulluar: kurrë një shumë, detajet e një thirrjeje të mbajtur ose bisedën e një taf-i. Kjo pastrohet kur dilni, kur ora kyçet ose i hiqet nga kyçi i dorës dhe pas 24 orësh. Mban Kutinë tuaj, ku çdo rresht është emri i një taf-i dhe ajo që thotë, kurrë një shumë, dhe një mesazh të ruajtur për më vonë, si tekst. Dalja, në orë ose në telefon, pastron gjithçka. Për pllakën e saj, mban edhe numrin e asaj që ju pret, të shfaqur vetëm kur ora është e zhbllokuar dhe pastruar kur dilni ose herën tjetër që pllaka shfaqet kur ora është e kyçur ose pa kyçje ekrani. Pasi dilni në orë, mban një shënim që dolët, derisa të hyni përsëri. Kutia hiqet edhe herën tjetër që aplikacioni hapet ose mbyllet kur ora është e kyçur ose pa kyçje ekrani. Një mesazh i ruajtur për më vonë qëndron derisa ta dërgoni ose ta fshini, pasi keni kërkuar të dërgohet. Nëse shërbimi i të folurit të orës ndalon para se të mbaroni, ora e dërgon regjistrimin te telefoni juaj, që e kthen në tekst në vetë telefonin, kurrë në një server. Regjistrimi fshihet në të dyja, sapo teksti kthehet ose anuloni, dhe pas 2 minutash më së shumti. Vetëm teksti shkon më tej te Coach ose taf-i juaj. Rezultati i një taf-i mund të qëndrojë në njoftimet e orës derisa ta hiqni ose të dilni në orë. Që një bisedë të hapet menjëherë, mban edhe 30 mesazhet e fundit të secilës prej deri në 20 bisedave që keni hapur në të, të Coach-it dhe të tafs-ave tuaj, vetëm si tekst dhe kurrë një shumë, të enkriptuara; fshihen kur dilni, në orë ose në telefon, dhe kur një bisedë nuk është hapur për 30 ditë, dhe një orë pa kyçje ekrani nuk mban asnjë. Një mesazh i ruajtur për më vonë fshihet edhe nëse ora nuk ka më kyçje ekrani.</li><li><strong>Passkey-t:</strong> kur miratoni me një passkey në kompjuterin tuaj, si Windows Hello ose një çelës sigurie, fytyra, gjurma e gishtit ose PIN-i juaj mbetet te sistemi i vetë kompjuterit. KIFF ruan çelësin publik të passkey-t, id-në e tij, një numërues dhe një emër, kurrë asgjë të fshehtë, dhe refuzon një passkey që sinkronizohet në pajisje të tjera.</li><li><strong>Njoftimet:</strong> në një telefon, një tablet ose një Mac që ekzekuton aplikacionin iPad, kur i aktivizoni, ruajmë push token-in e pajisjes me id-në tuaj të personit në KIFF dhe gjuhën që aplikacioni tregoi. Njoftimi kalon përmes Apple ose Google vetëm me cili taf dhe çfarë dëshiron, dhe në njoftimin e një dere emrin ose adresën e emailit të atij që shkroi: kurrë një shumë ose detajet e një kërkese. Aplikacioni i shton ato në vetë pajisjen, nga KIFF, kështu që njoftimi i një telefoni të zhbllokuar mund të tregojë një shumë, një tregtar ose një person. Në një telefon Android të kyçur tregon vetëm „Një taf ka nevojë për ju“, dhe në një iPhone të kyçur po ashtu, përveç nëse keni vendosur që pamjet paraprake të shfaqen gjithmonë. Në një PC Windows, një kompjuter Linux ose një Mac me aplikacionin macOS 12, njoftimet i bën vetë aplikacioni ndërsa punon, pa push token dhe përmes asnjë kompanie tjetër. Në Windows dhe Linux tregojnë cili taf, çfarë dëshiron të bëjë, shumën, pse dhe deri kur; në aplikacionin macOS 12 tregojnë fjalët e KIFF për thirrjen, pasi t'i aktivizoni, dhe një ekran i kyçur tregon atë që lejon cilësimi i pamjes paraprake të Mac-ut. Në Windows janë të çaktivizuara derisa t'i aktivizoni, dhe tregojnë vetëm „Një taf ka nevojë për ju“ kur ekrani është i kyçur. Një njoftim i shfaqur para kyçjes së ekranit i mban detajet në listën e njoftimeve të Windows. Në Linux janë të aktivizuara derisa t'i çaktivizoni, dhe ajo që tregon një ekran i kyçur varet nga desktopi juaj. Një telefon që i kalon përditësimet te një orë e mban push token-in e tij të regjistruar edhe me njoftimet të çaktivizuara, vetëm që një push i heshtur ta zgjojë për t'i kaluar përditësimet te ora; ai push nuk mban fjalë dhe nuk shfaq asgjë.</li><li><strong>Gjuha:</strong> shërbimi tafs ruan gjuhën e llogarisë, nga kush ka biseduar së fundi me Coach, deri në tre muaj, që raportet e një taf-i të vijnë në të.</li><li><strong>Mjetet tuaja:</strong> kur lidhni një mjet, hyni te ofruesi i vetë mjetit. Për një aplikacion ku planque hyn vetë, si Stripe, ose një çelës që jepni, planque e mban atë token ose çelës për kompaninë tuaj, të enkriptuar. Për një lidhje të menaxhuar, Composio, shërbimi i lidhjes me të cilin punon planque, mban hyrjen, dhe planque mban vetëm regjistrimin e lidhjes dhe mjetet që miratuat (shihni <a href=\"#google\">Të dhënat e përdoruesit nga Google</a>). Regjistrimi i një lidhjeje mund të përfshijë llogarinë në të cilën është hyrë (emrin ose emailin e saj), që aplikacioni t'ju tregojë cila është. KIFF përdor lidhje të menaxhuara vetëm për aplikacionet e emërtuara te <a href=\"/subprocessors#composio\">/subprocessors</a> (në anglisht).</li><li><strong>Shfletuesi juaj (Chrome):</strong> kur çiftoni shtesën tafs me telefonin tuaj, një taf mund të punojë në profilin e Chrome që keni çiftuar, vetëm në sajtet që i rendit lidhja e tij. Hap skedat e veta në një grup skedash që mund ta shihni, ta ndalni përkohësisht ose ta ndaloni, dhe ndalet përkohësisht kur prekni një prej tyre. Një taf që e nisni nga paneli anësor i shtesës punon, në vend të kësaj, në skedën ku ndodheni në atë dritare, nëse ajo është në një nga sajtet e lidhjes së tij: skeda hyn në grupin e tij dhe trajtohet si një nga skedat e tij, dhe mbetet e hapur kur taf-i ndalet. Ai i bashkohet asaj skede vetëm kur ajo faqe është e para që i duhet. Aty mund të klikojë dhe të shkruajë, vetëm në sajtet e tij. Në atë skedë e lexon faqen aty ku është, dhe çdo faqe tjetër e hap në një skedë të vetën; skedën tuaj mund ta lëvizë vetëm një hap që ai bën aty, si një klikim, dhe vetëm brenda sajteve të tij. I lexon ato faqe si tekst dhe fusha formularësh, me fushat e fjalëkalimit, kartës dhe kodit të hequra, kurrë skedat tuaja të tjera ose sajte të tjera. Ai tekst shkon te ofruesi ynë i AI si pjesë e ekzekutimit dhe ruhet me ekzekutimin si rezultat i çdo mjeti. Çdo hap shkon në Regjistër me sajtin dhe emrin e fushës, kurrë ajo që është shkruar në një fushë të fshehtë. Për çdo ndryshim që bën një taf, KIFF ruan faqen para dhe pas, si tekst me ato fusha të hequra, për jo më shumë se 30 ditë, dhe e fshin më herët kur shkëputeni ose e fshini llogarinë. Këto faqe mund të tregojnë të dhëna të njerëzve të tjerë, si klientët tuaj; KIFF i përpunon për ju, si përpunues. Shtesa ruan në kompjuterin tuaj çelësin e vet, seancën e saj me KIFF dhe listën e bisedave me Coach të nisura në të, kurrë fjalëkalimet tuaja: në një faqe hyrjeje, taf ndalet dhe ju kërkon të hyni vetë, në skedën tuaj. Mund të flisni me Coach edhe nga paneli anësor i shtesës. Coach e lexon faqen vetëm pasi ta lejoni në shtesë, me një pëlqim më vete që mund ta tërhiqni atje, dhe gjithmonë mund të dërgoni një mesazh pa faqen. Kur i dërgoni një mesazh prej andej, faqja përpara shkon me atë mesazh vetëm si teksti i saj i dukshëm, kurrë ajo që keni shkruar, përveç në një sajt banke, pagesash, poste ose shëndeti ose një sajt që e keni çaktivizuar për Coach. Vlerat e fushave dhe fjalëkalimet nuk lexohen; numrat e kartave shkurtohen te katër shifrat e fundit; çelësat dhe sekretet e etiketuara maskohen. Maskohen edhe kodet njëpërdorimshe që teksti i faqes i quan të tilla në anglisht, frëngjisht, spanjisht ose gjermanisht. Ajo shkon te ofruesi ynë i IA-së vetëm për atë mesazh; tafs e mban faqen vetëm derisa përgjigjja të jetë gati, dhe e mban emrin e sajtit me bisedën tuaj, të shfaqur si “Po lexon:”, për 30 ditë. Përgjigjja e Coach mund ta citojë faqen dhe ruhet me bisedën tuaj si çdo përgjigje. E njëjta vlen për një mesazh që i dërgoni atje një taf-i, me të njëjtin pëlqim, por vetëm në një nga sajtet e vetë atij taf-i: gjetiu nuk lexohet asgjë, në atë radhë taf-i vetëm lexon, dhe përgjigjja e tij mund ta citojë faqen. Për një taf, teksti i faqes ruhet me ekzekutimin e tij vetëm derisa ai ekzekutim të përfundojë. Paneli anësor shfaq bisedat e nisura në atë Chrome që kur e çiftuat; bisedat e tjera mbeten në telefonin dhe në pajisjet tuaja të tjera. Kur një taf punon në atë Chrome për një mesazh që e dërguat nga një pajisje tjetër, paneli shfaq edhe atë ekzekutim: mesazhin, hapat dhe përgjigjen e tij, kurrë pjesën tjetër të asaj bisede, derisa ta fshini atë bisedë, ta shkëpusni Chrome-in ose ta zhvendosni taf-in në një Chrome tjetër. Aty mund t'i bashkëngjitni edhe skedarë një mesazhi: ashtu si skedarët e bashkëngjitur në aplikacionet tafs, ata shkojnë te ofruesi ynë i IA-së me atë mesazh dhe ruhen me të 30 ditë, ose më pak nëse biseda hiqet (një skedar që nuk e përdor asnjë mesazh, rreth një orë), dhe vetëm personi që e bashkëngjiti një skedar mund ta hapë. Ajo ruan gjithashtu çiftimin me telefonin tuaj, faqet që keni çaktivizuar për Coach dhe një identifikues të rastësishëm të këtij profili Chrome, që i dërgohet KIFF me çdo çiftim që telefoni juaj ta njohë këtë Chrome. Çinstalimi fshin gjithçka; shkëputja fshin gjithçka përveç këtij identifikuesi dhe faqeve të çaktivizuara për Coach. Një taf nuk paguan kurrë pa miratimin tuaj në telefon. Për çdo hap që vepron (një klikim, shkrim, dërgim), përfshirë një që keni miratuar, ruan edhe një pamje ekrani të faqes, marrë pak para veprimit, për regjistrin; asnjëherë për një faqe që vetëm e lexon, asnjëherë në një sajt banke, portofoli, menaxheri fjalëkalimesh, pagesash, shëndeti ose qeverie, dhe me fushat e fjalëkalimit, kartës dhe kodit të fshehura para se të merret. Teksti që duket si numër karte ose çelës errësohet gjithashtu, por diçka e shkruar ndryshe mund të shfaqet prapë. Pamjet e ekranit ruhen në ruajtje të enkriptuar, të lidhura me atë hap, për 30 ditë, pastaj fshihen automatikisht, ose më herët kur ndërprisni lidhjen, shkëputni këtë Chrome ose fshini llogarinë, dhe nuk shkojnë kurrë te ofruesi ynë i IA-së. I shihni secilën nën hapin e vet në Aktivitetin e tafit. tafs i njeh faqet e bankave, portofolave, menaxherëve të fjalëkalimeve, pagesave, postës, shëndetësisë dhe qeverisë nga një listë dhe nga fjalët në adresën e tyre, kështu që një faqe që nuk e njeh trajtohet si çdo tjetër.</li><li><strong>Puna e taf-eve tuaja:</strong> ekzekutimet, bisedat, raportet, shënimet e kujtesës të çdo taf-i dhe skedarët që dorëzojnë, të mbajtur si përpunues. Të gjithë në llogarinë tuaj mund t'i shohin skedarët që dorëzojnë taf-et tuaja.</li><li><strong>Portat:</strong> kur hapni një portë që njerëzit t'i shkruajnë një taf-i me email, Slack ose Telegram, shërbimi tafs ruan çdo dërgues që çiftoni, sipas adresës së tij të emailit, ID-së së anëtarit në Slack ose ID-së së përdoruesit në Telegram (një numër telefoni për një portë WhatsApp), me emrin që i jepni, derisa të hiqni portën ose taf-in. Një mesazh nga dikush që nuk e keni çiftuar ju pret si trokitje, me atë që e shkroi dhe çfarë thotë, deri në 30 ditë pas së fundit. Mesazhi i një dërguesi të çiftuar hyn në bisedën e taf-it dhe ruhet si pjesa tjetër e bisedës. Slack dhe Telegram i bartin mesazhet sipas kushteve të tyre.</li><li><strong>Blerjet:</strong> Solo dhe paketat e krediteve shiten nga Apple përmes App Store, ose nga Google përmes faturimit të Google Play. Na tregojnë çfarë u bë, për cilën llogari KIFF (një id e rastësishme), kur, dhe referencat e transaksionit ose të porosisë. Nuk na japin Apple ID-në ose llogarinë, emrin, adresën e emailit ose kartën tuaj Google.</li></ul><p>Aplikacioni nuk ka gjurmues analitike ose reklamash.</p></section><section id=\"ai\"><h2>5. AI në tafs</h2><p>tafs përdor AI-në Claude të Anthropic për Coach dhe taf-et tuaja. E ekzekuton për ne Anthropic ose një nga ofruesit e cloud-it në faqen tonë të nënpërpunuesve. Ajo faqe tregon cili dhe ku. Aplikacioni ju pyet para se diçka t'i dërgohet.</p><ul><li>Çfarë i dërgohet: ajo që i shkruani Coach dhe taf-eve tuaja, skedarët që bashkëngjitni, ajo që aplikacionet tuaja të lidhura i kthejnë një taf-i ndërsa punon dhe ajo që është në ekranin tuaj ndërsa Coach ju ndihmon në aplikacion.</li><li>Nga Chrome: faqja përpara, kur i shkruani Coach në panelin anësor të shtesës, pasi t'i lejoni Coach të lexojë faqe atje. Edhe kur i shkruani atje një taf-i, në një nga sajtet e tij.</li><li>Çfarë nuk dërgohet kurrë: fjalëkalimet dhe çelësat që përdorin aplikacionet tuaja të lidhura, ose gjurma e gishtit tuaj.</li><li>Kompania që e ekzekuton e përdor për t'u përgjigjur dhe e fshin brenda 30 ditëve, përveç rasteve kur shënohet si shkelje e rregullave të saj të përdorimit ose kur ligji kërkon ruajtjen.</li><li>Asgjë nuk dërgohet derisa ta lejoni. Mund ta tërhiqni në Llogari.</li></ul><p>Kur e tërhiqni, Coach dhe taf-et tuaja ndalojnë së ju përgjigjuri, dhe një taf, ekzekutimet e të cilit mbështeten te pëlqimi juaj, pezullohet. tafs mban një regjistrim për çdo pëlqim që jepni ose tërhiqni, me kohën dhe versionin e tekstit të tij, për 10 vjet nga ndryshimi i fundit, për të treguar se për çfarë ramë dakord; fshirja e llogarisë e fshin më herët. <a href=\"/sq/privacy#ai-in-tafs\">Politika e privatësisë e KIFF</a> ka detajet.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". Një PC Windows pa TPM nuk mund të hyjë në tafs. KIFF ruan gjysmën publike të çelësit, emrin dhe platformën e pajisjes dhe kur u shtua e kur u përdor së fundi, që të mund të kontrollojë përgjigjet tuaja ndaj thirrjeve të mbajtura dhe miratimet tuaja të lidhjeve.</li><li><strong>Ora juaj:</strong> një orë nuk mban fjalëkalim ose çelës, flet vetëm me telefonin tuaj të çiftuar dhe nuk miraton kurrë. Dërgon atë që thoni te Coach, ose te taf-i që zgjodhët, vetëm si tekst, përmes telefonit, pasi të keni lejuar AI-n. Shërbimi i vet i të folurit i orës, i Apple ose i Google, i kthen fjalët tuaja në atë tekst. Në Wear OS, nëse ndalon para se të mbaroni, e bën në vend të tij njohësi i vetë telefonit tuaj, në telefon. Mund të refuzojë, të ndalojë ose të dërgojë te Coach ose një taf vetëm kur ka kyçje ekrani ose kod dhe është i zhbllokuar. Ajo që i dërgoni një taf-i shkon në bisedën e vet të atij taf-i, sikur ta kishit shkruar në telefon. Biseda e një taf-i, përfshirë shumat, lexohet përmes telefonit sa herë që hapet, dhe ora mban vetëm mesazhet e fundit që përshkruan seksioni i saj më poshtë. Kur aplikacionet janë të mbyllura, telefoni ia kalon orës përgjigjet dhe mesazhet e reja përmes lidhjes së vetë sistemit mes telefonit dhe orës (asaj të Apple në një Apple Watch, asaj të shërbimeve Google Play në Wear OS), e cila i mban në telefon dhe në orë vetëm derisa ora t'i marrë; njoftimi që zgjon telefonin nuk mbart fjalë. Një përgjigje që vjen ndërsa nuk e shikoni orën shfaqet edhe si njoftim, në iPhone dhe Apple Watch ose në orën tuaj me Wear OS, me fjalët e saj por kurrë me një shumë, dhe mbetet derisa ta hiqni; një orë me Wear OS e kyçur tregon vetëm se një përgjigje është gati.</li><li><strong>Apple Watch:</strong> tregon taf-et tuaja dhe faqet e tyre pa i mbajtur. Mban Kutinë tuaj, në një skedar që nuk mund ta lexojë kur është i kyçur: çdo thirrje e mbajtur si emri i taf-it të saj dhe çfarë kërkon, kurrë një shumë, dhe përgjigjet e Coach ndaj asaj që dërguat nga ora, si tekst. Nëse dilni në orë, mban edhe faktin që dolët, derisa të hyni përsëri në orë. Veç kësaj, nuk mban asgjë nëse ora nuk ka kod. Kutia hiqet kur dilni në orë ose iPhone-i juaj del, ose herën tjetër që aplikacioni hapet ose mbyllet pa kod. Nuk bën asnjë regjistrim, dhe të vetmet njoftime që tregon janë ato të iPhone-it tuaj. Që një bisedë të hapet menjëherë, mban edhe 30 mesazhet e fundit të secilës prej deri në 20 bisedave që keni hapur në të, të Coach-it dhe të tafs-ave tuaj, vetëm si tekst dhe kurrë një shumë, të kyçura si Kutia; fshihen kur fshihet Kutia dhe kur një bisedë nuk është hapur për 30 ditë. Nëse e ruani një mesazh për Coach për më vonë, ajo ruan edhe atë një mesazh, si tekst, në një skedar më vete, të kyçur si ai i Kutisë hyrëse, dhe e dërgon kur iPhone-i juaj të jetë sërish i disponueshëm. Fshihet pasi dërgohet, kur e fshini, kur ju ose iPhone-i juaj dilni, ose nëse ora nuk ka më kod kalimi.</li><li><strong>Wear OS:</strong> tregon emailin e llogarisë suaj dhe kalendarin e sotëm pa i mbajtur. Që të hapet menjëherë, mban, të enkriptuar, numrin e asaj që ju pret dhe emrin e çdo taf-i dhe nëse është i ndaluar apo i pezulluar: kurrë një shumë, detajet e një thirrjeje të mbajtur ose bisedën e një taf-i. Kjo pastrohet kur dilni, kur ora kyçet ose i hiqet nga kyçi i dorës dhe pas 24 orësh. Mban Kutinë tuaj, ku çdo rresht është emri i një taf-i dhe ajo që thotë, kurrë një shumë, dhe një mesazh të ruajtur për më vonë, si tekst. Dalja, në orë ose në telefon, pastron gjithçka. Për pllakën e saj, mban edhe numrin e asaj që ju pret, të shfaqur vetëm kur ora është e zhbllokuar dhe pastruar kur dilni ose herën tjetër që pllaka shfaqet kur ora është e kyçur ose pa kyçje ekrani. Pasi dilni në orë, mban një shënim që dolët, derisa të hyni përsëri. Kutia hiqet edhe herën tjetër që aplikacioni hapet ose mbyllet kur ora është e kyçur ose pa kyçje ekrani. Një mesazh i ruajtur për më vonë qëndron derisa ta dërgoni ose ta fshini, pasi keni kërkuar të dërgohet. Nëse shërbimi i të folurit të orës ndalon para se të mbaroni, ora e dërgon regjistrimin te telefoni juaj, që e kthen në tekst në vetë telefonin, kurrë në një server. Regjistrimi fshihet në të dyja, sapo teksti kthehet ose anuloni, dhe pas 2 minutash më së shumti. Vetëm teksti shkon më tej te Coach ose taf-i juaj. Rezultati i një taf-i mund të qëndrojë në njoftimet e orës derisa ta hiqni ose të dilni në orë. Që një bisedë të hapet menjëherë, mban edhe 30 mesazhet e fundit të secilës prej deri në 20 bisedave që keni hapur në të, të Coach-it dhe të tafs-ave tuaj, vetëm si tekst dhe kurrë një shumë, të enkriptuara; fshihen kur dilni, në orë ose në telefon, dhe kur një bisedë nuk është hapur për 30 ditë, dhe një orë pa kyçje ekrani nuk mban asnjë. Një mesazh i ruajtur për më vonë fshihet edhe nëse ora nuk ka më kyçje ekrani.</li><li><strong>Passkey-t:</strong> kur miratoni me një passkey në kompjuterin tuaj, si Windows Hello ose një çelës sigurie, fytyra, gjurma e gishtit ose PIN-i juaj mbetet te sistemi i vetë kompjuterit. KIFF ruan çelësin publik të passkey-t, id-në e tij, një numërues dhe një emër, kurrë asgjë të fshehtë, dhe refuzon një passkey që sinkronizohet në pajisje të tjera.</li><li><strong>Njoftimet:</strong> në një telefon, një tablet ose një Mac që ekzekuton aplikacionin iPad, kur i aktivizoni, ruajmë push token-in e pajisjes me id-në tuaj të personit në KIFF dhe gjuhën që aplikacioni tregoi. Njoftimi kalon përmes Apple ose Google vetëm me cili taf dhe çfarë dëshiron, dhe në njoftimin e një dere emrin ose adresën e emailit të atij që shkroi: kurrë një shumë ose detajet e një kërkese. Aplikacioni i shton ato në vetë pajisjen, nga KIFF, kështu që njoftimi i një telefoni të zhbllokuar mund të tregojë një shumë, një tregtar ose një person. Në një telefon Android të kyçur tregon vetëm „Një taf ka nevojë për ju“, dhe në një iPhone të kyçur po ashtu, përveç nëse keni vendosur që pamjet paraprake të shfaqen gjithmonë. Në një PC Windows, një kompjuter Linux ose një Mac me aplikacionin macOS 12, njoftimet i bën vetë aplikacioni ndërsa punon, pa push token dhe përmes asnjë kompanie tjetër. Në Windows dhe Linux tregojnë cili taf, çfarë dëshiron të bëjë, shumën, pse dhe deri kur; në aplikacionin macOS 12 tregojnë fjalët e KIFF për thirrjen, pasi t'i aktivizoni, dhe një ekran i kyçur tregon atë që lejon cilësimi i pamjes paraprake të Mac-ut. Në Windows janë të çaktivizuara derisa t'i aktivizoni, dhe tregojnë vetëm „Një taf ka nevojë për ju“ kur ekrani është i kyçur. Një njoftim i shfaqur para kyçjes së ekranit i mban detajet në listën e njoftimeve të Windows. Në Linux janë të aktivizuara derisa t'i çaktivizoni, dhe ajo që tregon një ekran i kyçur varet nga desktopi juaj. Një telefon që i kalon përditësimet te një orë e mban push token-in e tij të regjistruar edhe me njoftimet të çaktivizuara, vetëm që një push i heshtur ta zgjojë për t'i kaluar përditësimet te ora; ai push nuk mban fjalë dhe nuk shfaq asgjë.</li><li><strong>Gjuha:</strong> shërbimi tafs ruan gjuhën e llogarisë, nga kush ka biseduar së fundi me Coach, deri në tre muaj, që raportet e një taf-i të vijnë në të.</li><li><strong>Mjetet tuaja:</strong> kur lidhni një mjet, hyni te ofruesi i vetë mjetit. Për një aplikacion ku planque hyn vetë, si Stripe, ose një çelës që jepni, planque e mban atë token ose çelës për kompaninë tuaj, të enkriptuar. Për një lidhje të menaxhuar, Composio, shërbimi i lidhjes me të cilin punon planque, mban hyrjen, dhe planque mban vetëm regjistrimin e lidhjes dhe mjetet që miratuat (shihni <a href=\"#google\">Të dhënat e përdoruesit nga Google</a>). Regjistrimi i një lidhjeje mund të përfshijë llogarinë në të cilën është hyrë (emrin ose emailin e saj), që aplikacioni t'ju tregojë cila është. KIFF përdor lidhje të menaxhuara vetëm për aplikacionet e emërtuara te <a href=\"/subprocessors#composio\">/subprocessors</a> (në anglisht).</li><li><strong>Shfletuesi juaj (Chrome):</strong> kur çiftoni shtesën tafs me telefonin tuaj, një taf mund të punojë në profilin e Chrome që keni çiftuar, vetëm në sajtet që i rendit lidhja e tij. Hap skedat e veta në një grup skedash që mund ta shihni, ta ndalni përkohësisht ose ta ndaloni, dhe ndalet përkohësisht kur prekni një prej tyre. Një taf që e nisni nga paneli anësor i shtesës punon, në vend të kësaj, në skedën ku ndodheni në atë dritare, nëse ajo është në një nga sajtet e lidhjes së tij: skeda hyn në grupin e tij dhe trajtohet si një nga skedat e tij, dhe mbetet e hapur kur taf-i ndalet. Ai i bashkohet asaj skede vetëm kur ajo faqe është e para që i duhet. Aty mund të klikojë dhe të shkruajë, vetëm në sajtet e tij. Në atë skedë e lexon faqen aty ku është, dhe çdo faqe tjetër e hap në një skedë të vetën; skedën tuaj mund ta lëvizë vetëm një hap që ai bën aty, si një klikim, dhe vetëm brenda sajteve të tij. I lexon ato faqe si tekst dhe fusha formularësh, me fushat e fjalëkalimit, kartës dhe kodit të hequra, kurrë skedat tuaja të tjera ose sajte të tjera. Ai tekst shkon te ofruesi ynë i AI si pjesë e ekzekutimit dhe ruhet me ekzekutimin si rezultat i çdo mjeti. Çdo hap shkon në Regjistër me sajtin dhe emrin e fushës, kurrë ajo që është shkruar në një fushë të fshehtë. Për çdo ndryshim që bën një taf, KIFF ruan faqen para dhe pas, si tekst me ato fusha të hequra, për jo më shumë se 30 ditë, dhe e fshin më herët kur shkëputeni ose e fshini llogarinë. Këto faqe mund të tregojnë të dhëna të njerëzve të tjerë, si klientët tuaj; KIFF i përpunon për ju, si përpunues. Shtesa ruan në kompjuterin tuaj çelësin e vet, seancën e saj me KIFF dhe listën e bisedave me Coach të nisura në të, kurrë fjalëkalimet tuaja: në një faqe hyrjeje, taf ndalet dhe ju kërkon të hyni vetë, në skedën tuaj. Mund të flisni me Coach edhe nga paneli anësor i shtesës. Coach e lexon faqen vetëm pasi ta lejoni në shtesë, me një pëlqim më vete që mund ta tërhiqni atje, dhe gjithmonë mund të dërgoni një mesazh pa faqen. Kur i dërgoni një mesazh prej andej, faqja përpara shkon me atë mesazh vetëm si teksti i saj i dukshëm, kurrë ajo që keni shkruar, përveç në një sajt banke, pagesash, poste ose shëndeti ose një sajt që e keni çaktivizuar për Coach. Vlerat e fushave dhe fjalëkalimet nuk lexohen; numrat e kartave shkurtohen te katër shifrat e fundit; çelësat dhe sekretet e etiketuara maskohen. Maskohen edhe kodet njëpërdorimshe që teksti i faqes i quan të tilla në anglisht, frëngjisht, spanjisht ose gjermanisht. Ajo shkon te ofruesi ynë i IA-së vetëm për atë mesazh; tafs e mban faqen vetëm derisa përgjigjja të jetë gati, dhe e mban emrin e sajtit me bisedën tuaj, të shfaqur si “Po lexon:”, për 30 ditë. Përgjigjja e Coach mund ta citojë faqen dhe ruhet me bisedën tuaj si çdo përgjigje. E njëjta vlen për një mesazh që i dërgoni atje një taf-i, me të njëjtin pëlqim, por vetëm në një nga sajtet e vetë atij taf-i: gjetiu nuk lexohet asgjë, në atë radhë taf-i vetëm lexon, dhe përgjigjja e tij mund ta citojë faqen. Për një taf, teksti i faqes ruhet me ekzekutimin e tij vetëm derisa ai ekzekutim të përfundojë. Paneli anësor shfaq bisedat e nisura në atë Chrome që kur e çiftuat; bisedat e tjera mbeten në telefonin dhe në pajisjet tuaja të tjera. Kur një taf punon në atë Chrome për një mesazh që e dërguat nga një pajisje tjetër, paneli shfaq edhe atë ekzekutim: mesazhin, hapat dhe përgjigjen e tij, kurrë pjesën tjetër të asaj bisede, derisa ta fshini atë bisedë, ta shkëpusni Chrome-in ose ta zhvendosni taf-in në një Chrome tjetër. Aty mund t'i bashkëngjitni edhe skedarë një mesazhi: ashtu si skedarët e bashkëngjitur në aplikacionet tafs, ata shkojnë te ofruesi ynë i IA-së me atë mesazh dhe ruhen me të 30 ditë, ose më pak nëse biseda hiqet (një skedar që nuk e përdor asnjë mesazh, rreth një orë), dhe vetëm personi që e bashkëngjiti një skedar mund ta hapë. Ajo ruan gjithashtu çiftimin me telefonin tuaj, faqet që keni çaktivizuar për Coach dhe një identifikues të rastësishëm të këtij profili Chrome, që i dërgohet KIFF me çdo çiftim që telefoni juaj ta njohë këtë Chrome. Çinstalimi fshin gjithçka; shkëputja fshin gjithçka përveç këtij identifikuesi dhe faqeve të çaktivizuara për Coach. Një taf nuk paguan kurrë pa miratimin tuaj në telefon. Për çdo hap që vepron (një klikim, shkrim, dërgim), përfshirë një që keni miratuar, ruan edhe një pamje ekrani të faqes, marrë pak para veprimit, për regjistrin; asnjëherë për një faqe që vetëm e lexon, asnjëherë në një sajt banke, portofoli, menaxheri fjalëkalimesh, pagesash, shëndeti ose qeverie, dhe me fushat e fjalëkalimit, kartës dhe kodit të fshehura para se të merret. Teksti që duket si numër karte ose çelës errësohet gjithashtu, por diçka e shkruar ndryshe mund të shfaqet prapë. Pamjet e ekranit ruhen në ruajtje të enkriptuar, të lidhura me atë hap, për 30 ditë, pastaj fshihen automatikisht, ose më herët kur ndërprisni lidhjen, shkëputni këtë Chrome ose fshini llogarinë, dhe nuk shkojnë kurrë te ofruesi ynë i IA-së. I shihni secilën nën hapin e vet në Aktivitetin e tafit. tafs i njeh faqet e bankave, portofolave, menaxherëve të fjalëkalimeve, pagesave, postës, shëndetësisë dhe qeverisë nga një listë dhe nga fjalët në adresën e tyre, kështu që një faqe që nuk e njeh trajtohet si çdo tjetër.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if HostedBrowserForCustomers {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("sq").Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 45, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("sq").Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 45, Col: 93}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>Puna e taf-eve tuaja:</strong> ekzekutimet, bisedat, raportet, shënimet e kujtesës të çdo taf-i dhe skedarët që dorëzojnë, të mbajtur si përpunues. Të gjithë në llogarinë tuaj mund t'i shohin skedarët që dorëzojnë taf-et tuaja.</li><li><strong>Portat:</strong> kur hapni një portë që njerëzit t'i shkruajnë një taf-i me email, Slack ose Telegram, shërbimi tafs ruan çdo dërgues që çiftoni, sipas adresës së tij të emailit, ID-së së anëtarit në Slack ose ID-së së përdoruesit në Telegram (një numër telefoni për një portë WhatsApp), me emrin që i jepni, derisa të hiqni portën ose taf-in. Një mesazh nga dikush që nuk e keni çiftuar ju pret si trokitje, me atë që e shkroi dhe çfarë thotë, deri në 30 ditë pas së fundit. Mesazhi i një dërguesi të çiftuar hyn në bisedën e taf-it dhe ruhet si pjesa tjetër e bisedës. Slack dhe Telegram i bartin mesazhet sipas kushteve të tyre.</li><li><strong>Blerjet:</strong> Solo dhe paketat e krediteve shiten nga Apple përmes App Store, ose nga Google përmes faturimit të Google Play. Na tregojnë çfarë u bë, për cilën llogari KIFF (një id e rastësishme), kur, dhe referencat e transaksionit ose të porosisë. Nuk na japin Apple ID-në ose llogarinë, emrin, adresën e emailit ose kartën tuaj Google.</li></ul><p>Aplikacioni nuk ka gjurmues analitike ose reklamash.</p></section><section id=\"ai\"><h2>5. AI në tafs</h2><p>tafs përdor AI-në Claude të Anthropic për Coach dhe taf-et tuaja. E ekzekuton për ne Anthropic ose një nga ofruesit e cloud-it në faqen tonë të nënpërpunuesve. Ajo faqe tregon cili dhe ku. Aplikacioni ju pyet para se diçka t'i dërgohet.</p><ul><li>Çfarë i dërgohet: ajo që i shkruani Coach dhe taf-eve tuaja, skedarët që bashkëngjitni, ajo që aplikacionet tuaja të lidhura i kthejnë një taf-i ndërsa punon dhe ajo që është në ekranin tuaj ndërsa Coach ju ndihmon në aplikacion.</li><li>Nga Chrome: faqja përpara, kur i shkruani Coach në panelin anësor të shtesës, pasi t'i lejoni Coach të lexojë faqe atje. Edhe kur i shkruani atje një taf-i, në një nga sajtet e tij.</li><li>Çfarë nuk dërgohet kurrë: fjalëkalimet dhe çelësat që përdorin aplikacionet tuaja të lidhura, ose gjurma e gishtit tuaj.</li><li>Kompania që e ekzekuton e përdor për t'u përgjigjur dhe e fshin brenda 30 ditëve, përveç rasteve kur shënohet si shkelje e rregullave të saj të përdorimit ose kur ligji kërkon ruajtjen.</li><li>Asgjë nuk dërgohet derisa ta lejoni. Mund ta tërhiqni në Llogari.</li></ul><p>Kur e tërhiqni, Coach dhe taf-et tuaja ndalojnë së ju përgjigjuri, dhe një taf, ekzekutimet e të cilit mbështeten te pëlqimi juaj, pezullohet. tafs mban një regjistrim për çdo pëlqim që jepni ose tërhiqni, me kohën dhe versionin e tekstit të tij, për 10 vjet nga ndryshimi i fundit, për të treguar se për çfarë ramë dakord; fshirja e llogarisë e fshin më herët. <a href=\"/sq/privacy#ai-in-tafs\">Politika e privatësisë e KIFF</a> ka detajet.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +105,7 @@ func TafsPrivacySQ() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section id=\"sharing\"><h2>7. Kush tjetër merr të dhëna</h2><p>Nuk i shesim të dhënat tuaja personale dhe nuk i ndajmë për reklamim.</p><p>Për tafs, përdorim këto kompani: Amazon Web Services (pritja, përfshirë depon e tafs dhe lidhjet e planque), Clerk (hyrja për llogaritë KIFF), Anthropic (modeli AI, që e ekzekuton Anthropic, Amazon Web Services, Google Cloud ose Microsoft Azure), Composio (hyrjet e lidhjeve të menaxhuara dhe thirrjet që planque i kërkon të bëjë), Apple (njoftimet push), Google (njoftimet push në Android dhe faturimi i Google Play) dhe Resend (dera e emailit e një taf-i). Lista zyrtare, aktuale, me atë që prek secila dhe ku, është te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</p><p>Disa prej tyre janë jashtë Hapësirës Ekonomike Evropiane, kryesisht në Shtetet e Bashkuara. <a href=\"/sq/privacy#transfers\">Politika e privatësisë e KIFF</a> thotë si mbrohen ata transferime.</p><p><strong>Vendi juaj.</strong> Ligjet e disa vendeve kërkojnë më shumë se ç'thotë kjo politikë. Ajo që shtojnë, në anglisht dhe në gjuhën e vendit, është te <a href=\"/privacy/countries\">Vendi juaj</a> (në anglisht).</p></section><section id=\"retention\"><h2>8. Sa e ruajmë</h2><ul><li>Ajo që mjetet tuaja i kthejnë një taf-i: vetëm derisa të mbarojë ekzekutimi. Në një bisedë, ajo që është vetëm lexuar mbahet e enkriptuar për mesazhet e saj të ardhshme, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve.</li><li>Ekzekutimet dhe bisedat e një taf-i, me përmbledhjen e një bisede: 30 ditë. Shënimet e kujtesës të tij: derisa taf-i të hiqet. Mund ta fshini më herët një bisedë tuajën me Coach: mesazhet e saj dhe skedarët që shtuat fshihen menjëherë, ndërsa regjistrimi që çdo ekzekutim i saj ndodhi, kur dhe sa kushtoi mbetet për ato 30 ditë. Nëse raportoni një përgjigje, KIFF e mban atë përgjigje, arsyen dhe shënimin tuaj për 180 ditë, ose derisa ta fshini atë bisedë ose llogarinë tuaj. KIFF ia dërgon ato edhe me email ekipit që lexon raportimet, ku ai email ruhet si posta e mbështetjes së KIFF.</li><li>Shënimet e shkurtra të Coach për përgjigjen e tij të ardhshme, si pse një lidhje nuk u bë dot në një bisedë, ose që një Card u miratua: derisa ajo përgjigje t'i marrë, më së shumti 7 ditë; pas kësaj, si pjesë e asaj bisede, për aq kohë sa ruhet biseda. Një kopje mbahet 24 orë që një mesazh i ridërguar të marrë të njëjtin shënim. Shënimi i një bisede përdoret vetëm në atë bisedë.</li><li>Skedarët që bashkëngjitni në një bisedë: me mesazhin ku janë bashkëngjitur, 30 ditë, ose më herët nëse biseda hiqet, dhe në çdo rast brenda 38 ditëve. Një skedar që asnjë mesazh nuk e përdor hiqet rreth një orë pasi ta ngarkoni. Fshirja e llogarisë suaj i fshin.</li><li>Skedarët që dorëzojnë taf-et tuaja: 30 ditë nga koha kur i krijoi ekzekutimi, pastaj fshihen automatikisht brenda një dite. Kushdo në llogarinë tuaj mund ta fshijë një më herët me Fshi tani: vetë skedari shkon menjëherë, pa kopje të mbajtur; emri, madhësia dhe taf-i e ekzekutimi që e krijuan mund të mbeten në kopjet e enkriptuara në një çast të caktuar të depos së tafs deri në 35 ditë, të përdorura vetëm për ta rikthyer pas një dështimi. Heqja e një taf-i ose fshirja e llogarisë suaj fshin skedarët e tij. Ndarja e një skedari dërgon vetë skedarin, dhe kopja që ndani qëndron me aplikacionin ku e ndatë. Për të shkarkuar një skedar, bëjmë një lidhje për një anëtar të hyrë të llogarisë suaj që ndalon së punuari pas një minute; nuk bëjmë asnjë lidhje tjetër për të.</li><li>Ajo që një mjet ktheu, në regjistrimin e planque të çdo thirrjeje: 24 orë. Pas kësaj, regjistrimi mban vetëm nëse thirrja u dërgua, kështu që nuk dërgohet kurrë dy herë.</li><li>Tokeni ose çelësi i një lidhjeje në planque, ose hyrja e një lidhjeje të menaxhuar te Composio: derisa ta shkëputni. Nëse një tjetër lidhje e juaja mund ta përdorë të njëjtën llogari te ai furnitor, mbahet, e papërdorur, derisa të shkëputet edhe ajo, pastaj revokohet. Regjistrimi i miratimeve të saj: derisa llogaria të mbarojë.</li><li>Push token-i i një pajisjeje: derisa të dilni nga aplikacioni, ta hiqni pajisjen, ose Apple apo Google të raportojë që tokeni nuk ekziston më. Çelësi publik, emri, platforma dhe datat e një pajisjeje: sa kohë e përdorni; pasi e dilni, shënohet si e hequr dhe mbahet deri në fshirjen e llogarisë, që KIFF të mund të refuzojë një përgjigje të vonuar prej saj dhe të tregojë cila pajisje nënshkroi një më të hershme. Çelësi publik, id dhe emri i një passkey-t: si të pajisjes së tij. Sesioni i një kompjuteri: deri në 90 ditë, ose derisa të dilni.</li><li>Llogaria juaj: derisa të fshihet. Regjistrat e shërbimit: 30 ditë. Depot e tafs dhe planque mbajnë kopje të enkriptuara në një çast të caktuar për 35 ditë, të përdorura vetëm për rikthimin e një depoje pas një dështimi.</li></ul><p>Gjithçka tjetër është te <a href=\"/sq/privacy#retention\">seksioni i Ruajtjes i KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Bazat ligjore</h2><p>Ekzekutimi i një kontrate, për të drejtuar llogarinë tuaj dhe taf-et tuaja. Interesat legjitime, për siguri, parandalim të mashtrimit dhe zbulim të abuzimit. Pëlqimi, për AI në tafs (<a href=\"#ai\">seksioni 5</a>). Detyrimi ligjor, për regjistrat tatimorë. <a href=\"/sq/privacy#lawful-bases\">Politika e privatësisë e KIFF</a> ka detajet.</p></section><section id=\"rights\"><h2>10. Të drejtat tuaja</h2><p>Sipas GDPR-së mund të kërkoni qasje në të dhënat tuaja, korrigjimin, fshirjen, kufizimin ose një kopje të bartshme, të kundërshtoni përpunimin e bazuar në interesa legjitime dhe të tërhiqni pëlqimin. Dërgoni email te <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; përgjigjemi pa vonesë të panevojshme dhe jo më vonë se brenda një muaji; për një kërkesë të ndërlikuar mund të na duhen edhe dy muaj, dhe jua themi brenda muajit të parë. Në aplikacion, Llogari → Eksporto bisedat e mia shkarkon bisedat dhe shënimet tuaja.</p><p>Për të fshirë llogarinë tuaj tafs, hapni aplikacionin, shkoni te Llogari dhe prekni <em>Fshi llogarinë</em>, pastaj konfirmoni. Nuk mund të zhbëhet. <a href=\"/sq/privacy#delete-account\">Politika e privatësisë e KIFF</a> thotë çfarë fshihet dhe kur, dhe si të kërkoni me email.</p><p>Mund të ankoheni te <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspektorati Estonez i Mbrojtjes së të Dhënave (Andmekaitse Inspektsioon)</a>, ose te autoriteti mbikëqyrës ku jetoni.</p><p><strong>Vendi juaj.</strong> Ligjet e disa vendeve kërkojnë më shumë se ç'thotë kjo politikë. Ajo që shtojnë, në anglisht dhe në gjuhën e vendit, është te <a href=\"/privacy/countries\">Vendi juaj</a> (në anglisht).</p></section><section id=\"more\"><h2>11. Siguria, fëmijët dhe ndryshimet</h2><p>Masat tona të sigurisë janë te <a href=\"/security\">/security</a> (në anglisht). tafs nuk u drejtohet fëmijëve, dhe nuk mbledhim me dijeni të dhëna personale nga fëmijë nën 16 vjeç. E ndryshojmë këtë politikë ashtu siç thotë <a href=\"/sq/privacy#changes\">Politika e privatësisë e KIFF</a> për të vetën.</p></section><section id=\"contact\"><h2>12. Kontakti</h2><p>Pyetje dhe kërkesa për privatësinë: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Njoftime formale ligjore: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Kushtet e vetë aplikacionit janë te <a href=\"/sq/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section id=\"sharing\"><h2>7. Kush tjetër merr të dhëna</h2><p>Nuk i shesim të dhënat tuaja personale dhe nuk i ndajmë për reklamim.</p><p>Për tafs, përdorim këto kompani: Amazon Web Services (pritja, përfshirë depon e tafs dhe lidhjet e planque), Clerk (hyrja për llogaritë KIFF), Anthropic (modeli AI, që e ekzekuton Anthropic, Amazon Web Services, Google Cloud ose Microsoft Azure), Composio (hyrjet e lidhjeve të menaxhuara dhe thirrjet që planque i kërkon të bëjë), Apple (njoftimet push), Google (njoftimet push në Android dhe faturimi i Google Play) dhe Resend (dera e emailit e një taf-i). Lista zyrtare, aktuale, me atë që prek secila dhe ku, është te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</p><p>Disa prej tyre janë jashtë Hapësirës Ekonomike Evropiane, kryesisht në Shtetet e Bashkuara. <a href=\"/sq/privacy#transfers\">Politika e privatësisë e KIFF</a> thotë si mbrohen ata transferime.</p><p><strong>Vendi juaj.</strong> Ligjet e disa vendeve kërkojnë më shumë se ç'thotë kjo politikë. Ajo që shtojnë, në anglisht dhe në gjuhën e vendit, është te <a href=\"/privacy/countries\">Vendi juaj</a> (në anglisht).</p></section><section id=\"retention\"><h2>8. Sa e ruajmë</h2><ul><li>Ajo që mjetet tuaja i kthejnë një taf-i: vetëm derisa të mbarojë ekzekutimi. Në një bisedë, ajo që është vetëm lexuar mbahet e enkriptuar për mesazhet e saj të ardhshme, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve.</li><li>Ekzekutimet dhe bisedat e një taf-i, me përmbledhjen e një bisede: 30 ditë. Shënimet e kujtesës të tij: derisa taf-i të hiqet. Mund ta fshini më herët një bisedë tuajën me Coach: mesazhet e saj dhe skedarët që shtuat fshihen menjëherë, ndërsa regjistrimi që çdo ekzekutim i saj ndodhi, kur dhe sa kushtoi mbetet për ato 30 ditë. Nëse raportoni një përgjigje, KIFF e mban atë përgjigje, arsyen dhe shënimin tuaj për 180 ditë, ose derisa ta fshini atë bisedë ose llogarinë tuaj. KIFF ia dërgon ato edhe me email ekipit që lexon raportimet, ku ai email ruhet si posta e mbështetjes së KIFF.</li><li>Shënimet e shkurtra të Coach për përgjigjen e tij të ardhshme, si pse një lidhje nuk u bë dot në një bisedë, ose që një Card u miratua: derisa ajo përgjigje t'i marrë, më së shumti 7 ditë; pas kësaj, si pjesë e asaj bisede, për aq kohë sa ruhet biseda. Një kopje mbahet 24 orë që një mesazh i ridërguar të marrë të njëjtin shënim. Shënimi i një bisede përdoret vetëm në atë bisedë.</li><li>Skedarët që bashkëngjitni në një bisedë: me mesazhin ku janë bashkëngjitur, 30 ditë, ose më herët nëse biseda hiqet, dhe në çdo rast brenda 38 ditëve. Një skedar që asnjë mesazh nuk e përdor hiqet rreth një orë pasi ta ngarkoni. Fshirja e llogarisë suaj i fshin.</li><li>Skedarët që dorëzojnë taf-et tuaja: 30 ditë nga koha kur i krijoi ekzekutimi, pastaj fshihen automatikisht brenda një dite. Kushdo në llogarinë tuaj mund ta fshijë një më herët me Fshi tani: vetë skedari shkon menjëherë, pa kopje të mbajtur; emri, madhësia dhe taf-i e ekzekutimi që e krijuan mund të mbeten në kopjet e enkriptuara në një çast të caktuar të depos së tafs deri në 35 ditë, të përdorura vetëm për ta rikthyer pas një dështimi. Heqja e një taf-i ose fshirja e llogarisë suaj fshin skedarët e tij. Ndarja e një skedari dërgon vetë skedarin, dhe kopja që ndani qëndron me aplikacionin ku e ndatë. Për të shkarkuar një skedar, bëjmë një lidhje për një anëtar të hyrë të llogarisë suaj që ndalon së punuari pas një minute; nuk bëjmë asnjë lidhje tjetër për të.</li><li>Ajo që një mjet ktheu, në regjistrimin e planque të çdo thirrjeje: 24 orë. Pas kësaj, regjistrimi mban vetëm nëse thirrja u dërgua, kështu që nuk dërgohet kurrë dy herë.</li><li>Tokeni ose çelësi i një lidhjeje në planque, ose hyrja e një lidhjeje të menaxhuar te Composio: derisa ta shkëputni. Nëse një tjetër lidhje e juaja mund ta përdorë të njëjtën llogari te ai furnitor, mbahet, e papërdorur, derisa të shkëputet edhe ajo, pastaj revokohet. Regjistrimi i miratimeve të saj: derisa llogaria të mbarojë.</li><li>Push token-i i një pajisjeje: derisa të dilni nga aplikacioni, ta hiqni pajisjen, ose Apple apo Google të raportojë që tokeni nuk ekziston më. Çelësi publik, emri, platforma dhe datat e një pajisjeje: sa kohë e përdorni; pasi e dilni, shënohet si e hequr dhe mbahet deri në fshirjen e llogarisë, që KIFF të mund të refuzojë një përgjigje të vonuar prej saj dhe të tregojë cila pajisje nënshkroi një më të hershme. Çelësi publik, id dhe emri i një passkey-t: si të pajisjes së tij. Sesioni i një kompjuteri: deri në 90 ditë, ose derisa të dilni.</li><li>Llogaria juaj: derisa të fshihet. Regjistrat e shërbimit: 30 ditë. Depot e tafs dhe planque mbajnë kopje të enkriptuara në një çast të caktuar për 35 ditë, të përdorura vetëm për rikthimin e një depoje pas një dështimi.</li></ul><p>Gjithçka tjetër është te <a href=\"/sq/privacy#retention\">seksioni i Ruajtjes i KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Bazat ligjore</h2><p>Ekzekutimi i një kontrate, për të drejtuar llogarinë tuaj dhe taf-et tuaja. Interesat legjitime, për siguri, parandalim të mashtrimit dhe zbulim të abuzimit. Pëlqimi, për AI në tafs (<a href=\"#ai\">seksioni 5</a>). Detyrimi ligjor, për regjistrat tatimorë. <a href=\"/sq/privacy#lawful-bases\">Politika e privatësisë e KIFF</a> ka detajet.</p></section><section id=\"rights\"><h2>10. Të drejtat tuaja</h2><p>Sipas GDPR-së mund të kërkoni qasje në të dhënat tuaja, korrigjimin, fshirjen, kufizimin ose një kopje të bartshme, të kundërshtoni përpunimin e bazuar në interesa legjitime dhe të tërhiqni pëlqimin. Dërgoni email te <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; përgjigjemi pa vonesë të panevojshme dhe jo më vonë se brenda një muaji; për një kërkesë të ndërlikuar mund të na duhen edhe dy muaj, dhe jua themi brenda muajit të parë. Në aplikacion, Llogari → Eksporto bisedat e mia shkarkon bisedat dhe shënimet tuaja.</p><p>Për të fshirë llogarinë tuaj tafs, hapni aplikacionin, shkoni te Llogari dhe prekni <em>Fshi llogarinë</em>, pastaj konfirmoni. Nuk mund të zhbëhet. <a href=\"/sq/privacy#delete-account\">Politika e privatësisë e KIFF</a> thotë çfarë fshihet dhe kur, dhe si të kërkoni me email.</p><p>Mund të ankoheni te <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspektorati Estonez i Mbrojtjes së të Dhënave (Andmekaitse Inspektsioon)</a>, ose te autoriteti mbikëqyrës ku jetoni.</p><p><strong>Vendi juaj.</strong> Ligjet e disa vendeve kërkojnë më shumë se ç'thotë kjo politikë. Ajo që shtojnë, në anglisht dhe në gjuhën e vendit, është te <a href=\"/privacy/countries\">Vendi juaj</a> (në anglisht).</p></section><section id=\"more\"><h2>11. Siguria, fëmijët dhe ndryshimet</h2><p>Masat tona të sigurisë janë te <a href=\"/security\">/security</a> (në anglisht). tafs nuk u drejtohet fëmijëve, dhe nuk mbledhim me dijeni të dhëna personale nga fëmijë nën 16 vjeç. E ndryshojmë këtë politikë ashtu siç thotë <a href=\"/sq/privacy#changes\">Politika e privatësisë e KIFF</a> për të vetën.</p></section><section id=\"contact\"><h2>12. Kontakti</h2><p>Pyetje dhe kërkesa për privatësinë: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Njoftime formale ligjore: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Kushtet e vetë aplikacionit janë te <a href=\"/sq/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -102,347 +138,347 @@ func tafsPrivacyGoogleSQ() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<section id=\"google\"><h2>6. Të dhënat e përdoruesit nga Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section id=\"google\"><h2>6. Të dhënat e përdoruesit nga Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>Kur e kërkoni, tafs lidh një taf me llogarinë tuaj Google, për shembull me Google Sheets ose Google Calendar që përdor puna e tij, te Lidh aplikacionet në aplikacion. Ky seksion thotë çfarë bën tafs me të dhënat që merr nga Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>Kur e kërkoni, tafs lidh një taf me llogarinë tuaj Google, për shembull me Google Sheets ose Google Calendar që përdor puna e tij, te Lidh aplikacionet në aplikacion. Ky seksion thotë çfarë bën tafs me të dhënat që merr nga Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Kur e kërkoni, tafs lidh një taf me llogarinë tuaj Google, për shembull me Gmail-in tuaj, ose me Google Calendar ose Google Sheets që përdor puna e tij, te Lidh aplikacionet në aplikacion. Ky seksion thotë çfarë bën tafs me të dhënat që merr nga Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>Kur e kërkoni, tafs lidh një taf me llogarinë tuaj Google, për shembull me Gmail-in tuaj, ose me Google Calendar ose Google Sheets që përdor puna e tij, te Lidh aplikacionet në aplikacion. Ky seksion thotë çfarë bën tafs me të dhënat që merr nga Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><strong>Çfarë lexon dhe shkruan:</strong> atë që i duhet punës së taf-it: fletët e llogaritjes që i mban të përditësuara, ose ngjarjet në kalendarët që kujdeset. I ndryshon vetëm ku e lejon Card-i i taf-it, dhe çdo gjë mbi kufijtë e Card-it pret miratimin tuaj.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Çfarë lexon dhe shkruan:</strong> atë që i duhet punës së taf-it: fletët e llogaritjes që i mban të përditësuara, ose ngjarjet në kalendarët që kujdeset. I ndryshon vetëm ku e lejon Card-i i taf-it, dhe çdo gjë mbi kufijtë e Card-it pret miratimin tuaj.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li><strong>Çfarë lexon dhe shkruan:</strong> atë që i duhet punës së taf-it. Në Gmail-in tuaj, lexon mesazhet dhe fijet tuaja për të gjetur ato që kanë nevojë për përgjigje, dhe shkruan drafte; dërgon postë vetëm ku e lejon Card-i i taf-it. Në Google Calendar dhe Google Sheets, lexon ngjarjet në kalendarët që kujdeset, ose fletët e llogaritjes që i mban të përditësuara, dhe i ndryshon vetëm ku e lejon Card-i i taf-it. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Çfarë lexon dhe shkruan:</strong> atë që i duhet punës së taf-it. Në Gmail-in tuaj, lexon mesazhet dhe fijet tuaja për të gjetur ato që kanë nevojë për përgjigje, dhe shkruan drafte; dërgon postë vetëm ku e lejon Card-i i taf-it. Në Google Calendar dhe Google Sheets, lexon ngjarjet në kalendarët që kujdeset, ose fletët e llogaritjes që i mban të përditësuara, dhe i ndryshon vetëm ku e lejon Card-i i taf-it. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Në Google Tasks, lexon listat e detyrave që kujdeset dhe shton, përfundon, zhvendos ose fshin detyra vetëm ku e lejon Card-i i taf-it. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Në Google Tasks, lexon listat e detyrave që kujdeset dhe shton, përfundon, zhvendos ose fshin detyra vetëm ku e lejon Card-i i taf-it. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Çdo gjë mbi kufijtë e Card-it pret miratimin tuaj.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Çdo gjë mbi kufijtë e Card-it pret miratimin tuaj.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Pse:</strong> vetëm për të bërë punën që keni ngritur për atë taf, dhe për t'ju treguar me cilën llogari Google është lidhur: adresën e saj të emailit, të mbajtur me lidhjen derisa ta shkëputni.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Pse:</strong> vetëm për të bërë punën që keni ngritur për atë taf, dhe për t'ju treguar me cilën llogari Google është lidhur: adresën e saj të emailit, të mbajtur me lidhjen derisa ta shkëputni.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Si lidhet çdo aplikacion Google:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Si lidhet çdo aplikacion Google:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li>Përmes partnerit tonë të hyrjes, të listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 135, Col: 148}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("sq")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li>Përmes hyrjes së vet Google të tafs, pa asnjë kompani tjetër në mes: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 138, Col: 117}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			for _, a := range googlePending("sq") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>Përmes partnerit tonë të hyrjes, të listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 142, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 138, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("sq"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 142, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			if len(googleInHouse("sq")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Përmes hyrjes së vet Google të tafs, pa asnjë kompani tjetër në mes: ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 141, Col: 117}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sq").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 142, Col: 75}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("sq") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 145, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sq").AsksFor)
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("sq"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 143, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 145, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sq").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 145, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sq").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var13 string
+					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 146, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var12 string
-					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 146, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Një aplikacion i emërtuar në të dyja lidhet në një mënyrë ose tjetrën, sipas llogarisë suaj. Faqja e vet e hyrjes e Google tregon cilën po lejoni.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni.<ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> tafs kërkon vetëm qasjen që u duhet mjeteve të taf-it. Nëse ajo qasje më e ngushtë nuk është e mundur, kërkon qasjen e zakonshme të aplikacionit, dhe e thotë para se të hyni. Nëse qasja e zakonshme do të përfshinte të dhëna personale që taf-i nuk i përdor, tafs nuk lidhet.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> hyrja kërkon të gjithë qasjen e listuar më poshtë për atë aplikacion njëherësh, edhe kur taf-i vetëm lexon.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni. Hyrja kërkon të gjithë qasjen e listuar më poshtë për atë aplikacion njëherësh, edhe kur taf-i vetëm lexon.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni. tafs kërkon vetëm qasjen që u duhet mjeteve të taf-it. Nëse ajo qasje më e ngushtë nuk është e mundur, kërkon qasjen e zakonshme të aplikacionit, dhe e thotë para se të hyni. Nëse qasja e zakonshme do të përfshinte të dhëna personale që taf-i nuk i përdor, tafs nuk lidhet.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Si e përdor një taf:</strong> një taf përdor vetëm mjetet e miratuara në Card-in e tij. Çdo thirrje kontrollohet kundrejt një lejeje për atë mjet të saktë dhe ata argumente para se të dërgohet diçka, dhe një thirrje jashtë qasjes që dhatë refuzohet. Cilat veprime kërkojnë miratimin tuaj çdo herë caktohet në Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Qasja që kërkon hyrja e vet Google e tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Qasja që kërkon tafs:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("sq") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 181, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 184, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 149, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var15 string
-					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 184, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Sado që lejon një hyrje, taf-i përdor vetëm mjetet në Card-in e tij.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Një aplikacion i emërtuar në të dyja lidhet në një mënyrë ose tjetrën, sipas llogarisë suaj. Faqja e vet e hyrjes e Google tregon cilën po lejoni.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Kush e mban hyrjen tuaj:</strong><ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> hyrja juaj Google mbahet nga partneri ynë i hyrjes, i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht), dhe nuk i jepet kurrë një taf-i ose planque. As taf-i as tafs nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> planque, shërbimi i vet i lidhjes i tafs, e mban tokenin tuaj Google për kompaninë tuaj, të enkriptuar me AWS KMS në Bashkimin Evropian (Irlandë), dhe e përdor vetëm për të bërë një thirrje që e lejon Card-i i taf-it. Nuk i jepet kurrë një taf-i, dhe as taf-i as modeli AI nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni.<ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> tafs kërkon vetëm qasjen që u duhet mjeteve të taf-it. Nëse ajo qasje më e ngushtë nuk është e mundur, kërkon qasjen e zakonshme të aplikacionit, dhe e thotë para se të hyni. Nëse qasja e zakonshme do të përfshinte të dhëna personale që taf-i nuk i përdor, tafs nuk lidhet.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> hyrja kërkon të gjithë qasjen e listuar më poshtë për atë aplikacion njëherësh, edhe kur taf-i vetëm lexon.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Kush e mban hyrjen tuaj:</strong> planque, shërbimi i vet i lidhjes i tafs, e mban tokenin tuaj Google për kompaninë tuaj, të enkriptuar me AWS KMS në Bashkimin Evropian (Irlandë), dhe e përdor vetëm për të bërë një thirrje që e lejon Card-i i taf-it. Nuk i jepet kurrë një taf-i, dhe as taf-i as modeli AI nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni. Hyrja kërkon të gjithë qasjen e listuar më poshtë për atë aplikacion njëherësh, edhe kur taf-i vetëm lexon.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Kush e mban hyrjen tuaj:</strong> hyrja juaj Google mbahet nga partneri ynë i hyrjes, i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht), dhe nuk i jepet kurrë një taf-i ose planque. As taf-i as tafs nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Çfarë lejoni:</strong> hyni në faqen e vet të Google dhe zgjidhni çfarë të lejoni. tafs kërkon vetëm qasjen që u duhet mjeteve të taf-it. Nëse ajo qasje më e ngushtë nuk është e mundur, kërkon qasjen e zakonshme të aplikacionit, dhe e thotë para se të hyni. Nëse qasja e zakonshme do të përfshinte të dhëna personale që taf-i nuk i përdor, tafs nuk lidhet.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Si e përdor një taf:</strong> një taf përdor vetëm mjetet e miratuara në Card-in e tij. Çdo thirrje kontrollohet kundrejt një lejeje për atë mjet të saktë dhe ata argumente para se të dërgohet diçka, dhe një thirrje jashtë qasjes që dhatë refuzohet. Cilat veprime kërkojnë miratimin tuaj çdo herë caktohet në Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("sq")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<strong>Qasja që kërkon hyrja e vet Google e tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<strong>Qasja që kërkon tafs:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("sq") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 184, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 187, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sq_tafs_privacy.templ`, Line: 187, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul>Sado që lejon një hyrje, taf-i përdor vetëm mjetet në Card-in e tij.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij.<ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> kalon edhe përmes partnerit tonë të hyrjes, që bën çdo thirrje.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> planque thërret vetë Google, pra asnjë kompani tjetër nuk bën thirrjen ose nuk mban hyrjen tuaj.</li></ul>Të dyja janë të listuara te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kush e mban hyrjen tuaj:</strong><ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> hyrja juaj Google mbahet nga partneri ynë i hyrjes, i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht), dhe nuk i jepet kurrë një taf-i ose planque. As taf-i as tafs nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> planque, shërbimi i vet i lidhjes i tafs, e mban tokenin tuaj Google për kompaninë tuaj, të enkriptuar me AWS KMS në Bashkimin Evropian (Irlandë), dhe e përdor vetëm për të bërë një thirrje që e lejon Card-i i taf-it. Nuk i jepet kurrë një taf-i, dhe as taf-i as modeli AI nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij. planque thërret vetë Google, pra asnjë kompani tjetër nuk bën thirrjen ose nuk mban hyrjen tuaj. Ofruesi i modelit AI është i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kush e mban hyrjen tuaj:</strong> planque, shërbimi i vet i lidhjes i tafs, e mban tokenin tuaj Google për kompaninë tuaj, të enkriptuar me AWS KMS në Bashkimin Evropian (Irlandë), dhe e përdor vetëm për të bërë një thirrje që e lejon Card-i i taf-it. Nuk i jepet kurrë një taf-i, dhe as taf-i as modeli AI nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij. Kalon edhe përmes partnerit tonë të hyrjes, që bën çdo thirrje. Të dyja janë të listuara te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Kush e mban hyrjen tuaj:</strong> hyrja juaj Google mbahet nga partneri ynë i hyrjes, i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht), dhe nuk i jepet kurrë një taf-i ose planque. As taf-i as tafs nuk e shohin fjalëkalimin tuaj ose tokenat tuaj Google. Një tjetër taf i juaji që ka nevojë për të njëjtën qasje e ripërdor hyrjen, dhe çdo taf përdor vetëm mjetet që i keni miratuar.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Trajnimi i AI:</strong> të dhënat e përdoruesit nga Google nuk përdoren për të trajnuar modele AI.</li><li><strong>Imazhet:</strong> tafs nuk krijon ose redakton imazhe ose video: AI-ja e tij shkruan tekst. Nuk i përdor kurrë API-të e Google ose të dhënat e përdoruesit nga Google për të krijuar, redaktuar ose ndarë imazhe intime të dikujt pa pëlqimin e tij (NCII), ose çdo imazh tjetër të një personi.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij.<ul><li><strong>Përmes partnerit tonë të hyrjes:</strong> kalon edhe përmes partnerit tonë të hyrjes, që bën çdo thirrje.</li><li><strong>Përmes hyrjes së vet Google të tafs:</strong> planque thërret vetë Google, pra asnjë kompani tjetër nuk bën thirrjen ose nuk mban hyrjen tuaj.</li></ul>Të dyja janë të listuara te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("sq")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij. planque thërret vetë Google, pra asnjë kompani tjetër nuk bën thirrjen ose nuk mban hyrjen tuaj. Ofruesi i modelit AI është i listuar te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kush tjetër e merr:</strong> ajo që një taf lexon nga Google shkon te modeli AI që ekzekuton taf-in, vetëm pasi ta lejoni (shihni <a href=\"#ai\">AI në tafs</a>), që e ruan deri në 30 ditë sipas kushteve të ofruesit të tij. Kalon edhe përmes partnerit tonë të hyrjes, që bën çdo thirrje. Të dyja janë të listuara te <a href=\"/subprocessors\">/subprocessors</a> (në anglisht).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Trajnimi i AI:</strong> të dhënat e përdoruesit nga Google nuk përdoren për të trajnuar modele AI.</li><li><strong>Imazhet:</strong> tafs nuk krijon ose redakton imazhe ose video: AI-ja e tij shkruan tekst. Nuk i përdor kurrë API-të e Google ose të dhënat e përdoruesit nga Google për të krijuar, redaktuar ose ndarë imazhe intime të dikujt pa pëlqimin e tij (NCII), ose çdo imazh tjetër të një personi.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sq")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Sa gjatë, dhe ku:</strong> fletët tuaja të llogaritjes dhe ngjarjet qëndrojnë në llogarinë tuaj Google. Në depon e vet të tafs, ajo që kthen një mjet mbahet vetëm derisa të mbarojë ekzekutimi i taf-it. planque, që e kalon çdo thirrje më tej, mban atë që kthen Google për 24 orë, kështu që një thirrje e përsëritur merr të njëjtën përgjigje dhe nuk dërgohet kurrë dy herë; pas kësaj mban vetëm nëse thirrja u dërgua. Në një bisedë, ajo që u lexua vetëm mbahet e enkriptuar, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve. Regjistrimi i një ekzekutimi dhe biseda e tij mbahen 30 ditë, dhe shënimet e një taf-i derisa ta hiqni taf-in (shihni <a href=\"#retention\">Sa e ruajmë</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Sa gjatë, dhe ku:</strong> fletët tuaja të llogaritjes dhe ngjarjet qëndrojnë në llogarinë tuaj Google. Në depon e vet të tafs, ajo që kthen një mjet mbahet vetëm derisa të mbarojë ekzekutimi i taf-it. planque, që e kalon çdo thirrje më tej, mban atë që kthen Google për 24 orë, kështu që një thirrje e përsëritur merr të njëjtën përgjigje dhe nuk dërgohet kurrë dy herë; pas kësaj mban vetëm nëse thirrja u dërgua. Në një bisedë, ajo që u lexua vetëm mbahet e enkriptuar, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve. Regjistrimi i një ekzekutimi dhe biseda e tij mbahen 30 ditë, dhe shënimet e një taf-i derisa ta hiqni taf-in (shihni <a href=\"#retention\">Sa e ruajmë</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Sa gjatë, dhe ku:</strong> draftet, ngjarjet dhe fletët tuaja të llogaritjes qëndrojnë në llogarinë tuaj Google. Në depon e vet të tafs, ajo që kthen një mjet mbahet vetëm derisa të mbarojë ekzekutimi i taf-it. planque, që e kalon çdo thirrje më tej, mban atë që kthen Google për 24 orë, kështu që një thirrje e përsëritur merr të njëjtën përgjigje dhe nuk dërgohet kurrë dy herë; pas kësaj mban vetëm nëse thirrja u dërgua. Në një bisedë, ajo që u lexua vetëm mbahet e enkriptuar, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve. Regjistrimi i një ekzekutimi dhe biseda e tij mbahen 30 ditë, dhe shënimet e një taf-i derisa ta hiqni taf-in (shihni <a href=\"#retention\">Sa e ruajmë</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Sa gjatë, dhe ku:</strong> draftet, ngjarjet dhe fletët tuaja të llogaritjes qëndrojnë në llogarinë tuaj Google. Në depon e vet të tafs, ajo që kthen një mjet mbahet vetëm derisa të mbarojë ekzekutimi i taf-it. planque, që e kalon çdo thirrje më tej, mban atë që kthen Google për 24 orë, kështu që një thirrje e përsëritur merr të njëjtën përgjigje dhe nuk dërgohet kurrë dy herë; pas kësaj mban vetëm nëse thirrja u dërgua. Në një bisedë, ajo që u lexua vetëm mbahet e enkriptuar, përdoret derisa biseda të jetë e papunuar një orë dhe më së shumti katër orë pas leximit, pastaj fshihet automatikisht, brenda disa ditëve. Regjistrimi i një ekzekutimi dhe biseda e tij mbahen 30 ditë, dhe shënimet e një taf-i derisa ta hiqni taf-in (shihni <a href=\"#retention\">Sa e ruajmë</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ndalimi:</strong><ul><li>Shkëputni Google në aplikacion, te Lidh aplikacionet ose te skeda Card e taf-it. Mjetet e tij Google ndalojnë menjëherë, dhe tafs i kërkon Google të revokojë hyrjen menjëherë; kjo mund të plotësohet pak më vonë.</li><li>Hiqni një taf, dhe lidhjet e tij mbarojnë me të. Një hyrje Google që një tjetër taf i juaji ende e përdor qëndron derisa të largohet i fundit.</li><li>Hiqni qasjen e tafs në çdo kohë në Llogarinë tuaj Google, te <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Taf-et tuaja ndalojnë së arrituri Google, dhe aplikacioni ju tregon se lidhja Google është e dalë.</li><li>Fshini llogarinë tuaj: taf-et, bisedat, shënimet, skedarët dhe lidhjet e saj fshihen menjëherë, dhe nga kopjet e tyre në një çast të caktuar brenda 35 ditëve, dhe tokenat e saj Google revokohen ku e lejon Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Ndalimi:</strong><ul><li>Shkëputni Google në aplikacion, te Lidh aplikacionet ose te skeda Card e taf-it. Mjetet e tij Google ndalojnë menjëherë, dhe tafs i kërkon Google të revokojë hyrjen menjëherë; kjo mund të plotësohet pak më vonë.</li><li>Hiqni një taf, dhe lidhjet e tij mbarojnë me të. Një hyrje Google që një tjetër taf i juaji ende e përdor qëndron derisa të largohet i fundit.</li><li>Hiqni qasjen e tafs në çdo kohë në Llogarinë tuaj Google, te <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Taf-et tuaja ndalojnë së arrituri Google, dhe aplikacioni ju tregon se lidhja Google është e dalë.</li><li>Fshini llogarinë tuaj: taf-et, bisedat, shënimet, skedarët dhe lidhjet e saj fshihen menjëherë, dhe nga kopjet e tyre në një çast të caktuar brenda 35 ditëve, dhe tokenat e saj Google revokohen ku e lejon Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
