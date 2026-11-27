@@ -19,8 +19,8 @@ import (
 //
 // Inside an open window a routine action is signed with the device key and
 // the window's id (auth.RequestMessageWindow); the route policy checks the
-// window and restarts it. The window's end is the server's: expiry, its
-// cap, sign-out, a revoked session or device, a halt, or Close.
+// window, which no approval extends. The window's end is the server's:
+// 5 minutes after the fingerprint, sign-out, a revoked session or device, a halt, or Close.
 type ApprovalWindowHandler struct {
 	windows auth.WindowStore
 	// passkeys finds a computer's own passkey, for a window it opens: only

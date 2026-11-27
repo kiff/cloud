@@ -3,8 +3,8 @@
 -- The approval windows (kiff/tafs#494): one per opening, by the phone's
 -- approval key behind its fingerprint. While a window is open, routine
 -- actions from its device are signed with the device key and carry the
--- window's id. KIFF restarts the window's expiry on each approval, never
--- past its cap, and closes it on sign-out, revocation, a halt, the app's
+-- window's id. It ends 5 minutes after the fingerprint that opened it,
+-- however often it's used, and KIFF closes it earlier on sign-out, revocation, a halt, the app's
 -- own Close, or a new window on the same device.
 --
 -- This file is the source of truth. ApplyWindowsSchema embeds and runs it

@@ -87,25 +87,17 @@ func TestWindowStoreKeepsOneOpenWindowPerDevice(t *testing.T) {
 	if _, err := store.OpenFor(ctx, "dev_other", now); !errors.Is(err, auth.ErrWindowNotFound) {
 		t.Errorf("another device's window: %v", err)
 	}
-	// Expired: not open. Restarted at 4 minutes: open until 9; at 14: capped at 15.
-	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(6*time.Minute)); !errors.Is(err, auth.ErrWindowNotFound) {
-		t.Errorf("after expiry: %v", err)
-	}
+	// An approval never extends it: one fingerprint covers up to 5 minutes.
 	at := now.Add(4 * time.Minute)
-	if err := store.Restart(ctx, w.ID, w.Restarted(at)); err != nil {
-		t.Fatal(err)
+	if e := w.Restarted(at); !e.Equal(now.Add(auth.WindowLength)) || auth.WindowCap != auth.WindowLength {
+		t.Errorf("an approval at 4 minutes moved the expiry to %v (cap %v)", e, auth.WindowCap)
 	}
-	if got, err := store.OpenFor(ctx, "dev_abc", now.Add(8*time.Minute)); err != nil || !got.ExpiresAt.Equal(now.Add(9*time.Minute)) {
-		t.Errorf("restarted: %v %v", err, got.ExpiresAt)
+	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(4*time.Minute+59*time.Second)); err != nil {
+		t.Errorf("at 4:59: %v", err)
 	}
-	at = now.Add(14 * time.Minute)
-	got, _ := store.Get(ctx, w.ID)
-	if e := got.Restarted(at); !e.Equal(now.Add(auth.WindowCap)) {
-		t.Errorf("a restart near the cap: %v", e)
-	}
-	_ = store.Restart(ctx, w.ID, got.Restarted(at))
-	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(15*time.Minute)); !errors.Is(err, auth.ErrWindowNotFound) {
-		t.Errorf("at the cap: %v", err)
+	// Expired: not open.
+	if _, err := store.OpenFor(ctx, "dev_abc", now.Add(5*time.Minute+time.Second)); !errors.Is(err, auth.ErrWindowNotFound) {
+		t.Errorf("after expiry: %v", err)
 	}
 	// A new window on the device replaces the open one.
 	w2 := w

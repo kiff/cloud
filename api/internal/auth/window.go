@@ -24,16 +24,19 @@ import (
 // The window is the server's, not the phone's: a hardware timeout on either
 // platform counts any fingerprint on the phone, unlocking it included, so
 // only a record opened by KIFF's own prompt proves the fingerprint was the
-// app's. It ends on expiry, at its cap, on sign-out, when the session or
+// app's. It ends 5 minutes after that fingerprint, however often it's used,
+// and earlier on sign-out, when the session or
 // device is revoked, on a halt, and when the app closes it (backgrounded
 // over 30 seconds, or the screen locked).
 
 const (
-	// WindowLength is how long a window lasts from its last approval.
+	// WindowLength is how long a window lasts from the fingerprint that
+	// opened it. Approvals inside it don't restart it: one fingerprint
+	// covers up to 5 minutes, as the app's words say.
 	WindowLength = 5 * time.Minute
-	// WindowCap is the most a window lasts from the fingerprint that
-	// opened it, however many approvals restart it.
-	WindowCap = 15 * time.Minute
+	// WindowCap is the most a window lasts from the fingerprint that opened
+	// it: WindowLength, since nothing extends a window.
+	WindowCap = WindowLength
 	// WindowMessage names the message the approval key signs to open one.
 	WindowMessage = "kiff.window.v1"
 	// windowExpiresSkew is how far past now + WindowLength a phone's
@@ -95,14 +98,14 @@ func (w ApprovalWindow) OpenAt(now time.Time) bool {
 	return w.ClosedAt == nil && now.Before(w.ExpiresAt) && now.Before(w.CapAt)
 }
 
-// Restarted is the expiry an approval at now gives the window: WindowLength
-// ahead, never past the cap.
-func (w ApprovalWindow) Restarted(now time.Time) time.Time {
-	e := now.Add(WindowLength)
-	if e.After(w.CapAt) {
+// Restarted is the expiry an approval at now leaves the window: the one
+// its opening gave it. An approval never extends a window (one fingerprint
+// covers up to WindowLength), and never past the cap.
+func (w ApprovalWindow) Restarted(time.Time) time.Time {
+	if w.ExpiresAt.After(w.CapAt) {
 		return w.CapAt
 	}
-	return e
+	return w.ExpiresAt
 }
 
 // NewWindowID makes a window id: "win_" and 26 base32 characters.

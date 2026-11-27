@@ -61,11 +61,11 @@ func TestPostgresWindowStore(t *testing.T) {
 	if _, err := store.OpenFor(ctx, other.ID, now); !errors.Is(err, auth.ErrWindowNotFound) {
 		t.Errorf("the other device: %v", err)
 	}
-	// Restarted at 4 minutes: open at 8; a restart of none is not found.
-	if err := store.Restart(ctx, w.ID, now.Add(9*time.Minute)); err != nil {
+	// The store's Restart moves the expiry, never past the cap; a restart of none is not found.
+	if err := store.Restart(ctx, w.ID, now.Add(4*time.Minute)); err != nil {
 		t.Fatal(err)
 	}
-	if o, err := store.OpenFor(ctx, phone.ID, now.Add(8*time.Minute)); err != nil || !o.ExpiresAt.Equal(now.Add(9*time.Minute)) {
+	if o, err := store.OpenFor(ctx, phone.ID, now.Add(3*time.Minute)); err != nil || !o.ExpiresAt.Equal(now.Add(4*time.Minute)) {
 		t.Errorf("restarted: %v %v", err, o.ExpiresAt)
 	}
 	if err := store.Restart(ctx, "win_none", now); !errors.Is(err, auth.ErrWindowNotFound) {

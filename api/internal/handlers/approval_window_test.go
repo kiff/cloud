@@ -159,9 +159,9 @@ func TestAFingerprintOpensAWindowThenTapsSignRoutineActions(t *testing.T) {
 	if code, out := r.routine("/v1/me/mandates", win); code != http.StatusCreated || out["key"] != auth.KeyDevice || out["window"] != win {
 		t.Fatalf("a routine action inside the window: %d %v", code, out)
 	}
-	// The window restarted: 5 minutes from this approval.
-	if w, _ := r.windows.Get(context.Background(), win); !w.ExpiresAt.Equal(r.now.Add(5 * time.Minute)) {
-		t.Errorf("not restarted: expires %v", w.ExpiresAt)
+	// The approval didn't restart it: 5 minutes from the fingerprint.
+	if w, _ := r.windows.Get(context.Background(), win); !w.ExpiresAt.Equal(w.OpenedAt.Add(5 * time.Minute)) {
+		t.Errorf("an approval extended the window: expires %v", w.ExpiresAt)
 	}
 	// Replayed: refused.
 	code, out := r.call(r.phone, http.MethodPost, "/v1/me/mandates", `{"n":`+r.now.Format("150405")+`}`,
@@ -192,22 +192,23 @@ func TestAFingerprintOpensAWindowThenTapsSignRoutineActions(t *testing.T) {
 	if code, out := r.routine("/v1/keys", win); code != http.StatusCreated || out["key"] != auth.KeyDevice || out["window"] != "" {
 		t.Errorf("a device-key route with a window: %d %v", code, out)
 	}
-	// Approvals every 4 minutes keep it open until the cap, 15 minutes from the opening.
-	for i := 0; i < 3; i++ {
-		r.now = r.now.Add(4 * time.Minute)
-		if code, out := r.routine("/v1/me/mandates", win); code != http.StatusCreated {
-			t.Fatalf("approval %d at %v: %d %v", i, r.now, code, out)
-		}
+	// One fingerprint covers up to 5 minutes, however often it's used: a tap
+	// at 4:00 and one at 4:59 are taps; at 5:01 the next takes the fingerprint.
+	opened, _ := r.windows.Get(context.Background(), win)
+	r.now = opened.OpenedAt.Add(4 * time.Minute)
+	if code, out := r.routine("/v1/me/mandates", win); code != http.StatusCreated {
+		t.Fatalf("a tap at 4:00: %d %v", code, out)
 	}
-	if w, _ := r.windows.Get(context.Background(), win); !w.ExpiresAt.Equal(w.CapAt) {
-		t.Errorf("near the cap, expires %v, cap %v", w.ExpiresAt, w.CapAt)
+	r.now = opened.OpenedAt.Add(4*time.Minute + 59*time.Second)
+	if code, out := r.routine("/v1/me/mandates", win); code != http.StatusCreated {
+		t.Fatalf("a tap at 4:59: %d %v", code, out)
 	}
-	r.now = r.now.Add(2*time.Minute + time.Second) // 15:01 after the opening
+	r.now = opened.OpenedAt.Add(5*time.Minute + time.Second)
 	if code, out := r.routine("/v1/me/mandates", win); code != http.StatusForbidden || out["error"] != "window_required" {
-		t.Errorf("past the cap: %d %v", code, out)
+		t.Errorf("a tap at 5:01, after taps at 4:00 and 4:59: %d %v", code, out)
 	}
 	if code, out := r.call(r.phone, http.MethodGet, "/v1/me/window", "", ""); code != http.StatusOK || out["window"] != nil || out["words"] != "Your fingerprint or face at the next approval" {
-		t.Errorf("reading past the cap: %d %v", code, out)
+		t.Errorf("reading past 5 minutes: %d %v", code, out)
 	}
 
 	// A fresh fingerprint opens a new window; Close ends it.
@@ -414,8 +415,8 @@ func TestDeviceVerifySaysWhichKeyAndCountsAWindowOnlyFromTheSignedBytes(t *testi
 	if out["valid"] != true || out["key"] != auth.KeyDevice || w["id"] != win.ID || w["open"] != true {
 		t.Errorf("inside the window: %v", out)
 	}
-	if got, _ := windows.Get(ctx, win.ID); !got.ExpiresAt.Equal(now.Add(6 * time.Minute)) {
-		t.Errorf("not restarted: %v", got.ExpiresAt)
+	if got, _ := windows.Get(ctx, win.ID); !got.ExpiresAt.Equal(win.ExpiresAt) {
+		t.Errorf("a verify extended the window: %v", got.ExpiresAt)
 	}
 	// Once the session's approval key is another, the window doesn't count.
 	if _, err := sessions.ReplaceApprovalKey(ctx, "sess-1", deviceDER, now.Add(time.Minute)); err != nil {
