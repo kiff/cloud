@@ -47,7 +47,11 @@ func TestDownloadSaysWhatAndWhere(t *testing.T) {
 		"Get tafs", `href="` + testPlay + `"`, `alt="Google Play"`, "google-play-badge.png",
 		"Android 11 or later", "iOS and iPadOS 16 or later", `href="/pricing"`,
 		"macOS 12 (Monterey) only", "Windows 10 or 11", "Ubuntu 24.04 or later",
-		"Google Play, the Google Play logo, Wear OS and Pixel Watch are trademarks of Google LLC.",
+		"Google Play, the Google Play logo, Chrome, Wear OS and Pixel Watch are trademarks of Google LLC.",
+		// The Chrome extension: Google's badge, unaltered, linking to the listing, with the listing's own line.
+		`href="https://chromewebstore.google.com/detail/tafs/lgdfeikagklmfjobgednngcjjhgknfdl"`,
+		`alt="Available in the Chrome Web Store"`, "chrome-web-store-badge.png",
+		"Let your tafs work in your own Chrome, only on the sites you allow, with every risky step approved on your phone.",
 		"Tux by Larry Ewing, made with The GIMP.", "App Store is a service mark of Apple Inc.",
 	} {
 		if !strings.Contains(body, want) {

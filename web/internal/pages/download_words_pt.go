@@ -13,6 +13,8 @@ var downloadPT = downloadWords{
 	Sub:              "Agentes de IA para o trabalho de rotina da sua empresa, cada um dentro de um Card que define. O que for maior espera pela sua aprovação no seu telemóvel.",
 	Phones:           "Telemóvel e tablet",
 	Computer:         "Computador",
+	Browser:          "Navegador",
+	Chrome:           "Deixe os seus tafs trabalhar no seu próprio Chrome, só nos sites que permite, com cada passo arriscado aprovado no telemóvel.",
 	NotYet:           "Em breve",
 	NotAvailable:     "Não disponível",
 	AvailableVersion: "Versão %s",

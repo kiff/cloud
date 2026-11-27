@@ -91,7 +91,7 @@ func TestTheWatchesShowHowEachWillArrive(t *testing.T) {
 	// In another language, the state lines are that language's.
 	WatchLive = false
 	de := render(DownloadView{Desktop: DesktopApps(), W: downloadDE})
-	for _, want := range []string{"Bald bei Google Play", "Kommt mit der iPhone-App", "google-play-badge-de.png", "Linux® ist eine eingetragene Marke"} {
+	for _, want := range []string{"Bald bei Google Play", "Kommt mit der iPhone-App", "google-play-badge-de.png", "Linux® ist eine eingetragene Marke", "Google Play-Logo, Chrome, Wear OS", "Lass deine tafs in deinem Chrome arbeiten"} {
 		if !strings.Contains(de, want) {
 			t.Errorf("German page: missing %q", want)
 		}
