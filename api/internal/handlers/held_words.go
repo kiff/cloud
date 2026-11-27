@@ -403,17 +403,18 @@ func plainNumber(n string) string {
 		}
 		mant, exp = n[:i], e
 	}
+	whole, frac, _ := strings.Cut(mant, ".")
+	digits := strings.TrimLeft(whole+frac, "0")
+	// A zero is one written digit, whatever its exponent ("0e500" is 0).
+	if digits == "" {
+		return "0"
+	}
 	// Past these, the number can't be written in plainDigitsMax digits: no
 	// arithmetic on an exponent that large.
 	if exp > plainDigitsMax+len(mant) || exp < -plainDigitsMax-len(mant) {
 		return sent
 	}
-	whole, frac, _ := strings.Cut(mant, ".")
-	digits := strings.TrimLeft(whole+frac, "0")
 	scale := len(frac) - exp
-	if digits == "" {
-		return "0"
-	}
 	for strings.HasSuffix(digits, "0") {
 		digits, scale = digits[:len(digits)-1], scale-1
 	}
