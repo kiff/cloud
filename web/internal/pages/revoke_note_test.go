@@ -73,6 +73,33 @@ func TestSerbianAndChineseWordsMatchTheirPages(t *testing.T) {
 	}
 }
 
+// The note addresses the reader as its page does: German du, Dutch je, Spanish tú, Catalan vosaltres
+// and Dhivehi ތިބާ, as each page's own connection line does; so do the Catalan and Dhivehi bank items.
+func TestRevokeNoteAddressesTheReaderAsItsPageDoes(t *testing.T) {
+	for lang, w := range map[string]struct{ has, hasnt []string }{
+		"de": {[]string{"bis du ", "den du uns"}, []string{"Sie "}},
+		"nl": {[]string{"tot je ", "die je ons"}, []string{" u "}},
+		"es": {[]string{"retires", "hayas", "elimines"}, []string{"retire ", "haya dado", "elimine "}},
+		"ca": {[]string{"retireu", "hàgiu", "elimineu", "connecteu", "vostre banc"}, []string{"retiris", "hagis", "eliminis", "connectes", "teu banc"}},
+		"dv": {[]string{"ތިބާ"}, []string{"ތިޔަބޭފުޅާ"}},
+	} {
+		note := revokeNoteText[lang]
+		if lang == "ca" || lang == "dv" {
+			note += " " + bankDataText[lang].Label + " " + bankDataText[lang].Text
+		}
+		for _, s := range w.has {
+			if !strings.Contains(note, s) {
+				t.Errorf("%s: no %q in %q", lang, s, note)
+			}
+		}
+		for _, s := range w.hasnt {
+			if strings.Contains(note, s) {
+				t.Errorf("%s: %q in %q", lang, s, note)
+			}
+		}
+	}
+}
+
 // The English /tafs/privacy says, right after "then revoked", that a sign-in is revoked only where
 // the vendor offers a way to, and that a key keeps working at its vendor until the owner deletes it there.
 func TestTafsPrivacySaysRevokingDependsOnTheVendor(t *testing.T) {
