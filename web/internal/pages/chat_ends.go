@@ -4,7 +4,7 @@ package pages
 // token or key, per language: deleting a chat with Coach also ends the connections
 // that chat asked for that no taf uses. tafs cloud's DELETE of a chat asks planque
 // to end each agent its own successful requests were answered under, never a live
-// taf's (tafs docs/api.md). It ends them as a disconnect does, so the revoke note
+// taf's (its API docs in kiff/tafs). It ends them as a disconnect does, so the revoke note
 // before it applies to them too. A change to what a chat's delete ends changes
 // this text in the same change.
 func chatEndsWords(lang string) string {
