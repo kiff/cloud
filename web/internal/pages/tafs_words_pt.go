@@ -3,9 +3,9 @@ package pages
 // tafsPT is /pt/tafs.
 var tafsPT = tafsWords{
 	Shots: tafsShots{
-		Card:   "A Card de um taf na app tafs: reembolsos até 50 € cada, acima disso pergunta-lhe primeiro, no máximo 5000 € por dia; tudo o resto é recusado.",
+		Card:   "O Card de um taf na app tafs: reembolsos até 50 € cada, acima disso pergunta-lhe primeiro, no máximo 5000 € por dia; tudo o resto é recusado.",
 		Record: "O Registo na app tafs: uma reunião marcada por um taf, aprovada por si, feita, com o recibo da KIFF.",
-		Video2: "Um taf trata um pedido de reembolso dentro da sua Card. Dados de teste.",
+		Video2: "Um taf trata um pedido de reembolso dentro do seu Card. Dados de teste.",
 		Video3: "Um taf marca uma reunião no Google Calendar. Dados de teste.",
 		Play:   "Reproduzir o vídeo",
 		Pause:  "Pausar o vídeo",
@@ -15,13 +15,13 @@ var tafsPT = tafsWords{
 		Nodes: [4]tafsNode{
 			{"tafs", "As apps, e os tafs que fazem o seu trabalho de rotina."},
 			{"agents", "O ambiente onde corre cada taf."},
-			{"cloud", "KIFF: as suas Cards, as decisões dele e recibos assinados."},
+			{"cloud", "KIFF: os seus Cards, as decisões dele e recibos assinados."},
 			{"planque", "As chaves que lhe dá, seladas. Cada chamada verificada."},
 		},
 		Proof:       "O que foi feito, quem aprovou e a assinatura da KIFF.",
 		ProofAlt:    "Um recibo na app tafs: um reembolso de 3000 €, aprovado uma vez por si, com o recibo da KIFF, assinado e verificado.",
-		Control:     [3]string{"Precisa de si: o que espera pela sua resposta, e até quando.", "A Card: o que um taf pode fazer, o que espera por si e o que nunca faz.", "Cada passo que precisa de si pede a sua impressão digital."},
-		ControlAlt:  [3]string{"Um alerta na app tafs: um reembolso de 100 € ultrapassa o limite de 50 € por chamada, com Responder.", "A Card de um taf na app tafs: reembolsos até 50 € cada, acima disso pergunta-lhe primeiro, no máximo 5000 € por dia; tudo o resto é recusado.", "Uma chamada retida na app tafs: um reembolso de 100 € espera, nada é enviado até aprovar, com o botão para aprovar uma vez com a sua impressão digital."},
+		Control:     [3]string{"Precisa de si: o que espera pela sua resposta, e até quando.", "O Card: o que um taf pode fazer, o que espera por si e o que nunca faz.", "Cada passo que precisa de si pede a sua impressão digital."},
+		ControlAlt:  [3]string{"Um alerta na app tafs: um reembolso de 100 € ultrapassa o limite de 50 € por chamada, com Responder.", "O Card de um taf na app tafs: reembolsos até 50 € cada, acima disso pergunta-lhe primeiro, no máximo 5000 € por dia; tudo o resto é recusado.", "Uma chamada retida na app tafs: um reembolso de 100 € espera, nada é enviado até aprovar, com o botão para aprovar uma vez com a sua impressão digital."},
 		PrivacyHead: "A IA nunca vê as palavras-passe nem as chaves que as suas apps ligadas usam.",
 		Privacy:     [3]string{"Ligações diretas: o planque guarda a chave ou o início de sessão selados e só os abre para as chamadas dessa ligação. O taf e a IA nunca os veem.", "Ligações geridas: o nosso parceiro de início de sessão guarda o início de sessão, nunca o planque nem um taf.", "O seu próprio Chrome: um taf nunca lê campos de palavra-passe, cartão ou código. Numa página de início de sessão para e pede-lhe que inicie sessão no seu próprio separador."},
 		Partner:     "Quem é o nosso parceiro de início de sessão",
