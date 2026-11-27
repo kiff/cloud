@@ -50,6 +50,10 @@ type CreditsHandler struct {
 	names    UsageAgentNames
 	logger   *slog.Logger
 	now      func() time.Time
+	// reviewAccounts are App Review's and the store test accounts
+	// (WithReviewAccounts): Coach starts for them on no plan past its
+	// no-plan allowance.
+	reviewAccounts map[string]bool
 }
 
 // NewCreditsHandler reads and keeps runs through ledger.
@@ -66,6 +70,22 @@ func (h *CreditsHandler) WithOwnUse(o *OwnUse) *CreditsHandler { h.ownUse = o; r
 
 // WithAgentNames names the agents of the period's credits.
 func (h *CreditsHandler) WithAgentNames(a UsageAgentNames) *CreditsHandler { h.names = a; return h }
+
+// WithReviewAccounts names App Review's and the store test accounts: those
+// whose store test purchases count, as the App Store's and Play's processors
+// and Reset store billing read them (KIFF_APPLE_SANDBOX_TENANTS,
+// KIFF_GOOGLE_TEST_TENANTS). On no plan, Setup (Coach) may start for them
+// past the no-plan allowance, so a reviewer can always try Coach; a taf
+// still needs a plan. None named, there are none.
+func (h *CreditsHandler) WithReviewAccounts(ids ...string) *CreditsHandler {
+	h.reviewAccounts = map[string]bool{}
+	for _, id := range ids {
+		if id = strings.TrimSpace(id); id != "" {
+			h.reviewAccounts[id] = true
+		}
+	}
+	return h
+}
 
 // WithClock sets the clock, for tests.
 func (h *CreditsHandler) WithClock(now func() time.Time) *CreditsHandler { h.now = now; return h }
