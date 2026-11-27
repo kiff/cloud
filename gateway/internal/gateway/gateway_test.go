@@ -253,6 +253,12 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
 			ExpiresAt: f.holdExpiry}}, nil
 	}
+	// KIFF's "ask each call" (askEachCall): a count of 0 on a Card that asks
+	// the owner holds every call until the owner approves it.
+	if f.asksEachCall() && !f.approved[p.ID] {
+		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
+			ExpiresAt: f.holdExpiry}}, nil
+	}
 	if amount > 1000 && !f.approved[p.ID] {
 		return kiffapi.Decision{Outcome: "owner_required", Exception: &kiffapi.Exception{ID: "exc-" + p.ID[:8], ReviewURL: f.reviewBase + "/needs-you/exc-" + p.ID[:8],
 			ExpiresAt: f.holdExpiry, Why: f.why[amount]}}, nil
@@ -279,6 +285,19 @@ func (f *fakeAPI) decide(p kiffapi.Proposal) (kiffapi.Decision, error) {
 		return kiffapi.Decision{Outcome: "allowed", SealedRelease: rel}, nil
 	}
 	return kiffapi.Decision{Outcome: "allowed"}, nil
+}
+
+// asksEachCall is whether the agent's Card keeps a count of 0 calls and
+// asks the owner over it. The caller holds f.mu.
+func (f *fakeAPI) asksEachCall() bool {
+	for _, c := range f.card.Cards {
+		for _, l := range c.Limits {
+			if c.OnExceed == "owner" && l.Quantity == "count" && l.Per == "" && l.Limit == 0 && l.ExtraRoom == 0 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Trial decides like decide does, the Card's €1,000 per call, and records

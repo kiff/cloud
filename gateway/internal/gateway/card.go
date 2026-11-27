@@ -166,6 +166,12 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 			continue
 		}
 		var limits []string
+		// held: a Card that asks the owner and keeps a count of 0 calls
+		// ("each call asks you first", the hold on an app not yet proved):
+		// every call it covers is held for the owner. Read as "0 of 0 left,
+		// spent" it told an agent the tool was used up, so it never proposed
+		// the call and the owner was never asked (kiff/tafs#2226).
+		held := 0
 		for _, g := range c.Grants {
 			if !strings.EqualFold(g.Action, t.Name) {
 				continue
@@ -196,6 +202,14 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 					scale := l.Scale
 					num, unit = func(n int64) string { return formatScaled(n, scale) }, l.Unit
 				}
+			}
+			// Room the owner gave from a hold raises the ceiling KIFF holds at, so
+			// past it an approval doesn't run the call: that total reads as today.
+			if unit == "calls" && l.Per == "" && l.Limit == 0 && l.ExtraRoom == 0 && c.OnExceed == "owner" {
+				held++
+				limits = append(limits, "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval"+
+					" (the Card's count of 0 calls"+shared+", means this hold, not a used-up total)")
+				continue
 			}
 			if l.Per != "" {
 				// One total for each item the call names, not the Card's: it has
@@ -262,9 +276,15 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 		if len(limits) > 0 {
 			s += ": " + strings.Join(limits, "; ")
 		}
-		if c.OnExceed == "owner" {
+		if held > 0 {
+			s += ". A held call waits for the owner, and runs once they approve it; nothing runs before that."
+		}
+		switch {
+		case held > 0 && len(limits) == held:
+			// Only the hold: the words below are for the Card's other limits.
+		case c.OnExceed == "owner":
 			s += ". A per-action breach can be held for review. Approval still counts fully; a cumulative ceiling needs an explicit Card revision."
-		} else {
+		default:
 			s += ". A call over it is refused."
 		}
 		parts = append(parts, s)

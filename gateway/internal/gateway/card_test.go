@@ -370,3 +370,75 @@ func TestCardToolReadsAPerItemTotal(t *testing.T) {
 		t.Fatalf("text: %s", text)
 	}
 }
+
+// A tool held on an app not yet proved ("each call asks you first": a count
+// of 0 calls on a Card that asks the owner) reads to the agent as a call it
+// proposes and the owner approves, never as a total that is spent. Read as
+// "0 of 0 calls left; this total is spent", the agent never proposed the
+// call, so the owner was never asked (kiff/tafs#2226). Proposed, the call
+// comes back held for the owner's approval, and runs once approved.
+func TestAHeldToolReadsAsAskingEachCallNotASpentTotal(t *testing.T) {
+	r := newRig(t)
+	card := refundCard.Cards[0]
+	card.Grants = []kiffapi.CardGrant{{Action: "issue_refund"}}
+	resets := time.Now().Add(6 * time.Hour)
+	card.Limits = []kiffapi.CardLimit{{Quantity: "count", Limit: 0, Window: "calendar_day", Remaining: 0, Status: "ok",
+		Forecast: &kiffapi.CardForecast{State: "spent", ResetsAt: &resets}}}
+	r.api.card.Cards = []kiffapi.Card{card}
+
+	const asks = "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval"
+	for name, got := range map[string]string{"kiff_card": cardText(t, r), "description": descriptions(t, r)["issue_refund"]} {
+		if !strings.Contains(got, asks) || !strings.Contains(got, "means this hold, not a used-up total") || !strings.Contains(got, "runs once they approve it") {
+			t.Fatalf("%s: %q\nwant it to say each call asks the owner first", name, got)
+		}
+		for _, wrong := range []string{"0 of 0", "is spent", "resets at", "a total of 0", "calls left", "cumulative ceiling", "refused"} {
+			if strings.Contains(got, wrong) {
+				t.Fatalf("%s says %q: %q", name, wrong, got)
+			}
+		}
+	}
+
+	got := r.call(t, "agent-key", amount(10, "op-held-each"))
+	if !got.isError || got.call["state"] != "held" || !strings.Contains(got.text, "Waiting for the owner's approval") || r.tool.count() != 0 {
+		t.Fatalf("proposed call: %+v, tool calls %d", got, r.tool.count())
+	}
+	r.api.approveAll()
+	if got := r.call(t, "agent-key", amount(10, "op-held-each")); got.isError || r.tool.count() != 1 {
+		t.Fatalf("after approval: %+v, tool calls %d", got, r.tool.count())
+	}
+}
+
+// Room the owner gave from a hold raises the ceiling KIFF holds at, and an
+// approval past it doesn't run the call, so that total reads as any other.
+// A held tool's Card keeps the owner's words for its other totals.
+func TestAHeldToolKeepsTheWordsOfRoomAndOtherTotals(t *testing.T) {
+	r := newRig(t)
+	card := refundCard.Cards[0]
+	card.Grants = []kiffapi.CardGrant{{Action: "issue_refund"}}
+	card.Limits = []kiffapi.CardLimit{{Quantity: "count", Limit: 2, BaseLimit: 0, ExtraRoom: 2, Window: "calendar_day", Used: 1, Remaining: 1, Status: "ok"}}
+	r.api.card.Cards = []kiffapi.Card{card}
+	if got := cardText(t, r); !strings.Contains(got, "1 of 2 calls left today") || strings.Contains(got, "asks the owner first") ||
+		!strings.Contains(got, "a cumulative ceiling needs an explicit Card revision") {
+		t.Fatalf("with room: %q", got)
+	}
+
+	card.Limits = []kiffapi.CardLimit{
+		{Quantity: "count", Limit: 0, Window: "calendar_day", Status: "ok"},
+		{Quantity: "count", Limit: 20, Window: "rolling_1h", Used: 5, Remaining: 15, Status: "ok"},
+	}
+	r.api.card.Cards = []kiffapi.Card{card}
+	got := cardText(t, r)
+	for _, want := range []string{
+		"each call asks the owner first",
+		"15 of 20 calls left in the last hour",
+		"runs once they approve it",
+		"a cumulative ceiling needs an explicit Card revision",
+	} {
+		if !strings.Contains(got, want) {
+			t.Fatalf("got %q\nwant it to contain %q", got, want)
+		}
+	}
+	if strings.Contains(got, "0 of 0") {
+		t.Fatalf("reads the hold as a total: %q", got)
+	}
+}
