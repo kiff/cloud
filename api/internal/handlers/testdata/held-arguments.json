@@ -1,5 +1,5 @@
 {
-  "about": "A held call's arguments as every app writes them under Details (KIFF's `arguments`, kept while the call is held): one line an argument; the gateway's own (kiff_operation_id, kiff_reason, kiff_about) and an empty string at the top left out; a list's items (1, 2, ...) below its name in the order sent, an object's fields below its name, two spaces deeper each level; keys sorted by Unicode code point at every level, the top and every nested object alike (a dictionary can't keep the order sent); an empty string below the top written as \"\" so a fill with nothing still shows; a number written out exactly as sent, an integer past 2^53 included (parse numbers without loss); a newline or any other control character in a key or value becomes one space, so a value can't draw a line of its own, and a direction mark (U+202A-U+202E, U+2066-U+2069, U+200E, U+200F, U+061C) is dropped; nothing ever shortened to \"...\" (red-team, 27 Nov: a held browse_act showed `steps: ...`). Written by hand, as data; every app's test reads every case and must produce `lines` exactly.",
+  "about": "A held call's arguments as every app writes them under Details (KIFF's `arguments`, kept while the call is held): one line an argument; the gateway's own (kiff_operation_id, kiff_reason, kiff_about) and an empty string at the top left out; a list's items (1, 2, ...) below its name in the order sent, an object's fields below its name, two spaces deeper each level; keys sorted by Unicode code point at every level, the top and every nested object alike (a dictionary can't keep the order sent); an empty string below the top written as \"\" so a fill with nothing still shows; a number written out without an exponent and without trailing zeros after its point (1.50 is 1.5, 2.0 is 2: the iPhone reads a number as a Double, which keeps no scale), every digit sent, an integer past 2^53 or a decimal longer than a double holds included (parse numbers without loss, never through a double); a newline or any other control character in a key or value becomes one space, so a value can't draw a line of its own, and a direction mark (U+202A-U+202E, U+2066-U+2069, U+200E, U+200F, U+061C) is dropped; nothing ever shortened to \"...\" (red-team, 27 Nov: a held browse_act showed `steps: ...`). Written by hand, as data; every app's test reads every case and must produce `lines` exactly.",
   "cases": [
     {
       "name": "plain values",
@@ -114,6 +114,32 @@
         "    kind: fill",
         "    selector: input[name=payee]",
         "    value: Ana   2:     kind: click     text: Pay"
+      ]
+    },
+    {
+      "name": "decimals with trailing zeros",
+      "arguments": {
+        "amount": 1.50,
+        "rate": 2.0,
+        "tiny": 1.5e-05,
+        "count": 100
+      },
+      "lines": [
+        "amount: 1.5",
+        "count: 100",
+        "rate: 2",
+        "tiny: 0.000015"
+      ]
+    },
+    {
+      "name": "long decimals, written with every digit sent",
+      "arguments": {
+        "long": 0.12345678901234567890,
+        "id_like": 12345678901234567.89
+      },
+      "lines": [
+        "id_like: 12345678901234567.89",
+        "long: 0.1234567890123456789"
       ]
     }
   ]
