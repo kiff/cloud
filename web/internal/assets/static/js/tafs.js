@@ -77,6 +77,48 @@
     if (first && wide.matches) setTimeout(function () { go(first, false); }, 0);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
-  else start();
+  // The videos in their phones (tafsPhone): each plays while at least half of
+  // it is in view and pauses when it leaves, or when the tab is hidden. Muted,
+  // as browsers play only muted video by themselves, and nothing loads before
+  // it plays (preload="none"). With reduced motion, or where the browser won't
+  // play it, the poster stays and the play button plays it with its controls.
+  // Without this file, the video keeps its own controls.
+  function videos() {
+    var list = [].slice.call(document.querySelectorAll(".phone video"));
+    if (!list.length) return;
+    function button(v) { return v.parentNode.querySelector(".play"); }
+    function asked(v) {
+      var b = button(v);
+      if (b) b.hidden = true;
+      v.dataset.asked = "1";
+      v.controls = true;
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function offer(v) { var b = button(v); if (b) b.hidden = false; }
+    list.forEach(function (v) {
+      v.controls = false;
+      var b = button(v);
+      if (b) b.addEventListener("click", function () { asked(v); });
+    });
+    if (still.matches || !("IntersectionObserver" in window)) { list.forEach(offer); return; }
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (v.dataset.asked) return;
+        if (e.intersectionRatio >= 0.5 && !document.hidden && !still.matches) {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () { offer(v); });
+        } else if (!v.paused) v.pause();
+      });
+    }, { threshold: [0, 0.5] });
+    list.forEach(function (v) { seen.observe(v); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) list.forEach(function (v) { if (!v.paused) v.pause(); });
+    });
+  }
+
+  function boot() { start(); videos(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
 })();

@@ -2,6 +2,15 @@ package pages
 
 // tafsPT is /pt/tafs.
 var tafsPT = tafsWords{
+	Shots: tafsShots{
+		Coach:   "O Coach na app tafs aguarda a sua aprovação e repete a regra combinada: até 30 negócios por dia; depois pergunta-lhe.",
+		Card:    "A Card de um taf na app tafs: reembolsos até 50 € cada, acima disso pergunta-lhe primeiro, no máximo 5000 € por dia; tudo o resto é recusado.",
+		Approve: "O Coach pede-lhe que aprove a ligação ao Pipedrive para um taf, com «Aprovar com a sua impressão digital» e «Recusar».",
+		Record:  "O Registo na app tafs: uma reunião marcada por um taf, aprovada por si, feita, com o recibo da KIFF.",
+		Video2:  "Um taf trata um pedido de reembolso dentro da sua Card. Dados de teste.",
+		Video3:  "Um taf marca uma reunião no Google Calendar. Dados de teste.",
+		Play:    "Reproduzir o vídeo",
+	},
 	Cost:        tafsCostPT,
 	Title:       "tafs: agentes de IA que fazem o seu trabalho de rotina",
 	Description: "tafs é uma app em que agentes de IA, os tafs, fazem o trabalho de rotina da sua empresa, como responder a emails, dentro dos limites que define num Card. O que passar dos limites espera pelo seu sim.",

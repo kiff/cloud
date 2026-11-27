@@ -2,6 +2,15 @@ package pages
 
 // tafsPL is /pl/tafs.
 var tafsPL = tafsWords{
+	Shots: tafsShots{
+		Coach:   "Coach w aplikacji tafs czeka na Twoją zgodę i powtarza ustaloną zasadę: do 30 transakcji dziennie, potem pyta Ciebie.",
+		Card:    "Card tafa w aplikacji tafs: zwroty do 50 € każdy, większe najpierw pytają Ciebie, najwyżej 5000 € dziennie; wszystko inne jest odrzucane.",
+		Approve: "Coach prosi Cię o zgodę na połączenie Pipedrive dla tafa, z przyciskami „Zatwierdź przez odcisk palca” i „Odrzuć”.",
+		Record:  "Rejestr w aplikacji tafs: spotkanie zarezerwowane przez tafa, zatwierdzone przez Ciebie, wykonane, z potwierdzeniem KIFF.",
+		Video2:  "Taf obsługuje prośbę o zwrot w granicach swojej Card. Dane testowe.",
+		Video3:  "Taf rezerwuje spotkanie w Kalendarzu Google. Dane testowe.",
+		Play:    "Odtwórz wideo",
+	},
 	Cost:        tafsCostPL,
 	Title:       "tafs: agenci AI, którzy wykonują Twoją rutynową pracę",
 	Description: "tafs to aplikacja, w której agenci AI, zwani tafs, wykonują rutynową pracę Twojej firmy, na przykład odpowiadają na e-maile, w granicach limitów, które ustawiasz na Card. Wszystko ponad limity czeka na Twoje „tak”.",
