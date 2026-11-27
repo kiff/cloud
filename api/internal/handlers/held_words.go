@@ -24,8 +24,10 @@ import (
 //     has one KIFF can name;
 //   - reason_text: "$45 is over the $40 limit for one call", or the
 //     breach's own words when its amount isn't in one unit;
-//   - details: one line an argument ("charge: ch_…"), but the amount and
-//     KIFF's own operation id.
+//   - details: every argument written out in full, as tafs'
+//     contracts/held-arguments.json says (a plain value on its line, a list's
+//     items and an object's fields below it, indented), but the amount and
+//     the gateway's own (kiff_operation_id, kiff_reason, kiff_about);
 //   - answer_url: the hold's own page, where a person answers it (item 23);
 //   - install {taf, n}: for Coach's held version_install, the version it
 //     installs (item 22);
@@ -256,46 +258,93 @@ func heldDetails(args json.RawMessage, params map[string]int64, units map[string
 	if len(args) == 0 || json.Unmarshal(args, &m) != nil {
 		return out
 	}
-	shown := map[string]bool{"kiff_operation_id": true}
+	// The amount is shown above, and the gateway's own arguments (the
+	// operation's id, the taf's words) are said elsewhere.
+	shown := map[string]bool{"kiff_operation_id": true, "kiff_reason": true, "kiff_about": true}
 	for k := range params {
 		shown[strings.ToLower(k)] = true
 	}
 	for k := range units {
 		shown[strings.ToLower(k)] = true
 	}
+	for _, k := range argumentKeys(m) {
+		if shown[strings.ToLower(k)] {
+			continue
+		}
+		// An empty string at the top says nothing.
+		var s string
+		if strings.TrimSpace(string(m[k])) != "null" && json.Unmarshal(m[k], &s) == nil && s == "" {
+			continue
+		}
+		out = append(out, argumentLines(visible(k), m[k], 0)...)
+	}
+	return out
+}
+
+// argumentLines is label's value as lines, as tafs'
+// contracts/held-arguments.json writes them for every app: a plain value on
+// its label's line; a list's items (1, 2, ...) and an object's fields (by
+// key, at every level) below it, two spaces deeper each level. Nothing is
+// shortened: a held browser call's steps are what the owner signs, and a
+// step a line hid could click what the taf's words never said.
+func argumentLines(label string, raw json.RawMessage, depth int) []string {
+	pad := strings.Repeat("  ", depth)
+	var list []json.RawMessage
+	if json.Unmarshal(raw, &list) == nil && list != nil {
+		if len(list) == 0 {
+			return []string{pad + label + ": []"}
+		}
+		out := []string{pad + label + ":"}
+		for i, item := range list {
+			out = append(out, argumentLines(strconv.Itoa(i+1), item, depth+1)...)
+		}
+		return out
+	}
+	var obj map[string]json.RawMessage
+	if json.Unmarshal(raw, &obj) == nil && obj != nil {
+		if len(obj) == 0 {
+			return []string{pad + label + ": {}"}
+		}
+		out := []string{pad + label + ":"}
+		for _, k := range argumentKeys(obj) {
+			out = append(out, argumentLines(visible(k), obj[k], depth+1)...)
+		}
+		return out
+	}
+	return []string{pad + label + ": " + visible(argumentText(raw))}
+}
+
+// argumentKeys is m's keys in byte order, which for UTF-8 is code point order.
+func argumentKeys(m map[string]json.RawMessage) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	more := 0
-	for _, k := range keys {
-		if shown[strings.ToLower(k)] {
-			continue
-		}
-		t := argumentText(m[k])
-		if t == "" {
-			continue
-		}
-		if len(out) == heldDetailLines {
-			more++
-			continue
-		}
-		out = append(out, cut(k+": "+t, heldLineMax))
-	}
-	if more > 0 {
-		out = append(out, "and "+strconv.Itoa(more)+" more")
-	}
-	return out
+	return keys
 }
 
-// heldLineMax and heldDetailLines bound what a held call says, in runes and
-// in lines: an argument can be an email's body, and the card shows its
-// lines whole. The call's own page has every argument as KIFF keeps them.
-const (
-	heldLineMax     = 200
-	heldDetailLines = 20
-)
+// visible is a line from a taf as a card draws it: no direction mark
+// (U+202A-U+202E, U+2066-U+2069, U+200E, U+200F, U+061C), so a payee's name
+// can't reorder what's beside it, and any other control character, a line
+// break too, a space, so a value can't draw a line of its own.
+func visible(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		switch {
+		case (r >= 0x202A && r <= 0x202E) || (r >= 0x2066 && r <= 0x2069) || r == 0x200E || r == 0x200F || r == 0x061C:
+		case unicode.IsControl(r):
+			b.WriteByte(' ')
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
+// heldLineMax bounds a held call's summary, in runes. Its details are never
+// cut: what the owner signs is every argument.
+const heldLineMax = 200
 
 // cut is s within max runes, ending in "…" when it was longer.
 func cut(s string, max int) string {
@@ -306,22 +355,56 @@ func cut(s string, max int) string {
 	return string(r[:max-1]) + "…"
 }
 
-// argumentText is one argument as text: a string as it is, a number or a
-// flag written out, anything else "…".
+// argumentText is one plain argument as text: a string as it is (an empty
+// one as "", so a fill with nothing still shows), a number exactly as sent
+// but written out plainly ("0.000015", never "1.5e-05"; an integer past 2^53
+// too), a flag as true or false, a null as null.
 func argumentText(raw json.RawMessage) string {
+	t := strings.TrimSpace(string(raw))
+	if t == "null" {
+		return "null"
+	}
 	var s string
 	if json.Unmarshal(raw, &s) == nil {
+		if s == "" {
+			return `""`
+		}
 		return s
-	}
-	var n json.Number
-	dec := json.NewDecoder(strings.NewReader(string(raw)))
-	dec.UseNumber()
-	if dec.Decode(&n) == nil {
-		return n.String()
 	}
 	var b bool
 	if json.Unmarshal(raw, &b) == nil {
 		return strconv.FormatBool(b)
 	}
-	return "…"
+	return plainNumber(t)
+}
+
+// plainNumber is a JSON number written without an exponent, keeping its
+// digits and scale as Java's BigDecimal.toPlainString does: "1.5e-05" is
+// "0.000015", "1E+3" is "1000", "1.50" stays "1.50".
+func plainNumber(n string) string {
+	sign := ""
+	if strings.HasPrefix(n, "-") {
+		sign, n = "-", n[1:]
+	}
+	mant, exp := n, 0
+	if i := strings.IndexAny(n, "eE"); i >= 0 {
+		e, err := strconv.Atoi(strings.TrimPrefix(n[i+1:], "+"))
+		if err != nil {
+			return sign + n
+		}
+		mant, exp = n[:i], e
+	}
+	whole, frac, _ := strings.Cut(mant, ".")
+	digits := strings.TrimLeft(whole+frac, "0")
+	scale := len(frac) - exp
+	if digits == "" {
+		return "0"
+	}
+	if scale <= 0 {
+		return sign + digits + strings.Repeat("0", -scale)
+	}
+	if len(digits) <= scale {
+		digits = strings.Repeat("0", scale-len(digits)+1) + digits
+	}
+	return sign + digits[:len(digits)-scale] + "." + digits[len(digits)-scale:]
 }
