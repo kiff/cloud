@@ -3,7 +3,6 @@ package gateway
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -29,14 +28,50 @@ func schemaChecked(t Tool, relays []string, tenant string) bool {
 	return connectionGrant(t, relays, tenant) != "" && strings.HasPrefix(t.UpstreamTool, "browse_")
 }
 
-// schemaRefusal is why args don't fit schema, as the agent reads it, or ""
-// when they do, when there's no schema, or when it isn't one this check reads.
-func schemaRefusal(schema json.RawMessage, args map[string]any) string {
-	if len(schema) == 0 {
+// toolSchemaRefusal is why args, as splitArgs left them, don't fit t's
+// schema as tools/list serves it to the agent: without the idempotency
+// argument and the fixed arguments, which KIFF sets and the agent never does
+// (dropArg, as listed). The gateway's own request argument isn't the tool's
+// either, so it isn't checked.
+func toolSchemaRefusal(t Tool, args map[string]any) string {
+	if len(t.InputSchema) == 0 {
 		return ""
 	}
 	var s map[string]any
-	if json.Unmarshal(schema, &s) != nil || !readable(s) {
+	if json.Unmarshal(t.InputSchema, &s) != nil || s == nil {
+		return ""
+	}
+	props, _ := s["properties"].(map[string]any)
+	if props == nil {
+		props = map[string]any{}
+	}
+	if t.IdempotencyArg != "" {
+		dropArg(s, props, t.IdempotencyArg)
+	}
+	if fixed, err := t.fixedArgs(); err == nil {
+		for k := range fixed {
+			dropArg(s, props, k)
+		}
+	}
+	if _, had := s["properties"]; had {
+		s["properties"] = props
+	}
+	if _, theirs := args[RequestArg]; theirs {
+		own := make(map[string]any, len(args))
+		for k, v := range args {
+			if k != RequestArg {
+				own[k] = v
+			}
+		}
+		args = own
+	}
+	return schemaRefusal(s, args)
+}
+
+// schemaRefusal is why args don't fit s, as the agent reads it, or "" when
+// they do, or when s isn't a schema this check reads.
+func schemaRefusal(s map[string]any, args map[string]any) string {
+	if !readable(s) {
 		return ""
 	}
 	if why := fits(s, args, "arguments"); why != "" {
@@ -111,8 +146,6 @@ func readable(s map[string]any) bool {
 	return true
 }
 
-var integerText = regexp.MustCompile(`^-?(0|[1-9][0-9]*)$`)
-
 // fits is why v doesn't fit s, at path, or "".
 func fits(s map[string]any, v any, path string) string {
 	if t, ok := s["type"].(string); ok {
@@ -130,8 +163,11 @@ func fits(s map[string]any, v any, path string) string {
 				n++
 			}
 		}
-		if n != 1 {
+		switch {
+		case n == 0:
 			return path + " is none of the forms it allows: give it exactly one form's keys, each the form requires"
+		case n > 1:
+			return path + " fits more than one of the forms it allows: give it exactly one form's keys"
 		}
 	}
 	switch x := v.(type) {
@@ -206,8 +242,9 @@ func typed(t string, v any, path string) string {
 	case "number":
 		_, ok = v.(json.Number)
 	case "integer":
+		// By value, as JSON Schema reads it: 2.0 and 1e2 are integers.
 		n, isNum := v.(json.Number)
-		ok = isNum && integerText.MatchString(string(n))
+		ok = isNum && integral(string(n))
 	case "null":
 		ok = v == nil
 	}
@@ -215,6 +252,35 @@ func typed(t string, v any, path string) string {
 		return ""
 	}
 	return path + " isn't " + article(t) + " " + t
+}
+
+// integral says the JSON number n is a whole number, from its digits alone:
+// no arithmetic on its exponent, however large ("1e999999999" is whole).
+func integral(n string) bool {
+	n = strings.TrimPrefix(n, "-")
+	mant, expText, hasExp := strings.Cut(strings.ToLower(n), "e")
+	whole, frac, _ := strings.Cut(mant, ".")
+	frac = strings.TrimRight(frac, "0")
+	if strings.Trim(whole+frac, "0") == "" {
+		return true // zero
+	}
+	if frac == "" {
+		// A whole mantissa: whole for any exponent but a negative one, which
+		// divides it by ten that many times.
+		if !hasExp || !strings.HasPrefix(expText, "-") {
+			return true
+		}
+	}
+	exp, err := strconv.Atoi(strings.TrimPrefix(expText, "+"))
+	if hasExp && err != nil {
+		return !strings.HasPrefix(expText, "-") // past an int: huge (whole) or tiny (not)
+	}
+	digits := strings.TrimLeft(whole+frac, "0")
+	scale := len(frac) - exp
+	for strings.HasSuffix(digits, "0") {
+		digits, scale = digits[:len(digits)-1], scale-1
+	}
+	return scale <= 0
 }
 
 func article(t string) string {

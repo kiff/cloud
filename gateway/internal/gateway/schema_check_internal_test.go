@@ -34,31 +34,32 @@ func argsOf(t *testing.T, raw string) map[string]any {
 // call a red-team found, a fill with the field's words in option and no
 // label, is refused here now, before the owner is asked about it.
 func TestABrowserCallIsCheckedAgainstItsSchema(t *testing.T) {
-	schema := json.RawMessage(browseActSchema)
+	browser := Tool{InputSchema: json.RawMessage(browseActSchema)}
 	for _, ok := range []string{
 		`{"url":"https://shop.example/","read":"r1","steps":[{"fill":"f1","value":"Test","label":"Customer name"}]}`,
 		`{"url":"https://shop.example/","steps":[{"click":"c1","label":"Submit order","submits":true},{"back":true}]}`,
 		`{"url":"https://shop.example/","steps":[{"press":"f1","key":"Enter","label":"Search","submits":true}]}`,
-		`{"url":"https://shop.example/","steps":[{"select":"s1","option":"Large","label":"Size"}],"extra":"kept"}`, // the top takes other keys
+		// the top takes other keys
+		`{"url":"https://shop.example/","steps":[{"select":"s1","option":"Large","label":"Size"}],"extra":"kept"}`,
 	} {
-		if why := schemaRefusal(schema, argsOf(t, ok)); why != "" {
+		if why := toolSchemaRefusal(browser, argsOf(t, ok)); why != "" {
 			t.Errorf("%s: %s", ok, why)
 		}
 	}
-	for raw, want := range map[string]string{
-		`{"url":"https://shop.example/","steps":[{"fill":"f1","value":"Test","option":"Customer name:"}]}`: "arguments.steps.1 is none of the forms",
-		`{"url":"https://shop.example/","steps":[{"fill":"f1","value":"Test"}]}`:                           "arguments.steps.1 is none of the forms",
-		`{"url":"https://shop.example/","steps":[{"click":"c1","label":"Go","select":"s1"}]}`:              "arguments.steps.1 is none of the forms",
-		`{"url":"https://shop.example/","steps":[{"press":"f1","key":"Tab","label":"Search"}]}`:            "arguments.steps.1 is none of the forms",
-		`{"url":"https://shop.example/","steps":[{"back":false}]}`:                                         "arguments.steps.1 is none of the forms",
-		`{"steps":[]}`: "arguments is missing url",
-		`{"url":"https://shop.example/","steps":"click it"}`:        "arguments.steps isn't an array",
-		`{"url":42,"steps":[]}`:                                     "arguments.url isn't a string",
-		`{"url":"https://shop.example/","steps":[` + strings.Repeat(`{"back":true},`, 20) + `{"back":true}]}`: "arguments.steps has 21 items, more than 20",
+	for _, c := range []struct{ raw, want string }{
+		{`{"url":"https://shop.example/","steps":[{"fill":"f1","value":"Test","option":"Customer name:"}]}`, "arguments.steps.1 is none of the forms"},
+		{`{"url":"https://shop.example/","steps":[{"fill":"f1","value":"Test"}]}`, "arguments.steps.1 is none of the forms"},
+		{`{"url":"https://shop.example/","steps":[{"click":"c1","label":"Go","select":"s1"}]}`, "arguments.steps.1 is none of the forms"},
+		{`{"url":"https://shop.example/","steps":[{"press":"f1","key":"Tab","label":"Search"}]}`, "arguments.steps.1 is none of the forms"},
+		{`{"url":"https://shop.example/","steps":[{"back":false}]}`, "arguments.steps.1 is none of the forms"},
+		{`{"steps":[]}`, "arguments is missing url"},
+		{`{"url":"https://shop.example/","steps":"click it"}`, "arguments.steps isn't an array"},
+		{`{"url":42,"steps":[]}`, "arguments.url isn't a string"},
+		{`{"url":"https://shop.example/","steps":[` + strings.Repeat(`{"back":true},`, 20) + `{"back":true}]}`, "arguments.steps has 21 items, more than 20"},
 	} {
-		why := schemaRefusal(schema, argsOf(t, raw))
-		if !strings.Contains(why, want) || !strings.HasPrefix(why, "the arguments don't fit the tool's schema: ") {
-			t.Errorf("%.80s: %q, want %q", raw, why, want)
+		why := toolSchemaRefusal(browser, argsOf(t, c.raw))
+		if !strings.Contains(why, c.want) || !strings.HasPrefix(why, "the arguments don't fit the tool's schema: ") {
+			t.Errorf("%.80s: %q, want %q", c.raw, why, c.want)
 		}
 	}
 }
@@ -74,29 +75,31 @@ func TestASchemaTheCheckCantReadIsNotChecked(t *testing.T) {
 		`{"type":"object","additionalProperties":{"type":"string"},"properties":{"url":{"type":"string"}}}`,
 		`{"type":"object","properties":{"url":{"$ref":"#/defs/u"}}}`,
 		`{"type":"object","properties":{"url":{"type":["string","null"]}}}`,
-		`{"type":"object","properties":{"x":{"oneOf":[{"type":"string"}]}},"required":["url"]}`, // oneOf of a non-object
+		// a oneOf of a non-object
+		`{"type":"object","properties":{"x":{"oneOf":[{"type":"string"}]}},"required":["url"]}`,
 		`not json`,
 		``,
 	} {
-		if why := schemaRefusal(json.RawMessage(s), bad); why != "" {
+		if why := toolSchemaRefusal(Tool{InputSchema: json.RawMessage(s)}, bad); why != "" {
 			t.Errorf("%s: checked (%q) though the check can't read it", s, why)
 		}
 	}
 	// The same arguments against a schema it reads: refused.
-	if why := schemaRefusal(json.RawMessage(`{"type":"object","properties":{"url":{"type":"string","description":"https"}}}`), bad); why == "" {
+	if why := toolSchemaRefusal(Tool{InputSchema: json.RawMessage(`{"type":"object","properties":{"url":{"type":"string","description":"https"}}}`)}, bad); why == "" {
 		t.Error("a schema the check reads didn't refuse a number for a string")
 	}
 }
 
-// Numbers read as the gateway reads them (json.Number): an integer is one
-// with no fraction or exponent, and bounds and enums compare by value.
+// Numbers read as the gateway reads them (json.Number), by value as JSON
+// Schema reads them: 3.0 is an integer, 2.5 isn't; bounds and enums compare
+// by value.
 func TestASchemasNumbersAreReadAsSent(t *testing.T) {
-	s := json.RawMessage(`{"type":"object","properties":{"n":{"type":"integer","minimum":1,"maximum":5},"k":{"type":"number","enum":[1.5,2]}}}`)
+	s := Tool{InputSchema: json.RawMessage(`{"type":"object","properties":{"n":{"type":"integer","minimum":1,"maximum":5},"k":{"type":"number","enum":[1.5,2]}}}`)}
 	for raw, refused := range map[string]bool{
-		`{"n":3}`: false, `{"n":3.0}`: true, `{"n":1e1}`: true, `{"n":0}`: true, `{"n":6}`: true,
+		`{"n":3}`: false, `{"n":3.0}`: false, `{"n":30e-1}`: false, `{"n":2.5}`: true, `{"n":1e1}`: true, `{"n":0}`: true, `{"n":6}`: true,
 		`{"k":1.5}`: false, `{"k":2.0}`: false, `{"k":3}`: true, `{"k":"2"}`: true,
 	} {
-		if why := schemaRefusal(s, argsOf(t, raw)); (why != "") != refused {
+		if why := toolSchemaRefusal(s, argsOf(t, raw)); (why != "") != refused {
 			t.Errorf("%s: %q, want refused %v", raw, why, refused)
 		}
 	}
@@ -125,5 +128,49 @@ func TestOnlyAPlanqueBrowserToolIsChecked(t *testing.T) {
 		if got := schemaChecked(c.t, relays, "t1"); got != c.want {
 			t.Errorf("%s: %v", c.name, got)
 		}
+	}
+}
+
+// A whole number is told from its digits, never by arithmetic on its
+// exponent: 1e999999999 is answered at once.
+func TestIntegralReadsDigitsOnly(t *testing.T) {
+	for n, want := range map[string]bool{
+		"0": true, "-0.0": true, "7": true, "7.0": true, "7.10": false, "1e2": true, "1.5e1": true, "1.25e1": false,
+		"100e-2": true, "101e-2": false, "1e999999999": true, "1e-999999999": false, "0e-999999999999999999999": true,
+		"2e99999999999999999999": true, "2e-99999999999999999999": false,
+	} {
+		if got := integral(n); got != want {
+			t.Errorf("integral(%s) = %v", n, got)
+		}
+	}
+}
+
+// The schema checked is the one the agent is served: the idempotency argument
+// and the connection's fixed arguments are KIFF's to set, so a fixed required
+// argument is never asked of the call, and the gateway's own request
+// argument isn't the tool's.
+func TestTheSchemaCheckedIsTheOneTheAgentIsServed(t *testing.T) {
+	tool := Tool{
+		InputSchema:    json.RawMessage(`{"type":"object","required":["url","steps","op_key"],"additionalProperties":false,"properties":{"url":{"type":"string"},"op_key":{"type":"string"},"steps":{"type":"array"}}}`),
+		IdempotencyArg: "op_key",
+		FixedArgs:      json.RawMessage(`{"url":"https://shop.example/"}`),
+	}
+	if why := toolSchemaRefusal(tool, argsOf(t, `{"steps":[]}`)); why != "" {
+		t.Fatalf("the agent followed the schema it was served: %s", why)
+	}
+	if why := toolSchemaRefusal(tool, argsOf(t, `{"steps":[],"`+RequestArg+`":{"x":1}}`)); why != "" {
+		t.Fatalf("the gateway's own request argument: %s", why)
+	}
+	if why := toolSchemaRefusal(tool, argsOf(t, `{}`)); !strings.Contains(why, "arguments is missing steps") {
+		t.Fatalf("still checked: %q", why)
+	}
+}
+
+// A value that fits two forms is told so, not "none".
+func TestAValueThatFitsTwoFormsIsToldSo(t *testing.T) {
+	tool := Tool{InputSchema: json.RawMessage(`{"type":"object","properties":{"x":{"type":"object","oneOf":[` +
+		`{"type":"object","properties":{"a":{"type":"string"}}},{"type":"object","properties":{"b":{"type":"string"}}}]}}}`)}
+	if why := toolSchemaRefusal(tool, argsOf(t, `{"x":{}}`)); !strings.Contains(why, "arguments.x fits more than one of the forms") {
+		t.Fatalf("%q", why)
 	}
 }
