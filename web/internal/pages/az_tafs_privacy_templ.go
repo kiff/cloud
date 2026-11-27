@@ -48,7 +48,7 @@ func TafsPrivacyAZ() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · məxfilik siyasəti</p><h1>tafs Məxfilik Siyasəti</h1><p class=\"legal-meta\"><strong>Son yenilənmə:</strong> 25 noyabr 2026.</p><p class=\"legal-disclaimer\">Bu siyasət tafs, KIFF-in iPhone, iPad, Android və kompüterlər üçün tətbiqinin şəxsi məlumatlarla necə rəftar etdiyini izah edir. tafs KIFF Cloud-un bir hissəsidir, buna görə <a href=\"/az/privacy\">KIFF-in Məxfilik Siyasəti</a> də ona və bu səhifənin əhatə etmədiyi hər şeyə tətbiq olunur. Suallar: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Biz kimik</h2><p>tafs-ı Estoniyada təsis edilmiş məhdud məsuliyyətli xüsusi şirkət olan <strong>Kiff Agents OÜ</strong> (reyestr kodu 17372313, ƏDV nömrəsi EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya ünvanında təqdim edir. Avropa İttifaqının Ümumi Məlumatların Müdafiəsi Qaydası (GDPR) emalımıza tətbiq olunur.</p></section><section id=\"scope\"><h2>2. Bu siyasət nəyi əhatə edir</h2><p>iPhone, iPad, Android və kompüterlər (Mac, Windows və Linux) üçün tafs tətbiqi və onun arxasındakı xidmət, şirkətin alətlərini birləşdirən Setup və bu əlaqələri saxlayan planque daxil olmaqla. tafs-da şirkət işi KIFF Card-ları daxilində işləyən AI agentinə, taf-a həvalə edir.</p></section><section id=\"roles\"><h2>3. Rollarımız</h2><p>Biz hesabınızın və giriş məlumatlarınızın və öz xidmətimizin əməliyyat məlumatlarının <strong>nəzarətçisiyik</strong>. Şirkətinizin adından, tafs-ın onun üçün saxladıqları üçün <strong>emal edən</strong> kimi çıxış edirik: hər taf-ın icraları, söhbətləri, hesabatları, yaddaş qeydləri və təqdim etdiyi fayllar. Şirkətiniz həmin məlumatların nəzarətçisidir və <a href=\"/legal/dpa\">DPA</a> (ingiliscə) bu münasibəti tənzimləyir.</p></section><section id=\"data\"><h2>4. tafs nəyi toplayır</h2><ul><li><strong>Hesabınız:</strong> tafs-a KIFF hesabınızla daxil olursunuz. Telefon və ya planşetdə tətbiq sessiyanızı cihazın Keychain-ində saxlayır (Android-də onun şifrələnmiş yaddaşında). Kompüterdə onu istifadəçi hesabınız üçün möhürlənmiş saxlayır: Windows PC-də Windows-un öz məlumat müdafiəsi ilə, Linux-da keyring-də, Mac-də Keychain-də. Kompüter sessiyası 90 günə qədər davam edir.</li><li><strong>Cihazınız:</strong> tətbiq cihazı heç vaxt tərk etməyən imza açarı yaradır: iPhone, iPad və ya Mac-in Secure Enclave-ində, Android cihazının Keystore-unda və ya Windows PC-nin TPM-ində. Linux-da və Secure Enclave olmayan Mac-də açar keyring-də və ya Keychain-də saxlanılan proqram açarıdır və həmin kompüter sizi nəyin gözlədiyini göstərə bilər, lakin təsdiq edə bilməz; telefonunuzda təsdiq edirsiniz")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · məxfilik siyasəti</p><h1>tafs Məxfilik Siyasəti</h1><p class=\"legal-meta\"><strong>Son yenilənmə:</strong> 27 noyabr 2026.</p><p class=\"legal-disclaimer\">Bu siyasət tafs, KIFF-in iPhone, iPad, Android və kompüterlər üçün tətbiqinin şəxsi məlumatlarla necə rəftar etdiyini izah edir. tafs KIFF Cloud-un bir hissəsidir, buna görə <a href=\"/az/privacy\">KIFF-in Məxfilik Siyasəti</a> də ona və bu səhifənin əhatə etmədiyi hər şeyə tətbiq olunur. Suallar: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Biz kimik</h2><p>tafs-ı Estoniyada təsis edilmiş məhdud məsuliyyətli xüsusi şirkət olan <strong>Kiff Agents OÜ</strong> (reyestr kodu 17372313, ƏDV nömrəsi EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estoniya ünvanında təqdim edir. Avropa İttifaqının Ümumi Məlumatların Müdafiəsi Qaydası (GDPR) emalımıza tətbiq olunur.</p></section><section id=\"scope\"><h2>2. Bu siyasət nəyi əhatə edir</h2><p>iPhone, iPad, Android və kompüterlər (Mac, Windows və Linux) üçün tafs tətbiqi və onun arxasındakı xidmət, şirkətin alətlərini birləşdirən Setup və bu əlaqələri saxlayan planque daxil olmaqla. tafs-da şirkət işi KIFF Card-ları daxilində işləyən AI agentinə, taf-a həvalə edir.</p></section><section id=\"roles\"><h2>3. Rollarımız</h2><p>Biz hesabınızın və giriş məlumatlarınızın və öz xidmətimizin əməliyyat məlumatlarının <strong>nəzarətçisiyik</strong>. Şirkətinizin adından, tafs-ın onun üçün saxladıqları üçün <strong>emal edən</strong> kimi çıxış edirik: hər taf-ın icraları, söhbətləri, hesabatları, yaddaş qeydləri və təqdim etdiyi fayllar. Şirkətiniz həmin məlumatların nəzarətçisidir və <a href=\"/legal/dpa\">DPA</a> (ingiliscə) bu münasibəti tənzimləyir.</p></section><section id=\"data\"><h2>4. tafs nəyi toplayır</h2><ul><li><strong>Hesabınız:</strong> tafs-a KIFF hesabınızla daxil olursunuz. Telefon və ya planşetdə tətbiq sessiyanızı cihazın Keychain-ində saxlayır (Android-də onun şifrələnmiş yaddaşında). Kompüterdə onu istifadəçi hesabınız üçün möhürlənmiş saxlayır: Windows PC-də Windows-un öz məlumat müdafiəsi ilə, Linux-da keyring-də, Mac-də Keychain-də. Kompüter sessiyası 90 günə qədər davam edir.</li><li><strong>Cihazınız:</strong> tətbiq cihazı heç vaxt tərk etməyən imza açarı yaradır: iPhone, iPad və ya Mac-in Secure Enclave-ində, Android cihazının Keystore-unda və ya Windows PC-nin TPM-ində. Linux-da və Secure Enclave olmayan Mac-də açar keyring-də və ya Keychain-də saxlanılan proqram açarıdır və həmin kompüter sizi nəyin gözlədiyini göstərə bilər, lakin təsdiq edə bilməz; telefonunuzda təsdiq edirsiniz")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -97,7 +97,33 @@ func TafsPrivacyAZ() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>Taf-larınızın işi:</strong> hər taf-ın icraları, söhbətləri, hesabatları, yaddaş qeydləri və təqdim etdiyi fayllar, emal edən kimi saxlanılır. Hesabınızdakı hər kəs taf-larınızın təqdim etdiyi faylları görə bilər.</li><li><strong>Qapılar:</strong> insanların taf-a e-poçt, Slack və ya Telegram ilə yaza bilməsi üçün qapı açdığınızda, tafs xidməti cütləşdirdiyiniz hər göndərəni e-poçt ünvanı, Slack üzv ID-si və ya Telegram istifadəçi ID-si ilə (WhatsApp qapısı üçün telefon nömrəsi ilə) və ona verdiyiniz adla, qapını və ya taf-ı silənə qədər saxlayır. Cütləşdirmədiyiniz birinin mesajı döymə kimi, kimin yazdığı və nə yazdığı ilə, sonuncu döymədən sonra 30 günə qədər sizi gözləyir. Cütləşdirilmiş göndərənin mesajı taf-ın söhbətinə düşür və söhbətin qalan hissəsi kimi saxlanılır. Slack və Telegram mesajları öz şərtləri ilə daşıyır.</li><li><strong>Alışlar:</strong> Solo və kredit paketləri Apple tərəfindən App Store vasitəsilə, ya da Google tərəfindən Google Play-in faktura sistemi vasitəsilə satılır. Onlar bizə nə alındığını, hansı KIFF hesabı üçün (təsadüfi id), nə vaxt və əməliyyat və ya sifariş istinadlarını bildirirlər. Bizə Apple ID-nizi və ya Google hesabınızı, adınızı, e-poçt ünvanınızı və ya kartınızı vermirlər.</li></ul><p>Tətbiqin analitika və ya reklam izləyiciləri yoxdur.</p></section><section id=\"ai\"><h2>5. tafs-dakı AI</h2><p>tafs Coach və taf-larınız üçün Anthropic-in Claude AI-ından istifadə edir. Onu bizim üçün Anthropic və ya subprosessorlar səhifəmizdəki bulud provayderlərindən biri işlədir. O səhifə hansı olduğunu və harada olduğunu göstərir. Tətbiq hər hansı şey ona göndərilməzdən əvvəl sizdən soruşur.</p><ul><li>Ona nə göndərilir: Coach-a və taf-larınıza yazdıqlarınız, əlavə etdiyiniz fayllar, qoşulmuş tətbiqlərinizin taf-a işləyərkən qaytardıqları və Coach tətbiqdə sizə kömək edərkən ekranınızda olanlar.</li><li>Chrome-dan: əlavənin yan panelində Coach-a yazdığınız zaman öndəki səhifə, Coach-a orada səhifələri oxumağa icazə verdikdən sonra. Orada öz saytlarından birində olan bir taf-a yazdığınız zaman da.</li><li>Heç vaxt nə göndərilmir: qoşulmuş tətbiqlərinizin istifadə etdiyi parollar və açarlar və ya barmaq iziniz.</li><li>Onu işlədən şirkət ondan cavab vermək üçün istifadə edir və 30 gün ərzində silir, istifadə qaydalarını pozduğu qeyd olunmadıqca və ya qanun saxlanmasını tələb etmədikcə.</li><li>İcazə verməyincə heç nə göndərilmir. Hesabda geri götürə bilərsiniz.</li></ul><p>Geri götürdükdə, Coach və taf-larınız sizə cavab verməyi dayandırır, və icraları razılığınıza əsaslanan taf fasilə verir. tafs verdiyiniz və ya geri götürdüyünüz hər razılığın qeydini, nə vaxt və sözlərinin hansı versiyası ilə olduğunu, nəyə razılıq verdiyinizi göstərmək üçün son dəyişiklikdən 10 il saxlayır; hesabınızı silmək onu daha tez silir. <a href=\"/az/privacy#ai-in-tafs\">KIFF-in Məxfilik Siyasəti</a> təfərrüatlara malikdir.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("az").Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 47, Col: 44}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("az").Text)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 47, Col: 82}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Taf-larınızın işi:</strong> hər taf-ın icraları, söhbətləri, hesabatları, yaddaş qeydləri və təqdim etdiyi fayllar, emal edən kimi saxlanılır. Hesabınızdakı hər kəs taf-larınızın təqdim etdiyi faylları görə bilər.</li><li><strong>Qapılar:</strong> insanların taf-a e-poçt, Slack və ya Telegram ilə yaza bilməsi üçün qapı açdığınızda, tafs xidməti cütləşdirdiyiniz hər göndərəni e-poçt ünvanı, Slack üzv ID-si və ya Telegram istifadəçi ID-si ilə (WhatsApp qapısı üçün telefon nömrəsi ilə) və ona verdiyiniz adla, qapını və ya taf-ı silənə qədər saxlayır. Cütləşdirmədiyiniz birinin mesajı döymə kimi, kimin yazdığı və nə yazdığı ilə, sonuncu döymədən sonra 30 günə qədər sizi gözləyir. Cütləşdirilmiş göndərənin mesajı taf-ın söhbətinə düşür və söhbətin qalan hissəsi kimi saxlanılır. Slack və Telegram mesajları öz şərtləri ilə daşıyır.</li><li><strong>Alışlar:</strong> Solo və kredit paketləri Apple tərəfindən App Store vasitəsilə, ya da Google tərəfindən Google Play-in faktura sistemi vasitəsilə satılır. Onlar bizə nə alındığını, hansı KIFF hesabı üçün (təsadüfi id), nə vaxt və əməliyyat və ya sifariş istinadlarını bildirirlər. Bizə Apple ID-nizi və ya Google hesabınızı, adınızı, e-poçt ünvanınızı və ya kartınızı vermirlər.</li></ul><p>Tətbiqin analitika və ya reklam izləyiciləri yoxdur.</p></section><section id=\"ai\"><h2>5. tafs-dakı AI</h2><p>tafs Coach və taf-larınız üçün Anthropic-in Claude AI-ından istifadə edir. Onu bizim üçün Anthropic və ya subprosessorlar səhifəmizdəki bulud provayderlərindən biri işlədir. O səhifə hansı olduğunu və harada olduğunu göstərir. Tətbiq hər hansı şey ona göndərilməzdən əvvəl sizdən soruşur.</p><ul><li>Ona nə göndərilir: Coach-a və taf-larınıza yazdıqlarınız, əlavə etdiyiniz fayllar, qoşulmuş tətbiqlərinizin taf-a işləyərkən qaytardıqları və Coach tətbiqdə sizə kömək edərkən ekranınızda olanlar.</li><li>Chrome-dan: əlavənin yan panelində Coach-a yazdığınız zaman öndəki səhifə, Coach-a orada səhifələri oxumağa icazə verdikdən sonra. Orada öz saytlarından birində olan bir taf-a yazdığınız zaman da.</li><li>Heç vaxt nə göndərilmir: qoşulmuş tətbiqlərinizin istifadə etdiyi parollar və açarlar və ya barmaq iziniz.</li><li>Onu işlədən şirkət ondan cavab vermək üçün istifadə edir və 30 gün ərzində silir, istifadə qaydalarını pozduğu qeyd olunmadıqca və ya qanun saxlanmasını tələb etmədikcə.</li><li>İcazə verməyincə heç nə göndərilmir. Hesabda geri götürə bilərsiniz.</li></ul><p>Geri götürdükdə, Coach və taf-larınız sizə cavab verməyi dayandırır, və icraları razılığınıza əsaslanan taf fasilə verir. tafs verdiyiniz və ya geri götürdüyünüz hər razılığın qeydini, nə vaxt və sözlərinin hansı versiyası ilə olduğunu, nəyə razılıq verdiyinizi göstərmək üçün son dəyişiklikdən 10 il saxlayır; hesabınızı silmək onu daha tez silir. <a href=\"/az/privacy#ai-in-tafs\">KIFF-in Məxfilik Siyasəti</a> təfərrüatlara malikdir.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -105,7 +131,7 @@ func TafsPrivacyAZ() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section id=\"sharing\"><h2>7. Başqa kim məlumat alır</h2><p>Şəxsi məlumatlarınızı satmırıq və reklam üçün paylaşmırıq.</p><p>tafs üçün bu şirkətlərdən istifadə edirik: Amazon Web Services (hostinq, o cümlədən tafs-ın anbarı və planque-in əlaqələri), Clerk (KIFF hesabları üçün giriş), Anthropic (AI modeli, Anthropic, Amazon Web Services, Google Cloud və ya Microsoft Azure tərəfindən işlədilir), Composio (idarə olunan əlaqələrin girişləri və planque-in ondan etməsini xahiş etdiyi zənglər), Apple (push bildirişləri), Google (Android-də push bildirişləri və Google Play-in fakturası) və Resend (taf-ın e-poçt qapısı). Rəsmi, cari siyahı, hər birinin nəyə toxunduğu və harada ilə birlikdə, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanındadır.</p><p>Onlardan bəziləri Avropa İqtisadi Zonasından kənardadır, əsasən Birləşmiş Ştatlarda. <a href=\"/az/privacy#transfers\">KIFF-in Məxfilik Siyasəti</a> həmin ötürmələrin necə qorunduğunu deyir.</p><p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href=\"/privacy/countries\">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p></section><section id=\"retention\"><h2>8. Nə qədər saxlayırıq</h2><ul><li>Alətlərinizin taf-a qaytardıqları: yalnız icra bitənə qədər. Söhbətdə yalnız oxunanlar sonrakı mesajları üçün şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir.</li><li>Taf-ın icraları və söhbətləri, söhbətin xülasəsi ilə: 30 gün. Onun yaddaş qeydləri: taf silinənə qədər. Coach ilə öz söhbətlərinizdən birini daha tez silə bilərsiniz: onun mesajları və əlavə etdiyiniz fayllar dərhal silinir, hər icranın baş verməsi, vaxtı və dəyəri barədə qeyd isə həmin 30 gün qalır. Bir cavabı şikayət etsəniz, KIFF həmin cavabı, səbəbinizi və qeydinizi 180 gün və ya həmin söhbəti, yaxud hesabınızı silənə qədər saxlayır. KIFF onları həmçinin şikayətləri oxuyan komandaya e-poçtla göndərir və həmin məktub KIFF-in dəstək məktubları kimi saxlanılır.</li><li>Coach-un sonrakı cavabı üçün qısa qeydləri, məsələn söhbətdə əlaqənin niyə qurulmadığı və ya Card-ın təsdiq edildiyi: həmin cavab onları götürənə qədər, ən çoxu 7 gün; bundan sonra həmin söhbətin bir hissəsi kimi, söhbət saxlanıldığı müddətdə. Nüsxə 24 saat saxlanılır ki, yenidən göndərilən mesaj eyni qeydi alsın. Söhbətin qeydi yalnız həmin söhbətdə istifadə olunur.</li><li>Söhbətdə əlavə etdiyiniz fayllar: əlavə olunduğu mesajla birlikdə, 30 gün, ya da söhbət silinərsə daha tez, və hər halda 38 gün ərzində. Heç bir mesajın istifadə etmədiyi fayl yükləməyinizdən təxminən bir saat sonra silinir. Hesabınızın silinməsi onları silir.</li><li>Taf-larınızın təqdim etdiyi fayllar: onları yaradan icradan 30 gün, sonra bir gün ərzində avtomatik silinir. Hesabınızdakı hər kəs birini Dərhal sil ilə daha tez silə bilər: faylın özü dərhal yox olur, heç bir nüsxə saxlanılmır; onun adı, ölçüsü və onu yaradan taf və icra tafs-ın anbarının şifrələnmiş zamanla nüsxələrində 35 günə qədər qala bilər, yalnız nasazlıqdan sonra bərpa üçün istifadə olunur. Taf-ın silinməsi və ya hesabınızın silinməsi onun fayllarını silir. Faylın paylaşılması faylın özünü göndərir və paylaşdığınız nüsxə paylaşdığınız tətbiqdə qalır. Faylı yükləmək üçün hesabınızın daxil olmuş üzvü üçün bir dəqiqədən sonra işləməyi dayandıran keçid düzəldirik; ona başqa keçid düzəltmirik.</li><li>Alətin qaytardığı, planque-in hər zəngin qeydində: 24 saat. Bundan sonra qeyd yalnız zəngin göndərilib-göndərilmədiyini saxlayır, ona görə heç vaxt iki dəfə göndərilmir.</li><li>planque-də əlaqənin token-i və ya açarı, ya da Composio-da idarə olunan əlaqənin girişi: siz onu ayırana qədər. Əlaqələrinizdən digəri həmin təchizatçıda eyni hesabdan istifadə edə bilərsə, o da ayrılana qədər istifadə olunmadan saxlanılır, sonra ləğv edilir. Onun təsdiqlərinin qeydi: hesab bitənə qədər.</li><li>Cihazın push token-i: tətbiqdən çıxışınıza, cihazı silməyinizə və ya Apple və ya Google token-in artıq olmadığını bildirənə qədər. Cihazın açıq açarı, adı, platforması və tarixləri: onu istifadə etdiyiniz müddətdə; çıxış etdikdən sonra silinmiş kimi qeyd olunur və hesab silinənə qədər saxlanılır ki, KIFF ondan gecikmiş cavabı rədd edə bilsin və daha əvvəlkini hansı cihazın imzaladığını göstərə bilsin. Passkey-in açıq açarı, id-si və adı: cihazınınkı kimi. Kompüterin sessiyası: 90 günə qədər və ya çıxışınıza qədər.</li><li>Hesabınız: silinənə qədər. Xidmət jurnalları: 30 gün. tafs və planque-in anbarları 35 gün şifrələnmiş zamanla nüsxələr saxlayır, yalnız nasazlıqdan sonra anbarı bərpa etmək üçün istifadə olunur.</li></ul><p>Qalan hər şey <a href=\"/az/privacy#retention\">KIFF-in Saxlama bölməsindədir</a>.</p></section><section id=\"lawful-bases\"><h2>9. Hüquqi əsaslar</h2><p>Müqavilənin icrası, hesabınızı və taf-larınızı idarə etmək üçün. Qanuni maraqlar, təhlükəsizlik, fırıldaqçılığın qarşısının alınması və sui-istifadənin aşkarlanması üçün. Razılıq, tafs-dakı AI üçün (<a href=\"#ai\">5-ci bölmə</a>). Hüquqi öhdəlik, vergi qeydləri üçün. <a href=\"/az/privacy#lawful-bases\">KIFF-in Məxfilik Siyasəti</a> təfərrüatlara malikdir.</p></section><section id=\"rights\"><h2>10. Hüquqlarınız</h2><p>GDPR-ə əsasən məlumatlarınıza girişi, onların düzəldilməsini, silinməsini, məhdudlaşdırılmasını və ya daşına bilən surəti tələb edə, qanuni maraqlara əsaslanan emala etiraz edə və razılığı geri götürə bilərsiniz. <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> ünvanına e-məktub göndərin; əsassız gecikmə olmadan və ən geci bir ay ərzində cavab veririk; mürəkkəb sorğu üçün daha iki ay ala bilərik və bunu sizə ilk ay ərzində bildiririk. Tətbiqdə Hesab → Söhbətlərimi ixrac et öz söhbətlərinizi və qeydlərinizi yükləyir.</p><p>tafs hesabınızı silmək üçün tətbiqi açın, Hesab bölməsinə keçin və <em>Hesabı sil</em> düyməsinə toxunun, sonra təsdiq edin. Geri qaytarıla bilməz. <a href=\"/az/privacy#delete-account\">KIFF-in Məxfilik Siyasəti</a> nəyin silindiyini və nə vaxt, və e-poçtla necə xahiş edəcəyinizi deyir.</p><p><a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estoniya Məlumatların Müdafiəsi İnspektoratına (Andmekaitse Inspektsioon)</a> və ya yaşadığınız yerdəki nəzarət orqanına şikayət edə bilərsiniz.</p><p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href=\"/privacy/countries\">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p></section><section id=\"more\"><h2>11. Təhlükəsizlik, uşaqlar və dəyişikliklər</h2><p>Təhlükəsizlik tədbirlərimiz <a href=\"/security\">/security</a> (ingiliscə) ünvanındadır. tafs uşaqlara yönəlməyib və biz 16 yaşdan kiçik uşaqlardan bilərəkdən şəxsi məlumat toplamırıq. Bu siyasəti <a href=\"/az/privacy#changes\">KIFF-in Məxfilik Siyasətinin</a> öz siyasəti üçün dediyi kimi dəyişirik.</p></section><section id=\"contact\"><h2>12. Əlaqə</h2><p>Məxfilik sualları və sorğuları: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Rəsmi hüquqi bildirişlər: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Tətbiqin öz şərtləri <a href=\"/az/tafs/terms\">/tafs/terms</a> ünvanındadır.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Başqa kim məlumat alır</h2><p>Şəxsi məlumatlarınızı satmırıq və reklam üçün paylaşmırıq.</p><p>tafs üçün bu şirkətlərdən istifadə edirik: Amazon Web Services (hostinq, o cümlədən tafs-ın anbarı və planque-in əlaqələri), Clerk (KIFF hesabları üçün giriş), Anthropic (AI modeli, Anthropic, Amazon Web Services, Google Cloud və ya Microsoft Azure tərəfindən işlədilir), Composio (idarə olunan əlaqələrin girişləri və planque-in ondan etməsini xahiş etdiyi zənglər), Apple (push bildirişləri), Google (Android-də push bildirişləri və Google Play-in fakturası) və Resend (taf-ın e-poçt qapısı). Rəsmi, cari siyahı, hər birinin nəyə toxunduğu və harada ilə birlikdə, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanındadır.</p><p>Onlardan bəziləri Avropa İqtisadi Zonasından kənardadır, əsasən Birləşmiş Ştatlarda. <a href=\"/az/privacy#transfers\">KIFF-in Məxfilik Siyasəti</a> həmin ötürmələrin necə qorunduğunu deyir.</p><p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href=\"/privacy/countries\">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p></section><section id=\"retention\"><h2>8. Nə qədər saxlayırıq</h2><ul><li>Alətlərinizin taf-a qaytardıqları: yalnız icra bitənə qədər. Söhbətdə yalnız oxunanlar sonrakı mesajları üçün şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir.</li><li>Taf-ın icraları və söhbətləri, söhbətin xülasəsi ilə: 30 gün. Onun yaddaş qeydləri: taf silinənə qədər. Coach ilə öz söhbətlərinizdən birini daha tez silə bilərsiniz: onun mesajları və əlavə etdiyiniz fayllar dərhal silinir, hər icranın baş verməsi, vaxtı və dəyəri barədə qeyd isə həmin 30 gün qalır. Bir cavabı şikayət etsəniz, KIFF həmin cavabı, səbəbinizi və qeydinizi 180 gün və ya həmin söhbəti, yaxud hesabınızı silənə qədər saxlayır. KIFF onları həmçinin şikayətləri oxuyan komandaya e-poçtla göndərir və həmin məktub KIFF-in dəstək məktubları kimi saxlanılır.</li><li>Coach-un sonrakı cavabı üçün qısa qeydləri, məsələn söhbətdə əlaqənin niyə qurulmadığı və ya Card-ın təsdiq edildiyi: həmin cavab onları götürənə qədər, ən çoxu 7 gün; bundan sonra həmin söhbətin bir hissəsi kimi, söhbət saxlanıldığı müddətdə. Nüsxə 24 saat saxlanılır ki, yenidən göndərilən mesaj eyni qeydi alsın. Söhbətin qeydi yalnız həmin söhbətdə istifadə olunur.</li><li>Söhbətdə əlavə etdiyiniz fayllar: əlavə olunduğu mesajla birlikdə, 30 gün, ya da söhbət silinərsə daha tez, və hər halda 38 gün ərzində. Heç bir mesajın istifadə etmədiyi fayl yükləməyinizdən təxminən bir saat sonra silinir. Hesabınızın silinməsi onları silir.</li><li>Taf-larınızın təqdim etdiyi fayllar: onları yaradan icradan 30 gün, sonra bir gün ərzində avtomatik silinir. Hesabınızdakı hər kəs birini Dərhal sil ilə daha tez silə bilər: faylın özü dərhal yox olur, heç bir nüsxə saxlanılmır; onun adı, ölçüsü və onu yaradan taf və icra tafs-ın anbarının şifrələnmiş zamanla nüsxələrində 35 günə qədər qala bilər, yalnız nasazlıqdan sonra bərpa üçün istifadə olunur. Taf-ın silinməsi və ya hesabınızın silinməsi onun fayllarını silir. Faylın paylaşılması faylın özünü göndərir və paylaşdığınız nüsxə paylaşdığınız tətbiqdə qalır. Faylı yükləmək üçün hesabınızın daxil olmuş üzvü üçün bir dəqiqədən sonra işləməyi dayandıran keçid düzəldirik; ona başqa keçid düzəltmirik.</li><li>Alətin qaytardığı, planque-in hər zəngin qeydində: 24 saat. Bundan sonra qeyd yalnız zəngin göndərilib-göndərilmədiyini saxlayır, ona görə heç vaxt iki dəfə göndərilmir.</li><li>planque-də əlaqənin token-i və ya açarı, ya da Composio-da idarə olunan əlaqənin girişi: siz onu ayırana qədər. Əlaqələrinizdən digəri həmin təchizatçıda eyni hesabdan istifadə edə bilərsə, o da ayrılana qədər istifadə olunmadan saxlanılır, sonra ləğv edilir. Onun təsdiqlərinin qeydi: hesab bitənə qədər.</li><li>Cihazın push token-i: tətbiqdən çıxışınıza, cihazı silməyinizə və ya Apple və ya Google token-in artıq olmadığını bildirənə qədər. Cihazın açıq açarı, adı, platforması və tarixləri: onu istifadə etdiyiniz müddətdə; çıxış etdikdən sonra silinmiş kimi qeyd olunur və hesab silinənə qədər saxlanılır ki, KIFF ondan gecikmiş cavabı rədd edə bilsin və daha əvvəlkini hansı cihazın imzaladığını göstərə bilsin. Passkey-in açıq açarı, id-si və adı: cihazınınkı kimi. Kompüterin sessiyası: 90 günə qədər və ya çıxışınıza qədər.</li><li>Hesabınız: silinənə qədər. Xidmət jurnalları: 30 gün. tafs və planque-in anbarları 35 gün şifrələnmiş zamanla nüsxələr saxlayır, yalnız nasazlıqdan sonra anbarı bərpa etmək üçün istifadə olunur.</li></ul><p>Qalan hər şey <a href=\"/az/privacy#retention\">KIFF-in Saxlama bölməsindədir</a>.</p></section><section id=\"lawful-bases\"><h2>9. Hüquqi əsaslar</h2><p>Müqavilənin icrası, hesabınızı və taf-larınızı idarə etmək üçün. Qanuni maraqlar, təhlükəsizlik, fırıldaqçılığın qarşısının alınması və sui-istifadənin aşkarlanması üçün. Razılıq, tafs-dakı AI üçün (<a href=\"#ai\">5-ci bölmə</a>). Hüquqi öhdəlik, vergi qeydləri üçün. <a href=\"/az/privacy#lawful-bases\">KIFF-in Məxfilik Siyasəti</a> təfərrüatlara malikdir.</p></section><section id=\"rights\"><h2>10. Hüquqlarınız</h2><p>GDPR-ə əsasən məlumatlarınıza girişi, onların düzəldilməsini, silinməsini, məhdudlaşdırılmasını və ya daşına bilən surəti tələb edə, qanuni maraqlara əsaslanan emala etiraz edə və razılığı geri götürə bilərsiniz. <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> ünvanına e-məktub göndərin; əsassız gecikmə olmadan və ən geci bir ay ərzində cavab veririk; mürəkkəb sorğu üçün daha iki ay ala bilərik və bunu sizə ilk ay ərzində bildiririk. Tətbiqdə Hesab → Söhbətlərimi ixrac et öz söhbətlərinizi və qeydlərinizi yükləyir.</p><p>tafs hesabınızı silmək üçün tətbiqi açın, Hesab bölməsinə keçin və <em>Hesabı sil</em> düyməsinə toxunun, sonra təsdiq edin. Geri qaytarıla bilməz. <a href=\"/az/privacy#delete-account\">KIFF-in Məxfilik Siyasəti</a> nəyin silindiyini və nə vaxt, və e-poçtla necə xahiş edəcəyinizi deyir.</p><p><a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estoniya Məlumatların Müdafiəsi İnspektoratına (Andmekaitse Inspektsioon)</a> və ya yaşadığınız yerdəki nəzarət orqanına şikayət edə bilərsiniz.</p><p><strong>Ölkəniz.</strong> Bəzi ölkələrin qanunları bu siyasətin dediyindən çoxunu tələb edir. Onların əlavə etdikləri, ingilis dilində və ölkənin dilində, <a href=\"/privacy/countries\">Ölkəniz</a> (ingiliscə) səhifəsindədir.</p></section><section id=\"more\"><h2>11. Təhlükəsizlik, uşaqlar və dəyişikliklər</h2><p>Təhlükəsizlik tədbirlərimiz <a href=\"/security\">/security</a> (ingiliscə) ünvanındadır. tafs uşaqlara yönəlməyib və biz 16 yaşdan kiçik uşaqlardan bilərəkdən şəxsi məlumat toplamırıq. Bu siyasəti <a href=\"/az/privacy#changes\">KIFF-in Məxfilik Siyasətinin</a> öz siyasəti üçün dediyi kimi dəyişirik.</p></section><section id=\"contact\"><h2>12. Əlaqə</h2><p>Məxfilik sualları və sorğuları: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Rəsmi hüquqi bildirişlər: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Tətbiqin öz şərtləri <a href=\"/az/tafs/terms\">/tafs/terms</a> ünvanındadır.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -138,90 +164,71 @@ func tafsPrivacyGoogleAZ() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section id=\"google\"><h2>6. Google istifadəçi məlumatları</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"google\"><h2>6. Google istifadəçi məlumatları</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>Siz istədikdə tafs taf-ı Google hesabınıza, məsələn onun işinin istifadə etdiyi Google Sheets və ya Google Calendar-a, tətbiqin Tətbiqləri qoş bölməsində qoşur. Bu bölmə tafs-ın Google-dan aldığı məlumatlarla nə etdiyini deyir.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p>Siz istədikdə tafs taf-ı Google hesabınıza, məsələn onun işinin istifadə etdiyi Google Sheets və ya Google Calendar-a, tətbiqin Tətbiqləri qoş bölməsində qoşur. Bu bölmə tafs-ın Google-dan aldığı məlumatlarla nə etdiyini deyir.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>Siz istədikdə tafs taf-ı Google hesabınıza, məsələn Gmail-ə və ya onun işinin istifadə etdiyi Google Calendar və ya Google Sheets-ə, tətbiqin Tətbiqləri qoş bölməsində qoşur. Bu bölmə tafs-ın Google-dan aldığı məlumatlarla nə etdiyini deyir.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Siz istədikdə tafs taf-ı Google hesabınıza, məsələn Gmail-ə və ya onun işinin istifadə etdiyi Google Calendar və ya Google Sheets-ə, tətbiqin Tətbiqləri qoş bölməsində qoşur. Bu bölmə tafs-ın Google-dan aldığı məlumatlarla nə etdiyini deyir.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Nəyi oxuyur və yazır:</strong> taf-ın işinin tələb etdiyini: yeniləyib saxladığı cədvəlləri və ya baxdığı təqvimlərdəki hadisələri. Onları yalnız taf-ın Card-ının icazə verdiyi yerdə dəyişir və Card-ın limitlərini aşan hər şey təsdiqinizi gözləyir.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li><strong>Nəyi oxuyur və yazır:</strong> taf-ın işinin tələb etdiyini: yeniləyib saxladığı cədvəlləri və ya baxdığı təqvimlərdəki hadisələri. Onları yalnız taf-ın Card-ının icazə verdiyi yerdə dəyişir və Card-ın limitlərini aşan hər şey təsdiqinizi gözləyir.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Nəyi oxuyur və yazır:</strong> taf-ın işinin tələb etdiyini. Gmail-inizdə cavab tələb edənləri tapmaq üçün mesajlarınızı və mövzularınızı oxuyur və qaralamalar yazır; poçtu yalnız taf-ın Card-ının icazə verdiyi yerdə göndərir. Google Calendar və Google Sheets-də baxdığı təqvimlərdəki hadisələri və ya yeniləyib saxladığı cədvəlləri oxuyur və onları yalnız taf-ın Card-ının icazə verdiyi yerdə dəyişir. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Nəyi oxuyur və yazır:</strong> taf-ın işinin tələb etdiyini. Gmail-inizdə cavab tələb edənləri tapmaq üçün mesajlarınızı və mövzularınızı oxuyur və qaralamalar yazır; poçtu yalnız taf-ın Card-ının icazə verdiyi yerdə göndərir. Google Calendar və Google Sheets-də baxdığı təqvimlərdəki hadisələri və ya yeniləyib saxladığı cədvəlləri oxuyur və onları yalnız taf-ın Card-ının icazə verdiyi yerdə dəyişir. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Google Tasks-da baxdığı tapşırıq siyahılarını oxuyur və tapşırıqları yalnız taf-ın Card-ının icazə verdiyi yerdə əlavə edir, tamamlayır, köçürür və ya silir. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Google Tasks-da baxdığı tapşırıq siyahılarını oxuyur və tapşırıqları yalnız taf-ın Card-ının icazə verdiyi yerdə əlavə edir, tamamlayır, köçürür və ya silir. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Card-ın limitlərini aşan hər şey təsdiqinizi gözləyir.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Card-ın limitlərini aşan hər şey təsdiqinizi gözləyir.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Niyə:</strong> yalnız həmin taf üçün qurduğunuz işi görmək və hansı Google hesabına qoşulduğunu sizə göstərmək üçün: onun e-poçt ünvanı, siz ayırana qədər əlaqə ilə saxlanılır.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li><strong>Niyə:</strong> yalnız həmin taf üçün qurduğunuz işi görmək və hansı Google hesabına qoşulduğunu sizə göstərmək üçün: onun e-poçt ünvanı, siz ayırana qədər əlaqə ilə saxlanılır.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Hər Google tətbiqi necə qoşulur:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Hər Google tətbiqi necə qoşulur:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>Giriş tərəfdaşımız vasitəsilə, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Giriş tərəfdaşımız vasitəsilə, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 138, Col: 165}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 139, Col: 165}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("az")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>tafs-ın öz Google girişi vasitəsilə, arada başqa şirkət olmadan: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 141, Col: 115}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -230,44 +237,41 @@ func tafsPrivacyGoogleAZ() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("az") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 145, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if len(googleInHouse("az")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>tafs-ın öz Google girişi vasitəsilə, arada başqa şirkət olmadan: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("az"))
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 145, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 142, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("az").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 145, Col: 75}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("az") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("az").AsksFor)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("az"))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
@@ -275,210 +279,232 @@ func tafsPrivacyGoogleAZ() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<ul>")
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("az").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 146, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("az").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var13 string
-					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var15 string
+					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 149, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 149, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</ul></li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Hər ikisində adı çəkilən tətbiq hesabınızdan asılı olaraq bir üsulla və ya digərilə qoşulur. Google-ın öz giriş səhifəsi hansına icazə verdiyinizi göstərir.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz.<ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> tafs yalnız taf-ın alətlərinin ehtiyac duyduğu girişi istəyir. Bu daha dar giriş mümkün deyilsə, tətbiqin adi girişini istəyir və daxil olmazdan əvvəl bunu deyir. Adi giriş taf-ın istifadə etmədiyi şəxsi məlumatları ehtiva edərsə, tafs qoşulmur.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> giriş həmin tətbiq üçün aşağıda sadalanan bütün girişi birdən istəyir, taf yalnız oxuyanda belə.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz. Giriş həmin tətbiq üçün aşağıda sadalanan bütün girişi birdən istəyir, taf yalnız oxuyanda belə.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz. tafs yalnız taf-ın alətlərinin ehtiyac duyduğu girişi istəyir. Bu daha dar giriş mümkün deyilsə, tətbiqin adi girişini istəyir və daxil olmazdan əvvəl bunu deyir. Adi giriş taf-ın istifadə etmədiyi şəxsi məlumatları ehtiva edərsə, tafs qoşulmur.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Taf ondan necə istifadə edir:</strong> taf yalnız Card-ında təsdiq edilmiş alətlərdən istifadə edir. Hər zəng göndərilməzdən əvvəl məhz həmin alət və həmin arqumentlər üçün icazə ilə yoxlanılır və verdiyiniz girişdən kənar zəng rədd edilir. Hansı fəaliyyətlərin hər dəfə təsdiqinizi istədiyi Card-da təyin olunur.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<strong>tafs-ın öz Google girişinin istədiyi giriş:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<strong>tafs-ın istədiyi giriş:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("az") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 184, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 187, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 187, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul>Giriş nə qədər icazə versə də, taf yalnız Card-ındakı alətlərdən istifadə edir.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "Hər ikisində adı çəkilən tətbiq hesabınızdan asılı olaraq bir üsulla və ya digərilə qoşulur. Google-ın öz giriş səhifəsi hansına icazə verdiyinizi göstərir.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Girişinizi kim saxlayır:</strong><ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> Google girişinizi giriş tərəfdaşımız saxlayır, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb, və heç vaxt taf-a və ya planque-ə verilmir. Nə taf, nə tafs parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> planque, tafs-ın öz əlaqə xidməti, Google token-inizi şirkətiniz üçün Avropa İttifaqında (İrlandiya) AWS KMS ilə şifrələnmiş saxlayır və yalnız taf-ın Card-ının icazə verdiyi zəngi etmək üçün istifadə edir. O, heç vaxt taf-a verilmir və nə taf, nə AI modeli parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz.<ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> tafs yalnız taf-ın alətlərinin ehtiyac duyduğu girişi istəyir. Bu daha dar giriş mümkün deyilsə, tətbiqin adi girişini istəyir və daxil olmazdan əvvəl bunu deyir. Adi giriş taf-ın istifadə etmədiyi şəxsi məlumatları ehtiva edərsə, tafs qoşulmur.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> giriş həmin tətbiq üçün aşağıda sadalanan bütün girişi birdən istəyir, taf yalnız oxuyanda belə.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Girişinizi kim saxlayır:</strong> planque, tafs-ın öz əlaqə xidməti, Google token-inizi şirkətiniz üçün Avropa İttifaqında (İrlandiya) AWS KMS ilə şifrələnmiş saxlayır və yalnız taf-ın Card-ının icazə verdiyi zəngi etmək üçün istifadə edir. O, heç vaxt taf-a verilmir və nə taf, nə AI modeli parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz. Giriş həmin tətbiq üçün aşağıda sadalanan bütün girişi birdən istəyir, taf yalnız oxuyanda belə.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Girişinizi kim saxlayır:</strong> Google girişinizi giriş tərəfdaşımız saxlayır, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb, və heç vaxt taf-a və ya planque-ə verilmir. Nə taf, nə tafs parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Nəyə icazə verirsiniz:</strong> Google-ın öz səhifəsində daxil olur və nəyə icazə verəcəyinizi seçirsiniz. tafs yalnız taf-ın alətlərinin ehtiyac duyduğu girişi istəyir. Bu daha dar giriş mümkün deyilsə, tətbiqin adi girişini istəyir və daxil olmazdan əvvəl bunu deyir. Adi giriş taf-ın istifadə etmədiyi şəxsi məlumatları ehtiva edərsə, tafs qoşulmur.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Taf ondan necə istifadə edir:</strong> taf yalnız Card-ında təsdiq edilmiş alətlərdən istifadə edir. Hər zəng göndərilməzdən əvvəl məhz həmin alət və həmin arqumentlər üçün icazə ilə yoxlanılır və verdiyiniz girişdən kənar zəng rədd edilir. Hansı fəaliyyətlərin hər dəfə təsdiqinizi istədiyi Card-da təyin olunur.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("az")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<strong>tafs-ın öz Google girişinin istədiyi giriş:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>tafs-ın istədiyi giriş:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("az") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 185, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 188, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `az_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul>Giriş nə qədər icazə versə də, taf yalnız Card-ındakı alətlərdən istifadə edir.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır.<ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> o, həm də hər zəngi edən giriş tərəfdaşımızdan keçir.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> planque Google-a özü zəng edir, ona görə heç bir başqa şirkət zəngi etmir və ya girişinizi saxlamır.</li></ul>Hər ikisi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Girişinizi kim saxlayır:</strong><ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> Google girişinizi giriş tərəfdaşımız saxlayır, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb, və heç vaxt taf-a və ya planque-ə verilmir. Nə taf, nə tafs parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> planque, tafs-ın öz əlaqə xidməti, Google token-inizi şirkətiniz üçün Avropa İttifaqında (İrlandiya) AWS KMS ilə şifrələnmiş saxlayır və yalnız taf-ın Card-ının icazə verdiyi zəngi etmək üçün istifadə edir. O, heç vaxt taf-a verilmir və nə taf, nə AI modeli parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır. planque Google-a özü zəng edir, ona görə heç bir başqa şirkət zəngi etmir və ya girişinizi saxlamır. AI modelinin provayderi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Girişinizi kim saxlayır:</strong> planque, tafs-ın öz əlaqə xidməti, Google token-inizi şirkətiniz üçün Avropa İttifaqında (İrlandiya) AWS KMS ilə şifrələnmiş saxlayır və yalnız taf-ın Card-ının icazə verdiyi zəngi etmək üçün istifadə edir. O, heç vaxt taf-a verilmir və nə taf, nə AI modeli parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır. O, həm də hər zəngi edən giriş tərəfdaşımızdan keçir. Hər ikisi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Girişinizi kim saxlayır:</strong> Google girişinizi giriş tərəfdaşımız saxlayır, <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb, və heç vaxt taf-a və ya planque-ə verilmir. Nə taf, nə tafs parolunuzu və ya Google token-lərinizi görür. Eyni girişə ehtiyacı olan başqa taf-ınız girişdən təkrar istifadə edir və hər taf yalnız onun üçün təsdiq etdiyiniz alətlərdən istifadə edir.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>AI təlimi:</strong> Google istifadəçi məlumatları AI modellərini öyrətmək üçün istifadə olunmur.</li><li><strong>Şəkillər:</strong> tafs şəkil və ya video yaratmır və ya redaktə etmir: onun AI-ı mətn yazır. O, heç vaxt Google API-lərindən və ya Google istifadəçi məlumatlarından kiminsə intim şəkillərini razılığı olmadan yaratmaq, redaktə etmək və ya paylaşmaq (NCII) və ya şəxsin hər hansı digər şəklini üçün istifadə etmir.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır.<ul><li><strong>Giriş tərəfdaşımız vasitəsilə:</strong> o, həm də hər zəngi edən giriş tərəfdaşımızdan keçir.</li><li><strong>tafs-ın öz Google girişi vasitəsilə:</strong> planque Google-a özü zəng edir, ona görə heç bir başqa şirkət zəngi etmir və ya girişinizi saxlamır.</li></ul>Hər ikisi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("az")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır. planque Google-a özü zəng edir, ona görə heç bir başqa şirkət zəngi etmir və ya girişinizi saxlamır. AI modelinin provayderi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Başqa kim alır:</strong> taf-ın Google-dan oxuduğu, taf-ı işlədən AI modelinə gedir, yalnız siz icazə verdikdən sonra (bax <a href=\"#ai\">tafs-dakı AI</a>), o da onu provayderinin şərtləri ilə 30 günə qədər saxlayır. O, həm də hər zəngi edən giriş tərəfdaşımızdan keçir. Hər ikisi <a href=\"/subprocessors\">/subprocessors</a> (ingiliscə) ünvanında siyahıya alınıb.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>AI təlimi:</strong> Google istifadəçi məlumatları AI modellərini öyrətmək üçün istifadə olunmur.</li><li><strong>Şəkillər:</strong> tafs şəkil və ya video yaratmır və ya redaktə etmir: onun AI-ı mətn yazır. O, heç vaxt Google API-lərindən və ya Google istifadəçi məlumatlarından kiminsə intim şəkillərini razılığı olmadan yaratmaq, redaktə etmək və ya paylaşmaq (NCII) və ya şəxsin hər hansı digər şəklini üçün istifadə etmir.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("az")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Nə qədər və harada:</strong> cədvəlləriniz və hadisələriniz Google hesabınızda qalır. tafs-ın öz anbarında alətin qaytardığı yalnız taf-ın icrası bitənə qədər saxlanılır. Hər zəngi ötürən planque Google-ın qaytardığını 24 saat saxlayır, ona görə təkrar zəng eyni cavabı alır və heç vaxt iki dəfə göndərilmir; bundan sonra yalnız zəngin göndərilib-göndərilmədiyini saxlayır. Söhbətdə yalnız oxunanlar şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir. İcranın qeydi və onun söhbəti 30 gün saxlanılır, taf-ın qeydləri isə taf-ı silənə qədər (bax <a href=\"#retention\">Nə qədər saxlayırıq</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Nə qədər və harada:</strong> cədvəlləriniz və hadisələriniz Google hesabınızda qalır. tafs-ın öz anbarında alətin qaytardığı yalnız taf-ın icrası bitənə qədər saxlanılır. Hər zəngi ötürən planque Google-ın qaytardığını 24 saat saxlayır, ona görə təkrar zəng eyni cavabı alır və heç vaxt iki dəfə göndərilmir; bundan sonra yalnız zəngin göndərilib-göndərilmədiyini saxlayır. Söhbətdə yalnız oxunanlar şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir. İcranın qeydi və onun söhbəti 30 gün saxlanılır, taf-ın qeydləri isə taf-ı silənə qədər (bax <a href=\"#retention\">Nə qədər saxlayırıq</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Nə qədər və harada:</strong> qaralamalarınız, hadisələriniz və cədvəlləriniz Google hesabınızda qalır. tafs-ın öz anbarında alətin qaytardığı yalnız taf-ın icrası bitənə qədər saxlanılır. Hər zəngi ötürən planque Google-ın qaytardığını 24 saat saxlayır, ona görə təkrar zəng eyni cavabı alır və heç vaxt iki dəfə göndərilmir; bundan sonra yalnız zəngin göndərilib-göndərilmədiyini saxlayır. Söhbətdə yalnız oxunanlar şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir. İcranın qeydi və onun söhbəti 30 gün saxlanılır, taf-ın qeydləri isə taf-ı silənə qədər (bax <a href=\"#retention\">Nə qədər saxlayırıq</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Nə qədər və harada:</strong> qaralamalarınız, hadisələriniz və cədvəlləriniz Google hesabınızda qalır. tafs-ın öz anbarında alətin qaytardığı yalnız taf-ın icrası bitənə qədər saxlanılır. Hər zəngi ötürən planque Google-ın qaytardığını 24 saat saxlayır, ona görə təkrar zəng eyni cavabı alır və heç vaxt iki dəfə göndərilmir; bundan sonra yalnız zəngin göndərilib-göndərilmədiyini saxlayır. Söhbətdə yalnız oxunanlar şifrələnmiş saxlanılır, söhbət bir saat boş qalana qədər və oxunmadan ən çoxu dörd saat sonraya qədər istifadə olunur, sonra bir neçə gün ərzində avtomatik silinir. İcranın qeydi və onun söhbəti 30 gün saxlanılır, taf-ın qeydləri isə taf-ı silənə qədər (bax <a href=\"#retention\">Nə qədər saxlayırıq</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Dayandırılması:</strong><ul><li>Google-ı tətbiqdə, Tətbiqləri qoş bölməsində və ya taf-ın Card tabında ayırın. Onun Google alətləri dərhal dayanır və tafs Google-dan girişi dərhal ləğv etməsini xahiş edir; bu bir az sonra tamamlana bilər.</li><li>Taf-ı silin və onun əlaqələri onunla bitir. Başqa taf-ınızın hələ istifadə etdiyi Google girişi sonuncu gedənə qədər qalır.</li><li>tafs-ın girişini istənilən vaxt Google Hesabınızda, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> ünvanında silin. Taf-larınız Google-a çatmağı dayandırır və tətbiq sizə Google əlaqəsinin çıxdığını deyir.</li><li>Hesabınızı silin: onun taf-ları, söhbətləri, qeydləri, faylları və əlaqələri dərhal silinir, zamanla nüsxələrindən isə 35 gün ərzində, və Google icazə verdiyi yerdə onun Google token-ləri ləğv edilir.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Dayandırılması:</strong><ul><li>Google-ı tətbiqdə, Tətbiqləri qoş bölməsində və ya taf-ın Card tabında ayırın. Onun Google alətləri dərhal dayanır və tafs Google-dan girişi dərhal ləğv etməsini xahiş edir; bu bir az sonra tamamlana bilər.</li><li>Taf-ı silin və onun əlaqələri onunla bitir. Başqa taf-ınızın hələ istifadə etdiyi Google girişi sonuncu gedənə qədər qalır.</li><li>tafs-ın girişini istənilən vaxt Google Hesabınızda, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> ünvanında silin. Taf-larınız Google-a çatmağı dayandırır və tətbiq sizə Google əlaqəsinin çıxdığını deyir.</li><li>Hesabınızı silin: onun taf-ları, söhbətləri, qeydləri, faylları və əlaqələri dərhal silinir, zamanla nüsxələrindən isə 35 gün ərzində, və Google icazə verdiyi yerdə onun Google token-ləri ləğv edilir.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
