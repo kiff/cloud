@@ -307,6 +307,9 @@ main:focus { outline: none; }
   .tf-js .lines3, .tf-js .words { position: absolute; left: 7vw; top: 50%; transform: translateY(-50%); }
   .tf-js .lines3 { font-size: min(9vh, 7rem, calc(82vw / var(--n, 6))); }
   .tf-js .lines3 span { white-space: nowrap; }
+  /* Screen 4 shares its width with the phone on the right: the three lines
+     end before it, in every language. */
+  .tf-js .does .lines3 { font-size: min(9vh, 7rem, calc((81vw - min(29vh, 250px)) / var(--n, 6))); }
   .tf-js .words dl div { grid-template-columns: auto 1fr; align-items: baseline; gap: 22px; }
   .tf-js .mascot { width: min(380px, 40vh); }
   /* "Get it" in one screen (it's clipped to it): the buttons on the left, the

@@ -76,8 +76,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 							<span>{ w.DoesLines[1][0] } <i class="lemon">{ w.DoesLines[1][1] }</i></span>
 							<span>{ w.DoesLines[2][0] } <i class="straw">{ w.DoesLines[2][1] }</i></span>
 						</h2>
-						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:66%;--y:68%;--s:150px", ".9", "36")
-						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:79%;--y:59%;--r0:3deg;--w:min(13vh,120px)", ".5", "6")
+						@tafsBadge("c4", "var(--mint)", "var(--ink)", w.Does.Ring, "24/7", "--x:58%;--y:70%;--s:150px", ".9", "36")
+						@tafsPhone("video-2", w.Shots.Video2, w.Shots.Play, w.Shots.Pause, "--x:calc(91% - min(29vh, 250px));--y:11vh;--r0:3deg;--w:min(29vh,250px)", ".5", "6")
 						@tafsIdx(4, w.Does)
 					</section>
 					<section class="p diff">
@@ -101,7 +101,8 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 								<div><dt lang="fr">kiff</dt><dd>{ w.Glosses[2] }</dd></div>
 							</dl>
 						</div>
-						<p class="st pill" style="--x:66%;--y:70%;--r0:-6deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-10">{ w.Names.Stickers[0] }</p>
+						<p class="st pill" style="--x:40%;--y:77%;--r0:-6deg;--c:var(--ink);--t:#fff" data-x=".9" data-r="-10">{ w.Names.Stickers[0] }</p>
+						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:calc(88% - min(30vh, 260px));--y:9vh;--r0:-3deg;--w:min(30vh,260px)", ".6", "-6")
 						@tafsIdx(6, w.Names)
 					</section>
 					<section class="p why">
@@ -192,7 +193,6 @@ templ tafsPage(w tafsWords, o OfferLinks) {
 						</div>
 						@tafsGiant(w.Get)
 						<img class="st mascot" src={ assets.URL("img/tafs/tafs-mascot-512.png") } alt="" width="512" height="512" loading="lazy" style="--x:62%;--y:14%;--r0:-8deg" data-x=".8" data-r="-14"/>
-						@tafsPhone("video-3", w.Shots.Video3, w.Shots.Play, w.Shots.Pause, "--x:9%;--y:47%;--r0:-3deg;--w:min(18vh,160px)", ".6", "-6")
 						@tafsIdx(9, w.Get)
 					</section>
 				</div>
