@@ -166,6 +166,12 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 			continue
 		}
 		var limits []string
+		// heldEach: a Card that asks the owner and keeps a count of 0 calls
+		// ("each call asks you first", the hold on an app not yet proved):
+		// every call it covers is held for the owner. Read as "0 of 0 left,
+		// spent" it told an agent the tool was used up, so it never proposed
+		// the call and the owner was never asked (kiff/tafs#2226).
+		heldEach := false
 		for _, g := range c.Grants {
 			if !strings.EqualFold(g.Action, t.Name) {
 				continue
@@ -196,6 +202,21 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 					scale := l.Scale
 					num, unit = func(n int64) string { return formatScaled(n, scale) }, l.Unit
 				}
+			}
+			if base := baseOf(l); unit == "calls" && l.Per == "" && base == 0 && c.OnExceed == "owner" {
+				heldEach = true
+				h := "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval (a count of 0 calls" + shared +
+					": this hold, not a spent total)"
+				if l.ExtraRoom > 0 {
+					room := fmt.Sprintf("the owner gave extra room for %s", callsText(l.ExtraRoom))
+					if live && l.Status == "ok" {
+						room += fmt.Sprintf(", %s left %s", strconv.FormatInt(l.Remaining, 10), windowText(l.Window))
+					}
+					h = room + "; past it, " + h
+					totals = true
+				}
+				limits = append(limits, h)
+				continue
 			}
 			if l.Per != "" {
 				// One total for each item the call names, not the Card's: it has
@@ -262,7 +283,9 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 		if len(limits) > 0 {
 			s += ": " + strings.Join(limits, "; ")
 		}
-		if c.OnExceed == "owner" {
+		if heldEach {
+			s += ". A held call waits for the owner, and runs once they approve it; nothing runs before that."
+		} else if c.OnExceed == "owner" {
 			s += ". A per-action breach can be held for review. Approval still counts fully; a cumulative ceiling needs an explicit Card revision."
 		} else {
 			s += ". A call over it is refused."
@@ -276,6 +299,23 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 		parts = append(parts, "What is used and left of each total: "+CardTool+".")
 	}
 	return strings.Join(parts, " ")
+}
+
+// baseOf is a total's own limit, extra room aside: a Card's 0 with room the
+// owner gave from a hold is still a count of 0.
+func baseOf(l kiffapi.CardLimit) int64 {
+	if l.ExtraRoom > 0 {
+		return l.BaseLimit
+	}
+	return l.Limit
+}
+
+// callsText is a number of calls: "1 call", "3 calls".
+func callsText(n int64) string {
+	if n == 1 {
+		return "1 call"
+	}
+	return strconv.FormatInt(n, 10) + " calls"
 }
 
 // amountText writes one call's amount of t's amount argument (a per-call
