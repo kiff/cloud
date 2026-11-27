@@ -164,6 +164,11 @@ func TestPlainNumber(t *testing.T) {
 	for in, want := range map[string]string{
 		"50": "50", "1.5e-05": "0.000015", "1E+3": "1000", "1.50": "1.5", "2.0": "2", "0.5": "0.5", "-2.5e1": "-25",
 		"9007199254740993": "9007199254740993", "0": "0", "0.0": "0", "-0.0": "0", "100e-1": "10", "100": "100",
+		// Past 100 written digits, as sent: never a gigabyte of them for a taf's 1e999999999.
+		"1e400": "1e400", "1e-400": "1e-400", "-2.5E+999999999": "-2.5E+999999999", "1e999999999999999999999": "1e999999999999999999999",
+		// The edge: 100 written digits, the 0 before a point counted.
+		"1e99": "1" + strings.Repeat("0", 99), "1e100": "1e100", "1e-99": "0." + strings.Repeat("0", 98) + "1", "1e-100": "1e-100",
+		"1.50e98": "15" + strings.Repeat("0", 97), "-0.0e5": "0", "1" + strings.Repeat("0", 150) + "e-150": "1",
 	} {
 		if got := plainNumber(in); got != want {
 			t.Errorf("plainNumber(%q) = %q, want %q", in, got, want)
