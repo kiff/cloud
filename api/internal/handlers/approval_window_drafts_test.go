@@ -115,7 +115,7 @@ func TestADraftsConfirmKeyIsWhatItsConfirmEnforces(t *testing.T) {
 		t.Fatalf("drafting sam's first Card: %d %v", code, d)
 	}
 	sam, samVersion := d["id"].(string), d["version"].(string)
-	if code, out := confirm(sam, samVersion, deviceKey, win.ID); code != http.StatusForbidden || out["error"] != "window_scope" {
+	if code, out := confirm(sam, samVersion, deviceKey, win.ID); code != http.StatusForbidden || out["error"] != "critical_key_required" || out["reason"] != "window_scope" {
 		t.Fatalf("a tap confirming another taf's draft: %d %v", code, out)
 	}
 	if ms, _ := r.store.List(t.Context(), "t1"); len(ms) != 1 {
@@ -143,7 +143,7 @@ func TestADraftsConfirmKeyIsWhatItsConfirmEnforces(t *testing.T) {
 	if err := windows.Open(t.Context(), nobody); err != nil {
 		t.Fatal(err)
 	}
-	if code, out := confirm(d["id"].(string), d["version"].(string), deviceKey, nobody.ID); code != http.StatusForbidden || out["error"] != "window_scope" {
+	if code, out := confirm(d["id"].(string), d["version"].(string), deviceKey, nobody.ID); code != http.StatusForbidden || out["error"] != "critical_key_required" || out["reason"] != "window_scope" {
 		t.Fatalf("a tap in a window opened for no taf: %d %v", code, out)
 	}
 	if code, out := confirm(d["id"].(string), d["version"].(string), approvalKey, ""); code != http.StatusOK {

@@ -120,13 +120,16 @@ func (h *MandatesHandler) outsideWindow(ctx context.Context, tenantID, agent str
 }
 
 // windowScope answers a window-signed Card change for a taf other than the
-// one whose step opened the window: nothing changes.
+// one whose step opened the window: nothing changes. Its error is
+// critical_key_required, which every shipped app already answers by signing
+// again with the approval key behind the fingerprint; reason window_scope
+// tells it apart from a widening.
 func windowScope(w http.ResponseWriter, agent string) {
 	detail := "this approval window was opened for " + agent + ": sign Cards for another taf with the phone's approval key, behind its fingerprint or face, or open a window from that taf's step"
 	if agent == "" {
 		detail = "this approval window was opened for no taf: sign a Card with the phone's approval key, behind its fingerprint or face, or open a window from the taf's step"
 	}
-	writeJSON(w, http.StatusForbidden, map[string]any{"error": "window_scope", "detail": detail})
+	writeJSON(w, http.StatusForbidden, map[string]any{"error": "critical_key_required", "reason": "window_scope", "detail": detail})
 }
 
 // criticalKeyRequired answers a window-signed change that widens a Card in

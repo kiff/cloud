@@ -84,7 +84,7 @@ func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	}
 	count := func() int { ms, _ := store.List(t.Context(), "tenant-1"); return len(ms) }
 	// Another taf's first Card, inside agent-a's window: window_scope, nothing issued.
-	if code, body := tap(cardFor("card-b", "agent-b", 500000, 1)); code != http.StatusForbidden || !strings.Contains(body, "window_scope") {
+	if code, body := tap(cardFor("card-b", "agent-b", 500000, 1)); code != http.StatusForbidden || !strings.Contains(body, `"error":"critical_key_required"`) || !strings.Contains(body, `"reason":"window_scope"`) {
 		t.Fatalf("another taf's Card inside the window: %d %s", code, body)
 	}
 	if count() != 0 {
@@ -119,7 +119,7 @@ func TestAWindowSignedReissueOfACardNeedsTheApprovalKey(t *testing.T) {
 	if err := windows.Open(t.Context(), nobody); err != nil {
 		t.Fatal(err)
 	}
-	if code, body := post("/v1/me/mandates", card("card-w", 300000, 6), sign(deviceKey, "/v1/me/mandates", card("card-w", 300000, 6), nobody.ID)); code != http.StatusForbidden || !strings.Contains(body, "window_scope") {
+	if code, body := post("/v1/me/mandates", card("card-w", 300000, 6), sign(deviceKey, "/v1/me/mandates", card("card-w", 300000, 6), nobody.ID)); code != http.StatusForbidden || !strings.Contains(body, `"error":"critical_key_required"`) || !strings.Contains(body, `"reason":"window_scope"`) {
 		t.Fatalf("a tap in a window opened for no taf: %d %s", code, body)
 	}
 	// The approval key works anywhere: another taf's Card, and the widening reissue.
