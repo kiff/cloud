@@ -14,16 +14,14 @@ import (
 // rule for app connections asks for: no customer's
 // connection goes through Composio for an app that isn't named here, unless
 // ManagedAll says every app may, except ManagedExcept. /subprocessors shows it
-// on Composio's row. Since 18 Nov 2026: Gmail, Google Calendar and Google
-// Sheets (the owner's yes, pre-launch); wave 1a added 15 apps on 22 Nov.
+// on Composio's row.
 //
 // The list lives in managed_apps.json, so planque can keep its own copy equal
 // to it by a test, and refuse a managed sign-in for any app it doesn't allow.
 // The file is either a JSON array of app names as people know them ("Google
 // Sheets"), the list mode, or an object {"all": true, "named": [...],
 // "except": [...]}, the all mode: any app a customer connects through
-// Composio, except the ones in "except" (none, or a single app the owner
-// withdraws). "named" keeps the apps other pages
+// Composio, except the ones in "except" (none, or a single app withdrawn). "named" keeps the apps other pages
 // speak of by name (the Google section of the tafs privacy policy). An app is
 // allowed here, with the page's words, before planque lets it through.
 var ManagedApps, ManagedAll, ManagedExcept = func() ([]string, bool, []string) {

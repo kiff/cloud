@@ -76,7 +76,7 @@ func TestTheManagedAppsFileReadsInEitherForm(t *testing.T) {
 }
 
 // The shipped file is the all mode with nothing excepted: any app a customer
-// connects through Composio (the owner, 27 Nov). It still names the three
+// connects through Composio. It still names the three
 // Google apps and wave 1a's 15, which other pages speak of by name. planque's
 // copy is held within it by .github/workflows/managed-apps.yml.
 func TestTheManagedAppsAreTheShippedList(t *testing.T) {
