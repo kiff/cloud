@@ -1094,7 +1094,6 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 	if SignedTogether(header) {
 		key, with = id.ApprovalKey, SignedWith{Key: KeyCritical}
 	}
-	var window ApprovalWindow
 	inWindow := approval && signatureWindowNamed(header) && p.routine(r)
 	if inWindow {
 		if p.windows == nil {
@@ -1139,7 +1138,7 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 				"message": "the approval window this was signed in isn't open: open one with the phone's approval key, behind its fingerprint, and sign it again"})
 			return SignedWith{}, false
 		}
-		window, with.Window = open, open.ID
+		with.Window, with.WindowAgent = open.ID, open.Agent
 	}
 	// The same request, signed by the same key, is used once, however its
 	// signature is encoded. Its signed_at is within MaxAnswerSkew of now, so
@@ -1155,11 +1154,8 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 			"message": "this signed request was already made; sign it again to repeat it"})
 		return SignedWith{}, false
 	}
-	// Each approval inside the window restarts it, never past its cap. Best
-	// effort: a restart that fails leaves the window as it was.
-	if inWindow {
-		_ = p.windows.Restart(r.Context(), window.ID, window.Restarted(now))
-	}
+	// An approval inside the window doesn't restart it: it ends WindowLength
+	// after the fingerprint that opened it.
 	return with, true
 }
 

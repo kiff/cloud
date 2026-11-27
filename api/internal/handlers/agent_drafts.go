@@ -773,11 +773,16 @@ func (h *MandatesHandler) confirmDraftRoute(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	// Inside an approval window (kiff/tafs#494), a draft is confirmed with a
-	// tap only if it widens no Card in force (the widening rule).
+	// tap only if it is for the taf whose step opened the window
+	// (window_scope) and widens no Card in force (the widening rule).
 	if windowSigned(r) {
-		ws, status, msg := h.draftWidens(r, tenantID, r.PathValue("id"))
+		ws, out, status, msg := h.draftWidens(r, tenantID, r.PathValue("id"), windowAgent(r))
 		if status != 0 {
 			writeJSON(w, status, draftError(msg))
+			return
+		}
+		if out {
+			windowScope(w, windowAgent(r))
 			return
 		}
 		if len(ws) > 0 {
@@ -1055,23 +1060,35 @@ const cardRevisedMsg = "the agent's Cards changed since this draft was made; dra
 
 // draftError is a refused confirmation's body. One refused because a Card
 // changed also says reason card_revised, so a client needn't match the text.
-// draftWidens is how a draft's Cards widen the Cards in force.
-func (h *MandatesHandler) draftWidens(r *http.Request, tenantID, draftID string) ([]cardWidening, int, string) {
+// draftWidens is how a draft's Cards widen the Cards in force, and whether
+// the draft is for a taf other than agent, the one whose step opened the
+// approval window it was confirmed in (outsideWindow).
+func (h *MandatesHandler) draftWidens(r *http.Request, tenantID, draftID, agent string) ([]cardWidening, bool, int, string) {
 	d, err := h.drafts.Get(r.Context(), tenantID, draftID)
 	if err != nil {
-		return nil, draftStatus(err), draftMessage(err)
+		return nil, false, draftStatus(err), draftMessage(err)
+	}
+	if agent == "" || d.AgentID != agent {
+		return nil, true, 0, ""
 	}
 	var raw []json.RawMessage
 	_ = json.Unmarshal(d.Cards, &raw)
 	plan, status, msg := h.draftCards(r, tenantID, d.AgentID, raw, len(raw) == 0, d.RetireRest)
 	if status != 0 {
-		return nil, status, "the draft could not be confirmed: " + msg
+		return nil, false, status, "the draft could not be confirmed: " + msg
+	}
+	out, err := h.outsideWindow(r.Context(), tenantID, agent, plan.cards)
+	if err != nil {
+		return nil, false, http.StatusServiceUnavailable, "the Cards in force couldn't be read; try again"
+	}
+	if out {
+		return nil, true, 0, ""
 	}
 	ws, err := h.widensInForce(r.Context(), tenantID, plan.cards)
 	if err != nil {
-		return nil, http.StatusServiceUnavailable, "the Cards in force couldn't be read; try again"
+		return nil, false, http.StatusServiceUnavailable, "the Cards in force couldn't be read; try again"
 	}
-	return ws, 0, ""
+	return ws, false, 0, ""
 }
 
 func draftError(msg string) map[string]string {

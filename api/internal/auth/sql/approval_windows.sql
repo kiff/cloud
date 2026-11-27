@@ -3,8 +3,8 @@
 -- The approval windows (kiff/tafs#494): one per opening, by the phone's
 -- approval key behind its fingerprint. While a window is open, routine
 -- actions from its device are signed with the device key and carry the
--- window's id. KIFF restarts the window's expiry on each approval, never
--- past its cap, and closes it on sign-out, revocation, a halt, the app's
+-- window's id. It ends 5 minutes after the fingerprint that opened it,
+-- however often it's used, and KIFF closes it earlier on sign-out, revocation, a halt, the app's
 -- own Close, or a new window on the same device.
 --
 -- This file is the source of truth. ApplyWindowsSchema embeds and runs it
@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS cloud_meta.approval_windows (
     closed_at   TIMESTAMPTZ NULL,
     closed_by   TEXT        NOT NULL DEFAULT ''
 );
+
+-- The taf whose step opened it (kiff/tafs#494): a tap inside the window
+-- confirms or issues Cards for that taf only. '' for none.
+ALTER TABLE cloud_meta.approval_windows ADD COLUMN IF NOT EXISTS agent TEXT NOT NULL DEFAULT '';
 
 -- A device's open window, read on every routine action inside it.
 CREATE INDEX IF NOT EXISTS approval_windows_device_open_idx

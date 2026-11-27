@@ -222,9 +222,9 @@ func TestAComputersPasskeyWindowIsUsedForPlanquesApprovals(t *testing.T) {
 	if valid, key, open := r.verified("dev_pc", r.pcKey, win); valid != true || key != auth.KeyDevice || !open {
 		t.Errorf("planque's v2 check inside the passkey's window: %v %v open=%v", valid, key, open)
 	}
-	// Each use restarts it, as for a phone.
-	if got, err := r.windows.Get(r.ctx, win); err != nil || !got.ExpiresAt.Equal(r.now.Add(auth.WindowLength)) {
-		t.Errorf("not restarted: %+v %v", got, err)
+	// A use never extends it, as for a phone: 5 minutes from the passkey.
+	if got, err := r.windows.Get(r.ctx, win); err != nil || !got.ExpiresAt.Equal(opened.Add(auth.WindowLength)) {
+		t.Errorf("extended: %+v %v", got, err)
 	}
 	// A window id that isn't the open one: not open.
 	if _, _, open := r.verified("dev_pc", r.pcKey, auth.NewWindowID()); open {
