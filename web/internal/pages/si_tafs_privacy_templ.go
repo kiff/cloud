@@ -144,20 +144,7 @@ func TafsPrivacySI() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(chatEndsWords("si"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 83, Col: 662}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " එහි අනුමත කිරීම්වල වාර්තාව: ගිණුම අවසන් වන තුරු.</li><li>උපාංගයක push token එක: ඔබ යෙදුමෙන් ඉවත් වන, උපාංගය ඉවත් කරන, හෝ Apple හෝ Google token එක නැති වූ බව වාර්තා කරන තුරු. උපාංගයක පොදු යතුර, නම, වේදිකාව සහ දිනයන්: ඔබ එය භාවිත කරන අතරතුර; ඔබ එයින් ඉවත් වූ විට, එය ඉවත් කළ ලෙස සලකුණු කර ගිණුම මකන තුරු තබාගනී, එවිට KIFF එයින් ප්\u200dරමාද වූ පිළිතුරක් ප්\u200dරතික්ෂේප කර කලින් එකක් අත්සන් කළේ කුමන උපාංගයදැයි පෙන්විය හැක. passkey එකක පොදු යතුර, id සහ නම: එහි උපාංගයේ මෙන්. පරිගණකයක සැසිය: දින 90ක් දක්වා, හෝ ඔබ ඉවත් වන තුරු.</li><li>ඔබේ ගිණුම: එය මකන තුරු. සේවා ලඝු: දින 30ක්. tafs සහ planque හි ගබඩා සංකේතනය කළ ලක්ෂ්\u200dය-කාල පිටපත් දින 35ක් තබාගනී, ගබඩාවක් අසාර්ථක වීමකින් පසු ප්\u200dරතිසාධනය කිරීමට පමණක් භාවිත කරන.</li></ul><p>අනෙක් සියල්ල <a href=\"/si/privacy#retention\">KIFF හි රඳවා ගැනීමේ කොටසේ</a> ඇත.</p></section><section id=\"lawful-bases\"><h2>9. නීත්\u200dයානුකූල පදනම්</h2><p>ගිවිසුමක් ඉටු කිරීම, ඔබේ ගිණුම සහ ඔබේ taf ධාවනය කිරීමට. නීත්\u200dයානුකූල අවශ්\u200dයතා, ආරක්ෂාව, වංචා වැළැක්වීම සහ අනිසි භාවිත හඳුනාගැනීම සඳහා. කැමැත්ත, tafs හි AI සඳහා (<a href=\"#ai\">5 වන කොටස</a>). නීතිමය බැඳීම, බදු වාර්තා සඳහා. විස්තර <a href=\"/si/privacy#lawful-bases\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තියේ</a> ඇත.</p></section><section id=\"rights\"><h2>10. ඔබේ අයිතිවාසිකම්</h2><p>GDPR යටතේ ඔබට ඔබේ දත්තවලට ප්\u200dරවේශය, එහි නිවැරදි කිරීම, මැකීම, සීමා කිරීම හෝ ගෙන යා හැකි පිටපතක් ඉල්ලිය හැක, නීත්\u200dයානුකූල අවශ්\u200dයතා මත පදනම් වූ සැකසීමට විරුද්ධ විය හැක, සහ කැමැත්ත ඉවත් කරගත හැක. <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> වෙත ඊමේල් කරන්න; අපි අනවශ්\u200dය ප්\u200dරමාදයකින් තොරව, උපරිම වශයෙන් මාසයක් ඇතුළත පිළිතුරු දෙමු; සංකීර්ණ ඉල්ලීමකට තවත් මාස දෙකක් ගත විය හැකි අතර, එය පළමු මාසය ඇතුළත ඔබට දන්වමු. යෙදුමේ, ගිණුම → මගේ සංවාද නිර්යාත කරන්න මඟින් ඔබේම සංවාද සහ සටහන් බාගත කරයි.</p><p>ඔබේ tafs ගිණුම මකන්න, යෙදුම විවෘත කර, ගිණුම වෙත ගොස් <em>ගිණුම මකන්න</em> ඔබා, ඉන්පසු තහවුරු කරන්න. එය ආපසු හැරවිය නොහැක. කුමක් සහ කවදා මැකෙනවාද, සහ ඊමේල් මගින් ඉල්ලන ආකාරය <a href=\"/si/privacy#delete-account\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තිය</a> පවසයි.</p><p>ඔබට <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">එස්තෝනියානු දත්ත ආරක්ෂණ පරීක්ෂණාලය (Andmekaitse Inspektsioon)</a> වෙත, හෝ ඔබ ජීවත් වන තැනැති අධීක්ෂණ අධිකාරියට පැමිණිලි කළ හැක.</p><p><strong>ඔබේ රට.</strong> සමහර රටවල නීති මෙම ප්\u200dරතිපත්තිය පවසනවාට වඩා ඉල්ලයි. ඒවා එකතු කරන දේ, ඉංග්\u200dරීසියෙන් සහ රටේ භාෂාවෙන්, <a href=\"/privacy/countries\">ඔබේ රට</a> (ඉංග්\u200dරීසියෙන්) හි ඇත.</p></section><section id=\"more\"><h2>11. ආරක්ෂාව, ළමයින් සහ වෙනස්කම්</h2><p>අපගේ ආරක්ෂණ ක්\u200dරියාමාර්ග <a href=\"/security\">/security</a> (ඉංග්\u200dරීසියෙන්) හි ඇත. tafs ළමයින් අරමුණු කර ගෙන නොමැති අතර, අපි අවුරුදු 16ට අඩු ළමයින්ගෙන් පුද්ගලික දත්ත දැනුවත්ව එකතු නොකරමු. <a href=\"/si/privacy#changes\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තිය</a> තමන්ගේම ප්\u200dරතිපත්තිය සඳහා පවසන ආකාරයටම අපි මෙම ප්\u200dරතිපත්තිය වෙනස් කරමු.</p></section><section id=\"contact\"><h2>12. සම්බන්ධ වන්න</h2><p>පෞද්ගලිකත්ව ප්\u200dරශ්න සහ ඉල්ලීම්: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. නිල නීතිමය දැනුම්දීම්: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. යෙදුමේම කොන්දේසි <a href=\"/si/tafs/terms\">/tafs/terms</a> හි ඇත.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " එහි අනුමත කිරීම්වල වාර්තාව: ගිණුම අවසන් වන තුරු.</li><li>උපාංගයක push token එක: ඔබ යෙදුමෙන් ඉවත් වන, උපාංගය ඉවත් කරන, හෝ Apple හෝ Google token එක නැති වූ බව වාර්තා කරන තුරු. උපාංගයක පොදු යතුර, නම, වේදිකාව සහ දිනයන්: ඔබ එය භාවිත කරන අතරතුර; ඔබ එයින් ඉවත් වූ විට, එය ඉවත් කළ ලෙස සලකුණු කර ගිණුම මකන තුරු තබාගනී, එවිට KIFF එයින් ප්\u200dරමාද වූ පිළිතුරක් ප්\u200dරතික්ෂේප කර කලින් එකක් අත්සන් කළේ කුමන උපාංගයදැයි පෙන්විය හැක. passkey එකක පොදු යතුර, id සහ නම: එහි උපාංගයේ මෙන්. පරිගණකයක සැසිය: දින 90ක් දක්වා, හෝ ඔබ ඉවත් වන තුරු.</li><li>ඔබේ ගිණුම: එය මකන තුරු. සේවා ලඝු: දින 30ක්. tafs සහ planque හි ගබඩා සංකේතනය කළ ලක්ෂ්\u200dය-කාල පිටපත් දින 35ක් තබාගනී, ගබඩාවක් අසාර්ථක වීමකින් පසු ප්\u200dරතිසාධනය කිරීමට පමණක් භාවිත කරන.</li></ul><p>අනෙක් සියල්ල <a href=\"/si/privacy#retention\">KIFF හි රඳවා ගැනීමේ කොටසේ</a> ඇත.</p></section><section id=\"lawful-bases\"><h2>9. නීත්\u200dයානුකූල පදනම්</h2><p>ගිවිසුමක් ඉටු කිරීම, ඔබේ ගිණුම සහ ඔබේ taf ධාවනය කිරීමට. නීත්\u200dයානුකූල අවශ්\u200dයතා, ආරක්ෂාව, වංචා වැළැක්වීම සහ අනිසි භාවිත හඳුනාගැනීම සඳහා. කැමැත්ත, tafs හි AI සඳහා (<a href=\"#ai\">5 වන කොටස</a>). නීතිමය බැඳීම, බදු වාර්තා සඳහා. විස්තර <a href=\"/si/privacy#lawful-bases\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තියේ</a> ඇත.</p></section><section id=\"rights\"><h2>10. ඔබේ අයිතිවාසිකම්</h2><p>GDPR යටතේ ඔබට ඔබේ දත්තවලට ප්\u200dරවේශය, එහි නිවැරදි කිරීම, මැකීම, සීමා කිරීම හෝ ගෙන යා හැකි පිටපතක් ඉල්ලිය හැක, නීත්\u200dයානුකූල අවශ්\u200dයතා මත පදනම් වූ සැකසීමට විරුද්ධ විය හැක, සහ කැමැත්ත ඉවත් කරගත හැක. <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> වෙත ඊමේල් කරන්න; අපි අනවශ්\u200dය ප්\u200dරමාදයකින් තොරව, උපරිම වශයෙන් මාසයක් ඇතුළත පිළිතුරු දෙමු; සංකීර්ණ ඉල්ලීමකට තවත් මාස දෙකක් ගත විය හැකි අතර, එය පළමු මාසය ඇතුළත ඔබට දන්වමු. යෙදුමේ, ගිණුම → මගේ සංවාද නිර්යාත කරන්න මඟින් ඔබේම සංවාද සහ සටහන් බාගත කරයි.</p><p>ඔබේ tafs ගිණුම මකන්න, යෙදුම විවෘත කර, ගිණුම වෙත ගොස් <em>ගිණුම මකන්න</em> ඔබා, ඉන්පසු තහවුරු කරන්න. එය ආපසු හැරවිය නොහැක. කුමක් සහ කවදා මැකෙනවාද, සහ ඊමේල් මගින් ඉල්ලන ආකාරය <a href=\"/si/privacy#delete-account\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තිය</a> පවසයි.</p><p>ඔබට <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">එස්තෝනියානු දත්ත ආරක්ෂණ පරීක්ෂණාලය (Andmekaitse Inspektsioon)</a> වෙත, හෝ ඔබ ජීවත් වන තැනැති අධීක්ෂණ අධිකාරියට පැමිණිලි කළ හැක.</p><p><strong>ඔබේ රට.</strong> සමහර රටවල නීති මෙම ප්\u200dරතිපත්තිය පවසනවාට වඩා ඉල්ලයි. ඒවා එකතු කරන දේ, ඉංග්\u200dරීසියෙන් සහ රටේ භාෂාවෙන්, <a href=\"/privacy/countries\">ඔබේ රට</a> (ඉංග්\u200dරීසියෙන්) හි ඇත.</p></section><section id=\"more\"><h2>11. ආරක්ෂාව, ළමයින් සහ වෙනස්කම්</h2><p>අපගේ ආරක්ෂණ ක්\u200dරියාමාර්ග <a href=\"/security\">/security</a> (ඉංග්\u200dරීසියෙන්) හි ඇත. tafs ළමයින් අරමුණු කර ගෙන නොමැති අතර, අපි අවුරුදු 16ට අඩු ළමයින්ගෙන් පුද්ගලික දත්ත දැනුවත්ව එකතු නොකරමු. <a href=\"/si/privacy#changes\">KIFF හි පෞද්ගලිකත්ව ප්\u200dරතිපත්තිය</a> තමන්ගේම ප්\u200dරතිපත්තිය සඳහා පවසන ආකාරයටම අපි මෙම ප්\u200dරතිපත්තිය වෙනස් කරමු.</p></section><section id=\"contact\"><h2>12. සම්බන්ධ වන්න</h2><p>පෞද්ගලිකත්ව ප්\u200dරශ්න සහ ඉල්ලීම්: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. නිල නීතිමය දැනුම්දීම්: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. යෙදුමේම කොන්දේසි <a href=\"/si/tafs/terms\">/tafs/terms</a> හි ඇත.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -190,347 +177,347 @@ func tafsPrivacyGoogleSI() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Google පරිශීලක දත්ත</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google පරිශීලක දත්ත</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>ඔබ ඉල්ලූ විට, tafs ඔබේ Google ගිණුමට taf එකක් සම්බන්ධ කරයි, උදාහරණයක් ලෙස එහි කාර්යය භාවිත කරන Google Sheets හෝ Google Calendar වෙත, යෙදුමේ යෙදුම් සම්බන්ධ කරන්න තුළ. මෙම කොටස පවසන්නේ Google වෙතින් ලබාගන්නා දත්ත සමඟ tafs කරන්නේ කුමක්ද යන්නයි.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>ඔබ ඉල්ලූ විට, tafs ඔබේ Google ගිණුමට taf එකක් සම්බන්ධ කරයි, උදාහරණයක් ලෙස එහි කාර්යය භාවිත කරන Google Sheets හෝ Google Calendar වෙත, යෙදුමේ යෙදුම් සම්බන්ධ කරන්න තුළ. මෙම කොටස පවසන්නේ Google වෙතින් ලබාගන්නා දත්ත සමඟ tafs කරන්නේ කුමක්ද යන්නයි.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>ඔබ ඉල්ලූ විට, tafs ඔබේ Google ගිණුමට taf එකක් සම්බන්ධ කරයි, උදාහරණයක් ලෙස ඔබේ Gmail වෙත, හෝ එහි කාර්යය භාවිත කරන Google Calendar හෝ Google Sheets වෙත, යෙදුමේ යෙදුම් සම්බන්ධ කරන්න තුළ. මෙම කොටස පවසන්නේ Google වෙතින් ලබාගන්නා දත්ත සමඟ tafs කරන්නේ කුමක්ද යන්නයි.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>ඔබ ඉල්ලූ විට, tafs ඔබේ Google ගිණුමට taf එකක් සම්බන්ධ කරයි, උදාහරණයක් ලෙස ඔබේ Gmail වෙත, හෝ එහි කාර්යය භාවිත කරන Google Calendar හෝ Google Sheets වෙත, යෙදුමේ යෙදුම් සම්බන්ධ කරන්න තුළ. මෙම කොටස පවසන්නේ Google වෙතින් ලබාගන්නා දත්ත සමඟ tafs කරන්නේ කුමක්ද යන්නයි.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>එය කියවන සහ ලියන දේ:</strong> taf හි කාර්යයට අවශ්\u200dය දේ: එය යාවත්කාලීනව තබන පැතුරුම්පත්, හෝ එය බලා ගන්නා දිනදර්ශනවල සිදුවීම්. එය ඒවා වෙනස් කරන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි, සහ Card හි සීමා ඉක්මවන ඕනෑම දෙයක් ඔබේ අනුමැතිය සඳහා රැඳී සිටී.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>එය කියවන සහ ලියන දේ:</strong> taf හි කාර්යයට අවශ්\u200dය දේ: එය යාවත්කාලීනව තබන පැතුරුම්පත්, හෝ එය බලා ගන්නා දිනදර්ශනවල සිදුවීම්. එය ඒවා වෙනස් කරන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි, සහ Card හි සීමා ඉක්මවන ඕනෑම දෙයක් ඔබේ අනුමැතිය සඳහා රැඳී සිටී.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>එය කියවන සහ ලියන දේ:</strong> taf හි කාර්යයට අවශ්\u200dය දේ. ඔබේ Gmail හි, පිළිතුරක් අවශ්\u200dය ඒවා සොයා ගැනීමට එය ඔබේ පණිවිඩ සහ සංවාද කියවා, කෙටුම්පත් ලියයි; එය තැපැල් යවන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. Google Calendar සහ Google Sheets හි, එය බලා ගන්නා දිනදර්ශනවල සිදුවීම්, හෝ යාවත්කාලීනව තබන පැතුරුම්පත් කියවයි, සහ ඒවා වෙනස් කරන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>එය කියවන සහ ලියන දේ:</strong> taf හි කාර්යයට අවශ්\u200dය දේ. ඔබේ Gmail හි, පිළිතුරක් අවශ්\u200dය ඒවා සොයා ගැනීමට එය ඔබේ පණිවිඩ සහ සංවාද කියවා, කෙටුම්පත් ලියයි; එය තැපැල් යවන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. Google Calendar සහ Google Sheets හි, එය බලා ගන්නා දිනදර්ශනවල සිදුවීම්, හෝ යාවත්කාලීනව තබන පැතුරුම්පත් කියවයි, සහ ඒවා වෙනස් කරන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Google Tasks හි, එය බලා ගන්නා කාර්ය ලැයිස්තු කියවයි, සහ කාර්ය එකතු කරන, සම්පූර්ණ කරන, ගෙන යන හෝ මකන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Google Tasks හි, එය බලා ගන්නා කාර්ය ලැයිස්තු කියවයි, සහ කාර්ය එකතු කරන, සම්පූර්ණ කරන, ගෙන යන හෝ මකන්නේ taf හි Card එක ඉඩ දෙන තැන පමණි. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Card හි සීමා ඉක්මවන ඕනෑම දෙයක් ඔබේ අනුමැතිය සඳහා රැඳී සිටී.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Card හි සීමා ඉක්මවන ඕනෑම දෙයක් ඔබේ අනුමැතිය සඳහා රැඳී සිටී.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>ඇයි:</strong> ඒ taf සඳහා ඔබ සකසා ඇති කාර්යය කිරීමට පමණක්, සහ එය සම්බන්ධ වී ඇත්තේ කුමන Google ගිණුමටදැයි ඔබට පෙන්වීමට: එහි ඊමේල් ලිපිනය, ඔබ විසන්ධි කරන තුරු සම්බන්ධතාව සමඟ තබාගනී.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>ඇයි:</strong> ඒ taf සඳහා ඔබ සකසා ඇති කාර්යය කිරීමට පමණක්, සහ එය සම්බන්ධ වී ඇත්තේ කුමන Google ගිණුමටදැයි ඔබට පෙන්වීමට: එහි ඊමේල් ලිපිනය, ඔබ විසන්ධි කරන තුරු සම්බන්ධතාව සමඟ තබාගනී.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>එක් එක් Google යෙදුම සම්බන්ධ වන ආකාරය:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>එක් එක් Google යෙදුම සම්බන්ධ වන ආකාරය:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>අපගේ පිවිසුම් හවුල්කරු හරහා, <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>අපගේ පිවිසුම් හවුල්කරු හරහා, <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 139, Col: 256}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if len(googleInHouse("si")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>tafs හි ම Google පිවිසුම හරහා, අතරමැදි වෙනත් සමාගමක් නොමැතිව: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>tafs හි ම Google පිවිසුම හරහා, අතරමැදි වෙනත් සමාගමක් නොමැතිව: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 142, Col: 184}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			for _, a := range googlePending("si") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("si"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("si"))
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("si").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("si").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("si").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var16 string
-				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("si").AsksFor)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 147, Col: 42}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 150, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var18 string
-					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 150, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "දෙකෙහිම නම් කර ඇති යෙදුමක් ඔබේ ගිණුම අනුව එක් ආකාරයකින් හෝ අනෙක් ආකාරයෙන් සම්බන්ධ වේ. Google හි ම පිවිසුම් පිටුව ඔබ ඉඩ දෙන්නේ කුමක්දැයි පෙන්වයි.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "දෙකෙහිම නම් කර ඇති යෙදුමක් ඔබේ ගිණුම අනුව එක් ආකාරයකින් හෝ අනෙක් ආකාරයෙන් සම්බන්ධ වේ. Google හි ම පිවිසුම් පිටුව ඔබ ඉඩ දෙන්නේ කුමක්දැයි පෙන්වයි.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි.<ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> tafs ඉල්ලන්නේ taf හි මෙවලම්වලට අවශ්\u200dය ප්\u200dරවේශය පමණි. එම පටු ප්\u200dරවේශය කළ නොහැකි නම්, එය යෙදුමේ සාමාන්\u200dය ප්\u200dරවේශය ඉල්ලන අතර, ඔබ පිවිසීමට පෙර එය පවසයි. සාමාන්\u200dය ප්\u200dරවේශයට taf භාවිත නොකරන පුද්ගලික දත්ත ඇතුළත් වන්නේ නම්, tafs සම්බන්ධ නොකරයි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> පිවිසුම ඒ යෙදුම සඳහා පහත ලැයිස්තුගත ප්\u200dරවේශ සියල්ලම එකවර ඉල්ලයි, taf කියවන්නේ නම් පවා.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි.<ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> tafs ඉල්ලන්නේ taf හි මෙවලම්වලට අවශ්\u200dය ප්\u200dරවේශය පමණි. එම පටු ප්\u200dරවේශය කළ නොහැකි නම්, එය යෙදුමේ සාමාන්\u200dය ප්\u200dරවේශය ඉල්ලන අතර, ඔබ පිවිසීමට පෙර එය පවසයි. සාමාන්\u200dය ප්\u200dරවේශයට taf භාවිත නොකරන පුද්ගලික දත්ත ඇතුළත් වන්නේ නම්, tafs සම්බන්ධ නොකරයි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> පිවිසුම ඒ යෙදුම සඳහා පහත ලැයිස්තුගත ප්\u200dරවේශ සියල්ලම එකවර ඉල්ලයි, taf කියවන්නේ නම් පවා.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි. පිවිසුම ඒ යෙදුම සඳහා පහත ලැයිස්තුගත ප්\u200dරවේශ සියල්ලම එකවර ඉල්ලයි, taf කියවන්නේ නම් පවා.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි. පිවිසුම ඒ යෙදුම සඳහා පහත ලැයිස්තුගත ප්\u200dරවේශ සියල්ලම එකවර ඉල්ලයි, taf කියවන්නේ නම් පවා.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි. tafs ඉල්ලන්නේ taf හි මෙවලම්වලට අවශ්\u200dය ප්\u200dරවේශය පමණි. එම පටු ප්\u200dරවේශය කළ නොහැකි නම්, එය යෙදුමේ සාමාන්\u200dය ප්\u200dරවේශය ඉල්ලන අතර, ඔබ පිවිසීමට පෙර එය පවසයි. සාමාන්\u200dය ප්\u200dරවේශයට taf භාවිත නොකරන පුද්ගලික දත්ත ඇතුළත් වන්නේ නම්, tafs සම්බන්ධ නොකරයි.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>ඔබ ඉඩ දෙන දේ:</strong> ඔබ Google හි ම පිටුවේ පිවිසී ඉඩ දිය යුතු දේ තෝරයි. tafs ඉල්ලන්නේ taf හි මෙවලම්වලට අවශ්\u200dය ප්\u200dරවේශය පමණි. එම පටු ප්\u200dරවේශය කළ නොහැකි නම්, එය යෙදුමේ සාමාන්\u200dය ප්\u200dරවේශය ඉල්ලන අතර, ඔබ පිවිසීමට පෙර එය පවසයි. සාමාන්\u200dය ප්\u200dරවේශයට taf භාවිත නොකරන පුද්ගලික දත්ත ඇතුළත් වන්නේ නම්, tafs සම්බන්ධ නොකරයි.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>taf එකක් එය භාවිත කරන ආකාරය:</strong> taf එකක් භාවිත කරන්නේ එහි Card එකේ අනුමත මෙවලම් පමණි. කිසිවක් යැවීමට පෙර සෑම ඇමතුමක්ම ඒ නිශ්චිත මෙවලම සහ ඒ තර්ක සඳහා වන අවසරයකට එරෙහිව පරීක්ෂා කෙරේ, සහ ඔබ දුන් ප්\u200dරවේශයෙන් පිටත ඇමතුමක් ප්\u200dරතික්ෂේප කෙරේ. සෑම විටම ඔබේ අනුමැතිය ඉල්ලන ක්\u200dරියා Card එකේ සකසා ඇත.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>taf එකක් එය භාවිත කරන ආකාරය:</strong> taf එකක් භාවිත කරන්නේ එහි Card එකේ අනුමත මෙවලම් පමණි. කිසිවක් යැවීමට පෙර සෑම ඇමතුමක්ම ඒ නිශ්චිත මෙවලම සහ ඒ තර්ක සඳහා වන අවසරයකට එරෙහිව පරීක්ෂා කෙරේ, සහ ඔබ දුන් ප්\u200dරවේශයෙන් පිටත ඇමතුමක් ප්\u200dරතික්ෂේප කෙරේ. සෑම විටම ඔබේ අනුමැතිය ඉල්ලන ක්\u200dරියා Card එකේ සකසා ඇත.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>tafs හි ම Google පිවිසුම ඉල්ලන ප්\u200dරවේශය:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>tafs හි ම Google පිවිසුම ඉල්ලන ප්\u200dරවේශය:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>tafs ඉල්ලන ප්\u200dරවේශය:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>tafs ඉල්ලන ප්\u200dරවේශය:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("si") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 188, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var21 string
-					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `si_tafs_privacy.templ`, Line: 188, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>පිවිසුමක් කොපමණ ඉඩ දුන්නත්, taf භාවිත කරන්නේ එහි Card එකේ මෙවලම් පමණි.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>පිවිසුමක් කොපමණ ඉඩ දුන්නත්, taf භාවිත කරන්නේ එහි Card එකේ මෙවලම් පමණි.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong><ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> ඔබේ Google පිවිසුම තබාගන්නේ <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති අපගේ පිවිසුම් හවුල්කරු විසිනි, සහ එය කිසිදා taf එකකට හෝ planque වෙත ලබා නොදේ. taf එකටවත් tafs ටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> tafs හි ම සම්බන්ධතා සේවාව වන planque, ඔබේ Google token එක ඔබේ සමාගම සඳහා යුරෝපා සංගමයේ (අයර්ලන්තය) AWS KMS සමඟ සංකේතනය කර තබාගන්නා අතර, taf හි Card එක ඉඩ දෙන ඇමතුමක් කිරීමට පමණක් එය භාවිත කරයි. එය කිසිදා taf එකකට ලබා නොදේ, සහ taf එකටවත් AI ආකෘතියටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong><ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> ඔබේ Google පිවිසුම තබාගන්නේ <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති අපගේ පිවිසුම් හවුල්කරු විසිනි, සහ එය කිසිදා taf එකකට හෝ planque වෙත ලබා නොදේ. taf එකටවත් tafs ටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> tafs හි ම සම්බන්ධතා සේවාව වන planque, ඔබේ Google token එක ඔබේ සමාගම සඳහා යුරෝපා සංගමයේ (අයර්ලන්තය) AWS KMS සමඟ සංකේතනය කර තබාගන්නා අතර, taf හි Card එක ඉඩ දෙන ඇමතුමක් කිරීමට පමණක් එය භාවිත කරයි. එය කිසිදා taf එකකට ලබා නොදේ, සහ taf එකටවත් AI ආකෘතියටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong> tafs හි ම සම්බන්ධතා සේවාව වන planque, ඔබේ Google token එක ඔබේ සමාගම සඳහා යුරෝපා සංගමයේ (අයර්ලන්තය) AWS KMS සමඟ සංකේතනය කර තබාගන්නා අතර, taf හි Card එක ඉඩ දෙන ඇමතුමක් කිරීමට පමණක් එය භාවිත කරයි. එය කිසිදා taf එකකට ලබා නොදේ, සහ taf එකටවත් AI ආකෘතියටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong> tafs හි ම සම්බන්ධතා සේවාව වන planque, ඔබේ Google token එක ඔබේ සමාගම සඳහා යුරෝපා සංගමයේ (අයර්ලන්තය) AWS KMS සමඟ සංකේතනය කර තබාගන්නා අතර, taf හි Card එක ඉඩ දෙන ඇමතුමක් කිරීමට පමණක් එය භාවිත කරයි. එය කිසිදා taf එකකට ලබා නොදේ, සහ taf එකටවත් AI ආකෘතියටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong> ඔබේ Google පිවිසුම තබාගන්නේ <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති අපගේ පිවිසුම් හවුල්කරු විසිනි, සහ එය කිසිදා taf එකකට හෝ planque වෙත ලබා නොදේ. taf එකටවත් tafs ටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>ඔබේ පිවිසුම තබාගන්නේ කවුද:</strong> ඔබේ Google පිවිසුම තබාගන්නේ <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇති අපගේ පිවිසුම් හවුල්කරු විසිනි, සහ එය කිසිදා taf එකකට හෝ planque වෙත ලබා නොදේ. taf එකටවත් tafs ටවත් ඔබේ මුරපදය හෝ ඔබේ Google token නොපෙනේ. එම ප්\u200dරවේශයම අවශ්\u200dය ඔබේ තවත් taf එකක් පිවිසුම නැවත භාවිත කරන අතර, සෑම taf එකක්ම භාවිත කරන්නේ ඔබ එයට අනුමත කළ මෙවලම් පමණි.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී.<ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> එය සෑම ඇමතුමක්ම කරන අපගේ පිවිසුම් හවුල්කරු හරහාද යයි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> planque Google වෙත ඇමතුම් කරන්නේ ම ය, එබැවින් වෙනත් සමාගමක් ඇමතුම කරන්නේවත් ඔබේ පිවිසුම තබාගන්නේවත් නැත.</li></ul>දෙකම <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී.<ul><li><strong>අපගේ පිවිසුම් හවුල්කරු හරහා:</strong> එය සෑම ඇමතුමක්ම කරන අපගේ පිවිසුම් හවුල්කරු හරහාද යයි.</li><li><strong>tafs හි ම Google පිවිසුම හරහා:</strong> planque Google වෙත ඇමතුම් කරන්නේ ම ය, එබැවින් වෙනත් සමාගමක් ඇමතුම කරන්නේවත් ඔබේ පිවිසුම තබාගන්නේවත් නැත.</li></ul>දෙකම <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී. planque Google වෙත ඇමතුම් කරන්නේ ම ය, එබැවින් වෙනත් සමාගමක් ඇමතුම කරන්නේවත් ඔබේ පිවිසුම තබාගන්නේවත් නැත. AI ආකෘතියේ සැපයුම්කරු <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී. planque Google වෙත ඇමතුම් කරන්නේ ම ය, එබැවින් වෙනත් සමාගමක් ඇමතුම කරන්නේවත් ඔබේ පිවිසුම තබාගන්නේවත් නැත. AI ආකෘතියේ සැපයුම්කරු <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී. එය සෑම ඇමතුමක්ම කරන අපගේ පිවිසුම් හවුල්කරු හරහාද යයි. දෙකම <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>එය ලබාගන්නා වෙනත් අය:</strong> taf එකක් Google වෙතින් කියවන දේ taf එක ධාවනය කරන AI ආකෘතියට යයි, ඔබ ඉඩ දුන් පසු පමණි (බලන්න <a href=\"#ai\">tafs හි AI</a>), එය තම සැපයුම්කරුගේ කොන්දේසි යටතේ දින 30ක් දක්වා තබාගනී. එය සෑම ඇමතුමක්ම කරන අපගේ පිවිසුම් හවුල්කරු හරහාද යයි. දෙකම <a href=\"/subprocessors\">/subprocessors</a> (ඉංග්\u200dරීසියෙන්) හි ලැයිස්තුගත කර ඇත.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>AI පුහුණුව:</strong> Google පරිශීලක දත්ත AI ආකෘති පුහුණු කිරීමට භාවිත නොකෙරේ.</li><li><strong>රූප:</strong> tafs රූප හෝ වීඩියෝ නිර්මාණය හෝ සංස්කරණය නොකරයි: එහි AI ලියන්නේ පෙළ ය. එය කිසිදා Google API හෝ Google පරිශීලක දත්ත භාවිත කරන්නේ කිසිවෙකුගේ සමීප රූප (කැමැත්තක් නොමැති සමීප රූප, NCII), හෝ පුද්ගලයෙකුගේ වෙනත් ඕනෑම රූපයක් නිර්මාණය, සංස්කරණය හෝ බෙදාගැනීමට නොවේ.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>AI පුහුණුව:</strong> Google පරිශීලක දත්ත AI ආකෘති පුහුණු කිරීමට භාවිත නොකෙරේ.</li><li><strong>රූප:</strong> tafs රූප හෝ වීඩියෝ නිර්මාණය හෝ සංස්කරණය නොකරයි: එහි AI ලියන්නේ පෙළ ය. එය කිසිදා Google API හෝ Google පරිශීලක දත්ත භාවිත කරන්නේ කිසිවෙකුගේ සමීප රූප (කැමැත්තක් නොමැති සමීප රූප, NCII), හෝ පුද්ගලයෙකුගේ වෙනත් ඕනෑම රූපයක් නිර්මාණය, සංස්කරණය හෝ බෙදාගැනීමට නොවේ.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("si")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>කොපමණ කාලයක්, සහ කොතැනද:</strong> ඔබේ පැතුරුම්පත් සහ සිදුවීම් ඔබේ Google ගිණුමේ පවතී. tafs හි ම ගබඩාවේ, මෙවලමක් ආපසු දෙන දේ තබාගන්නේ taf හි ධාවනය අවසන් වන තුරු පමණි. සෑම ඇමතුමක්ම ඉදිරියට යවන planque, Google ආපසු දෙන දේ පැය 24ක් තබාගනී, එබැවින් නැවත කරන ඇමතුමකට එකම පිළිතුර ලැබෙන අතර එය කිසිදා දෙවරක් නොයැවේ; ඉන්පසු එය තබාගන්නේ ඇමතුම යවා තිබේද යන්න පමණි. සංවාදයක, කියවූ දේ පමණක් සංකේතනය කර තබාගනී, සංවාදය පැයක් අක්\u200dරිය වන තුරු සහ කියවීමෙන් පසු උපරිම පැය හතරක් දක්වා භාවිත කර, ඉන්පසු දින කිහිපයක් ඇතුළත ස්වයංක්\u200dරීයව මැකේ. ධාවනයක වාර්තාව සහ එහි සංවාදය දින 30ක් තබාගන්නා අතර, taf එකක සටහන් ඔබ taf එක ඉවත් කරන තුරු (බලන්න <a href=\"#retention\">අපි එය තබාගන්නේ කොපමණ කාලයක්ද</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>කොපමණ කාලයක්, සහ කොතැනද:</strong> ඔබේ පැතුරුම්පත් සහ සිදුවීම් ඔබේ Google ගිණුමේ පවතී. tafs හි ම ගබඩාවේ, මෙවලමක් ආපසු දෙන දේ තබාගන්නේ taf හි ධාවනය අවසන් වන තුරු පමණි. සෑම ඇමතුමක්ම ඉදිරියට යවන planque, Google ආපසු දෙන දේ පැය 24ක් තබාගනී, එබැවින් නැවත කරන ඇමතුමකට එකම පිළිතුර ලැබෙන අතර එය කිසිදා දෙවරක් නොයැවේ; ඉන්පසු එය තබාගන්නේ ඇමතුම යවා තිබේද යන්න පමණි. සංවාදයක, කියවූ දේ පමණක් සංකේතනය කර තබාගනී, සංවාදය පැයක් අක්\u200dරිය වන තුරු සහ කියවීමෙන් පසු උපරිම පැය හතරක් දක්වා භාවිත කර, ඉන්පසු දින කිහිපයක් ඇතුළත ස්වයංක්\u200dරීයව මැකේ. ධාවනයක වාර්තාව සහ එහි සංවාදය දින 30ක් තබාගන්නා අතර, taf එකක සටහන් ඔබ taf එක ඉවත් කරන තුරු (බලන්න <a href=\"#retention\">අපි එය තබාගන්නේ කොපමණ කාලයක්ද</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>කොපමණ කාලයක්, සහ කොතැනද:</strong> ඔබේ කෙටුම්පත්, සිදුවීම් සහ පැතුරුම්පත් ඔබේ Google ගිණුමේ පවතී. tafs හි ම ගබඩාවේ, මෙවලමක් ආපසු දෙන දේ තබාගන්නේ taf හි ධාවනය අවසන් වන තුරු පමණි. සෑම ඇමතුමක්ම ඉදිරියට යවන planque, Google ආපසු දෙන දේ පැය 24ක් තබාගනී, එබැවින් නැවත කරන ඇමතුමකට එකම පිළිතුර ලැබෙන අතර එය කිසිදා දෙවරක් නොයැවේ; ඉන්පසු එය තබාගන්නේ ඇමතුම යවා තිබේද යන්න පමණි. සංවාදයක, කියවූ දේ පමණක් සංකේතනය කර තබාගනී, සංවාදය පැයක් අක්\u200dරිය වන තුරු සහ කියවීමෙන් පසු උපරිම පැය හතරක් දක්වා භාවිත කර, ඉන්පසු දින කිහිපයක් ඇතුළත ස්වයංක්\u200dරීයව මැකේ. ධාවනයක වාර්තාව සහ එහි සංවාදය දින 30ක් තබාගන්නා අතර, taf එකක සටහන් ඔබ taf එක ඉවත් කරන තුරු (බලන්න <a href=\"#retention\">අපි එය තබාගන්නේ කොපමණ කාලයක්ද</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>කොපමණ කාලයක්, සහ කොතැනද:</strong> ඔබේ කෙටුම්පත්, සිදුවීම් සහ පැතුරුම්පත් ඔබේ Google ගිණුමේ පවතී. tafs හි ම ගබඩාවේ, මෙවලමක් ආපසු දෙන දේ තබාගන්නේ taf හි ධාවනය අවසන් වන තුරු පමණි. සෑම ඇමතුමක්ම ඉදිරියට යවන planque, Google ආපසු දෙන දේ පැය 24ක් තබාගනී, එබැවින් නැවත කරන ඇමතුමකට එකම පිළිතුර ලැබෙන අතර එය කිසිදා දෙවරක් නොයැවේ; ඉන්පසු එය තබාගන්නේ ඇමතුම යවා තිබේද යන්න පමණි. සංවාදයක, කියවූ දේ පමණක් සංකේතනය කර තබාගනී, සංවාදය පැයක් අක්\u200dරිය වන තුරු සහ කියවීමෙන් පසු උපරිම පැය හතරක් දක්වා භාවිත කර, ඉන්පසු දින කිහිපයක් ඇතුළත ස්වයංක්\u200dරීයව මැකේ. ධාවනයක වාර්තාව සහ එහි සංවාදය දින 30ක් තබාගන්නා අතර, taf එකක සටහන් ඔබ taf එක ඉවත් කරන තුරු (බලන්න <a href=\"#retention\">අපි එය තබාගන්නේ කොපමණ කාලයක්ද</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>එය නැවැත්වීම:</strong><ul><li>යෙදුමේ, යෙදුම් සම්බන්ධ කරන්න හෝ taf හි Card පටිත්තෙහි Google විසන්ධි කරන්න. එහි Google මෙවලම් වහාම නවතී, සහ tafs පිවිසුම වහාම ඉවත් කරන ලෙස Google ගෙන් ඉල්ලයි; එය ටිකක් පසුව සම්පූර්ණ විය හැක.</li><li>taf එකක් ඉවත් කරන්න, එවිට එහි සම්බන්ධතා එය සමඟ අවසන් වේ. ඔබේ වෙනත් taf එකක් තවමත් භාවිත කරන Google පිවිසුමක් අන්තිමයා යන තුරු පවතී.</li><li>ඔබේ Google ගිණුමේ, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> හිදී ඕනෑම වේලාවක tafs හි ප්\u200dරවේශය ඉවත් කරන්න. ඔබේ taf Google වෙත ළඟා වීම නවත්වන අතර, Google සම්බන්ධතාව ඉවත් වී ඇති බව යෙදුම ඔබට කියයි.</li><li>ඔබේ ගිණුම මකන්න: එහි taf, සංවාද, සටහන්, ගොනු සහ සම්බන්ධතා එකවරම මැකෙන අතර, ඒවායේ ලක්ෂ්\u200dය-කාල පිටපත්වලින් දින 35ක් ඇතුළත, සහ එහි Google token Google ඉඩ දෙන තැන ඉවත් කෙරේ.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>එය නැවැත්වීම:</strong><ul><li>යෙදුමේ, යෙදුම් සම්බන්ධ කරන්න හෝ taf හි Card පටිත්තෙහි Google විසන්ධි කරන්න. එහි Google මෙවලම් වහාම නවතී, සහ tafs පිවිසුම වහාම ඉවත් කරන ලෙස Google ගෙන් ඉල්ලයි; එය ටිකක් පසුව සම්පූර්ණ විය හැක.</li><li>taf එකක් ඉවත් කරන්න, එවිට එහි සම්බන්ධතා එය සමඟ අවසන් වේ. ඔබේ වෙනත් taf එකක් තවමත් භාවිත කරන Google පිවිසුමක් අන්තිමයා යන තුරු පවතී.</li><li>ඔබේ Google ගිණුමේ, <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> හිදී ඕනෑම වේලාවක tafs හි ප්\u200dරවේශය ඉවත් කරන්න. ඔබේ taf Google වෙත ළඟා වීම නවත්වන අතර, Google සම්බන්ධතාව ඉවත් වී ඇති බව යෙදුම ඔබට කියයි.</li><li>ඔබේ ගිණුම මකන්න: එහි taf, සංවාද, සටහන්, ගොනු සහ සම්බන්ධතා එකවරම මැකෙන අතර, ඒවායේ ලක්ෂ්\u200dය-කාල පිටපත්වලින් දින 35ක් ඇතුළත, සහ එහි Google token Google ඉඩ දෙන තැන ඉවත් කෙරේ.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

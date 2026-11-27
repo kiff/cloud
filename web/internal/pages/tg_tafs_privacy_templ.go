@@ -144,20 +144,7 @@ func TafsPrivacyTG() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(chatEndsWords("tg"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 83, Col: 586}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " Сабти тасдиқҳои он: то поёни ҳисоб.</li><li>Push token-и дастгоҳ: то баромадани шумо аз барнома, хориҷ кардани дастгоҳ, ё хабар додани Apple ё Google, ки token нест шудааст. Калиди оммавӣ, ном, платформа ва санаҳои дастгоҳ: ҳангоми истифодаи шумо; пас аз баромадани шумо аз он, он ҳамчун хориҷшуда қайд шуда то нест шудани ҳисоб нигоҳ дошта мешавад, то KIFF ҷавоби дерро аз он рад кунад ва нишон диҳад, ки кадом дастгоҳ пештарро имзо кардааст. Калиди оммавӣ, id ва номи passkey: монанди дастгоҳи он. Ҷаласаи компютер: то 90 рӯз, ё то баромадани шумо.</li><li>Ҳисоби шумо: то нест шуданаш. Ҳисоботҳои хизмат: 30 рӯз. Захираҳои tafs ва planque нусхаҳои нуқтаи-вақти рамзгузоришударо 35 рӯз нигоҳ медоранд, ки танҳо барои барқарор кардани захира пас аз вайроншавӣ истифода мешаванд.</li></ul><p>Ҳама чизи дигар дар <a href=\"/tg/privacy#retention\">қисми Нигоҳдории KIFF</a> оварда шудааст.</p></section><section id=\"lawful-bases\"><h2>9. Асосҳои қонунӣ</h2><p>Иҷрои шартнома, барои пешбурди ҳисоб ва taf-ҳои шумо. Манфиатҳои қонунӣ, барои амният, пешгирии қаллобӣ ва ошкор кардани сӯиистифода. Розигӣ, барои AI дар tafs (<a href=\"#ai\">қисми 5</a>). Ӯҳдадории қонунӣ, барои сабтҳои андоз. Тафсилот дар <a href=\"/tg/privacy#lawful-bases\">Сиёсати махфияти KIFF</a> оварда шудааст.</p></section><section id=\"rights\"><h2>10. Ҳуқуқҳои шумо</h2><p>Тибқи GDPR шумо метавонед дастрасӣ ба маълумоти худ, ислоҳ, нест кардан, маҳдуд кардан ё нусхаи интиқолшаванда талаб кунед, ба коркарди ба манфиатҳои қонунӣ асосёфта эътироз кунед ва розигиро бозпас гиред. Ба <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> нома фиристед; мо бе таъхири беасос ва дертаринаш дар давоми як моҳ ҷавоб медиҳем; барои дархости мураккаб метавонад боз ду моҳ лозим шавад ва мо инро дар моҳи аввал ба шумо хабар медиҳем. Дар барнома Ҳисоб → Содироти сӯҳбатҳои ман сӯҳбатҳо ва ёддоштҳои худи шуморо боргирӣ мекунад.</p><p>Барои нест кардани ҳисоби tafs-и худ, барномаро кушоед, ба Ҳисоб гузаред ва <em>Ҳисобро нест кунед</em>-ро пахш кунед, баъд тасдиқ кунед. Онро бозгардонидан мумкин нест. <a href=\"/tg/privacy#delete-account\">Сиёсати махфияти KIFF</a> мегӯяд, ки чӣ ва кай нест карда мешавад ва чӣ гуна тавассути почтаи электронӣ дархост кардан мумкин аст.</p><p>Шумо метавонед ба <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Нозироти ҳифзи маълумоти Эстония (Andmekaitse Inspektsioon)</a> ё ба мақоми назоратӣ дар ҷои зисти худ шикоят кунед.</p><p><strong>Кишвари шумо.</strong> Қонунҳои баъзе кишварҳо аз он чӣ ин сиёсат мегӯяд, бештар талаб мекунанд. Он чиро, ки онҳо илова мекунанд, ба забони англисӣ ва ба забони кишвар, дар <a href=\"/privacy/countries\">Кишвари шумо</a> (бо забони англисӣ) ёфтан мумкин аст.</p></section><section id=\"more\"><h2>11. Амният, кӯдакон ва тағйирот</h2><p>Чораҳои амнияти мо дар <a href=\"/security\">/security</a> (бо забони англисӣ) оварда шудаанд. tafs ба кӯдакон нигаронида нашудааст ва мо маълумоти шахсиро аз кӯдаконе, ки аз 16 сол хурданд, огоҳона ҷамъ намекунем. Мо ин сиёсатро ҳамон тавр тағйир медиҳем, ки <a href=\"/tg/privacy#changes\">Сиёсати махфияти KIFF</a> барои худаш мегӯяд.</p></section><section id=\"contact\"><h2>12. Тамос</h2><p>Саволҳо ва дархостҳо оид ба махфият: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Огоҳиҳои расмии ҳуқуқӣ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Шартҳои худи барнома дар <a href=\"/tg/tafs/terms\">/tafs/terms</a> мебошанд.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Сабти тасдиқҳои он: то поёни ҳисоб.</li><li>Push token-и дастгоҳ: то баромадани шумо аз барнома, хориҷ кардани дастгоҳ, ё хабар додани Apple ё Google, ки token нест шудааст. Калиди оммавӣ, ном, платформа ва санаҳои дастгоҳ: ҳангоми истифодаи шумо; пас аз баромадани шумо аз он, он ҳамчун хориҷшуда қайд шуда то нест шудани ҳисоб нигоҳ дошта мешавад, то KIFF ҷавоби дерро аз он рад кунад ва нишон диҳад, ки кадом дастгоҳ пештарро имзо кардааст. Калиди оммавӣ, id ва номи passkey: монанди дастгоҳи он. Ҷаласаи компютер: то 90 рӯз, ё то баромадани шумо.</li><li>Ҳисоби шумо: то нест шуданаш. Ҳисоботҳои хизмат: 30 рӯз. Захираҳои tafs ва planque нусхаҳои нуқтаи-вақти рамзгузоришударо 35 рӯз нигоҳ медоранд, ки танҳо барои барқарор кардани захира пас аз вайроншавӣ истифода мешаванд.</li></ul><p>Ҳама чизи дигар дар <a href=\"/tg/privacy#retention\">қисми Нигоҳдории KIFF</a> оварда шудааст.</p></section><section id=\"lawful-bases\"><h2>9. Асосҳои қонунӣ</h2><p>Иҷрои шартнома, барои пешбурди ҳисоб ва taf-ҳои шумо. Манфиатҳои қонунӣ, барои амният, пешгирии қаллобӣ ва ошкор кардани сӯиистифода. Розигӣ, барои AI дар tafs (<a href=\"#ai\">қисми 5</a>). Ӯҳдадории қонунӣ, барои сабтҳои андоз. Тафсилот дар <a href=\"/tg/privacy#lawful-bases\">Сиёсати махфияти KIFF</a> оварда шудааст.</p></section><section id=\"rights\"><h2>10. Ҳуқуқҳои шумо</h2><p>Тибқи GDPR шумо метавонед дастрасӣ ба маълумоти худ, ислоҳ, нест кардан, маҳдуд кардан ё нусхаи интиқолшаванда талаб кунед, ба коркарди ба манфиатҳои қонунӣ асосёфта эътироз кунед ва розигиро бозпас гиред. Ба <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> нома фиристед; мо бе таъхири беасос ва дертаринаш дар давоми як моҳ ҷавоб медиҳем; барои дархости мураккаб метавонад боз ду моҳ лозим шавад ва мо инро дар моҳи аввал ба шумо хабар медиҳем. Дар барнома Ҳисоб → Содироти сӯҳбатҳои ман сӯҳбатҳо ва ёддоштҳои худи шуморо боргирӣ мекунад.</p><p>Барои нест кардани ҳисоби tafs-и худ, барномаро кушоед, ба Ҳисоб гузаред ва <em>Ҳисобро нест кунед</em>-ро пахш кунед, баъд тасдиқ кунед. Онро бозгардонидан мумкин нест. <a href=\"/tg/privacy#delete-account\">Сиёсати махфияти KIFF</a> мегӯяд, ки чӣ ва кай нест карда мешавад ва чӣ гуна тавассути почтаи электронӣ дархост кардан мумкин аст.</p><p>Шумо метавонед ба <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Нозироти ҳифзи маълумоти Эстония (Andmekaitse Inspektsioon)</a> ё ба мақоми назоратӣ дар ҷои зисти худ шикоят кунед.</p><p><strong>Кишвари шумо.</strong> Қонунҳои баъзе кишварҳо аз он чӣ ин сиёсат мегӯяд, бештар талаб мекунанд. Он чиро, ки онҳо илова мекунанд, ба забони англисӣ ва ба забони кишвар, дар <a href=\"/privacy/countries\">Кишвари шумо</a> (бо забони англисӣ) ёфтан мумкин аст.</p></section><section id=\"more\"><h2>11. Амният, кӯдакон ва тағйирот</h2><p>Чораҳои амнияти мо дар <a href=\"/security\">/security</a> (бо забони англисӣ) оварда шудаанд. tafs ба кӯдакон нигаронида нашудааст ва мо маълумоти шахсиро аз кӯдаконе, ки аз 16 сол хурданд, огоҳона ҷамъ намекунем. Мо ин сиёсатро ҳамон тавр тағйир медиҳем, ки <a href=\"/tg/privacy#changes\">Сиёсати махфияти KIFF</a> барои худаш мегӯяд.</p></section><section id=\"contact\"><h2>12. Тамос</h2><p>Саволҳо ва дархостҳо оид ба махфият: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Огоҳиҳои расмии ҳуқуқӣ: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Шартҳои худи барнома дар <a href=\"/tg/tafs/terms\">/tafs/terms</a> мебошанд.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -190,347 +177,347 @@ func tafsPrivacyGoogleTG() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Маълумоти корбарии Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Маълумоти корбарии Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Вақте ки шумо хоҳиш мекунед, tafs taf-ро ба ҳисоби Google-и шумо, масалан ба Google Sheets ё Google Calendar, ки кори он истифода мебарад, дар Пайвастани барномаҳои барнома пайваст мекунад. Ин қисм мегӯяд, ки tafs бо маълумоте, ки аз Google мегирад, чӣ кор мекунад.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Вақте ки шумо хоҳиш мекунед, tafs taf-ро ба ҳисоби Google-и шумо, масалан ба Google Sheets ё Google Calendar, ки кори он истифода мебарад, дар Пайвастани барномаҳои барнома пайваст мекунад. Ин қисм мегӯяд, ки tafs бо маълумоте, ки аз Google мегирад, чӣ кор мекунад.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Вақте ки шумо хоҳиш мекунед, tafs taf-ро ба ҳисоби Google-и шумо, масалан ба Gmail-и шумо, ё ба Google Calendar ё Google Sheets, ки кори он истифода мебарад, дар Пайвастани барномаҳои барнома пайваст мекунад. Ин қисм мегӯяд, ки tafs бо маълумоте, ки аз Google мегирад, чӣ кор мекунад.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Вақте ки шумо хоҳиш мекунед, tafs taf-ро ба ҳисоби Google-и шумо, масалан ба Gmail-и шумо, ё ба Google Calendar ё Google Sheets, ки кори он истифода мебарад, дар Пайвастани барномаҳои барнома пайваст мекунад. Ин қисм мегӯяд, ки tafs бо маълумоте, ки аз Google мегирад, чӣ кор мекунад.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Он чиро мехонад ва менависад:</strong> он чиро, ки кори taf талаб мекунад: ҷадвалҳое, ки онро навсозишуда нигоҳ медорад, ё рӯйдодҳо дар тақвимҳое, ки онҳоро сарпарастӣ мекунад. Он онҳоро танҳо дар ҷое тағйир медиҳад, ки Card-и taf иҷозат медиҳад, ва ҳар чизе, ки аз ҳудуди Card гузарад, интизори тасдиқи шумо мемонад.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Он чиро мехонад ва менависад:</strong> он чиро, ки кори taf талаб мекунад: ҷадвалҳое, ки онро навсозишуда нигоҳ медорад, ё рӯйдодҳо дар тақвимҳое, ки онҳоро сарпарастӣ мекунад. Он онҳоро танҳо дар ҷое тағйир медиҳад, ки Card-и taf иҷозат медиҳад, ва ҳар чизе, ки аз ҳудуди Card гузарад, интизори тасдиқи шумо мемонад.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Он чиро мехонад ва менависад:</strong> он чиро, ки кори taf талаб мекунад. Дар Gmail-и шумо он паёмҳо ва риштаҳои шуморо мехонад, то онҳоеро, ки посух лозим доранд, ёбад, ва пешнавис менависад; он почта танҳо дар ҷое мефиристад, ки Card-и taf иҷозат медиҳад. Дар Google Calendar ва Google Sheets он рӯйдодҳоро дар тақвимҳое, ки онҳоро сарпарастӣ мекунад, ё ҷадвалҳоеро, ки навсозишуда нигоҳ медорад, мехонад ва онҳоро танҳо дар ҷое тағйир медиҳад, ки Card-и taf иҷозат медиҳад. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Он чиро мехонад ва менависад:</strong> он чиро, ки кори taf талаб мекунад. Дар Gmail-и шумо он паёмҳо ва риштаҳои шуморо мехонад, то онҳоеро, ки посух лозим доранд, ёбад, ва пешнавис менависад; он почта танҳо дар ҷое мефиристад, ки Card-и taf иҷозат медиҳад. Дар Google Calendar ва Google Sheets он рӯйдодҳоро дар тақвимҳое, ки онҳоро сарпарастӣ мекунад, ё ҷадвалҳоеро, ки навсозишуда нигоҳ медорад, мехонад ва онҳоро танҳо дар ҷое тағйир медиҳад, ки Card-и taf иҷозат медиҳад. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Дар Google Tasks он рӯйхатҳои вазифаҳоеро, ки сарпарастӣ мекунад, мехонад ва вазифаҳоро танҳо дар ҷое илова мекунад, анҷом медиҳад, интиқол медиҳад ё нест мекунад, ки Card-и taf иҷозат медиҳад. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Дар Google Tasks он рӯйхатҳои вазифаҳоеро, ки сарпарастӣ мекунад, мехонад ва вазифаҳоро танҳо дар ҷое илова мекунад, анҷом медиҳад, интиқол медиҳад ё нест мекунад, ки Card-и taf иҷозат медиҳад. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Ҳар чизе, ки аз ҳудуди Card гузарад, интизори тасдиқи шумо мемонад.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Ҳар чизе, ки аз ҳудуди Card гузарад, интизори тасдиқи шумо мемонад.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Барои чӣ:</strong> танҳо барои иҷрои кореро, ки шумо барои он taf танзим кардаед, ва барои он ки ба шумо нишон диҳад, ки он ба кадом ҳисоби Google пайваст аст: суроғаи почтаи электронии он, ки то қатъ кардани пайванди шумо бо пайвастшавӣ нигоҳ дошта мешавад.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Барои чӣ:</strong> танҳо барои иҷрои кореро, ки шумо барои он taf танзим кардаед, ва барои он ки ба шумо нишон диҳад, ки он ба кадом ҳисоби Google пайваст аст: суроғаи почтаи электронии он, ки то қатъ кардани пайванди шумо бо пайвастшавӣ нигоҳ дошта мешавад.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Ҳар як барномаи Google чӣ гуна пайваст мешавад:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Ҳар як барномаи Google чӣ гуна пайваст мешавад:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Тавассути шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Тавассути шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 139, Col: 216}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if len(googleInHouse("tg")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>Тавассути воридшавии Google-и худи tafs, бидуни ширкати дигар дар байн: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Тавассути воридшавии Google-и худи tafs, бидуни ширкати дигар дар байн: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 142, Col: 163}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			for _, a := range googlePending("tg") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("tg"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("tg"))
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var16 string
-				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").AsksFor)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 147, Col: 42}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var18 string
-					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "Барномае, ки дар ҳар дуи онҳо номбар шудааст, вобаста ба ҳисоби шумо ба як роҳ ё роҳи дигар пайваст мешавад. Саҳифаи воридшавии худи Google нишон медиҳад, ки шумо чиро иҷозат медиҳед.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Барномае, ки дар ҳар дуи онҳо номбар шудааст, вобаста ба ҳисоби шумо ба як роҳ ё роҳи дигар пайваст мешавад. Саҳифаи воридшавии худи Google нишон медиҳад, ки шумо чиро иҷозат медиҳед.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед.<ul><li><strong>Тавассути шарики воридшавии мо:</strong> tafs танҳо дастрасии лозимаи абзорҳои taf-ро талаб мекунад. Агар он дастрасии танг имконнопазир бошад, он дастрасии маъмулии барномаро талаб мекунад ва пеш аз воридшавии шумо инро мегӯяд. Агар дастрасии маъмулӣ маълумоти шахсиеро дар бар гирад, ки taf истифода намебарад, tafs пайваст намекунад.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> воридшавӣ ҳамаи дастрасиҳои дар зер барои он барнома номбаршударо якбора талаб мекунад, ҳатто агар taf танҳо мехонад.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед.<ul><li><strong>Тавассути шарики воридшавии мо:</strong> tafs танҳо дастрасии лозимаи абзорҳои taf-ро талаб мекунад. Агар он дастрасии танг имконнопазир бошад, он дастрасии маъмулии барномаро талаб мекунад ва пеш аз воридшавии шумо инро мегӯяд. Агар дастрасии маъмулӣ маълумоти шахсиеро дар бар гирад, ки taf истифода намебарад, tafs пайваст намекунад.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> воридшавӣ ҳамаи дастрасиҳои дар зер барои он барнома номбаршударо якбора талаб мекунад, ҳатто агар taf танҳо мехонад.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед. Воридшавӣ ҳамаи дастрасиҳои дар зер барои он барнома номбаршударо якбора талаб мекунад, ҳатто агар taf танҳо мехонад.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед. Воридшавӣ ҳамаи дастрасиҳои дар зер барои он барнома номбаршударо якбора талаб мекунад, ҳатто агар taf танҳо мехонад.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед. tafs танҳо дастрасии лозимаи абзорҳои taf-ро талаб мекунад. Агар он дастрасии танг имконнопазир бошад, он дастрасии маъмулии барномаро талаб мекунад ва пеш аз воридшавии шумо инро мегӯяд. Агар дастрасии маъмулӣ маълумоти шахсиеро дар бар гирад, ки taf истифода намебарад, tafs пайваст намекунад.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Он чи шумо иҷозат медиҳед:</strong> шумо дар саҳифаи худи Google ворид мешавед ва интихоб мекунед, ки чиро иҷозат диҳед. tafs танҳо дастрасии лозимаи абзорҳои taf-ро талаб мекунад. Агар он дастрасии танг имконнопазир бошад, он дастрасии маъмулии барномаро талаб мекунад ва пеш аз воридшавии шумо инро мегӯяд. Агар дастрасии маъмулӣ маълумоти шахсиеро дар бар гирад, ки taf истифода намебарад, tafs пайваст намекунад.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>taf онро чӣ гуна истифода мебарад:</strong> taf танҳо абзорҳои дар Card-и худ тасдиқшударо истифода мебарад. Ҳар занг пеш аз фиристодани чизе бо иҷозатномаи он абзори дақиқ ва он аргументҳо санҷида мешавад, ва занге, ки берун аз дастрасии додаи шумо аст, рад карда мешавад. Кадом амалҳо ҳар дафъа тасдиқи шуморо мепурсанд, дар Card муқаррар шудааст.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>taf онро чӣ гуна истифода мебарад:</strong> taf танҳо абзорҳои дар Card-и худ тасдиқшударо истифода мебарад. Ҳар занг пеш аз фиристодани чизе бо иҷозатномаи он абзори дақиқ ва он аргументҳо санҷида мешавад, ва занге, ки берун аз дастрасии додаи шумо аст, рад карда мешавад. Кадом амалҳо ҳар дафъа тасдиқи шуморо мепурсанд, дар Card муқаррар шудааст.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Дастрасие, ки воридшавии Google-и худи tafs талаб мекунад:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Дастрасие, ки воридшавии Google-и худи tafs талаб мекунад:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>Дастрасие, ки tafs талаб мекунад:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Дастрасие, ки tafs талаб мекунад:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("tg") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var19 string
+					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var21 string
-					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>Воридшавӣ ҳар қадар иҷозат диҳад ҳам, taf танҳо абзорҳои дар Card-и худро истифода мебарад.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Воридшавӣ ҳар қадар иҷозат диҳад ҳам, taf танҳо абзорҳои дар Card-и худро истифода мебарад.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong><ul><li><strong>Тавассути шарики воридшавии мо:</strong> воридшавии Google-и шуморо шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст, нигоҳ медорад ва он ҳаргиз ба taf ё planque дода намешавад. На taf ва на tafs гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> planque, хизмати пайвасткунии худи tafs, token-и Google-и шуморо барои ширкати шумо бо AWS KMS дар Иттиҳоди Аврупо (Ирландия) рамзгузоришуда нигоҳ медорад ва онро танҳо барои анҷом додани занге истифода мебарад, ки Card-и taf иҷозат медиҳад. Он ҳаргиз ба taf дода намешавад, ва на taf ва на модели AI гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong><ul><li><strong>Тавассути шарики воридшавии мо:</strong> воридшавии Google-и шуморо шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст, нигоҳ медорад ва он ҳаргиз ба taf ё planque дода намешавад. На taf ва на tafs гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> planque, хизмати пайвасткунии худи tafs, token-и Google-и шуморо барои ширкати шумо бо AWS KMS дар Иттиҳоди Аврупо (Ирландия) рамзгузоришуда нигоҳ медорад ва онро танҳо барои анҷом додани занге истифода мебарад, ки Card-и taf иҷозат медиҳад. Он ҳаргиз ба taf дода намешавад, ва на taf ва на модели AI гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong> planque, хизмати пайвасткунии худи tafs, token-и Google-и шуморо барои ширкати шумо бо AWS KMS дар Иттиҳоди Аврупо (Ирландия) рамзгузоришуда нигоҳ медорад ва онро танҳо барои анҷом додани занге истифода мебарад, ки Card-и taf иҷозат медиҳад. Он ҳаргиз ба taf дода намешавад, ва на taf ва на модели AI гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong> planque, хизмати пайвасткунии худи tafs, token-и Google-и шуморо барои ширкати шумо бо AWS KMS дар Иттиҳоди Аврупо (Ирландия) рамзгузоришуда нигоҳ медорад ва онро танҳо барои анҷом додани занге истифода мебарад, ки Card-и taf иҷозат медиҳад. Он ҳаргиз ба taf дода намешавад, ва на taf ва на модели AI гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong> воридшавии Google-и шуморо шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст, нигоҳ медорад ва он ҳаргиз ба taf ё planque дода намешавад. На taf ва на tafs гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Воридшавии шуморо кӣ нигоҳ медорад:</strong> воридшавии Google-и шуморо шарики воридшавии мо, ки дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст, нигоҳ медорад ва он ҳаргиз ба taf ё planque дода намешавад. На taf ва на tafs гузарвожа ё token-ҳои Google-и шуморо намебинанд. taf-и дигари шумо, ки ҳамон дастрасиро лозим дорад, воридшавиро аз нав истифода мебарад ва ҳар як taf танҳо абзорҳоеро истифода мебарад, ки шумо барои он тасдиқ кардаед.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад.<ul><li><strong>Тавассути шарики воридшавии мо:</strong> он инчунин аз шарики воридшавии мо мегузарад, ки ҳар занг-ро анҷом медиҳад.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> planque худаш Google-ро занг мезанад, бинобар ин ягон ширкати дигар занг намезанад ва воридшавии шуморо нигоҳ намедорад.</li></ul>Ҳарду дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудаанд.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад.<ul><li><strong>Тавассути шарики воридшавии мо:</strong> он инчунин аз шарики воридшавии мо мегузарад, ки ҳар занг-ро анҷом медиҳад.</li><li><strong>Тавассути воридшавии Google-и худи tafs:</strong> planque худаш Google-ро занг мезанад, бинобар ин ягон ширкати дигар занг намезанад ва воридшавии шуморо нигоҳ намедорад.</li></ul>Ҳарду дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудаанд.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад. planque худаш Google-ро занг мезанад, бинобар ин ягон ширкати дигар занг намезанад ва воридшавии шуморо нигоҳ намедорад. Таъминкунандаи модели AI дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад. planque худаш Google-ро занг мезанад, бинобар ин ягон ширкати дигар занг намезанад ва воридшавии шуморо нигоҳ намедорад. Таъминкунандаи модели AI дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудааст.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад. Он инчунин аз шарики воридшавии мо мегузарад, ки ҳар занг-ро анҷом медиҳад. Ҳарду дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудаанд.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Дигарон онро кӣ мегиранд:</strong> он чи taf аз Google мехонад, ба модели AI, ки taf-ро иҷро мекунад, меравад, танҳо пас аз иҷозати шумо (нигаред ба <a href=\"#ai\">AI дар tafs</a>), ки онро то 30 рӯз тибқи шартҳои таъминкунандаи худ нигоҳ медорад. Он инчунин аз шарики воридшавии мо мегузарад, ки ҳар занг-ро анҷом медиҳад. Ҳарду дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) номбар шудаанд.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Омӯзиши AI:</strong> маълумоти корбарии Google барои омӯзонидани моделҳои AI истифода намешавад.</li><li><strong>Тасвирҳо:</strong> tafs тасвир ё видеоро намесозад ва таҳрир намекунад: AI-и он матн менависад. Он ҳаргиз Google API ё маълумоти корбарии Google-ро барои сохтан, таҳрир кардан ё мубодила кардани тасвирҳои хусусии касе (тасвирҳои хусусии бидуни розигӣ, NCII) ё ягон тасвири дигари шахс истифода намебарад.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Омӯзиши AI:</strong> маълумоти корбарии Google барои омӯзонидани моделҳои AI истифода намешавад.</li><li><strong>Тасвирҳо:</strong> tafs тасвир ё видеоро намесозад ва таҳрир намекунад: AI-и он матн менависад. Он ҳаргиз Google API ё маълумоти корбарии Google-ро барои сохтан, таҳрир кардан ё мубодила кардани тасвирҳои хусусии касе (тасвирҳои хусусии бидуни розигӣ, NCII) ё ягон тасвири дигари шахс истифода намебарад.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("tg")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>То кай ва дар куҷо:</strong> ҷадвалҳо ва рӯйдодҳои шумо дар ҳисоби Google-и шумо мемонанд. Дар захираи худи tafs он чи абзор бармегардонад, танҳо то поёни иҷрои taf нигоҳ дошта мешавад. planque, ки ҳар занг-ро мегузаронад, он чиро, ки Google бармегардонад, 24 соат нигоҳ медорад, то занги такрорӣ ҳамон ҷавобро гирад ва ҳаргиз ду маротиба фиристода нашавад; баъд аз он танҳо нигоҳ медорад, ки занг фиристода шуд ё не. Дар сӯҳбат он чи танҳо хонда шуд, рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад. Сабти иҷро ва сӯҳбати он 30 рӯз нигоҳ дошта мешавад, ва ёддоштҳои taf то хориҷ кардани taf аз ҷониби шумо (нигаред ба <a href=\"#retention\">То кай мо онро нигоҳ медорем</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>То кай ва дар куҷо:</strong> ҷадвалҳо ва рӯйдодҳои шумо дар ҳисоби Google-и шумо мемонанд. Дар захираи худи tafs он чи абзор бармегардонад, танҳо то поёни иҷрои taf нигоҳ дошта мешавад. planque, ки ҳар занг-ро мегузаронад, он чиро, ки Google бармегардонад, 24 соат нигоҳ медорад, то занги такрорӣ ҳамон ҷавобро гирад ва ҳаргиз ду маротиба фиристода нашавад; баъд аз он танҳо нигоҳ медорад, ки занг фиристода шуд ё не. Дар сӯҳбат он чи танҳо хонда шуд, рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад. Сабти иҷро ва сӯҳбати он 30 рӯз нигоҳ дошта мешавад, ва ёддоштҳои taf то хориҷ кардани taf аз ҷониби шумо (нигаред ба <a href=\"#retention\">То кай мо онро нигоҳ медорем</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>То кай ва дар куҷо:</strong> пешнависҳо, рӯйдодҳо ва ҷадвалҳои шумо дар ҳисоби Google-и шумо мемонанд. Дар захираи худи tafs он чи абзор бармегардонад, танҳо то поёни иҷрои taf нигоҳ дошта мешавад. planque, ки ҳар занг-ро мегузаронад, он чиро, ки Google бармегардонад, 24 соат нигоҳ медорад, то занги такрорӣ ҳамон ҷавобро гирад ва ҳаргиз ду маротиба фиристода нашавад; баъд аз он танҳо нигоҳ медорад, ки занг фиристода шуд ё не. Дар сӯҳбат он чи танҳо хонда шуд, рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад. Сабти иҷро ва сӯҳбати он 30 рӯз нигоҳ дошта мешавад, ва ёддоштҳои taf то хориҷ кардани taf аз ҷониби шумо (нигаред ба <a href=\"#retention\">То кай мо онро нигоҳ медорем</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>То кай ва дар куҷо:</strong> пешнависҳо, рӯйдодҳо ва ҷадвалҳои шумо дар ҳисоби Google-и шумо мемонанд. Дар захираи худи tafs он чи абзор бармегардонад, танҳо то поёни иҷрои taf нигоҳ дошта мешавад. planque, ки ҳар занг-ро мегузаронад, он чиро, ки Google бармегардонад, 24 соат нигоҳ медорад, то занги такрорӣ ҳамон ҷавобро гирад ва ҳаргиз ду маротиба фиристода нашавад; баъд аз он танҳо нигоҳ медорад, ки занг фиристода шуд ё не. Дар сӯҳбат он чи танҳо хонда шуд, рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад. Сабти иҷро ва сӯҳбати он 30 рӯз нигоҳ дошта мешавад, ва ёддоштҳои taf то хориҷ кардани taf аз ҷониби шумо (нигаред ба <a href=\"#retention\">То кай мо онро нигоҳ медорем</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>Қатъ кардани он:</strong><ul><li>Google-ро дар барнома, дар Пайвастани барномаҳо ё дар варақаи Card-и taf ҷудо кунед. Абзорҳои Google-и он фавран қатъ мешаванд, ва tafs аз Google мехоҳад, ки воридшавиро фавран бекор кунад; ин метавонад каме баъдтар анҷом ёбад.</li><li>taf-ро хориҷ кунед, ва пайвастшавиҳои он бо он ба охир мерасанд. Воридшавии Google, ки taf-и дигари шумо ҳанӯз истифода мебарад, то рафтани охиринаш мемонад.</li><li>Дастрасии tafs-ро ҳар вақт дар ҳисоби Google-и худ, дар <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> хориҷ кунед. taf-ҳои шумо аз расидан ба Google боз меистанд, ва барнома ба шумо мегӯяд, ки пайвастшавии Google баромад кардааст.</li><li>Ҳисоби худро нест кунед: taf-ҳо, сӯҳбатҳо, ёддоштҳо, файлҳо ва пайвастшавиҳои он фавран нест карда мешаванд, ва аз нусхаҳои нуқтаи-вақти онҳо дар давоми 35 рӯз, ва token-ҳои Google-и он дар ҷое, ки Google иҷозат медиҳад, бекор карда мешаванд.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Қатъ кардани он:</strong><ul><li>Google-ро дар барнома, дар Пайвастани барномаҳо ё дар варақаи Card-и taf ҷудо кунед. Абзорҳои Google-и он фавран қатъ мешаванд, ва tafs аз Google мехоҳад, ки воридшавиро фавран бекор кунад; ин метавонад каме баъдтар анҷом ёбад.</li><li>taf-ро хориҷ кунед, ва пайвастшавиҳои он бо он ба охир мерасанд. Воридшавии Google, ки taf-и дигари шумо ҳанӯз истифода мебарад, то рафтани охиринаш мемонад.</li><li>Дастрасии tafs-ро ҳар вақт дар ҳисоби Google-и худ, дар <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> хориҷ кунед. taf-ҳои шумо аз расидан ба Google боз меистанд, ва барнома ба шумо мегӯяд, ки пайвастшавии Google баромад кардааст.</li><li>Ҳисоби худро нест кунед: taf-ҳо, сӯҳбатҳо, ёддоштҳо, файлҳо ва пайвастшавиҳои он фавран нест карда мешаванд, ва аз нусхаҳои нуқтаи-вақти онҳо дар давоми 35 рӯз, ва token-ҳои Google-и он дар ҷое, ки Google иҷозат медиҳад, бекор карда мешаванд.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
