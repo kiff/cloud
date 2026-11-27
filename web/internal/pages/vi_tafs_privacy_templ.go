@@ -61,7 +61,43 @@ func TafsPrivacyVI() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". PC Windows không có TPM không thể đăng nhập vào tafs. KIFF giữ nửa công khai của khóa, tên và nền tảng của thiết bị, cùng thời điểm nó được thêm và dùng lần cuối, để có thể kiểm tra câu trả lời của bạn cho các lệnh gọi bị giữ và các phê duyệt kết nối của bạn.</li><li><strong>Đồng hồ của bạn:</strong> một chiếc đồng hồ không giữ mật khẩu hay khóa, chỉ nói chuyện với điện thoại đã ghép đôi của bạn, và không bao giờ phê duyệt. Nó gửi những gì bạn nói cho Coach, hoặc cho taf bạn chọn, chỉ dưới dạng văn bản, qua điện thoại, sau khi bạn cho phép AI. Dịch vụ nhận dạng giọng nói riêng của đồng hồ, của Apple hoặc Google, chuyển lời bạn thành văn bản đó. Trên Wear OS, nếu nó dừng trước khi bạn nói xong, trình nhận dạng của chính điện thoại bạn làm việc đó thay, ngay trên điện thoại. Đồng hồ chỉ có thể từ chối, dừng hoặc gửi cho Coach hay một taf khi nó có khóa màn hình hoặc mật mã và đang được mở khóa. Những gì bạn gửi cho một taf đi vào cuộc trò chuyện riêng của taf đó, như thể bạn viết trên điện thoại. Cuộc trò chuyện của một taf, kể cả số tiền, được đọc qua điện thoại mỗi lần mở, và đồng hồ chỉ giữ các tin nhắn gần đây mà phần của nó bên dưới mô tả. Khi các ứng dụng đóng, điện thoại chuyển câu trả lời và tin nhắn mới sang đồng hồ qua kết nối điện thoại-đồng hồ của chính hệ thống (của Apple trên Apple Watch, của dịch vụ Google Play trên Wear OS), vốn chỉ giữ chúng trên điện thoại và đồng hồ cho đến khi đồng hồ nhận; thông báo đánh thức điện thoại của bạn không chứa chữ nào. Câu trả lời đến khi bạn không nhìn đồng hồ cũng hiện thành thông báo, trên iPhone và Apple Watch hoặc trên đồng hồ Wear OS của bạn, kèm lời của nó nhưng không bao giờ có số tiền, và còn đó đến khi bạn gạt đi; đồng hồ Wear OS đang khóa chỉ cho biết có câu trả lời sẵn sàng.</li><li><strong>Apple Watch:</strong> nó hiển thị các taf của bạn và các trang của chúng mà không lưu giữ. Nó giữ Hộp thư đến của bạn, trong một tệp nó không đọc được khi bị khóa: mỗi lệnh gọi bị giữ dưới dạng tên taf của nó và điều nó yêu cầu, không bao giờ là số tiền, và các trả lời của Coach cho những gì bạn gửi từ đồng hồ, dưới dạng văn bản. Nếu bạn đăng xuất trên đồng hồ, nó cũng giữ việc bạn đã làm vậy, cho đến khi bạn đăng nhập lại trên đồng hồ. Ngoài ra, nó không giữ gì trừ khi đồng hồ có mật mã. Hộp thư đến biến mất khi bạn đăng xuất trên đồng hồ hoặc iPhone của bạn đăng xuất, hoặc lần tới ứng dụng mở hay đóng mà không có mật mã. Nó không ghi âm, và các thông báo duy nhất nó hiển thị là của iPhone của bạn. Để cuộc trò chuyện mở ngay, nó cũng giữ 30 tin nhắn gần nhất của mỗi cuộc trò chuyện trong tối đa 20 cuộc bạn đã mở trên đó, của Coach và các taf của bạn, chỉ dưới dạng văn bản và không bao giờ có số tiền, khóa như Hộp thư đến; chúng bị xóa khi Hộp thư đến bị xóa, và khi một cuộc trò chuyện không được mở trong 30 ngày. Nếu bạn giữ một tin nhắn gửi Coach để gửi sau, đồng hồ cũng giữ một tin nhắn đó, dưới dạng văn bản, trong tệp riêng được khóa như tệp Hộp thư đến, và gửi đi khi iPhone của bạn có lại. Tin nhắn bị xóa khi đã gửi, khi bạn xóa, khi bạn hoặc iPhone của bạn đăng xuất, hoặc nếu đồng hồ không còn mật mã.</li><li><strong>Wear OS:</strong> nó hiển thị email tài khoản của bạn và lịch hôm nay mà không lưu giữ. Để mở ngay lập tức, nó giữ, được mã hóa, số lượng những gì đang chờ bạn, và tên của mỗi taf cùng việc nó đã bị dừng hay tạm dừng: không bao giờ là số tiền, chi tiết của một lệnh gọi bị giữ hay cuộc trò chuyện của một taf. Dữ liệu đó bị xóa khi bạn đăng xuất, khi đồng hồ khóa hoặc rời khỏi cổ tay bạn, và sau 24 giờ. Nó giữ Hộp thư đến của bạn, trong đó mỗi dòng là tên một taf và điều nó nói, không bao giờ là số tiền, và một tin nhắn giữ lại để gửi sau, dưới dạng văn bản. Đăng xuất, trên đồng hồ hoặc trên điện thoại, xóa tất cả. Cho ô (tile) của nó, nó cũng giữ số lượng những gì đang chờ bạn, chỉ hiện khi đồng hồ được mở khóa, và bị xóa khi bạn đăng xuất, hoặc lần tới ô hiện khi đồng hồ đang khóa hay không có khóa màn hình. Sau khi bạn đăng xuất trên đồng hồ, nó giữ một ghi chú rằng bạn đã làm vậy, cho đến khi bạn đăng nhập lại. Hộp thư đến cũng biến mất lần tới ứng dụng mở hay đóng khi đồng hồ đang khóa hoặc không có khóa màn hình. Một tin nhắn giữ lại để gửi sau ở nguyên cho đến khi bạn gửi hoặc xóa, vì bạn đã yêu cầu gửi nó. Nếu dịch vụ nhận dạng giọng nói của đồng hồ dừng trước khi bạn nói xong, đồng hồ gửi bản ghi cho điện thoại của bạn, nơi chuyển nó thành văn bản ngay trên điện thoại, không bao giờ trên máy chủ. Bản ghi bị xóa trên cả hai, khi văn bản đã về hoặc bạn hủy, và nhiều nhất sau 2 phút. Chỉ văn bản đi tiếp đến Coach hoặc taf của bạn. Kết quả của một taf có thể ở lại trong thông báo của đồng hồ cho đến khi bạn bỏ qua nó hoặc đăng xuất trên đồng hồ. Để cuộc trò chuyện mở ngay, nó cũng giữ 30 tin nhắn gần nhất của mỗi cuộc trò chuyện trong tối đa 20 cuộc bạn đã mở trên đó, của Coach và các taf của bạn, chỉ dưới dạng văn bản và không bao giờ có số tiền, mã hóa; chúng bị xóa khi bạn đăng xuất, trên đồng hồ hoặc trên điện thoại, và khi một cuộc trò chuyện không được mở trong 30 ngày, còn đồng hồ không có khóa màn hình thì không giữ gì cả. Tin nhắn được giữ để gửi sau cũng bị xóa nếu đồng hồ không còn khóa màn hình.</li><li><strong>Khóa truy cập (passkey):</strong> khi bạn phê duyệt bằng khóa truy cập trên máy tính, như Windows Hello hoặc khóa bảo mật, khuôn mặt, vân tay hoặc mã PIN của bạn ở lại trong hệ thống riêng của máy tính. KIFF giữ khóa công khai của khóa truy cập, mã định danh, một bộ đếm và một cái tên, không bao giờ là bất cứ thứ gì bí mật, và từ chối khóa truy cập đồng bộ sang thiết bị khác.</li><li><strong>Thông báo:</strong> trên điện thoại, máy tính bảng hoặc Mac chạy ứng dụng iPad, khi bạn bật chúng, chúng tôi giữ mã thông báo đẩy của thiết bị cùng mã người KIFF của bạn, và ngôn ngữ ứng dụng đã hiển thị. Một thông báo đi qua Apple hoặc Google chỉ với taf nào và điều nó muốn, và trong thông báo của một cánh cửa, tên hoặc địa chỉ email của người đã viết: không bao giờ là số tiền hay chi tiết của một yêu cầu. Ứng dụng thêm những thứ đó ngay trên thiết bị, từ KIFF, nên thông báo của một điện thoại đã mở khóa có thể hiển thị số tiền, một người bán hoặc một người. Trên điện thoại Android bị khóa, nó chỉ hiển thị “Một taf cần bạn”, và trên iPhone bị khóa cũng vậy, trừ khi bạn đã đặt phần xem trước của nó luôn hiển thị. Trên PC Windows, máy tính Linux hoặc Mac có ứng dụng macOS 12, thông báo do chính ứng dụng tạo khi nó chạy, không có mã thông báo đẩy và không qua công ty nào khác. Trên Windows và Linux chúng hiển thị taf nào, nó muốn làm gì, số tiền, vì sao và đến khi nào; trên ứng dụng macOS 12 chúng hiển thị lời của KIFF cho lệnh gọi, sau khi bạn bật chúng, và màn hình khóa hiển thị những gì cài đặt xem trước của Mac cho phép. Trên Windows chúng tắt cho đến khi bạn bật, và chỉ hiển thị “Một taf cần bạn” khi màn hình bị khóa. Một thông báo hiện trước khi màn hình khóa giữ chi tiết của nó trong danh sách thông báo của Windows. Trên Linux chúng bật cho đến khi bạn tắt, và màn hình khóa hiển thị gì phụ thuộc vào máy tính để bàn của bạn. Điện thoại chuyển cập nhật sang đồng hồ vẫn giữ mã thông báo đẩy được đăng ký ngay cả khi thông báo tắt, chỉ để một lần đẩy im lặng có thể đánh thức nó và chuyển cập nhật sang đồng hồ; lần đẩy đó không mang chữ nào và không hiển thị gì.</li><li><strong>Ngôn ngữ:</strong> dịch vụ tafs giữ ngôn ngữ của tài khoản, từ người trò chuyện với Coach gần nhất, tối đa ba tháng, để báo cáo của một taf đến bằng ngôn ngữ đó.</li><li><strong>Công cụ của bạn:</strong> khi bạn kết nối một công cụ, bạn đăng nhập tại nhà cung cấp của chính công cụ đó. Với một ứng dụng planque tự đăng nhập, như Stripe, hoặc một khóa bạn đưa, planque giữ mã thông báo hoặc khóa đó cho công ty bạn, được mã hóa. Với một kết nối được quản lý, Composio, dịch vụ kết nối mà planque làm việc cùng, giữ thông tin đăng nhập, và planque chỉ giữ bản ghi của kết nối và các công cụ bạn đã phê duyệt (xem <a href=\"#google\">Dữ liệu người dùng Google</a>). Bản ghi của một kết nối có thể gồm tài khoản mà nó đăng nhập (tên hoặc email của nó), để ứng dụng cho bạn thấy đó là tài khoản nào. KIFF chỉ dùng các kết nối được quản lý cho những ứng dụng nêu tại <a href=\"/subprocessors#composio\">/subprocessors</a> (bằng tiếng Anh).</li><li><strong>Trình duyệt của bạn (Chrome):</strong> khi bạn ghép nối tiện ích mở rộng tafs với điện thoại, một taf có thể làm việc trong hồ sơ Chrome bạn đã ghép nối, chỉ trên những trang web mà kết nối của nó liệt kê. Nó mở các tab riêng trong một nhóm tab mà bạn có thể xem, tạm dừng hoặc dừng, và nó tạm dừng khi bạn chạm vào một trong các tab đó. Một taf bạn khởi động từ bảng bên của tiện ích sẽ làm việc ngay trong tab bạn đang mở ở cửa sổ đó, nếu tab ấy nằm trên một trong các trang của kết nối của nó: tab được đưa vào nhóm của taf và được coi như tab của chính nó, và vẫn mở khi taf dừng. Taf chỉ nhập vào tab đó khi trang ấy là trang đầu tiên nó cần. Ở đó taf có thể nhấp và gõ, chỉ trên các trang của chính nó. Trong tab đó, taf đọc trang ngay tại chỗ, và mở mọi trang khác trong tab riêng của nó; chỉ một bước nó làm ở đó, như một cú nhấp, mới có thể đưa tab của bạn sang trang khác, và chỉ trong các trang của nó. Nó đọc các trang đó dưới dạng văn bản và ô biểu mẫu, đã loại bỏ các ô mật khẩu, thẻ và mã, không bao giờ đọc các tab khác hay trang web khác của bạn. Văn bản đó được gửi đến nhà cung cấp AI của chúng tôi như một phần của lượt chạy, và được lưu cùng lượt chạy như kết quả của bất kỳ công cụ nào. Mỗi bước được ghi vào Sổ ghi cùng trang web và tên ô, không bao giờ ghi những gì đã gõ vào một ô bí mật. Với mỗi thay đổi một taf thực hiện, KIFF lưu trang trước và sau, dưới dạng văn bản đã loại bỏ các ô đó, tối đa 30 ngày, và xóa sớm hơn khi bạn ngắt kết nối hoặc xóa tài khoản. Các trang này có thể hiển thị thông tin của người khác, chẳng hạn khách hàng của bạn; KIFF xử lý chúng cho bạn, với tư cách bên xử lý. Tiện ích lưu trên máy tính của bạn khóa riêng của nó, phiên của nó với KIFF và danh sách cuộc trò chuyện với Coach đã bắt đầu trong đó, không bao giờ lưu mật khẩu của bạn: ở trang đăng nhập, taf dừng lại và đề nghị bạn tự đăng nhập, trong thẻ của chính bạn. Bạn cũng có thể trò chuyện với Coach từ bảng điều khiển bên của tiện ích. Coach chỉ đọc trang sau khi bạn cho phép trong tiện ích, bằng một sự đồng ý riêng mà bạn có thể rút lại ở đó, và bạn luôn có thể gửi tin nhắn không kèm trang. Khi bạn gửi tin nhắn cho Coach từ đó, trang phía trước đi kèm tin nhắn ấy, chỉ phần chữ hiển thị, không bao giờ là những gì bạn đã gõ, trừ trang ngân hàng, thanh toán, thư hoặc sức khỏe hoặc trang bạn đã tắt cho Coach. Giá trị trong các ô và mật khẩu không được đọc; số thẻ được cắt chỉ còn bốn chữ số cuối; khóa và các bí mật có nhãn được che đi. Mã dùng một lần được trang ghi rõ là mã như vậy bằng tiếng Anh, tiếng Pháp, tiếng Tây Ban Nha hoặc tiếng Đức cũng được che đi. Trang ấy đến nhà cung cấp AI của chúng tôi chỉ cho tin nhắn đó; tafs chỉ giữ trang cho đến khi câu trả lời xong, và giữ tên trang cùng cuộc trò chuyện của bạn, hiển thị là “Đang đọc:”, trong 30 ngày. Câu trả lời của Coach có thể trích dẫn trang và được giữ cùng cuộc trò chuyện của bạn như mọi câu trả lời. Điều này cũng áp dụng cho tin nhắn bạn gửi ở đó cho một taf, với cùng sự đồng ý, nhưng chỉ trên một trang của chính taf đó: ở nơi khác không có gì được đọc, trong lượt đó taf chỉ đọc, và câu trả lời của nó có thể trích dẫn trang. Với một taf, văn bản của trang chỉ được lưu cùng lượt chạy của nó cho đến khi lượt chạy đó kết thúc. Bảng bên hiển thị các cuộc trò chuyện bắt đầu trong Chrome đó kể từ khi bạn ghép nối nó; các cuộc trò chuyện khác của bạn vẫn ở trên điện thoại và các thiết bị khác. Khi một taf làm việc trong Chrome đó cho một tin nhắn bạn gửi từ thiết bị khác, bảng bên cũng hiển thị lần chạy đó: tin nhắn, các bước và câu trả lời của nó, không bao giờ là phần còn lại của cuộc trò chuyện đó, cho đến khi bạn xóa cuộc trò chuyện đó, hủy ghép nối Chrome hoặc chuyển taf sang Chrome khác. Bạn cũng có thể đính kèm tệp vào tin nhắn ở đó: giống như tệp đính kèm trong các ứng dụng tafs, tệp được gửi đến nhà cung cấp AI của chúng tôi cùng tin nhắn đó và được giữ cùng tin nhắn trong 30 ngày, hoặc sớm hơn nếu cuộc trò chuyện bị xóa (tệp không tin nhắn nào dùng, khoảng một giờ), và chỉ người đã đính kèm tệp mới mở được tệp đó. Tiện ích cũng lưu việc ghép nối với điện thoại của bạn, các trang bạn đã tắt cho Coach và một mã ngẫu nhiên cho hồ sơ Chrome này, được gửi tới KIFF mỗi lần ghép nối để điện thoại của bạn nhận ra Chrome này. Gỡ cài đặt sẽ xóa tất cả; hủy ghép nối xóa tất cả trừ mã đó và các trang đã tắt cho Coach. Taf không bao giờ thanh toán khi chưa có phê duyệt của bạn trên điện thoại. Với mỗi bước hành động (một lần nhấp, gõ, gửi), kể cả bước bạn đã phê duyệt, nó còn lưu một ảnh chụp màn hình của trang, chụp ngay trước hành động, để ghi lại; không bao giờ cho trang chỉ đọc, không bao giờ trên trang của ngân hàng, ví, trình quản lý mật khẩu, thanh toán, y tế hay cơ quan nhà nước, và các ô mật khẩu, thẻ và mã được ẩn trước khi chụp. Văn bản trông giống số thẻ hoặc khóa cũng được bôi đen, nhưng thứ được viết theo cách khác vẫn có thể hiện ra. Ảnh chụp màn hình được lưu trong kho mã hóa, gắn với bước đó, trong 30 ngày, rồi tự động xóa, hoặc sớm hơn khi bạn ngắt kết nối, hủy ghép đôi Chrome này hoặc xóa tài khoản, và không bao giờ gửi đến nhà cung cấp AI của chúng tôi. Bạn thấy từng ảnh dưới bước của nó trong Hoạt động của taf. tafs nhận ra các trang ngân hàng, ví, trình quản lý mật khẩu, thanh toán, thư, y tế và cơ quan nhà nước qua một danh sách và qua các từ trong địa chỉ của chúng, nên trang nào nó không nhận ra sẽ được xử lý như mọi trang khác.</li><li><strong>Công việc của các taf của bạn:</strong> các lần chạy, cuộc trò chuyện, báo cáo, ghi chú bộ nhớ của mỗi taf và các tệp chúng giao, được giữ với tư cách bên xử lý. Mọi người trong tài khoản của bạn có thể thấy các tệp mà các taf của bạn giao.</li><li><strong>Cửa:</strong> khi bạn mở một cửa để mọi người có thể viết cho một taf qua email, Slack hoặc Telegram, dịch vụ tafs giữ mỗi người gửi bạn ghép đôi, theo địa chỉ email, ID thành viên Slack hoặc ID người dùng Telegram của họ (số điện thoại đối với cửa WhatsApp), cùng tên bạn đặt cho họ, cho đến khi bạn xóa cửa hoặc taf. Tin nhắn từ người bạn chưa ghép đôi sẽ chờ bạn dưới dạng gõ cửa, kèm người viết và nội dung, tối đa 30 ngày sau lần gõ cửa gần nhất. Tin nhắn của người gửi đã ghép đôi đi vào cuộc trò chuyện của taf và được giữ như phần còn lại của cuộc trò chuyện. Slack và Telegram chuyển tin nhắn theo điều khoản riêng của họ.</li><li><strong>Giao dịch mua:</strong> Solo và các gói tín dụng được Apple bán qua App Store, hoặc Google bán qua thanh toán của Google Play. Họ cho chúng tôi biết đã mua gì, cho tài khoản KIFF nào (một mã ngẫu nhiên), khi nào, và mã tham chiếu giao dịch hoặc đơn hàng của họ. Họ không cung cấp cho chúng tôi Apple ID hay tài khoản Google, tên, địa chỉ email hoặc thẻ của bạn.</li></ul><p>Ứng dụng không có trình theo dõi phân tích hay quảng cáo.</p></section><section id=\"ai\"><h2>5. AI trong tafs</h2><p>tafs dùng AI Claude của Anthropic cho Coach và các taf của bạn. Anthropic, hoặc một trong các nhà cung cấp đám mây trên trang bên xử lý phụ của chúng tôi, vận hành nó cho chúng tôi. Trang đó cho biết là bên nào, và ở đâu. Ứng dụng hỏi bạn trước khi bất cứ thứ gì được gửi đến đó.</p><ul><li>Những gì được gửi đến đó: những gì bạn viết cho Coach và các taf của bạn, các tệp bạn đính kèm, những gì các ứng dụng bạn đã kết nối trả về cho một taf khi nó làm việc, và những gì có trên màn hình của bạn khi Coach giúp bạn trong ứng dụng.</li><li>Từ Chrome: trang phía trước, khi bạn viết cho Coach trong bảng điều khiển bên của tiện ích, sau khi bạn cho phép Coach đọc trang ở đó. Cả khi bạn viết cho một taf ở đó, trên một trang của chính nó.</li><li>Những gì không bao giờ được gửi: mật khẩu và khóa mà các ứng dụng bạn đã kết nối dùng, hoặc vân tay của bạn.</li><li>Công ty vận hành nó dùng nó để trả lời và xóa trong vòng 30 ngày, trừ khi bị đánh dấu là vi phạm quy tắc sử dụng của công ty đó hoặc luật pháp yêu cầu lưu giữ.</li><li>Không có gì được gửi cho đến khi bạn cho phép. Bạn có thể rút lại trong Tài khoản.</li></ul><p>Khi bạn rút lại, Coach và các taf của bạn ngừng trả lời bạn, và một taf có các lần chạy dựa trên sự đồng ý của bạn sẽ tạm dừng. tafs lưu hồ sơ của mỗi sự đồng ý bạn đưa ra hoặc rút lại, kèm thời điểm và phiên bản nội dung của nó, trong 10 năm kể từ lần thay đổi cuối, để cho thấy bạn đã đồng ý với điều gì; xóa tài khoản sẽ xóa hồ sơ này sớm hơn. <a href=\"/vi/privacy#ai-in-tafs\">Chính sách quyền riêng tư của KIFF</a> có chi tiết.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". PC Windows không có TPM không thể đăng nhập vào tafs. KIFF giữ nửa công khai của khóa, tên và nền tảng của thiết bị, cùng thời điểm nó được thêm và dùng lần cuối, để có thể kiểm tra câu trả lời của bạn cho các lệnh gọi bị giữ và các phê duyệt kết nối của bạn.</li><li><strong>Đồng hồ của bạn:</strong> một chiếc đồng hồ không giữ mật khẩu hay khóa, chỉ nói chuyện với điện thoại đã ghép đôi của bạn, và không bao giờ phê duyệt. Nó gửi những gì bạn nói cho Coach, hoặc cho taf bạn chọn, chỉ dưới dạng văn bản, qua điện thoại, sau khi bạn cho phép AI. Dịch vụ nhận dạng giọng nói riêng của đồng hồ, của Apple hoặc Google, chuyển lời bạn thành văn bản đó. Trên Wear OS, nếu nó dừng trước khi bạn nói xong, trình nhận dạng của chính điện thoại bạn làm việc đó thay, ngay trên điện thoại. Đồng hồ chỉ có thể từ chối, dừng hoặc gửi cho Coach hay một taf khi nó có khóa màn hình hoặc mật mã và đang được mở khóa. Những gì bạn gửi cho một taf đi vào cuộc trò chuyện riêng của taf đó, như thể bạn viết trên điện thoại. Cuộc trò chuyện của một taf, kể cả số tiền, được đọc qua điện thoại mỗi lần mở, và đồng hồ chỉ giữ các tin nhắn gần đây mà phần của nó bên dưới mô tả. Khi các ứng dụng đóng, điện thoại chuyển câu trả lời và tin nhắn mới sang đồng hồ qua kết nối điện thoại-đồng hồ của chính hệ thống (của Apple trên Apple Watch, của dịch vụ Google Play trên Wear OS), vốn chỉ giữ chúng trên điện thoại và đồng hồ cho đến khi đồng hồ nhận; thông báo đánh thức điện thoại của bạn không chứa chữ nào. Câu trả lời đến khi bạn không nhìn đồng hồ cũng hiện thành thông báo, trên iPhone và Apple Watch hoặc trên đồng hồ Wear OS của bạn, kèm lời của nó nhưng không bao giờ có số tiền, và còn đó đến khi bạn gạt đi; đồng hồ Wear OS đang khóa chỉ cho biết có câu trả lời sẵn sàng.</li><li><strong>Apple Watch:</strong> nó hiển thị các taf của bạn và các trang của chúng mà không lưu giữ. Nó giữ Hộp thư đến của bạn, trong một tệp nó không đọc được khi bị khóa: mỗi lệnh gọi bị giữ dưới dạng tên taf của nó và điều nó yêu cầu, không bao giờ là số tiền, và các trả lời của Coach cho những gì bạn gửi từ đồng hồ, dưới dạng văn bản. Nếu bạn đăng xuất trên đồng hồ, nó cũng giữ việc bạn đã làm vậy, cho đến khi bạn đăng nhập lại trên đồng hồ. Ngoài ra, nó không giữ gì trừ khi đồng hồ có mật mã. Hộp thư đến biến mất khi bạn đăng xuất trên đồng hồ hoặc iPhone của bạn đăng xuất, hoặc lần tới ứng dụng mở hay đóng mà không có mật mã. Nó không ghi âm, và các thông báo duy nhất nó hiển thị là của iPhone của bạn. Để cuộc trò chuyện mở ngay, nó cũng giữ 30 tin nhắn gần nhất của mỗi cuộc trò chuyện trong tối đa 20 cuộc bạn đã mở trên đó, của Coach và các taf của bạn, chỉ dưới dạng văn bản và không bao giờ có số tiền, khóa như Hộp thư đến; chúng bị xóa khi Hộp thư đến bị xóa, và khi một cuộc trò chuyện không được mở trong 30 ngày. Nếu bạn giữ một tin nhắn gửi Coach để gửi sau, đồng hồ cũng giữ một tin nhắn đó, dưới dạng văn bản, trong tệp riêng được khóa như tệp Hộp thư đến, và gửi đi khi iPhone của bạn có lại. Tin nhắn bị xóa khi đã gửi, khi bạn xóa, khi bạn hoặc iPhone của bạn đăng xuất, hoặc nếu đồng hồ không còn mật mã.</li><li><strong>Wear OS:</strong> nó hiển thị email tài khoản của bạn và lịch hôm nay mà không lưu giữ. Để mở ngay lập tức, nó giữ, được mã hóa, số lượng những gì đang chờ bạn, và tên của mỗi taf cùng việc nó đã bị dừng hay tạm dừng: không bao giờ là số tiền, chi tiết của một lệnh gọi bị giữ hay cuộc trò chuyện của một taf. Dữ liệu đó bị xóa khi bạn đăng xuất, khi đồng hồ khóa hoặc rời khỏi cổ tay bạn, và sau 24 giờ. Nó giữ Hộp thư đến của bạn, trong đó mỗi dòng là tên một taf và điều nó nói, không bao giờ là số tiền, và một tin nhắn giữ lại để gửi sau, dưới dạng văn bản. Đăng xuất, trên đồng hồ hoặc trên điện thoại, xóa tất cả. Cho ô (tile) của nó, nó cũng giữ số lượng những gì đang chờ bạn, chỉ hiện khi đồng hồ được mở khóa, và bị xóa khi bạn đăng xuất, hoặc lần tới ô hiện khi đồng hồ đang khóa hay không có khóa màn hình. Sau khi bạn đăng xuất trên đồng hồ, nó giữ một ghi chú rằng bạn đã làm vậy, cho đến khi bạn đăng nhập lại. Hộp thư đến cũng biến mất lần tới ứng dụng mở hay đóng khi đồng hồ đang khóa hoặc không có khóa màn hình. Một tin nhắn giữ lại để gửi sau ở nguyên cho đến khi bạn gửi hoặc xóa, vì bạn đã yêu cầu gửi nó. Nếu dịch vụ nhận dạng giọng nói của đồng hồ dừng trước khi bạn nói xong, đồng hồ gửi bản ghi cho điện thoại của bạn, nơi chuyển nó thành văn bản ngay trên điện thoại, không bao giờ trên máy chủ. Bản ghi bị xóa trên cả hai, khi văn bản đã về hoặc bạn hủy, và nhiều nhất sau 2 phút. Chỉ văn bản đi tiếp đến Coach hoặc taf của bạn. Kết quả của một taf có thể ở lại trong thông báo của đồng hồ cho đến khi bạn bỏ qua nó hoặc đăng xuất trên đồng hồ. Để cuộc trò chuyện mở ngay, nó cũng giữ 30 tin nhắn gần nhất của mỗi cuộc trò chuyện trong tối đa 20 cuộc bạn đã mở trên đó, của Coach và các taf của bạn, chỉ dưới dạng văn bản và không bao giờ có số tiền, mã hóa; chúng bị xóa khi bạn đăng xuất, trên đồng hồ hoặc trên điện thoại, và khi một cuộc trò chuyện không được mở trong 30 ngày, còn đồng hồ không có khóa màn hình thì không giữ gì cả. Tin nhắn được giữ để gửi sau cũng bị xóa nếu đồng hồ không còn khóa màn hình.</li><li><strong>Khóa truy cập (passkey):</strong> khi bạn phê duyệt bằng khóa truy cập trên máy tính, như Windows Hello hoặc khóa bảo mật, khuôn mặt, vân tay hoặc mã PIN của bạn ở lại trong hệ thống riêng của máy tính. KIFF giữ khóa công khai của khóa truy cập, mã định danh, một bộ đếm và một cái tên, không bao giờ là bất cứ thứ gì bí mật, và từ chối khóa truy cập đồng bộ sang thiết bị khác.</li><li><strong>Thông báo:</strong> trên điện thoại, máy tính bảng hoặc Mac chạy ứng dụng iPad, khi bạn bật chúng, chúng tôi giữ mã thông báo đẩy của thiết bị cùng mã người KIFF của bạn, và ngôn ngữ ứng dụng đã hiển thị. Một thông báo đi qua Apple hoặc Google chỉ với taf nào và điều nó muốn, và trong thông báo của một cánh cửa, tên hoặc địa chỉ email của người đã viết: không bao giờ là số tiền hay chi tiết của một yêu cầu. Ứng dụng thêm những thứ đó ngay trên thiết bị, từ KIFF, nên thông báo của một điện thoại đã mở khóa có thể hiển thị số tiền, một người bán hoặc một người. Trên điện thoại Android bị khóa, nó chỉ hiển thị “Một taf cần bạn”, và trên iPhone bị khóa cũng vậy, trừ khi bạn đã đặt phần xem trước của nó luôn hiển thị. Trên PC Windows, máy tính Linux hoặc Mac có ứng dụng macOS 12, thông báo do chính ứng dụng tạo khi nó chạy, không có mã thông báo đẩy và không qua công ty nào khác. Trên Windows và Linux chúng hiển thị taf nào, nó muốn làm gì, số tiền, vì sao và đến khi nào; trên ứng dụng macOS 12 chúng hiển thị lời của KIFF cho lệnh gọi, sau khi bạn bật chúng, và màn hình khóa hiển thị những gì cài đặt xem trước của Mac cho phép. Trên Windows chúng tắt cho đến khi bạn bật, và chỉ hiển thị “Một taf cần bạn” khi màn hình bị khóa. Một thông báo hiện trước khi màn hình khóa giữ chi tiết của nó trong danh sách thông báo của Windows. Trên Linux chúng bật cho đến khi bạn tắt, và màn hình khóa hiển thị gì phụ thuộc vào máy tính để bàn của bạn. Điện thoại chuyển cập nhật sang đồng hồ vẫn giữ mã thông báo đẩy được đăng ký ngay cả khi thông báo tắt, chỉ để một lần đẩy im lặng có thể đánh thức nó và chuyển cập nhật sang đồng hồ; lần đẩy đó không mang chữ nào và không hiển thị gì.</li><li><strong>Ngôn ngữ:</strong> dịch vụ tafs giữ ngôn ngữ của tài khoản, từ người trò chuyện với Coach gần nhất, tối đa ba tháng, để báo cáo của một taf đến bằng ngôn ngữ đó.</li><li><strong>Công cụ của bạn:</strong> khi bạn kết nối một công cụ, bạn đăng nhập tại nhà cung cấp của chính công cụ đó. Với một ứng dụng planque tự đăng nhập, như Stripe, hoặc một khóa bạn đưa, planque giữ mã thông báo hoặc khóa đó cho công ty bạn, được mã hóa. Với một kết nối được quản lý, Composio, dịch vụ kết nối mà planque làm việc cùng, giữ thông tin đăng nhập, và planque chỉ giữ bản ghi của kết nối và các công cụ bạn đã phê duyệt (xem <a href=\"#google\">Dữ liệu người dùng Google</a>). Bản ghi của một kết nối có thể gồm tài khoản mà nó đăng nhập (tên hoặc email của nó), để ứng dụng cho bạn thấy đó là tài khoản nào. KIFF chỉ dùng các kết nối được quản lý cho những ứng dụng nêu tại <a href=\"/subprocessors#composio\">/subprocessors</a> (bằng tiếng Anh).</li><li><strong>Trình duyệt của bạn (Chrome):</strong> khi bạn ghép nối tiện ích mở rộng tafs với điện thoại, một taf có thể làm việc trong hồ sơ Chrome bạn đã ghép nối, chỉ trên những trang web mà kết nối của nó liệt kê. Nó mở các tab riêng trong một nhóm tab mà bạn có thể xem, tạm dừng hoặc dừng, và nó tạm dừng khi bạn chạm vào một trong các tab đó. Một taf bạn khởi động từ bảng bên của tiện ích sẽ làm việc ngay trong tab bạn đang mở ở cửa sổ đó, nếu tab ấy nằm trên một trong các trang của kết nối của nó: tab được đưa vào nhóm của taf và được coi như tab của chính nó, và vẫn mở khi taf dừng. Taf chỉ nhập vào tab đó khi trang ấy là trang đầu tiên nó cần. Ở đó taf có thể nhấp và gõ, chỉ trên các trang của chính nó. Trong tab đó, taf đọc trang ngay tại chỗ, và mở mọi trang khác trong tab riêng của nó; chỉ một bước nó làm ở đó, như một cú nhấp, mới có thể đưa tab của bạn sang trang khác, và chỉ trong các trang của nó. Nó đọc các trang đó dưới dạng văn bản và ô biểu mẫu, đã loại bỏ các ô mật khẩu, thẻ và mã, không bao giờ đọc các tab khác hay trang web khác của bạn. Văn bản đó được gửi đến nhà cung cấp AI của chúng tôi như một phần của lượt chạy, và được lưu cùng lượt chạy như kết quả của bất kỳ công cụ nào. Mỗi bước được ghi vào Sổ ghi cùng trang web và tên ô, không bao giờ ghi những gì đã gõ vào một ô bí mật. Với mỗi thay đổi một taf thực hiện, KIFF lưu trang trước và sau, dưới dạng văn bản đã loại bỏ các ô đó, tối đa 30 ngày, và xóa sớm hơn khi bạn ngắt kết nối hoặc xóa tài khoản. Các trang này có thể hiển thị thông tin của người khác, chẳng hạn khách hàng của bạn; KIFF xử lý chúng cho bạn, với tư cách bên xử lý. Tiện ích lưu trên máy tính của bạn khóa riêng của nó, phiên của nó với KIFF và danh sách cuộc trò chuyện với Coach đã bắt đầu trong đó, không bao giờ lưu mật khẩu của bạn: ở trang đăng nhập, taf dừng lại và đề nghị bạn tự đăng nhập, trong thẻ của chính bạn. Bạn cũng có thể trò chuyện với Coach từ bảng điều khiển bên của tiện ích. Coach chỉ đọc trang sau khi bạn cho phép trong tiện ích, bằng một sự đồng ý riêng mà bạn có thể rút lại ở đó, và bạn luôn có thể gửi tin nhắn không kèm trang. Khi bạn gửi tin nhắn cho Coach từ đó, trang phía trước đi kèm tin nhắn ấy, chỉ phần chữ hiển thị, không bao giờ là những gì bạn đã gõ, trừ trang ngân hàng, thanh toán, thư hoặc sức khỏe hoặc trang bạn đã tắt cho Coach. Giá trị trong các ô và mật khẩu không được đọc; số thẻ được cắt chỉ còn bốn chữ số cuối; khóa và các bí mật có nhãn được che đi. Mã dùng một lần được trang ghi rõ là mã như vậy bằng tiếng Anh, tiếng Pháp, tiếng Tây Ban Nha hoặc tiếng Đức cũng được che đi. Trang ấy đến nhà cung cấp AI của chúng tôi chỉ cho tin nhắn đó; tafs chỉ giữ trang cho đến khi câu trả lời xong, và giữ tên trang cùng cuộc trò chuyện của bạn, hiển thị là “Đang đọc:”, trong 30 ngày. Câu trả lời của Coach có thể trích dẫn trang và được giữ cùng cuộc trò chuyện của bạn như mọi câu trả lời. Điều này cũng áp dụng cho tin nhắn bạn gửi ở đó cho một taf, với cùng sự đồng ý, nhưng chỉ trên một trang của chính taf đó: ở nơi khác không có gì được đọc, trong lượt đó taf chỉ đọc, và câu trả lời của nó có thể trích dẫn trang. Với một taf, văn bản của trang chỉ được lưu cùng lượt chạy của nó cho đến khi lượt chạy đó kết thúc. Bảng bên hiển thị các cuộc trò chuyện bắt đầu trong Chrome đó kể từ khi bạn ghép nối nó; các cuộc trò chuyện khác của bạn vẫn ở trên điện thoại và các thiết bị khác. Khi một taf làm việc trong Chrome đó cho một tin nhắn bạn gửi từ thiết bị khác, bảng bên cũng hiển thị lần chạy đó: tin nhắn, các bước và câu trả lời của nó, không bao giờ là phần còn lại của cuộc trò chuyện đó, cho đến khi bạn xóa cuộc trò chuyện đó, hủy ghép nối Chrome hoặc chuyển taf sang Chrome khác. Bạn cũng có thể đính kèm tệp vào tin nhắn ở đó: giống như tệp đính kèm trong các ứng dụng tafs, tệp được gửi đến nhà cung cấp AI của chúng tôi cùng tin nhắn đó và được giữ cùng tin nhắn trong 30 ngày, hoặc sớm hơn nếu cuộc trò chuyện bị xóa (tệp không tin nhắn nào dùng, khoảng một giờ), và chỉ người đã đính kèm tệp mới mở được tệp đó. Tiện ích cũng lưu việc ghép nối với điện thoại của bạn, các trang bạn đã tắt cho Coach và một mã ngẫu nhiên cho hồ sơ Chrome này, được gửi tới KIFF mỗi lần ghép nối để điện thoại của bạn nhận ra Chrome này. Gỡ cài đặt sẽ xóa tất cả; hủy ghép nối xóa tất cả trừ mã đó và các trang đã tắt cho Coach. Taf không bao giờ thanh toán khi chưa có phê duyệt của bạn trên điện thoại. Với mỗi bước hành động (một lần nhấp, gõ, gửi), kể cả bước bạn đã phê duyệt, nó còn lưu một ảnh chụp màn hình của trang, chụp ngay trước hành động, để ghi lại; không bao giờ cho trang chỉ đọc, không bao giờ trên trang của ngân hàng, ví, trình quản lý mật khẩu, thanh toán, y tế hay cơ quan nhà nước, và các ô mật khẩu, thẻ và mã được ẩn trước khi chụp. Văn bản trông giống số thẻ hoặc khóa cũng được bôi đen, nhưng thứ được viết theo cách khác vẫn có thể hiện ra. Ảnh chụp màn hình được lưu trong kho mã hóa, gắn với bước đó, trong 30 ngày, rồi tự động xóa, hoặc sớm hơn khi bạn ngắt kết nối, hủy ghép đôi Chrome này hoặc xóa tài khoản, và không bao giờ gửi đến nhà cung cấp AI của chúng tôi. Bạn thấy từng ảnh dưới bước của nó trong Hoạt động của taf. tafs nhận ra các trang ngân hàng, ví, trình quản lý mật khẩu, thanh toán, thư, y tế và cơ quan nhà nước qua một danh sách và qua các từ trong địa chỉ của chúng, nên trang nào nó không nhận ra sẽ được xử lý như mọi trang khác.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if HostedBrowserForCustomers {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("vi").Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 45, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("vi").Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 45, Col: 93}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>Công việc của các taf của bạn:</strong> các lần chạy, cuộc trò chuyện, báo cáo, ghi chú bộ nhớ của mỗi taf và các tệp chúng giao, được giữ với tư cách bên xử lý. Mọi người trong tài khoản của bạn có thể thấy các tệp mà các taf của bạn giao.</li><li><strong>Cửa:</strong> khi bạn mở một cửa để mọi người có thể viết cho một taf qua email, Slack hoặc Telegram, dịch vụ tafs giữ mỗi người gửi bạn ghép đôi, theo địa chỉ email, ID thành viên Slack hoặc ID người dùng Telegram của họ (số điện thoại đối với cửa WhatsApp), cùng tên bạn đặt cho họ, cho đến khi bạn xóa cửa hoặc taf. Tin nhắn từ người bạn chưa ghép đôi sẽ chờ bạn dưới dạng gõ cửa, kèm người viết và nội dung, tối đa 30 ngày sau lần gõ cửa gần nhất. Tin nhắn của người gửi đã ghép đôi đi vào cuộc trò chuyện của taf và được giữ như phần còn lại của cuộc trò chuyện. Slack và Telegram chuyển tin nhắn theo điều khoản riêng của họ.</li><li><strong>Giao dịch mua:</strong> Solo và các gói tín dụng được Apple bán qua App Store, hoặc Google bán qua thanh toán của Google Play. Họ cho chúng tôi biết đã mua gì, cho tài khoản KIFF nào (một mã ngẫu nhiên), khi nào, và mã tham chiếu giao dịch hoặc đơn hàng của họ. Họ không cung cấp cho chúng tôi Apple ID hay tài khoản Google, tên, địa chỉ email hoặc thẻ của bạn.</li></ul><p>Ứng dụng không có trình theo dõi phân tích hay quảng cáo.</p></section><section id=\"ai\"><h2>5. AI trong tafs</h2><p>tafs dùng AI Claude của Anthropic cho Coach và các taf của bạn. Anthropic, hoặc một trong các nhà cung cấp đám mây trên trang bên xử lý phụ của chúng tôi, vận hành nó cho chúng tôi. Trang đó cho biết là bên nào, và ở đâu. Ứng dụng hỏi bạn trước khi bất cứ thứ gì được gửi đến đó.</p><ul><li>Những gì được gửi đến đó: những gì bạn viết cho Coach và các taf của bạn, các tệp bạn đính kèm, những gì các ứng dụng bạn đã kết nối trả về cho một taf khi nó làm việc, và những gì có trên màn hình của bạn khi Coach giúp bạn trong ứng dụng.</li><li>Từ Chrome: trang phía trước, khi bạn viết cho Coach trong bảng điều khiển bên của tiện ích, sau khi bạn cho phép Coach đọc trang ở đó. Cả khi bạn viết cho một taf ở đó, trên một trang của chính nó.</li><li>Những gì không bao giờ được gửi: mật khẩu và khóa mà các ứng dụng bạn đã kết nối dùng, hoặc vân tay của bạn.</li><li>Công ty vận hành nó dùng nó để trả lời và xóa trong vòng 30 ngày, trừ khi bị đánh dấu là vi phạm quy tắc sử dụng của công ty đó hoặc luật pháp yêu cầu lưu giữ.</li><li>Không có gì được gửi cho đến khi bạn cho phép. Bạn có thể rút lại trong Tài khoản.</li></ul><p>Khi bạn rút lại, Coach và các taf của bạn ngừng trả lời bạn, và một taf có các lần chạy dựa trên sự đồng ý của bạn sẽ tạm dừng. tafs lưu hồ sơ của mỗi sự đồng ý bạn đưa ra hoặc rút lại, kèm thời điểm và phiên bản nội dung của nó, trong 10 năm kể từ lần thay đổi cuối, để cho thấy bạn đã đồng ý với điều gì; xóa tài khoản sẽ xóa hồ sơ này sớm hơn. <a href=\"/vi/privacy#ai-in-tafs\">Chính sách quyền riêng tư của KIFF</a> có chi tiết.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +105,7 @@ func TafsPrivacyVI() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section id=\"sharing\"><h2>7. Ai khác nhận dữ liệu</h2><p>Chúng tôi không bán dữ liệu cá nhân của bạn, và không chia sẻ để quảng cáo.</p><p>Với tafs, chúng tôi dùng các công ty này: Amazon Web Services (lưu trữ, gồm kho của tafs và các kết nối của planque), Clerk (đăng nhập cho tài khoản KIFF), Anthropic (mô hình AI, do Anthropic, Amazon Web Services, Google Cloud hoặc Microsoft Azure vận hành), Composio (thông tin đăng nhập của các kết nối được quản lý, và các lệnh gọi planque yêu cầu nó thực hiện), Apple (thông báo đẩy), Google (thông báo đẩy trên Android, và thanh toán của Google Play), và Resend (cửa email của một taf). Danh sách chính thức, hiện hành, kèm việc mỗi bên chạm vào và ở đâu, nằm tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</p><p>Một số trong họ ở ngoài Khu vực Kinh tế Châu Âu, chủ yếu tại Hoa Kỳ. <a href=\"/vi/privacy#transfers\">Chính sách quyền riêng tư của KIFF</a> nói các chuyển giao đó được bảo vệ ra sao.</p><p><strong>Quốc gia của bạn.</strong> Luật của một số quốc gia đòi hỏi nhiều hơn những gì chính sách này nêu. Những gì họ bổ sung, bằng tiếng Anh và bằng ngôn ngữ của quốc gia đó, nằm ở <a href=\"/privacy/countries\">Quốc gia của bạn</a> (bằng tiếng Anh).</p></section><section id=\"retention\"><h2>8. Chúng tôi giữ bao lâu</h2><ul><li>Những gì công cụ của bạn trả về cho một taf: chỉ cho đến khi lần chạy kết thúc. Trong một cuộc trò chuyện, những gì nó chỉ đọc được giữ mã hóa cho các tin nhắn tiếp theo, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày.</li><li>Các lần chạy và cuộc trò chuyện của một taf, cùng bản tóm tắt của cuộc trò chuyện: 30 ngày. Ghi chú bộ nhớ của nó: cho đến khi taf bị gỡ bỏ. Bạn có thể xóa sớm hơn một cuộc trò chuyện của riêng mình với Coach: các tin nhắn và tệp bạn đã thêm bị xóa ngay, còn bản ghi rằng mỗi lần chạy của nó đã diễn ra, khi nào và tốn bao nhiêu vẫn được giữ trong 30 ngày đó. Nếu bạn báo cáo một câu trả lời, KIFF giữ câu trả lời đó, lý do và ghi chú của bạn trong 180 ngày, hoặc cho đến khi bạn xóa cuộc trò chuyện đó hay tài khoản của mình. KIFF cũng gửi email chúng cho nhóm đọc các báo cáo, nơi email đó được lưu giữ như thư hỗ trợ của KIFF.</li><li>Các ghi chú ngắn của Coach cho câu trả lời kế tiếp của nó, như vì sao một kết nối không thực hiện được trong một cuộc trò chuyện, hoặc một Card đã được phê duyệt: cho đến khi câu trả lời đó lấy chúng, tối đa 7 ngày; sau đó, như một phần của cuộc trò chuyện ấy, chừng nào cuộc trò chuyện còn được giữ. Một bản sao được giữ 24 giờ để một tin nhắn gửi lại nhận cùng ghi chú. Ghi chú của một cuộc trò chuyện chỉ được dùng trong cuộc trò chuyện đó.</li><li>Các tệp bạn đính kèm trong một cuộc trò chuyện: cùng với tin nhắn chúng được đính kèm, 30 ngày, hoặc sớm hơn nếu cuộc trò chuyện bị gỡ, và trong mọi trường hợp trong vòng 38 ngày. Một tệp không tin nhắn nào dùng bị gỡ khoảng một giờ sau khi bạn tải lên. Xóa tài khoản của bạn sẽ xóa chúng.</li><li>Các tệp các taf của bạn giao: 30 ngày kể từ khi lần chạy tạo ra chúng, rồi tự động xóa trong vòng một ngày. Bất kỳ ai trong tài khoản của bạn có thể xóa một tệp sớm hơn bằng Xóa ngay: bản thân tệp biến mất ngay, không giữ bản sao nào; tên, kích thước và taf cùng lần chạy đã tạo ra nó có thể ở lại trong các bản sao theo thời điểm đã mã hóa của kho tafs tối đa 35 ngày, chỉ dùng để khôi phục nó sau sự cố. Gỡ một taf hoặc xóa tài khoản của bạn sẽ xóa các tệp của nó. Chia sẻ một tệp gửi chính tệp đó, và bản sao bạn chia sẻ ở lại với ứng dụng bạn đã chia sẻ đến. Để tải một tệp xuống, chúng tôi tạo một liên kết cho một thành viên đã đăng nhập của tài khoản bạn, ngừng hoạt động sau một phút; chúng tôi không tạo liên kết nào khác đến nó.</li><li>Những gì một công cụ trả về, trong bản ghi của planque về mỗi lệnh gọi: 24 giờ. Sau đó, bản ghi chỉ giữ việc lệnh gọi có được gửi hay không, để nó không bao giờ bị gửi hai lần.</li><li>Mã thông báo hoặc khóa của một kết nối trong planque, hoặc thông tin đăng nhập của một kết nối được quản lý tại Composio: cho đến khi bạn ngắt nó. Nếu một kết nối khác của bạn có thể dùng cùng tài khoản đó ở nhà cung cấp, nó được giữ, không dùng, cho đến khi kết nối kia cũng bị ngắt, rồi bị thu hồi. Bản ghi các phê duyệt của nó: cho đến khi tài khoản kết thúc.</li><li>Mã thông báo đẩy của một thiết bị: cho đến khi bạn đăng xuất khỏi ứng dụng, gỡ thiết bị, hoặc Apple hay Google báo mã thông báo đã mất. Khóa công khai, tên, nền tảng và ngày của một thiết bị: khi bạn còn dùng nó; khi bạn đăng xuất nó, nó được đánh dấu đã gỡ và giữ cho đến khi tài khoản bị xóa, để KIFF có thể từ chối một câu trả lời muộn từ nó và cho biết thiết bị nào đã ký một câu trả lời trước. Khóa công khai, mã định danh và tên của một khóa truy cập: như của thiết bị của nó. Phiên của một máy tính: tối đa 90 ngày, hoặc cho đến khi bạn đăng xuất.</li><li>Tài khoản của bạn: cho đến khi bị xóa. Nhật ký dịch vụ: 30 ngày. Các kho của tafs và planque giữ các bản sao theo thời điểm đã mã hóa trong 35 ngày, chỉ dùng để khôi phục một kho sau sự cố.</li></ul><p>Mọi thứ khác nằm trong <a href=\"/vi/privacy#retention\">mục Lưu giữ của KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Cơ sở pháp lý</h2><p>Thực hiện hợp đồng, để vận hành tài khoản và các taf của bạn. Lợi ích hợp pháp, cho an ninh, phòng chống gian lận và phát hiện lạm dụng. Sự đồng ý, cho AI trong tafs (<a href=\"#ai\">mục 5</a>). Nghĩa vụ pháp lý, cho hồ sơ thuế. <a href=\"/vi/privacy#lawful-bases\">Chính sách quyền riêng tư của KIFF</a> có chi tiết.</p></section><section id=\"rights\"><h2>10. Quyền của bạn</h2><p>Theo GDPR, bạn có thể yêu cầu truy cập dữ liệu của bạn, chỉnh sửa, xóa, hạn chế hoặc một bản sao có thể di chuyển, phản đối việc xử lý dựa trên lợi ích hợp pháp, và rút lại sự đồng ý. Hãy gửi email đến <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; chúng tôi trả lời không chậm trễ quá mức và muộn nhất trong một tháng; với yêu cầu phức tạp, chúng tôi có thể cần thêm hai tháng và sẽ báo cho bạn trong tháng đầu tiên. Trong ứng dụng, Tài khoản → Xuất cuộc trò chuyện của tôi tải xuống các cuộc trò chuyện và ghi chú của chính bạn.</p><p>Để xóa tài khoản tafs của bạn, hãy mở ứng dụng, vào Tài khoản và chạm <em>Xóa tài khoản</em>, rồi xác nhận. Không thể hoàn tác. <a href=\"/vi/privacy#delete-account\">Chính sách quyền riêng tư của KIFF</a> nói điều gì bị xóa và khi nào, và cách yêu cầu qua email.</p><p>Bạn có thể khiếu nại với <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Cơ quan Thanh tra Bảo vệ Dữ liệu Estonia (Andmekaitse Inspektsioon)</a>, hoặc với cơ quan giám sát nơi bạn sống.</p><p><strong>Quốc gia của bạn.</strong> Luật của một số quốc gia đòi hỏi nhiều hơn những gì chính sách này nêu. Những gì họ bổ sung, bằng tiếng Anh và bằng ngôn ngữ của quốc gia đó, nằm ở <a href=\"/privacy/countries\">Quốc gia của bạn</a> (bằng tiếng Anh).</p></section><section id=\"more\"><h2>11. Bảo mật, trẻ em và thay đổi</h2><p>Các biện pháp bảo mật của chúng tôi nằm tại <a href=\"/security\">/security</a> (bằng tiếng Anh). tafs không hướng đến trẻ em, và chúng tôi không cố ý thu thập dữ liệu cá nhân từ trẻ em dưới 16 tuổi. Chúng tôi thay đổi chính sách này theo cách <a href=\"/vi/privacy#changes\">Chính sách quyền riêng tư của KIFF</a> nêu cho chính nó.</p></section><section id=\"contact\"><h2>12. Liên hệ</h2><p>Câu hỏi và yêu cầu về quyền riêng tư: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Thông báo pháp lý chính thức: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Điều khoản riêng của ứng dụng nằm tại <a href=\"/vi/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section id=\"sharing\"><h2>7. Ai khác nhận dữ liệu</h2><p>Chúng tôi không bán dữ liệu cá nhân của bạn, và không chia sẻ để quảng cáo.</p><p>Với tafs, chúng tôi dùng các công ty này: Amazon Web Services (lưu trữ, gồm kho của tafs và các kết nối của planque), Clerk (đăng nhập cho tài khoản KIFF), Anthropic (mô hình AI, do Anthropic, Amazon Web Services, Google Cloud hoặc Microsoft Azure vận hành), Composio (thông tin đăng nhập của các kết nối được quản lý, và các lệnh gọi planque yêu cầu nó thực hiện), Apple (thông báo đẩy), Google (thông báo đẩy trên Android, và thanh toán của Google Play), và Resend (cửa email của một taf). Danh sách chính thức, hiện hành, kèm việc mỗi bên chạm vào và ở đâu, nằm tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</p><p>Một số trong họ ở ngoài Khu vực Kinh tế Châu Âu, chủ yếu tại Hoa Kỳ. <a href=\"/vi/privacy#transfers\">Chính sách quyền riêng tư của KIFF</a> nói các chuyển giao đó được bảo vệ ra sao.</p><p><strong>Quốc gia của bạn.</strong> Luật của một số quốc gia đòi hỏi nhiều hơn những gì chính sách này nêu. Những gì họ bổ sung, bằng tiếng Anh và bằng ngôn ngữ của quốc gia đó, nằm ở <a href=\"/privacy/countries\">Quốc gia của bạn</a> (bằng tiếng Anh).</p></section><section id=\"retention\"><h2>8. Chúng tôi giữ bao lâu</h2><ul><li>Những gì công cụ của bạn trả về cho một taf: chỉ cho đến khi lần chạy kết thúc. Trong một cuộc trò chuyện, những gì nó chỉ đọc được giữ mã hóa cho các tin nhắn tiếp theo, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày.</li><li>Các lần chạy và cuộc trò chuyện của một taf, cùng bản tóm tắt của cuộc trò chuyện: 30 ngày. Ghi chú bộ nhớ của nó: cho đến khi taf bị gỡ bỏ. Bạn có thể xóa sớm hơn một cuộc trò chuyện của riêng mình với Coach: các tin nhắn và tệp bạn đã thêm bị xóa ngay, còn bản ghi rằng mỗi lần chạy của nó đã diễn ra, khi nào và tốn bao nhiêu vẫn được giữ trong 30 ngày đó. Nếu bạn báo cáo một câu trả lời, KIFF giữ câu trả lời đó, lý do và ghi chú của bạn trong 180 ngày, hoặc cho đến khi bạn xóa cuộc trò chuyện đó hay tài khoản của mình. KIFF cũng gửi email chúng cho nhóm đọc các báo cáo, nơi email đó được lưu giữ như thư hỗ trợ của KIFF.</li><li>Các ghi chú ngắn của Coach cho câu trả lời kế tiếp của nó, như vì sao một kết nối không thực hiện được trong một cuộc trò chuyện, hoặc một Card đã được phê duyệt: cho đến khi câu trả lời đó lấy chúng, tối đa 7 ngày; sau đó, như một phần của cuộc trò chuyện ấy, chừng nào cuộc trò chuyện còn được giữ. Một bản sao được giữ 24 giờ để một tin nhắn gửi lại nhận cùng ghi chú. Ghi chú của một cuộc trò chuyện chỉ được dùng trong cuộc trò chuyện đó.</li><li>Các tệp bạn đính kèm trong một cuộc trò chuyện: cùng với tin nhắn chúng được đính kèm, 30 ngày, hoặc sớm hơn nếu cuộc trò chuyện bị gỡ, và trong mọi trường hợp trong vòng 38 ngày. Một tệp không tin nhắn nào dùng bị gỡ khoảng một giờ sau khi bạn tải lên. Xóa tài khoản của bạn sẽ xóa chúng.</li><li>Các tệp các taf của bạn giao: 30 ngày kể từ khi lần chạy tạo ra chúng, rồi tự động xóa trong vòng một ngày. Bất kỳ ai trong tài khoản của bạn có thể xóa một tệp sớm hơn bằng Xóa ngay: bản thân tệp biến mất ngay, không giữ bản sao nào; tên, kích thước và taf cùng lần chạy đã tạo ra nó có thể ở lại trong các bản sao theo thời điểm đã mã hóa của kho tafs tối đa 35 ngày, chỉ dùng để khôi phục nó sau sự cố. Gỡ một taf hoặc xóa tài khoản của bạn sẽ xóa các tệp của nó. Chia sẻ một tệp gửi chính tệp đó, và bản sao bạn chia sẻ ở lại với ứng dụng bạn đã chia sẻ đến. Để tải một tệp xuống, chúng tôi tạo một liên kết cho một thành viên đã đăng nhập của tài khoản bạn, ngừng hoạt động sau một phút; chúng tôi không tạo liên kết nào khác đến nó.</li><li>Những gì một công cụ trả về, trong bản ghi của planque về mỗi lệnh gọi: 24 giờ. Sau đó, bản ghi chỉ giữ việc lệnh gọi có được gửi hay không, để nó không bao giờ bị gửi hai lần.</li><li>Mã thông báo hoặc khóa của một kết nối trong planque, hoặc thông tin đăng nhập của một kết nối được quản lý tại Composio: cho đến khi bạn ngắt nó. Nếu một kết nối khác của bạn có thể dùng cùng tài khoản đó ở nhà cung cấp, nó được giữ, không dùng, cho đến khi kết nối kia cũng bị ngắt, rồi bị thu hồi. Bản ghi các phê duyệt của nó: cho đến khi tài khoản kết thúc.</li><li>Mã thông báo đẩy của một thiết bị: cho đến khi bạn đăng xuất khỏi ứng dụng, gỡ thiết bị, hoặc Apple hay Google báo mã thông báo đã mất. Khóa công khai, tên, nền tảng và ngày của một thiết bị: khi bạn còn dùng nó; khi bạn đăng xuất nó, nó được đánh dấu đã gỡ và giữ cho đến khi tài khoản bị xóa, để KIFF có thể từ chối một câu trả lời muộn từ nó và cho biết thiết bị nào đã ký một câu trả lời trước. Khóa công khai, mã định danh và tên của một khóa truy cập: như của thiết bị của nó. Phiên của một máy tính: tối đa 90 ngày, hoặc cho đến khi bạn đăng xuất.</li><li>Tài khoản của bạn: cho đến khi bị xóa. Nhật ký dịch vụ: 30 ngày. Các kho của tafs và planque giữ các bản sao theo thời điểm đã mã hóa trong 35 ngày, chỉ dùng để khôi phục một kho sau sự cố.</li></ul><p>Mọi thứ khác nằm trong <a href=\"/vi/privacy#retention\">mục Lưu giữ của KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Cơ sở pháp lý</h2><p>Thực hiện hợp đồng, để vận hành tài khoản và các taf của bạn. Lợi ích hợp pháp, cho an ninh, phòng chống gian lận và phát hiện lạm dụng. Sự đồng ý, cho AI trong tafs (<a href=\"#ai\">mục 5</a>). Nghĩa vụ pháp lý, cho hồ sơ thuế. <a href=\"/vi/privacy#lawful-bases\">Chính sách quyền riêng tư của KIFF</a> có chi tiết.</p></section><section id=\"rights\"><h2>10. Quyền của bạn</h2><p>Theo GDPR, bạn có thể yêu cầu truy cập dữ liệu của bạn, chỉnh sửa, xóa, hạn chế hoặc một bản sao có thể di chuyển, phản đối việc xử lý dựa trên lợi ích hợp pháp, và rút lại sự đồng ý. Hãy gửi email đến <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; chúng tôi trả lời không chậm trễ quá mức và muộn nhất trong một tháng; với yêu cầu phức tạp, chúng tôi có thể cần thêm hai tháng và sẽ báo cho bạn trong tháng đầu tiên. Trong ứng dụng, Tài khoản → Xuất cuộc trò chuyện của tôi tải xuống các cuộc trò chuyện và ghi chú của chính bạn.</p><p>Để xóa tài khoản tafs của bạn, hãy mở ứng dụng, vào Tài khoản và chạm <em>Xóa tài khoản</em>, rồi xác nhận. Không thể hoàn tác. <a href=\"/vi/privacy#delete-account\">Chính sách quyền riêng tư của KIFF</a> nói điều gì bị xóa và khi nào, và cách yêu cầu qua email.</p><p>Bạn có thể khiếu nại với <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Cơ quan Thanh tra Bảo vệ Dữ liệu Estonia (Andmekaitse Inspektsioon)</a>, hoặc với cơ quan giám sát nơi bạn sống.</p><p><strong>Quốc gia của bạn.</strong> Luật của một số quốc gia đòi hỏi nhiều hơn những gì chính sách này nêu. Những gì họ bổ sung, bằng tiếng Anh và bằng ngôn ngữ của quốc gia đó, nằm ở <a href=\"/privacy/countries\">Quốc gia của bạn</a> (bằng tiếng Anh).</p></section><section id=\"more\"><h2>11. Bảo mật, trẻ em và thay đổi</h2><p>Các biện pháp bảo mật của chúng tôi nằm tại <a href=\"/security\">/security</a> (bằng tiếng Anh). tafs không hướng đến trẻ em, và chúng tôi không cố ý thu thập dữ liệu cá nhân từ trẻ em dưới 16 tuổi. Chúng tôi thay đổi chính sách này theo cách <a href=\"/vi/privacy#changes\">Chính sách quyền riêng tư của KIFF</a> nêu cho chính nó.</p></section><section id=\"contact\"><h2>12. Liên hệ</h2><p>Câu hỏi và yêu cầu về quyền riêng tư: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Thông báo pháp lý chính thức: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Điều khoản riêng của ứng dụng nằm tại <a href=\"/vi/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -102,347 +138,347 @@ func tafsPrivacyGoogleVI() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<section id=\"google\"><h2>6. Dữ liệu người dùng Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section id=\"google\"><h2>6. Dữ liệu người dùng Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>Khi bạn yêu cầu, tafs kết nối một taf với tài khoản Google của bạn, ví dụ với Google Sheets hoặc Google Calendar mà công việc của nó dùng, trong Kết nối ứng dụng của ứng dụng. Mục này nói tafs làm gì với dữ liệu nó nhận từ Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>Khi bạn yêu cầu, tafs kết nối một taf với tài khoản Google của bạn, ví dụ với Google Sheets hoặc Google Calendar mà công việc của nó dùng, trong Kết nối ứng dụng của ứng dụng. Mục này nói tafs làm gì với dữ liệu nó nhận từ Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Khi bạn yêu cầu, tafs kết nối một taf với tài khoản Google của bạn, ví dụ với Gmail của bạn, hoặc với Google Calendar hay Google Sheets mà công việc của nó dùng, trong Kết nối ứng dụng của ứng dụng. Mục này nói tafs làm gì với dữ liệu nó nhận từ Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>Khi bạn yêu cầu, tafs kết nối một taf với tài khoản Google của bạn, ví dụ với Gmail của bạn, hoặc với Google Calendar hay Google Sheets mà công việc của nó dùng, trong Kết nối ứng dụng của ứng dụng. Mục này nói tafs làm gì với dữ liệu nó nhận từ Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><strong>Nó đọc và ghi gì:</strong> những gì công việc của taf cần: các bảng tính nó giữ cập nhật, hoặc các sự kiện trên các lịch nó trông coi. Nó chỉ thay đổi chúng ở nơi Card của taf cho phép, và bất cứ điều gì vượt giới hạn của Card đều chờ sự phê duyệt của bạn.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Nó đọc và ghi gì:</strong> những gì công việc của taf cần: các bảng tính nó giữ cập nhật, hoặc các sự kiện trên các lịch nó trông coi. Nó chỉ thay đổi chúng ở nơi Card của taf cho phép, và bất cứ điều gì vượt giới hạn của Card đều chờ sự phê duyệt của bạn.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li><strong>Nó đọc và ghi gì:</strong> những gì công việc của taf cần. Trong Gmail của bạn, nó đọc thư và chuỗi thư của bạn để tìm những thư cần trả lời, và viết bản nháp; nó chỉ gửi thư ở nơi Card của taf cho phép. Trong Google Calendar và Google Sheets, nó đọc các sự kiện trên các lịch nó trông coi, hoặc các bảng tính nó giữ cập nhật, và chỉ thay đổi chúng ở nơi Card của taf cho phép. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Nó đọc và ghi gì:</strong> những gì công việc của taf cần. Trong Gmail của bạn, nó đọc thư và chuỗi thư của bạn để tìm những thư cần trả lời, và viết bản nháp; nó chỉ gửi thư ở nơi Card của taf cho phép. Trong Google Calendar và Google Sheets, nó đọc các sự kiện trên các lịch nó trông coi, hoặc các bảng tính nó giữ cập nhật, và chỉ thay đổi chúng ở nơi Card của taf cho phép. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Trong Google Tasks, nó đọc các danh sách công việc nó trông coi, và chỉ thêm, hoàn thành, di chuyển hoặc xóa công việc ở nơi Card của taf cho phép. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Trong Google Tasks, nó đọc các danh sách công việc nó trông coi, và chỉ thêm, hoàn thành, di chuyển hoặc xóa công việc ở nơi Card của taf cho phép. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Bất cứ điều gì vượt giới hạn của Card đều chờ sự phê duyệt của bạn.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Bất cứ điều gì vượt giới hạn của Card đều chờ sự phê duyệt của bạn.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Vì sao:</strong> chỉ để làm công việc bạn đã thiết lập cho taf đó, và để cho bạn thấy nó kết nối với tài khoản Google nào: địa chỉ email của tài khoản, được giữ cùng kết nối cho đến khi bạn ngắt.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Vì sao:</strong> chỉ để làm công việc bạn đã thiết lập cho taf đó, và để cho bạn thấy nó kết nối với tài khoản Google nào: địa chỉ email của tài khoản, được giữ cùng kết nối cho đến khi bạn ngắt.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Mỗi ứng dụng Google kết nối ra sao:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Mỗi ứng dụng Google kết nối ra sao:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li>Qua đối tác đăng nhập của chúng tôi, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 135, Col: 163}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("vi")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li>Qua chính phương thức đăng nhập Google của tafs, không có công ty nào khác ở giữa: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 138, Col: 145}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			for _, a := range googlePending("vi") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>Qua đối tác đăng nhập của chúng tôi, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 138, Col: 163}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("vi"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			if len(googleInHouse("vi")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>Qua chính phương thức đăng nhập Google của tafs, không có công ty nào khác ở giữa: ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 141, Col: 145}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 142, Col: 75}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("vi") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 145, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").AsksFor)
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("vi"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 143, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 145, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 145, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("vi").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var13 string
+					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 146, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var12 string
-					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 146, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Một ứng dụng được nêu ở cả hai kết nối theo cách này hoặc cách kia, tùy tài khoản của bạn. Trang đăng nhập riêng của Google cho thấy bạn đang cho phép cách nào.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. Phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Một taf dùng nó ra sao:</strong> một taf chỉ dùng các công cụ được phê duyệt trên Card của nó. Mọi lệnh gọi được kiểm tra theo một giấy phép cho đúng công cụ và các đối số đó trước khi bất cứ thứ gì được gửi, và một lệnh gọi ngoài quyền truy cập bạn đã cấp bị từ chối. Những hành động nào hỏi phê duyệt của bạn mỗi lần được đặt trên Card.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Quyền truy cập mà phương thức đăng nhập Google của chính tafs yêu cầu:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Quyền truy cập mà tafs yêu cầu:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("vi") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 181, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 184, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 149, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var15 string
-					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 184, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Dù một phương thức đăng nhập cho phép bao nhiêu, taf chỉ dùng các công cụ trên Card của nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Một ứng dụng được nêu ở cả hai kết nối theo cách này hoặc cách kia, tùy tài khoản của bạn. Trang đăng nhập riêng của Google cho thấy bạn đang cho phép cách nào.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong><ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. Phương thức đăng nhập yêu cầu toàn bộ quyền truy cập liệt kê dưới đây cho ứng dụng đó cùng lúc, kể cả khi taf chỉ đọc.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Những gì bạn cho phép:</strong> bạn đăng nhập trên trang riêng của Google và chọn những gì cho phép. tafs chỉ yêu cầu quyền truy cập mà các công cụ của taf cần. Nếu quyền truy cập hẹp hơn đó không thể, nó yêu cầu quyền truy cập thông thường của ứng dụng, và nói như vậy trước khi bạn đăng nhập. Nếu quyền truy cập thông thường bao gồm dữ liệu cá nhân mà taf không dùng, tafs không kết nối.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Một taf dùng nó ra sao:</strong> một taf chỉ dùng các công cụ được phê duyệt trên Card của nó. Mọi lệnh gọi được kiểm tra theo một giấy phép cho đúng công cụ và các đối số đó trước khi bất cứ thứ gì được gửi, và một lệnh gọi ngoài quyền truy cập bạn đã cấp bị từ chối. Những hành động nào hỏi phê duyệt của bạn mỗi lần được đặt trên Card.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("vi")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<strong>Quyền truy cập mà phương thức đăng nhập Google của chính tafs yêu cầu:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<strong>Quyền truy cập mà tafs yêu cầu:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("vi") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 184, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 187, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `vi_tafs_privacy.templ`, Line: 187, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul>Dù một phương thức đăng nhập cho phép bao nhiêu, taf chỉ dùng các công cụ trên Card của nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn.</li></ul>Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong><ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn. Nhà cung cấp mô hình AI được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> planque, dịch vụ kết nối riêng của tafs, giữ mã thông báo Google của bạn cho công ty bạn, được mã hóa bằng AWS KMS tại Liên minh châu Âu (Ireland), và chỉ dùng nó để thực hiện một lệnh gọi mà Card của taf cho phép. Nó không bao giờ được đưa cho một taf, và cả taf lẫn mô hình AI đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. Nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi. Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Ai giữ thông tin đăng nhập của bạn:</strong> thông tin đăng nhập Google của bạn do đối tác đăng nhập của chúng tôi giữ, nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh), và không bao giờ được đưa cho một taf hay cho planque. Cả taf lẫn tafs đều không thấy mật khẩu hay mã thông báo Google của bạn. Một taf khác của bạn cần cùng quyền truy cập sẽ dùng lại thông tin đăng nhập đó, và mỗi taf chỉ dùng các công cụ bạn đã phê duyệt cho nó.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Huấn luyện AI:</strong> dữ liệu người dùng Google không được dùng để huấn luyện các mô hình AI.</li><li><strong>Hình ảnh:</strong> tafs không tạo hay chỉnh sửa hình ảnh hoặc video: AI của nó viết văn bản. Nó không bao giờ dùng API của Google hay dữ liệu người dùng Google để tạo, chỉnh sửa hoặc chia sẻ hình ảnh thân mật của bất kỳ ai (hình ảnh thân mật không có sự đồng ý, NCII), hay bất kỳ hình ảnh nào khác của một người.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp.<ul><li><strong>Qua đối tác đăng nhập của chúng tôi:</strong> nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi.</li><li><strong>Qua chính phương thức đăng nhập Google của tafs:</strong> planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn.</li></ul>Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("vi")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. planque tự gọi Google, nên không công ty nào khác thực hiện lệnh gọi hay giữ thông tin đăng nhập của bạn. Nhà cung cấp mô hình AI được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Ai khác nhận nó:</strong> những gì một taf đọc từ Google đi đến mô hình AI chạy taf đó, chỉ sau khi bạn cho phép (xem <a href=\"#ai\">AI trong tafs</a>), mô hình giữ nó tối đa 30 ngày theo điều khoản của nhà cung cấp. Nó cũng đi qua đối tác đăng nhập của chúng tôi, bên thực hiện mỗi lệnh gọi. Cả hai đều được nêu tại <a href=\"/subprocessors\">/subprocessors</a> (bằng tiếng Anh).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Huấn luyện AI:</strong> dữ liệu người dùng Google không được dùng để huấn luyện các mô hình AI.</li><li><strong>Hình ảnh:</strong> tafs không tạo hay chỉnh sửa hình ảnh hoặc video: AI của nó viết văn bản. Nó không bao giờ dùng API của Google hay dữ liệu người dùng Google để tạo, chỉnh sửa hoặc chia sẻ hình ảnh thân mật của bất kỳ ai (hình ảnh thân mật không có sự đồng ý, NCII), hay bất kỳ hình ảnh nào khác của một người.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("vi")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Bao lâu, và ở đâu:</strong> các bảng tính và sự kiện của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Bao lâu, và ở đâu:</strong> các bảng tính và sự kiện của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Bao lâu, và ở đâu:</strong> các bản nháp, sự kiện và bảng tính của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Bao lâu, và ở đâu:</strong> các bản nháp, sự kiện và bảng tính của bạn ở lại trong tài khoản Google của bạn. Trong kho riêng của tafs, những gì một công cụ trả về chỉ được giữ cho đến khi lần chạy của taf kết thúc. planque, nơi chuyển tiếp mỗi lệnh gọi, giữ những gì Google trả về trong 24 giờ, để một lệnh gọi lặp lại nhận cùng câu trả lời và không bao giờ bị gửi hai lần; sau đó nó chỉ giữ việc lệnh gọi có được gửi hay không. Trong một cuộc trò chuyện, những gì chỉ được đọc giữ mã hóa, dùng cho đến khi cuộc trò chuyện nhàn rỗi một giờ và tối đa bốn giờ sau khi đọc, rồi tự động xóa, trong vài ngày. Bản ghi của một lần chạy và cuộc trò chuyện của nó được giữ 30 ngày, và ghi chú của một taf cho đến khi bạn gỡ taf (xem <a href=\"#retention\">Chúng tôi giữ bao lâu</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Dừng nó:</strong><ul><li>Ngắt Google trong ứng dụng, trong Kết nối ứng dụng hoặc trên tab Card của taf. Các công cụ Google của nó dừng ngay, và tafs yêu cầu Google thu hồi thông tin đăng nhập ngay; việc đó có thể hoàn tất muộn hơn một chút.</li><li>Gỡ một taf, và các kết nối của nó kết thúc cùng nó. Một thông tin đăng nhập Google mà taf khác của bạn vẫn dùng ở lại cho đến khi taf cuối cùng biến mất.</li><li>Gỡ quyền truy cập của tafs bất cứ lúc nào trong Tài khoản Google của bạn, tại <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Các taf của bạn ngừng tiếp cận Google, và ứng dụng cho bạn biết kết nối Google đã đăng xuất.</li><li>Xóa tài khoản của bạn: các taf, cuộc trò chuyện, ghi chú, tệp và kết nối của nó bị xóa ngay, và khỏi các bản sao theo thời điểm của chúng trong vòng 35 ngày, và các mã thông báo Google của nó bị thu hồi ở nơi Google cho phép.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Dừng nó:</strong><ul><li>Ngắt Google trong ứng dụng, trong Kết nối ứng dụng hoặc trên tab Card của taf. Các công cụ Google của nó dừng ngay, và tafs yêu cầu Google thu hồi thông tin đăng nhập ngay; việc đó có thể hoàn tất muộn hơn một chút.</li><li>Gỡ một taf, và các kết nối của nó kết thúc cùng nó. Một thông tin đăng nhập Google mà taf khác của bạn vẫn dùng ở lại cho đến khi taf cuối cùng biến mất.</li><li>Gỡ quyền truy cập của tafs bất cứ lúc nào trong Tài khoản Google của bạn, tại <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Các taf của bạn ngừng tiếp cận Google, và ứng dụng cho bạn biết kết nối Google đã đăng xuất.</li><li>Xóa tài khoản của bạn: các taf, cuộc trò chuyện, ghi chú, tệp và kết nối của nó bị xóa ngay, và khỏi các bản sao theo thời điểm của chúng trong vòng 35 ngày, và các mã thông báo Google của nó bị thu hồi ở nơi Google cho phép.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

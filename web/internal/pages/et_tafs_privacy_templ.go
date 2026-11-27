@@ -62,7 +62,43 @@ func TafsPrivacyET() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". TPM-ita Windowsi arvutiga ei saa tafsi sisse logida. KIFF hoiab võtme avalikku poolt, seadme nime ja platvormi ning seda, millal see lisati ja viimati kasutati, et kontrollida teie vastuseid kinni peetud päringutele ja ühenduste kinnitusi.</li><li><strong>Teie kell:</strong> kell ei hoia ühtegi parooli ega võtit, suhtleb ainult teie seotud telefoniga ega kinnita kunagi midagi. See saadab Coachile või teie valitud tafile seda, mida ütlete, ainult tekstina, telefoni kaudu, pärast seda, kui olete AI lubanud. Kella enda kõnetuvastusteenus, Apple'i või Google'i oma, muudab teie sõnad selleks tekstiks. Wear OS-is teeb seda, kui see teenus lõpetab enne, kui olete lõpetanud, selle asemel teie telefoni enda kõnetuvastus, telefonis. Kell saab keelduda, peatada või Coachile või tafile saata ainult siis, kui sellel on ekraanilukk või pääsukood ja see on lukust lahti. See, mida tafile saadate, läheb selle tafi enda vestlusesse, nagu oleksite selle telefonis kirjutanud. Tafi vestlust koos summadega loetakse iga kord avamisel telefoni kaudu ning kell hoiab ainult viimaseid sõnumeid, mida kirjeldab selle oma jaotis allpool. Kui rakendused on suletud, edastab telefon uued vastused ja sõnumid kellale süsteemi enda telefoni ja kella vahelise ühenduse kaudu (Apple Watchil Apple'i, Wear OS-is Google Play teenuste oma), mis hoiab neid telefonis ja kellas ainult seni, kuni kell need vastu võtab; telefoni äratav teavitus ei sisalda sõnu. Vastus, mis saabub ajal, kui te kella ei vaata, kuvatakse ka teavitusena, teie iPhone'is ja Apple Watchis või Wear OS-i kellas, oma sõnadega, kuid mitte kunagi summaga, ning jääb alles, kuni selle eemaldate; lukus Wear OS-i kell näitab ainult, et vastus on valmis.</li><li><strong>Apple Watch:</strong> see näitab teie tafe ja nende lehti neid hoidmata. See hoiab teie postkasti, failis, mida see ei saa lukus olles lugeda: iga kinni peetud päringu selle tafi nime ja küsimusena, mitte kunagi summana, ning Coachi vastused sellele, mille kellast saatsite, tekstina. Kui logite kellas välja, hoiab see ka teadet, et tegite seda, kuni logite kellas uuesti sisse. Peale selle ei hoia see midagi, kui kellal pole pääsukoodi. Postkast kustub, kui logite kellas välja või teie iPhone logib välja, või järgmisel korral, kui rakendus avaneb või sulgub ilma pääsukoodita. See ei tee salvestisi ja ainsad teavitused, mida see näitab, on teie iPhone'i omad. Et vestlus avaneks kohe, hoiab see ka kuni 20 sellel avatud vestluse viimast 30 sõnumit, Coachi ja teie tafide omi, ainult tekstina ja mitte kunagi summat, lukus nagu postkast; need kustuvad koos postkastiga ja siis, kui vestlust pole 30 päeva avatud. Kui jätad Coachile mõeldud sõnumi hilisemaks, hoiab see ka seda üht sõnumit tekstina omaette failis, mis on lukus nagu Postkasti oma, ja saadab selle, kui su iPhone on jälle kättesaadav. See kustutatakse pärast saatmist, kui sa selle kustutad, kui sina või su iPhone välja logite või kui kellal pole enam pääsukoodi.</li><li><strong>Wear OS:</strong> see näitab teie konto e-posti aadressi ja tänast kalendrit neid hoidmata. Et see avaneks kohe, hoiab see krüpteeritult teid ootavate asjade arvu ning iga tafi nime ja seda, kas see on peatatud või pausil: mitte kunagi summat, kinni peetud päringu üksikasju ega tafi vestlust. See kustutatakse, kui logite välja, kui kell lukustub või võetakse randmelt ära, ja 24 tunni pärast. See hoiab teie postkasti, kus iga rida on tafi nimi ja see, mida see ütleb, mitte kunagi summa, ning ühte hilisemaks hoitud sõnumit, tekstina. Väljalogimine, kellas või telefonis, kustutab selle kõik. Oma paani jaoks hoiab see ka teid ootavate asjade arvu, mis kuvatakse ainult siis, kui kell on lukust lahti, ja kustutatakse väljalogimisel või järgmisel korral, kui paan kuvatakse kella lukus olles või ekraanilukuta. Pärast kellas väljalogimist hoiab see teadet, et tegite seda, kuni logite uuesti sisse. Postkast kustub ka järgmisel korral, kui rakendus avaneb või sulgub kella lukus olles või ekraanilukuta. Hilisemaks hoitud sõnum jääb alles, kuni selle saadate või kustutate, kuna palusite selle saata. Kui kella kõnetuvastusteenus lõpetab enne, kui olete lõpetanud, saadab kell salvestise teie telefoni, mis muudab selle tekstiks telefonis endas, mitte kunagi serveris. Salvestis kustutatakse mõlemas seadmes, kui tekst on tagasi või kui tühistate, ja hiljemalt 2 minuti pärast. Coachile või teie tafile läheb edasi ainult tekst. Tafi tulemus võib jääda kella teavitustesse, kuni selle eemaldate või kellas välja logite. Et vestlus avaneks kohe, hoiab see ka kuni 20 sellel avatud vestluse viimast 30 sõnumit, Coachi ja teie tafide omi, ainult tekstina ja mitte kunagi summat, krüpteerituna; need kustuvad, kui logite välja kellas või telefonis, ja kui vestlust pole 30 päeva avatud, ning ekraanilukuta kell ei hoia ühtegi. Hilisemaks jäetud sõnum kustutatakse ka siis, kui kellal pole enam ekraanilukku.</li><li><strong>Pääsuvõtmed:</strong> kui kinnitate arvutis pääsuvõtmega, näiteks Windows Hello või turvavõtmega, jääb teie nägu, sõrmejälg või PIN-kood arvuti enda süsteemi. KIFF hoiab pääsuvõtme avalikku võtit, selle tunnust, loendurit ja nime, mitte kunagi midagi salajast, ning keeldub pääsuvõtmest, mis sünkroonitakse teistesse seadmetesse.</li><li><strong>Teavitused:</strong> telefonis, tahvelarvutis või iPadi rakendust kasutavas Macis hoiame teavituste sisselülitamisel seadme tõukemärki koos teie KIFFi isiku tunnuse ja rakenduses kuvatud keelega. Teavitus läheb läbi Apple'i või Google'i ainult sellega, milline taf ja mida see soovib, ning ukse teavituses selle inimese nime või e-posti aadressiga, kes kirjutas: mitte kunagi summa ega päringu üksikasjadega. Rakendus lisab need seadmes endas KIFFist, nii et lukust lahti telefoni teavitus võib näidata summat, kaupmeest või inimest. Lukus Android-telefonis näitab see ainult „Taf vajab sind“ ja lukus iPhone'is samuti, kui te pole selle eelvaateid seadnud alati kuvama. Windowsi arvutis, Linuxi arvutis või macOS 12 rakendusega Macis loob teavitused rakendus ise töö ajal, ilma tõukemärgita ja ühegi teise ettevõtte kaudu. Windowsis ja Linuxis näitavad need, milline taf, mida see teha tahab, summat, põhjust ja tähtaega; macOS 12 rakenduses näitavad need KIFFi sõnastust päringu kohta, kui need sisse lülitate, ning lukus ekraan näitab seda, mida Maci eelvaate seade lubab. Windowsis on need välja lülitatud, kuni need sisse lülitate, ja näitavad ekraani lukus olles ainult „Taf vajab sind“. Enne ekraani lukustumist kuvatud teavitus säilitab oma üksikasjad Windowsi teavituste loendis. Linuxis on need sees, kuni need välja lülitate, ja see, mida lukus ekraan näitab, sõltub teie töölauast. Telefon, mis edastab uuendusi kellale, hoiab oma tõukemärki registreerituna ka siis, kui teavitused on välja lülitatud, ainult selleks, et vaikne tõuge saaks selle äratada ja uuendused kellale edastada; see tõuge ei sisalda sõnu ega näita midagi.</li><li><strong>Keel:</strong> tafsi teenus hoiab konto keelt, selle järgi, kes viimati Coachiga vestles, kuni kolm kuud, et tafi aruanded tuleksid selles keeles.</li><li><strong>Teie tööriistad:</strong> tööriista ühendamisel logite sisse tööriista enda pakkuja juures. Rakenduse puhul, kuhu planque ise sisse logib, näiteks Stripe, või teie antud võtme puhul hoiab planque seda märki või võtit teie ettevõtte jaoks krüpteeritult. Hallatud ühenduse puhul hoiab sisselogimist Composio, ühendusteenus, millega planque töötab, ja planque hoiab ainult ühenduse kirjet ja teie kinnitatud tööriistu (vt <a href=\"#google\">Google'i kasutajaandmed</a>). Ühenduse kirje võib sisaldada kontot, kuhu see on sisse logitud (selle nime või e-posti aadressi), et rakendus saaks teile näidata, milline see on. KIFF kasutab hallatud ühendusi ainult rakenduste jaoks, mis on nimetatud lehel <a href=\"/subprocessors#composio\">/subprocessors</a> (inglise keeles).</li><li><strong>Teie brauser (Chrome):</strong> Kui seote tafsi laienduse oma telefoniga, võib taf töötada teie seotud Chrome'i profiilis, ainult nendel saitidel, mis on loetletud tema ühenduses. Ta avab oma vahelehed vahelehegrupis, mida näete, saate peatada või lõpetada, ja ta peatub, kui puudutate mõnda neist. Taf, mille käivitate laienduse külgpaneelilt, töötab selle asemel vahelehel, millel te selles aknas olete, kui see on mõnel tema ühenduse saidil: vaheleht liitub tema grupiga ja seda koheldakse tema omana ning see jääb avatuks, kui taf peatub. See liitub selle vahelehega ainult siis, kui see leht on esimene, mida tal vaja on. Seal saab see klõpsata ja kirjutada, ainult oma saitidel. Sellel vahelehel loeb see lehte seal, kus see on, ja avab iga muu lehe oma vahelehel; teie vahelehte saab liigutada ainult samm, mille ta seal teeb, näiteks klõps, ja ainult tema saitide piires. Ta loeb neid lehti tekstina ja vormiväljadena, ilma parooli-, kaardi- ja koodiväljadeta, mitte kunagi teie teisi vahelehti ega teisi saite. See tekst läheb käivituse osana meie tehisintellekti pakkujale ja seda hoitakse koos käivitusega nagu iga tööriista tulemust. Iga samm kantakse logisse koos saidi ja välja nimega, mitte kunagi sellega, mis salajasse välja sisestati. Iga muudatuse kohta, mille taf teeb, hoiab KIFF lehte enne ja pärast, tekstina ilma nende väljadeta, kõige rohkem 30 päeva, ja kustutab selle varem, kui ühenduse katkestate või oma konto kustutate. Need lehed võivad näidata teiste inimeste andmeid, näiteks teie kliente; KIFF töötleb neid teie jaoks volitatud töötlejana. Laiendus hoiab teie arvutis oma võtit, oma KIFF-i seanssi ja seda, millised vestlused Coachiga selles alustati, mitte kunagi teie paroole: sisselogimislehel taf peatub ja palub teil ise sisse logida, teie enda vahelehel. Coachiga saad rääkida ka laienduse külgpaneelilt. Coach loeb lehte alles siis, kui olete seda laienduses lubanud, eraldi nõusolekuga, mille saate seal tagasi võtta, ja sõnumi saate alati saata ka ilma leheta. Kui saadad talle sealt sõnumi, läheb eesolev leht selle sõnumiga kaasa ainult nähtava tekstina, mitte kunagi see, mida sisestasid, välja arvatud panga, maksete, posti või tervise saidil või saidil, mille Coachi jaoks välja lülitasid. Väljade väärtusi ja paroole ei loeta; kaardinumbritest jäetakse alles ainult neli viimast numbrit; võtmed ja märgistatud saladused maskeeritakse. Maskeeritakse ka ühekordsed koodid, mida lehe tekst inglise, prantsuse, hispaania või saksa keeles sellistena nimetab. See läheb meie tehisintellekti teenusepakkujale ainult selle sõnumi jaoks; tafs hoiab lehte ainult vastuse valmimiseni ning hoiab saidi nime sinu vestlusega, kuvatuna kujul „Loeb:“, 30 päeva. Coachi vastus võib lehte tsiteerida ja seda hoitakse sinu vestlusega nagu iga vastust. Sama kehtib sõnumi kohta, mille saadate seal tafile, sama nõusolekuga, kuid ainult selle tafi enda saitidel: mujal ei loeta midagi, selles käigus taf ainult loeb ja tema vastus võib lehte tsiteerida. Tafi puhul hoitakse lehe teksti tema käiguga ainult selle käigu lõpuni. Külgpaneel näitab vestlusi, mis on selles Chrome'is alustatud pärast selle sidumist; sinu muud vestlused jäävad su telefoni ja teistesse seadmetesse. Kui taf töötab selles Chrome'is sõnumi pärast, mille saatsid teisest seadmest, näitab paneel ka seda käivitust: sõnumit, selle samme ja vastust, kuid mitte kunagi ülejäänud vestlust, kuni sa selle vestluse kustutad, Chrome'i sidumise tühistad või tafi teise Chrome'i viid. Seal saate sõnumile ka faile lisada: nagu tafsi rakendustes lisatud failid, lähevad need selle sõnumiga meie tehisintellekti teenusepakkujale ja neid hoitakse koos sellega 30 päeva või vähem, kui vestlus eemaldatakse (fail, mida ükski sõnum ei kasuta, umbes tund), ja faili saab avada ainult see, kes selle lisas. See hoiab ka oma sidumist teie telefoniga, saite, mille te Coachi jaoks välja lülitasite, ja selle Chrome'i profiili juhuslikku tunnust, mis läheb iga sidumisega KIFF-ile, et teie telefon tunneks selle Chrome'i ära. Desinstallimine kustutab kõik; sidumise lõpetamine kustutab kõik peale selle tunnuse ja Coachi jaoks välja lülitatud saitide. Taf ei maksa kunagi ilma teie nõusolekuta telefonis. Iga tegutseva sammu (klõps, sisestamine, saatmine), sealhulgas teie heaks kiidetud sammu kohta, hoiab see lisaks ühe ekraanipildi lehest, tehtud vahetult enne tegevust, logi jaoks; mitte kunagi lehe kohta, mida ta ainult loeb, mitte kunagi panga-, rahakoti-, paroolihalduri-, makse-, tervise- ega riigiasutuse saidil, ning parooli-, kaardi- ja koodiväljad peidetakse enne pildistamist. Ka kaardinumbri või võtmena näivat teksti kustutatakse mustaga, kuid midagi, mis on kirjutatud teisiti, võib siiski paista. Ekraanipilte hoitakse krüptitud salvestusruumis, selle sammuga seotuna, 30 päeva, seejärel kustutatakse need automaatselt või varem, kui ühenduse katkestate, selle Chrome'i lahutate või oma konto kustutate, ning need ei lähe kunagi meie tehisintellekti pakkujale. Näete neid iga sammu all tafi tegevuses. tafs tunneb pankade, rahakottide, paroolihaldurite, maksete, posti, tervise ja riigiasutuste saidid ära loendi ja aadressis olevate sõnade järgi, nii et saiti, mida ta ära ei tunne, koheldakse nagu iga teist.</li><li><strong>Teie tafide töö:</strong> iga tafi käivitused, vestlused, aruanded, mälumärkmed ja failid, mida need väljastavad, mida hoiame volitatud töötlejana. Kõik teie konto inimesed näevad faile, mida teie tafid väljastavad.</li><li><strong>Uksed:</strong> kui avate ukse, et inimesed saaksid tafile kirjutada e-posti, Slacki või Telegrami kaudu, hoiab tafsi teenus iga seotud saatjat tema e-posti aadressi, Slacki liikme ID või Telegrami kasutaja ID järgi (WhatsAppi ukse puhul telefoninumbri järgi) koos nimega, mille talle annate, kuni eemaldate ukse või tafi. Sõnum kelleltki, keda te pole sidunud, ootab teid koputusena, koos sellega, kes selle kirjutas ja mida see ütleb, kuni 30 päeva pärast viimast. Seotud saatja sõnum läheb tafi vestlusesse ja seda hoitakse nagu ülejäänud vestlust. Slack ja Telegram edastavad sõnumeid oma tingimustel.</li><li><strong>Ostud:</strong> Solot ja krediidipakette müüb Apple App Store'i kaudu või Google Google Play arveldusega. Nad teatavad meile, mida osteti, millise KIFFi konto jaoks (juhuslik tunnus), millal, ning tehingu või tellimuse viited. Nad ei anna meile teie Apple ID-d ega Google'i kontot, nime, e-posti aadressi ega kaarti.</li></ul><p>Rakenduses pole analüütika- ega reklaamijälgijaid.</p></section><section id=\"ai\"><h2>5. AI tafsis</h2><p>tafs kasutab Coachi ja teie tafide jaoks Anthropicu AI-d Claude. Seda käitab meie jaoks Anthropic või mõni meie alltöötlejate lehel nimetatud pilveteenuse pakkuja. See leht ütleb, kes ja kus. Rakendus küsib teilt enne, kui sinna midagi saadetakse.</p><ul><li>Mida sinna saadetakse: see, mida kirjutate Coachile ja oma tafidele, teie lisatud failid, see, mida teie ühendatud rakendused tafile töö ajal tagastavad, ja see, mis on teie ekraanil, kui Coach teid rakenduses aitab.</li><li>Chrome'ist: eesolev leht, kui kirjutad Coachile laienduse külgpaneelil, kui olete lubanud Coachil seal lehti lugeda. Ka siis, kui kirjutate seal tafile mõnel tema enda saidil.</li><li>Mida ei saadeta kunagi: paroole ja võtmeid, mida teie ühendatud rakendused kasutavad, ega teie sõrmejälge.</li><li>Ettevõte, kes seda käitab, kasutab seda vastamiseks ja kustutab selle 30 päeva jooksul, välja arvatud juhul, kui see märgitakse tema kasutusreeglite rikkumiseks või seadus nõuab selle säilitamist.</li><li>Midagi ei saadeta enne, kui te selle lubate. Nõusoleku saate tagasi võtta vaates Konto.</li></ul><p>Kui nõusoleku tagasi võtate, lõpetavad Coach ja teie tafid teile vastamise ning taf, mille käivitused põhinevad teie nõusolekul, läheb pausile. tafs hoiab iga antud või tagasi võetud nõusoleku kohta kirjet, millal ja millise sõnastuse versiooni kohta, 10 aastat viimasest muudatusest, et näidata, millega nõustusite; konto kustutamine kustutab selle varem. Üksikasjad on <a href=\"/et/privacy#ai-in-tafs\">KIFFi privaatsuspoliitikas</a>.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, ". TPM-ita Windowsi arvutiga ei saa tafsi sisse logida. KIFF hoiab võtme avalikku poolt, seadme nime ja platvormi ning seda, millal see lisati ja viimati kasutati, et kontrollida teie vastuseid kinni peetud päringutele ja ühenduste kinnitusi.</li><li><strong>Teie kell:</strong> kell ei hoia ühtegi parooli ega võtit, suhtleb ainult teie seotud telefoniga ega kinnita kunagi midagi. See saadab Coachile või teie valitud tafile seda, mida ütlete, ainult tekstina, telefoni kaudu, pärast seda, kui olete AI lubanud. Kella enda kõnetuvastusteenus, Apple'i või Google'i oma, muudab teie sõnad selleks tekstiks. Wear OS-is teeb seda, kui see teenus lõpetab enne, kui olete lõpetanud, selle asemel teie telefoni enda kõnetuvastus, telefonis. Kell saab keelduda, peatada või Coachile või tafile saata ainult siis, kui sellel on ekraanilukk või pääsukood ja see on lukust lahti. See, mida tafile saadate, läheb selle tafi enda vestlusesse, nagu oleksite selle telefonis kirjutanud. Tafi vestlust koos summadega loetakse iga kord avamisel telefoni kaudu ning kell hoiab ainult viimaseid sõnumeid, mida kirjeldab selle oma jaotis allpool. Kui rakendused on suletud, edastab telefon uued vastused ja sõnumid kellale süsteemi enda telefoni ja kella vahelise ühenduse kaudu (Apple Watchil Apple'i, Wear OS-is Google Play teenuste oma), mis hoiab neid telefonis ja kellas ainult seni, kuni kell need vastu võtab; telefoni äratav teavitus ei sisalda sõnu. Vastus, mis saabub ajal, kui te kella ei vaata, kuvatakse ka teavitusena, teie iPhone'is ja Apple Watchis või Wear OS-i kellas, oma sõnadega, kuid mitte kunagi summaga, ning jääb alles, kuni selle eemaldate; lukus Wear OS-i kell näitab ainult, et vastus on valmis.</li><li><strong>Apple Watch:</strong> see näitab teie tafe ja nende lehti neid hoidmata. See hoiab teie postkasti, failis, mida see ei saa lukus olles lugeda: iga kinni peetud päringu selle tafi nime ja küsimusena, mitte kunagi summana, ning Coachi vastused sellele, mille kellast saatsite, tekstina. Kui logite kellas välja, hoiab see ka teadet, et tegite seda, kuni logite kellas uuesti sisse. Peale selle ei hoia see midagi, kui kellal pole pääsukoodi. Postkast kustub, kui logite kellas välja või teie iPhone logib välja, või järgmisel korral, kui rakendus avaneb või sulgub ilma pääsukoodita. See ei tee salvestisi ja ainsad teavitused, mida see näitab, on teie iPhone'i omad. Et vestlus avaneks kohe, hoiab see ka kuni 20 sellel avatud vestluse viimast 30 sõnumit, Coachi ja teie tafide omi, ainult tekstina ja mitte kunagi summat, lukus nagu postkast; need kustuvad koos postkastiga ja siis, kui vestlust pole 30 päeva avatud. Kui jätad Coachile mõeldud sõnumi hilisemaks, hoiab see ka seda üht sõnumit tekstina omaette failis, mis on lukus nagu Postkasti oma, ja saadab selle, kui su iPhone on jälle kättesaadav. See kustutatakse pärast saatmist, kui sa selle kustutad, kui sina või su iPhone välja logite või kui kellal pole enam pääsukoodi.</li><li><strong>Wear OS:</strong> see näitab teie konto e-posti aadressi ja tänast kalendrit neid hoidmata. Et see avaneks kohe, hoiab see krüpteeritult teid ootavate asjade arvu ning iga tafi nime ja seda, kas see on peatatud või pausil: mitte kunagi summat, kinni peetud päringu üksikasju ega tafi vestlust. See kustutatakse, kui logite välja, kui kell lukustub või võetakse randmelt ära, ja 24 tunni pärast. See hoiab teie postkasti, kus iga rida on tafi nimi ja see, mida see ütleb, mitte kunagi summa, ning ühte hilisemaks hoitud sõnumit, tekstina. Väljalogimine, kellas või telefonis, kustutab selle kõik. Oma paani jaoks hoiab see ka teid ootavate asjade arvu, mis kuvatakse ainult siis, kui kell on lukust lahti, ja kustutatakse väljalogimisel või järgmisel korral, kui paan kuvatakse kella lukus olles või ekraanilukuta. Pärast kellas väljalogimist hoiab see teadet, et tegite seda, kuni logite uuesti sisse. Postkast kustub ka järgmisel korral, kui rakendus avaneb või sulgub kella lukus olles või ekraanilukuta. Hilisemaks hoitud sõnum jääb alles, kuni selle saadate või kustutate, kuna palusite selle saata. Kui kella kõnetuvastusteenus lõpetab enne, kui olete lõpetanud, saadab kell salvestise teie telefoni, mis muudab selle tekstiks telefonis endas, mitte kunagi serveris. Salvestis kustutatakse mõlemas seadmes, kui tekst on tagasi või kui tühistate, ja hiljemalt 2 minuti pärast. Coachile või teie tafile läheb edasi ainult tekst. Tafi tulemus võib jääda kella teavitustesse, kuni selle eemaldate või kellas välja logite. Et vestlus avaneks kohe, hoiab see ka kuni 20 sellel avatud vestluse viimast 30 sõnumit, Coachi ja teie tafide omi, ainult tekstina ja mitte kunagi summat, krüpteerituna; need kustuvad, kui logite välja kellas või telefonis, ja kui vestlust pole 30 päeva avatud, ning ekraanilukuta kell ei hoia ühtegi. Hilisemaks jäetud sõnum kustutatakse ka siis, kui kellal pole enam ekraanilukku.</li><li><strong>Pääsuvõtmed:</strong> kui kinnitate arvutis pääsuvõtmega, näiteks Windows Hello või turvavõtmega, jääb teie nägu, sõrmejälg või PIN-kood arvuti enda süsteemi. KIFF hoiab pääsuvõtme avalikku võtit, selle tunnust, loendurit ja nime, mitte kunagi midagi salajast, ning keeldub pääsuvõtmest, mis sünkroonitakse teistesse seadmetesse.</li><li><strong>Teavitused:</strong> telefonis, tahvelarvutis või iPadi rakendust kasutavas Macis hoiame teavituste sisselülitamisel seadme tõukemärki koos teie KIFFi isiku tunnuse ja rakenduses kuvatud keelega. Teavitus läheb läbi Apple'i või Google'i ainult sellega, milline taf ja mida see soovib, ning ukse teavituses selle inimese nime või e-posti aadressiga, kes kirjutas: mitte kunagi summa ega päringu üksikasjadega. Rakendus lisab need seadmes endas KIFFist, nii et lukust lahti telefoni teavitus võib näidata summat, kaupmeest või inimest. Lukus Android-telefonis näitab see ainult „Taf vajab sind“ ja lukus iPhone'is samuti, kui te pole selle eelvaateid seadnud alati kuvama. Windowsi arvutis, Linuxi arvutis või macOS 12 rakendusega Macis loob teavitused rakendus ise töö ajal, ilma tõukemärgita ja ühegi teise ettevõtte kaudu. Windowsis ja Linuxis näitavad need, milline taf, mida see teha tahab, summat, põhjust ja tähtaega; macOS 12 rakenduses näitavad need KIFFi sõnastust päringu kohta, kui need sisse lülitate, ning lukus ekraan näitab seda, mida Maci eelvaate seade lubab. Windowsis on need välja lülitatud, kuni need sisse lülitate, ja näitavad ekraani lukus olles ainult „Taf vajab sind“. Enne ekraani lukustumist kuvatud teavitus säilitab oma üksikasjad Windowsi teavituste loendis. Linuxis on need sees, kuni need välja lülitate, ja see, mida lukus ekraan näitab, sõltub teie töölauast. Telefon, mis edastab uuendusi kellale, hoiab oma tõukemärki registreerituna ka siis, kui teavitused on välja lülitatud, ainult selleks, et vaikne tõuge saaks selle äratada ja uuendused kellale edastada; see tõuge ei sisalda sõnu ega näita midagi.</li><li><strong>Keel:</strong> tafsi teenus hoiab konto keelt, selle järgi, kes viimati Coachiga vestles, kuni kolm kuud, et tafi aruanded tuleksid selles keeles.</li><li><strong>Teie tööriistad:</strong> tööriista ühendamisel logite sisse tööriista enda pakkuja juures. Rakenduse puhul, kuhu planque ise sisse logib, näiteks Stripe, või teie antud võtme puhul hoiab planque seda märki või võtit teie ettevõtte jaoks krüpteeritult. Hallatud ühenduse puhul hoiab sisselogimist Composio, ühendusteenus, millega planque töötab, ja planque hoiab ainult ühenduse kirjet ja teie kinnitatud tööriistu (vt <a href=\"#google\">Google'i kasutajaandmed</a>). Ühenduse kirje võib sisaldada kontot, kuhu see on sisse logitud (selle nime või e-posti aadressi), et rakendus saaks teile näidata, milline see on. KIFF kasutab hallatud ühendusi ainult rakenduste jaoks, mis on nimetatud lehel <a href=\"/subprocessors#composio\">/subprocessors</a> (inglise keeles).</li><li><strong>Teie brauser (Chrome):</strong> Kui seote tafsi laienduse oma telefoniga, võib taf töötada teie seotud Chrome'i profiilis, ainult nendel saitidel, mis on loetletud tema ühenduses. Ta avab oma vahelehed vahelehegrupis, mida näete, saate peatada või lõpetada, ja ta peatub, kui puudutate mõnda neist. Taf, mille käivitate laienduse külgpaneelilt, töötab selle asemel vahelehel, millel te selles aknas olete, kui see on mõnel tema ühenduse saidil: vaheleht liitub tema grupiga ja seda koheldakse tema omana ning see jääb avatuks, kui taf peatub. See liitub selle vahelehega ainult siis, kui see leht on esimene, mida tal vaja on. Seal saab see klõpsata ja kirjutada, ainult oma saitidel. Sellel vahelehel loeb see lehte seal, kus see on, ja avab iga muu lehe oma vahelehel; teie vahelehte saab liigutada ainult samm, mille ta seal teeb, näiteks klõps, ja ainult tema saitide piires. Ta loeb neid lehti tekstina ja vormiväljadena, ilma parooli-, kaardi- ja koodiväljadeta, mitte kunagi teie teisi vahelehti ega teisi saite. See tekst läheb käivituse osana meie tehisintellekti pakkujale ja seda hoitakse koos käivitusega nagu iga tööriista tulemust. Iga samm kantakse logisse koos saidi ja välja nimega, mitte kunagi sellega, mis salajasse välja sisestati. Iga muudatuse kohta, mille taf teeb, hoiab KIFF lehte enne ja pärast, tekstina ilma nende väljadeta, kõige rohkem 30 päeva, ja kustutab selle varem, kui ühenduse katkestate või oma konto kustutate. Need lehed võivad näidata teiste inimeste andmeid, näiteks teie kliente; KIFF töötleb neid teie jaoks volitatud töötlejana. Laiendus hoiab teie arvutis oma võtit, oma KIFF-i seanssi ja seda, millised vestlused Coachiga selles alustati, mitte kunagi teie paroole: sisselogimislehel taf peatub ja palub teil ise sisse logida, teie enda vahelehel. Coachiga saad rääkida ka laienduse külgpaneelilt. Coach loeb lehte alles siis, kui olete seda laienduses lubanud, eraldi nõusolekuga, mille saate seal tagasi võtta, ja sõnumi saate alati saata ka ilma leheta. Kui saadad talle sealt sõnumi, läheb eesolev leht selle sõnumiga kaasa ainult nähtava tekstina, mitte kunagi see, mida sisestasid, välja arvatud panga, maksete, posti või tervise saidil või saidil, mille Coachi jaoks välja lülitasid. Väljade väärtusi ja paroole ei loeta; kaardinumbritest jäetakse alles ainult neli viimast numbrit; võtmed ja märgistatud saladused maskeeritakse. Maskeeritakse ka ühekordsed koodid, mida lehe tekst inglise, prantsuse, hispaania või saksa keeles sellistena nimetab. See läheb meie tehisintellekti teenusepakkujale ainult selle sõnumi jaoks; tafs hoiab lehte ainult vastuse valmimiseni ning hoiab saidi nime sinu vestlusega, kuvatuna kujul „Loeb:“, 30 päeva. Coachi vastus võib lehte tsiteerida ja seda hoitakse sinu vestlusega nagu iga vastust. Sama kehtib sõnumi kohta, mille saadate seal tafile, sama nõusolekuga, kuid ainult selle tafi enda saitidel: mujal ei loeta midagi, selles käigus taf ainult loeb ja tema vastus võib lehte tsiteerida. Tafi puhul hoitakse lehe teksti tema käiguga ainult selle käigu lõpuni. Külgpaneel näitab vestlusi, mis on selles Chrome'is alustatud pärast selle sidumist; sinu muud vestlused jäävad su telefoni ja teistesse seadmetesse. Kui taf töötab selles Chrome'is sõnumi pärast, mille saatsid teisest seadmest, näitab paneel ka seda käivitust: sõnumit, selle samme ja vastust, kuid mitte kunagi ülejäänud vestlust, kuni sa selle vestluse kustutad, Chrome'i sidumise tühistad või tafi teise Chrome'i viid. Seal saate sõnumile ka faile lisada: nagu tafsi rakendustes lisatud failid, lähevad need selle sõnumiga meie tehisintellekti teenusepakkujale ja neid hoitakse koos sellega 30 päeva või vähem, kui vestlus eemaldatakse (fail, mida ükski sõnum ei kasuta, umbes tund), ja faili saab avada ainult see, kes selle lisas. See hoiab ka oma sidumist teie telefoniga, saite, mille te Coachi jaoks välja lülitasite, ja selle Chrome'i profiili juhuslikku tunnust, mis läheb iga sidumisega KIFF-ile, et teie telefon tunneks selle Chrome'i ära. Desinstallimine kustutab kõik; sidumise lõpetamine kustutab kõik peale selle tunnuse ja Coachi jaoks välja lülitatud saitide. Taf ei maksa kunagi ilma teie nõusolekuta telefonis. Iga tegutseva sammu (klõps, sisestamine, saatmine), sealhulgas teie heaks kiidetud sammu kohta, hoiab see lisaks ühe ekraanipildi lehest, tehtud vahetult enne tegevust, logi jaoks; mitte kunagi lehe kohta, mida ta ainult loeb, mitte kunagi panga-, rahakoti-, paroolihalduri-, makse-, tervise- ega riigiasutuse saidil, ning parooli-, kaardi- ja koodiväljad peidetakse enne pildistamist. Ka kaardinumbri või võtmena näivat teksti kustutatakse mustaga, kuid midagi, mis on kirjutatud teisiti, võib siiski paista. Ekraanipilte hoitakse krüptitud salvestusruumis, selle sammuga seotuna, 30 päeva, seejärel kustutatakse need automaatselt või varem, kui ühenduse katkestate, selle Chrome'i lahutate või oma konto kustutate, ning need ei lähe kunagi meie tehisintellekti pakkujale. Näete neid iga sammu all tafi tegevuses. tafs tunneb pankade, rahakottide, paroolihaldurite, maksete, posti, tervise ja riigiasutuste saidid ära loendi ja aadressis olevate sõnade järgi, nii et saiti, mida ta ära ei tunne, koheldakse nagu iga teist.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if HostedBrowserForCustomers {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("et").Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 46, Col: 50}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("et").Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 46, Col: 93}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<li><strong>Teie tafide töö:</strong> iga tafi käivitused, vestlused, aruanded, mälumärkmed ja failid, mida need väljastavad, mida hoiame volitatud töötlejana. Kõik teie konto inimesed näevad faile, mida teie tafid väljastavad.</li><li><strong>Uksed:</strong> kui avate ukse, et inimesed saaksid tafile kirjutada e-posti, Slacki või Telegrami kaudu, hoiab tafsi teenus iga seotud saatjat tema e-posti aadressi, Slacki liikme ID või Telegrami kasutaja ID järgi (WhatsAppi ukse puhul telefoninumbri järgi) koos nimega, mille talle annate, kuni eemaldate ukse või tafi. Sõnum kelleltki, keda te pole sidunud, ootab teid koputusena, koos sellega, kes selle kirjutas ja mida see ütleb, kuni 30 päeva pärast viimast. Seotud saatja sõnum läheb tafi vestlusesse ja seda hoitakse nagu ülejäänud vestlust. Slack ja Telegram edastavad sõnumeid oma tingimustel.</li><li><strong>Ostud:</strong> Solot ja krediidipakette müüb Apple App Store'i kaudu või Google Google Play arveldusega. Nad teatavad meile, mida osteti, millise KIFFi konto jaoks (juhuslik tunnus), millal, ning tehingu või tellimuse viited. Nad ei anna meile teie Apple ID-d ega Google'i kontot, nime, e-posti aadressi ega kaarti.</li></ul><p>Rakenduses pole analüütika- ega reklaamijälgijaid.</p></section><section id=\"ai\"><h2>5. AI tafsis</h2><p>tafs kasutab Coachi ja teie tafide jaoks Anthropicu AI-d Claude. Seda käitab meie jaoks Anthropic või mõni meie alltöötlejate lehel nimetatud pilveteenuse pakkuja. See leht ütleb, kes ja kus. Rakendus küsib teilt enne, kui sinna midagi saadetakse.</p><ul><li>Mida sinna saadetakse: see, mida kirjutate Coachile ja oma tafidele, teie lisatud failid, see, mida teie ühendatud rakendused tafile töö ajal tagastavad, ja see, mis on teie ekraanil, kui Coach teid rakenduses aitab.</li><li>Chrome'ist: eesolev leht, kui kirjutad Coachile laienduse külgpaneelil, kui olete lubanud Coachil seal lehti lugeda. Ka siis, kui kirjutate seal tafile mõnel tema enda saidil.</li><li>Mida ei saadeta kunagi: paroole ja võtmeid, mida teie ühendatud rakendused kasutavad, ega teie sõrmejälge.</li><li>Ettevõte, kes seda käitab, kasutab seda vastamiseks ja kustutab selle 30 päeva jooksul, välja arvatud juhul, kui see märgitakse tema kasutusreeglite rikkumiseks või seadus nõuab selle säilitamist.</li><li>Midagi ei saadeta enne, kui te selle lubate. Nõusoleku saate tagasi võtta vaates Konto.</li></ul><p>Kui nõusoleku tagasi võtate, lõpetavad Coach ja teie tafid teile vastamise ning taf, mille käivitused põhinevad teie nõusolekul, läheb pausile. tafs hoiab iga antud või tagasi võetud nõusoleku kohta kirjet, millal ja millise sõnastuse versiooni kohta, 10 aastat viimasest muudatusest, et näidata, millega nõustusite; konto kustutamine kustutab selle varem. Üksikasjad on <a href=\"/et/privacy#ai-in-tafs\">KIFFi privaatsuspoliitikas</a>.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -70,7 +106,7 @@ func TafsPrivacyET() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section id=\"sharing\"><h2>7. Kes veel andmeid saab</h2><p>Me ei müü teie isikuandmeid ega jaga neid reklaami eesmärgil.</p><p>tafsi jaoks kasutame neid ettevõtteid: Amazon Web Services (majutus, sealhulgas tafsi salvestus ja planque'i ühendused), Clerk (KIFFi kontode sisselogimine), Anthropic (AI-mudel, mida käitab Anthropic, Amazon Web Services, Google Cloud või Microsoft Azure), Composio (hallatud ühenduste sisselogimised ja päringud, mida planque palub tal teha), Apple (tõuketeavitused), Google (tõuketeavitused Androidis ja Google Play arveldus) ning Resend (tafi e-posti uks). Ametlik ja ajakohane nimekiri, koos sellega, mida igaüks puudutab ja kus, on lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</p><p>Mõned neist asuvad väljaspool Euroopa Majanduspiirkonda, peamiselt Ameerika Ühendriikides. <a href=\"/et/privacy#transfers\">KIFFi privaatsuspoliitika</a> ütleb, kuidas neid edastusi kaitstakse.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"retention\"><h2>8. Kui kaua me neid hoiame</h2><ul><li>See, mida teie tööriistad tafile tagastavad: ainult käivituse lõpuni. Vestluses hoitakse ainult loetut krüpteeritult järgmiste sõnumite jaoks, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul.</li><li>Tafi käivitused ja vestlused koos vestluse kokkuvõttega: 30 päeva. Selle mälumärkmed: kuni taf eemaldatakse. Oma vestluse Coachiga võite kustutada ka varem: selle sõnumid ja lisatud failid kustutatakse kohe, kuid kirje selle kohta, et iga selle käivitus toimus, millal ja kui palju see maksis, jääb neiks 30 päevaks. Kui teatad vastusest, hoiab KIFF seda vastust, sinu põhjust ja märkust 180 päeva või kuni sa selle vestluse või oma konto kustutad. KIFF saadab need ka e-postiga meeskonnale, kes teateid loeb, ja seda kirja hoitakse nagu KIFF-i tugipostkasti kirju.</li><li>Coachi lühikesed märkmed järgmise vastuse jaoks, näiteks miks ühendust ei õnnestunud vestluses luua või et Card kinnitati: kuni see vastus need võtab, kõige rohkem 7 päeva; pärast seda selle vestluse osana nii kaua, kui vestlust hoitakse. Koopiat hoitakse 24 tundi, et uuesti saadetud sõnum saaks sama märkme. Vestluse märget kasutatakse ainult selles vestluses.</li><li>Failid, mille vestlusesse lisate: koos sõnumiga, millele need on lisatud, 30 päeva või varem, kui vestlus eemaldatakse, ja igal juhul 38 päeva jooksul. Fail, mida ükski sõnum ei kasuta, eemaldatakse umbes tund pärast üleslaadimist. Konto kustutamine kustutab need.</li><li>Failid, mida teie tafid väljastavad: 30 päeva alates sellest, kui käivitus need lõi, seejärel kustutatakse need automaatselt päeva jooksul. Igaüks teie kontol saab faili varem kustutada valikuga Kustuta kohe: fail ise kaob kohe ja koopiat ei jää; selle nimi, suurus ning taf ja käivitus, mis selle lõi, võivad jääda tafsi salvestuse krüpteeritud ajahetke koopiatesse kuni 35 päevaks ja neid kasutatakse ainult selle taastamiseks pärast tõrget. Tafi eemaldamine või konto kustutamine kustutab selle failid. Faili jagamine saadab faili enda ja jagatud koopia jääb rakendusse, kuhu selle jagasite. Faili allalaadimiseks loome teie konto sisselogitud liikmele lingi, mis lakkab töötamast ühe minuti pärast; muud linki sellele me ei loo.</li><li>See, mida tööriist tagastas, planque'i kirjes iga päringu kohta: 24 tundi. Pärast seda hoiab kirje ainult teavet, kas päring saadeti, et seda ei saadetaks kunagi kaks korda.</li><li>Ühenduse märk või võti planque'is või hallatud ühenduse sisselogimine Composios: kuni ühenduse katkestate. Kui mõni teine teie ühendus võib kasutada sama kontot selle tarnija juures, hoitakse seda kasutamata, kuni ka see ühendus katkestatakse, ja seejärel tühistatakse. Selle kinnituste kirje: kuni konto lõpeb.</li><li>Seadme tõukemärk: kuni logite rakendusest välja, eemaldate seadme või Apple või Google teatab, et märki enam pole. Seadme avalik võti, nimi, platvorm ja kuupäevad: kuni seda kasutate; kui selle välja logite, märgitakse see eemaldatuks ja seda hoitakse kuni konto kustutamiseni, et KIFF saaks keelduda selle hilisest vastusest ja näidata, milline seade allkirjastas varasema. Pääsuvõtme avalik võti, tunnus ja nimi: nagu selle seadmel. Arvuti seanss: kuni 90 päeva või kuni välja logite.</li><li>Teie konto: kuni see kustutatakse. Teenuse logid: 30 päeva. tafsi ja planque'i salvestused hoiavad krüpteeritud ajahetke koopiaid 35 päeva ja neid kasutatakse ainult salvestuse taastamiseks pärast tõrget.</li></ul><p>Kõik muu on <a href=\"/et/privacy#retention\">KIFFi säilitamise jaotises</a>.</p></section><section id=\"lawful-bases\"><h2>9. Õiguslikud alused</h2><p>Lepingu täitmine, et pidada teie kontot ja teie tafe. Õigustatud huvid, turvalisuse, pettuste ennetamise ja kuritarvituste avastamise jaoks. Nõusolek, AI jaoks tafsis (<a href=\"#ai\">jaotis 5</a>). Juriidiline kohustus, maksuarvestuse jaoks. Üksikasjad on <a href=\"/et/privacy#lawful-bases\">KIFFi privaatsuspoliitikas</a>.</p></section><section id=\"rights\"><h2>10. Teie õigused</h2><p>GDPR-i alusel võite taotleda juurdepääsu oma andmetele, nende parandamist, kustutamist, töötlemise piiramist või ülekantavat koopiat, esitada vastuväite õigustatud huvidel põhinevale töötlemisele ja võtta nõusoleku tagasi. Kirjutage aadressil <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; vastame põhjendamatu viivituseta ja hiljemalt ühe kuu jooksul; keerulise taotluse korral võime vajada veel kaks kuud ja teatame sellest esimese kuu jooksul. Rakenduses laadib Konto → Ekspordi minu vestlused alla teie enda vestlused ja märkmed.</p><p>tafsi konto kustutamiseks avage rakendus, minge vaatesse Konto ja puudutage valikut <em>Kustuta konto</em>, seejärel kinnitage. Seda ei saa tagasi võtta. <a href=\"/et/privacy#delete-account\">KIFFi privaatsuspoliitika</a> ütleb, mida ja millal kustutatakse ning kuidas seda e-posti teel taotleda.</p><p>Võite esitada kaebuse <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioonile</a> või oma elukoha järelevalveasutusele.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"more\"><h2>11. Turvalisus, lapsed ja muudatused</h2><p>Meie turvameetmed on lehel <a href=\"/security\">/security</a> (inglise keeles). tafs ei ole suunatud lastele ja me ei kogu teadlikult alla 16-aastaste laste isikuandmeid. Muudame seda poliitikat nii, nagu <a href=\"/et/privacy#changes\">KIFFi privaatsuspoliitika</a> ütleb enda kohta.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Privaatsusküsimused ja taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Ametlikud õiguslikud teated: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Rakenduse enda tingimused on lehel <a href=\"/et/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section id=\"sharing\"><h2>7. Kes veel andmeid saab</h2><p>Me ei müü teie isikuandmeid ega jaga neid reklaami eesmärgil.</p><p>tafsi jaoks kasutame neid ettevõtteid: Amazon Web Services (majutus, sealhulgas tafsi salvestus ja planque'i ühendused), Clerk (KIFFi kontode sisselogimine), Anthropic (AI-mudel, mida käitab Anthropic, Amazon Web Services, Google Cloud või Microsoft Azure), Composio (hallatud ühenduste sisselogimised ja päringud, mida planque palub tal teha), Apple (tõuketeavitused), Google (tõuketeavitused Androidis ja Google Play arveldus) ning Resend (tafi e-posti uks). Ametlik ja ajakohane nimekiri, koos sellega, mida igaüks puudutab ja kus, on lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</p><p>Mõned neist asuvad väljaspool Euroopa Majanduspiirkonda, peamiselt Ameerika Ühendriikides. <a href=\"/et/privacy#transfers\">KIFFi privaatsuspoliitika</a> ütleb, kuidas neid edastusi kaitstakse.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"retention\"><h2>8. Kui kaua me neid hoiame</h2><ul><li>See, mida teie tööriistad tafile tagastavad: ainult käivituse lõpuni. Vestluses hoitakse ainult loetut krüpteeritult järgmiste sõnumite jaoks, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul.</li><li>Tafi käivitused ja vestlused koos vestluse kokkuvõttega: 30 päeva. Selle mälumärkmed: kuni taf eemaldatakse. Oma vestluse Coachiga võite kustutada ka varem: selle sõnumid ja lisatud failid kustutatakse kohe, kuid kirje selle kohta, et iga selle käivitus toimus, millal ja kui palju see maksis, jääb neiks 30 päevaks. Kui teatad vastusest, hoiab KIFF seda vastust, sinu põhjust ja märkust 180 päeva või kuni sa selle vestluse või oma konto kustutad. KIFF saadab need ka e-postiga meeskonnale, kes teateid loeb, ja seda kirja hoitakse nagu KIFF-i tugipostkasti kirju.</li><li>Coachi lühikesed märkmed järgmise vastuse jaoks, näiteks miks ühendust ei õnnestunud vestluses luua või et Card kinnitati: kuni see vastus need võtab, kõige rohkem 7 päeva; pärast seda selle vestluse osana nii kaua, kui vestlust hoitakse. Koopiat hoitakse 24 tundi, et uuesti saadetud sõnum saaks sama märkme. Vestluse märget kasutatakse ainult selles vestluses.</li><li>Failid, mille vestlusesse lisate: koos sõnumiga, millele need on lisatud, 30 päeva või varem, kui vestlus eemaldatakse, ja igal juhul 38 päeva jooksul. Fail, mida ükski sõnum ei kasuta, eemaldatakse umbes tund pärast üleslaadimist. Konto kustutamine kustutab need.</li><li>Failid, mida teie tafid väljastavad: 30 päeva alates sellest, kui käivitus need lõi, seejärel kustutatakse need automaatselt päeva jooksul. Igaüks teie kontol saab faili varem kustutada valikuga Kustuta kohe: fail ise kaob kohe ja koopiat ei jää; selle nimi, suurus ning taf ja käivitus, mis selle lõi, võivad jääda tafsi salvestuse krüpteeritud ajahetke koopiatesse kuni 35 päevaks ja neid kasutatakse ainult selle taastamiseks pärast tõrget. Tafi eemaldamine või konto kustutamine kustutab selle failid. Faili jagamine saadab faili enda ja jagatud koopia jääb rakendusse, kuhu selle jagasite. Faili allalaadimiseks loome teie konto sisselogitud liikmele lingi, mis lakkab töötamast ühe minuti pärast; muud linki sellele me ei loo.</li><li>See, mida tööriist tagastas, planque'i kirjes iga päringu kohta: 24 tundi. Pärast seda hoiab kirje ainult teavet, kas päring saadeti, et seda ei saadetaks kunagi kaks korda.</li><li>Ühenduse märk või võti planque'is või hallatud ühenduse sisselogimine Composios: kuni ühenduse katkestate. Kui mõni teine teie ühendus võib kasutada sama kontot selle tarnija juures, hoitakse seda kasutamata, kuni ka see ühendus katkestatakse, ja seejärel tühistatakse. Selle kinnituste kirje: kuni konto lõpeb.</li><li>Seadme tõukemärk: kuni logite rakendusest välja, eemaldate seadme või Apple või Google teatab, et märki enam pole. Seadme avalik võti, nimi, platvorm ja kuupäevad: kuni seda kasutate; kui selle välja logite, märgitakse see eemaldatuks ja seda hoitakse kuni konto kustutamiseni, et KIFF saaks keelduda selle hilisest vastusest ja näidata, milline seade allkirjastas varasema. Pääsuvõtme avalik võti, tunnus ja nimi: nagu selle seadmel. Arvuti seanss: kuni 90 päeva või kuni välja logite.</li><li>Teie konto: kuni see kustutatakse. Teenuse logid: 30 päeva. tafsi ja planque'i salvestused hoiavad krüpteeritud ajahetke koopiaid 35 päeva ja neid kasutatakse ainult salvestuse taastamiseks pärast tõrget.</li></ul><p>Kõik muu on <a href=\"/et/privacy#retention\">KIFFi säilitamise jaotises</a>.</p></section><section id=\"lawful-bases\"><h2>9. Õiguslikud alused</h2><p>Lepingu täitmine, et pidada teie kontot ja teie tafe. Õigustatud huvid, turvalisuse, pettuste ennetamise ja kuritarvituste avastamise jaoks. Nõusolek, AI jaoks tafsis (<a href=\"#ai\">jaotis 5</a>). Juriidiline kohustus, maksuarvestuse jaoks. Üksikasjad on <a href=\"/et/privacy#lawful-bases\">KIFFi privaatsuspoliitikas</a>.</p></section><section id=\"rights\"><h2>10. Teie õigused</h2><p>GDPR-i alusel võite taotleda juurdepääsu oma andmetele, nende parandamist, kustutamist, töötlemise piiramist või ülekantavat koopiat, esitada vastuväite õigustatud huvidel põhinevale töötlemisele ja võtta nõusoleku tagasi. Kirjutage aadressil <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; vastame põhjendamatu viivituseta ja hiljemalt ühe kuu jooksul; keerulise taotluse korral võime vajada veel kaks kuud ja teatame sellest esimese kuu jooksul. Rakenduses laadib Konto → Ekspordi minu vestlused alla teie enda vestlused ja märkmed.</p><p>tafsi konto kustutamiseks avage rakendus, minge vaatesse Konto ja puudutage valikut <em>Kustuta konto</em>, seejärel kinnitage. Seda ei saa tagasi võtta. <a href=\"/et/privacy#delete-account\">KIFFi privaatsuspoliitika</a> ütleb, mida ja millal kustutatakse ning kuidas seda e-posti teel taotleda.</p><p>Võite esitada kaebuse <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioonile</a> või oma elukoha järelevalveasutusele.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"more\"><h2>11. Turvalisus, lapsed ja muudatused</h2><p>Meie turvameetmed on lehel <a href=\"/security\">/security</a> (inglise keeles). tafs ei ole suunatud lastele ja me ei kogu teadlikult alla 16-aastaste laste isikuandmeid. Muudame seda poliitikat nii, nagu <a href=\"/et/privacy#changes\">KIFFi privaatsuspoliitika</a> ütleb enda kohta.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Privaatsusküsimused ja taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Ametlikud õiguslikud teated: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Rakenduse enda tingimused on lehel <a href=\"/et/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -102,347 +138,347 @@ func tafsPrivacyGoogleET() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<section id=\"google\"><h2>6. Google'i kasutajaandmed</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section id=\"google\"><h2>6. Google'i kasutajaandmed</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks Google Sheetsiga või Google Calendariga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks Google Sheetsiga või Google Calendariga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks teie Gmailiga või Google Calendariga või Google Sheetsiga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks teie Gmailiga või Google Calendariga või Google Sheetsiga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab: arvutustabeleid, mida see ajakohasena hoiab, või sündmusi kalendrites, mida see haldab. Neid muudab see ainult seal, kus tafi Card seda lubab, ja kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab: arvutustabeleid, mida see ajakohasena hoiab, või sündmusi kalendrites, mida see haldab. Neid muudab see ainult seal, kus tafi Card seda lubab, ja kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab. Teie Gmailis loeb see teie sõnumeid ja lõimi, et leida need, mis vajavad vastust, ning kirjutab mustandeid; kirju saadab see ainult seal, kus tafi Card seda lubab. Google Calendaris ja Google Sheetsis loeb see sündmusi kalendrites, mida see haldab, või arvutustabeleid, mida see ajakohasena hoiab, ning muudab neid ainult seal, kus tafi Card seda lubab. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab. Teie Gmailis loeb see teie sõnumeid ja lõimi, et leida need, mis vajavad vastust, ning kirjutab mustandeid; kirju saadab see ainult seal, kus tafi Card seda lubab. Google Calendaris ja Google Sheetsis loeb see sündmusi kalendrites, mida see haldab, või arvutustabeleid, mida see ajakohasena hoiab, ning muudab neid ainult seal, kus tafi Card seda lubab. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Google Tasksis loeb see ülesandeloendeid, mida see haldab, ning lisab, lõpetab, teisaldab või kustutab ülesandeid ainult seal, kus tafi Card seda lubab. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Google Tasksis loeb see ülesandeloendeid, mida see haldab, ning lisab, lõpetab, teisaldab või kustutab ülesandeid ainult seal, kus tafi Card seda lubab. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "Kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "Kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<li><strong>Miks:</strong> ainult selle töö tegemiseks, mille selle tafi jaoks seadistasite, ja selleks, et näidata teile, millise Google'i kontoga see on ühendatud: selle e-posti aadressi, mida hoitakse koos ühendusega, kuni ühenduse katkestate.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Miks:</strong> ainult selle töö tegemiseks, mille selle tafi jaoks seadistasite, ja selleks, et näidata teile, millise Google'i kontoga see on ühendatud: selle e-posti aadressi, mida hoitakse koos ühendusega, kuni ühenduse katkestate.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<li><strong>Kuidas iga Google'i rakendus ühendub:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Kuidas iga Google'i rakendus ühendub:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<li>Meie sisselogimispartneri kaudu, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 135, Col: 155}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("et")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li>tafsi enda Google'i sisselogimise kaudu, ilma ühegi teise ettevõtteta vahel: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 138, Col: 121}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			for _, a := range googlePending("et") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<li>Meie sisselogimispartneri kaudu, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 142, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 138, Col: 155}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("et"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 142, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			if len(googleInHouse("et")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li>tafsi enda Google'i sisselogimise kaudu, ilma ühegi teise ettevõtteta vahel: ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 141, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").Line)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 142, Col: 75}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("et") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var9 string
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 145, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").AsksFor)
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("et"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 143, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 145, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<ul>")
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").Line)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 145, Col: 75}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					var templ_7745c5c3_Var13 string
+					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</code>: ")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var12 string
-					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</li>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul></li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "Mõlema all nimetatud rakendus ühendub ühel või teisel viisil, olenevalt teie kontost. Google'i enda sisselogimisleht näitab, kumba te lubate.")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li></ul></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. Sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<li><strong>Kuidas taf seda kasutab:</strong> taf kasutab ainult oma Cardil kinnitatud tööriistu. Iga päringut kontrollitakse enne, kui midagi saadetakse, just selle tööriista ja nende argumentide loa alusel, ning päringust, mis jääb väljapoole teie antud juurdepääsu, keeldutakse. Millised toimingud küsivad iga kord teie kinnitust, määratakse Cardil.</li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<strong>Juurdepääs, mida tafsi enda Google'i sisselogimine küsib:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<strong>Juurdepääs, mida tafs küsib:</strong>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, a := range googleInHouse("et") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 181, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<ul>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><code>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</code>: ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var14 string
-					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 184, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 149, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</code>: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var15 string
-					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 184, Col: 45}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</ul>Ükskõik kui palju sisselogimine lubab, kasutab taf ainult oma Cardil olevaid tööriistu.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Mõlema all nimetatud rakendus ühendub ühel või teisel viisil, olenevalt teie kontost. Google'i enda sisselogimisleht näitab, kumba te lubate.")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li><strong>Kes hoiab teie sisselogimist:</strong><ul><li><strong>Meie sisselogimispartneri kaudu:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>Kes hoiab teie sisselogimist:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. Sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><strong>Kes hoiab teie sisselogimist:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Kuidas taf seda kasutab:</strong> taf kasutab ainult oma Cardil kinnitatud tööriistu. Iga päringut kontrollitakse enne, kui midagi saadetakse, just selle tööriista ja nende argumentide loa alusel, ning päringust, mis jääb väljapoole teie antud juurdepääsu, keeldutakse. Millised toimingud küsivad iga kord teie kinnitust, määratakse Cardil.</li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(googleInHouse("et")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if googleBoth() {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<strong>Juurdepääs, mida tafsi enda Google'i sisselogimine küsib:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<strong>Juurdepääs, mida tafs küsib:</strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, a := range googleInHouse("et") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 184, Col: 16}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, s := range a.Scopes {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><code>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var16 string
+					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 187, Col: 26}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 187, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</li>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</ul></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul>Ükskõik kui palju sisselogimine lubab, kasutab taf ainult oma Cardil olevaid tööriistu.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> see läbib ka meie sisselogimispartnerit, kes teeb iga päringu.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist.</li></ul>Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kes hoiab teie sisselogimist:</strong><ul><li><strong>Meie sisselogimispartneri kaudu:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist. AI-mudeli pakkuja on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kes hoiab teie sisselogimist:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. See läbib ka meie sisselogimispartnerit, kes teeb iga päringu. Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>Kes hoiab teie sisselogimist:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li><strong>AI treenimine:</strong> Google'i kasutajaandmeid ei kasutata AI-mudelite treenimiseks.</li><li><strong>Pildid:</strong> tafs ei loo ega muuda pilte ega videoid: selle AI kirjutab teksti. See ei kasuta kunagi Google'i API-sid ega Google'i kasutajaandmeid kellegi intiimsete piltide (nõusolekuta intiimpildid, NCII) ega ühegi muu inimest kujutava pildi loomiseks, muutmiseks ega jagamiseks.</li>")
+		if googleBoth() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> see läbib ka meie sisselogimispartnerit, kes teeb iga päringu.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist.</li></ul>Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if len(googleInHouse("et")) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist. AI-mudeli pakkuja on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. See läbib ka meie sisselogimispartnerit, kes teeb iga päringu. Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>AI treenimine:</strong> Google'i kasutajaandmeid ei kasutata AI-mudelite treenimiseks.</li><li><strong>Pildid:</strong> tafs ei loo ega muuda pilte ega videoid: selle AI kirjutab teksti. See ei kasuta kunagi Google'i API-sid ega Google'i kasutajaandmeid kellegi intiimsete piltide (nõusolekuta intiimpildid, NCII) ega ühegi muu inimest kujutava pildi loomiseks, muutmiseks ega jagamiseks.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kui kaua ja kus:</strong> teie arvutustabelid ja sündmused jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kui kaua ja kus:</strong> teie arvutustabelid ja sündmused jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kui kaua ja kus:</strong> teie mustandid, sündmused ja arvutustabelid jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kui kaua ja kus:</strong> teie mustandid, sündmused ja arvutustabelid jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Peatamine:</strong><ul><li>Katkestage Google'i ühendus rakenduses, vaates Ühenda rakendused või tafi Cardi vahekaardil. Selle Google'i tööriistad peatuvad kohe ja tafs palub Google'il sisselogimise kohe tühistada; see võib lõpule jõuda veidi hiljem.</li><li>Eemaldage taf ja selle ühendused lõpevad koos sellega. Google'i sisselogimine, mida mõni teine teie taf veel kasutab, jääb alles, kuni viimane neist eemaldatakse.</li><li>Eemaldage tafsi juurdepääs igal ajal oma Google'i kontol aadressil <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Teie tafid ei jõua enam Google'ini ja rakendus teatab, et Google'i ühendus on välja logitud.</li><li>Kustutage oma konto: selle tafid, vestlused, märkmed, failid ja ühendused kustutatakse kohe ning nende ajahetke koopiatest 35 päeva jooksul, ja selle Google'i märgid tühistatakse seal, kus Google seda lubab.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Peatamine:</strong><ul><li>Katkestage Google'i ühendus rakenduses, vaates Ühenda rakendused või tafi Cardi vahekaardil. Selle Google'i tööriistad peatuvad kohe ja tafs palub Google'il sisselogimise kohe tühistada; see võib lõpule jõuda veidi hiljem.</li><li>Eemaldage taf ja selle ühendused lõpevad koos sellega. Google'i sisselogimine, mida mõni teine teie taf veel kasutab, jääb alles, kuni viimane neist eemaldatakse.</li><li>Eemaldage tafsi juurdepääs igal ajal oma Google'i kontol aadressil <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Teie tafid ei jõua enam Google'ini ja rakendus teatab, et Google'i ühendus on välja logitud.</li><li>Kustutage oma konto: selle tafid, vestlused, märkmed, failid ja ühendused kustutatakse kohe ning nende ajahetke koopiatest 35 päeva jooksul, ja selle Google'i märgid tühistatakse seal, kus Google seda lubab.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
