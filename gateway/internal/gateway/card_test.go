@@ -408,27 +408,37 @@ func TestAHeldToolReadsAsAskingEachCallNotASpentTotal(t *testing.T) {
 	}
 }
 
-// Room the owner gave from a hold reads first, with what is left of it; past
-// it, each call still asks the owner. A total above 0 keeps its own words.
-func TestAHeldToolWithExtraRoomReadsTheRoomThenTheHold(t *testing.T) {
+// Room the owner gave from a hold raises the ceiling KIFF holds at, and an
+// approval past it doesn't run the call, so that total reads as any other.
+// A held tool's Card keeps the owner's words for its other totals.
+func TestAHeldToolKeepsTheWordsOfRoomAndOtherTotals(t *testing.T) {
 	r := newRig(t)
 	card := refundCard.Cards[0]
 	card.Grants = []kiffapi.CardGrant{{Action: "issue_refund"}}
+	card.Limits = []kiffapi.CardLimit{{Quantity: "count", Limit: 2, BaseLimit: 0, ExtraRoom: 2, Window: "calendar_day", Used: 1, Remaining: 1, Status: "ok"}}
+	r.api.card.Cards = []kiffapi.Card{card}
+	if got := cardText(t, r); !strings.Contains(got, "1 of 2 calls left today") || strings.Contains(got, "asks the owner first") ||
+		!strings.Contains(got, "a cumulative ceiling needs an explicit Card revision") {
+		t.Fatalf("with room: %q", got)
+	}
+
 	card.Limits = []kiffapi.CardLimit{
-		{Quantity: "count", Limit: 2, BaseLimit: 0, ExtraRoom: 2, Window: "calendar_day", Used: 1, Remaining: 1, Status: "ok"},
+		{Quantity: "count", Limit: 0, Window: "calendar_day", Status: "ok"},
 		{Quantity: "count", Limit: 20, Window: "rolling_1h", Used: 5, Remaining: 15, Status: "ok"},
 	}
 	r.api.card.Cards = []kiffapi.Card{card}
 	got := cardText(t, r)
 	for _, want := range []string{
-		"the owner gave extra room for 2 calls, 1 left today; past it, each call asks the owner first",
+		"each call asks the owner first",
 		"15 of 20 calls left in the last hour",
+		"runs once they approve it",
+		"a cumulative ceiling needs an explicit Card revision",
 	} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("got %q\nwant it to contain %q", got, want)
 		}
 	}
-	if strings.Contains(got, "0 of") || strings.Contains(got, "is spent") {
+	if strings.Contains(got, "0 of 0") {
 		t.Fatalf("reads the hold as a total: %q", got)
 	}
 }
