@@ -53,7 +53,7 @@ func TestBothPoliciesSayBankData(t *testing.T) {
 	if err := privacyCategories().Render(context.Background(), &b); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(b.String(), "lifts its banking secrecy") {
+	if !strings.Contains(b.String(), "lifts its banking secrecy") || !strings.Contains(b.String(), "add and change clients") || !strings.Contains(b.String(), "credit notes") {
 		t.Errorf("/privacy lacks the bank data item")
 	}
 	b.Reset()
