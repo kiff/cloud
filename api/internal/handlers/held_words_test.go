@@ -162,8 +162,8 @@ func TestHeldDetailsAreTheContractsLines(t *testing.T) {
 
 func TestPlainNumber(t *testing.T) {
 	for in, want := range map[string]string{
-		"50": "50", "1.5e-05": "0.000015", "1E+3": "1000", "1.50": "1.50", "0.5": "0.5", "-2.5e1": "-25",
-		"9007199254740993": "9007199254740993", "0": "0", "100e-1": "10.0",
+		"50": "50", "1.5e-05": "0.000015", "1E+3": "1000", "1.50": "1.5", "2.0": "2", "0.5": "0.5", "-2.5e1": "-25",
+		"9007199254740993": "9007199254740993", "0": "0", "0.0": "0", "-0.0": "0", "100e-1": "10", "100": "100",
 	} {
 		if got := plainNumber(in); got != want {
 			t.Errorf("plainNumber(%q) = %q, want %q", in, got, want)

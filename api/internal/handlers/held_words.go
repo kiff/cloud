@@ -378,9 +378,10 @@ func argumentText(raw json.RawMessage) string {
 	return plainNumber(t)
 }
 
-// plainNumber is a JSON number written without an exponent, keeping its
-// digits and scale as Java's BigDecimal.toPlainString does: "1.5e-05" is
-// "0.000015", "1E+3" is "1000", "1.50" stays "1.50".
+// plainNumber is a JSON number written without an exponent and without
+// trailing zeros after its point, as every app writes it (the iPhone reads a
+// number as a Double, which keeps no scale): "1.5e-05" is "0.000015", "1E+3"
+// is "1000", "1.50" is "1.5", "2.0" is "2".
 func plainNumber(n string) string {
 	sign := ""
 	if strings.HasPrefix(n, "-") {
@@ -406,5 +407,12 @@ func plainNumber(n string) string {
 	if len(digits) <= scale {
 		digits = strings.Repeat("0", scale-len(digits)+1) + digits
 	}
-	return sign + digits[:len(digits)-scale] + "." + digits[len(digits)-scale:]
+	whole, frac = digits[:len(digits)-scale], strings.TrimRight(digits[len(digits)-scale:], "0")
+	if frac == "" {
+		if whole == "0" {
+			return "0"
+		}
+		return sign + whole
+	}
+	return sign + whole + "." + frac
 }
