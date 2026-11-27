@@ -29,6 +29,12 @@ func TestOpeningAWindowIsCheckedAgainstTheSessionAndTheClock(t *testing.T) {
 	if err != nil || !expires.Equal(now.Add(4*time.Minute)) {
 		t.Fatalf("a good opening: %v, expires %v", err, expires)
 	}
+	// The taf whose step opened it, signed with the rest.
+	forRae := good
+	forRae.Agent = "rae"
+	if _, err := forRae.Check(id, now); err != nil {
+		t.Fatalf("an opening for a taf: %v", err)
+	}
 	// A phone's clock a little ahead: its expiry is kept to the server's 5 minutes.
 	ahead := good
 	ahead.Expires = now.Add(5*time.Minute + 20*time.Second).Format(time.RFC3339)
@@ -38,6 +44,9 @@ func TestOpeningAWindowIsCheckedAgainstTheSessionAndTheClock(t *testing.T) {
 	bad := map[string]auth.OpenWindow{
 		"another message":   {Message: "kiff.request.v1", Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce},
 		"another session":   {Message: good.Message, Session: "sess-other", Device: good.Device, Expires: good.Expires, Nonce: good.Nonce},
+		"agent too long":    {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: strings.Repeat("a", 129)},
+		"agent with spaces": {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: " rae"},
+		"agent with a NUL":  {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: good.Nonce, Agent: "r\x00ae"},
 		"another device":    {Message: good.Message, Session: good.Session, Device: "dev_other", Expires: good.Expires, Nonce: good.Nonce},
 		"a short nonce":     {Message: good.Message, Session: good.Session, Device: good.Device, Expires: good.Expires, Nonce: "short"},
 		"expires past":      {Message: good.Message, Session: good.Session, Device: good.Device, Expires: now.Add(-time.Second).Format(time.RFC3339), Nonce: good.Nonce},

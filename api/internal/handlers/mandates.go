@@ -583,9 +583,19 @@ func (h *MandatesHandler) issue(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, status, map[string]string{"error": msg})
 		return
 	}
-	// Inside an approval window (kiff/tafs#494), a tap issues a new Card, or
-	// reissues one in force only if it widens nothing (the widening rule).
+	// Inside an approval window (kiff/tafs#494), a tap issues or reissues
+	// Cards only for the taf whose step opened the window (window_scope),
+	// and a reissue only if it widens nothing (the widening rule).
 	if windowSigned(r) {
+		out, err := h.outsideWindow(r.Context(), tenantID, windowAgent(r), []mandate.Mandate{m})
+		if err != nil {
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "the Cards in force couldn't be read; try again"})
+			return
+		}
+		if out {
+			windowScope(w, windowAgent(r))
+			return
+		}
 		ws, err := h.widensInForce(r.Context(), tenantID, []mandate.Mandate{m})
 		if err != nil {
 			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "the Cards in force couldn't be read; try again"})

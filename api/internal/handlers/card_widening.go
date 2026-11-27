@@ -13,9 +13,9 @@ import (
 // of every Card it revises is the same as or narrower than the Card in
 // force (mandate.Widens, which fails closed). Anything that widens is
 // critical: the phone's approval key, behind its fingerprint, every time.
-// A new Card always widens: it gives a taf authority it didn't have, a new
-// taf's first Card as much as a second one beside a Card in force, so no
-// window covers it. Retiring a Card only narrows.
+// A new Card is routine only for a holder with no Card in force (a new
+// taf's first Cards); beside one it holds already, it widens. Retiring a
+// Card only narrows.
 
 // cardWidening is one way a change widens a Card in force, with the Card.
 type cardWidening struct {
@@ -36,7 +36,8 @@ func (h *MandatesHandler) widensInForce(ctx context.Context, tenantID string, ca
 			byID[m.ID] = m
 		}
 	}
-	// Who holds a Card in force already, for the words.
+	// Who holds a Card in force already: a new Card for one of them adds
+	// authority beside it, whatever its own terms.
 	holds := map[string]bool{}
 	for _, m := range byID {
 		for _, h := range m.HolderList() {
@@ -47,15 +48,13 @@ func (h *MandatesHandler) widensInForce(ctx context.Context, tenantID string, ca
 	for _, c := range cards {
 		cur, ok := byID[c.ID]
 		if !ok {
-			// A Card not in force gives authority, whoever holds it.
-			words := "Issues a new Card: authority its taf didn't have"
 			for _, h := range c.HolderList() {
 				if holds[h] {
-					words = "Adds a Card beside the ones its holder already has"
+					out = append(out, cardWidening{Card: c.ID, Widening: mandate.Widening{Kind: "new_card",
+						Words: "Adds a Card beside the ones its holder already has"}})
 					break
 				}
 			}
-			out = append(out, cardWidening{Card: c.ID, Widening: mandate.Widening{Kind: "new_card", Words: words}})
 			continue
 		}
 		for _, w := range mandate.Widens(&cur, mandate.AsIssuedOver(c, &cur)) {
@@ -72,11 +71,69 @@ func windowSigned(r *http.Request) bool {
 	return signed && with.Window != ""
 }
 
+// windowAgent is the taf whose step opened the approval window a
+// window-signed request was signed in ("" for a window opened for none).
+func windowAgent(r *http.Request) string {
+	with, _ := auth.SignedWithFrom(r.Context())
+	return with.WindowAgent
+}
+
+// outsideWindow reports whether a window opened for agent may not confirm
+// or issue cards (kiff/tafs#494): a tap inside a window speaks for the taf
+// whose step opened it, so every holder of each Card, and of the Card in
+// force it reissues, must be that taf. A window opened for no taf confirms
+// and issues no Card.
+func (h *MandatesHandler) outsideWindow(ctx context.Context, tenantID, agent string, cards []mandate.Mandate) (bool, error) {
+	if agent == "" {
+		return true, nil
+	}
+	inForce, err := h.store.List(ctx, tenantID)
+	if err != nil {
+		return false, err
+	}
+	current := make(map[string]mandate.Mandate, len(inForce))
+	for _, m := range inForce {
+		if m.RevokedAt == nil {
+			current[m.ID] = m
+		}
+	}
+	onlyAgent := func(holders []string) bool {
+		if len(holders) == 0 {
+			return false
+		}
+		for _, h := range holders {
+			if h != agent {
+				return false
+			}
+		}
+		return true
+	}
+	for _, c := range cards {
+		if !onlyAgent(c.HolderList()) {
+			return true, nil
+		}
+		if cur, ok := current[c.ID]; ok && !onlyAgent(cur.HolderList()) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+// windowScope answers a window-signed Card change for a taf other than the
+// one whose step opened the window: nothing changes.
+func windowScope(w http.ResponseWriter, agent string) {
+	detail := "this approval window was opened for " + agent + ": sign Cards for another taf with the phone's approval key, behind its fingerprint or face, or open a window from that taf's step"
+	if agent == "" {
+		detail = "this approval window was opened for no taf: sign a Card with the phone's approval key, behind its fingerprint or face, or open a window from the taf's step"
+	}
+	writeJSON(w, http.StatusForbidden, map[string]any{"error": "window_scope", "detail": detail})
+}
+
 // criticalKeyRequired answers a window-signed change that widens a Card in
 // force: nothing changes, and the words say each way it widens, so the
 // app can say why it asks for the fingerprint.
 func criticalKeyRequired(w http.ResponseWriter, ws []cardWidening) {
 	writeJSON(w, http.StatusForbidden, map[string]any{"error": "critical_key_required",
-		"detail": "this issues a new Card or widens one in force: sign it with the phone's approval key, behind its fingerprint or face",
+		"detail": "this widens a Card in force: sign it with the phone's approval key, behind its fingerprint or face",
 		"widens": ws})
 }

@@ -104,14 +104,14 @@ func (r *windowRig) open() string {
 	nonce := make([]byte, 16)
 	_, _ = rand.Read(nonce)
 	body, _ := json.Marshal(auth.OpenWindow{Message: auth.WindowMessage, Session: "sess-phone", Device: "dev_phone",
-		Expires: r.now.Add(5 * time.Minute).Format(time.RFC3339), Nonce: hex.EncodeToString(nonce)})
+		Expires: r.now.Add(5 * time.Minute).Format(time.RFC3339), Nonce: hex.EncodeToString(nonce), Agent: "agent-a"})
 	code, out := r.call(r.phone, http.MethodPost, "/v1/me/window", string(body), signRequest(r.t, r.approval, "tenant-1", http.MethodPost, "/v1/me/window", string(body), r.now))
 	if code != http.StatusCreated {
 		r.t.Fatalf("opening a window: %d %v", code, out)
 	}
 	w, _ := out["window"].(map[string]any)
 	id, _ := w["id"].(string)
-	if id == "" || w["open"] != true || w["words"] != "No fingerprint or face for the next 5 minutes" {
+	if id == "" || w["open"] != true || w["agent"] != "agent-a" || w["words"] != "No fingerprint or face for the next 5 minutes" {
 		r.t.Fatalf("the window as opened: %v", w)
 	}
 	return id

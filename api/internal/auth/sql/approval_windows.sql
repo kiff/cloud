@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS cloud_meta.approval_windows (
     closed_by   TEXT        NOT NULL DEFAULT ''
 );
 
+-- The taf whose step opened it (kiff/tafs#494): a tap inside the window
+-- confirms or issues Cards for that taf only. '' for none.
+ALTER TABLE cloud_meta.approval_windows ADD COLUMN IF NOT EXISTS agent TEXT NOT NULL DEFAULT '';
+
 -- A device's open window, read on every routine action inside it.
 CREATE INDEX IF NOT EXISTS approval_windows_device_open_idx
     ON cloud_meta.approval_windows (device_id) WHERE closed_at IS NULL;

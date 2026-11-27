@@ -41,12 +41,12 @@ func TestPostgresWindowStore(t *testing.T) {
 	}
 	store := auth.NewPostgresWindowStore(pool)
 	w := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: tenantID, Subject: "human-1", DeviceID: phone.ID, SessionID: "sess-1",
-		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: "3f2a 91c0 7b1e 0d44"}
+		OpenedAt: now, ExpiresAt: now.Add(auth.WindowLength), CapAt: now.Add(auth.WindowCap), OpenedBy: "3f2a 91c0 7b1e 0d44", Agent: "rae"}
 	if err := store.Open(ctx, w); err != nil {
 		t.Fatalf("open: %v", err)
 	}
 	got, err := store.Get(ctx, w.ID)
-	if err != nil || got.ID != w.ID || got.DeviceID != phone.ID || !got.OpenedAt.Equal(now) || !got.CapAt.Equal(w.CapAt) || got.OpenedBy != w.OpenedBy || got.ClosedAt != nil {
+	if err != nil || got.ID != w.ID || got.DeviceID != phone.ID || !got.OpenedAt.Equal(now) || !got.CapAt.Equal(w.CapAt) || got.OpenedBy != w.OpenedBy || got.Agent != "rae" || got.ClosedAt != nil {
 		t.Fatalf("read back: %v %+v", err, got)
 	}
 	if _, err := store.Get(ctx, "win_none"); !errors.Is(err, auth.ErrWindowNotFound) {

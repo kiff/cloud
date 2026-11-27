@@ -109,7 +109,7 @@ func (h *ApprovalWindowHandler) open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	win := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: id.Tenant, Subject: id.Subject, DeviceID: id.DeviceID, SessionID: id.DeviceSessionID,
-		OpenedAt: now, ExpiresAt: expires, CapAt: now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(openedBy)}
+		OpenedAt: now, ExpiresAt: expires, CapAt: now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(openedBy), Agent: req.Agent}
 	// A window opens only for what can later use it: a passkey opens one
 	// only when it's this computer's own, still registered, not synced. An
 	// account passkey approves each request, never a window.
@@ -176,6 +176,9 @@ func (h *ApprovalWindowHandler) get(w http.ResponseWriter, r *http.Request) {
 func windowView(w auth.ApprovalWindow, now time.Time, lang string) map[string]any {
 	v := map[string]any{"id": w.ID, "opened": w.OpenedAt.UTC().Format(time.RFC3339), "expires": w.ExpiresAt.UTC().Format(time.RFC3339),
 		"cap": w.CapAt.UTC().Format(time.RFC3339), "open": w.OpenAt(now), "key": auth.KeyDevice, "words": windowWords(&w, now, lang)}
+	if w.Agent != "" {
+		v["agent"] = w.Agent
+	}
 	if w.ClosedAt != nil {
 		v["closed"], v["closed_by"] = w.ClosedAt.UTC().Format(time.RFC3339), w.ClosedBy
 	}

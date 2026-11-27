@@ -22,8 +22,7 @@ import (
 // is what the confirm enforces. A revision that widens nothing says
 // confirm_key "window" and a tap inside the window confirms it; one that
 // widens says "critical" with each way it widens, and a tap is refused
-// with critical_key_required while the approval key confirms it. A draft
-// that issues a new Card, for a taf that holds none, is critical too.
+// with critical_key_required while the approval key confirms it.
 // Category: authority
 // Attack: the app is shown "window" for a draft whose confirm then takes a tap that widens a Card, or the reverse
 // Refused: the view's confirm_key and the confirm's check agree, both from the widening rule
@@ -43,7 +42,7 @@ func TestADraftsConfirmKeyIsWhatItsConfirmEnforces(t *testing.T) {
 	phone := auth.Identity{Subject: "alice", Tenant: "t1", Method: auth.MethodSession, MemberRole: membership.RoleAdmin,
 		Roles: membership.IdentityRoles(membership.RoleAdmin), DeviceKey: deviceDER, DeviceSessionID: "sess-phone", DeviceID: "dev_phone", ApprovalKey: approvalDER}
 	win := auth.ApprovalWindow{ID: auth.NewWindowID(), Tenant: "t1", Subject: "alice", DeviceID: "dev_phone", SessionID: "sess-phone",
-		OpenedAt: r.now, ExpiresAt: r.now.Add(auth.WindowLength), CapAt: r.now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER)}
+		OpenedAt: r.now, ExpiresAt: r.now.Add(auth.WindowLength), CapAt: r.now.Add(auth.WindowCap), OpenedBy: auth.DeviceKeyFingerprint(approvalDER), Agent: "rae"}
 	if err := windows.Open(t.Context(), win); err != nil {
 		t.Fatal(err)
 	}
@@ -110,34 +109,44 @@ func TestADraftsConfirmKeyIsWhatItsConfirmEnforces(t *testing.T) {
 		t.Fatalf("the confirmed narrowing isn't in force: %d", r.perActionMax("rae-refund"))
 	}
 
-	// A new Card, for a taf that holds none: authority it didn't have. The
-	// view says the fingerprint; a tap inside the window is refused and
-	// nothing is issued; the approval key confirms it.
+	// Another taf's first Card, in rae's window: window_scope, nothing issued.
 	code, d := r.submit(agentKey("setup-agent", ""), map[string]any{"agent_id": "sam", "cards": []any{cardMax("sam-refund", "sam", 10000)}})
 	if code != http.StatusCreated || d["status"] != "draft" {
 		t.Fatalf("drafting sam's first Card: %d %v", code, d)
 	}
-	fresh, freshVersion := d["id"].(string), d["version"].(string)
-	if v := view(fresh); v["confirm_key"] != "critical" || !bytes.Contains(must(json.Marshal(v["widens"])), []byte("new_card")) {
-		t.Fatalf("a new Card's draft view: confirm_key %v, widens %v", v["confirm_key"], v["widens"])
-	}
-	if code, out := confirm(fresh, freshVersion, deviceKey, win.ID); code != http.StatusForbidden || out["error"] != "critical_key_required" {
-		t.Fatalf("a tap confirming a new Card: %d %v", code, out)
+	sam, samVersion := d["id"].(string), d["version"].(string)
+	if code, out := confirm(sam, samVersion, deviceKey, win.ID); code != http.StatusForbidden || out["error"] != "window_scope" {
+		t.Fatalf("a tap confirming another taf's draft: %d %v", code, out)
 	}
 	if ms, _ := r.store.List(t.Context(), "t1"); len(ms) != 1 {
 		t.Fatalf("the refused tap issued a Card: %+v", ms)
 	}
-	if code, out := confirm(fresh, freshVersion, approvalKey, ""); code != http.StatusOK {
-		t.Fatalf("the approval key confirming a new Card: %d %v", code, out)
+	// In a window opened from sam's own step, sam's first Card is a tap.
+	samWin := win
+	samWin.ID, samWin.Agent = auth.NewWindowID(), "sam"
+	if err := windows.Open(t.Context(), samWin); err != nil {
+		t.Fatal(err)
+	}
+	if code, out := confirm(sam, samVersion, deviceKey, samWin.ID); code != http.StatusOK {
+		t.Fatalf("a tap confirming sam's first Card in sam's window: %d %v", code, out)
 	}
 	if r.perActionMax("sam-refund") != 10000 {
 		t.Fatalf("the confirmed new Card isn't in force")
 	}
-}
-
-func must(b []byte, err error) []byte {
-	if err != nil {
-		panic(err)
+	// A window opened for no taf confirms no Card; the approval key, anywhere, does.
+	code, d = r.submit(agentKey("setup-agent", ""), map[string]any{"agent_id": "rae", "cards": []any{cardMax("rae-refund", "rae", 9000)}})
+	if code != http.StatusCreated {
+		t.Fatalf("drafting: %d %v", code, d)
 	}
-	return b
+	nobody := win
+	nobody.ID, nobody.Agent = auth.NewWindowID(), ""
+	if err := windows.Open(t.Context(), nobody); err != nil {
+		t.Fatal(err)
+	}
+	if code, out := confirm(d["id"].(string), d["version"].(string), deviceKey, nobody.ID); code != http.StatusForbidden || out["error"] != "window_scope" {
+		t.Fatalf("a tap in a window opened for no taf: %d %v", code, out)
+	}
+	if code, out := confirm(d["id"].(string), d["version"].(string), approvalKey, ""); code != http.StatusOK {
+		t.Fatalf("the approval key confirming: %d %v", code, out)
+	}
 }

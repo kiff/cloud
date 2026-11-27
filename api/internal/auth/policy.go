@@ -113,11 +113,10 @@ var PhoneApprovalSoonRules = []string{
 // is routine only by its content, which its handler checks with
 // SignedWithFrom and refuses with critical_key_required otherwise: "No" to
 // "Did this happen?" gives a Card its room back, and issuing a Card is
-// routine only for a reissue that widens nothing, as is a draft's confirm:
-// a revision is routine only if every term is the same or narrower than the
-// Card in force (mandate.Widens). A new Card, a new taf's first one
-// included, is never routine: it gives authority that wasn't there. A
-// draft's submit, which can confirm in one step, stays critical.
+// routine for a new one and for a reissue that widens nothing, as is a
+// draft's confirm: a revision is routine only if every term is the same or
+// narrower than the Card in force (mandate.Widens). A draft's submit,
+// which can confirm in one step, stays critical.
 // The approval routes not listed here (extra room, resume, sharing) are
 // critical: the approval key, every time, and a window never counts.
 var PhoneWindowRules = []string{
@@ -1140,7 +1139,7 @@ func (p *RoutePolicy) verifySigned(w http.ResponseWriter, r *http.Request, id Id
 				"message": "the approval window this was signed in isn't open: open one with the phone's approval key, behind its fingerprint, and sign it again"})
 			return SignedWith{}, false
 		}
-		window, with.Window = open, open.ID
+		window, with.Window, with.WindowAgent = open, open.ID, open.Agent
 	}
 	// The same request, signed by the same key, is used once, however its
 	// signature is encoded. Its signed_at is within MaxAnswerSkew of now, so

@@ -82,6 +82,10 @@ type ApprovalWindow struct {
 	// receipts name keys: a window counts only while that key is the
 	// session's, so a new enrolment and re-link end it.
 	OpenedBy string
+	// Agent is the taf whose step opened the window (the opening's agent):
+	// inside it a tap confirms or issues Cards for that taf only, and a
+	// window opened for no taf confirms or issues none (window_scope).
+	Agent    string
 	ClosedAt *time.Time
 	ClosedBy string
 }
@@ -126,6 +130,10 @@ type OpenWindow struct {
 	Device  string `json:"device"`
 	Expires string `json:"expires"`
 	Nonce   string `json:"nonce"`
+	// Agent is the taf whose step the person is approving, signed with the
+	// rest: the window confirms and issues Cards for it alone. Optional; a
+	// window without one confirms and issues no Card.
+	Agent string `json:"agent,omitempty"`
 }
 
 // ErrOpenWindow is an opening that isn't kiff.window.v1 for this session.
@@ -142,6 +150,9 @@ func (o OpenWindow) Check(id Identity, now time.Time) (time.Time, error) {
 	}
 	if n := len(strings.TrimSpace(o.Nonce)); n < 16 || n > 128 {
 		return time.Time{}, errors.New("auth: the opening's nonce is 16 to 128 characters")
+	}
+	if len(o.Agent) > 128 || strings.TrimSpace(o.Agent) != o.Agent || strings.ContainsFunc(o.Agent, func(r rune) bool { return r < 0x20 || r == 0x7f }) {
+		return time.Time{}, errors.New("auth: the opening's agent is an agent id, at most 128 characters")
 	}
 	at, err := time.Parse(time.RFC3339, o.Expires)
 	if err != nil {
