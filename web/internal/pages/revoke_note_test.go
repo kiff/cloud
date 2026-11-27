@@ -45,6 +45,25 @@ func TestRevokeNoteIsSaidInEveryLanguage(t *testing.T) {
 			t.Errorf("%s: still English", lang)
 		}
 	}
+	for _, f := range files {
+		b, _ := os.ReadFile(f)
+		n := regexp.MustCompile(`chatEndsWords\("([a-z-]+)"\)`).FindAllSubmatch(b, -1)
+		if len(n) != 1 {
+			t.Errorf("%s: %d chat-deletion lines, want 1", f, len(n))
+			continue
+		}
+		lang := string(n[0][1])
+		if m := note.FindSubmatch(b); m == nil || string(m[1]) != lang {
+			t.Errorf("%s: chat-deletion line in %s, not the page's language", f, lang)
+		}
+		w, ok := chatEndsText[lang]
+		if !ok || !strings.Contains(w, "Coach") || !strings.Contains(w, "taf") || (lang != "en" && w == chatEndsText["en"]) {
+			t.Errorf("%s: %q", lang, w)
+		}
+	}
+	if len(chatEndsText) != len(bankDataText) {
+		t.Errorf("%d languages for the chat-deletion line, %d for bank data", len(chatEndsText), len(bankDataText))
+	}
 	if len(revokeNoteText) != len(bankDataText) {
 		t.Errorf("%d languages for the revoke note, %d for bank data", len(revokeNoteText), len(bankDataText))
 	}
@@ -77,13 +96,16 @@ func TestSerbianAndChineseWordsMatchTheirPages(t *testing.T) {
 // and Dhivehi ތިބާ, as each page's own connection line does; so do the Catalan and Dhivehi bank items.
 func TestRevokeNoteAddressesTheReaderAsItsPageDoes(t *testing.T) {
 	for lang, w := range map[string]struct{ has, hasnt []string }{
-		"de": {[]string{"bis du ", "den du uns"}, []string{"Sie "}},
-		"nl": {[]string{"tot je ", "die je ons"}, []string{" u "}},
-		"es": {[]string{"retires", "hayas", "elimines"}, []string{"retire ", "haya dado", "elimine "}},
-		"ca": {[]string{"retireu", "hàgiu", "elimineu", "connecteu", "vostre banc"}, []string{"retiris", "hagis", "eliminis", "connectes", "teu banc"}},
+		"de": {[]string{"bis du ", "den du uns", "wenn du einen chat"}, []string{"Sie "}},
+		"nl": {[]string{"tot je ", "die je ons", "als je een chat"}, []string{" u "}},
+		"es": {[]string{"retires", "hayas", "elimines", "desconectaras"}, []string{"retire ", "haya dado", "elimine ", "desconectara "}},
+		"ca": {[]string{"retireu", "hàgiu", "elimineu", "connecteu", "vostre banc", "desconnectéssiu"}, []string{"retiris", "hagis", "eliminis", "connectes", "teu banc"}},
 		"dv": {[]string{"ތިބާ"}, []string{"ތިޔަބޭފުޅާ"}},
 	} {
-		note := revokeNoteText[lang]
+		note := strings.ToLower(revokeNoteText[lang]) + " " + strings.ToLower(chatEndsText[lang])
+		if lang == "de" {
+			note = revokeNoteText[lang] + " " + strings.ToLower(chatEndsText[lang])
+		}
 		if lang == "ca" || lang == "dv" {
 			note += " " + bankDataText[lang].Label + " " + bankDataText[lang].Text
 		}
@@ -110,7 +132,7 @@ func TestTafsPrivacySaysRevokingDependsOnTheVendor(t *testing.T) {
 	if !strings.Contains(b.String(), "then revoked. Revoking depends on the vendor") {
 		t.Errorf("/tafs/privacy lacks the revoke note right after \"then revoked\"")
 	}
-	if !strings.Contains(b.String(), "A key you gave us is deleted here too, and keeps working at its vendor until you delete it there. The record of its approvals: until the account ends.") {
+	if !strings.Contains(b.String(), "A key you gave us is deleted here too, and keeps working at its vendor until you delete it there. Deleting a chat with Coach also ends the connections it asked for that no taf uses, as disconnecting them would. The record of its approvals: until the account ends.") {
 		t.Errorf("/tafs/privacy lacks the key's half of the revoke note")
 	}
 }

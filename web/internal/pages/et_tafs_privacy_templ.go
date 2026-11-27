@@ -145,7 +145,20 @@ func TafsPrivacyET() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Selle kinnituste kirje: kuni konto lõpeb.</li><li>Seadme tõukemärk: kuni logite rakendusest välja, eemaldate seadme või Apple või Google teatab, et märki enam pole. Seadme avalik võti, nimi, platvorm ja kuupäevad: kuni seda kasutate; kui selle välja logite, märgitakse see eemaldatuks ja seda hoitakse kuni konto kustutamiseni, et KIFF saaks keelduda selle hilisest vastusest ja näidata, milline seade allkirjastas varasema. Pääsuvõtme avalik võti, tunnus ja nimi: nagu selle seadmel. Arvuti seanss: kuni 90 päeva või kuni välja logite.</li><li>Teie konto: kuni see kustutatakse. Teenuse logid: 30 päeva. tafsi ja planque'i salvestused hoiavad krüpteeritud ajahetke koopiaid 35 päeva ja neid kasutatakse ainult salvestuse taastamiseks pärast tõrget.</li></ul><p>Kõik muu on <a href=\"/et/privacy#retention\">KIFFi säilitamise jaotises</a>.</p></section><section id=\"lawful-bases\"><h2>9. Õiguslikud alused</h2><p>Lepingu täitmine, et pidada teie kontot ja teie tafe. Õigustatud huvid, turvalisuse, pettuste ennetamise ja kuritarvituste avastamise jaoks. Nõusolek, AI jaoks tafsis (<a href=\"#ai\">jaotis 5</a>). Juriidiline kohustus, maksuarvestuse jaoks. Üksikasjad on <a href=\"/et/privacy#lawful-bases\">KIFFi privaatsuspoliitikas</a>.</p></section><section id=\"rights\"><h2>10. Teie õigused</h2><p>GDPR-i alusel võite taotleda juurdepääsu oma andmetele, nende parandamist, kustutamist, töötlemise piiramist või ülekantavat koopiat, esitada vastuväite õigustatud huvidel põhinevale töötlemisele ja võtta nõusoleku tagasi. Kirjutage aadressil <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; vastame põhjendamatu viivituseta ja hiljemalt ühe kuu jooksul; keerulise taotluse korral võime vajada veel kaks kuud ja teatame sellest esimese kuu jooksul. Rakenduses laadib Konto → Ekspordi minu vestlused alla teie enda vestlused ja märkmed.</p><p>tafsi konto kustutamiseks avage rakendus, minge vaatesse Konto ja puudutage valikut <em>Kustuta konto</em>, seejärel kinnitage. Seda ei saa tagasi võtta. <a href=\"/et/privacy#delete-account\">KIFFi privaatsuspoliitika</a> ütleb, mida ja millal kustutatakse ning kuidas seda e-posti teel taotleda.</p><p>Võite esitada kaebuse <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioonile</a> või oma elukoha järelevalveasutusele.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"more\"><h2>11. Turvalisus, lapsed ja muudatused</h2><p>Meie turvameetmed on lehel <a href=\"/security\">/security</a> (inglise keeles). tafs ei ole suunatud lastele ja me ei kogu teadlikult alla 16-aastaste laste isikuandmeid. Muudame seda poliitikat nii, nagu <a href=\"/et/privacy#changes\">KIFFi privaatsuspoliitika</a> ütleb enda kohta.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Privaatsusküsimused ja taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Ametlikud õiguslikud teated: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Rakenduse enda tingimused on lehel <a href=\"/et/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(chatEndsWords("et"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 84, Col: 339}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " Selle kinnituste kirje: kuni konto lõpeb.</li><li>Seadme tõukemärk: kuni logite rakendusest välja, eemaldate seadme või Apple või Google teatab, et märki enam pole. Seadme avalik võti, nimi, platvorm ja kuupäevad: kuni seda kasutate; kui selle välja logite, märgitakse see eemaldatuks ja seda hoitakse kuni konto kustutamiseni, et KIFF saaks keelduda selle hilisest vastusest ja näidata, milline seade allkirjastas varasema. Pääsuvõtme avalik võti, tunnus ja nimi: nagu selle seadmel. Arvuti seanss: kuni 90 päeva või kuni välja logite.</li><li>Teie konto: kuni see kustutatakse. Teenuse logid: 30 päeva. tafsi ja planque'i salvestused hoiavad krüpteeritud ajahetke koopiaid 35 päeva ja neid kasutatakse ainult salvestuse taastamiseks pärast tõrget.</li></ul><p>Kõik muu on <a href=\"/et/privacy#retention\">KIFFi säilitamise jaotises</a>.</p></section><section id=\"lawful-bases\"><h2>9. Õiguslikud alused</h2><p>Lepingu täitmine, et pidada teie kontot ja teie tafe. Õigustatud huvid, turvalisuse, pettuste ennetamise ja kuritarvituste avastamise jaoks. Nõusolek, AI jaoks tafsis (<a href=\"#ai\">jaotis 5</a>). Juriidiline kohustus, maksuarvestuse jaoks. Üksikasjad on <a href=\"/et/privacy#lawful-bases\">KIFFi privaatsuspoliitikas</a>.</p></section><section id=\"rights\"><h2>10. Teie õigused</h2><p>GDPR-i alusel võite taotleda juurdepääsu oma andmetele, nende parandamist, kustutamist, töötlemise piiramist või ülekantavat koopiat, esitada vastuväite õigustatud huvidel põhinevale töötlemisele ja võtta nõusoleku tagasi. Kirjutage aadressil <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; vastame põhjendamatu viivituseta ja hiljemalt ühe kuu jooksul; keerulise taotluse korral võime vajada veel kaks kuud ja teatame sellest esimese kuu jooksul. Rakenduses laadib Konto → Ekspordi minu vestlused alla teie enda vestlused ja märkmed.</p><p>tafsi konto kustutamiseks avage rakendus, minge vaatesse Konto ja puudutage valikut <em>Kustuta konto</em>, seejärel kinnitage. Seda ei saa tagasi võtta. <a href=\"/et/privacy#delete-account\">KIFFi privaatsuspoliitika</a> ütleb, mida ja millal kustutatakse ning kuidas seda e-posti teel taotleda.</p><p>Võite esitada kaebuse <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Andmekaitse Inspektsioonile</a> või oma elukoha järelevalveasutusele.</p><p><strong>Teie riik.</strong> Mõne riigi seadused nõuavad rohkem, kui selles poliitikas on öeldud. Mida need lisavad, inglise keeles ja riigi keeles, on lehel <a href=\"/privacy/countries\">Teie riik</a>.</p></section><section id=\"more\"><h2>11. Turvalisus, lapsed ja muudatused</h2><p>Meie turvameetmed on lehel <a href=\"/security\">/security</a> (inglise keeles). tafs ei ole suunatud lastele ja me ei kogu teadlikult alla 16-aastaste laste isikuandmeid. Muudame seda poliitikat nii, nagu <a href=\"/et/privacy#changes\">KIFFi privaatsuspoliitika</a> ütleb enda kohta.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Privaatsusküsimused ja taotlused: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Ametlikud õiguslikud teated: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Rakenduse enda tingimused on lehel <a href=\"/et/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -177,347 +190,347 @@ func tafsPrivacyGoogleET() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google'i kasutajaandmed</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Google'i kasutajaandmed</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks Google Sheetsiga või Google Calendariga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks Google Sheetsiga või Google Calendariga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks teie Gmailiga või Google Calendariga või Google Sheetsiga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Kui seda palute, ühendab tafs rakenduse vaates Ühenda rakendused tafi teie Google'i kontoga, näiteks teie Gmailiga või Google Calendariga või Google Sheetsiga, mida selle töö kasutab. See jaotis ütleb, mida tafs teeb Google'ilt saadud andmetega.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab: arvutustabeleid, mida see ajakohasena hoiab, või sündmusi kalendrites, mida see haldab. Neid muudab see ainult seal, kus tafi Card seda lubab, ja kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab: arvutustabeleid, mida see ajakohasena hoiab, või sündmusi kalendrites, mida see haldab. Neid muudab see ainult seal, kus tafi Card seda lubab, ja kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab. Teie Gmailis loeb see teie sõnumeid ja lõimi, et leida need, mis vajavad vastust, ning kirjutab mustandeid; kirju saadab see ainult seal, kus tafi Card seda lubab. Google Calendaris ja Google Sheetsis loeb see sündmusi kalendrites, mida see haldab, või arvutustabeleid, mida see ajakohasena hoiab, ning muudab neid ainult seal, kus tafi Card seda lubab. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Mida see loeb ja kirjutab:</strong> seda, mida tafi töö vajab. Teie Gmailis loeb see teie sõnumeid ja lõimi, et leida need, mis vajavad vastust, ning kirjutab mustandeid; kirju saadab see ainult seal, kus tafi Card seda lubab. Google Calendaris ja Google Sheetsis loeb see sündmusi kalendrites, mida see haldab, või arvutustabeleid, mida see ajakohasena hoiab, ning muudab neid ainult seal, kus tafi Card seda lubab. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Google Tasksis loeb see ülesandeloendeid, mida see haldab, ning lisab, lõpetab, teisaldab või kustutab ülesandeid ainult seal, kus tafi Card seda lubab. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Google Tasksis loeb see ülesandeloendeid, mida see haldab, ning lisab, lõpetab, teisaldab või kustutab ülesandeid ainult seal, kus tafi Card seda lubab. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Kõik, mis ületab Cardi piire, ootab teie kinnitust.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Miks:</strong> ainult selle töö tegemiseks, mille selle tafi jaoks seadistasite, ja selleks, et näidata teile, millise Google'i kontoga see on ühendatud: selle e-posti aadressi, mida hoitakse koos ühendusega, kuni ühenduse katkestate.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Miks:</strong> ainult selle töö tegemiseks, mille selle tafi jaoks seadistasite, ja selleks, et näidata teile, millise Google'i kontoga see on ühendatud: selle e-posti aadressi, mida hoitakse koos ühendusega, kuni ühenduse katkestate.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Kuidas iga Google'i rakendus ühendub:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Kuidas iga Google'i rakendus ühendub:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Meie sisselogimispartneri kaudu, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 139, Col: 155}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("et")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>tafsi enda Google'i sisselogimise kaudu, ilma ühegi teise ettevõtteta vahel: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Meie sisselogimispartneri kaudu, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 142, Col: 121}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 139, Col: 155}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("et") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+			if len(googleInHouse("et")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>tafsi enda Google'i sisselogimise kaudu, ilma ühegi teise ettevõtteta vahel: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 142, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("et"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("et") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").Line)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("et"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").AsksFor)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("et").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 150, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Mõlema all nimetatud rakendus ühendub ühel või teisel viisil, olenevalt teie kontost. Google'i enda sisselogimisleht näitab, kumba te lubate.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "Mõlema all nimetatud rakendus ühendub ühel või teisel viisil, olenevalt teie kontost. Google'i enda sisselogimisleht näitab, kumba te lubate.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. Sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. Sisselogimine küsib korraga kogu juurdepääsu, mis on allpool selle rakenduse jaoks loetletud, isegi kui taf ainult loeb.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Mida te lubate:</strong> logite sisse Google'i enda lehel ja valite, mida lubada. tafs küsib ainult juurdepääsu, mida tafi tööriistad vajavad. Kui selline kitsam juurdepääs pole võimalik, küsib see rakenduse tavapärast juurdepääsu ja ütleb seda enne, kui sisse logite. Kui tavapärane juurdepääs hõlmaks isikuandmeid, mida taf ei kasuta, tafs ei ühenda.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kuidas taf seda kasutab:</strong> taf kasutab ainult oma Cardil kinnitatud tööriistu. Iga päringut kontrollitakse enne, kui midagi saadetakse, just selle tööriista ja nende argumentide loa alusel, ning päringust, mis jääb väljapoole teie antud juurdepääsu, keeldutakse. Millised toimingud küsivad iga kord teie kinnitust, määratakse Cardil.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Kuidas taf seda kasutab:</strong> taf kasutab ainult oma Cardil kinnitatud tööriistu. Iga päringut kontrollitakse enne, kui midagi saadetakse, just selle tööriista ja nende argumentide loa alusel, ning päringust, mis jääb väljapoole teie antud juurdepääsu, keeldutakse. Millised toimingud küsivad iga kord teie kinnitust, määratakse Cardil.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Juurdepääs, mida tafsi enda Google'i sisselogimine küsib:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Juurdepääs, mida tafsi enda Google'i sisselogimine küsib:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Juurdepääs, mida tafs küsib:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>Juurdepääs, mida tafs küsib:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("et") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 188, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var21 string
+					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `et_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Ükskõik kui palju sisselogimine lubab, kasutab taf ainult oma Cardil olevaid tööriistu.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>Ükskõik kui palju sisselogimine lubab, kasutab taf ainult oma Cardil olevaid tööriistu.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kes hoiab teie sisselogimist:</strong><ul><li><strong>Meie sisselogimispartneri kaudu:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kes hoiab teie sisselogimist:</strong><ul><li><strong>Meie sisselogimispartneri kaudu:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kes hoiab teie sisselogimist:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kes hoiab teie sisselogimist:</strong> planque, tafsi enda ühendusteenus, hoiab teie Google'i märki teie ettevõtte jaoks, krüpteerituna AWS KMS-iga Euroopa Liidus (Iirimaal), ja kasutab seda ainult päringu tegemiseks, mida tafi Card lubab. Seda ei anta kunagi tafile ning ei taf ega AI-mudel näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kes hoiab teie sisselogimist:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kes hoiab teie sisselogimist:</strong> teie Google'i sisselogimist hoiab meie sisselogimispartner, mis on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles), ja seda ei anta kunagi tafile ega planque'ile. Ei taf ega tafs näe teie parooli ega teie Google'i märke. Teine teie taf, mis vajab sama juurdepääsu, kasutab sama sisselogimist uuesti ja iga taf kasutab ainult tööriistu, mille te sellele kinnitasite.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> see läbib ka meie sisselogimispartnerit, kes teeb iga päringu.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist.</li></ul>Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva.<ul><li><strong>Meie sisselogimispartneri kaudu:</strong> see läbib ka meie sisselogimispartnerit, kes teeb iga päringu.</li><li><strong>tafsi enda Google'i sisselogimise kaudu:</strong> planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist.</li></ul>Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist. AI-mudeli pakkuja on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. planque pöördub Google'i poole ise, nii et ükski teine ettevõte ei tee päringut ega hoia teie sisselogimist. AI-mudeli pakkuja on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. See läbib ka meie sisselogimispartnerit, kes teeb iga päringu. Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Kes veel neid saab:</strong> see, mida taf Google'ist loeb, läheb tafi käitavale AI-mudelile ainult pärast seda, kui olete selle lubanud (vt <a href=\"#ai\">AI tafsis</a>), ja see hoiab seda oma pakkuja tingimuste alusel kuni 30 päeva. See läbib ka meie sisselogimispartnerit, kes teeb iga päringu. Mõlemad on nimetatud lehel <a href=\"/subprocessors\">/subprocessors</a> (inglise keeles).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>AI treenimine:</strong> Google'i kasutajaandmeid ei kasutata AI-mudelite treenimiseks.</li><li><strong>Pildid:</strong> tafs ei loo ega muuda pilte ega videoid: selle AI kirjutab teksti. See ei kasuta kunagi Google'i API-sid ega Google'i kasutajaandmeid kellegi intiimsete piltide (nõusolekuta intiimpildid, NCII) ega ühegi muu inimest kujutava pildi loomiseks, muutmiseks ega jagamiseks.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>AI treenimine:</strong> Google'i kasutajaandmeid ei kasutata AI-mudelite treenimiseks.</li><li><strong>Pildid:</strong> tafs ei loo ega muuda pilte ega videoid: selle AI kirjutab teksti. See ei kasuta kunagi Google'i API-sid ega Google'i kasutajaandmeid kellegi intiimsete piltide (nõusolekuta intiimpildid, NCII) ega ühegi muu inimest kujutava pildi loomiseks, muutmiseks ega jagamiseks.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("et")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Kui kaua ja kus:</strong> teie arvutustabelid ja sündmused jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Kui kaua ja kus:</strong> teie arvutustabelid ja sündmused jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Kui kaua ja kus:</strong> teie mustandid, sündmused ja arvutustabelid jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Kui kaua ja kus:</strong> teie mustandid, sündmused ja arvutustabelid jäävad teie Google'i kontole. tafsi enda salvestuses hoitakse seda, mida tööriist tagastab, ainult tafi käivituse lõpuni. planque, mis iga päringu edasi saadab, hoiab seda, mida Google tagastab, 24 tundi, et korduv päring saaks sama vastuse ja seda ei saadetaks kunagi kaks korda; pärast seda hoiab see ainult teavet, kas päring saadeti. Vestluses hoitakse ainult loetut krüpteeritult, seda kasutatakse, kuni vestlus on olnud tund aega jõude, ja kõige rohkem neli tundi pärast lugemist, seejärel kustutatakse see automaatselt mõne päeva jooksul. Käivituse kirjet ja selle vestlust hoitakse 30 päeva ning tafi märkmeid seni, kuni tafi eemaldate (vt <a href=\"#retention\">Kui kaua me neid hoiame</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Peatamine:</strong><ul><li>Katkestage Google'i ühendus rakenduses, vaates Ühenda rakendused või tafi Cardi vahekaardil. Selle Google'i tööriistad peatuvad kohe ja tafs palub Google'il sisselogimise kohe tühistada; see võib lõpule jõuda veidi hiljem.</li><li>Eemaldage taf ja selle ühendused lõpevad koos sellega. Google'i sisselogimine, mida mõni teine teie taf veel kasutab, jääb alles, kuni viimane neist eemaldatakse.</li><li>Eemaldage tafsi juurdepääs igal ajal oma Google'i kontol aadressil <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Teie tafid ei jõua enam Google'ini ja rakendus teatab, et Google'i ühendus on välja logitud.</li><li>Kustutage oma konto: selle tafid, vestlused, märkmed, failid ja ühendused kustutatakse kohe ning nende ajahetke koopiatest 35 päeva jooksul, ja selle Google'i märgid tühistatakse seal, kus Google seda lubab.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>Peatamine:</strong><ul><li>Katkestage Google'i ühendus rakenduses, vaates Ühenda rakendused või tafi Cardi vahekaardil. Selle Google'i tööriistad peatuvad kohe ja tafs palub Google'il sisselogimise kohe tühistada; see võib lõpule jõuda veidi hiljem.</li><li>Eemaldage taf ja selle ühendused lõpevad koos sellega. Google'i sisselogimine, mida mõni teine teie taf veel kasutab, jääb alles, kuni viimane neist eemaldatakse.</li><li>Eemaldage tafsi juurdepääs igal ajal oma Google'i kontol aadressil <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Teie tafid ei jõua enam Google'ini ja rakendus teatab, et Google'i ühendus on välja logitud.</li><li>Kustutage oma konto: selle tafid, vestlused, märkmed, failid ja ühendused kustutatakse kohe ning nende ajahetke koopiatest 35 päeva jooksul, ja selle Google'i märgid tühistatakse seal, kus Google seda lubab.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

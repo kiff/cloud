@@ -144,7 +144,20 @@ func TafsPrivacyDZ() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " དེའི་ཆ་འཇོག་ཚུ་གི་ཐོ་བཀོད། རྩིས་ཐོ་མཇུག་མ་བསྡུ་ཚུན།</li><li>ཐབས་འཕྲུལ་གྱི་ push token། ཁྱོད་ཀྱིས་ཨེཔ་ནང་ཕྱིར་འཐོན་པ་ཡང་ན་ཐབས་འཕྲུལ་བསལ་པ་ ཡང་ན་ Apple ཡང་ན་ Google གིས་ token མེད་པར་སོང་ཟེར་སྙན་ཞུ་འབད་ཚུན། ཐབས་འཕྲུལ་གྱི་སྤྱི་འཐུས་ལྡེ་མིག མིང་། སྟེགས་བུ་དང་ཚེས་གྲངས། ཁྱོད་ཀྱིས་ལག་ལེན་འཐབ་པའི་སྐབས། ཁྱོད་ཀྱིས་དེ་ནང་ལས་ཕྱིར་འཐོན་པའི་ཤུལ་ལས་ དེ་བསལ་ཟེར་རྟགས་བཀལ་ཞིནམ་ལས་རྩིས་ཐོ་བསུབ་ཚུན་བཞག། དེ་ལུ་བརྟེན་ KIFF གིས་དེ་ལས་ལན་འགོར་མི་ངོས་ལེན་མི་འབད་བཏུབ་ཨིནམ་དང་ སྔ་མ་ཅིག་ཐབས་འཕྲུལ་གང་གིས་མཚན་རྟགས་བཀོད་ཡོདཔ་སྟོན་ཚུགས། passkey གི་སྤྱི་འཐུས་ལྡེ་མིག id དང་མིང་། དེའི་ཐབས་འཕྲུལ་བཟུམ། གློག་ཀླད་ཀྱི་ཚོགས་ཐེངས། ཉིནམ་ 90 ཚུན། ཡང་ན་ཁྱོད་ཕྱིར་འཐོན་ཚུན།</li><li>ཁྱོད་ཀྱི་རྩིས་ཐོ། བསུབ་ཚུན། ཞབས་ཏོག་ཐོ་བཀོད། ཉིནམ་ 30། tafs དང་ planque གི་མཛོད་གིས་གསང་བསྡམས་པའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ཉིནམ་ 35 བཞག་ཨིན། སྐྱོན་འཕྲད་ཤུལ་ལས་མཛོད་ཅིག་བསྐྱར་གསོ་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li></ul><p>གཞན་ཆ་མཉམ་ <a href=\"/dz/privacy#retention\">KIFF གི་བསྐྱངས་ཚུལ་ཆ་ཤས།</a> ནང་ཡོད།</p></section><section id=\"lawful-bases\"><h2>9. ཁྲིམས་ལུགས་ཀྱི་གཞི།</h2><p>གན་རྒྱ་ལག་ལེན། ཁྱོད་ཀྱི་རྩིས་ཐོ་དང་ཁྱོད་ཀྱི་ taf ཚུ་འཁོར་ནི་ལུ། ཁྲིམས་ལུགས་ཀྱི་ཕན་ཐོགས། ཉེན་སྲུང་། གཤགས་འཚུབ་བཀག་ནི་དང་ལག་ལེན་ལོག་འཐབ་ཐོབ་ནི་ལུ། མོས་མཐུན། tafs ནང་ AI གི་དོན་ལུ་ (<a href=\"#ai\">ཆ་ཤས་ 5།</a>)། ཁྲིམས་ལུགས་ཀྱི་ཁུར། ཁྲལ་གྱི་ཐོ་བཀོད་ལུ། ཁ་གསལ་ <a href=\"/dz/privacy#lawful-bases\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> ནང་ཡོད།</p></section><section id=\"rights\"><h2>10. ཁྱོད་ཀྱི་དབང་ཚད།</h2><p>GDPR གི་འོག་ལུ་ ཁྱོད་ཀྱིས་ཁྱོད་ཀྱི་གནས་ཚུལ་འཛུལ་སྤྱོད། དེ་ཡང་དག་བཟོ། བསུབ། ཚད་བཀག་ ཡང་ན་འཁྱེར་འགྱོ་ཚུགས་པའི་འདྲ་བཤུས་ཞུ་ཚུགས། ཁྲིམས་ལུགས་ཀྱི་ཕན་ཐོགས་ལུ་གཞི་བཞག་པའི་ལག་ལེན་ལུ་འགོག་ཚུགས། དང་མོས་མཐུན་ཕྱིར་ལེན་འབད་ཚུགས། <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> ལུ་གློག་འཕྲིན་གཏང་། ང་བཅས་ཀྱིས་ དགོས་མེད་ཀྱི་ཕྱི་འགྱངས་མེད་པར་ ཟླ་བ་གཅིག་གི་ནང་ལན་འདེབས་འབད། ཞུ་བ་རྙོག་དྲགས་ཅན་ཅིག་ལུ་ ཟླ་བ་གཉིས་ཁ་སྐོང་དགོཔ་འོང་ཚེ་ ཟླ་བ་དང་པའི་ནང་ཁྱོད་ལུ་སླབ་འོང་། ཨེཔ་ནང་ རྩིས་ཐོ་ → ངའི་གྲོས་ཚོགས་ཚུ་ཕྱིར་འདྲེན་འབད་ ཁྱོད་རང་གི་གྲོས་ཚོགས་དང་དྲན་ཐོ་ཚུ་ཕབ་ལེན་འབད།</p><p>ཁྱོད་ཀྱི་ tafs རྩིས་ཐོ་བསུབ་ནི་ལུ་ ཨེཔ་ཁ་ཕྱེ་ཞིནམ་ལས་ རྩིས་ཐོ་ལུ་འགྱོ་ <em>རྩིས་ཐོ་བསུབ</em> ལུ་མཛུབ་བཙུགས་ཞིནམ་ལས་ ངེས་གཏན་བཟོ། དེ་ལོག་སྟེ་མི་ཚུགས། ཅི་དང་ག་དུས་བསུབ་ཨིན་ན་དང་ གློག་འཕྲིན་གྱིས་ག་དེ་སྦེ་ཞུ་ཨིན་ན་འདི་ <a href=\"/dz/privacy#delete-account\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་སླབ།</p><p>ཁྱོད་ཀྱིས་ <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">ཨེསྟོ་ནི་ཡ་གནས་ཚུལ་སྲུང་སྐྱོབ་ཞིབ་འཇུག་ལྷན་ཁག (Andmekaitse Inspektsioon)</a> ལུ་ ཡང་ན་ཁྱོད་སྡོད་ས་ཀྱི་ལྟ་རྟོག་སྡེ་ཚན་ལུ་སྙན་ཞུ་འབད་ཚུགས།</p><p><strong>ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</strong> རྒྱལ་ཁབ་ལ་ལོ་ཅིག་གི་ཁྲིམས་གིས་སྲིད་བྱུས་འདི་གིས་སླབ་མི་ལས་ལྷག་པའི་དགོས་མཁོ་བཀོད། དེ་ཚུ་གིས་བསྣན་མི་ ཨིང་ཁ་དང་རྒྱལ་ཁབ་ཀྱི་སྐད་ཡིག་ནང་ <a href=\"/privacy/countries\">ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p></section><section id=\"more\"><h2>11. ཉེན་སྲུང་། བུ་ཆུང་དང་འགྱུར་བ།</h2><p>ང་བཅས་ཀྱི་ཉེན་སྲུང་ཐབས་ལམ་ཚུ་ <a href=\"/security\">/security</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད། tafs འདི་བུ་ཆུང་ཚུ་ལུ་དམིགས་བསལ་མེན་པས་ ང་བཅས་ཀྱིས་ལོ་ 16 གི་འོག་གི་བུ་ཆུང་ལས་སྒེར་གྱི་གནས་ཚུལ་ཤེས་བཞིན་དུ་མི་བསྡུ། <a href=\"/dz/privacy#changes\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་རང་གི་སྲིད་བྱུས་ལུ་སླབ་མི་བཟུམ་སྦེ་ང་བཅས་ཀྱིས་སྲིད་བྱུས་འདི་བསྒྱུར།</p></section><section id=\"contact\"><h2>12. འབྲེལ་བ།</h2><p>སྒེར་གསང་གི་དྲི་བ་དང་ཞུ་བ། <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. ཁྲིམས་ལུགས་ཀྱི་གཞུང་འབྲེལ་བརྡ་དོན། <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. ཨེཔ་རང་གི་ཆ་རྐྱེན་ཚུ་ <a href=\"/dz/tafs/terms\">/tafs/terms</a> ནང་ཡོད།</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(chatEndsWords("dz"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 83, Col: 780}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " དེའི་ཆ་འཇོག་ཚུ་གི་ཐོ་བཀོད། རྩིས་ཐོ་མཇུག་མ་བསྡུ་ཚུན།</li><li>ཐབས་འཕྲུལ་གྱི་ push token། ཁྱོད་ཀྱིས་ཨེཔ་ནང་ཕྱིར་འཐོན་པ་ཡང་ན་ཐབས་འཕྲུལ་བསལ་པ་ ཡང་ན་ Apple ཡང་ན་ Google གིས་ token མེད་པར་སོང་ཟེར་སྙན་ཞུ་འབད་ཚུན། ཐབས་འཕྲུལ་གྱི་སྤྱི་འཐུས་ལྡེ་མིག མིང་། སྟེགས་བུ་དང་ཚེས་གྲངས། ཁྱོད་ཀྱིས་ལག་ལེན་འཐབ་པའི་སྐབས། ཁྱོད་ཀྱིས་དེ་ནང་ལས་ཕྱིར་འཐོན་པའི་ཤུལ་ལས་ དེ་བསལ་ཟེར་རྟགས་བཀལ་ཞིནམ་ལས་རྩིས་ཐོ་བསུབ་ཚུན་བཞག། དེ་ལུ་བརྟེན་ KIFF གིས་དེ་ལས་ལན་འགོར་མི་ངོས་ལེན་མི་འབད་བཏུབ་ཨིནམ་དང་ སྔ་མ་ཅིག་ཐབས་འཕྲུལ་གང་གིས་མཚན་རྟགས་བཀོད་ཡོདཔ་སྟོན་ཚུགས། passkey གི་སྤྱི་འཐུས་ལྡེ་མིག id དང་མིང་། དེའི་ཐབས་འཕྲུལ་བཟུམ། གློག་ཀླད་ཀྱི་ཚོགས་ཐེངས། ཉིནམ་ 90 ཚུན། ཡང་ན་ཁྱོད་ཕྱིར་འཐོན་ཚུན།</li><li>ཁྱོད་ཀྱི་རྩིས་ཐོ། བསུབ་ཚུན། ཞབས་ཏོག་ཐོ་བཀོད། ཉིནམ་ 30། tafs དང་ planque གི་མཛོད་གིས་གསང་བསྡམས་པའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ཉིནམ་ 35 བཞག་ཨིན། སྐྱོན་འཕྲད་ཤུལ་ལས་མཛོད་ཅིག་བསྐྱར་གསོ་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li></ul><p>གཞན་ཆ་མཉམ་ <a href=\"/dz/privacy#retention\">KIFF གི་བསྐྱངས་ཚུལ་ཆ་ཤས།</a> ནང་ཡོད།</p></section><section id=\"lawful-bases\"><h2>9. ཁྲིམས་ལུགས་ཀྱི་གཞི།</h2><p>གན་རྒྱ་ལག་ལེན། ཁྱོད་ཀྱི་རྩིས་ཐོ་དང་ཁྱོད་ཀྱི་ taf ཚུ་འཁོར་ནི་ལུ། ཁྲིམས་ལུགས་ཀྱི་ཕན་ཐོགས། ཉེན་སྲུང་། གཤགས་འཚུབ་བཀག་ནི་དང་ལག་ལེན་ལོག་འཐབ་ཐོབ་ནི་ལུ། མོས་མཐུན། tafs ནང་ AI གི་དོན་ལུ་ (<a href=\"#ai\">ཆ་ཤས་ 5།</a>)། ཁྲིམས་ལུགས་ཀྱི་ཁུར། ཁྲལ་གྱི་ཐོ་བཀོད་ལུ། ཁ་གསལ་ <a href=\"/dz/privacy#lawful-bases\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> ནང་ཡོད།</p></section><section id=\"rights\"><h2>10. ཁྱོད་ཀྱི་དབང་ཚད།</h2><p>GDPR གི་འོག་ལུ་ ཁྱོད་ཀྱིས་ཁྱོད་ཀྱི་གནས་ཚུལ་འཛུལ་སྤྱོད། དེ་ཡང་དག་བཟོ། བསུབ། ཚད་བཀག་ ཡང་ན་འཁྱེར་འགྱོ་ཚུགས་པའི་འདྲ་བཤུས་ཞུ་ཚུགས། ཁྲིམས་ལུགས་ཀྱི་ཕན་ཐོགས་ལུ་གཞི་བཞག་པའི་ལག་ལེན་ལུ་འགོག་ཚུགས། དང་མོས་མཐུན་ཕྱིར་ལེན་འབད་ཚུགས། <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a> ལུ་གློག་འཕྲིན་གཏང་། ང་བཅས་ཀྱིས་ དགོས་མེད་ཀྱི་ཕྱི་འགྱངས་མེད་པར་ ཟླ་བ་གཅིག་གི་ནང་ལན་འདེབས་འབད། ཞུ་བ་རྙོག་དྲགས་ཅན་ཅིག་ལུ་ ཟླ་བ་གཉིས་ཁ་སྐོང་དགོཔ་འོང་ཚེ་ ཟླ་བ་དང་པའི་ནང་ཁྱོད་ལུ་སླབ་འོང་། ཨེཔ་ནང་ རྩིས་ཐོ་ → ངའི་གྲོས་ཚོགས་ཚུ་ཕྱིར་འདྲེན་འབད་ ཁྱོད་རང་གི་གྲོས་ཚོགས་དང་དྲན་ཐོ་ཚུ་ཕབ་ལེན་འབད།</p><p>ཁྱོད་ཀྱི་ tafs རྩིས་ཐོ་བསུབ་ནི་ལུ་ ཨེཔ་ཁ་ཕྱེ་ཞིནམ་ལས་ རྩིས་ཐོ་ལུ་འགྱོ་ <em>རྩིས་ཐོ་བསུབ</em> ལུ་མཛུབ་བཙུགས་ཞིནམ་ལས་ ངེས་གཏན་བཟོ། དེ་ལོག་སྟེ་མི་ཚུགས། ཅི་དང་ག་དུས་བསུབ་ཨིན་ན་དང་ གློག་འཕྲིན་གྱིས་ག་དེ་སྦེ་ཞུ་ཨིན་ན་འདི་ <a href=\"/dz/privacy#delete-account\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་སླབ།</p><p>ཁྱོད་ཀྱིས་ <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">ཨེསྟོ་ནི་ཡ་གནས་ཚུལ་སྲུང་སྐྱོབ་ཞིབ་འཇུག་ལྷན་ཁག (Andmekaitse Inspektsioon)</a> ལུ་ ཡང་ན་ཁྱོད་སྡོད་ས་ཀྱི་ལྟ་རྟོག་སྡེ་ཚན་ལུ་སྙན་ཞུ་འབད་ཚུགས།</p><p><strong>ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</strong> རྒྱལ་ཁབ་ལ་ལོ་ཅིག་གི་ཁྲིམས་གིས་སྲིད་བྱུས་འདི་གིས་སླབ་མི་ལས་ལྷག་པའི་དགོས་མཁོ་བཀོད། དེ་ཚུ་གིས་བསྣན་མི་ ཨིང་ཁ་དང་རྒྱལ་ཁབ་ཀྱི་སྐད་ཡིག་ནང་ <a href=\"/privacy/countries\">ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p></section><section id=\"more\"><h2>11. ཉེན་སྲུང་། བུ་ཆུང་དང་འགྱུར་བ།</h2><p>ང་བཅས་ཀྱི་ཉེན་སྲུང་ཐབས་ལམ་ཚུ་ <a href=\"/security\">/security</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད། tafs འདི་བུ་ཆུང་ཚུ་ལུ་དམིགས་བསལ་མེན་པས་ ང་བཅས་ཀྱིས་ལོ་ 16 གི་འོག་གི་བུ་ཆུང་ལས་སྒེར་གྱི་གནས་ཚུལ་ཤེས་བཞིན་དུ་མི་བསྡུ། <a href=\"/dz/privacy#changes\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་རང་གི་སྲིད་བྱུས་ལུ་སླབ་མི་བཟུམ་སྦེ་ང་བཅས་ཀྱིས་སྲིད་བྱུས་འདི་བསྒྱུར།</p></section><section id=\"contact\"><h2>12. འབྲེལ་བ།</h2><p>སྒེར་གསང་གི་དྲི་བ་དང་ཞུ་བ། <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. ཁྲིམས་ལུགས་ཀྱི་གཞུང་འབྲེལ་བརྡ་དོན། <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. ཨེཔ་རང་གི་ཆ་རྐྱེན་ཚུ་ <a href=\"/dz/tafs/terms\">/tafs/terms</a> ནང་ཡོད།</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -177,347 +190,347 @@ func tafsPrivacyGoogleDZ() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google ལག་ལེན་པའི་གནས་ཚུལ།</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Google ལག་ལེན་པའི་གནས་ཚུལ།</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>ཁྱོད་ཀྱིས་ཞུ་བའི་སྐབས་ tafs གིས་ taf ཅིག་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ལུ་ དཔེར་ན་དེའི་ལས་ཀ་གིས་ལག་ལེན་འཐབ་མི་ Google Sheets ཡང་ན་ Google Calendar ལུ་ ཨེཔ་གི་ཨེཔ་མཐུད་ནང་མཐུདཔ་ཨིན། ཆ་ཤས་འདི་གིས་ tafs གིས་ Google ལས་འཐོབ་མི་གནས་ཚུལ་ལུ་ཅི་འབདཝ་ཨིན་ན་སླབ།</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>ཁྱོད་ཀྱིས་ཞུ་བའི་སྐབས་ tafs གིས་ taf ཅིག་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ལུ་ དཔེར་ན་དེའི་ལས་ཀ་གིས་ལག་ལེན་འཐབ་མི་ Google Sheets ཡང་ན་ Google Calendar ལུ་ ཨེཔ་གི་ཨེཔ་མཐུད་ནང་མཐུདཔ་ཨིན། ཆ་ཤས་འདི་གིས་ tafs གིས་ Google ལས་འཐོབ་མི་གནས་ཚུལ་ལུ་ཅི་འབདཝ་ཨིན་ན་སླབ།</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>ཁྱོད་ཀྱིས་ཞུ་བའི་སྐབས་ tafs གིས་ taf ཅིག་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ལུ་ དཔེར་ན་ཁྱོད་ཀྱི་ Gmail ལུ་ ཡང་ན་དེའི་ལས་ཀ་གིས་ལག་ལེན་འཐབ་མི་ Google Calendar ཡང་ན་ Google Sheets ལུ་ ཨེཔ་གི་ཨེཔ་མཐུད་ནང་མཐུདཔ་ཨིན། ཆ་ཤས་འདི་གིས་ tafs གིས་ Google ལས་འཐོབ་མི་གནས་ཚུལ་ལུ་ཅི་འབདཝ་ཨིན་ན་སླབ།</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>ཁྱོད་ཀྱིས་ཞུ་བའི་སྐབས་ tafs གིས་ taf ཅིག་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ལུ་ དཔེར་ན་ཁྱོད་ཀྱི་ Gmail ལུ་ ཡང་ན་དེའི་ལས་ཀ་གིས་ལག་ལེན་འཐབ་མི་ Google Calendar ཡང་ན་ Google Sheets ལུ་ ཨེཔ་གི་ཨེཔ་མཐུད་ནང་མཐུདཔ་ཨིན། ཆ་ཤས་འདི་གིས་ tafs གིས་ Google ལས་འཐོབ་མི་གནས་ཚུལ་ལུ་ཅི་འབདཝ་ཨིན་ན་སླབ།</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>དེ་གིས་ཅི་ལྷག་ཅི་འབྲི།</strong> taf གི་ལས་ཀ་གིས་དགོ་མི། དེ་གིས་གསར་བཅོས་འབད་བཞག་མི་ཐིག་ཤོག་དང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལོ་ཐོ་ཚུ་ནང་གི་བྱུང་རིམ། དེ་གིས་དེ་ཚུ་བསྒྱུར་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིནམ་དང་ Card གི་ཚད་འཛིན་ལས་འདས་མི་གང་ཡང་ཁྱོད་ཀྱི་ཆ་འཇོག་ལུ་སྒུག།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>དེ་གིས་ཅི་ལྷག་ཅི་འབྲི།</strong> taf གི་ལས་ཀ་གིས་དགོ་མི། དེ་གིས་གསར་བཅོས་འབད་བཞག་མི་ཐིག་ཤོག་དང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལོ་ཐོ་ཚུ་ནང་གི་བྱུང་རིམ། དེ་གིས་དེ་ཚུ་བསྒྱུར་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིནམ་དང་ Card གི་ཚད་འཛིན་ལས་འདས་མི་གང་ཡང་ཁྱོད་ཀྱི་ཆ་འཇོག་ལུ་སྒུག།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>དེ་གིས་ཅི་ལྷག་ཅི་འབྲི།</strong> taf གི་ལས་ཀ་གིས་དགོ་མི། ཁྱོད་ཀྱི་ Gmail ནང་ ལན་དགོ་མི་ཚུ་འཚོལ་ནི་ལུ་དེ་གིས་ཁྱོད་ཀྱི་འཕྲིན་ཡིག་དང་སྐད་རྒྱུན་ཚུ་ལྷག་ཞིནམ་ལས་ སྒྲིག་བྲིས་ཚུ་འབྲི། དེ་གིས་གློག་འཕྲིན་གཏང་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། Google Calendar དང་ Google Sheets ནང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལོ་ཐོ་ཚུ་ནང་གི་བྱུང་རིམ་ ཡང་ན་གསར་བཅོས་འབད་བཞག་མི་ཐིག་ཤོག་ཚུ་ལྷག་ཞིནམ་ལས་ དེ་ཚུ་བསྒྱུར་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>དེ་གིས་ཅི་ལྷག་ཅི་འབྲི།</strong> taf གི་ལས་ཀ་གིས་དགོ་མི། ཁྱོད་ཀྱི་ Gmail ནང་ ལན་དགོ་མི་ཚུ་འཚོལ་ནི་ལུ་དེ་གིས་ཁྱོད་ཀྱི་འཕྲིན་ཡིག་དང་སྐད་རྒྱུན་ཚུ་ལྷག་ཞིནམ་ལས་ སྒྲིག་བྲིས་ཚུ་འབྲི། དེ་གིས་གློག་འཕྲིན་གཏང་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། Google Calendar དང་ Google Sheets ནང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལོ་ཐོ་ཚུ་ནང་གི་བྱུང་རིམ་ ཡང་ན་གསར་བཅོས་འབད་བཞག་མི་ཐིག་ཤོག་ཚུ་ལྷག་ཞིནམ་ལས་ དེ་ཚུ་བསྒྱུར་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Google Tasks ནང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལས་ཀའི་ཐོ་ཡིག་ལྷག་ཞིནམ་ལས་ ལས་ཀ་ཚུ་བསྣན་ཡང་ན་མཇུག་བསྡུ་ཡང་ན་སྤོ་ཡང་ན་བསུབ་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Google Tasks ནང་ དེ་གིས་ལྟ་རྟོག་འབད་མི་ལས་ཀའི་ཐོ་ཡིག་ལྷག་ཞིནམ་ལས་ ལས་ཀ་ཚུ་བསྣན་ཡང་ན་མཇུག་བསྡུ་ཡང་ན་སྤོ་ཡང་ན་བསུབ་ནི་ taf གི་ Card གིས་གནང་མི་གནས་ཚུལ་ནང་རྐྱངམ་གཅིག་ཨིན། ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Card གི་ཚད་འཛིན་ལས་འདས་མི་གང་ཡང་ཁྱོད་ཀྱི་ཆ་འཇོག་ལུ་སྒུག།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Card གི་ཚད་འཛིན་ལས་འདས་མི་གང་ཡང་ཁྱོད་ཀྱི་ཆ་འཇོག་ལུ་སྒུག།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>ཅིའི་ཕྱིར།</strong> taf དེའི་དོན་ལུ་ཁྱོད་ཀྱིས་གཞི་སྒྲིག་འབད་མི་ལས་ཀ་འབད་ནི་དང་ དེ་ Google རྩིས་ཐོ་གང་ལུ་མཐུདཔ་ཨིན་ན་ཁྱོད་ལུ་སྟོན་ནི་ལུ་རྐྱངམ་གཅིག། དེའི་གློག་འཕྲིན་ཁ་བྱང་ ཁྱོད་ཀྱིས་མཐུད་མཚམས་བཅད་ཚུན་མཐུད་མཚམས་དང་གཅིག་ཁར་བཞག།</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>ཅིའི་ཕྱིར།</strong> taf དེའི་དོན་ལུ་ཁྱོད་ཀྱིས་གཞི་སྒྲིག་འབད་མི་ལས་ཀ་འབད་ནི་དང་ དེ་ Google རྩིས་ཐོ་གང་ལུ་མཐུདཔ་ཨིན་ན་ཁྱོད་ལུ་སྟོན་ནི་ལུ་རྐྱངམ་གཅིག། དེའི་གློག་འཕྲིན་ཁ་བྱང་ ཁྱོད་ཀྱིས་མཐུད་མཚམས་བཅད་ཚུན་མཐུད་མཚམས་དང་གཅིག་ཁར་བཞག།</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Google ཨེཔ་རེ་རེ་ག་དེ་སྦེ་མཐུདཔ་ཨིན་ན།</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Google ཨེཔ་རེ་རེ་ག་དེ་སྦེ་མཐུདཔ་ཨིན་ན།</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ། <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 139, Col: 297}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("dz")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ། བར་ན་ལས་ཁུངས་གཞན་མེད་པར: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ། <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 142, Col: 199}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 139, Col: 297}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("dz") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+			if len(googleInHouse("dz")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ། བར་ན་ལས་ཁུངས་གཞན་མེད་པར: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 142, Col: 199}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("dz"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("dz") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").Line)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("dz"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").AsksFor)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "གཉིས་ཀྱི་ནང་མིང་བཀོད་པའི་ཨེཔ་ཅིག་ཁྱོད་ཀྱི་རྩིས་ཐོ་ལུ་བརྟེན་ཏེ་ཐབས་ལམ་གཅིག་ཡང་ན་གཞན་ཅིག་གིས་མཐུདཔ་ཨིན། Google རང་གི་ནང་འཛུལ་ཤོག་ལེབ་གིས་ཁྱོད་ཀྱིས་ཅི་ལུ་ཆོག་ཐམ་བྱིན་དོ་ཡོདཔ་སྟོན།")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "གཉིས་ཀྱི་ནང་མིང་བཀོད་པའི་ཨེཔ་ཅིག་ཁྱོད་ཀྱི་རྩིས་ཐོ་ལུ་བརྟེན་ཏེ་ཐབས་ལམ་གཅིག་ཡང་ན་གཞན་ཅིག་གིས་མཐུདཔ་ཨིན། Google རང་གི་ནང་འཛུལ་ཤོག་ལེབ་གིས་ཁྱོད་ཀྱིས་ཅི་ལུ་ཆོག་ཐམ་བྱིན་དོ་ཡོདཔ་སྟོན།")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན།<ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> tafs གིས་ taf གི་ལག་ཆ་ཚུ་གིས་དགོ་མི་འཛུལ་སྒོ་རྐྱངམ་གཅིག་ཞུ། འཛུལ་སྒོ་ཕྲ་མོ་དེ་མི་འབད་བཏུབ་པ་ཅིན་ ཨེཔ་གི་རྒྱུན་ལྡན་འཛུལ་སྒོ་ཞུཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་ནང་འཛུལ་མ་འབད་བའི་ཧེ་མར་དེ་སླབ། རྒྱུན་ལྡན་འཛུལ་སྒོ་ནང་ taf གིས་ལག་ལེན་མི་འཐབ་པའི་སྒེར་གྱི་གནས་ཚུལ་ཚུད་པ་ཅིན་ tafs གིས་མི་མཐུད།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> ནང་འཛུལ་གྱིས་ཨེཔ་དེའི་དོན་ལུ་འོག་ལུ་ཐོ་བཀོད་འབད་མི་འཛུལ་སྒོ་ཆ་མཉམ་དུས་གཅིག་ལུ་ཞུ། taf གིས་ཀློགས་རྐྱངམ་གཅིག་འབད་རུང་།</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན།<ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> tafs གིས་ taf གི་ལག་ཆ་ཚུ་གིས་དགོ་མི་འཛུལ་སྒོ་རྐྱངམ་གཅིག་ཞུ། འཛུལ་སྒོ་ཕྲ་མོ་དེ་མི་འབད་བཏུབ་པ་ཅིན་ ཨེཔ་གི་རྒྱུན་ལྡན་འཛུལ་སྒོ་ཞུཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་ནང་འཛུལ་མ་འབད་བའི་ཧེ་མར་དེ་སླབ། རྒྱུན་ལྡན་འཛུལ་སྒོ་ནང་ taf གིས་ལག་ལེན་མི་འཐབ་པའི་སྒེར་གྱི་གནས་ཚུལ་ཚུད་པ་ཅིན་ tafs གིས་མི་མཐུད།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> ནང་འཛུལ་གྱིས་ཨེཔ་དེའི་དོན་ལུ་འོག་ལུ་ཐོ་བཀོད་འབད་མི་འཛུལ་སྒོ་ཆ་མཉམ་དུས་གཅིག་ལུ་ཞུ། taf གིས་ཀློགས་རྐྱངམ་གཅིག་འབད་རུང་།</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན། ནང་འཛུལ་གྱིས་ཨེཔ་དེའི་དོན་ལུ་འོག་ལུ་ཐོ་བཀོད་འབད་མི་འཛུལ་སྒོ་ཆ་མཉམ་དུས་གཅིག་ལུ་ཞུ། taf གིས་ཀློགས་རྐྱངམ་གཅིག་འབད་རུང་།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན། ནང་འཛུལ་གྱིས་ཨེཔ་དེའི་དོན་ལུ་འོག་ལུ་ཐོ་བཀོད་འབད་མི་འཛུལ་སྒོ་ཆ་མཉམ་དུས་གཅིག་ལུ་ཞུ། taf གིས་ཀློགས་རྐྱངམ་གཅིག་འབད་རུང་།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན། tafs གིས་ taf གི་ལག་ཆ་ཚུ་གིས་དགོ་མི་འཛུལ་སྒོ་རྐྱངམ་གཅིག་ཞུ། འཛུལ་སྒོ་ཕྲ་མོ་དེ་མི་འབད་བཏུབ་པ་ཅིན་ ཨེཔ་གི་རྒྱུན་ལྡན་འཛུལ་སྒོ་ཞུཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་ནང་འཛུལ་མ་འབད་བའི་ཧེ་མར་དེ་སླབ། རྒྱུན་ལྡན་འཛུལ་སྒོ་ནང་ taf གིས་ལག་ལེན་མི་འཐབ་པའི་སྒེར་གྱི་གནས་ཚུལ་ཚུད་པ་ཅིན་ tafs གིས་མི་མཐུད།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་མི།</strong> ཁྱོད་ཀྱིས་ Google རང་གི་ཤོག་ལེབ་ནང་ནང་འཛུལ་འབད་ཞིནམ་ལས་ཆོག་ཐམ་བྱིན་ནི་ཅི་ཨིན་ན་སེལ་འཐུ་འབདཝ་ཨིན། tafs གིས་ taf གི་ལག་ཆ་ཚུ་གིས་དགོ་མི་འཛུལ་སྒོ་རྐྱངམ་གཅིག་ཞུ། འཛུལ་སྒོ་ཕྲ་མོ་དེ་མི་འབད་བཏུབ་པ་ཅིན་ ཨེཔ་གི་རྒྱུན་ལྡན་འཛུལ་སྒོ་ཞུཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་ནང་འཛུལ་མ་འབད་བའི་ཧེ་མར་དེ་སླབ། རྒྱུན་ལྡན་འཛུལ་སྒོ་ནང་ taf གིས་ལག་ལེན་མི་འཐབ་པའི་སྒེར་གྱི་གནས་ཚུལ་ཚུད་པ་ཅིན་ tafs གིས་མི་མཐུད།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>taf གིས་དེ་ག་དེ་སྦེ་ལག་ལེན་འཐབ་ཨིན་ན།</strong> taf གིས་དེའི་ Card ནང་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ཅི་ཡང་མ་གཏང་བའི་ཧེ་མར་ཁ་པར་རེ་རེ་ལག་ཆ་དེ་དང་རྩོད་རྒྱུན་དེ་ཚུའི་ཆོག་ཐམ་ཅིག་དང་མཉམ་བརྟག་ཞིབ་འབདཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་བྱིན་མི་འཛུལ་སྒོ་ལས་ཕྱིར་ཡོད་པའི་ཁ་པར་ཅིག་ངོས་ལེན་མི་འབད། བྱ་བ་གང་ཐེངས་རེ་རེ་ཁྱོད་ཀྱི་ཆ་འཇོག་འདྲི་ཨིན་ན་འདི་ Card ནང་གཞི་སྒྲིག་འབད་ཡོད།</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>taf གིས་དེ་ག་དེ་སྦེ་ལག་ལེན་འཐབ་ཨིན་ན།</strong> taf གིས་དེའི་ Card ནང་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ཅི་ཡང་མ་གཏང་བའི་ཧེ་མར་ཁ་པར་རེ་རེ་ལག་ཆ་དེ་དང་རྩོད་རྒྱུན་དེ་ཚུའི་ཆོག་ཐམ་ཅིག་དང་མཉམ་བརྟག་ཞིབ་འབདཝ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་བྱིན་མི་འཛུལ་སྒོ་ལས་ཕྱིར་ཡོད་པའི་ཁ་པར་ཅིག་ངོས་ལེན་མི་འབད། བྱ་བ་གང་ཐེངས་རེ་རེ་ཁྱོད་ཀྱི་ཆ་འཇོག་འདྲི་ཨིན་ན་འདི་ Card ནང་གཞི་སྒྲིག་འབད་ཡོད།</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>tafs རང་གི་ Google ནང་འཛུལ་གྱིས་ཞུ་མི་འཛུལ་སྒོ།</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>tafs རང་གི་ Google ནང་འཛུལ་གྱིས་ཞུ་མི་འཛུལ་སྒོ།</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>tafs གིས་ཞུ་མི་འཛུལ་སྒོ།</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>tafs གིས་ཞུ་མི་འཛུལ་སྒོ།</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("dz") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var21 string
+					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>ནང་འཛུལ་གྱིས་ཅི་ཚད་ཆོག་ཐམ་བྱིན་རུང་ taf གིས་དེའི་ Card གི་ནང་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>ནང་འཛུལ་གྱིས་ཅི་ཚད་ཆོག་ཐམ་བྱིན་རུང་ taf གིས་དེའི་ Card གི་ནང་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong><ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> ཁྱོད་ཀྱི་ Google ནང་འཛུལ་འདི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་གིས་བཞགཔ་ཨིནམ་དང་ ནམ་ཡང་ taf ཡང་ན་ planque ལུ་མི་བྱིན། taf དང་ tafs གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> tafs རང་གི་མཐུད་མཚམས་ཞབས་ཏོག་ planque གིས་ཁྱོད་ཀྱི་ Google token འདི་ཁྱོད་ཀྱི་ལས་ཁུངས་ལུ་ ཡུ་རོབ་མཐུན་ཚོགས་ (ཨཱ་ཡར་ལེནཌ) ནང་ AWS KMS དང་གཅིག་ཁར་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ taf གི་ Card གིས་གནང་མི་ཁ་པར་ཅིག་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ནམ་ཡང་ taf ལུ་མི་བྱིན། taf དང་ AI ཟུར་དཔེ་གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong><ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> ཁྱོད་ཀྱི་ Google ནང་འཛུལ་འདི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་གིས་བཞགཔ་ཨིནམ་དང་ ནམ་ཡང་ taf ཡང་ན་ planque ལུ་མི་བྱིན། taf དང་ tafs གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> tafs རང་གི་མཐུད་མཚམས་ཞབས་ཏོག་ planque གིས་ཁྱོད་ཀྱི་ Google token འདི་ཁྱོད་ཀྱི་ལས་ཁུངས་ལུ་ ཡུ་རོབ་མཐུན་ཚོགས་ (ཨཱ་ཡར་ལེནཌ) ནང་ AWS KMS དང་གཅིག་ཁར་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ taf གི་ Card གིས་གནང་མི་ཁ་པར་ཅིག་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ནམ་ཡང་ taf ལུ་མི་བྱིན། taf དང་ AI ཟུར་དཔེ་གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong> tafs རང་གི་མཐུད་མཚམས་ཞབས་ཏོག་ planque གིས་ཁྱོད་ཀྱི་ Google token འདི་ཁྱོད་ཀྱི་ལས་ཁུངས་ལུ་ ཡུ་རོབ་མཐུན་ཚོགས་ (ཨཱ་ཡར་ལེནཌ) ནང་ AWS KMS དང་གཅིག་ཁར་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ taf གི་ Card གིས་གནང་མི་ཁ་པར་ཅིག་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ནམ་ཡང་ taf ལུ་མི་བྱིན། taf དང་ AI ཟུར་དཔེ་གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong> tafs རང་གི་མཐུད་མཚམས་ཞབས་ཏོག་ planque གིས་ཁྱོད་ཀྱི་ Google token འདི་ཁྱོད་ཀྱི་ལས་ཁུངས་ལུ་ ཡུ་རོབ་མཐུན་ཚོགས་ (ཨཱ་ཡར་ལེནཌ) ནང་ AWS KMS དང་གཅིག་ཁར་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ taf གི་ Card གིས་གནང་མི་ཁ་པར་ཅིག་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། ནམ་ཡང་ taf ལུ་མི་བྱིན། taf དང་ AI ཟུར་དཔེ་གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong> ཁྱོད་ཀྱི་ Google ནང་འཛུལ་འདི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་གིས་བཞགཔ་ཨིནམ་དང་ ནམ་ཡང་ taf ཡང་ན་ planque ལུ་མི་བྱིན། taf དང་ tafs གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>ཁྱོད་ཀྱི་ནང་འཛུལ་སུ་གིས་བཞག་ཨིན་ན།</strong> ཁྱོད་ཀྱི་ Google ནང་འཛུལ་འདི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་གིས་བཞགཔ་ཨིནམ་དང་ ནམ་ཡང་ taf ཡང་ན་ planque ལུ་མི་བྱིན། taf དང་ tafs གཉིས་ཀྱིས་ཁྱོད་ཀྱི་གསང་ཚིག་ཡང་ན་ Google token ཚུ་མི་མཐོང་། འཛུལ་སྒོ་གཅིག་པ་དགོ་མི་ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ནང་འཛུལ་དེ་བསྐྱར་ལག་ལེན་འཐབ་ཨིནམ་དང་ taf རེ་རེ་གིས་ཁྱོད་ཀྱིས་དེ་ལུ་ཆ་འཇོག་འབད་མི་ལག་ཆ་ཚུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག།<ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> དེ་གིས་ཁ་པར་རེ་རེ་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་ཀྱང་འགྱོ།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> planque གིས་ Google ལུ་རང་ཁ་པར་འབདཝ་ལས་ ལས་ཁུངས་གཞན་གིས་ཁ་པར་མི་འབད་ཡང་ན་ཁྱོད་ཀྱི་ནང་འཛུལ་མི་བཞག།</li></ul>གཉིས་ཆ་ར་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག།<ul><li><strong>ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་དེ།</strong> དེ་གིས་ཁ་པར་རེ་རེ་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་ཀྱང་འགྱོ།</li><li><strong>tafs རང་གི་ Google ནང་འཛུལ་བརྒྱུད་དེ།</strong> planque གིས་ Google ལུ་རང་ཁ་པར་འབདཝ་ལས་ ལས་ཁུངས་གཞན་གིས་ཁ་པར་མི་འབད་ཡང་ན་ཁྱོད་ཀྱི་ནང་འཛུལ་མི་བཞག།</li></ul>གཉིས་ཆ་ར་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག། planque གིས་ Google ལུ་རང་ཁ་པར་འབདཝ་ལས་ ལས་ཁུངས་གཞན་གིས་ཁ་པར་མི་འབད་ཡང་ན་ཁྱོད་ཀྱི་ནང་འཛུལ་མི་བཞག། AI ཟུར་དཔེའི་བྱིན་མི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག། planque གིས་ Google ལུ་རང་ཁ་པར་འབདཝ་ལས་ ལས་ཁུངས་གཞན་གིས་ཁ་པར་མི་འབད་ཡང་ན་ཁྱོད་ཀྱི་ནང་འཛུལ་མི་བཞག། AI ཟུར་དཔེའི་བྱིན་མི་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག། དེ་གིས་ཁ་པར་རེ་རེ་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་ཀྱང་འགྱོ། གཉིས་ཆ་ར་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>གཞན་སུ་གིས་ཐོབ་ཨིན་ན།</strong> taf གིས་ Google ལས་ལྷག་མི་ taf འཁོར་བཞག་མི་ AI ཟུར་དཔེ་ལུ་འགྱོ། ཁྱོད་ཀྱིས་ཆོག་ཐམ་བྱིན་པའི་ཤུལ་ལས་རྐྱངམ་གཅིག་ (<a href=\"#ai\">tafs ནང་ AI</a> ལུ་བལྟ)། དེ་གིས་དེའི་བྱིན་མིའི་ཆ་རྐྱེན་འོག་ཉིནམ་ 30 ཚུན་བཞག། དེ་གིས་ཁ་པར་རེ་རེ་འབད་མི་ང་བཅས་ཀྱི་ནང་འཛུལ་ཕྱོགས་མཐུན་མི་བརྒྱུད་ཀྱང་འགྱོ། གཉིས་ཆ་ར་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཐོ་བཀོད་འབད་ཡོད།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>AI སློབ་སྦྱོང་།</strong> Google ལག་ལེན་པའི་གནས་ཚུལ་འདི་ AI ཟུར་དཔེ་སློབ་སྦྱོང་འབད་ནི་ལུ་ལག་ལེན་མི་འཐབ།</li><li><strong>པར་རིས།</strong> tafs གིས་པར་རིས་ཡང་ན་བརྙན་ཟློས་མི་བཟོ་ཡང་ན་མི་ཞུན་དག་འབད། དེའི་ AI གིས་ཚིག་ཡིག་འབྲིསཔ་ཨིན། དེ་གིས་ནམ་ཡང་ Google API ཡང་ན་ Google ལག་ལེན་པའི་གནས་ཚུལ་ལག་ལེན་འཐབ་ཞིནམ་ལས་ སུ་གི་ཡང་སྒེར་གྱི་པར་རིས་ (མོས་མཐུན་མེད་པའི་སྒེར་གྱི་པར་རིས། NCII) ཡང་ན་མི་ཅིག་གི་པར་རིས་གཞན་གང་ཡང་བཟོ་ནི་དང་ཞུན་དག་འབད་ནི་ བརྗེ་སོར་འབད་ནི་མི་འབད།</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>AI སློབ་སྦྱོང་།</strong> Google ལག་ལེན་པའི་གནས་ཚུལ་འདི་ AI ཟུར་དཔེ་སློབ་སྦྱོང་འབད་ནི་ལུ་ལག་ལེན་མི་འཐབ།</li><li><strong>པར་རིས།</strong> tafs གིས་པར་རིས་ཡང་ན་བརྙན་ཟློས་མི་བཟོ་ཡང་ན་མི་ཞུན་དག་འབད། དེའི་ AI གིས་ཚིག་ཡིག་འབྲིསཔ་ཨིན། དེ་གིས་ནམ་ཡང་ Google API ཡང་ན་ Google ལག་ལེན་པའི་གནས་ཚུལ་ལག་ལེན་འཐབ་ཞིནམ་ལས་ སུ་གི་ཡང་སྒེར་གྱི་པར་རིས་ (མོས་མཐུན་མེད་པའི་སྒེར་གྱི་པར་རིས། NCII) ཡང་ན་མི་ཅིག་གི་པར་རིས་གཞན་གང་ཡང་བཟོ་ནི་དང་ཞུན་དག་འབད་ནི་ བརྗེ་སོར་འབད་ནི་མི་འབད།</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("dz")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>ག་ཚུན་ཚོད་དང་ག་ཅིག་ནང་།</strong> ཁྱོད་ཀྱི་ཐིག་ཤོག་དང་བྱུང་རིམ་ཚུ་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་གནས། tafs རང་གི་མཛོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི་ taf གི་གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག་བཞག། ཁ་པར་རེ་རེ་འདི་བརྒྱུད་སྤྲོད་མི་ planque གིས་ Google གིས་ལོག་སྤྲོད་མི་ཆུ་ཚོད་ 24 བཞག་ཨིནམ་ལས་ ཁ་པར་བསྐྱར་འབད་པའི་ལན་གཅིག་པ་ཐོབ་ཞིནམ་ལས་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་། དེའི་ཤུལ་ལས་ཁ་པར་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག། གྲོས་ཚོགས་ནང་ ལྷག་མི་རྐྱངམ་གཅིག་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། གཡོག་གི་ཐོ་བཀོད་དང་དེའི་གྲོས་ཚོགས་ཉིནམ་ 30 བཞག། taf ཅིག་གི་དྲན་ཐོ་ཚུ་ཁྱོད་ཀྱིས་ taf རྩ་བསྐྲད་འབད་ཚུན (<a href=\"#retention\">ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</a> ལུ་བལྟ)།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>ག་ཚུན་ཚོད་དང་ག་ཅིག་ནང་།</strong> ཁྱོད་ཀྱི་ཐིག་ཤོག་དང་བྱུང་རིམ་ཚུ་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་གནས། tafs རང་གི་མཛོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི་ taf གི་གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག་བཞག། ཁ་པར་རེ་རེ་འདི་བརྒྱུད་སྤྲོད་མི་ planque གིས་ Google གིས་ལོག་སྤྲོད་མི་ཆུ་ཚོད་ 24 བཞག་ཨིནམ་ལས་ ཁ་པར་བསྐྱར་འབད་པའི་ལན་གཅིག་པ་ཐོབ་ཞིནམ་ལས་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་། དེའི་ཤུལ་ལས་ཁ་པར་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག། གྲོས་ཚོགས་ནང་ ལྷག་མི་རྐྱངམ་གཅིག་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། གཡོག་གི་ཐོ་བཀོད་དང་དེའི་གྲོས་ཚོགས་ཉིནམ་ 30 བཞག། taf ཅིག་གི་དྲན་ཐོ་ཚུ་ཁྱོད་ཀྱིས་ taf རྩ་བསྐྲད་འབད་ཚུན (<a href=\"#retention\">ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</a> ལུ་བལྟ)།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>ག་ཚུན་ཚོད་དང་ག་ཅིག་ནང་།</strong> ཁྱོད་ཀྱི་སྒྲིག་བྲིས་དང་བྱུང་རིམ། ཐིག་ཤོག་ཚུ་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་གནས། tafs རང་གི་མཛོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི་ taf གི་གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག་བཞག། ཁ་པར་རེ་རེ་འདི་བརྒྱུད་སྤྲོད་མི་ planque གིས་ Google གིས་ལོག་སྤྲོད་མི་ཆུ་ཚོད་ 24 བཞག་ཨིནམ་ལས་ ཁ་པར་བསྐྱར་འབད་པའི་ལན་གཅིག་པ་ཐོབ་ཞིནམ་ལས་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་། དེའི་ཤུལ་ལས་ཁ་པར་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག། གྲོས་ཚོགས་ནང་ ལྷག་མི་རྐྱངམ་གཅིག་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། གཡོག་གི་ཐོ་བཀོད་དང་དེའི་གྲོས་ཚོགས་ཉིནམ་ 30 བཞག། taf ཅིག་གི་དྲན་ཐོ་ཚུ་ཁྱོད་ཀྱིས་ taf རྩ་བསྐྲད་འབད་ཚུན (<a href=\"#retention\">ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</a> ལུ་བལྟ)།</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>ག་ཚུན་ཚོད་དང་ག་ཅིག་ནང་།</strong> ཁྱོད་ཀྱི་སྒྲིག་བྲིས་དང་བྱུང་རིམ། ཐིག་ཤོག་ཚུ་ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་གནས། tafs རང་གི་མཛོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི་ taf གི་གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག་བཞག། ཁ་པར་རེ་རེ་འདི་བརྒྱུད་སྤྲོད་མི་ planque གིས་ Google གིས་ལོག་སྤྲོད་མི་ཆུ་ཚོད་ 24 བཞག་ཨིནམ་ལས་ ཁ་པར་བསྐྱར་འབད་པའི་ལན་གཅིག་པ་ཐོབ་ཞིནམ་ལས་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་། དེའི་ཤུལ་ལས་ཁ་པར་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག། གྲོས་ཚོགས་ནང་ ལྷག་མི་རྐྱངམ་གཅིག་གསང་བསྡམས་ཏེ་བཞག་ཨིནམ་དང་ གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། གཡོག་གི་ཐོ་བཀོད་དང་དེའི་གྲོས་ཚོགས་ཉིནམ་ 30 བཞག། taf ཅིག་གི་དྲན་ཐོ་ཚུ་ཁྱོད་ཀྱིས་ taf རྩ་བསྐྲད་འབད་ཚུན (<a href=\"#retention\">ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</a> ལུ་བལྟ)།</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>དེ་མཚམས་འཇོག་ནི།</strong><ul><li>ཨེཔ་ནང་ ཨེཔ་མཐུད་ནང་ ཡང་ན་ taf གི་ Card ཤོག་ལེབ་ནང་ Google མཐུད་མཚམས་བཅད། དེའི་ Google ལག་ཆ་ཚུ་འཕྲལ་དུ་མཚམས་འཇོག་ཨིནམ་དང་ tafs གིས་ Google ལུ་ནང་འཛུལ་འཕྲལ་དུ་ཆ་མེད་བཟོ་ནི་ལུ་ཞུ། དེ་ཅུང་ཏོ་འགོར་ཏེ་མཇུག་བསྡུ་ཚུགས།</li><li>taf ཅིག་རྩ་བསྐྲད་འབད། དེའི་མཐུད་མཚམས་ཚུ་དེ་དང་གཅིག་ཁར་མཇུག་བསྡུ། ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ད་ལྟོ་ལག་ལེན་འཐབ་མི་ Google ནང་འཛུལ་འདི་མཇུག་མ་ཚུན་གནས།</li><li>ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་ <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> ལུ་དུས་ཚོད་ག་ཅི་ལུ་ཡང་ tafs གི་འཛུལ་སྒོ་བཏོན་ཚུགས། ཁྱོད་ཀྱི་ taf ཚུ་ Google ལུ་འཐོབ་མཚམས་འཇོག་ཨིནམ་དང་ ཨེཔ་གིས་ Google མཐུད་མཚམས་ཕྱིར་འཐོན་སོང་ཟེར་ཁྱོད་ལུ་སླབ།</li><li>ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ། དེའི་ taf ཚུ་དང་གྲོས་ཚོགས། དྲན་ཐོ། ཡིག་ཆ་དང་མཐུད་མཚམས་ཚུ་འཕྲལ་དུ་བསུབ་ཨིནམ་དང་ དེ་ཚུའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ནང་ལས་ཉིནམ་ 35 གི་ནང་། དེའི་ Google token ཚུ་ Google གིས་གནང་མི་ཁར་ཆ་མེད་བཟོ།</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>དེ་མཚམས་འཇོག་ནི།</strong><ul><li>ཨེཔ་ནང་ ཨེཔ་མཐུད་ནང་ ཡང་ན་ taf གི་ Card ཤོག་ལེབ་ནང་ Google མཐུད་མཚམས་བཅད། དེའི་ Google ལག་ཆ་ཚུ་འཕྲལ་དུ་མཚམས་འཇོག་ཨིནམ་དང་ tafs གིས་ Google ལུ་ནང་འཛུལ་འཕྲལ་དུ་ཆ་མེད་བཟོ་ནི་ལུ་ཞུ། དེ་ཅུང་ཏོ་འགོར་ཏེ་མཇུག་བསྡུ་ཚུགས།</li><li>taf ཅིག་རྩ་བསྐྲད་འབད། དེའི་མཐུད་མཚམས་ཚུ་དེ་དང་གཅིག་ཁར་མཇུག་བསྡུ། ཁྱོད་ཀྱི་ taf གཞན་ཅིག་གིས་ད་ལྟོ་ལག་ལེན་འཐབ་མི་ Google ནང་འཛུལ་འདི་མཇུག་མ་ཚུན་གནས།</li><li>ཁྱོད་ཀྱི་ Google རྩིས་ཐོ་ནང་ <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a> ལུ་དུས་ཚོད་ག་ཅི་ལུ་ཡང་ tafs གི་འཛུལ་སྒོ་བཏོན་ཚུགས། ཁྱོད་ཀྱི་ taf ཚུ་ Google ལུ་འཐོབ་མཚམས་འཇོག་ཨིནམ་དང་ ཨེཔ་གིས་ Google མཐུད་མཚམས་ཕྱིར་འཐོན་སོང་ཟེར་ཁྱོད་ལུ་སླབ།</li><li>ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ། དེའི་ taf ཚུ་དང་གྲོས་ཚོགས། དྲན་ཐོ། ཡིག་ཆ་དང་མཐུད་མཚམས་ཚུ་འཕྲལ་དུ་བསུབ་ཨིནམ་དང་ དེ་ཚུའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ནང་ལས་ཉིནམ་ 35 གི་ནང་། དེའི་ Google token ཚུ་ Google གིས་གནང་མི་ཁར་ཆ་མེད་བཟོ།</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

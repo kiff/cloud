@@ -145,7 +145,20 @@ func TafsPrivacySL() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Zapis njenih odobritev: do konca računa.</li><li>Potisni žeton naprave: dokler se ne odjavite iz aplikacije, ne odstranite naprave ali Apple ali Google ne sporoči, da žetona ni več. Javni ključ, ime, platforma in datumi naprave: dokler jo uporabljate; ko jo odjavite, se označi kot odstranjena in hrani do izbrisa računa, da lahko KIFF zavrne njen pozni odgovor in pokaže, katera naprava je podpisala prejšnjega. Javni ključ, ID in ime ključa za dostop: kot podatki njegove naprave. Seja računalnika: največ 90 dni ali do odjave.</li><li>Vaš račun: dokler ni izbrisan. Dnevniki storitev: 30 dni. Shrambi tafs in planque hranita šifrirane kopije na določeno točko v času 35 dni, ki se uporabljajo samo za obnovitev shrambe po okvari.</li></ul><p>Vse drugo je v <a href=\"/sl/privacy#retention\">razdelku o hrambi v pravilniku KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Pravne podlage</h2><p>Izvajanje pogodbe, za upravljanje vašega računa in vaših tafov. Zakoniti interesi, za varnost, preprečevanje goljufij in odkrivanje zlorab. Privolitev, za AI v tafs (<a href=\"#ai\">razdelek 5</a>). Pravna obveznost, za davčne evidence. Podrobnosti so v <a href=\"/sl/privacy#lawful-bases\">pravilniku o zasebnosti KIFF</a>.</p></section><section id=\"rights\"><h2>10. Vaše pravice</h2><p>V skladu z GDPR lahko zahtevate dostop do svojih podatkov, njihov popravek, izbris, omejitev ali prenosljivo kopijo, ugovarjate obdelavi na podlagi zakonitih interesov in prekličete privolitev. Pišite na <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; odgovorimo brez nepotrebnega odlašanja in najpozneje v enem mesecu; za zapleteno zahtevo lahko potrebujemo še dva meseca, o čemer vas obvestimo v prvem mesecu. V aplikaciji Račun → Izvozi moje klepete prenese vaše lastne klepete in zapiske.</p><p>Za izbris računa tafs odprite aplikacijo, pojdite v Račun in tapnite <em>Izbriši račun</em>, nato potrdite. Tega ni mogoče razveljaviti. <a href=\"/sl/privacy#delete-account\">Pravilnik o zasebnosti KIFF</a> pove, kaj se izbriše in kdaj ter kako to zahtevate po e-pošti.</p><p>Pritožbo lahko vložite pri <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">estonskem inšpektoratu za varstvo podatkov (Andmekaitse Inspektsioon)</a> ali pri nadzornem organu v kraju, kjer živite.</p><p><strong>Vaša država.</strong> Zakoni nekaterih držav zahtevajo več, kot pove ta pravilnik. Kaj dodajajo, v angleščini in v jeziku države, je na strani <a href=\"/privacy/countries\">Vaša država</a>.</p></section><section id=\"more\"><h2>11. Varnost, otroci in spremembe</h2><p>Naši varnostni ukrepi so na <a href=\"/security\">/security</a> (v angleščini). tafs ni namenjen otrokom in zavestno ne zbiramo osebnih podatkov otrok, mlajših od 16 let. Ta pravilnik spreminjamo tako, kot <a href=\"/sl/privacy#changes\">pravilnik o zasebnosti KIFF</a> določa za svojega.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Vprašanja in zahteve glede zasebnosti: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Uradna pravna obvestila: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Lastni pogoji aplikacije so na <a href=\"/sl/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(chatEndsWords("sl"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 84, Col: 310}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " Zapis njenih odobritev: do konca računa.</li><li>Potisni žeton naprave: dokler se ne odjavite iz aplikacije, ne odstranite naprave ali Apple ali Google ne sporoči, da žetona ni več. Javni ključ, ime, platforma in datumi naprave: dokler jo uporabljate; ko jo odjavite, se označi kot odstranjena in hrani do izbrisa računa, da lahko KIFF zavrne njen pozni odgovor in pokaže, katera naprava je podpisala prejšnjega. Javni ključ, ID in ime ključa za dostop: kot podatki njegove naprave. Seja računalnika: največ 90 dni ali do odjave.</li><li>Vaš račun: dokler ni izbrisan. Dnevniki storitev: 30 dni. Shrambi tafs in planque hranita šifrirane kopije na določeno točko v času 35 dni, ki se uporabljajo samo za obnovitev shrambe po okvari.</li></ul><p>Vse drugo je v <a href=\"/sl/privacy#retention\">razdelku o hrambi v pravilniku KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Pravne podlage</h2><p>Izvajanje pogodbe, za upravljanje vašega računa in vaših tafov. Zakoniti interesi, za varnost, preprečevanje goljufij in odkrivanje zlorab. Privolitev, za AI v tafs (<a href=\"#ai\">razdelek 5</a>). Pravna obveznost, za davčne evidence. Podrobnosti so v <a href=\"/sl/privacy#lawful-bases\">pravilniku o zasebnosti KIFF</a>.</p></section><section id=\"rights\"><h2>10. Vaše pravice</h2><p>V skladu z GDPR lahko zahtevate dostop do svojih podatkov, njihov popravek, izbris, omejitev ali prenosljivo kopijo, ugovarjate obdelavi na podlagi zakonitih interesov in prekličete privolitev. Pišite na <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; odgovorimo brez nepotrebnega odlašanja in najpozneje v enem mesecu; za zapleteno zahtevo lahko potrebujemo še dva meseca, o čemer vas obvestimo v prvem mesecu. V aplikaciji Račun → Izvozi moje klepete prenese vaše lastne klepete in zapiske.</p><p>Za izbris računa tafs odprite aplikacijo, pojdite v Račun in tapnite <em>Izbriši račun</em>, nato potrdite. Tega ni mogoče razveljaviti. <a href=\"/sl/privacy#delete-account\">Pravilnik o zasebnosti KIFF</a> pove, kaj se izbriše in kdaj ter kako to zahtevate po e-pošti.</p><p>Pritožbo lahko vložite pri <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">estonskem inšpektoratu za varstvo podatkov (Andmekaitse Inspektsioon)</a> ali pri nadzornem organu v kraju, kjer živite.</p><p><strong>Vaša država.</strong> Zakoni nekaterih držav zahtevajo več, kot pove ta pravilnik. Kaj dodajajo, v angleščini in v jeziku države, je na strani <a href=\"/privacy/countries\">Vaša država</a>.</p></section><section id=\"more\"><h2>11. Varnost, otroci in spremembe</h2><p>Naši varnostni ukrepi so na <a href=\"/security\">/security</a> (v angleščini). tafs ni namenjen otrokom in zavestno ne zbiramo osebnih podatkov otrok, mlajših od 16 let. Ta pravilnik spreminjamo tako, kot <a href=\"/sl/privacy#changes\">pravilnik o zasebnosti KIFF</a> določa za svojega.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Vprašanja in zahteve glede zasebnosti: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Uradna pravna obvestila: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Lastni pogoji aplikacije so na <a href=\"/sl/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -177,347 +190,347 @@ func tafsPrivacyGoogleSL() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Uporabniški podatki Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Uporabniški podatki Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Ko to zahtevate, tafs poveže taf z vašim računom Google, na primer z Google Sheets ali Google Calendar, ki ju uporablja njegova naloga, v razdelku aplikacije Poveži aplikacije. Ta razdelek pove, kaj tafs počne s podatki, ki jih prejme od Googla.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Ko to zahtevate, tafs poveže taf z vašim računom Google, na primer z Google Sheets ali Google Calendar, ki ju uporablja njegova naloga, v razdelku aplikacije Poveži aplikacije. Ta razdelek pove, kaj tafs počne s podatki, ki jih prejme od Googla.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Ko to zahtevate, tafs poveže taf z vašim računom Google, na primer z vašim Gmailom ali z Google Calendar ali Google Sheets, ki ju uporablja njegova naloga, v razdelku aplikacije Poveži aplikacije. Ta razdelek pove, kaj tafs počne s podatki, ki jih prejme od Googla.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Ko to zahtevate, tafs poveže taf z vašim računom Google, na primer z vašim Gmailom ali z Google Calendar ali Google Sheets, ki ju uporablja njegova naloga, v razdelku aplikacije Poveži aplikacije. Ta razdelek pove, kaj tafs počne s podatki, ki jih prejme od Googla.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Kaj bere in piše:</strong> kar potrebuje naloga tafa: preglednice, ki jih posodablja, ali dogodke v koledarjih, za katere skrbi. Spreminja jih samo tam, kjer to dovoli Card tafa, vse, kar presega omejitve Card, pa čaka na vašo odobritev.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Kaj bere in piše:</strong> kar potrebuje naloga tafa: preglednice, ki jih posodablja, ali dogodke v koledarjih, za katere skrbi. Spreminja jih samo tam, kjer to dovoli Card tafa, vse, kar presega omejitve Card, pa čaka na vašo odobritev.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Kaj bere in piše:</strong> kar potrebuje naloga tafa. V vašem Gmailu bere vaša sporočila in niti, da najde tista, na katera je treba odgovoriti, in piše osnutke; pošto pošlje samo tam, kjer to dovoli Card tafa. V Google Calendar in Google Sheets bere dogodke v koledarjih, za katere skrbi, ali preglednice, ki jih posodablja, in jih spreminja samo tam, kjer to dovoli Card tafa. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Kaj bere in piše:</strong> kar potrebuje naloga tafa. V vašem Gmailu bere vaša sporočila in niti, da najde tista, na katera je treba odgovoriti, in piše osnutke; pošto pošlje samo tam, kjer to dovoli Card tafa. V Google Calendar in Google Sheets bere dogodke v koledarjih, za katere skrbi, ali preglednice, ki jih posodablja, in jih spreminja samo tam, kjer to dovoli Card tafa. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "V Google Tasks bere sezname opravil, za katere skrbi, ter dodaja, dokonča, premika ali briše opravila samo tam, kjer to dovoli Card tafa. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "V Google Tasks bere sezname opravil, za katere skrbi, ter dodaja, dokonča, premika ali briše opravila samo tam, kjer to dovoli Card tafa. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Vse, kar presega omejitve Card, čaka na vašo odobritev.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Vse, kar presega omejitve Card, čaka na vašo odobritev.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Zakaj:</strong> samo za opravljanje naloge, ki ste jo nastavili za ta taf, in da vam pokaže, s katerim računom Google je povezan: njegov e-poštni naslov, ki se hrani s povezavo, dokler je ne prekinete.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Zakaj:</strong> samo za opravljanje naloge, ki ste jo nastavili za ta taf, in da vam pokaže, s katerim računom Google je povezan: njegov e-poštni naslov, ki se hrani s povezavo, dokler je ne prekinete.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Kako se poveže posamezna aplikacija Google:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Kako se poveže posamezna aplikacija Google:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Prek našega partnerja za prijavo, navedenega na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 139, Col: 148}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("sl")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Prek lastne prijave Google aplikacije tafs, brez drugega podjetja vmes: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Prek našega partnerja za prijavo, navedenega na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 142, Col: 114}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 139, Col: 148}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("sl") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+			if len(googleInHouse("sl")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>Prek lastne prijave Google aplikacije tafs, brez drugega podjetja vmes: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 142, Col: 114}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("sl"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("sl") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sl").Line)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("sl"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sl").AsksFor)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sl").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("sl").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 150, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Aplikacija, navedena v obeh, se poveže na en ali drug način, odvisno od vašega računa. Googlova lastna stran za prijavo pokaže, kateri dovolite.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "Aplikacija, navedena v obeh, se poveže na en ali drug način, odvisno od vašega računa. Googlova lastna stran za prijavo pokaže, kateri dovolite.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili.<ul><li><strong>Prek našega partnerja za prijavo:</strong> tafs zahteva samo dostop, ki ga potrebujejo orodja tafa. Če ožji dostop ni mogoč, zahteva običajni dostop aplikacije in to pove, preden se prijavite. Če bi običajni dostop vključeval osebne podatke, ki jih taf ne uporablja, se tafs ne poveže.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> prijava naenkrat zahteva ves spodaj naveden dostop za to aplikacijo, tudi kadar taf samo bere.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili.<ul><li><strong>Prek našega partnerja za prijavo:</strong> tafs zahteva samo dostop, ki ga potrebujejo orodja tafa. Če ožji dostop ni mogoč, zahteva običajni dostop aplikacije in to pove, preden se prijavite. Če bi običajni dostop vključeval osebne podatke, ki jih taf ne uporablja, se tafs ne poveže.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> prijava naenkrat zahteva ves spodaj naveden dostop za to aplikacijo, tudi kadar taf samo bere.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili. Prijava naenkrat zahteva ves spodaj naveden dostop za to aplikacijo, tudi kadar taf samo bere.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili. Prijava naenkrat zahteva ves spodaj naveden dostop za to aplikacijo, tudi kadar taf samo bere.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili. tafs zahteva samo dostop, ki ga potrebujejo orodja tafa. Če ožji dostop ni mogoč, zahteva običajni dostop aplikacije in to pove, preden se prijavite. Če bi običajni dostop vključeval osebne podatke, ki jih taf ne uporablja, se tafs ne poveže.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kaj dovolite:</strong> prijavite se na Googlovi lastni strani in izberete, kaj boste dovolili. tafs zahteva samo dostop, ki ga potrebujejo orodja tafa. Če ožji dostop ni mogoč, zahteva običajni dostop aplikacije in to pove, preden se prijavite. Če bi običajni dostop vključeval osebne podatke, ki jih taf ne uporablja, se tafs ne poveže.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Kako jih taf uporablja:</strong> taf uporablja samo orodja, odobrena v njegovem Card. Vsak klic se preveri glede na dovoljenje za točno to orodje in te argumente, preden se karkoli pošlje, klic zunaj dostopa, ki ste ga dali, pa se zavrne. Katera dejanja vsakič zahtevajo vašo odobritev, je določeno v Card.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Kako jih taf uporablja:</strong> taf uporablja samo orodja, odobrena v njegovem Card. Vsak klic se preveri glede na dovoljenje za točno to orodje in te argumente, preden se karkoli pošlje, klic zunaj dostopa, ki ste ga dali, pa se zavrne. Katera dejanja vsakič zahtevajo vašo odobritev, je določeno v Card.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Dostop, ki ga zahteva lastna prijava Google aplikacije tafs:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Dostop, ki ga zahteva lastna prijava Google aplikacije tafs:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Dostop, ki ga zahteva tafs:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>Dostop, ki ga zahteva tafs:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("sl") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 188, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var21 string
+					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `sl_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Ne glede na to, koliko prijava dovoli, taf uporablja samo orodja v svojem Card.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>Ne glede na to, koliko prijava dovoli, taf uporablja samo orodja v svojem Card.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Kdo hrani vašo prijavo:</strong><ul><li><strong>Prek našega partnerja za prijavo:</strong> vašo prijavo Google hrani naš partner za prijavo, naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini), in je nikoli ne da tafu ali planque. Ne taf ne tafs ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> planque, lastna storitev za povezave tafs, hrani vaš žeton Google za vaše podjetje, šifriran z AWS KMS v Evropski uniji (Irska), in ga uporablja samo za klic, ki ga dovoli Card tafa. Nikoli ga ne da tafu, ne taf ne model AI pa ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kdo hrani vašo prijavo:</strong><ul><li><strong>Prek našega partnerja za prijavo:</strong> vašo prijavo Google hrani naš partner za prijavo, naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini), in je nikoli ne da tafu ali planque. Ne taf ne tafs ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> planque, lastna storitev za povezave tafs, hrani vaš žeton Google za vaše podjetje, šifriran z AWS KMS v Evropski uniji (Irska), in ga uporablja samo za klic, ki ga dovoli Card tafa. Nikoli ga ne da tafu, ne taf ne model AI pa ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Kdo hrani vašo prijavo:</strong> planque, lastna storitev za povezave tafs, hrani vaš žeton Google za vaše podjetje, šifriran z AWS KMS v Evropski uniji (Irska), in ga uporablja samo za klic, ki ga dovoli Card tafa. Nikoli ga ne da tafu, ne taf ne model AI pa ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kdo hrani vašo prijavo:</strong> planque, lastna storitev za povezave tafs, hrani vaš žeton Google za vaše podjetje, šifriran z AWS KMS v Evropski uniji (Irska), in ga uporablja samo za klic, ki ga dovoli Card tafa. Nikoli ga ne da tafu, ne taf ne model AI pa ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Kdo hrani vašo prijavo:</strong> vašo prijavo Google hrani naš partner za prijavo, naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini), in je nikoli ne da tafu ali planque. Ne taf ne tafs ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kdo hrani vašo prijavo:</strong> vašo prijavo Google hrani naš partner za prijavo, naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini), in je nikoli ne da tafu ali planque. Ne taf ne tafs ne vidita vašega gesla ali vaših žetonov Google. Drug vaš taf, ki potrebuje enak dostop, prijavo uporabi znova, vsak taf pa uporablja samo orodja, ki ste mu jih odobrili.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika.<ul><li><strong>Prek našega partnerja za prijavo:</strong> gre tudi skozi našega partnerja za prijavo, ki izvede vsak klic.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> planque kliče Google sam, zato klica ne izvede in vaše prijave ne hrani nobeno drugo podjetje.</li></ul>Oba sta navedena na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika.<ul><li><strong>Prek našega partnerja za prijavo:</strong> gre tudi skozi našega partnerja za prijavo, ki izvede vsak klic.</li><li><strong>Prek lastne prijave Google aplikacije tafs:</strong> planque kliče Google sam, zato klica ne izvede in vaše prijave ne hrani nobeno drugo podjetje.</li></ul>Oba sta navedena na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika. planque kliče Google sam, zato klica ne izvede in vaše prijave ne hrani nobeno drugo podjetje. Ponudnik modela AI je naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika. planque kliče Google sam, zato klica ne izvede in vaše prijave ne hrani nobeno drugo podjetje. Ponudnik modela AI je naveden na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika. Gre tudi skozi našega partnerja za prijavo, ki izvede vsak klic. Oba sta navedena na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Kdo jih še prejme:</strong> kar taf prebere od Googla, gre k modelu AI, ki poganja taf, šele ko to dovolite (glejte <a href=\"#ai\">AI v tafs</a>), ta pa to hrani največ 30 dni v skladu s pogoji svojega ponudnika. Gre tudi skozi našega partnerja za prijavo, ki izvede vsak klic. Oba sta navedena na <a href=\"/subprocessors\">/subprocessors</a> (v angleščini).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Učenje AI:</strong> uporabniški podatki Google se ne uporabljajo za učenje modelov AI.</li><li><strong>Slike:</strong> tafs ne ustvarja in ne ureja slik ali videoposnetkov: njegova AI piše besedilo. Nikoli ne uporablja API-jev Google ali uporabniških podatkov Google za ustvarjanje, urejanje ali deljenje intimnih podob kogar koli (intimne podobe brez privolitve, NCII) ali katere koli druge podobe osebe.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Učenje AI:</strong> uporabniški podatki Google se ne uporabljajo za učenje modelov AI.</li><li><strong>Slike:</strong> tafs ne ustvarja in ne ureja slik ali videoposnetkov: njegova AI piše besedilo. Nikoli ne uporablja API-jev Google ali uporabniških podatkov Google za ustvarjanje, urejanje ali deljenje intimnih podob kogar koli (intimne podobe brez privolitve, NCII) ali katere koli druge podobe osebe.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("sl")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Kako dolgo in kje:</strong> vaše preglednice in dogodki ostanejo v vašem računu Google. V lastni shrambi tafs se to, kar vrne orodje, hrani samo do konca zagona tafa. planque, ki vsak klic posreduje naprej, hrani to, kar vrne Google, 24 ur, da ponovljen klic dobi enak odgovor in se nikoli ne pošlje dvakrat; po tem hrani samo, ali je bil klic poslan. V klepetu se to, kar je bilo le prebrano, hrani šifrirano, uporablja se, dokler klepet ni eno uro nedejaven, in največ štiri ure po branju, nato se samodejno izbriše, v nekaj dneh. Zapis zagona in njegov klepet se hranita 30 dni, zapiski tafa pa, dokler taf ne odstranite (glejte <a href=\"#retention\">Kako dolgo jih hranimo</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Kako dolgo in kje:</strong> vaše preglednice in dogodki ostanejo v vašem računu Google. V lastni shrambi tafs se to, kar vrne orodje, hrani samo do konca zagona tafa. planque, ki vsak klic posreduje naprej, hrani to, kar vrne Google, 24 ur, da ponovljen klic dobi enak odgovor in se nikoli ne pošlje dvakrat; po tem hrani samo, ali je bil klic poslan. V klepetu se to, kar je bilo le prebrano, hrani šifrirano, uporablja se, dokler klepet ni eno uro nedejaven, in največ štiri ure po branju, nato se samodejno izbriše, v nekaj dneh. Zapis zagona in njegov klepet se hranita 30 dni, zapiski tafa pa, dokler taf ne odstranite (glejte <a href=\"#retention\">Kako dolgo jih hranimo</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Kako dolgo in kje:</strong> vaši osnutki, dogodki in preglednice ostanejo v vašem računu Google. V lastni shrambi tafs se to, kar vrne orodje, hrani samo do konca zagona tafa. planque, ki vsak klic posreduje naprej, hrani to, kar vrne Google, 24 ur, da ponovljen klic dobi enak odgovor in se nikoli ne pošlje dvakrat; po tem hrani samo, ali je bil klic poslan. V klepetu se to, kar je bilo le prebrano, hrani šifrirano, uporablja se, dokler klepet ni eno uro nedejaven, in največ štiri ure po branju, nato se samodejno izbriše, v nekaj dneh. Zapis zagona in njegov klepet se hranita 30 dni, zapiski tafa pa, dokler taf ne odstranite (glejte <a href=\"#retention\">Kako dolgo jih hranimo</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Kako dolgo in kje:</strong> vaši osnutki, dogodki in preglednice ostanejo v vašem računu Google. V lastni shrambi tafs se to, kar vrne orodje, hrani samo do konca zagona tafa. planque, ki vsak klic posreduje naprej, hrani to, kar vrne Google, 24 ur, da ponovljen klic dobi enak odgovor in se nikoli ne pošlje dvakrat; po tem hrani samo, ali je bil klic poslan. V klepetu se to, kar je bilo le prebrano, hrani šifrirano, uporablja se, dokler klepet ni eno uro nedejaven, in največ štiri ure po branju, nato se samodejno izbriše, v nekaj dneh. Zapis zagona in njegov klepet se hranita 30 dni, zapiski tafa pa, dokler taf ne odstranite (glejte <a href=\"#retention\">Kako dolgo jih hranimo</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Kako to ustavite:</strong><ul><li>Prekinite povezavo z Googlom v aplikaciji, v Poveži aplikacije ali na zavihku Card tafa. Njegova orodja Google se takoj ustavijo, tafs pa Google takoj zaprosi za preklic prijave; to se lahko dokonča nekoliko pozneje.</li><li>Odstranite taf in njegove povezave se končajo z njim. Prijava Google, ki jo še uporablja drug vaš taf, ostane, dokler ne izgine zadnji.</li><li>Dostop tafs lahko kadar koli odstranite v svojem računu Google, na <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Vaši tafi ne dosežejo več Googla, aplikacija pa vam pove, da je povezava Google odjavljena.</li><li>Izbrišite svoj račun: njegovi tafi, klepeti, zapiski, datoteke in povezave se takoj izbrišejo, iz kopij na določeno točko v času pa v 35 dneh, njegovi žetoni Google pa se prekličejo, kjer Google to dovoli.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>Kako to ustavite:</strong><ul><li>Prekinite povezavo z Googlom v aplikaciji, v Poveži aplikacije ali na zavihku Card tafa. Njegova orodja Google se takoj ustavijo, tafs pa Google takoj zaprosi za preklic prijave; to se lahko dokonča nekoliko pozneje.</li><li>Odstranite taf in njegove povezave se končajo z njim. Prijava Google, ki jo še uporablja drug vaš taf, ostane, dokler ne izgine zadnji.</li><li>Dostop tafs lahko kadar koli odstranite v svojem računu Google, na <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Vaši tafi ne dosežejo več Googla, aplikacija pa vam pove, da je povezava Google odjavljena.</li><li>Izbrišite svoj račun: njegovi tafi, klepeti, zapiski, datoteke in povezave se takoj izbrišejo, iz kopij na določeno točko v času pa v 35 dneh, njegovi žetoni Google pa se prekličejo, kjer Google to dovoli.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

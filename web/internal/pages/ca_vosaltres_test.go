@@ -10,9 +10,9 @@ import (
 )
 
 // The Catalan legal pages address the reader as vosaltres throughout, as most of each already did: no tu
-// possessive, in the pages or in the words they take from Go.
+// possessive or verb, in the pages or in the words they take from Go.
 func TestCatalanLegalPagesSayVosaltres(t *testing.T) {
-	tu := regexp.MustCompile(`(?i)\b(teu|teva|teus|teves)\b`)
+	tu := regexp.MustCompile(`(?i)\b(teu|teva|teus|teves|pots|hagis|escrius|envies|vincules|aprovis|actives|activis|inicies|toques|guardes|suprimeixis|desconnectes)\b`)
 	for name, page := range map[string]templ.Component{
 		"/ca/privacy": PrivacyCA(), "/ca/tafs/privacy": TafsPrivacyCA(), "/ca/terms": TermsCA(), "/ca/tafs/terms": TafsTermsCA(),
 	} {
