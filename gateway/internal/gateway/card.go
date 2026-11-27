@@ -205,8 +205,8 @@ func cardLine(card kiffapi.AgentCard, t Tool, live bool) string {
 			}
 			if base := baseOf(l); unit == "calls" && l.Per == "" && base == 0 && c.OnExceed == "owner" {
 				heldEach = true
-				h := "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval (a count of 0 calls" + shared +
-					": this hold, not a spent total)"
+				h := "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval (the Card's count of 0 calls" + shared +
+					", means this hold, not a used-up total)"
 				if l.ExtraRoom > 0 {
 					room := fmt.Sprintf("the owner gave extra room for %s", callsText(l.ExtraRoom))
 					if live && l.Status == "ok" {

@@ -388,7 +388,7 @@ func TestAHeldToolReadsAsAskingEachCallNotASpentTotal(t *testing.T) {
 
 	const asks = "each call asks the owner first: propose it as usual, and KIFF holds it for the owner's approval"
 	for name, got := range map[string]string{"kiff_card": cardText(t, r), "description": descriptions(t, r)["issue_refund"]} {
-		if !strings.Contains(got, asks) || !strings.Contains(got, "runs once they approve it") {
+		if !strings.Contains(got, asks) || !strings.Contains(got, "means this hold, not a used-up total") || !strings.Contains(got, "runs once they approve it") {
 			t.Fatalf("%s: %q\nwant it to say each call asks the owner first", name, got)
 		}
 		for _, wrong := range []string{"0 of 0", "is spent", "resets at", "a total of 0", "calls left", "cumulative ceiling", "refused"} {
