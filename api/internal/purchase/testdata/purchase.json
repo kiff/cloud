@@ -364,7 +364,7 @@
     ]
   },
   "approval": {
-    "about": "What the apps draw on a held purchase, every line in KIFF's words. Show more is closed each time and opens every line; the signature covers the version, so approving with the lines closed approves exactly those lines. Never offers extra room. `lines` and `charges` together add up to `total`; `delivery` is drawn under the total.",
+    "about": "What the apps draw on a held purchase, every line in KIFF's words. Show more is closed each time and opens every line, and the toggle then says `show_less`; the signature covers the version, so approving with the lines closed approves exactly those lines. Never offers extra room. `lines` and `charges` together add up to `total`; `delivery` is drawn under the total.",
     "value": {
       "case_id": "pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z",
       "version": 1,
@@ -433,7 +433,7 @@
     }
   },
   "receipt": {
-    "about": "KIFF's signed receipt, kept in the Record: what was decided and what happened, `unknown` said as unknown. Signed by KIFF (Ed25519, `kid`) over the canonical JSON of `value`. The issuer's merchant name and category sit beside the case's, so a mismatch is visible; on `path: token`, the case's side carries the `stripe_profile` the token named, so a profile that paid someone else shows. A placeholder `sig` here; the reader checks the shape and that `digest` is the case's. `path` says which way it paid, and `words.card` is that path's line. `approver.self` is whether the reader is the approver, and `method` how they approved: device_biometric or security_key.",
+    "about": "KIFF's signed receipt, kept in the Record: what was decided and what happened, `unknown` said as unknown. Signed by KIFF (Ed25519, `kid`) over the canonical JSON of `value`. The issuer's merchant name and category sit beside the case's, so a mismatch is visible; on `path: token`, the case's side carries the `stripe_profile` the token named, so a profile that paid someone else shows. A placeholder `sig` here; the reader checks the shape and that `digest` is the case's. `path` says which way it paid, and `words.card` is that path's line. `words.order` is the order's state as the shop confirmed it (`words.shipping` is kept for the delivery's, once there is one). `approver.self` is whether the reader is the approver, and `method` how they approved: device_biometric or security_key.",
     "value": {
       "schema": "kiff.purchase-receipt.v1",
       "receipt_id": "rc_8a44",
@@ -480,7 +480,7 @@
         "state": "Bought",
         "allowed": "You approved up to €86.20 at this shop, once.",
         "card": "One card for this purchase, used once. Its number never reached tafs or KIFF.",
-        "shipping": "Order PL-2026-118204 confirmed by the shop.",
+        "order": "Order PL-2026-118204 confirmed by the shop.",
         "refunds": "No refunds."
       },
       "kid": "kiff-receipts-1",
@@ -497,7 +497,7 @@
         "words": {
           "line": "Not known yet: Papeterie Lumière · €84.20",
           "state": "Not known yet",
-          "shipping": "KIFF is checking whether the shop placed the order. Nothing is tried again until then."
+          "order": "KIFF is checking whether the shop placed the order. Nothing is tried again until then."
         }
       },
       "not_bought": {

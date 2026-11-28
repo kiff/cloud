@@ -212,7 +212,7 @@ func TestTheReceiptSaysWhatWasDecidedAndWhatHappened(t *testing.T) {
 		rc.Approver != (Approver{Role: "owner", Self: true, Method: "device_biometric"}) || rc.Order == nil || rc.Order.Reference != "PL-2026-118204" || rc.DecidedBy != ByOwner {
 		t.Fatalf("receipt %+v", rc)
 	}
-	if rc.Words["state"] != "Bought" || rc.Words["line"] != "Bought from Papeterie Lumière · €85.70 (€1.50 more for shipping, inside what you approved)" || rc.Words["shipping"] != "Order PL-2026-118204 confirmed by the shop." ||
+	if rc.Words["state"] != "Bought" || rc.Words["line"] != "Bought from Papeterie Lumière · €85.70 (€1.50 more for shipping, inside what you approved)" || rc.Words["order"] != "Order PL-2026-118204 confirmed by the shop." ||
 		rc.Words["allowed"] != "You approved up to €86.20 at this shop, once." || rc.Words["refunds"] != "No refunds." {
 		t.Fatalf("words %v", rc.Words)
 	}

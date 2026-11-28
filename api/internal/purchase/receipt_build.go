@@ -157,13 +157,13 @@ func receiptWords(c Case, r Row, rc Receipt, d Decision) map[string]string {
 	}
 	switch {
 	case rc.Order != nil:
-		w["shipping"] = fmt.Sprintf("Order %s confirmed by the shop.", rc.Order.Reference)
+		w["order"] = fmt.Sprintf("Order %s confirmed by the shop.", rc.Order.Reference)
 	case r.State == StateUnknown:
-		w["shipping"] = "KIFF is checking whether the shop placed the order. Nothing is tried again until then."
+		w["order"] = "KIFF is checking whether the shop placed the order. Nothing is tried again until then."
 	case r.State == StateDone:
-		w["shipping"] = "The shop took the order."
+		w["order"] = "The shop took the order."
 	default:
-		w["shipping"] = "No order."
+		w["order"] = "No order."
 	}
 	if rc.Amounts.Refunded > 0 {
 		w["refunds"] = fmt.Sprintf("%s refunded.", money(rc.Amounts.Refunded))
