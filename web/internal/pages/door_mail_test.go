@@ -72,3 +72,21 @@ func TestNoPageGivesResendTheEmailDoor(t *testing.T) {
 		}
 	}
 }
+
+// tafs sends no mail through Resend any more: its door mail, its door replies and reported answers all go through
+// chutchut on Amazon SES, so every /tafs/privacy company list names Amazon SES and not Resend.
+func TestTafsPrivacyNamesNoResend(t *testing.T) {
+	files, err := filepath.Glob("*tafs_privacy.templ")
+	if err != nil || len(files) != 49 {
+		t.Fatalf("want 49 tafs privacy templates, got %d", len(files))
+	}
+	for _, f := range files {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(string(b), "Resend") || !strings.Contains(string(b), "Amazon SES") {
+			t.Errorf("%s: names Resend, or not Amazon SES", f)
+		}
+	}
+}
