@@ -60,6 +60,7 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 	name := r.PathValue("name")
 	var old, next relayState
 	var why, vendor string
+	var changed bool
 	err := h.Store.Change(r.Context(), c.me.TenantID, func(tx *Tx) error {
 		conn, err := tx.Get(r.Context(), name)
 		if err != nil {
@@ -90,6 +91,7 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 		if old.App == next.App && old.DestructiveHint == next.DestructiveHint && samePins(old.VendorPins, next.VendorPins) {
 			return nil
 		}
+		changed = true
 		return tx.SetRelay(r.Context(), name, next, old, c.me.CredentialID)
 	}, h.applier(r.Context(), c))
 	switch {
@@ -131,6 +133,16 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 		if before != after {
 			h.Logger.InfoContext(r.Context(), "connections: a relay's change moved a tool's class",
 				slog.String("tenant", c.me.TenantID), slog.String("tool", name), slog.String("from", string(before)), slog.String("to", string(after)))
+		}
+	}
+	// The tool's class follows what the relay said of it (its app's reviewed
+	// table, its hint, its pins): recorded now, so a Card drafted before the
+	// next start opens what the tool is. Best effort: the change is kept
+	// either way, and the next start records it.
+	if changed && h.Store.Pool != nil {
+		if _, err := (gateway.PostgresCatalog{Pool: h.Store.Pool}).RecordTenantClasses(r.Context(), c.me.TenantID); err != nil && h.Logger != nil {
+			h.Logger.WarnContext(r.Context(), "connections: a relay's change wasn't recorded in the tool's class yet",
+				slog.String("tenant", c.me.TenantID), slog.String("tool", name), slog.String("err", err.Error()))
 		}
 	}
 	h.log(r, "relay fields updated", c, name)
