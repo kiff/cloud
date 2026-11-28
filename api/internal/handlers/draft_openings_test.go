@@ -79,7 +79,7 @@ func TestADraftOpensTheNarrowestCategoryFirst(t *testing.T) {
 func TestAFilledOpeningIsReadAndSignedBehindTheFingerprint(t *testing.T) {
 	t.Parallel()
 	tools := classedTools{"refund": {Class: "money"}}
-	r := newDraftRig(t, WithMandatesToolTitles(tools))
+	r := newDraftRig(t, WithMandatesToolTitles(tools), WithMandatesDraftOpenings(true))
 	windows := auth.NewMemoryWindowStore()
 	policed := auth.DefaultRoutePolicy().WithWindows(windows).WithClock(func() time.Time { return r.now }).Wrap(r.mux)
 	key := func() (*ecdsa.PrivateKey, []byte) {
@@ -148,5 +148,33 @@ func TestAFilledOpeningIsReadAndSignedBehindTheFingerprint(t *testing.T) {
 	ms, _ := r.store.List(t.Context(), "t1")
 	if len(ms) != 1 || len(ms[0].Grants[0].Opens) != 1 || ms[0].Grants[0].Opens[0] != (mandate.Opening{Class: "money"}) {
 		t.Fatalf("the Card in force: %+v", ms)
+	}
+}
+
+// Until every app draws a draft's openings, none is filled; and an Allow
+// from a held call is never filled, since the app compares it key by key
+// with the held call's terms.
+// Category: authority
+// Attack: an app that drops a draft's openings has the owner sign one unseen
+func TestADraftIsFilledOnlyWhenSwitchedOnAndNeverFromAHold(t *testing.T) {
+	t.Parallel()
+	tools := classedTools{"refund": {Class: "money"}}
+	r := newDraftRig(t, WithMandatesToolTitles(tools))
+	code, d := r.submit(agentKey("setup-agent", ""), map[string]any{"agent_id": "sam", "cards": []any{cardMax("sam-refund", "sam", 10000)}})
+	if code != http.StatusCreated {
+		t.Fatalf("drafting: %d %v", code, d)
+	}
+	if grant := d["cards"].([]any)[0].(map[string]any)["grants"].([]any)[0].(map[string]any); grant["opens"] != nil {
+		t.Fatalf("switched off, the draft opens %v", grant["opens"])
+	}
+	h := &MandatesHandler{titles: tools, fillOpens: true}
+	raw, _ := json.Marshal(cardMax("sam-refund", "sam", 10000))
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	out, status, _ := h.fillOpenings(req, "t1", []json.RawMessage{raw}, "hold_1")
+	if status != 0 || string(out[0]) != string(raw) {
+		t.Fatalf("an Allow from a hold was filled: %d %s", status, out[0])
+	}
+	if out, _, _ := h.fillOpenings(req, "t1", []json.RawMessage{raw}, ""); string(out[0]) == string(raw) {
+		t.Fatal("switched on, a draft wasn't filled")
 	}
 }

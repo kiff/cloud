@@ -76,9 +76,11 @@ func draftOpenings(body *mandateBody, classes map[string]tooloutcome.ToolClass) 
 // fillOpenings fills the openings of a draft's Cards as it is made or
 // previewed (draftOpenings), never as it is confirmed: the Cards confirmed
 // are the ones the owner read. A Card that doesn't decode is left for
-// draftCards to refuse.
-func (h *MandatesHandler) fillOpenings(r *http.Request, tenantID string, raw []json.RawMessage) ([]json.RawMessage, int, string) {
-	if len(raw) == 0 {
+// draftCards to refuse. Only with fillOpens on, and never for an Allow from
+// a held call: that offer is the held call's terms, which the app compares
+// key by key.
+func (h *MandatesHandler) fillOpenings(r *http.Request, tenantID string, raw []json.RawMessage, fromHold string) ([]json.RawMessage, int, string) {
+	if !h.fillOpens || fromHold != "" || len(raw) == 0 {
 		return raw, 0, ""
 	}
 	classes := h.toolClasses(r, tenantID)
