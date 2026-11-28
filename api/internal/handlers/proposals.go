@@ -36,6 +36,7 @@ import (
 	"github.com/kiff/cloud/api/internal/permit"
 	"github.com/kiff/cloud/api/internal/profile"
 	"github.com/kiff/cloud/api/internal/proposals"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/runcontext"
 	"github.com/kiff/cloud/api/internal/stream"
 	"github.com/kiff/cloud/api/internal/tenant"
@@ -187,6 +188,21 @@ type ProposalsHandler struct {
 	toolProfiles GatewayToolProfiles
 	// k4 are the accounts whose calls are decided by their class (K4).
 	k4 map[string]bool
+	// purchases reads purchase cases, so issue_card's permit is signed
+	// only for the exact case KIFF approved and is executing. Nil: no
+	// purchase card is ever allowed.
+	purchases purchaseCases
+}
+
+// purchaseCases is the purchase store as the permit gate reads it.
+type purchaseCases interface {
+	Latest(ctx context.Context, tenant, caseID string) (purchase.Row, error)
+}
+
+// WithProposalsPurchases lets issue_card's permit be checked against the
+// purchase case it names.
+func WithProposalsPurchases(p purchaseCases) ProposalsOption {
+	return func(h *ProposalsHandler) { h.purchases = p }
 }
 
 // CallRequesters records the person whose run made a call; the meter is one.

@@ -403,6 +403,11 @@ func (s *Store) AttachCard(ctx context.Context, tenant, caseID string, version i
 	return nil
 }
 
+// Latest reads a case's newest version.
+func (s *Store) Latest(ctx context.Context, tenant, caseID string) (Row, error) {
+	return scanRow(s.Pool.QueryRow(ctx, `SELECT `+rowCols+` FROM purchase.cases WHERE tenant_id = $1 AND case_id = $2 ORDER BY version DESC LIMIT 1`, tenant, caseID))
+}
+
 // Get reads a case version.
 func (s *Store) Get(ctx context.Context, tenant, caseID string, version int) (Row, error) {
 	return scanRow(s.Pool.QueryRow(ctx, `SELECT `+rowCols+` FROM purchase.cases WHERE tenant_id = $1 AND case_id = $2 AND version = $3`, tenant, caseID, version))
