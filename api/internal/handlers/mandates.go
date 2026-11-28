@@ -26,6 +26,7 @@ import (
 	"github.com/kiff/cloud/api/internal/profile"
 	"github.com/kiff/cloud/api/internal/proofs"
 	"github.com/kiff/cloud/api/internal/proposals"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/tenant"
 	"github.com/kiff/cloud/api/internal/tooloutcome"
 	"github.com/kiff/cloud/api/internal/words"
@@ -38,6 +39,9 @@ import (
 // would make every limit advisory — the same escalation the decide path
 // refuses when a caller decorates the actor on a request body.
 type MandatesHandler struct {
+	// purchaseHolds reads the purchase case a hold was opened for, so the
+	// owner's answer signs that case's purchase line. Nil: no purchases.
+	purchaseHolds purchaseHolds
 	// appBaseURL is KIFF's app (https://app.kiff.dev), for the page a held
 	// call is answered on; "" gives the path alone.
 	appBaseURL string
@@ -115,6 +119,18 @@ func WithMandatesPasskeys(store auth.PasskeyStore, rp auth.RelyingParty) Mandate
 
 // WithMandatesAlerts sends hold_answered to the account's alert targets
 // that list it, so an app can clear a held call it is showing.
+// purchaseHolds is the purchase store as a hold's answer reads it.
+type purchaseHolds interface {
+	ByException(ctx context.Context, tenant, exceptionID string) (purchase.Row, error)
+	Decide(ctx context.Context, tenant, caseID string, version int, digest string, d purchase.Decision) error
+	Refuse(ctx context.Context, tenant, caseID string, version int, digest string) error
+}
+
+// WithMandatesPurchaseHolds binds a purchase hold's answer to its case.
+func WithMandatesPurchaseHolds(p purchaseHolds) MandatesOption {
+	return func(h *MandatesHandler) { h.purchaseHolds = p }
+}
+
 func WithMandatesAlerts(n alert.Notifier) MandatesOption {
 	return func(h *MandatesHandler) { h.alerts = n }
 }
@@ -508,6 +524,54 @@ type mandateGrantBody struct {
 	// Opens are the categories the owner opens on this action (K4):
 	// [{"class":"irreversible","argument":"status","value":"finalize"}].
 	Opens []mandateOpeningBody `json:"opens,omitempty"`
+	// Purchase is how a purchase under this grant is decided (Thune):
+	// {"mode":"within_limits","currency":"EUR","per_purchase":5000,...}.
+	Purchase *mandatePurchaseBody `json:"purchase,omitempty"`
+}
+
+// mandatePurchaseBody is a grant's purchase rule as a Card body carries it,
+// amounts in the currency's minor units.
+type mandatePurchaseBody struct {
+	Mode        string                `json:"mode"`
+	Currency    string                `json:"currency"`
+	PerPurchase int64                 `json:"per_purchase,omitempty"`
+	PerDay      int64                 `json:"per_day,omitempty"`
+	PerHour     int                   `json:"purchases_per_hour,omitempty"`
+	PerDayCount int                   `json:"purchases_per_day,omitempty"`
+	Categories  []string              `json:"categories,omitempty"`
+	PriceRule   *mandatePriceRuleBody `json:"price_rule,omitempty"`
+}
+
+type mandatePriceRuleBody struct {
+	UpTo int64    `json:"up_to"`
+	For  []string `json:"for"`
+}
+
+// purchaseBody is a grant's purchase rule as a Card body carries it, so a
+// Card rebuilt from one in force keeps it.
+func purchaseBody(p *mandate.PurchaseRule) *mandatePurchaseBody {
+	if p == nil {
+		return nil
+	}
+	out := &mandatePurchaseBody{Mode: p.Mode, Currency: p.Currency, PerPurchase: p.PerPurchase, PerDay: p.PerDay, PerHour: p.PerHour,
+		PerDayCount: p.PerDayCount, Categories: p.Categories}
+	if r := p.PriceRule; r != nil {
+		out.PriceRule = &mandatePriceRuleBody{UpTo: r.UpTo, For: r.For}
+	}
+	return out
+}
+
+// purchaseRule is a body's purchase rule as the Card keeps it.
+func purchaseRule(b *mandatePurchaseBody) *mandate.PurchaseRule {
+	if b == nil {
+		return nil
+	}
+	out := &mandate.PurchaseRule{Mode: strings.TrimSpace(b.Mode), Currency: strings.TrimSpace(b.Currency), PerPurchase: b.PerPurchase, PerDay: b.PerDay,
+		PerHour: b.PerHour, PerDayCount: b.PerDayCount, Categories: b.Categories}
+	if r := b.PriceRule; r != nil {
+		out.PriceRule = &mandate.PurchasePriceRule{UpTo: r.UpTo, For: r.For}
+	}
+	return out
 }
 
 type mandateOpeningBody struct {
@@ -1846,6 +1910,7 @@ func (b mandateBody) toMandate(tenantID string) (mandate.Mandate, error) {
 		for _, o := range g.Opens {
 			grant.Opens = append(grant.Opens, mandate.Opening{Class: strings.TrimSpace(o.Class), Argument: strings.TrimSpace(o.Argument), Value: o.Value})
 		}
+		grant.Purchase = purchaseRule(g.Purchase)
 		m.Grants = append(m.Grants, grant)
 	}
 	for _, a := range b.Aggregates {
@@ -1958,6 +2023,9 @@ func grantsView(gs []mandate.Grant) []map[string]any {
 				opens = append(opens, ov)
 			}
 			gv["opens"] = opens
+		}
+		if p := purchaseBody(g.Purchase); p != nil {
+			gv["purchase"] = p
 		}
 		out = append(out, gv)
 	}

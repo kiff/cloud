@@ -69,6 +69,9 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 	for _, o := range newOpenings(cur.Grants, next.Grants) {
 		add("opens", "%s", openingWords(o.action, o.opening))
 	}
+	for _, w := range purchaseWidenings(cur.Grants, next.Grants) {
+		add("purchase", "%s", w)
+	}
 	for _, a := range cur.Aggregates {
 		b, ok := matchingAggregate(next.Aggregates, a)
 		if !ok {

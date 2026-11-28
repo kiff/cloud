@@ -16,6 +16,7 @@ import (
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/membership"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/tooloutcome"
 )
 
@@ -417,6 +418,8 @@ func (h *MandatesHandler) listExceptions(w http.ResponseWriter, r *http.Request)
 			v["vendor_tool"] = vt
 		}
 		v = h.withBrowserBlock(r.Context(), tenantID, v, e)
+		v = h.withPurchase(r.Context(), tenantID, v, e)
+		v = h.withPurchase(r.Context(), tenantID, v, e)
 		out = append(out, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"exceptions": out})
@@ -467,6 +470,7 @@ func (h *MandatesHandler) getException(w http.ResponseWriter, r *http.Request) {
 		v["vendor_tool"] = vt
 	}
 	v = h.withBrowserBlock(r.Context(), tenantID, v, e)
+	v = h.withPurchase(r.Context(), tenantID, v, e)
 	writeJSON(w, http.StatusOK, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 }
 
@@ -563,6 +567,12 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 				writeHoldGateError(w, err)
 				return
 			}
+		}
+		// A held purchase's case is decided with the answer: approving
+		// reserves the Card's room first, and a room another purchase took
+		// approves nothing.
+		if stop := h.decidePurchase(w, r, tenantID, id, answer); stop {
+			return
 		}
 		var e mandate.Exception
 		var err error
@@ -766,6 +776,25 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 			"detail": "this phone's key is the integration proofs' test key; it answers only on a test account"})
 		return nil, false
 	}
+	// A purchase is approved only on the phone, behind its fingerprint: the
+	// approval signs the case's purchase line. A session with no device key
+	// (the dashboard, the CLI) and any API key, holds.answer or not, are
+	// refused before anything is reserved; refusing it stays open to anyone
+	// who may answer.
+	if answer == "approve-once" && h.purchaseHolds != nil {
+		_, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+		switch {
+		case err == nil:
+			if len(ident.DeviceKey) == 0 || ident.APIKey || ident.Method == auth.MethodAPIKey {
+				writeJSON(w, http.StatusForbidden, map[string]string{"error": "device_required",
+					"detail": "a purchase is approved on the phone, behind its fingerprint or face, which signs the purchase"})
+				return nil, false
+			}
+		case !errors.Is(err, purchase.ErrNoCase):
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+			return nil, false
+		}
+	}
 	if len(ident.DeviceKey) == 0 {
 		// A device's sign-in without a device key (the CLI's, or a device with
 		// no secure hardware) doesn't approve: nothing proves the
@@ -810,6 +839,26 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 	// A held sealed fill's answer signs over the block the phone drew.
 	if v := h.withBrowserBlock(r.Context(), tenantID, map[string]any{}, held); v["browser_sha256"] != nil {
 		signed.BrowserSHA256, _ = v["browser_sha256"].(string)
+	}
+	// A held purchase's answer signs its case version's purchase line, so
+	// the signature binds the case the phone drew; a case that can't be
+	// read answers nothing rather than verify without it.
+	if h.purchaseHolds != nil {
+		pr, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+		switch {
+		case err == nil:
+			// A purchase is approved once or refused: no Card change and no
+			// next step stand in for the owner's decision on its case.
+			if (answer != "approve-once" && answer != "reject") || refusal.NextStep != "" {
+				writeJSON(w, http.StatusBadRequest, map[string]string{"error": "purchase_answer",
+					"detail": "a purchase is answered approve-once or reject, with no next step"})
+				return nil, false
+			}
+			signed.Purchase = purchase.AnswerLine(pr.Case.CaseID, pr.Case.Version, pr.Digest)
+		case !errors.Is(err, purchase.ErrNoCase):
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+			return nil, false
+		}
 	}
 	// A session that approves with its device's own passkey: an answer that
 	// grants authority counts only with that passkey's assertion (§2.6); a
@@ -940,4 +989,80 @@ func (h *MandatesHandler) vendorTools(r *http.Request, tenantID string) map[stri
 		return nil
 	}
 	return m
+}
+
+// decidePurchase decides the purchase case a hold was opened for, with the
+// owner's answer: approve-once decides it, its room reserved against the
+// Card's day; reject refuses it. stop is true once it has answered.
+func (h *MandatesHandler) decidePurchase(w http.ResponseWriter, r *http.Request, tenantID, id, answer string) bool {
+	if h.purchaseHolds == nil {
+		return false
+	}
+	pr, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+	if errors.Is(err, purchase.ErrNoCase) {
+		return false
+	}
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+		return true
+	}
+	c := pr.Case
+	if answer == "reject" {
+		err = h.purchaseHolds.Refuse(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest)
+	} else {
+		// The Card must still let it buy; the owner's own approval reserves
+		// the room and counts, and isn't refused by the within-limits day
+		// ceiling: outside those limits is exactly what waits for them.
+		if _, ok := h.cardPurchaseLimits(r.Context(), tenantID, c); !ok {
+			writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_card_changed",
+				"detail": "the Card this purchase was made under no longer lets it buy; nothing was approved"})
+			return true
+		}
+		// Who approved, and how, for the receipt: the phone's approval key behind
+		// its fingerprint, or a passkey (a security key).
+		method := "device_biometric"
+		if with, ok := auth.SignedWithFrom(r.Context()); ok && len(with.Passkey) > 0 {
+			method = "security_key"
+		}
+		approver := ""
+		if ident, err := auth.IdentityFrom(r.Context()); err == nil {
+			approver = ident.Subject
+		}
+		err = h.purchaseHolds.Decide(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest,
+			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card, Approver: approver, Method: method})
+	}
+	switch {
+	case err == nil:
+		return false
+	case errors.Is(err, purchase.ErrRoomTaken):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_room_taken",
+			"detail": "Another purchase used this room. Nothing was approved; ask again."})
+	case errors.Is(err, purchase.ErrStale), errors.Is(err, purchase.ErrNotHeld):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_changed",
+			"detail": "this purchase changed or was already decided; reload it"})
+	default:
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "purchase decision failed"})
+	}
+	return true
+}
+
+// cardPurchaseLimits reads the purchase rule of the Card in force the case
+// was made under, never the request's: its day's room bounds the owner's
+// decision too.
+func (h *MandatesHandler) cardPurchaseLimits(ctx context.Context, tenantID string, c purchase.Case) (purchase.Limits, bool) {
+	cards, err := h.store.List(ctx, tenantID)
+	if err != nil {
+		return purchase.Limits{}, false
+	}
+	for _, m := range cards {
+		if m.ID != c.Card.ID || m.RevokedAt != nil {
+			continue
+		}
+		for _, g := range m.Grants {
+			if p := g.Purchase; p != nil && p.Currency == c.Currency {
+				return purchase.LimitsFrom(p.PerPurchase, p.PerDay, p.PerHour, p.PerDayCount, p.Categories).In(m.Location), true
+			}
+		}
+	}
+	return purchase.Limits{}, false
 }
