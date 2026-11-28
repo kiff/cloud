@@ -29,7 +29,7 @@
     {
      "name": "change_client_invoice_status",
      "condition": {
-      "argument": "status",
+      "argument": "operation",
       "equals": "finalize"
      }
     },
@@ -38,7 +38,7 @@
     }
    ],
    "doesnt_open": [
-    "change_client_invoice_status with cancel or unmark_as_paid",
+    "change_client_invoice_status with cancel or unmark_as_paid, or with more than one flag set",
     "mark_client_invoice_as_paid",
     "send_quote",
     "create_reminder",
@@ -47,7 +47,7 @@
    "precondition": "Before by_einvoice, the taf reads get_client and checks e_invoicing_reachable."
   }
  },
- "to_check": "Qonto's live list stored on 28 Nov has 61 tools; this file lists every name in planque's reference plus create_transfer_request. Names here that the live list lacks are kept: if Qonto serves them later, their class is already set.",
+ "to_check": "Checked against Qonto's live list stored on 28 Nov (61 tools): every live tool is here. Ten here aren't served today (create_card_request, create_payment_link, create_reminder, delete_reminder, export_transaction_attachments, export_transactions, get_payment_link, list_payment_links, list_reminders, list_user_organizations); they keep their class in case Qonto serves them later.",
  "tools": [
   {
    "name": "get_organization",
@@ -210,6 +210,21 @@
    "why": "A read: the hint says read-only and the name is a read verb."
   },
   {
+   "name": "get_business_summary",
+   "class": "read",
+   "why": "A read: readOnlyHint true, destructiveHint false, and a read verb. Input from and to only."
+  },
+  {
+   "name": "get_business_summary_period",
+   "class": "read",
+   "why": "A read: readOnlyHint true, destructiveHint false, and a read verb. Input preset, from_month, to_month and charts."
+  },
+  {
+   "name": "show_view",
+   "class": "write",
+   "why": "readOnlyHint true, but show_ isn't a read verb, so by the rule it's at least a write. Its input (from, to, components) changes nothing that's visible; a write here means held, not refused."
+  },
+  {
    "name": "create_client",
    "class": "write",
    "why": "Creates a client record at Qonto; nothing leaves Qonto and it can be edited or deleted."
@@ -289,7 +304,15 @@
    "name": "change_client_invoice_status",
    "class": "irreversible",
    "kind": "finalise",
-   "why": "finalize locks and numbers the invoice; cancel and unmark_as_paid change a final invoice. destructiveHint true."
+   "why": "Takes id and three nullable booleans: finalize (locks and numbers the invoice), cancel and unmark_as_paid. destructiveHint true. Its operation is the one flag set true; none or more than one gives operation \"mixed\", which no opening matches.",
+   "operation": {
+    "name": "operation",
+    "one_of": [
+     "finalize",
+     "cancel",
+     "unmark_as_paid"
+    ]
+   }
   },
   {
    "name": "change_supplier_invoice_status",
@@ -307,7 +330,7 @@
    "name": "create_credit_note",
    "class": "irreversible",
    "kind": "finalise",
-   "why": "A credit note is a numbered accounting document issued against a final invoice. Classed as finalise until its definition shows a draft state."
+   "why": "Hints say a write (destructiveHint false). It's classed finalise because a credit note is a numbered accounting document issued against an invoice; the hint can't lower a class. To be lowered to write only if the tool's description shows a draft state."
   },
   {
    "name": "send_client_invoice",
@@ -403,5 +426,6 @@
    "class": "delete",
    "why": "Removes a transaction's attachment. destructiveHint true."
   }
- ]
+ ],
+ "operations": "A tool with an operation takes exactly one of the flags in one_of. The call's operation is the name of the one flag set to true; with none set, or more than one, it's \"mixed\". An opening may name the operation's value. A \"mixed\" call is classed as the tool, and no opening matches it."
 }

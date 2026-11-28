@@ -73,8 +73,8 @@ func TestTheRulesNeverMakeAReadOnAGuess(t *testing.T) {
 
 // A call's class can depend on its arguments, as the reviewer's table says:
 // Qonto's create_client_invoice is a write only with status draft, and
-// change_client_invoice_status carries its status to KIFF, so an opening can
-// name finalize alone. The class and those values reach KIFF in the call's
+// change_client_invoice_status carries its operation to KIFF, derived from
+// its flags, so an opening can name finalize alone. The class and those values reach KIFF in the call's
 // parameters, set by the gateway over anything the agent sent.
 func TestACallsClassAndItsArgumentsReachKIFF(t *testing.T) {
 	create := Tool{Name: "create_client_invoice_q1", UpstreamTool: "create_client_invoice", App: "qonto"}
@@ -87,23 +87,41 @@ func TestACallsClassAndItsArgumentsReachKIFF(t *testing.T) {
 		}
 	}
 	status := Tool{Name: "change_client_invoice_status_q1", UpstreamTool: "change_client_invoice_status", App: "qonto"}
-	c, args := status.CallClass(map[string]any{"status": "finalize", "id": "inv_1"})
-	if c != ClassIrreversible || len(args) != 1 || args["status"] != "finalize" {
-		t.Errorf("finalize: %s %v", c, args)
+	// Its operation is the one flag set true, derived by KIFF: finalize alone
+	// opens send_invoices; anything else is another operation, or mixed.
+	for _, tc := range []struct {
+		args map[string]any
+		want string
+	}{
+		{map[string]any{"id": "inv_1", "finalize": true}, "finalize"},
+		{map[string]any{"id": "inv_1", "finalize": true, "cancel": false, "unmark_as_paid": nil}, "finalize"},
+		{map[string]any{"id": "inv_1", "cancel": true}, "cancel"},
+		{map[string]any{"id": "inv_1", "unmark_as_paid": true}, "unmark_as_paid"},
+		{map[string]any{"id": "inv_1", "finalize": true, "cancel": true}, OperationMixed},
+		{map[string]any{"id": "inv_1"}, OperationMixed},
+		{map[string]any{"id": "inv_1", "finalize": "true"}, OperationMixed},
+		// The agent's own operation is never read.
+		{map[string]any{"id": "inv_1", "operation": "finalize", "cancel": true}, "cancel"},
+		{map[string]any{"id": "inv_1", "operation": "finalize"}, OperationMixed},
+	} {
+		c, args := status.CallClass(tc.args)
+		if c != ClassIrreversible || len(args) != 1 || args["operation"] != tc.want {
+			t.Errorf("%v: %s %v, want operation %s", tc.args, c, args, tc.want)
+		}
 	}
 	// Without the app, no table: the rules, and no argument values.
 	if c, args := (Tool{Name: "create_client_invoice"}).CallClass(map[string]any{"status": "draft"}); c != ClassIrreversible || args != nil {
 		t.Errorf("no app: %s %v", c, args)
 	}
 	// The parameters KIFF decides on carry both, whatever the agent sent.
-	p, err := status.params(map[string]any{"status": "finalize", ClassParam: "read", ClassArgsParam: map[string]any{"status": "x"}})
+	p, err := status.params(map[string]any{"finalize": true, ClassParam: "read", ClassArgsParam: map[string]any{"operation": "cancel"}})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if p[ClassParam] != "irreversible" {
 		t.Errorf("class sent: %v", p[ClassParam])
 	}
-	if a, _ := p[ClassArgsParam].(map[string]string); a["status"] != "finalize" {
+	if a, _ := p[ClassArgsParam].(map[string]string); a["operation"] != "finalize" {
 		t.Errorf("arguments sent: %v", p[ClassArgsParam])
 	}
 	// A read sends its class too, and no argument values.

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -169,6 +170,7 @@ type ClassTable struct {
 		Name      string          `json:"name"`
 		Class     Class           `json:"class"`
 		Condition *classCondition `json:"condition"`
+		Operation *classOperation `json:"operation"`
 	} `json:"tools"`
 	Categories map[string]struct {
 		Opens []struct {
@@ -184,9 +186,42 @@ type classCondition struct {
 	Then     Class  `json:"then"`
 }
 
+// classOperation is a tool whose call does one of several things, each a
+// flag of its own (change_client_invoice_status: finalize, cancel,
+// unmark_as_paid). The call's operation, under Name, is the one flag it sets
+// true, or OperationMixed for none or more than one. KIFF derives it from
+// the flags and never reads it from the call: an agent that sends its own
+// "operation" next to cancel: true matches nothing.
+type classOperation struct {
+	Name  string   `json:"name"`
+	OneOf []string `json:"one_of"`
+}
+
+// OperationMixed is the operation of a call that sets none of its tool's
+// flags, or more than one: no opening matches it.
+const OperationMixed = "mixed"
+
+// of is the call's operation, from its flags alone.
+func (o *classOperation) of(callArgs map[string]any) string {
+	set := ""
+	for _, flag := range o.OneOf {
+		if v, ok := callArgs[flag].(bool); ok && v {
+			if set != "" {
+				return OperationMixed
+			}
+			set = flag
+		}
+	}
+	if set == "" {
+		return OperationMixed
+	}
+	return set
+}
+
 type tableTool struct {
 	class     Class
 	condition *classCondition
+	operation *classOperation
 	// args are the arguments an opening or condition names for this tool.
 	args []string
 }
@@ -222,7 +257,11 @@ func loadTables() {
 				tablesErr = fmt.Errorf("classes/%s: %s has class %q", e.Name(), tool.Name, tool.Class)
 				return
 			}
-			tt := tableTool{class: tool.Class, condition: tool.Condition}
+			tt := tableTool{class: tool.Class, condition: tool.Condition, operation: tool.Operation}
+			if o := tool.Operation; o != nil && (o.Name == "" || len(o.OneOf) == 0 || slices.Contains(o.OneOf, o.Name) || slices.Contains(o.OneOf, OperationMixed)) {
+				tablesErr = fmt.Errorf("classes/%s: %s has an operation that isn't one", e.Name(), tool.Name)
+				return
+			}
 			if c := tool.Condition; c != nil {
 				if _, ok := classRank[c.Then]; !ok || c.Argument == "" {
 					tablesErr = fmt.Errorf("classes/%s: %s has a condition that isn't one", e.Name(), tool.Name)
@@ -279,8 +318,16 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 	if !ok {
 		return c, nil
 	}
+	// The call's own value for each argument the table names, but the
+	// operation: that one is derived from its flags, never taken as sent.
 	var args map[string]string
+	if o := tt.operation; o != nil {
+		args = map[string]string{o.Name: o.of(callArgs)}
+	}
 	for _, a := range tt.args {
+		if tt.operation != nil && a == tt.operation.Name {
+			continue
+		}
 		if v, ok := callArgs[a].(string); ok {
 			if args == nil {
 				args = map[string]string{}
@@ -295,7 +342,11 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 		// carry nested send, finalise or e-invoicing fields. The relay's own
 		// draft-only check refuses those, and must stay until KIFF signs the
 		// whole vendor body for pinned arguments.
-		if v, ok := callArgs[cond.Argument].(string); ok && v == cond.Equals {
+		v, ok := callArgs[cond.Argument].(string)
+		if tt.operation != nil && cond.Argument == tt.operation.Name {
+			v, ok = args[cond.Argument], true
+		}
+		if ok && v == cond.Equals {
 			c = worse(cond.Then, minimumOf(ClassedTool{ReadOnly: t.ReadOnly, Money: t.Money}))
 		}
 	}
