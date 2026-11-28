@@ -55,7 +55,7 @@ func TestAPayOpensItsCaseFromPlanquesSignedCheckout(t *testing.T) {
 	apiAddr, gwAddr := freeAddr(t), freeAddr(t)
 	start(t, apiBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_AUTH_PROVIDER=stub", "KIFF_STUB_SUBJECTS=" + owner, "KIFF_DEMO_TENANT_ID=" + tenantID,
 		"KIFF_PERMIT_SIGNING_KEY=e2e-1:" + seed(), "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text",
-		"KIFF_PURCHASES=on", "KIFF_PURCHASE_CARD_FILL=test", "KIFF_E2E_PLANQUE_STEP_KEY=" + base64.RawURLEncoding.EncodeToString(pub)}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
+		"KIFF_PURCHASES=on", "KIFF_PURCHASE_CARD_FILL=test", "KIFF_K4_TENANTS=" + tenantID, "KIFF_E2E_PLANQUE_STEP_KEY=" + base64.RawURLEncoding.EncodeToString(pub)}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
 	gwKeys := "e2e:" + base64.StdEncoding.EncodeToString(func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }())
 	start(t, gwBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_GATEWAY_CREDENTIAL_KEYS=" + gwKeys, "KIFF_API_URL=http://" + apiAddr,
 		"KIFF_GATEWAY_ALLOW_PRIVATE_TOOLS=true", "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text", "KIFF_PURCHASES=on"}, "http://"+gwAddr+"/healthz", "-addr", gwAddr)

@@ -14,7 +14,7 @@ import (
 // A pay's describe (Thune). KIFF opens a purchase's case from planque's
 // signed read of its checkout, never from the taf's words, so before a
 // relay's browse_pay is decided the gateway asks planque for that read: the
-// same tool, with {url, ref} and the gateway's own header
+// same tool, with {url, ref, checkout_describe} and the gateway's own header
 // CheckoutDescribeHeader naming the pay's operation (a taf can't set it),
 // decided by KIFF on its own as "<call>:describe" and sent under its own
 // permit. planque answers from the
@@ -26,6 +26,10 @@ import (
 // CheckoutDescribeHeader asks planque's browse_pay to describe the checkout
 // of the pay it names (the pay's operation) instead of paying.
 const CheckoutDescribeHeader = "KIFF-Checkout-Describe"
+
+// CheckoutDescribeArg carries the pay's operation in the describe's own
+// arguments, under its permit. Only the gateway sets it; tafs never see it.
+const CheckoutDescribeArg = "checkout_describe"
 
 // payTool is planque's call that pays a checkout.
 const payTool = "browse_pay"
@@ -50,7 +54,10 @@ func (a *agent) describePay(ctx context.Context, t Tool, in invocation.Invocatio
 		return nil, "a pay names its checkout's page and the control it clicks"
 	}
 	id := in.Key + ":describe"
-	ask := map[string]any{"url": args.URL, "ref": args.Ref}
+	// checkout_describe binds the describe in its permit: planque's describe
+	// requires it equal to the header, and a planque without one refuses it
+	// as an argument it doesn't know, so a describe is never run as a pay.
+	ask := map[string]any{"url": args.URL, "ref": args.Ref, CheckoutDescribeArg: in.Key}
 	if t.IdempotencyArg != "" {
 		ask[t.IdempotencyArg] = id
 	}
@@ -59,6 +66,13 @@ func (a *agent) describePay(ctx context.Context, t Tool, in invocation.Invocatio
 	if err != nil {
 		return nil, "the checkout couldn't be asked for"
 	}
+	// A read of planque's kept checkout: it acts on nothing, so it's decided
+	// as a read, never as the pay's money (which would ask the owner for a
+	// call that buys nothing). Safe only because the argument above makes a
+	// planque that can't describe refuse it.
+	params[ClassParam] = string(ClassRead)
+	delete(params, ClassArgsParam)
+	delete(params, OwnerAskParam)
 	if err := a.g.API.RequestToolCall(ctx, a.key, Domain, id, a.me.AgentID, a.g.now()); err != nil {
 		return nil, "KIFF couldn't record the read of the checkout"
 	}
