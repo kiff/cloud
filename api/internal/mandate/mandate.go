@@ -269,11 +269,37 @@ type Grant struct {
 	// return_first. The agent reads the chosen step when it collects the
 	// call. Empty means approve or refuse only, as before.
 	NextSteps []string `json:",omitempty"`
+	// Opens are the categories of call the owner opened on this action
+	// (K4): irreversible, delete or money, each
+	// refused until opened, and optionally only for one value of one
+	// argument ("finalize" on status). A money opening never lets a pay run
+	// unasked: each is still the owner's to approve.
+	Opens []Opening `json:",omitempty"`
 }
 
 // ResourceScope limits a grant to calls whose string parameter is one
 // of Values. Values match exactly; the parameter name matches without
 // regard to case, as everywhere else on a Card.
+// Opening is one category the owner opened on a grant's action (K4): its
+// class, and when Argument is set, only for calls whose Argument is Value.
+type Opening struct {
+	Class    string
+	Argument string `json:",omitempty"`
+	Value    string `json:",omitempty"`
+}
+
+// Classes K4 refuses until a grant opens them.
+const (
+	ClassIrreversible = "irreversible"
+	ClassDelete       = "delete"
+	ClassMoney        = "money"
+)
+
+// GatedClass reports whether K4 refuses class until a grant opens it.
+func GatedClass(class string) bool {
+	return class == ClassIrreversible || class == ClassDelete || class == ClassMoney
+}
+
 type ResourceScope struct {
 	Parameter string
 	Values    []string
