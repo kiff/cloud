@@ -111,26 +111,24 @@ func TestAPayOpensItsCaseFromPlanquesSignedCheckout(t *testing.T) {
 		return
 	}
 
-	// planque's signed checkout opens the case. planque's read names no
-	// merchant category (the issuer gives it at the authorization), so the
-	// Card's limits can't decide it here: it waits for the owner with the
-	// purchase ask, and only the describe
-	// reached the tool.
-	ok, text := pay("c7", "op-pay-1")
-	if ok || !strings.Contains(text, "HELD") || !strings.Contains(text, "this buys something") {
+	// planque's signed checkout opens the case, decided within the Card's
+	// limits (planque's read names no merchant category: the single-use
+	// card checks it at the authorization), and the pay reaches the tool
+	// after its describe.
+	if ok, text := pay("c7", "op-pay-1"); !ok || !strings.Contains(text, "Paid #") {
 		t.Fatalf("the pay: %v %s", ok, text)
 	}
-	if n := calls(); n != 1 {
-		t.Fatalf("the tool received %d calls, want only the describe", n)
+	if n := calls(); n != 2 {
+		t.Fatalf("the tool received %d calls, want the describe and the pay", n)
 	}
-	if n, state := cases(); n != 1 || state != "held" {
+	if n, state := cases(); n != 1 || state != "approved" {
 		t.Fatalf("the case: %d, %q", n, state)
 	}
-	// The describe was permitted under its own op; the held pay wasn't.
+	// The describe and the pay were each permitted under their own op.
 	var describes, pays int
 	_ = pool.QueryRow(ctx, `SELECT count(*) FILTER (WHERE op LIKE '%:describe'), count(*) FILTER (WHERE op NOT LIKE '%:describe') FROM cloud_meta.permit_bindings
 		WHERE tenant_id = $1 AND tool = 'browse_pay' AND permit_jti IS NOT NULL`, tenantID).Scan(&describes, &pays)
-	if describes != 1 || pays != 0 {
+	if describes != 1 || pays != 1 {
 		t.Fatalf("the permits: %d describes, %d pays", describes, pays)
 	}
 
@@ -139,7 +137,7 @@ func TestAPayOpensItsCaseFromPlanquesSignedCheckout(t *testing.T) {
 	if ok, text := pay("tampered", "op-pay-2"); ok || !strings.Contains(text, "purchase_checkout") || !strings.Contains(text, "isn't signed by planque") {
 		t.Fatalf("the tampered pay: %v %s", ok, text)
 	}
-	if n := calls(); n != 2 {
+	if n := calls(); n != 3 {
 		t.Fatalf("the tool received %d calls, want only the tampered pay's describe more", n)
 	}
 	if n, _ := cases(); n != 1 {
