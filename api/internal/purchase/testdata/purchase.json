@@ -374,6 +374,7 @@
         "total_note": "With shipping and VAT, as the checkout shows it",
         "delivery": "Acme SAS, 12 rue des Lilas, 69003 Lyon, France",
         "show_more": "Show more",
+        "show_less": "Show less",
         "lines": [
           {
             "name": "A4 paper, 80 g, 5 reams",

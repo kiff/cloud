@@ -14,6 +14,9 @@ func TestTheApprovalIsDrawnInKIFFsWords(t *testing.T) {
 		w.PriceRule != "It can go up to €2.00 more for shipping." || len(w.Lines) != 2 || len(w.Charges) != 1 || w.Charges[0].Amount != "€9.50" {
 		t.Fatalf("words %+v", w)
 	}
+	if w.ShowMore != "Show more" || w.ShowLess != "Show less" {
+		t.Fatalf("the toggle: %q %q", w.ShowMore, w.ShowLess)
+	}
 	if w.Delivery != "Acme SAS, 12 rue des Lilas, 69003 Lyon, FR" {
 		t.Fatalf("delivery %q", w.Delivery)
 	}

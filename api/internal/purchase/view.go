@@ -17,12 +17,14 @@ type Approval struct {
 
 // ApprovalWords are the lines the apps draw, none composed by the apps.
 type ApprovalWords struct {
-	Title        string      `json:"title"`
-	Subtitle     string      `json:"subtitle"`
-	Total        string      `json:"total"`
-	TotalNote    string      `json:"total_note"`
-	Delivery     string      `json:"delivery"`
-	ShowMore     string      `json:"show_more"`
+	Title     string `json:"title"`
+	Subtitle  string `json:"subtitle"`
+	Total     string `json:"total"`
+	TotalNote string `json:"total_note"`
+	Delivery  string `json:"delivery"`
+	ShowMore  string `json:"show_more"`
+	// ShowLess is the toggle's words while the lines are open.
+	ShowLess     string      `json:"show_less"`
 	Lines        []WordsLine `json:"lines"`
 	Charges      []WordsLine `json:"charges"`
 	PriceRule    string      `json:"price_rule,omitempty"`
@@ -51,6 +53,7 @@ func ApprovalOf(r Row) Approval {
 		TotalNote:    "With shipping and VAT, as the checkout shows it",
 		Delivery:     addressLine(c.Delivery),
 		ShowMore:     "Show more",
+		ShowLess:     "Show less",
 		Grant:        fmt.Sprintf("A card for this purchase: up to %s, at this shop, used once.", money(c.Price.Max)),
 		BuysNow:      "It buys now. If the shop doesn't take it within 15 minutes, nothing is bought.",
 		NothingUntil: "Nothing is bought until you approve.",
