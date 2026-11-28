@@ -102,6 +102,9 @@ func Validate(m Mandate, actions []domain.ActionSpec) error {
 		if err := validateOpens(spec.Name, g.Opens); err != nil {
 			return err
 		}
+		if err := validatePurchase(spec.Name, g); err != nil {
+			return err
+		}
 		granted = append(granted, spec)
 	}
 

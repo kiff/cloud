@@ -750,6 +750,12 @@ permit_key=""
 if [ -n "\$PERMIT_KEY_SECRET" ] || [ -n "\$kiff_bundle" ]; then permit_key=\$(secret_value permit_key "\$PERMIT_KEY_SECRET" optional); fi
 permit_published=""
 if [ -n "\$PERMIT_PUBLISHED_SECRET" ] || [ -n "\$kiff_bundle" ]; then permit_published=\$(secret_value permit_published "\$PERMIT_PUBLISHED_SECRET" optional); fi
+# The purchase receipt key (Thune): its own Ed25519 seed, never the permit
+# key's, in KIFF's one secret. Without it receipts stay off.
+purchase_receipt_key=""
+if [ -n "\$kiff_bundle" ]; then purchase_receipt_key=\$(secret_value purchase_receipt_key "" optional); fi
+purchase_receipt_published=""
+if [ -n "\$kiff_bundle" ]; then purchase_receipt_published=\$(secret_value purchase_receipt_published "" optional); fi
 planque_event_secret=""
 if [ -n "\$PLANQUE_EVENT_SECRET_ARN" ] || [ -n "\$kiff_bundle" ]; then
 	planque_event_secret=\$(secret_value planque_event_secret "\$PLANQUE_EVENT_SECRET_ARN" optional)
@@ -806,6 +812,8 @@ KIFF_APP_SIGNIN_TENANTS=\${KIFF_APP_SIGNIN_TENANTS}
 KIFF_APP_BASE_URL=https://\${KIFF_APP_HOST}
 KIFF_PERMIT_SIGNING_KEY=\${permit_key}
 KIFF_PERMIT_PUBLISHED_KEYS=\${permit_published}
+KIFF_PURCHASE_RECEIPT_KEY=\${purchase_receipt_key}
+KIFF_PURCHASE_RECEIPT_PUBLISHED_KEYS=\${purchase_receipt_published}
 KIFF_PLANQUE_URLS=\${KIFF_PLANQUE_URLS}
 KIFF_ANDROID_APPS=\${KIFF_ANDROID_APPS}
 KIFF_PRUNE_TENANTS=\${KIFF_PRUNE_TENANTS}

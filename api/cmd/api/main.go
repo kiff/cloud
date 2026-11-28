@@ -85,6 +85,7 @@ import (
 	"github.com/kiff/cloud/api/internal/posture"
 	"github.com/kiff/cloud/api/internal/proofs"
 	"github.com/kiff/cloud/api/internal/proposals"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/receipt"
 	"github.com/kiff/cloud/api/internal/region"
 	"github.com/kiff/cloud/api/internal/requestlog"
@@ -194,6 +195,19 @@ const (
 	// delete and money refused until a Card opens them, and every money call
 	// held for its owner. Test accounts only until K4's step 7; unset, none.
 	envK4Tenants = "KIFF_K4_TENANTS"
+
+	// envPurchases turns purchases on (Thune): "on", or off.
+	envPurchases = "KIFF_PURCHASES"
+	// Paying by card fill puts a card number in a worker's browser: only
+	// while the issuer is in test mode ("test"; unset, tokens only).
+	envPurchaseCardFill = "KIFF_PURCHASE_CARD_FILL"
+	// The purchase receipt key, kid:base64url(seed), its own (never the
+	// permit key's), and the published ones, kid:base64url(pub)[:revoked_at].
+	envPurchaseReceiptKey       = "KIFF_PURCHASE_RECEIPT_KEY"
+	envPurchaseReceiptPublished = "KIFF_PURCHASE_RECEIPT_PUBLISHED_KEYS"
+	// envIssuingWebhookSecret is the issuer's signing secret for its live
+	// authorization webhook. Unset, the webhook isn't served.
+	envIssuingWebhookSecret = "KIFF_ISSUING_WEBHOOK_SECRET"
 
 	// Google Play Billing for the tafs Android app. Set up when the
 	// package name and the service account are both set; otherwise its
@@ -2055,6 +2069,30 @@ func newRouter(deps routerDeps) http.Handler {
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))
 		}
+		// Thune: purchases, off unless KIFF_PURCHASES=on. On, issue_card's
+		// permit is checked against its purchase case, the issuer's live
+		// authorization webhook is served (KIFF_ISSUING_WEBHOOK_SECRET), and
+		// cases past their time, or whose execution died, are swept.
+		if os.Getenv(envPurchases) == "on" && deps.pool != nil {
+			if err := purchase.ApplySchema(context.Background(), deps.pool); err != nil {
+				deps.logger.Error("purchases: schema", slog.String("err", err.Error()))
+			} else {
+				store := &purchase.Store{Pool: deps.pool}
+				propOpts = append(propOpts, handlers.WithProposalsPurchases(store))
+				if secret := os.Getenv(envIssuingWebhookSecret); secret != "" {
+					mux.Handle("POST /v1/issuing/authorizations", &purchase.Webhook{Store: store, Secret: secret, Logger: deps.logger})
+				}
+				go sweepPurchases(store, deps.logger)
+				receiptsFor(store, deps.logger).Register(authed, mux)
+				// A relay's pay opens its purchase's case from planque's
+				// signed checkout (purchase_open.go). Card fill only while
+				// the issuer is in test mode (KIFF_PURCHASE_CARD_FILL=test).
+				if deps.mandateStore != nil {
+					propOpts = append(propOpts, handlers.WithProposalsPurchaseOpening(store, purchaseRules{deps.mandateStore},
+						os.Getenv(envPurchaseCardFill) == "test"))
+				}
+			}
+		}
 		// K4: the accounts whose calls are decided by their class, test
 		// accounts first (KIFF_K4_TENANTS, comma-separated; unset, none).
 		propOpts = append(propOpts, handlers.WithProposalsK4Tenants(strings.Split(os.Getenv(envK4Tenants), ",")...))
@@ -2160,6 +2198,7 @@ func newRouter(deps routerDeps) http.Handler {
 			handlers.WithMandatesAlerts(deps.alertNotifier),
 			handlers.WithMandatesAgentDrafts(deps.agentDrafts, deps.apiKeyStore),
 			handlers.WithMandatesCalls(callsReader(deps.decisionsReader)),
+			mandatesPurchaseHolds(deps),
 			handlers.WithMandatesSetupReads(setupReadDeps(deps, memberSvc)),
 			handlers.WithMandatesApprovalWindows(deps.devSessionStore, deps.windows),
 			handlers.WithMandatesApprovalPasskeys(deps.passkeys),
@@ -4074,4 +4113,91 @@ func buildRegionGate(path string, logger *slog.Logger) (*region.Gate, error) {
 	}
 	logger.Info("region: table loaded", slog.Int("ranges", table.Len()), slog.String("list_effective", region.ListEffective))
 	return region.NewGate(table, region.SessionRoutes, logger), nil
+}
+
+// sweepPurchases ends approved purchase cases past their time and moves
+// executions whose holder died to unknown, every 30 seconds.
+func sweepPurchases(store *purchase.Store, logger *slog.Logger) {
+	for range time.Tick(30 * time.Second) {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		if n, err := store.Expire(ctx); err != nil {
+			logger.Error("purchases: expire", slog.String("err", err.Error()))
+		} else if n > 0 {
+			logger.Info("purchases: expired", slog.Int("cases", n))
+		}
+		if n, err := store.SweepLeases(ctx); err != nil {
+			logger.Error("purchases: sweep leases", slog.String("err", err.Error()))
+		} else if n > 0 {
+			logger.Info("purchases: executions now unknown", slog.Int("cases", n))
+		}
+		cancel()
+	}
+}
+
+// mandatesPurchaseHolds binds a purchase hold's answer to its case, with
+// purchases on; otherwise an option that changes nothing.
+func mandatesPurchaseHolds(deps routerDeps) handlers.MandatesOption {
+	if os.Getenv(envPurchases) != "on" || deps.pool == nil {
+		return func(*handlers.MandatesHandler) {}
+	}
+	return handlers.WithMandatesPurchaseHolds(&purchase.Store{Pool: deps.pool})
+}
+
+// receiptsFor is the purchase receipts' routes, signing with
+// KIFF_PURCHASE_RECEIPT_KEY. Unset, or the permit key's own seed (one
+// leaked seed must never both authorize calls and vouch for receipts), or
+// unreadable: receipts stay off.
+func receiptsFor(store *purchase.Store, logger *slog.Logger) *handlers.PurchaseReceipts {
+	h := &handlers.PurchaseReceipts{Store: store}
+	raw := strings.TrimSpace(os.Getenv(envPurchaseReceiptKey))
+	if raw == "" {
+		logger.Info("purchase receipts off", slog.String("reason", envPurchaseReceiptKey+" unset"))
+		return h
+	}
+	k, err := permit.ParseKey(raw)
+	if err != nil {
+		logger.Error("purchase receipts off", slog.String("reason", envPurchaseReceiptKey+": "+err.Error()))
+		return h
+	}
+	if pk, err := permit.ParseKey(strings.TrimSpace(os.Getenv(envPermitSigningKey))); err == nil && pk.Priv.Equal(k.Priv) {
+		logger.Error("purchase receipts off", slog.String("reason", envPurchaseReceiptKey+" is the permit key's seed; it must be its own"))
+		return h
+	}
+	others, err := purchase.ParseReceiptKeys(os.Getenv(envPurchaseReceiptPublished))
+	if err != nil {
+		logger.Error("purchase receipts off", slog.String("reason", envPurchaseReceiptPublished+": "+err.Error()))
+		return h
+	}
+	h.Key, h.Others = &k, others
+	logger.Info("purchase receipts on", slog.String("kid", k.ID), slog.Int("published_keys", 1+len(others)))
+	return h
+}
+
+// purchaseRules finds the Card a pay buys under, from the Cards in force.
+type purchaseRules struct{ store mandate.Store }
+
+// PurchaseRule is the Card in force held by agent that grants action with a
+// purchase rule in currency, and its revision.
+func (p purchaseRules) PurchaseRule(ctx context.Context, tenant, agent, action, currency string) (mandate.Mandate, int, mandate.PurchaseRule, bool, error) {
+	cards, err := p.store.List(ctx, tenant)
+	if err != nil {
+		return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, err
+	}
+	now := time.Now()
+	for _, m := range cards {
+		if !m.Active(now) || !slices.Contains(m.HolderList(), agent) {
+			continue
+		}
+		for _, g := range m.Grants {
+			if g.Action != action || g.Purchase == nil || g.Purchase.Currency != currency {
+				continue
+			}
+			revs, err := p.store.Revisions(ctx, tenant, m.ID)
+			if err != nil {
+				return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, err
+			}
+			return m, len(revs), *g.Purchase, true, nil
+		}
+	}
+	return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, nil
 }

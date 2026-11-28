@@ -164,10 +164,13 @@ func run(args []string) error {
 		// KIFF_SIGN_PINS: the comma-separated accounts whose permits carry
 		// their relay tools' vendor pins. Unset, none.
 		SignPins: tenantSet(os.Getenv("KIFF_SIGN_PINS")),
-		Relays:   relays,
-		API:      api,
-		Catalog:  catalog,
-		Store:    store,
+		// KIFF_PURCHASES=on: a relay's pay is described first, so KIFF opens
+		// its purchase's case from planque's signed checkout (pay_describe.go).
+		Purchases: strings.TrimSpace(os.Getenv("KIFF_PURCHASES")) == "on",
+		Relays:    relays,
+		API:       api,
+		Catalog:   catalog,
+		Store:     store,
 		// Refunds with a case block go through thune (refund.go); the
 		// watch reads only as an agent, when one touches the account.
 		Thune:          refunds,

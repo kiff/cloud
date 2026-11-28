@@ -315,10 +315,13 @@ type Gateway struct {
 	// SignPins are the tenants whose permits carry their relay tools'
 	// vendor pins (KIFF_SIGN_PINS). Off the list, a permit has none.
 	SignPins map[string]bool
-	API      API
-	Catalog  Catalog
-	Store    Store
-	Forward  Forwarder
+	// Purchases: a relay's pay is described first, so KIFF opens its
+	// purchase's case from planque's signed checkout (KIFF_PURCHASES=on).
+	Purchases bool
+	API       API
+	Catalog   Catalog
+	Store     Store
+	Forward   Forwarder
 	// Credentials is nil when no tool has a stored credential.
 	Credentials Credentials
 	// AppURL absolutizes Needs you links (https://app.kiff.dev).
@@ -1031,6 +1034,15 @@ func (a *agent) first(ctx context.Context, t Tool, in invocation.Invocation, par
 		block, why := a.describeSealed(ctx, t, in)
 		if why != "" {
 			return a.sealedNotDescribed(ctx, in, from, why)
+		}
+		ctx = withBrowserBlock(ctx, block)
+	}
+	// A pay is described before it's decided: its case is built from
+	// planque's read of the checkout (pay_describe.go).
+	if a.g.describesPay(t) {
+		block, why := a.describePay(ctx, t, in)
+		if why != "" {
+			return a.payNotDescribed(ctx, in, from, why)
 		}
 		ctx = withBrowserBlock(ctx, block)
 	}
