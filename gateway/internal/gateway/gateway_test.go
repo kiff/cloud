@@ -1362,7 +1362,7 @@ func TestAKeyKIFFCantCheckIsUnavailable(t *testing.T) {
 // reaches the journal, which it doesn't.
 func TestCallOutcomeIsLogged(t *testing.T) {
 	type line struct {
-		Invocation, Tool, Operation, State, Class, Status, Refusal, Level, Raw string
+		Invocation, Tool, Operation, State, Class, Status, Refusal, Level, KiffClass, Raw string
 	}
 	lines := func(buf *bytes.Buffer) []line {
 		var out []line
@@ -1372,7 +1372,7 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 				continue
 			}
 			out = append(out, line{fmt.Sprint(m["invocation"]), fmt.Sprint(m["tool"]), fmt.Sprint(m["operation_id"]), fmt.Sprint(m["state"]),
-				fmt.Sprint(m["class"]), fmt.Sprint(m["status"]), fmt.Sprint(m["connection_refusal"]), fmt.Sprint(m["level"]), raw})
+				fmt.Sprint(m["class"]), fmt.Sprint(m["status"]), fmt.Sprint(m["connection_refusal"]), fmt.Sprint(m["level"]), fmt.Sprint(m["kiff_class"]), raw})
 		}
 		return out
 	}
@@ -1394,6 +1394,10 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 		if l.Tool != "issue_refund" || l.Operation != "op-vendor-404" || l.State != "forwarded" || l.Class != "vendor_error" || l.Status != "404" ||
 			l.Level != "WARN" || !strings.HasPrefix(l.Invocation, "tc-") || l.Refusal != "<nil>" {
 			t.Fatalf("outcome line: %+v", l)
+		}
+		// The call's own class (K4), as KIFF was told it: one grep per class.
+		if want, _ := refundTool.CallClass(map[string]any{"amount_eur": 500}); l.KiffClass != string(want) || l.KiffClass == "" {
+			t.Fatalf("the outcome line's kiff_class: %q, want %q", l.KiffClass, want)
 		}
 		for _, word := range []string{"sk_tool_secret", "ana.lopez", "example.com", "dashboard.example", "cus_9xYz", "No such customer"} {
 			if strings.Contains(buf.String(), word) {

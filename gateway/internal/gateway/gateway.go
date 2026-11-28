@@ -1307,6 +1307,15 @@ func (a *agent) logOutcome(ctx context.Context, in invocation.Invocation) {
 		slog.String("state", string(in.State)),
 		slog.String("class", class),
 	}
+	// The call's own class (K4), as KIFF was told it (kiff_class): from the
+	// tool and the call's arguments, so a held or refused irreversible call
+	// and a forwarded read are each one grep. Never an argument itself.
+	if t, err := a.tool(ctx, in.Tool); err == nil {
+		var args map[string]any
+		_ = json.Unmarshal(in.Arguments, &args)
+		kc, _ := t.CallClass(args)
+		attrs = append(attrs, slog.String("kiff_class", string(kc)))
+	}
 	level := slog.LevelWarn
 	switch class {
 	case ClassDone:
