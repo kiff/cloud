@@ -3,6 +3,7 @@ package pages
 import (
 	_ "embed"
 	"encoding/json"
+	"strings"
 )
 
 // HostedBrowserForCustomers is true once planque's hosted browser (the
@@ -12,17 +13,33 @@ import (
 // PLANQUE_BROWSER_TENANTS names any account that isn't a test account.
 var HostedBrowserForCustomers = mustHostedBrowser(hostedBrowserJSON)
 
+// hostedBrowserSwitches are the hosted browser's features that change what
+// /tafs/privacy says, each page first like customers: its switch turns true,
+// and that deploy is live, before planque's own switch names a customer's
+// account. Pictures is planque's evidence pictures (PLANQUE_EVIDENCE),
+// downloads its kept downloads (PLANQUE_BROWSER_DOWNLOADS), and health its
+// sign-in check (a site on planque's reviewed health pages). While all three
+// are false, the paragraph is today's, "no screenshot … is kept" included.
+var hostedBrowserSwitches = mustHostedBrowserSwitches(hostedBrowserJSON)
+
 //go:embed hosted_browser.json
 var hostedBrowserJSON []byte
 
-func mustHostedBrowser(b []byte) bool {
+type browserSwitches struct{ Customers, Pictures, Downloads, Health bool }
+
+func mustHostedBrowser(b []byte) bool { return mustHostedBrowserSwitches(b).Customers }
+
+func mustHostedBrowserSwitches(b []byte) browserSwitches {
 	var v struct {
 		Customers *bool `json:"customers"`
+		Pictures  *bool `json:"pictures"`
+		Downloads *bool `json:"downloads"`
+		Health    *bool `json:"health"`
 	}
-	if err := json.Unmarshal(b, &v); err != nil || v.Customers == nil {
-		panic("pages: hosted_browser.json: want {\"customers\": true|false}")
+	if err := json.Unmarshal(b, &v); err != nil || v.Customers == nil || v.Pictures == nil || v.Downloads == nil || v.Health == nil {
+		panic("pages: hosted_browser.json: want {\"customers\", \"pictures\", \"downloads\", \"health\"}, each true|false")
 	}
-	return *v.Customers
+	return browserSwitches{*v.Customers, *v.Pictures, *v.Downloads, *v.Health}
 }
 
 // hostedBrowserWords is the hosted browser's item in /tafs/privacy's list of
@@ -39,10 +56,46 @@ func mustHostedBrowser(b []byte) bool {
 type hostedBrowserItem struct{ Label, Text string }
 
 func hostedBrowserWords(lang string) hostedBrowserItem {
-	if w, ok := hostedBrowserText[lang]; ok {
-		return w
+	w, ok := hostedBrowserText[lang]
+	if !ok {
+		lang, w = "en", hostedBrowserText["en"]
 	}
-	return hostedBrowserText["en"]
+	w.Text = withBrowserSwitches(w.Text, lang, hostedBrowserSwitches)
+	return w
+}
+
+// hostedBrowserOn is, per language, what a switched-on feature says in place
+// of the no-screenshot sentence: the evidence pictures, the kept downloads,
+// what both have in common (who opens them, when they go), and the sign-in
+// check. Empty until the owner's yes on those words; a switch can't be true
+// without them in every language (TestEveryBrowserSwitchOnHasItsWords).
+type hostedBrowserOnItem struct{ Pictures, Downloads, Kept, Health string }
+
+var hostedBrowserOn = map[string]hostedBrowserOnItem{}
+
+// withBrowserSwitches is text with its no-screenshot sentence swapped for
+// what the switched-on features say. With every switch off, it's text as is.
+func withBrowserSwitches(text, lang string, sw browserSwitches) string {
+	if !sw.Pictures && !sw.Downloads && !sw.Health {
+		return text
+	}
+	on := hostedBrowserOn[lang]
+	var parts []string
+	if sw.Pictures {
+		parts = append(parts, on.Pictures)
+	} else {
+		parts = append(parts, hostedBrowserNoScreenshot[lang])
+	}
+	if sw.Downloads {
+		parts = append(parts, on.Downloads)
+	}
+	if sw.Pictures || sw.Downloads {
+		parts = append(parts, on.Kept)
+	}
+	if sw.Health {
+		parts = append(parts, on.Health)
+	}
+	return strings.Replace(text, hostedBrowserNoScreenshot[lang], strings.Join(parts, " "), 1)
 }
 
 var hostedBrowserText = map[string]hostedBrowserItem{
@@ -95,4 +148,58 @@ var hostedBrowserText = map[string]hostedBrowserItem{
 	"vi":    {"Trình duyệt của chúng tôi:", "khi một taf làm việc trên một trang web mà không dùng Chrome của chính bạn, nó có thể dùng một trình duyệt mà KIFF chạy cho bạn trên Amazon Web Services tại Liên minh châu Âu (Ireland), chỉ trên các trang mà kết nối của nó liệt kê. Mỗi kết nối có phiên riêng, được đóng khi bước của taf hoàn tất. Khi một trang cần bạn đăng nhập, bạn tự đăng nhập, trong chế độ xem trực tiếp của trình duyệt đó trong ứng dụng. Những gì bạn gõ đi qua planque, dịch vụ kết nối của tafs, đến trình duyệt, và không bao giờ được lưu hay ghi nhật ký. Sau đó cookie của trang được lưu ở dạng mã hóa chỉ cho kết nối đó, và bị xóa khi bạn ngắt kết nối. Taf đọc các trang đó dưới dạng văn bản và trường biểu mẫu, đã bỏ giá trị của các trường mật khẩu, thẻ và mã, và mọi số thẻ chỉ hiện bốn chữ số cuối. Nó không thể gõ vào các trường đó, không thể thanh toán hay đặt hàng. Văn bản đó được gửi đến nhà cung cấp AI của chúng tôi như một phần của lần chạy, và được lưu như kết quả của bất kỳ công cụ nào. Với mỗi thay đổi mà taf thực hiện, kết quả cũng chứa trang trước và sau, dưới dạng văn bản được che theo cùng cách. Không ảnh chụp màn hình nào của các trang này được lưu. Các trang này có thể hiển thị thông tin của người khác, chẳng hạn khách hàng của bạn; KIFF xử lý chúng thay mặt bạn, với tư cách bên xử lý."},
 	"id":    {"Browser kami:", "saat taf bekerja di sebuah situs tanpa Chrome Anda sendiri, taf dapat memakai browser yang dijalankan KIFF untuk Anda di Amazon Web Services di Uni Eropa (Irlandia), hanya di situs yang tercantum di koneksinya. Setiap koneksi punya sesinya sendiri, yang ditutup saat langkah taf selesai. Saat situs meminta Anda masuk, Anda masuk sendiri, di tampilan langsung browser itu di aplikasi. Apa yang Anda ketik melewati planque, layanan koneksi tafs, ke browser, dan tidak pernah disimpan atau dicatat. Setelah itu cookie situs disimpan terenkripsi hanya untuk koneksi tersebut, dan dihapus saat Anda memutuskannya. Taf membaca halaman-halaman itu sebagai teks dan kolom formulir, tanpa nilai kolom kata sandi, kartu, dan kode, dan setiap nomor kartu hanya ditampilkan empat digit terakhirnya. Taf tidak bisa mengetik di kolom tersebut, tidak bisa membayar, dan tidak bisa membuat pesanan. Teks itu dikirim ke penyedia AI kami sebagai bagian dari proses, dan disimpan seperti hasil alat apa pun. Untuk setiap perubahan yang dibuat taf, hasilnya juga memuat halaman sebelum dan sesudah, sebagai teks yang disamarkan dengan cara yang sama. Tidak ada tangkapan layar halaman-halaman ini yang disimpan. Halaman-halaman ini dapat menampilkan data orang lain, seperti pelanggan Anda; KIFF memprosesnya atas nama Anda, sebagai pemroses."},
 	"tr":    {"Tarayıcımız:", "bir taf, sizin kendi Chrome'unuz olmadan bir sitede çalıştığında, KIFF'in sizin için Avrupa Birliği'nde (İrlanda) Amazon Web Services üzerinde çalıştırdığı bir tarayıcıyı kullanabilir, yalnızca bağlantısının listelediği sitelerde. Her bağlantının kendi oturumu vardır ve taf'ın adımı bitince kapanır. Bir site giriş yapmanızı istediğinde, girişi uygulamadaki o tarayıcının canlı görünümünde kendiniz yaparsınız. Yazdıklarınız tafs'ın bağlantı hizmeti planque üzerinden tarayıcıya gider ve asla saklanmaz ya da günlüğe kaydedilmez. Ardından sitenin çerezleri yalnızca o bağlantı için şifrelenmiş olarak saklanır ve bağlantıyı kestiğinizde silinir. Taf bu sayfaları metin ve form alanları olarak okur; parola, kart ve kod alanlarının değerleri çıkarılır ve her kart numarası yalnızca son dört hanesiyle gösterilir. Bu alanlara yazamaz, ödeme yapamaz ve sipariş veremez. Bu metin, çalıştırmanın bir parçası olarak yapay zekâ sağlayıcımıza gider ve herhangi bir aracın sonucu gibi saklanır. Taf'ın yaptığı her değişiklik için sonuç, değişiklikten önceki ve sonraki sayfayı da aynı şekilde gizlenmiş metin olarak içerir. Bu sayfaların hiçbir ekran görüntüsü saklanmaz. Bu sayfalar, müşterileriniz gibi başka kişilerin bilgilerini gösterebilir; KIFF bunları sizin adınıza, veri işleyen olarak işler."},
+}
+
+// hostedBrowserNoScreenshot is each language's no-screenshot sentence in
+// hostedBrowserText, exactly as written there, for withBrowserSwitches to swap.
+var hostedBrowserNoScreenshot = map[string]string{
+	"en":    "No screenshot of these pages is kept.",
+	"de":    "Von diesen Seiten wird kein Screenshot aufbewahrt.",
+	"es":    "No se guarda ninguna captura de estas páginas.",
+	"fr":    "Aucune capture d'écran de ces pages n'est conservée.",
+	"it":    "Non viene conservato alcuno screenshot di queste pagine.",
+	"nl":    "Van deze pagina's wordt geen screenshot bewaard.",
+	"pl":    "Żaden zrzut ekranu tych stron nie jest przechowywany.",
+	"pt":    "Nenhuma captura de ecrã destas páginas é guardada.",
+	"pt-br": "Nenhuma captura de tela dessas páginas é guardada.",
+	"ko":    "이 페이지의 스크린샷은 보관하지 않습니다.",
+	"ja":    "これらのページのスクリーンショットは保管しません。",
+	"et":    "Nendest lehtedest ühtegi kuvatõmmist ei säilitata.",
+	"lv":    "Netiek glabāts neviens šo lapu ekrānuzņēmums.",
+	"el":    "Δεν φυλάσσεται κανένα στιγμιότυπο οθόνης αυτών των σελίδων.",
+	"lt":    "Jokia šių puslapių ekrano kopija nesaugoma.",
+	"cs":    "Žádný snímek obrazovky těchto stránek se neuchovává.",
+	"sk":    "Žiadna snímka obrazovky týchto stránok sa neuchováva.",
+	"sl":    "Nobenega posnetka zaslona teh strani ne hranimo.",
+	"hu":    "Ezekről az oldalakról nem őrzünk képernyőképet.",
+	"ro":    "Nu se păstrează nicio captură de ecran a acestor pagini.",
+	"bg":    "Не се пази никаква екранна снимка на тези страници.",
+	"hr":    "Ne čuva se nijedna snimka zaslona tih stranica.",
+	"dz":    "ཤོག་ལེབ་འདི་ཚུ་གི་ གསལ་གཞི་པར་ཅི་ཡང་ མི་བཞག",
+	"dv":    "މި ޕޭޖްތަކުގެ އެއްވެސް ސްކްރީންޝޮޓެއް ރައްކާ ނުކުރެވޭ.",
+	"tg":    "Ягон акси экрани ин саҳифаҳо нигоҳ дошта намешавад.",
+	"tk":    "Bu sahypalaryň hiç bir ekran suraty saklanmaýar.",
+	"ur":    "ان صفحات کا کوئی اسکرین شاٹ نہیں رکھا جاتا۔",
+	"hi":    "इन पेजों का कोई स्क्रीनशॉट नहीं रखा जाता।",
+	"ta":    "இந்தப் பக்கங்களின் எந்தத் திரைப்பிடிப்பும் வைக்கப்படுவதில்லை.",
+	"si":    "මෙම පිටුවල කිසිදු තිර රුවක් තබා නොගනී.",
+	"lo":    "ບໍ່ມີການເກັບພາບໜ້າຈໍຂອງໜ້າເຫຼົ່ານີ້.",
+	"km":    "គ្មានរូបថតអេក្រង់នៃទំព័រទាំងនេះត្រូវបានរក្សាទុកទេ។",
+	"ne":    "यी पृष्ठहरूको कुनै स्क्रिनसट राखिँदैन।",
+	"mn":    "Эдгээр хуудасны ямар ч дэлгэцийн зураг хадгалагдахгүй.",
+	"mk":    "Не се чува ниту една слика од екранот на овие страници.",
+	"ca":    "No es desa cap captura d'aquestes pàgines.",
+	"he":    "לא נשמר שום צילום מסך של הדפים האלה.",
+	"bn":    "এই পৃষ্ঠাগুলোর কোনো স্ক্রিনশট রাখা হয় না।",
+	"az":    "Bu səhifələrin heç bir ekran görüntüsü saxlanmır.",
+	"hy":    "Այս էջերից ոչ մի էկրանի պատկեր չի պահվում։",
+	"ka":    "ამ გვერდების არც ერთი ეკრანის სურათი არ ინახება.",
+	"sq":    "Nuk ruhet asnjë pamje ekrani e këtyre faqeve.",
+	"sr":    "Ne čuva se nijedan snimak ekrana tih stranica.",
+	"ar":    "لا تُحفظ أي لقطة شاشة لهذه الصفحات.",
+	"zh":    "這些頁面不會保留任何螢幕截圖。",
+	"th":    "จะไม่มีการเก็บภาพหน้าจอของหน้าเหล่านี้",
+	"vi":    "Không ảnh chụp màn hình nào của các trang này được lưu.",
+	"id":    "Tidak ada tangkapan layar halaman-halaman ini yang disimpan.",
+	"tr":    "Bu sayfaların hiçbir ekran görüntüsü saklanmaz.",
 }
