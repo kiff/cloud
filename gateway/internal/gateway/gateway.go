@@ -857,6 +857,18 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 			params[t.AmountArg] = i
 		}
 	}
+	// The resource goes in before KIFF's own parameters, so no argument name
+	// a connection chose can stand in for one of them (ReservedArg).
+	params, err := t.resourceParam(args, params)
+	if err != nil {
+		return nil, err
+	}
+	if ReservedArg(t.AmountArg) || ReservedArg(t.ResourceArg) {
+		// A tool stored before names were refused: KIFF's own parameters
+		// always win, and its argument's value never reaches the decision.
+		delete(params, t.AmountArg)
+		delete(params, t.ResourceArg)
+	}
 	// A sealed fill asks whatever the tool's own code would say: it is
 	// allowed only once, with the phone's release.
 	if namesSealed(args) {
@@ -874,7 +886,14 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 	if by != "" {
 		params[ClassByParam] = by
 	}
-	return t.resourceParam(args, params)
+	return params, nil
+}
+
+// ReservedArg says whether an argument name is KIFF's own (kiff_class,
+// kiff_owner_ask…): a connection may never name its amount, resource or
+// idempotency argument so, or the agent's value would stand in for KIFF's.
+func ReservedArg(name string) bool {
+	return strings.HasPrefix(strings.ToLower(strings.TrimSpace(name)), "kiff_")
 }
 
 // resourceParam adds the resource the call is on to params.
