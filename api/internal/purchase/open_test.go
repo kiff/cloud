@@ -7,7 +7,7 @@ import (
 
 func read() CheckoutRead {
 	return CheckoutRead{Site: "papeterie-lumiere.example", Name: "Papeterie Lumière", Country: "fr", Currency: "eur", Path: "token",
-		StripeProfile: "profile_61RkZt0hLumiere", StripeProfileFrom: "pay.papeterie-lumiere.example",
+		StripeProfile: "profile_61RkZt0hLumiere", StripeProfileFrom: "papeterie-lumiere.example",
 		Lines:    []CheckoutLine{{Item: "A4 paper, 80 g, 5 reams", Quantity: 2, Price: "59.80"}, {Item: "Ballpoint pens, blue, box of 50", Quantity: 1, Price: "14,90"}},
 		Shipping: "9.50", Total: "84.20",
 		Delivery: Address{Name: "Acme SAS", Line1: "12 rue des Lilas", PostalCode: "69003", City: "Lyon", Country: "FR"}}
@@ -45,6 +45,8 @@ func TestACheckoutThatDoesntAddUpIsNoCase(t *testing.T) {
 		// the checkout's own site counts, and a token needs one.
 		"a profile read on another site": func(r *CheckoutRead) { r.StripeProfileFrom = "evil.example" },
 		"a look-alike site":              func(r *CheckoutRead) { r.StripeProfileFrom = "papeterie-lumiere.example.evil.example" },
+		"a host under the site":          func(r *CheckoutRead) { r.StripeProfileFrom = "pay.papeterie-lumiere.example" },
+		"a free line":                    func(r *CheckoutRead) { r.Lines[0].Price = "0.00" },
 		"a token with no profile":        func(r *CheckoutRead) { r.StripeProfile = "" },
 		"a profile that isn't one":       func(r *CheckoutRead) { r.StripeProfile = "acct_123" },
 	} {

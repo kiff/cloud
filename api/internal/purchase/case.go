@@ -179,7 +179,7 @@ func (c Case) Check() error {
 	}
 	var sum int64
 	for _, l := range c.Lines {
-		if l.Quantity < 1 || l.Amount < 0 || strings.TrimSpace(l.Name) == "" {
+		if l.Quantity < 1 || l.Amount <= 0 || strings.TrimSpace(l.Name) == "" {
 			return bad("a line %q", l.Name)
 		}
 		sum += l.Amount

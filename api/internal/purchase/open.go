@@ -75,7 +75,7 @@ func FromCheckout(o Opening, read CheckoutRead, rule CardRule) (Case, error) {
 	c.Merchant.Match = Match{NameKey: Fold(c.Merchant.Name)}
 	if read.Path == "token" {
 		// The profile is the shop's own claim, so only one read on the
-		// checkout's own site counts.
+		// checkout's own host counts, exactly.
 		if !onSite(read.StripeProfileFrom, c.Merchant.Site) {
 			return bad("the seller's Stripe profile wasn't read on the checkout's own site")
 		}
@@ -148,8 +148,9 @@ func NewCaseID() string {
 	return "pc_" + hex.EncodeToString(b[:])
 }
 
-// onSite says whether host is site or a host under it.
+// onSite says whether host is exactly the checkout's site: a host under it
+// is someone else's claim (a shop's subdomain can be another tenant's).
 func onSite(host, site string) bool {
-	host, site = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), ".")), strings.ToLower(strings.TrimSpace(site))
-	return host != "" && site != "" && (host == site || strings.HasSuffix(host, "."+site))
+	host, site = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), ".")), strings.ToLower(strings.TrimSuffix(strings.TrimSpace(site), "."))
+	return host != "" && host == site
 }
