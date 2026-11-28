@@ -306,3 +306,8 @@ CREATE TABLE IF NOT EXISTS gateway.tool_patches (
     new        jsonb       NOT NULL
 );
 CREATE INDEX IF NOT EXISTS tool_patches_tool ON gateway.tool_patches (tenant_id, name, at);
+
+-- The call's class (K4) as KIFF was told it when the call was decided, so
+-- the call's outcome line logs that class, never one worked out again
+-- later. '' for a call from before it was kept.
+ALTER TABLE gateway.invocations ADD COLUMN IF NOT EXISTS kiff_class text NOT NULL DEFAULT '';

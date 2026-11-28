@@ -952,7 +952,7 @@ func (a *agent) callTool(ctx context.Context, name string, raw json.RawMessage) 
 	in, created, err := a.g.Store.Begin(ctx, invocation.Call{
 		TenantID: a.me.TenantID, CredentialID: a.credentialID, AgentID: a.me.AgentID,
 		Tool: name, OperationID: op, Arguments: argsJSON, ReadOnly: t.ReadOnly, ProfileRevision: t.ProfileRevision,
-		Measure: measureOf(t),
+		Measure: measureOf(t), KiffClass: classSent(params),
 	})
 	if errors.Is(err, invocation.ErrOperationReused) {
 		return operationReused(op), "", nil
@@ -1307,6 +1307,12 @@ func (a *agent) logOutcome(ctx context.Context, in invocation.Invocation) {
 		slog.String("state", string(in.State)),
 		slog.String("class", class),
 	}
+	// The call's class (K4) exactly as KIFF was told it when it was decided,
+	// kept on the call (kiff_class), never worked out again here: a held or
+	// refused irreversible call and a forwarded read are each one grep.
+	if in.KiffClass != "" {
+		attrs = append(attrs, slog.String("kiff_class", in.KiffClass))
+	}
 	level := slog.LevelWarn
 	switch class {
 	case ClassDone:
@@ -1553,4 +1559,11 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 		out = append(out, t)
 	}
 	return out, rows.Err()
+}
+
+// classSent is the class the decision's parameters carry (ClassParam), as
+// the call keeps it.
+func classSent(params map[string]any) string {
+	c, _ := params[ClassParam].(string)
+	return c
 }

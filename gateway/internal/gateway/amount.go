@@ -176,7 +176,7 @@ func (a *agent) amountRefused(ctx context.Context, t Tool, name, op string, args
 	argsJSON, _ := json.Marshal(args)
 	in, created, err := a.g.Store.Begin(ctx, invocation.Call{
 		TenantID: a.me.TenantID, CredentialID: a.credentialID, AgentID: a.me.AgentID,
-		Tool: name, OperationID: op, Arguments: argsJSON, ReadOnly: t.ReadOnly,
+		Tool: name, OperationID: op, Arguments: argsJSON, ReadOnly: t.ReadOnly, KiffClass: classSent(params),
 	})
 	if errors.Is(err, invocation.ErrOperationReused) {
 		return operationReused(op), "", nil

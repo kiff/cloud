@@ -1362,7 +1362,7 @@ func TestAKeyKIFFCantCheckIsUnavailable(t *testing.T) {
 // reaches the journal, which it doesn't.
 func TestCallOutcomeIsLogged(t *testing.T) {
 	type line struct {
-		Invocation, Tool, Operation, State, Class, Status, Refusal, Level, Raw string
+		Invocation, Tool, Operation, State, Class, Status, Refusal, Level, KiffClass, Raw string
 	}
 	lines := func(buf *bytes.Buffer) []line {
 		var out []line
@@ -1372,7 +1372,7 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 				continue
 			}
 			out = append(out, line{fmt.Sprint(m["invocation"]), fmt.Sprint(m["tool"]), fmt.Sprint(m["operation_id"]), fmt.Sprint(m["state"]),
-				fmt.Sprint(m["class"]), fmt.Sprint(m["status"]), fmt.Sprint(m["connection_refusal"]), fmt.Sprint(m["level"]), raw})
+				fmt.Sprint(m["class"]), fmt.Sprint(m["status"]), fmt.Sprint(m["connection_refusal"]), fmt.Sprint(m["level"]), fmt.Sprint(m["kiff_class"]), raw})
 		}
 		return out
 	}
@@ -1394,6 +1394,16 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 		if l.Tool != "issue_refund" || l.Operation != "op-vendor-404" || l.State != "forwarded" || l.Class != "vendor_error" || l.Status != "404" ||
 			l.Level != "WARN" || !strings.HasPrefix(l.Invocation, "tc-") || l.Refusal != "<nil>" {
 			t.Fatalf("outcome line: %+v", l)
+		}
+		// The call's own class (K4), exactly as KIFF was told it when it was decided, kept on the call: one grep
+		// per class, never worked out again at the end.
+		sent, _ := r.api.params[l.Invocation][gateway.ClassParam].(string)
+		var keptClass string
+		if err := r.store.Pool().QueryRow(context.Background(), `SELECT kiff_class FROM gateway.invocations WHERE key = $1`, l.Invocation).Scan(&keptClass); err != nil {
+			t.Fatal(err)
+		}
+		if sent == "" || keptClass != sent || l.KiffClass != sent {
+			t.Fatalf("the outcome line's kiff_class %q, kept %q, sent %q", l.KiffClass, keptClass, sent)
 		}
 		for _, word := range []string{"sk_tool_secret", "ana.lopez", "example.com", "dashboard.example", "cus_9xYz", "No such customer"} {
 			if strings.Contains(buf.String(), word) {
