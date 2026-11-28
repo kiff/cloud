@@ -1240,7 +1240,7 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	// purchases on, a pay without planque's signed checkout is refused, never
 	// decided as a plain call.
 	var opened *openedCase
-	if h.purchaseOpening != nil && isPay(req.Permit) {
+	if h.purchaseOpening != nil && isPay(req.Permit, prop.ID) {
 		o, refusal, stop := h.openPurchase(ctx, id, prop, req.BrowserBlock)
 		if stop {
 			if releaseLock != nil {

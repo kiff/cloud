@@ -225,12 +225,16 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 	}
 }
 
-// A describe is no pay: it opens no case.
+// A describe is no pay: it opens no case. A pay that names itself one
+// (its op, not its call's id) is still a pay.
 func TestADescribeIsNoPay(t *testing.T) {
-	pay := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7"}`)}
-	describe := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","describe":true}`)}
+	pay := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","op":"tc-1"}`)}
+	describe := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","op":"tc-1:describe"}`)}
 	other := &permit.Request{Tool: "browse_open", Arguments: json.RawMessage(`{}`)}
-	if !isPay(pay) || isPay(describe) || isPay(other) || isPay(nil) {
+	if !isPay(pay, "tc-1") || isPay(describe, "tc-1:describe") || isPay(other, "tc-1") || isPay(nil, "tc-1") {
 		t.Fatal("isPay")
+	}
+	if !isPay(describe, "tc-1") || !isPay(pay, "tc-1:describe") {
+		t.Fatal("a pay passed as a describe")
 	}
 }

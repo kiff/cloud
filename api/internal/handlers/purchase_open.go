@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/kiff/cloud/api/internal/auth"
@@ -88,17 +89,19 @@ const (
 )
 
 // isPay says the permit request is a relay's pay (browse_pay), not its
-// describe ({describe: true}, which reads planque's kept checkout and acts
-// on nothing).
-func isPay(req *permit.Request) bool {
+// describe. The gateway sends a describe as the proposal "<call>:describe"
+// with that as its op (planque answers it from the checkout it kept, under
+// its KIFF-Checkout-Describe header, and acts on nothing). A call's own id
+// is the gateway's "tc-<hex>", so a taf can't name a pay as a describe.
+func isPay(req *permit.Request, proposalID string) bool {
 	if req == nil || req.Tool != purchase.ToolBrowsePay {
 		return false
 	}
 	var a struct {
-		Describe bool `json:"describe"`
+		Op string `json:"op"`
 	}
 	_ = json.Unmarshal(req.Arguments, &a)
-	return !a.Describe
+	return !(strings.HasSuffix(proposalID, ":describe") && a.Op == proposalID)
 }
 
 // openPurchase opens the pay's case, or says why it's refused: the response

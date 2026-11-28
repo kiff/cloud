@@ -28,7 +28,7 @@ func payRig(t *testing.T, purchases bool) *rig {
 // Invariant: with purchases on, a relay's pay is decided only with planque's signed read of its checkout, read back by a describe KIFF allowed on its own
 // Category: authority
 // Attack: a taf's pay is decided with no checkout, or one the taf wrote, so KIFF opens a purchase from the taf's words
-// Refused: the describe is decided as "<call>:describe" with its own permit for exactly {url, ref, describe, op}; the pay's decision carries planque's block byte for byte; a pay planque won't describe is refused and nothing is bought
+// Refused: the describe is decided as "<call>:describe" with its own permit for exactly {url, ref, op}, sent with the gateway's header naming the pay; the pay's decision carries planque's block byte for byte; a pay planque won't describe is refused and nothing is bought
 func TestAPayIsDescribedBeforeItsDecided(t *testing.T) {
 	r := payRig(t, true)
 	call := r.callNamed(t, "browse_pay", map[string]any{"url": "https://shop.example/checkout", "ref": "c7", gateway.OperationArg: "op-pay"})
@@ -43,7 +43,7 @@ func TestAPayIsDescribedBeforeItsDecided(t *testing.T) {
 	}
 	var args map[string]any
 	_ = json.Unmarshal(pr.Arguments, &args)
-	if len(args) != 4 || args["url"] != "https://shop.example/checkout" || args["ref"] != "c7" || args["describe"] != true || args["op"] != describe {
+	if len(args) != 3 || args["url"] != "https://shop.example/checkout" || args["ref"] != "c7" || args["op"] != describe {
 		t.Fatalf("the describe's arguments: %v", args)
 	}
 	if string(r.api.blocks[key]) != string(checkoutBlock) {
@@ -52,8 +52,11 @@ func TestAPayIsDescribedBeforeItsDecided(t *testing.T) {
 	if !slices.Equal(r.tool.tools, []string{"browse_pay", "browse_pay"}) {
 		t.Fatalf("sent: %v", r.tool.tools)
 	}
-	if r.tool.calls[0]["describe"] != true || r.tool.calls[1]["describe"] != nil {
+	if r.tool.calls[0]["op"] != describe || r.tool.calls[1]["op"] != key {
 		t.Fatalf("the describe went first, then the pay: %v", r.tool.calls)
+	}
+	if !slices.Equal(r.tool.payDescribes, []string{key, ""}) {
+		t.Fatalf("the describe header: %v", r.tool.payDescribes)
 	}
 }
 
@@ -73,7 +76,7 @@ func TestAPayPlanqueWontDescribeIsRefused(t *testing.T) {
 func TestWithPurchasesOffAPayIsNotDescribed(t *testing.T) {
 	r := payRig(t, false)
 	r.callNamed(t, "browse_pay", map[string]any{"url": "https://shop.example/checkout", "ref": "c7", gateway.OperationArg: "op-pay"})
-	if !slices.Equal(r.tool.tools, []string{"browse_pay"}) || r.tool.calls[0]["describe"] != nil {
-		t.Fatalf("sent: %v %v", r.tool.tools, r.tool.calls)
+	if !slices.Equal(r.tool.tools, []string{"browse_pay"}) || r.tool.payDescribes[0] != "" {
+		t.Fatalf("sent: %v %v", r.tool.tools, r.tool.payDescribes)
 	}
 }

@@ -14,12 +14,18 @@ import (
 // A pay's describe (Thune). KIFF opens a purchase's case from planque's
 // signed read of its checkout, never from the taf's words, so before a
 // relay's browse_pay is decided the gateway asks planque for that read: the
-// same tool, with {url, ref, describe: true}, decided by KIFF on its own as
-// "<call>:describe" and sent under its own permit. planque answers from the
+// same tool, with {url, ref} and the gateway's own header
+// CheckoutDescribeHeader naming the pay's operation (a taf can't set it),
+// decided by KIFF on its own as "<call>:describe" and sent under its own
+// permit. planque answers from the
 // checkout it kept at browse_checkout, signed as planque/checkout/v1,
 // starting no browser and sending nothing to the site; the pay's decision
 // carries the block (kiffapi.Proposal.BrowserBlock). Only with purchases on
 // (Gateway.Purchases).
+
+// CheckoutDescribeHeader asks planque's browse_pay to describe the checkout
+// of the pay it names (the pay's operation) instead of paying.
+const CheckoutDescribeHeader = "KIFF-Checkout-Describe"
 
 // payTool is planque's call that pays a checkout.
 const payTool = "browse_pay"
@@ -44,7 +50,7 @@ func (a *agent) describePay(ctx context.Context, t Tool, in invocation.Invocatio
 		return nil, "a pay names its checkout's page and the control it clicks"
 	}
 	id := in.Key + ":describe"
-	ask := map[string]any{"url": args.URL, "ref": args.Ref, "describe": true}
+	ask := map[string]any{"url": args.URL, "ref": args.Ref}
 	if t.IdempotencyArg != "" {
 		ask[t.IdempotencyArg] = id
 	}
@@ -73,6 +79,7 @@ func (a *agent) describePay(ctx context.Context, t Tool, in invocation.Invocatio
 	fctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	fctx = mcp.WithCallHeader(fctx, PermitHeader, d.Permit)
+	fctx = mcp.WithCallHeader(fctx, CheckoutDescribeHeader, in.Key)
 	res, err := a.g.Forward.CallTool(fctx, t.UpstreamURL, "", t.UpstreamTool, body)
 	if err != nil {
 		if a.g.Logger != nil {
