@@ -60,7 +60,7 @@ func TestTheReceiptIsSignedOverEveryField(t *testing.T) {
 		Merchant: ReceiptMerchant{Case: NameCategory{c.Merchant.Name, c.Merchant.Category}, Issuer: NameCategory{"PAPETERIE LUMIERE LYON", "5943"}},
 		Amounts:  Amounts{ApprovedMax: c.Price.Max, Authorized: 8570, Captured: 8570, Currency: c.Currency},
 		States:   States{Case: StateDone, Money: MoneyCaptured, Order: "confirmed"}, Verification: "exempted",
-		Words:    map[string]string{"state": "Bought"}}, time.Date(2026, 11, 28, 9, 16, 52, 0, time.UTC))
+		Words: map[string]string{"state": "Bought"}}, time.Date(2026, 11, 28, 9, 16, 52, 0, time.UTC))
 	if err != nil {
 		t.Fatal(err)
 	}
