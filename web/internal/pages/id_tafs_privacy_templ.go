@@ -48,7 +48,7 @@ func TafsPrivacyID() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · kebijakan privasi</p><h1>Kebijakan Privasi tafs</h1><p class=\"legal-meta\"><strong>Terakhir diperbarui:</strong> 27 November 2026.</p><p class=\"legal-disclaimer\">Kebijakan ini menjelaskan cara tafs, aplikasi KIFF untuk iPhone, iPad, Android, dan komputer, menangani data pribadi. tafs adalah bagian dari KIFF Cloud, sehingga <a href=\"/id/privacy\">Kebijakan Privasi KIFF</a> juga berlaku untuknya, dan untuk hal apa pun yang tidak dicakup halaman ini. Pertanyaan: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Siapa kami</h2><p>tafs disediakan oleh <strong>Kiff Agents OÜ</strong>, perseroan terbatas swasta yang didirikan di Estonia (kode registri 17372313, nomor PPN EE102924327), beralamat di Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Peraturan Perlindungan Data Umum Uni Eropa (GDPR) berlaku untuk pemrosesan kami.</p></section><section id=\"scope\"><h2>2. Cakupan kebijakan ini</h2><p>Aplikasi tafs untuk iPhone, iPad, Android, dan komputer (Mac, Windows, dan Linux), serta layanan di baliknya, termasuk Setup, yang menghubungkan alat sebuah perusahaan, dan planque, yang menyimpan koneksi itu. Di tafs, sebuah perusahaan menyerahkan pekerjaan kepada agen AI, sebuah taf, yang bekerja di dalam KIFF Card.</p></section><section id=\"roles\"><h2>3. Peran kami</h2><p>Kami adalah <strong>pengendali data</strong> untuk akun dan data masuk Anda, serta data operasional layanan kami sendiri. Kami bertindak sebagai <strong>prosesor data</strong>, atas nama perusahaan Anda, untuk apa yang disimpan tafs untuknya: proses, percakapan, laporan, catatan memori setiap taf, dan berkas yang diserahkannya. Perusahaan Anda adalah pengendali data itu, dan <a href=\"/legal/dpa\">DPA</a> (dalam bahasa Inggris) mengatur hubungan tersebut.</p></section><section id=\"data\"><h2>4. Apa yang dikumpulkan tafs</h2><ul><li><strong>Akun Anda:</strong> Anda masuk ke tafs dengan akun KIFF Anda. Di ponsel atau tablet, aplikasi menyimpan sesi Anda di Keychain perangkat (di Android, penyimpanan terenkripsinya). Di komputer, sesi disimpan tersegel untuk akun pengguna Anda: di PC Windows dengan perlindungan data bawaan Windows, di Linux di keyring Anda, di Mac di Keychain-nya. Sesi sebuah komputer berlangsung hingga 90 hari.</li><li><strong>Perangkat Anda:</strong> aplikasi membuat kunci penandatanganan yang tidak pernah meninggalkan perangkat: di Secure Enclave iPhone, iPad, atau Mac, di Keystore perangkat Android, atau di TPM PC Windows. Di Linux, dan di Mac tanpa Secure Enclave, kuncinya adalah kunci perangkat lunak yang disimpan di keyring atau Keychain Anda, dan komputer itu dapat menunjukkan apa yang menunggu Anda tetapi tidak dapat menyetujuinya; Anda menyetujui di ponsel Anda")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · kebijakan privasi</p><h1>Kebijakan Privasi tafs</h1><p class=\"legal-meta\"><strong>Terakhir diperbarui:</strong> 28 November 2026.</p><p class=\"legal-disclaimer\">Kebijakan ini menjelaskan cara tafs, aplikasi KIFF untuk iPhone, iPad, Android, dan komputer, menangani data pribadi. tafs adalah bagian dari KIFF Cloud, sehingga <a href=\"/id/privacy\">Kebijakan Privasi KIFF</a> juga berlaku untuknya, dan untuk hal apa pun yang tidak dicakup halaman ini. Pertanyaan: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Siapa kami</h2><p>tafs disediakan oleh <strong>Kiff Agents OÜ</strong>, perseroan terbatas swasta yang didirikan di Estonia (kode registri 17372313, nomor PPN EE102924327), beralamat di Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estonia. Peraturan Perlindungan Data Umum Uni Eropa (GDPR) berlaku untuk pemrosesan kami.</p></section><section id=\"scope\"><h2>2. Cakupan kebijakan ini</h2><p>Aplikasi tafs untuk iPhone, iPad, Android, dan komputer (Mac, Windows, dan Linux), serta layanan di baliknya, termasuk Setup, yang menghubungkan alat sebuah perusahaan, dan planque, yang menyimpan koneksi itu. Di tafs, sebuah perusahaan menyerahkan pekerjaan kepada agen AI, sebuah taf, yang bekerja di dalam KIFF Card.</p></section><section id=\"roles\"><h2>3. Peran kami</h2><p>Kami adalah <strong>pengendali data</strong> untuk akun dan data masuk Anda, serta data operasional layanan kami sendiri. Kami bertindak sebagai <strong>prosesor data</strong>, atas nama perusahaan Anda, untuk apa yang disimpan tafs untuknya: proses, percakapan, laporan, catatan memori setiap taf, dan berkas yang diserahkannya. Perusahaan Anda adalah pengendali data itu, dan <a href=\"/legal/dpa\">DPA</a> (dalam bahasa Inggris) mengatur hubungan tersebut.</p></section><section id=\"data\"><h2>4. Apa yang dikumpulkan tafs</h2><ul><li><strong>Akun Anda:</strong> Anda masuk ke tafs dengan akun KIFF Anda. Di ponsel atau tablet, aplikasi menyimpan sesi Anda di Keychain perangkat (di Android, penyimpanan terenkripsinya). Di komputer, sesi disimpan tersegel untuk akun pengguna Anda: di PC Windows dengan perlindungan data bawaan Windows, di Linux di keyring Anda, di Mac di Keychain-nya. Sesi sebuah komputer berlangsung hingga 90 hari.</li><li><strong>Perangkat Anda:</strong> aplikasi membuat kunci penandatanganan yang tidak pernah meninggalkan perangkat: di Secure Enclave iPhone, iPad, atau Mac, di Keystore perangkat Android, atau di TPM PC Windows. Di Linux, dan di Mac tanpa Secure Enclave, kuncinya adalah kunci perangkat lunak yang disimpan di keyring atau Keychain Anda, dan komputer itu dapat menunjukkan apa yang menunggu Anda tetapi tidak dapat menyetujuinya; Anda menyetujui di ponsel Anda")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -123,7 +123,20 @@ func TafsPrivacyID() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Pekerjaan taf Anda:</strong> proses, percakapan, laporan, catatan memori setiap taf dan berkas yang diserahkannya, disimpan sebagai prosesor. Siapa pun di akun Anda dapat melihat berkas yang diserahkan taf Anda.</li><li><strong>Pintu:</strong> saat Anda membuka pintu agar orang bisa menulis ke taf lewat email, Slack, atau Telegram, layanan tafs menyimpan setiap pengirim yang Anda pasangkan, dengan alamat email, ID anggota Slack, atau ID pengguna Telegram mereka (nomor telepon untuk pintu WhatsApp), beserta nama yang Anda berikan, sampai Anda menghapus pintu atau taf. Pesan dari orang yang belum Anda pasangkan menunggu Anda sebagai ketukan, berisi siapa yang menulisnya dan apa isinya, hingga 30 hari setelah ketukan terakhir. Pesan dari pengirim yang dipasangkan masuk ke chat taf dan disimpan seperti bagian chat lainnya. Slack dan Telegram mengantarkan pesan dengan ketentuan mereka sendiri.</li><li><strong>Pembelian:</strong> Solo dan paket kredit dijual oleh Apple melalui App Store, atau oleh Google melalui penagihan Google Play. Mereka memberi tahu kami apa yang dibeli, untuk akun KIFF mana (ID acak), kapan, dan referensi transaksi atau pesanannya. Mereka tidak memberi kami Apple ID atau akun Google, nama, alamat email, atau kartu Anda.</li></ul><p>Aplikasi tidak memiliki pelacak analitik atau iklan.</p></section><section id=\"ai\"><h2>5. AI di tafs</h2><p>tafs menggunakan AI Claude milik Anthropic untuk Coach dan taf Anda. Anthropic, atau salah satu penyedia cloud di halaman subprosesor kami, menjalankannya untuk kami. Halaman itu menyebutkan yang mana, dan di mana. Aplikasi bertanya kepada Anda sebelum apa pun dikirim ke sana.</p><ul><li>Yang dikirim ke sana: apa yang Anda tulis kepada Coach dan taf Anda, berkas yang Anda lampirkan, apa yang dikembalikan aplikasi yang Anda hubungkan kepada sebuah taf saat bekerja, dan apa yang ada di layar Anda saat Coach membantu Anda di aplikasi.</li><li>Dari Chrome: halaman di depan, saat Anda menulis kepada Coach di panel samping ekstensi, setelah Anda mengizinkan Coach membaca halaman di sana. Juga saat Anda menulis ke taf di sana, di salah satu situsnya sendiri.</li><li>Yang tidak pernah dikirim: kata sandi dan kunci yang dipakai aplikasi yang Anda hubungkan, atau sidik jari Anda.</li><li>Perusahaan yang menjalankannya menggunakannya untuk menjawab dan menghapusnya dalam 30 hari, kecuali ditandai melanggar aturan penggunaan perusahaan itu atau hukum mewajibkan penyimpanannya.</li><li>Tidak ada yang dikirim sampai Anda mengizinkan. Anda dapat menarik izin di Akun.</li></ul><p>Saat Anda menarik izin, Coach dan taf Anda berhenti menjawab Anda, dan sebuah taf yang prosesnya bertumpu pada persetujuan Anda dijeda. tafs menyimpan catatan setiap persetujuan yang Anda berikan atau tarik, beserta waktunya dan versi teksnya, selama 10 tahun sejak perubahan terakhirnya, untuk menunjukkan apa yang Anda setujui; menghapus akun Anda menghapusnya lebih cepat. <a href=\"/id/privacy#ai-in-tafs\">Kebijakan Privasi KIFF</a> memuat rinciannya.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Pekerjaan taf Anda:</strong> proses, percakapan, laporan, catatan memori setiap taf dan berkas yang diserahkannya, disimpan sebagai prosesor. Siapa pun di akun Anda dapat melihat berkas yang diserahkan taf Anda.</li><li><strong>Pintu:</strong> saat Anda membuka pintu agar orang bisa menulis ke taf lewat email, Slack, atau Telegram, layanan tafs menyimpan setiap pengirim yang Anda pasangkan, dengan alamat email, ID anggota Slack, atau ID pengguna Telegram mereka (nomor telepon untuk pintu WhatsApp), beserta nama yang Anda berikan, sampai Anda menghapus pintu atau taf. Pesan dari orang yang belum Anda pasangkan menunggu Anda sebagai ketukan, berisi siapa yang menulisnya dan apa isinya, hingga 30 hari setelah ketukan terakhir. Pesan dari pengirim yang dipasangkan masuk ke chat taf dan disimpan seperti bagian chat lainnya. Slack dan Telegram mengantarkan pesan dengan ketentuan mereka sendiri. ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("id"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 49, Col: 712}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</li><li><strong>Pembelian:</strong> Solo dan paket kredit dijual oleh Apple melalui App Store, atau oleh Google melalui penagihan Google Play. Mereka memberi tahu kami apa yang dibeli, untuk akun KIFF mana (ID acak), kapan, dan referensi transaksi atau pesanannya. Mereka tidak memberi kami Apple ID atau akun Google, nama, alamat email, atau kartu Anda.</li></ul><p>Aplikasi tidak memiliki pelacak analitik atau iklan.</p></section><section id=\"ai\"><h2>5. AI di tafs</h2><p>tafs menggunakan AI Claude milik Anthropic untuk Coach dan taf Anda. Anthropic, atau salah satu penyedia cloud di halaman subprosesor kami, menjalankannya untuk kami. Halaman itu menyebutkan yang mana, dan di mana. Aplikasi bertanya kepada Anda sebelum apa pun dikirim ke sana.</p><ul><li>Yang dikirim ke sana: apa yang Anda tulis kepada Coach dan taf Anda, berkas yang Anda lampirkan, apa yang dikembalikan aplikasi yang Anda hubungkan kepada sebuah taf saat bekerja, dan apa yang ada di layar Anda saat Coach membantu Anda di aplikasi.</li><li>Dari Chrome: halaman di depan, saat Anda menulis kepada Coach di panel samping ekstensi, setelah Anda mengizinkan Coach membaca halaman di sana. Juga saat Anda menulis ke taf di sana, di salah satu situsnya sendiri.</li><li>Yang tidak pernah dikirim: kata sandi dan kunci yang dipakai aplikasi yang Anda hubungkan, atau sidik jari Anda.</li><li>Perusahaan yang menjalankannya menggunakannya untuk menjawab dan menghapusnya dalam 30 hari, kecuali ditandai melanggar aturan penggunaan perusahaan itu atau hukum mewajibkan penyimpanannya.</li><li>Tidak ada yang dikirim sampai Anda mengizinkan. Anda dapat menarik izin di Akun.</li></ul><p>Saat Anda menarik izin, Coach dan taf Anda berhenti menjawab Anda, dan sebuah taf yang prosesnya bertumpu pada persetujuan Anda dijeda. tafs menyimpan catatan setiap persetujuan yang Anda berikan atau tarik, beserta waktunya dan versi teksnya, selama 10 tahun sejak perubahan terakhirnya, untuk menunjukkan apa yang Anda setujui; menghapus akun Anda menghapusnya lebih cepat. <a href=\"/id/privacy#ai-in-tafs\">Kebijakan Privasi KIFF</a> memuat rinciannya.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,20 +144,20 @@ func TafsPrivacyID() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Siapa lagi yang menerima data</h2><p>Kami tidak menjual data pribadi Anda, dan tidak membagikannya untuk periklanan.</p><p>Untuk tafs, kami memakai perusahaan-perusahaan ini: Amazon Web Services (hosting, termasuk penyimpanan tafs dan koneksi planque), Clerk (login untuk akun KIFF), Anthropic (model AI, dijalankan oleh Anthropic, Amazon Web Services, Google Cloud, atau Microsoft Azure), Composio (login koneksi terkelola, dan panggilan yang diminta planque untuk dilakukannya), Apple (notifikasi push), Google (notifikasi push di Android, dan penagihan Google Play), dan Resend (pintu email sebuah taf). Daftar resmi terkini, dengan apa yang disentuh masing-masing dan di mana, ada di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</p><p>Sebagian dari mereka berada di luar Wilayah Ekonomi Eropa, terutama di Amerika Serikat. <a href=\"/id/privacy#transfers\">Kebijakan Privasi KIFF</a> menjelaskan bagaimana transfer itu diamankan.</p><p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href=\"/privacy/countries\">Negara Anda</a> (dalam bahasa Inggris).</p></section><section id=\"retention\"><h2>8. Berapa lama kami menyimpannya</h2><ul><li>Apa yang dikembalikan alat Anda kepada sebuah taf: hanya sampai proses selesai. Dalam sebuah percakapan, apa yang hanya dibacanya disimpan terenkripsi untuk pesan berikutnya, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari.</li><li>Proses dan percakapan sebuah taf, dengan ringkasan percakapan: 30 hari. Catatan memorinya: sampai taf dihapus. Anda dapat menghapus lebih awal salah satu percakapan Anda dengan Coach: pesan-pesannya dan berkas yang Anda tambahkan langsung dihapus, sementara catatan bahwa setiap prosesnya terjadi, kapan, dan berapa biayanya tetap ada selama 30 hari itu. Jika Anda melaporkan jawaban, KIFF menyimpan jawaban itu, alasan, dan catatan Anda selama 180 hari, atau sampai Anda menghapus chat itu atau akun Anda. KIFF juga mengirimkannya lewat email ke tim yang membaca laporan, dan email itu disimpan seperti email dukungan KIFF.</li><li>Catatan singkat Coach untuk jawaban berikutnya, seperti mengapa sebuah koneksi tidak dapat dibuat dalam percakapan, atau bahwa sebuah Card disetujui: sampai jawaban itu mengambilnya, paling lama 7 hari; setelah itu, sebagai bagian dari percakapan itu, selama percakapan disimpan. Sebuah salinan disimpan 24 jam agar pesan yang dikirim ulang mendapat catatan yang sama. Catatan sebuah percakapan hanya dipakai dalam percakapan itu.</li><li>Berkas yang Anda lampirkan dalam percakapan: bersama pesan tempat berkas dilampirkan, 30 hari, atau lebih cepat jika percakapan dihapus, dan bagaimanapun dalam 38 hari. Berkas yang tidak dipakai pesan mana pun dihapus sekitar satu jam setelah Anda mengunggahnya. Menghapus akun Anda menghapusnya.</li><li>Berkas yang diserahkan taf Anda: 30 hari sejak proses membuatnya, lalu dihapus otomatis dalam satu hari. Siapa pun di akun Anda dapat menghapusnya lebih cepat dengan Hapus sekarang: berkasnya sendiri hilang seketika, tanpa salinan tersisa; nama, ukuran, serta taf dan proses yang membuatnya dapat tetap ada di salinan titik-waktu terenkripsi penyimpanan tafs hingga 35 hari, hanya dipakai untuk memulihkannya setelah kegagalan. Menghapus sebuah taf atau akun Anda menghapus berkasnya. Membagikan berkas mengirim berkas itu sendiri, dan salinan yang Anda bagikan tetap berada di aplikasi tempat Anda membagikannya. Untuk mengunduh berkas, kami membuat tautan bagi anggota akun Anda yang sedang masuk yang berhenti berfungsi setelah satu menit; kami tidak membuat tautan lain ke berkas itu.</li><li>Apa yang dikembalikan sebuah alat, dalam catatan planque untuk setiap panggilan: 24 jam. Setelah itu, catatan hanya menyimpan apakah panggilan dikirim, sehingga tidak pernah dikirim dua kali.</li><li>Token atau kunci sebuah koneksi di planque, atau login koneksi terkelola di Composio: sampai Anda memutusnya. Jika koneksi Anda yang lain boleh memakai akun yang sama di vendor itu, ia disimpan, tidak dipakai, sampai koneksi itu juga diputus, lalu dicabut. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Siapa lagi yang menerima data</h2><p>Kami tidak menjual data pribadi Anda, dan tidak membagikannya untuk periklanan.</p><p>Untuk tafs, kami memakai perusahaan-perusahaan ini: Amazon Web Services (hosting, termasuk penyimpanan tafs dan koneksi planque), Clerk (login untuk akun KIFF), Anthropic (model AI, dijalankan oleh Anthropic, Amazon Web Services, Google Cloud, atau Microsoft Azure), Composio (login koneksi terkelola, dan panggilan yang diminta planque untuk dilakukannya), Apple (notifikasi push), Google (notifikasi push di Android, dan penagihan Google Play), dan Resend (pintu email sebuah taf). Daftar resmi terkini, dengan apa yang disentuh masing-masing dan di mana, ada di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</p><p>Sebagian dari mereka berada di luar Wilayah Ekonomi Eropa, terutama di Amerika Serikat. <a href=\"/id/privacy#transfers\">Kebijakan Privasi KIFF</a> menjelaskan bagaimana transfer itu diamankan.</p><p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href=\"/privacy/countries\">Negara Anda</a> (dalam bahasa Inggris).</p></section><section id=\"retention\"><h2>8. Berapa lama kami menyimpannya</h2><ul><li>Apa yang dikembalikan alat Anda kepada sebuah taf: hanya sampai proses selesai. Dalam sebuah percakapan, apa yang hanya dibacanya disimpan terenkripsi untuk pesan berikutnya, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari.</li><li>Proses dan percakapan sebuah taf, dengan ringkasan percakapan: 30 hari. Catatan memorinya: sampai taf dihapus. Anda dapat menghapus lebih awal salah satu percakapan Anda dengan Coach: pesan-pesannya dan berkas yang Anda tambahkan langsung dihapus, sementara catatan bahwa setiap prosesnya terjadi, kapan, dan berapa biayanya tetap ada selama 30 hari itu. Jika Anda melaporkan jawaban, KIFF menyimpan jawaban itu, alasan, dan catatan Anda selama 180 hari, atau sampai Anda menghapus chat itu atau akun Anda. KIFF juga mengirimkannya lewat email ke tim yang membaca laporan, dan email itu disimpan seperti email dukungan KIFF.</li><li>Catatan singkat Coach untuk jawaban berikutnya, seperti mengapa sebuah koneksi tidak dapat dibuat dalam percakapan, atau bahwa sebuah Card disetujui: sampai jawaban itu mengambilnya, paling lama 7 hari; setelah itu, sebagai bagian dari percakapan itu, selama percakapan disimpan. Sebuah salinan disimpan 24 jam agar pesan yang dikirim ulang mendapat catatan yang sama. Catatan sebuah percakapan hanya dipakai dalam percakapan itu.</li><li>Berkas yang Anda lampirkan dalam percakapan: bersama pesan tempat berkas dilampirkan, 30 hari, atau lebih cepat jika percakapan dihapus, dan bagaimanapun dalam 38 hari. Berkas yang tidak dipakai pesan mana pun dihapus sekitar satu jam setelah Anda mengunggahnya. Menghapus akun Anda menghapusnya.</li><li>Berkas yang diserahkan taf Anda: 30 hari sejak proses membuatnya, lalu dihapus otomatis dalam satu hari. Siapa pun di akun Anda dapat menghapusnya lebih cepat dengan Hapus sekarang: berkasnya sendiri hilang seketika, tanpa salinan tersisa; nama, ukuran, serta taf dan proses yang membuatnya dapat tetap ada di salinan titik-waktu terenkripsi penyimpanan tafs hingga 35 hari, hanya dipakai untuk memulihkannya setelah kegagalan. Menghapus sebuah taf atau akun Anda menghapus berkasnya. Membagikan berkas mengirim berkas itu sendiri, dan salinan yang Anda bagikan tetap berada di aplikasi tempat Anda membagikannya. Untuk mengunduh berkas, kami membuat tautan bagi anggota akun Anda yang sedang masuk yang berhenti berfungsi setelah satu menit; kami tidak membuat tautan lain ke berkas itu.</li><li>Apa yang dikembalikan sebuah alat, dalam catatan planque untuk setiap panggilan: 24 jam. Setelah itu, catatan hanya menyimpan apakah panggilan dikirim, sehingga tidak pernah dikirim dua kali.</li><li>Token atau kunci sebuah koneksi di planque, atau login koneksi terkelola di Composio: sampai Anda memutusnya. Jika koneksi Anda yang lain boleh memakai akun yang sama di vendor itu, ia disimpan, tidak dipakai, sampai koneksi itu juga diputus, lalu dicabut. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("id"))
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("id"))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 83, Col: 289}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Catatan persetujuannya: sampai akun berakhir.</li><li>Token push sebuah perangkat: sampai Anda keluar dari aplikasi, menghapus perangkat, atau Apple atau Google melaporkan token itu hilang. Kunci publik, nama, platform, dan tanggal sebuah perangkat: selama Anda memakainya; setelah Anda mengeluarkannya, ia ditandai dihapus dan disimpan sampai akun dihapus, agar KIFF dapat menolak jawaban terlambat darinya dan menunjukkan perangkat mana yang menandatangani jawaban sebelumnya. Kunci publik, ID, dan nama sebuah passkey: seperti milik perangkatnya. Sesi sebuah komputer: hingga 90 hari, atau sampai Anda keluar.</li><li>Akun Anda: sampai dihapus. Log layanan: 30 hari. Penyimpanan tafs dan planque menyimpan salinan titik-waktu terenkripsi selama 35 hari, hanya dipakai untuk memulihkan penyimpanan setelah kegagalan.</li></ul><p>Semua yang lain ada di <a href=\"/id/privacy#retention\">bagian Retensi KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Dasar hukum</h2><p>Pelaksanaan kontrak, untuk menjalankan akun dan taf Anda. Kepentingan yang sah, untuk keamanan, pencegahan penipuan, dan deteksi penyalahgunaan. Persetujuan, untuk AI di tafs (<a href=\"#ai\">bagian 5</a>). Kewajiban hukum, untuk catatan pajak. <a href=\"/id/privacy#lawful-bases\">Kebijakan Privasi KIFF</a> memuat rinciannya.</p></section><section id=\"rights\"><h2>10. Hak Anda</h2><p>Berdasarkan GDPR, Anda dapat meminta akses ke data Anda, koreksi, penghapusan, pembatasan, atau salinan yang dapat dipindahkan, menolak pemrosesan berdasarkan kepentingan yang sah, dan menarik persetujuan. Kirim email ke <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; kami menanggapi tanpa penundaan yang tidak semestinya dan paling lambat dalam satu bulan; untuk permintaan yang rumit kami mungkin perlu dua bulan lagi, dan kami memberi tahu Anda dalam bulan pertama. Di aplikasi, Akun → Ekspor percakapan saya mengunduh percakapan dan catatan Anda sendiri.</p><p>Untuk menghapus akun tafs Anda, buka aplikasi, masuk ke Akun dan ketuk <em>Hapus akun</em>, lalu konfirmasi. Tindakan ini tidak dapat dibatalkan. <a href=\"/id/privacy#delete-account\">Kebijakan Privasi KIFF</a> menjelaskan apa yang dihapus dan kapan, dan cara meminta lewat email.</p><p>Anda dapat mengajukan keluhan kepada <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspektorat Perlindungan Data Estonia (Andmekaitse Inspektsioon)</a>, atau kepada otoritas pengawas di tempat Anda tinggal.</p><p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href=\"/privacy/countries\">Negara Anda</a> (dalam bahasa Inggris).</p></section><section id=\"more\"><h2>11. Keamanan, anak-anak, dan perubahan</h2><p>Langkah keamanan kami ada di <a href=\"/security\">/security</a> (dalam bahasa Inggris). tafs tidak ditujukan untuk anak-anak, dan kami tidak dengan sengaja mengumpulkan data pribadi dari anak di bawah 16 tahun. Kami mengubah kebijakan ini dengan cara yang dinyatakan <a href=\"/id/privacy#changes\">Kebijakan Privasi KIFF</a> untuk kebijakannya sendiri.</p></section><section id=\"contact\"><h2>12. Kontak</h2><p>Pertanyaan dan permintaan privasi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Pemberitahuan hukum formal: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Ketentuan aplikasi sendiri ada di <a href=\"/id/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " Catatan persetujuannya: sampai akun berakhir.</li><li>Token push sebuah perangkat: sampai Anda keluar dari aplikasi, menghapus perangkat, atau Apple atau Google melaporkan token itu hilang. Kunci publik, nama, platform, dan tanggal sebuah perangkat: selama Anda memakainya; setelah Anda mengeluarkannya, ia ditandai dihapus dan disimpan sampai akun dihapus, agar KIFF dapat menolak jawaban terlambat darinya dan menunjukkan perangkat mana yang menandatangani jawaban sebelumnya. Kunci publik, ID, dan nama sebuah passkey: seperti milik perangkatnya. Sesi sebuah komputer: hingga 90 hari, atau sampai Anda keluar.</li><li>Akun Anda: sampai dihapus. Log layanan: 30 hari. Penyimpanan tafs dan planque menyimpan salinan titik-waktu terenkripsi selama 35 hari, hanya dipakai untuk memulihkan penyimpanan setelah kegagalan.</li></ul><p>Semua yang lain ada di <a href=\"/id/privacy#retention\">bagian Retensi KIFF</a>.</p></section><section id=\"lawful-bases\"><h2>9. Dasar hukum</h2><p>Pelaksanaan kontrak, untuk menjalankan akun dan taf Anda. Kepentingan yang sah, untuk keamanan, pencegahan penipuan, dan deteksi penyalahgunaan. Persetujuan, untuk AI di tafs (<a href=\"#ai\">bagian 5</a>). Kewajiban hukum, untuk catatan pajak. <a href=\"/id/privacy#lawful-bases\">Kebijakan Privasi KIFF</a> memuat rinciannya.</p></section><section id=\"rights\"><h2>10. Hak Anda</h2><p>Berdasarkan GDPR, Anda dapat meminta akses ke data Anda, koreksi, penghapusan, pembatasan, atau salinan yang dapat dipindahkan, menolak pemrosesan berdasarkan kepentingan yang sah, dan menarik persetujuan. Kirim email ke <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; kami menanggapi tanpa penundaan yang tidak semestinya dan paling lambat dalam satu bulan; untuk permintaan yang rumit kami mungkin perlu dua bulan lagi, dan kami memberi tahu Anda dalam bulan pertama. Di aplikasi, Akun → Ekspor percakapan saya mengunduh percakapan dan catatan Anda sendiri.</p><p>Untuk menghapus akun tafs Anda, buka aplikasi, masuk ke Akun dan ketuk <em>Hapus akun</em>, lalu konfirmasi. Tindakan ini tidak dapat dibatalkan. <a href=\"/id/privacy#delete-account\">Kebijakan Privasi KIFF</a> menjelaskan apa yang dihapus dan kapan, dan cara meminta lewat email.</p><p>Anda dapat mengajukan keluhan kepada <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Inspektorat Perlindungan Data Estonia (Andmekaitse Inspektsioon)</a>, atau kepada otoritas pengawas di tempat Anda tinggal.</p><p><strong>Negara Anda.</strong> Hukum sebagian negara meminta lebih dari yang dikatakan kebijakan ini. Apa yang mereka tambahkan, dalam bahasa Inggris dan dalam bahasa negara itu, ada di <a href=\"/privacy/countries\">Negara Anda</a> (dalam bahasa Inggris).</p></section><section id=\"more\"><h2>11. Keamanan, anak-anak, dan perubahan</h2><p>Langkah keamanan kami ada di <a href=\"/security\">/security</a> (dalam bahasa Inggris). tafs tidak ditujukan untuk anak-anak, dan kami tidak dengan sengaja mengumpulkan data pribadi dari anak di bawah 16 tahun. Kami mengubah kebijakan ini dengan cara yang dinyatakan <a href=\"/id/privacy#changes\">Kebijakan Privasi KIFF</a> untuk kebijakannya sendiri.</p></section><section id=\"contact\"><h2>12. Kontak</h2><p>Pertanyaan dan permintaan privasi: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Pemberitahuan hukum formal: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Ketentuan aplikasi sendiri ada di <a href=\"/id/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -177,347 +190,347 @@ func tafsPrivacyGoogleID() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Data pengguna Google</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Data pengguna Google</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Google Sheets atau Google Calendar yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Google Sheets atau Google Calendar yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Gmail Anda, atau ke Google Calendar atau Google Sheets yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Atas permintaan Anda, tafs menghubungkan sebuah taf ke akun Google Anda, misalnya ke Gmail Anda, atau ke Google Calendar atau Google Sheets yang dipakai pekerjaannya, di Hubungkan aplikasi pada aplikasi. Bagian ini menjelaskan apa yang dilakukan tafs dengan data yang diterimanya dari Google.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu: spreadsheet yang dijaganya tetap mutakhir, atau acara di kalender yang diurusnya. Ia mengubahnya hanya jika Card taf itu mengizinkan, dan apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu: spreadsheet yang dijaganya tetap mutakhir, atau acara di kalender yang diurusnya. Ia mengubahnya hanya jika Card taf itu mengizinkan, dan apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu. Di Gmail Anda, ia membaca pesan dan utas Anda untuk menemukan yang perlu dijawab, dan menulis draf; ia mengirim email hanya jika Card taf itu mengizinkan. Di Google Calendar dan Google Sheets, ia membaca acara di kalender yang diurusnya, atau spreadsheet yang dijaganya tetap mutakhir, dan mengubahnya hanya jika Card taf itu mengizinkan. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Apa yang dibaca dan ditulisnya:</strong> apa yang dibutuhkan pekerjaan taf itu. Di Gmail Anda, ia membaca pesan dan utas Anda untuk menemukan yang perlu dijawab, dan menulis draf; ia mengirim email hanya jika Card taf itu mengizinkan. Di Google Calendar dan Google Sheets, ia membaca acara di kalender yang diurusnya, atau spreadsheet yang dijaganya tetap mutakhir, dan mengubahnya hanya jika Card taf itu mengizinkan. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "Di Google Tasks, ia membaca daftar tugas yang diurusnya, dan menambah, menyelesaikan, memindahkan, atau menghapus tugas hanya jika Card taf itu mengizinkan. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Di Google Tasks, ia membaca daftar tugas yang diurusnya, dan menambah, menyelesaikan, memindahkan, atau menghapus tugas hanya jika Card taf itu mengizinkan. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Apa pun yang melebihi batas Card menunggu persetujuan Anda.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Mengapa:</strong> hanya untuk mengerjakan pekerjaan yang Anda siapkan untuk taf itu, dan untuk menunjukkan akun Google mana yang terhubung dengannya: alamat emailnya, disimpan bersama koneksi sampai Anda memutusnya.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Mengapa:</strong> hanya untuk mengerjakan pekerjaan yang Anda siapkan untuk taf itu, dan untuk menunjukkan akun Google mana yang terhubung dengannya: alamat emailnya, disimpan bersama koneksi sampai Anda memutusnya.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Bagaimana setiap aplikasi Google terhubung:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Bagaimana setiap aplikasi Google terhubung:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Melalui mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris): ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 139, Col: 149}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("id")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Melalui login Google milik tafs sendiri, tanpa perusahaan lain di tengah: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Melalui mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris): ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 142, Col: 116}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 139, Col: 149}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("id") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+			if len(googleInHouse("id")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>Melalui login Google milik tafs sendiri, tanpa perusahaan lain di tengah: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 142, Col: 116}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("id"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("id") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("id").Line)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("id"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("id").AsksFor)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("id").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("id").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 147, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 150, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 150, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Aplikasi yang disebut di keduanya terhubung dengan salah satu cara, tergantung akun Anda. Halaman login Google sendiri menunjukkan yang mana yang Anda izinkan.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "Aplikasi yang disebut di keduanya terhubung dengan salah satu cara, tergantung akun Anda. Halaman login Google sendiri menunjukkan yang mana yang Anda izinkan.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan.<ul><li><strong>Melalui mitra login kami:</strong> tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan.<ul><li><strong>Melalui mitra login kami:</strong> tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. Login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. Login itu meminta semua akses yang tercantum di bawah untuk aplikasi itu sekaligus, meskipun taf hanya membaca.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Apa yang Anda izinkan:</strong> Anda masuk di halaman Google sendiri dan memilih apa yang diizinkan. tafs hanya meminta akses yang dibutuhkan alat taf itu. Jika akses yang lebih sempit itu tidak mungkin, ia meminta akses biasa aplikasi itu, dan mengatakannya sebelum Anda masuk. Jika akses biasa mencakup data pribadi yang tidak dipakai taf itu, tafs tidak menghubungkan.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Bagaimana sebuah taf memakainya:</strong> sebuah taf hanya memakai alat yang disetujui pada Card-nya. Setiap panggilan diperiksa terhadap izin untuk alat dan argumen yang tepat itu sebelum apa pun dikirim, dan panggilan di luar akses yang Anda berikan ditolak. Tindakan mana yang meminta persetujuan Anda setiap kali ditetapkan di Card.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Bagaimana sebuah taf memakainya:</strong> sebuah taf hanya memakai alat yang disetujui pada Card-nya. Setiap panggilan diperiksa terhadap izin untuk alat dan argumen yang tepat itu sebelum apa pun dikirim, dan panggilan di luar akses yang Anda berikan ditolak. Tindakan mana yang meminta persetujuan Anda setiap kali ditetapkan di Card.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Akses yang diminta login Google milik tafs sendiri:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Akses yang diminta login Google milik tafs sendiri:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Akses yang diminta tafs:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>Akses yang diminta tafs:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("id") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 188, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var21 string
+					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `id_tafs_privacy.templ`, Line: 188, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Seberapa pun yang diizinkan sebuah login, taf hanya memakai alat yang ada di Card-nya.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>Seberapa pun yang diizinkan sebuah login, taf hanya memakai alat yang ada di Card-nya.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Siapa yang menyimpan login Anda:</strong><ul><li><strong>Melalui mitra login kami:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Siapa yang menyimpan login Anda:</strong><ul><li><strong>Melalui mitra login kami:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Siapa yang menyimpan login Anda:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Siapa yang menyimpan login Anda:</strong> planque, layanan koneksi tafs sendiri, menyimpan token Google Anda untuk perusahaan Anda, terenkripsi dengan AWS KMS di Uni Eropa (Irlandia), dan memakainya hanya untuk membuat panggilan yang diizinkan Card taf itu. Token itu tidak pernah diberikan kepada sebuah taf, dan baik taf maupun model AI tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Siapa yang menyimpan login Anda:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Siapa yang menyimpan login Anda:</strong> login Google Anda disimpan oleh mitra login kami, yang tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris), dan tidak pernah diberikan kepada sebuah taf atau kepada planque. Baik taf maupun tafs tidak melihat kata sandi atau token Google Anda. Taf Anda yang lain yang membutuhkan akses yang sama memakai ulang login itu, dan setiap taf hanya memakai alat yang Anda setujui untuknya.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya.<ul><li><strong>Melalui mitra login kami:</strong> data itu juga melewati mitra login kami, yang membuat setiap panggilan.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda.</li></ul>Keduanya tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya.<ul><li><strong>Melalui mitra login kami:</strong> data itu juga melewati mitra login kami, yang membuat setiap panggilan.</li><li><strong>Melalui login Google milik tafs sendiri:</strong> planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda.</li></ul>Keduanya tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda. Penyedia model AI tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. planque memanggil Google sendiri, sehingga tidak ada perusahaan lain yang membuat panggilan atau menyimpan login Anda. Penyedia model AI tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. Data itu juga melewati mitra login kami, yang membuat setiap panggilan. Keduanya tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Siapa lagi yang menerimanya:</strong> apa yang dibaca sebuah taf dari Google dikirim ke model AI yang menjalankan taf itu, hanya setelah Anda mengizinkannya (lihat <a href=\"#ai\">AI di tafs</a>), yang menyimpannya hingga 30 hari berdasarkan ketentuan penyedianya. Data itu juga melewati mitra login kami, yang membuat setiap panggilan. Keduanya tercantum di <a href=\"/subprocessors\">/subprocessors</a> (dalam bahasa Inggris).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Pelatihan AI:</strong> data pengguna Google tidak dipakai untuk melatih model AI.</li><li><strong>Gambar:</strong> tafs tidak membuat atau mengedit gambar atau video: AI-nya menulis teks. tafs tidak pernah memakai API Google atau data pengguna Google untuk membuat, mengedit, atau membagikan gambar intim siapa pun (citra intim non-konsensual, NCII), atau gambar lain apa pun dari seseorang.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Pelatihan AI:</strong> data pengguna Google tidak dipakai untuk melatih model AI.</li><li><strong>Gambar:</strong> tafs tidak membuat atau mengedit gambar atau video: AI-nya menulis teks. tafs tidak pernah memakai API Google atau data pengguna Google untuk membuat, mengedit, atau membagikan gambar intim siapa pun (citra intim non-konsensual, NCII), atau gambar lain apa pun dari seseorang.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("id")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Berapa lama, dan di mana:</strong> spreadsheet dan acara Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href=\"#retention\">Berapa lama kami menyimpannya</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Berapa lama, dan di mana:</strong> spreadsheet dan acara Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href=\"#retention\">Berapa lama kami menyimpannya</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Berapa lama, dan di mana:</strong> draf, acara, dan spreadsheet Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href=\"#retention\">Berapa lama kami menyimpannya</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Berapa lama, dan di mana:</strong> draf, acara, dan spreadsheet Anda tetap di akun Google Anda. Di penyimpanan tafs sendiri, apa yang dikembalikan sebuah alat disimpan hanya sampai proses taf itu selesai. planque, yang meneruskan setiap panggilan, menyimpan apa yang dikembalikan Google selama 24 jam, sehingga panggilan yang diulang mendapat jawaban yang sama dan tidak pernah dikirim dua kali; setelah itu ia hanya menyimpan apakah panggilan dikirim. Dalam sebuah percakapan, apa yang hanya dibaca disimpan terenkripsi, dipakai sampai percakapan tidak aktif selama satu jam dan paling lama empat jam setelah dibaca, lalu dihapus otomatis, dalam beberapa hari. Catatan sebuah proses dan percakapannya disimpan 30 hari, dan catatan sebuah taf sampai Anda menghapus taf itu (lihat <a href=\"#retention\">Berapa lama kami menyimpannya</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Menghentikannya:</strong><ul><li>Putuskan Google di aplikasi, di Hubungkan aplikasi atau di tab Card milik taf itu. Alat Google-nya berhenti seketika, dan tafs meminta Google mencabut login itu seketika; itu mungkin selesai sedikit lebih lambat.</li><li>Hapus sebuah taf, dan koneksinya berakhir bersamanya. Login Google yang masih dipakai taf Anda yang lain tetap ada sampai yang terakhir hilang.</li><li>Cabut akses tafs kapan saja di Akun Google Anda, di <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Taf Anda berhenti menjangkau Google, dan aplikasi memberi tahu Anda bahwa koneksi Google telah keluar.</li><li>Hapus akun Anda: taf, percakapan, catatan, berkas, dan koneksinya dihapus seketika, dan dari salinan titik-waktunya dalam 35 hari, dan token Google-nya dicabut sejauh diizinkan Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>Menghentikannya:</strong><ul><li>Putuskan Google di aplikasi, di Hubungkan aplikasi atau di tab Card milik taf itu. Alat Google-nya berhenti seketika, dan tafs meminta Google mencabut login itu seketika; itu mungkin selesai sedikit lebih lambat.</li><li>Hapus sebuah taf, dan koneksinya berakhir bersamanya. Login Google yang masih dipakai taf Anda yang lain tetap ada sampai yang terakhir hilang.</li><li>Cabut akses tafs kapan saja di Akun Google Anda, di <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Taf Anda berhenti menjangkau Google, dan aplikasi memberi tahu Anda bahwa koneksi Google telah keluar.</li><li>Hapus akun Anda: taf, percakapan, catatan, berkas, dan koneksinya dihapus seketika, dan dari salinan titik-waktunya dalam 35 hari, dan token Google-nya dicabut sejauh diizinkan Google.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
