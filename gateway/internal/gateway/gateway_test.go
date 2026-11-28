@@ -1395,9 +1395,15 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 			l.Level != "WARN" || !strings.HasPrefix(l.Invocation, "tc-") || l.Refusal != "<nil>" {
 			t.Fatalf("outcome line: %+v", l)
 		}
-		// The call's own class (K4), as KIFF was told it: one grep per class.
-		if want, _ := refundTool.CallClass(map[string]any{"amount_eur": 500}); l.KiffClass != string(want) || l.KiffClass == "" {
-			t.Fatalf("the outcome line's kiff_class: %q, want %q", l.KiffClass, want)
+		// The call's own class (K4), exactly as KIFF was told it when it was decided, kept on the call: one grep
+		// per class, never worked out again at the end.
+		sent, _ := r.api.params[l.Invocation][gateway.ClassParam].(string)
+		var keptClass string
+		if err := r.store.Pool().QueryRow(context.Background(), `SELECT kiff_class FROM gateway.invocations WHERE key = $1`, l.Invocation).Scan(&keptClass); err != nil {
+			t.Fatal(err)
+		}
+		if sent == "" || keptClass != sent || l.KiffClass != sent {
+			t.Fatalf("the outcome line's kiff_class %q, kept %q, sent %q", l.KiffClass, keptClass, sent)
 		}
 		for _, word := range []string{"sk_tool_secret", "ana.lopez", "example.com", "dashboard.example", "cus_9xYz", "No such customer"} {
 			if strings.Contains(buf.String(), word) {

@@ -87,6 +87,9 @@ type Invocation struct {
 	// StatusEvidence is what the profile's status read found when the
 	// call's outcome wasn't known, or nil (kiff/tafs#498).
 	StatusEvidence json.RawMessage
+	// KiffClass is the call's class (K4) as KIFF was told it when the call
+	// was decided ("" for a call from before it was kept).
+	KiffClass string
 }
 
 // Call identifies a tool call before it has a key.
@@ -108,6 +111,10 @@ type Call struct {
 	ProfileRevision *int64
 	// Measure is what its amount means as decided: {unit, scale, title}.
 	Measure json.RawMessage
+	// KiffClass is the class (K4) the decision is asked with, kept so the
+	// call's outcome line says the class KIFF was told, never one worked out
+	// again later.
+	KiffClass string
 }
 
 // CanonicalJSON re-encodes v with object keys sorted (encoding/json
@@ -192,14 +199,14 @@ func (s *Store) Pool() *pgxpool.Pool { return s.pool }
 func (s *Store) SetClock(now func() time.Time) { s.now = now }
 
 const cols = `key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments,
-	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence, connection_refusal, status_evidence`
+	state, exception_id, review_url, message, reasons, result, created_at, updated_at, hold_expires_at, tool_error, tool_outcome, no_effect_evidence, execution_binding, profile_revision, verify_evidence, connection_refusal, status_evidence, kiff_class`
 
 func scan(row pgx.Row) (Invocation, error) {
 	var in Invocation
 	var args, result []byte
 	err := row.Scan(&in.Key, &in.TenantID, &in.CredentialID, &in.AgentID, &in.Tool, &in.OperationID,
 		&in.ArgsHash, &args, &in.State, &in.ExceptionID, &in.ReviewURL, &in.Message, &in.Reasons, &result,
-		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence, &in.ConnectionRefusal, &in.StatusEvidence)
+		&in.CreatedAt, &in.UpdatedAt, &in.HoldExpiresAt, &in.ToolError, &in.ToolOutcome, &in.NoEffectEvidence, &in.ExecutionBinding, &in.ProfileRevision, &in.VerifyEvidence, &in.ConnectionRefusal, &in.StatusEvidence, &in.KiffClass)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Invocation{}, ErrNotFound
 	}
@@ -336,11 +343,11 @@ func (s *Store) Begin(ctx context.Context, c Call) (Invocation, bool, error) {
 
 	in, err := scan(tx.QueryRow(ctx, `
 		INSERT INTO gateway.invocations
-		  (key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments, state, created_at, updated_at, profile_revision, measure)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12)
+		  (key, tenant_id, credential_id, agent_id, tool, operation_id, args_hash, arguments, state, created_at, updated_at, profile_revision, measure, kiff_class)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12, $13)
 		ON CONFLICT (key) DO NOTHING
 		RETURNING `+cols,
-		key, c.TenantID, c.CredentialID, c.AgentID, c.Tool, c.OperationID, argsHash, canon, StateDeciding, now, c.ProfileRevision, nullableJSON(c.Measure)))
+		key, c.TenantID, c.CredentialID, c.AgentID, c.Tool, c.OperationID, argsHash, canon, StateDeciding, now, c.ProfileRevision, nullableJSON(c.Measure), c.KiffClass))
 	if err == nil {
 		return in, true, tx.Commit(ctx)
 	}
