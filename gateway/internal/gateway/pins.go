@@ -78,26 +78,6 @@ func DecodeVendorPins(b []byte) ([]VendorPin, error) {
 	return pins, nil
 }
 
-// PinInSchema says whether a vendor path is in a tool's input schema, key
-// by key through its properties, so a pin never sits on a field the vendor
-// ignores. A marker isn't checked: its field is the relay's to set and is
-// kept out of the schema the agent sees, so the agent can't set it.
-func PinInSchema(schema json.RawMessage, path string) bool {
-	var node map[string]any
-	if json.Unmarshal(schema, &node) != nil {
-		return false
-	}
-	for _, key := range strings.Split(path, ".") {
-		props, _ := node["properties"].(map[string]any)
-		next, ok := props[key].(map[string]any)
-		if !ok {
-			return false
-		}
-		node = next
-	}
-	return true
-}
-
 func pinPath(path string) bool {
 	if path == "" || len(path) > MaxPinPath {
 		return false

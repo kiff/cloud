@@ -1033,10 +1033,9 @@ func TestControlRefusedWhereAConnectorConnects(t *testing.T) {
 	}
 }
 
-// A relay's vendor pins are kept for its tool, each value on a field the
-// tool's schema lists (a marker isn't); a tool registered straight to KIFF
-// keeps none, as it keeps no app.
-func TestVendorPinsAreKeptOnlyForARelaysToolOnItsSchema(t *testing.T) {
+// A relay's vendor pins are kept for its tool, within the path limits; a
+// tool registered straight to KIFF keeps none, as it keeps no app.
+func TestVendorPinsAreKeptOnlyForARelaysTool(t *testing.T) {
 	r := newRig(t, dev)
 	relay, direct := openToolServer(t), openToolServer(t)
 	r.h.RelayURLs = []string{relay.URL + "/v1/relay"}
@@ -1049,9 +1048,11 @@ func TestVendorPinsAreKeptOnlyForARelaysToolOnItsSchema(t *testing.T) {
 		!strings.Contains(body, `"vendor_pins":[{"path":"order","value":"o-1"},{"path":"metadata.kiff_op","marker":true}]`) {
 		t.Fatalf("a relay's pins: %d %s", status, body)
 	}
-	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_bad", relay.URL, []map[string]any{{"path": "status", "value": "draft"}})); status != http.StatusBadRequest ||
-		!strings.Contains(body, "isn't in the tool's input schema") {
-		t.Fatalf("a pin off the schema: %d %s", status, body)
+	// A pin off the narrowed schema is kept: a pinned value is kept out of
+	// it on purpose (the relay checks the vendor's own schema).
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_context", relay.URL, []map[string]any{{"path": "stripe_context", "value": "acct_1"}})); status != http.StatusCreated ||
+		!strings.Contains(body, `"vendor_pins":[{"path":"stripe_context","value":"acct_1"}]`) {
+		t.Fatalf("a pin off the narrowed schema: %d %s", status, body)
 	}
 	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_index", relay.URL, []map[string]any{{"path": "lines.0", "value": "x"}})); status != http.StatusBadRequest {
 		t.Fatalf("an index: %d %s", status, body)

@@ -27,15 +27,6 @@ func TestOnlyPinsAPermitCanSignAreKept(t *testing.T) {
 	}
 }
 
-func TestAPinSitsOnlyOnAFieldTheSchemaLists(t *testing.T) {
-	schema := json.RawMessage(`{"type":"object","properties":{"status":{"type":"string"},"metadata":{"type":"object","properties":{"note":{"type":"string"}}}}}`)
-	for path, want := range map[string]bool{"status": true, "metadata.note": true, "metadata": true, "report_einvoicing": false, "metadata.kiff_op": false, "status.x": false} {
-		if got := PinInSchema(schema, path); got != want {
-			t.Errorf("%s: %v, want %v", path, got, want)
-		}
-	}
-}
-
 // With its draft pin signed, create_client_invoice is a write because the
 // permit signs status = draft, whatever the agent's own status says; with
 // no pin signed, the agent's argument decides, as before.

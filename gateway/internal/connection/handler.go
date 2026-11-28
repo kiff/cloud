@@ -463,14 +463,13 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	if len(schema) == 0 {
 		schema = json.RawMessage(`{"type":"object"}`)
 	}
-	// A relay's pins, each value on a field its tool's schema lists.
+	// A relay's pins. They aren't checked against the schema stored here:
+	// that's the relay's narrowed one, which holds only what the agent may
+	// set, and a pin is by definition a value kept out of it. The relay
+	// checks each pin's path against the vendor's own listed schema before
+	// it registers the tool.
 	var pins []gateway.VendorPin
 	if h.onRelay(u.String()) && len(req.VendorPins) > 0 {
-		for _, p := range req.VendorPins {
-			if !p.Marker && !gateway.PinInSchema(schema, p.Path) {
-				return Connection{}, http.StatusBadRequest, "vendor_pins: " + p.Path + " isn't in the tool's input schema"
-			}
-		}
 		pins = req.VendorPins
 	}
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
