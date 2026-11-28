@@ -170,6 +170,10 @@ jobs:
       # The test tenants whose test keys' sessions last two weeks (a robot test user's); optional, and
       # each must also be in KIFF_PROOF_TEST_TENANTS. Unset or "-": none, every test key's session as usual.
       KIFF_PROOF_SHORT_SESSION_TENANTS: ${{ secrets.KIFF_PROOF_SHORT_SESSION_TENANTS }}
+      # K4 (kiff/cloud#212): the accounts whose calls are decided by their class, test accounts first
+      # ("-" or unset: none), and the gateway's class log ("on", or off).
+      KIFF_K4_TENANTS: ${{ secrets.KIFF_K4_TENANTS }}
+      KIFF_CLASS_LOG: ${{ vars.KIFF_CLASS_LOG }}
       KIFF_PROOF_RUNNER_VERSIONS: ${{ vars.KIFF_PROOF_RUNNER_VERSIONS }}
       KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
       # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of
