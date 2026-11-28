@@ -55,7 +55,7 @@ func TafsPrivacyFR() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("fr"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 35, Col: 524}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 35, Col: 524}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func TafsPrivacyFR() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("fr").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 45, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func TafsPrivacyFR() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("fr").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 45, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 45, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TafsPrivacyFR() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("fr").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 47, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 47, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func TafsPrivacyFR() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("fr").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 47, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 47, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func TafsPrivacyFR() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("fr"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 49, Col: 793}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 49, Col: 793}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -144,14 +144,14 @@ func TafsPrivacyFR() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Qui d'autre reçoit des données</h2><p>Nous ne vendons pas vos données personnelles et ne les partageons pas à des fins publicitaires.</p><p>Pour tafs, nous faisons appel à ces sociétés : Amazon Web Services (l'hébergement, y compris le stockage de tafs et les connexions de planque), Clerk (l'authentification des comptes KIFF), Anthropic (le modèle d'IA, exécuté par Anthropic, Amazon Web Services, Google Cloud ou Microsoft Azure), Composio (l'authentification des connexions gérées, et les appels que planque lui demande d'effectuer), Apple (les alertes push), Google (les alertes push sur Android, et la facturation de Google Play) et Resend (la porte e-mail d'un taf). La liste officielle et à jour, avec ce que chacune touche et où, se trouve sur <a href=\"/fr/subprocessors\">/subprocessors</a>.</p><p>Certaines d'entre elles sont établies hors de l'Espace économique européen, principalement aux États-Unis. La <a href=\"/fr/privacy#transfers\">politique de confidentialité de KIFF</a> indique les garanties qui encadrent ces transferts.</p><p><strong>Votre pays.</strong> Dans certains pays, la loi demande davantage que ce que dit cette politique. Ce qu'elle ajoute figure, en anglais et dans la langue du pays, sur <a href=\"/privacy/countries\">Votre pays</a>.</p></section><section id=\"retention\"><h2>8. Combien de temps nous les conservons</h2><ul><li>Ce que vos outils renvoient à un taf : seulement jusqu'à la fin de l'exécution. Dans un chat, ce qu'il a seulement lu est conservé chiffré pour ses messages suivants, utilisé jusqu'à ce que le chat soit resté inactif une heure, et au plus quatre heures après la lecture, puis supprimé automatiquement, sous quelques jours.</li><li>Les exécutions et les chats d'un taf, avec le résumé d'un chat : 30 jours. Ses notes de mémoire : jusqu'à la suppression du taf. Vous pouvez supprimer plus tôt un de vos propres chats avec Coach : ses messages et les fichiers que vous avez ajoutés sont supprimés aussitôt, tandis que la trace que chacune de ses exécutions a eu lieu, quand et ce qu'elle a coûté reste ces 30 jours. Si vous signalez une réponse, KIFF conserve cette réponse, votre motif et votre note pendant 180 jours, ou jusqu'à ce que vous supprimiez ce chat ou votre compte. KIFF les envoie aussi par e-mail à l'équipe qui lit les signalements, où cet e-mail est conservé comme le courrier d'assistance de KIFF.</li><li>Les courtes notes de Coach pour sa prochaine réponse, par exemple pourquoi une connexion n'a pas pu se faire dans un chat, ou qu'une Card a été approuvée : jusqu'à ce que cette réponse les reprenne, 7 jours au plus ; ensuite, comme partie de ce chat, aussi longtemps que le chat est conservé. Une copie est gardée 24 heures pour qu'un message renvoyé reçoive la même note. La note d'un chat ne sert que dans ce chat.</li><li>Les fichiers que vous joignez dans un chat : avec le message auquel ils sont joints, 30 jours, ou moins si le chat est supprimé, et dans tous les cas sous 38 jours. Un fichier qu'aucun message n'utilise est supprimé environ une heure après son envoi. Supprimer votre compte les supprime.</li><li>Fichiers livrés par vos tafs : 30 jours à partir de l'exécution qui les a créés, puis supprimés automatiquement dans un délai d'un jour. Tout membre de votre compte peut en supprimer un plus tôt avec « Supprimer maintenant » : le fichier lui-même disparaît aussitôt, sans qu'aucune copie ne soit gardée ; son nom, sa taille, ainsi que le taf et l'exécution qui l'ont créé peuvent rester jusqu'à 35 jours dans les copies chiffrées à un instant donné du stockage de tafs, qui ne servent qu'à le restaurer après une panne. Supprimer un taf ou supprimer votre compte supprime ses fichiers. Partager un fichier envoie le fichier lui-même, et la copie partagée reste dans l'app avec laquelle vous l'avez partagée. Pour télécharger un fichier, nous créons pour un membre connecté de votre compte un lien qui cesse de fonctionner au bout d'une minute ; nous ne créons aucun autre lien vers lui.</li><li>Ce qu'un outil a renvoyé, dans l'enregistrement que planque tient de chaque appel : 24 heures. Ensuite, l'enregistrement ne garde que le fait que l'appel a été envoyé ou non, pour qu'il ne soit jamais envoyé deux fois.</li><li>Le jeton ou la clé d'une connexion dans planque, ou l'authentification d'une connexion gérée chez Composio : jusqu'à ce que vous la déconnectiez. Si une autre de vos connexions peut utiliser le même compte chez ce fournisseur, elle est gardée, sans être utilisée, jusqu'à ce que celle-ci soit aussi déconnectée, puis révoquée. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Qui d'autre reçoit des données</h2><p>Nous ne vendons pas vos données personnelles et ne les partageons pas à des fins publicitaires.</p><p>Pour tafs, nous faisons appel à ces sociétés : Amazon Web Services (l'hébergement, y compris le stockage de tafs et les connexions de planque), Clerk (l'authentification des comptes KIFF), Anthropic (le modèle d'IA, exécuté par Anthropic, Amazon Web Services, Google Cloud ou Microsoft Azure), Composio (l'authentification des connexions gérées, et les appels que planque lui demande d'effectuer), Apple (les alertes push), Google (les alertes push sur Android, et la facturation de Google Play) et Resend (les réponses signalées, envoyées à l'équipe de KIFF). La liste officielle et à jour, avec ce que chacune touche et où, se trouve sur <a href=\"/fr/subprocessors\">/subprocessors</a>.</p><p>Certaines d'entre elles sont établies hors de l'Espace économique européen, principalement aux États-Unis. La <a href=\"/fr/privacy#transfers\">politique de confidentialité de KIFF</a> indique les garanties qui encadrent ces transferts.</p><p><strong>Votre pays.</strong> Dans certains pays, la loi demande davantage que ce que dit cette politique. Ce qu'elle ajoute figure, en anglais et dans la langue du pays, sur <a href=\"/privacy/countries\">Votre pays</a>.</p></section><section id=\"retention\"><h2>8. Combien de temps nous les conservons</h2><ul><li>Ce que vos outils renvoient à un taf : seulement jusqu'à la fin de l'exécution. Dans un chat, ce qu'il a seulement lu est conservé chiffré pour ses messages suivants, utilisé jusqu'à ce que le chat soit resté inactif une heure, et au plus quatre heures après la lecture, puis supprimé automatiquement, sous quelques jours.</li><li>Les exécutions et les chats d'un taf, avec le résumé d'un chat : 30 jours. Ses notes de mémoire : jusqu'à la suppression du taf. Vous pouvez supprimer plus tôt un de vos propres chats avec Coach : ses messages et les fichiers que vous avez ajoutés sont supprimés aussitôt, tandis que la trace que chacune de ses exécutions a eu lieu, quand et ce qu'elle a coûté reste ces 30 jours. Si vous signalez une réponse, KIFF conserve cette réponse, votre motif et votre note pendant 180 jours, ou jusqu'à ce que vous supprimiez ce chat ou votre compte. KIFF les envoie aussi par e-mail à l'équipe qui lit les signalements, où cet e-mail est conservé comme le courrier d'assistance de KIFF.</li><li>Les courtes notes de Coach pour sa prochaine réponse, par exemple pourquoi une connexion n'a pas pu se faire dans un chat, ou qu'une Card a été approuvée : jusqu'à ce que cette réponse les reprenne, 7 jours au plus ; ensuite, comme partie de ce chat, aussi longtemps que le chat est conservé. Une copie est gardée 24 heures pour qu'un message renvoyé reçoive la même note. La note d'un chat ne sert que dans ce chat.</li><li>Les fichiers que vous joignez dans un chat : avec le message auquel ils sont joints, 30 jours, ou moins si le chat est supprimé, et dans tous les cas sous 38 jours. Un fichier qu'aucun message n'utilise est supprimé environ une heure après son envoi. Supprimer votre compte les supprime.</li><li>Fichiers livrés par vos tafs : 30 jours à partir de l'exécution qui les a créés, puis supprimés automatiquement dans un délai d'un jour. Tout membre de votre compte peut en supprimer un plus tôt avec « Supprimer maintenant » : le fichier lui-même disparaît aussitôt, sans qu'aucune copie ne soit gardée ; son nom, sa taille, ainsi que le taf et l'exécution qui l'ont créé peuvent rester jusqu'à 35 jours dans les copies chiffrées à un instant donné du stockage de tafs, qui ne servent qu'à le restaurer après une panne. Supprimer un taf ou supprimer votre compte supprime ses fichiers. Partager un fichier envoie le fichier lui-même, et la copie partagée reste dans l'app avec laquelle vous l'avez partagée. Pour télécharger un fichier, nous créons pour un membre connecté de votre compte un lien qui cesse de fonctionner au bout d'une minute ; nous ne créons aucun autre lien vers lui.</li><li>Ce qu'un outil a renvoyé, dans l'enregistrement que planque tient de chaque appel : 24 heures. Ensuite, l'enregistrement ne garde que le fait que l'appel a été envoyé ou non, pour qu'il ne soit jamais envoyé deux fois.</li><li>Le jeton ou la clé d'une connexion dans planque, ou l'authentification d'une connexion gérée chez Composio : jusqu'à ce que vous la déconnectiez. Si une autre de vos connexions peut utiliser le même compte chez ce fournisseur, elle est gardée, sans être utilisée, jusqu'à ce que celle-ci soit aussi déconnectée, puis révoquée. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("fr"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 83, Col: 373}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 83, Col: 373}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -251,7 +251,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 138, Col: 138}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 138, Col: 138}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -270,7 +270,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 141, Col: 133}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 141, Col: 133}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -289,7 +289,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 145, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 145, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -298,7 +298,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("fr"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 145, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 145, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -307,7 +307,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("fr").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 145, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 145, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -320,7 +320,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("fr").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 149, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -351,7 +351,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 149, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 149, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -430,7 +430,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 184, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 184, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -448,7 +448,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 187, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 187, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -461,7 +461,7 @@ func tafsPrivacyGoogleFR() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `fr_tafs_privacy.templ`, Line: 187, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/fr_tafs_privacy.templ`, Line: 187, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {

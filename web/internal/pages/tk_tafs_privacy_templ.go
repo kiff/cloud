@@ -56,7 +56,7 @@ func TafsPrivacyTK() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("tk"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 36, Col: 494}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 36, Col: 494}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -74,7 +74,7 @@ func TafsPrivacyTK() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("tk").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 46, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 46, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func TafsPrivacyTK() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("tk").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 46, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 46, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -105,7 +105,7 @@ func TafsPrivacyTK() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("tk").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 48, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 48, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +118,7 @@ func TafsPrivacyTK() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("tk").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 48, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 48, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -131,7 +131,7 @@ func TafsPrivacyTK() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("tk"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 50, Col: 718}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 50, Col: 718}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -145,14 +145,14 @@ func TafsPrivacyTK() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Maglumatlary ýene kim alýar</h2><p>Biz şahsy maglumatlaryňyzy satmaýarys we mahabat üçin paýlaşmaýarys.</p><p>tafs üçin biz şu kompaniýalary ulanýarys: Amazon Web Services (hosting, şol sanda tafs-yň saklaýjysy we planque-yň birikmeleri), Clerk (KIFF hasaplary üçin giriş), Anthropic (AI modeli, Anthropic, Amazon Web Services, Google Cloud ýa-da Microsoft Azure tarapyndan işledilýär), Composio (dolandyrylýan birikmeleriň girişleri we planque-yň ondan haýyş edýän çagyryşlary), Apple (push duýduryşlary), Google (Android-de push duýduryşlary we Google Play-iň töleg ulgamy) we Resend (taf-yň email gapysy). Resmi, häzirki sanaw, her biriniň degýän zady we ýeri bilen, <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) bar.</p><p>Olaryň käbiri Ýewropa Ykdysady Zolagyndan daşarda, köplenç Amerikanyň Birleşen Ştatlarynda. Şol geçirmeleriň nähili goralýandygyny <a href=\"/tk/privacy#transfers\">KIFF-iň Gizlinlik syýasaty</a> aýdýar.</p><p><strong>Siziň ýurduňyz.</strong> Käbir ýurtlaryň kanunlary bu syýasatyň aýdýanyndan köpüsini talap edýär. Olaryň goşýan zatlary, iňlis dilinde we ýurduň dilinde, <a href=\"/privacy/countries\">Siziň ýurduňyz</a> (iňlis dilinde) sahypasynda bar.</p></section><section id=\"retention\"><h2>8. Ony näçe wagt saklaýarys</h2><ul><li>Gurallaryňyzyň taf-a gaýtarýan zatlary: diňe işleme gutarýança. Söhbetdeşlikde ol diňe okan zady indiki habarlary üçin şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar.</li><li>taf-yň işlemeleri we söhbetdeşlikleri, söhbetdeşligiň gysgaça mazmuny bilen: 30 gün. Onuň ýat belliklerini: taf aýrylýança. Coach bilen öz söhbetdeşligiňizi has ir pozup bilersiňiz: onuň habarlary we goşan faýllaryňyz derrew pozulýar, onuň her işlemesiniň bolandygy, haçan we näçä düşendigi baradaky ýazgy bolsa şol 30 günüň dowamynda galýar.</li><li>Coach-yň indiki jogaby üçin gysga bellikleri, meselem söhbetdeşlikde birikmäniň näme üçin edilip bilinmändigi ýa-da Card-yň tassyklanandygy: şol jogap olary alýança, iň köp 7 gün; ondan soň, şol söhbetdeşligiň bir bölegi hökmünde, söhbetdeşlik saklanýança. Täzeden iberilen habar şol bir bellik alsyn diýip, nusga 24 sagat saklanýar. Söhbetdeşligiň bellik diňe şol söhbetdeşlikde ulanylýar.</li><li>Söhbetdeşlikde goşýan faýllaryňyz: goşulan habar bilen, 30 gün, ýa-da söhbetdeşlik aýrylsa ir, we her ýagdaýda 38 gün içinde. Hiç bir habaryň ulanmaýan faýly ýükländen takmynan bir sagat soň aýrylýar. Hasabyňyzy pozmak olary pozýar.</li><li>taf-laryňyzyň eltip berýän faýllary: işleme olary döreden pursatyndan 30 gün, soňra bir günüň içinde awtomatiki pozulýar. Hasabyňyzdaky islendik adam ony Indi poz bilen ir pozup biler: faýlyň özi derrew ýok bolýar, nusga saklanmaýar; onuň ady, ölçegi we ony döreden taf we işleme tafs-yň saklaýjysynyň şifrlenen wagt nokatlaýyn nusgalarynda 35 güne çenli galyp biler, diňe ýalňyşlykdan soň dikeltmek üçin ulanylýar. taf-y aýyrmak ýa-da hasabyňyzy pozmak onuň faýllaryny pozýar. Faýly paýlaşmak faýlyň özüni iberýär, siz paýlaşan nusga paýlaşan programmaňyzda galýar. Faýly ýüklemek üçin biz hasabyňyzyň giren agzasy üçin bir minutdan soň işlemeýän baglanyşyk döredýäris; oňa başga baglanyşyk döretmeýäris.</li><li>planque-yň her çagyryşyň ýazgysynda guralyň gaýtaran zady: 24 sagat. Ondan soň ýazgy diňe çagyryşyň iberilendigini saklaýar, şonuň üçin ol hiç haçan iki gezek iberilmeýär.</li><li>planque-da birikmäniň belgisi ýa-da açary, ýa-da Composio-da dolandyrylýan birikmäniň girişi: siz aýyrýançaňyz. Eger beýleki birikmäňiz şol üpjün edijidäki şol bir hasaby ulanyp bilse, ol, ulanylmazdan, şol aýrylýança saklanýar, soňra ýatyrylýar. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Maglumatlary ýene kim alýar</h2><p>Biz şahsy maglumatlaryňyzy satmaýarys we mahabat üçin paýlaşmaýarys.</p><p>tafs üçin biz şu kompaniýalary ulanýarys: Amazon Web Services (hosting, şol sanda tafs-yň saklaýjysy we planque-yň birikmeleri), Clerk (KIFF hasaplary üçin giriş), Anthropic (AI modeli, Anthropic, Amazon Web Services, Google Cloud ýa-da Microsoft Azure tarapyndan işledilýär), Composio (dolandyrylýan birikmeleriň girişleri we planque-yň ondan haýyş edýän çagyryşlary), Apple (push duýduryşlary), Google (Android-de push duýduryşlary we Google Play-iň töleg ulgamy) we Resend (KIFF toparyna iberilýän habar berlen jogaplar). Resmi, häzirki sanaw, her biriniň degýän zady we ýeri bilen, <a href=\"/subprocessors\">/subprocessors</a> sahypasynda (iňlis dilinde) bar.</p><p>Olaryň käbiri Ýewropa Ykdysady Zolagyndan daşarda, köplenç Amerikanyň Birleşen Ştatlarynda. Şol geçirmeleriň nähili goralýandygyny <a href=\"/tk/privacy#transfers\">KIFF-iň Gizlinlik syýasaty</a> aýdýar.</p><p><strong>Siziň ýurduňyz.</strong> Käbir ýurtlaryň kanunlary bu syýasatyň aýdýanyndan köpüsini talap edýär. Olaryň goşýan zatlary, iňlis dilinde we ýurduň dilinde, <a href=\"/privacy/countries\">Siziň ýurduňyz</a> (iňlis dilinde) sahypasynda bar.</p></section><section id=\"retention\"><h2>8. Ony näçe wagt saklaýarys</h2><ul><li>Gurallaryňyzyň taf-a gaýtarýan zatlary: diňe işleme gutarýança. Söhbetdeşlikde ol diňe okan zady indiki habarlary üçin şifrlenen görnüşde saklanýar, söhbetdeşlik bir sagat hereketsiz bolýança we okalandan soň iň köp dört sagada çenli ulanylýar, soňra bolsa birnäçe günüň içinde awtomatiki pozulýar.</li><li>taf-yň işlemeleri we söhbetdeşlikleri, söhbetdeşligiň gysgaça mazmuny bilen: 30 gün. Onuň ýat belliklerini: taf aýrylýança. Coach bilen öz söhbetdeşligiňizi has ir pozup bilersiňiz: onuň habarlary we goşan faýllaryňyz derrew pozulýar, onuň her işlemesiniň bolandygy, haçan we näçä düşendigi baradaky ýazgy bolsa şol 30 günüň dowamynda galýar.</li><li>Coach-yň indiki jogaby üçin gysga bellikleri, meselem söhbetdeşlikde birikmäniň näme üçin edilip bilinmändigi ýa-da Card-yň tassyklanandygy: şol jogap olary alýança, iň köp 7 gün; ondan soň, şol söhbetdeşligiň bir bölegi hökmünde, söhbetdeşlik saklanýança. Täzeden iberilen habar şol bir bellik alsyn diýip, nusga 24 sagat saklanýar. Söhbetdeşligiň bellik diňe şol söhbetdeşlikde ulanylýar.</li><li>Söhbetdeşlikde goşýan faýllaryňyz: goşulan habar bilen, 30 gün, ýa-da söhbetdeşlik aýrylsa ir, we her ýagdaýda 38 gün içinde. Hiç bir habaryň ulanmaýan faýly ýükländen takmynan bir sagat soň aýrylýar. Hasabyňyzy pozmak olary pozýar.</li><li>taf-laryňyzyň eltip berýän faýllary: işleme olary döreden pursatyndan 30 gün, soňra bir günüň içinde awtomatiki pozulýar. Hasabyňyzdaky islendik adam ony Indi poz bilen ir pozup biler: faýlyň özi derrew ýok bolýar, nusga saklanmaýar; onuň ady, ölçegi we ony döreden taf we işleme tafs-yň saklaýjysynyň şifrlenen wagt nokatlaýyn nusgalarynda 35 güne çenli galyp biler, diňe ýalňyşlykdan soň dikeltmek üçin ulanylýar. taf-y aýyrmak ýa-da hasabyňyzy pozmak onuň faýllaryny pozýar. Faýly paýlaşmak faýlyň özüni iberýär, siz paýlaşan nusga paýlaşan programmaňyzda galýar. Faýly ýüklemek üçin biz hasabyňyzyň giren agzasy üçin bir minutdan soň işlemeýän baglanyşyk döredýäris; oňa başga baglanyşyk döretmeýäris.</li><li>planque-yň her çagyryşyň ýazgysynda guralyň gaýtaran zady: 24 sagat. Ondan soň ýazgy diňe çagyryşyň iberilendigini saklaýar, şonuň üçin ol hiç haçan iki gezek iberilmeýär.</li><li>planque-da birikmäniň belgisi ýa-da açary, ýa-da Composio-da dolandyrylýan birikmäniň girişi: siz aýyrýançaňyz. Eger beýleki birikmäňiz şol üpjün edijidäki şol bir hasaby ulanyp bilse, ol, ulanylmazdan, şol aýrylýança saklanýar, soňra ýatyrylýar. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("tk"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 84, Col: 308}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 84, Col: 308}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -253,7 +253,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 140, Col: 161}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 140, Col: 161}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -272,7 +272,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 143, Col: 115}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 143, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -291,7 +291,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 147, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 147, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -300,7 +300,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("tk"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -309,7 +309,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tk").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 147, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 147, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -322,7 +322,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tk").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 148, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 148, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -340,7 +340,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 151, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 151, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -353,7 +353,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 151, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 151, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -432,7 +432,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 186, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 186, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -450,7 +450,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 189, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 189, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -463,7 +463,7 @@ func tafsPrivacyGoogleTK() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tk_tafs_privacy.templ`, Line: 189, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tk_tafs_privacy.templ`, Line: 189, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {

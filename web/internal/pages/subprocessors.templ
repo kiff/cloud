@@ -31,7 +31,7 @@ templ subprocessorsHead() {
 		<p class="legal-badge">Subprocessors · v0.1</p>
 		<h1>Subprocessors</h1>
 		<p class="legal-meta">
-			<strong>Last updated:</strong> 25 November 2026.
+			<strong>Last updated:</strong> 28 November 2026.
 		</p>
 		<p class="legal-disclaimer">
 			The companies Kiff Agents OÜ uses to run KIFF Cloud and
@@ -60,8 +60,8 @@ templ subprocessorsList() {
 				<tbody>
 					<tr id="aws">
 						<td>Amazon Web Services</td>
-						<td>Hosting: the servers, the database and its backups, key management, secrets and monitoring. For tafs, its own store and planque's connections</td>
-						<td>Everything KIFF keeps: accounts and the people who sign in, Cards, decisions, receipts, logs. For tafs, runs, chats, memory notes, and connection tokens (encrypted), and, once Chrome screenshots are switched on, the picture taken before a Chrome step, sealed and kept at most 30 days</td>
+						<td>Hosting: the servers, the database and its backups, key management, secrets and monitoring. For tafs, its own store, planque's connections, and chutchut, KIFF's mail service that receives what people send to a taf's email door and sends the taf's answers</td>
+						<td>Everything KIFF keeps: accounts and the people who sign in, Cards, decisions, receipts, logs. For tafs, runs, chats, memory notes, connection tokens (encrypted), and an email door's messages, their senders and attachments, kept as received for 30 days, and, once Chrome screenshots are switched on, the picture taken before a Chrome step, sealed and kept at most 30 days</td>
 						<td>Ireland (eu-west-1): KIFF Cloud, the tafs service, tafs's runs, chats and model calls, and planque, with all they store. Ireland also serves KIFF's public demos and the site's videos. The only thing in the United States (us-east-1) is the certificates CloudFront requires there, which hold no customer data</td>
 					</tr>
 					<tr id="clerk">
@@ -78,8 +78,8 @@ templ subprocessorsList() {
 					</tr>
 					<tr id="resend">
 						<td>Resend</td>
-						<td>Email: held-call and Card-warning notices, usage and account notices, the sign-in code, new-device notices, notices that code sign-in was turned on or off, the reply to a code asked while it is off, membership emails such as invitations, and support replies. For tafs, a taf's email door: the mail people send to it, and its answers; and an answer someone reports from the app, sent to KIFF's team</td>
-						<td>The recipient's email address and the notice. A held-call notice names the agent, the action, its amount and the Card it is outside of. A sign-in code email carries the code, the time, and the browser and country it was asked from; a new-device notice names the device, its browser, how it signed in, the time and a guess at the city and country; an on or off notice says the setting was turned on or off, and when; a code asked while the setting is off is answered with an email giving the time, browser and country it was asked from; a membership email, such as an invitation, names the account and the role, and the person who invited only as an admin; a notice of a new approver or a relinked phone names the device. For an email door, the messages, their senders and attachments. For a reported answer, the taf's name, the answer's text, which may include personal data from that chat, the reason and the note the person adds, with the account, taf, chat and message ids; the person who reports it is named only by an id, never by name or email address</td>
+						<td>Email: held-call and Card-warning notices, usage and account notices, the sign-in code, new-device notices, notices that code sign-in was turned on or off, the reply to a code asked while it is off, membership emails such as invitations, and support replies. For tafs, an answer someone reports from the app, sent to KIFF's team</td>
+						<td>The recipient's email address and the notice. A held-call notice names the agent, the action, its amount and the Card it is outside of. A sign-in code email carries the code, the time, and the browser and country it was asked from; a new-device notice names the device, its browser, how it signed in, the time and a guess at the city and country; an on or off notice says the setting was turned on or off, and when; a code asked while the setting is off is answered with an email giving the time, browser and country it was asked from; a membership email, such as an invitation, names the account and the role, and the person who invited only as an admin; a notice of a new approver or a relinked phone names the device. For a reported answer, the taf's name, the answer's text, which may include personal data from that chat, the reason and the note the person adds, with the account, taf, chat and message ids; the person who reports it is named only by an id, never by name or email address</td>
 						<td>United States</td>
 					</tr>
 					<tr id="cloudflare">
@@ -185,7 +185,7 @@ templ subprocessorsChanges() {
 
 		<p class="legal-footnote">
 			<strong>Document version:</strong> v0.1.<br/>
-			<strong>Last updated:</strong> 25 November 2026.
+			<strong>Last updated:</strong> 28 November 2026.
 		</p>
 	</section>
 }

@@ -55,7 +55,7 @@ func TafsPrivacyTG() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("tg"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 35, Col: 756}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 35, Col: 756}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func TafsPrivacyTG() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("tg").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 45, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func TafsPrivacyTG() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("tg").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 45, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 45, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TafsPrivacyTG() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("tg").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 47, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 47, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func TafsPrivacyTG() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("tg").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 47, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 47, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func TafsPrivacyTG() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("tg"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 49, Col: 1179}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 49, Col: 1179}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -144,14 +144,14 @@ func TafsPrivacyTG() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Дигарон, ки маълумотро мегиранд</h2><p>Мо маълумоти шахсии шуморо намефурӯшем ва онро барои таблиғот мубодила намекунем.</p><p>Барои tafs мо аз ин ширкатҳо истифода мебарем: Amazon Web Services (хостинг, аз ҷумла захираи tafs ва пайвастшавиҳои planque), Clerk (воридшавӣ барои ҳисобҳои KIFF), Anthropic (модели AI, ки онро Anthropic, Amazon Web Services, Google Cloud ё Microsoft Azure кор мефармояд), Composio (воридшавиҳои пайвастшавиҳои идорашаванда ва занги planque аз он мехоҳад), Apple (огоҳиҳои push), Google (огоҳиҳои push дар Android ва ҳисобкунии Google Play), ва Resend (дарвозаи почтаи электронии taf). Рӯйхати расмӣ ва ҷорӣ, бо он ки ҳар кадом ба чӣ даст мезанад ва дар куҷо, дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) аст.</p><p>Баъзе аз онҳо берун аз Минтақаи иқтисодии Аврупо, асосан дар Иёлоти Муттаҳида ҳастанд. <a href=\"/tg/privacy#transfers\">Сиёсати махфияти KIFF</a> мегӯяд, ки ин интиқолҳо чӣ гуна ҳифз карда мешаванд.</p><p><strong>Кишвари шумо.</strong> Қонунҳои баъзе кишварҳо аз он чӣ ин сиёсат мегӯяд, бештар талаб мекунанд. Он чиро, ки онҳо илова мекунанд, ба забони англисӣ ва ба забони кишвар, дар <a href=\"/privacy/countries\">Кишвари шумо</a> (бо забони англисӣ) ёфтан мумкин аст.</p></section><section id=\"retention\"><h2>8. То кай мо онро нигоҳ медорем</h2><ul><li>Он чиро, ки абзорҳои шумо ба taf бармегардонанд: танҳо то поёни иҷро. Дар сӯҳбат он чи танҳо хонда шуд, барои паёмҳои баъдии он рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад.</li><li>Иҷроҳо ва сӯҳбатҳои taf, бо хулосаи сӯҳбат: 30 рӯз. Ёддоштҳои хотираи он: то хориҷ шудани taf. Шумо метавонед сӯҳбати худро бо Coach пештар нест кунед: паёмҳои он ва файлҳое, ки илова кардаед, дарҳол нест мешаванд, аммо сабти он ки ҳар иҷрои он рух дод, кай ва чанд арзиш дошт, дар давоми он 30 рӯз мемонад.</li><li>Ёддоштҳои кӯтоҳи Coach барои ҷавоби навбатии он, масалан чаро дар сӯҳбат пайвастшавӣ анҷом дода нашуд, ё ин ки Card тасдиқ шуд: то он даме, ки он ҷавоб онҳоро мегирад, ҳадди аксар 7 рӯз; пас аз он, ҳамчун қисми он сӯҳбат, то он даме ки сӯҳбат нигоҳ дошта мешавад. Нусха 24 соат нигоҳ дошта мешавад, то паёми дубора фиристодашуда ҳамон ёддоштро гирад. Ёддошти сӯҳбат танҳо дар ҳамон сӯҳбат истифода мешавад.</li><li>Файлҳое, ки шумо дар сӯҳбат замима мекунед: бо паёме, ки онҳо ба он замима шудаанд, 30 рӯз, ё барвақттар агар сӯҳбат хориҷ шавад, ва ба ҳар ҳол дар давоми 38 рӯз. Файле, ки ҳеҷ паём истифода намебарад, тақрибан як соат пас аз боркунии шумо хориҷ карда мешавад. Нест кардани ҳисоби шумо онҳоро нест мекунад.</li><li>Файлҳое, ки taf-ҳои шумо месупоранд: 30 рӯз аз замоне, ки иҷро онҳоро сохт, баъд дар давоми як рӯз худкор нест карда мешаванд. Ҳар касе дар ҳисоби шумо метавонад якеро барвақттар бо Ҳозир нест кунед нест кунад: худи файл фавран нест мешавад, нусха нигоҳ дошта намешавад; номи он, ҳаҷм ва taf ва иҷрое, ки онро сохтааст, метавонанд дар нусхаҳои нуқтаи-вақти рамзгузоришудаи захираи tafs то 35 рӯз бимонанд, ки танҳо барои барқарор кардани он пас аз вайроншавӣ истифода мешаванд. Хориҷ кардани taf ё нест кардани ҳисоби шумо файлҳои онро нест мекунад. Мубодилаи файл худи файлро мефиристад, ва нусхае, ки шумо мубодила кардед, дар назди барномаи мубодилашуда мемонад. Барои боргирии файл мо барои узви воридшудаи ҳисоби шумо пайванде месозем, ки пас аз як дақиқа кор карданро бас мекунад; мо пайванди дигаре ба он намесозем.</li><li>Он чиро, ки абзор бозгардонд, дар сабти planque-и ҳар занг: 24 соат. Пас аз он сабт танҳо нигоҳ медорад, ки занг фиристода шуд ё не, то он ҳаргиз ду маротиба фиристода нашавад.</li><li>Token ё калиди пайвастшавӣ дар planque, ё воридшавии пайвастшавии идорашаванда дар Composio: то қатъ кардани пайвасти шумо. Агар пайвастшавии дигари шумо метавонад ҳамон ҳисобро дар назди он фурӯшанда истифода барад, он бе истифода нигоҳ дошта мешавад, то он низ қатъ шавад, баъд бекор карда мешавад. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Дигарон, ки маълумотро мегиранд</h2><p>Мо маълумоти шахсии шуморо намефурӯшем ва онро барои таблиғот мубодила намекунем.</p><p>Барои tafs мо аз ин ширкатҳо истифода мебарем: Amazon Web Services (хостинг, аз ҷумла захираи tafs ва пайвастшавиҳои planque), Clerk (воридшавӣ барои ҳисобҳои KIFF), Anthropic (модели AI, ки онро Anthropic, Amazon Web Services, Google Cloud ё Microsoft Azure кор мефармояд), Composio (воридшавиҳои пайвастшавиҳои идорашаванда ва занги planque аз он мехоҳад), Apple (огоҳиҳои push), Google (огоҳиҳои push дар Android ва ҳисобкунии Google Play), ва Resend (ҷавобҳои гузоришшуда, ки ба дастаи KIFF фиристода мешаванд). Рӯйхати расмӣ ва ҷорӣ, бо он ки ҳар кадом ба чӣ даст мезанад ва дар куҷо, дар <a href=\"/subprocessors\">/subprocessors</a> (бо забони англисӣ) аст.</p><p>Баъзе аз онҳо берун аз Минтақаи иқтисодии Аврупо, асосан дар Иёлоти Муттаҳида ҳастанд. <a href=\"/tg/privacy#transfers\">Сиёсати махфияти KIFF</a> мегӯяд, ки ин интиқолҳо чӣ гуна ҳифз карда мешаванд.</p><p><strong>Кишвари шумо.</strong> Қонунҳои баъзе кишварҳо аз он чӣ ин сиёсат мегӯяд, бештар талаб мекунанд. Он чиро, ки онҳо илова мекунанд, ба забони англисӣ ва ба забони кишвар, дар <a href=\"/privacy/countries\">Кишвари шумо</a> (бо забони англисӣ) ёфтан мумкин аст.</p></section><section id=\"retention\"><h2>8. То кай мо онро нигоҳ медорем</h2><ul><li>Он чиро, ки абзорҳои шумо ба taf бармегардонанд: танҳо то поёни иҷро. Дар сӯҳбат он чи танҳо хонда шуд, барои паёмҳои баъдии он рамзгузоришуда нигоҳ дошта мешавад, то яксоат ғайрифаъол мондани сӯҳбат ва ҳадди аксар то чор соат пас аз хондан истифода мешавад, баъд дар давоми чанд рӯз худкор нест карда мешавад.</li><li>Иҷроҳо ва сӯҳбатҳои taf, бо хулосаи сӯҳбат: 30 рӯз. Ёддоштҳои хотираи он: то хориҷ шудани taf. Шумо метавонед сӯҳбати худро бо Coach пештар нест кунед: паёмҳои он ва файлҳое, ки илова кардаед, дарҳол нест мешаванд, аммо сабти он ки ҳар иҷрои он рух дод, кай ва чанд арзиш дошт, дар давоми он 30 рӯз мемонад.</li><li>Ёддоштҳои кӯтоҳи Coach барои ҷавоби навбатии он, масалан чаро дар сӯҳбат пайвастшавӣ анҷом дода нашуд, ё ин ки Card тасдиқ шуд: то он даме, ки он ҷавоб онҳоро мегирад, ҳадди аксар 7 рӯз; пас аз он, ҳамчун қисми он сӯҳбат, то он даме ки сӯҳбат нигоҳ дошта мешавад. Нусха 24 соат нигоҳ дошта мешавад, то паёми дубора фиристодашуда ҳамон ёддоштро гирад. Ёддошти сӯҳбат танҳо дар ҳамон сӯҳбат истифода мешавад.</li><li>Файлҳое, ки шумо дар сӯҳбат замима мекунед: бо паёме, ки онҳо ба он замима шудаанд, 30 рӯз, ё барвақттар агар сӯҳбат хориҷ шавад, ва ба ҳар ҳол дар давоми 38 рӯз. Файле, ки ҳеҷ паём истифода намебарад, тақрибан як соат пас аз боркунии шумо хориҷ карда мешавад. Нест кардани ҳисоби шумо онҳоро нест мекунад.</li><li>Файлҳое, ки taf-ҳои шумо месупоранд: 30 рӯз аз замоне, ки иҷро онҳоро сохт, баъд дар давоми як рӯз худкор нест карда мешаванд. Ҳар касе дар ҳисоби шумо метавонад якеро барвақттар бо Ҳозир нест кунед нест кунад: худи файл фавран нест мешавад, нусха нигоҳ дошта намешавад; номи он, ҳаҷм ва taf ва иҷрое, ки онро сохтааст, метавонанд дар нусхаҳои нуқтаи-вақти рамзгузоришудаи захираи tafs то 35 рӯз бимонанд, ки танҳо барои барқарор кардани он пас аз вайроншавӣ истифода мешаванд. Хориҷ кардани taf ё нест кардани ҳисоби шумо файлҳои онро нест мекунад. Мубодилаи файл худи файлро мефиристад, ва нусхае, ки шумо мубодила кардед, дар назди барномаи мубодилашуда мемонад. Барои боргирии файл мо барои узви воридшудаи ҳисоби шумо пайванде месозем, ки пас аз як дақиқа кор карданро бас мекунад; мо пайванди дигаре ба он намесозем.</li><li>Он чиро, ки абзор бозгардонд, дар сабти planque-и ҳар занг: 24 соат. Пас аз он сабт танҳо нигоҳ медорад, ки занг фиристода шуд ё не, то он ҳаргиз ду маротиба фиристода нашавад.</li><li>Token ё калиди пайвастшавӣ дар planque, ё воридшавии пайвастшавии идорашаванда дар Composio: то қатъ кардани пайвасти шумо. Агар пайвастшавии дигари шумо метавонад ҳамон ҳисобро дар назди он фурӯшанда истифода барад, он бе истифода нигоҳ дошта мешавад, то он низ қатъ шавад, баъд бекор карда мешавад. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("tg"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 83, Col: 562}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 83, Col: 562}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 139, Col: 216}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 139, Col: 216}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 142, Col: 163}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 142, Col: 163}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("tg"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("tg").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleTG() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `tg_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/tg_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {

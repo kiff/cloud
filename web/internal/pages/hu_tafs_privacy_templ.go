@@ -56,7 +56,7 @@ func TafsPrivacyHU() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("hu"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 36, Col: 540}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 36, Col: 540}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -74,7 +74,7 @@ func TafsPrivacyHU() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("hu").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 46, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 46, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func TafsPrivacyHU() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("hu").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 46, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 46, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -105,7 +105,7 @@ func TafsPrivacyHU() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("hu").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 48, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 48, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +118,7 @@ func TafsPrivacyHU() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("hu").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 48, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 48, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -131,7 +131,7 @@ func TafsPrivacyHU() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("hu"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 50, Col: 763}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 50, Col: 763}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -145,14 +145,14 @@ func TafsPrivacyHU() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Kik kapnak még adatokat</h2><p>Személyes adatait nem adjuk el, és nem osztjuk meg hirdetési célokra.</p><p>A tafshoz a következő vállalatokat vesszük igénybe: Amazon Web Services (tárhely, beleértve a tafs adattárát és a planque kapcsolatait), Clerk (bejelentkezés a KIFF-fiókokba), Anthropic (az MI-modell, amelyet az Anthropic, az Amazon Web Services, a Google Cloud vagy a Microsoft Azure futtat), Composio (a kezelt kapcsolatok bejelentkezései, valamint azok a hívások, amelyek elvégzésére a planque kéri), Apple (push-értesítések), Google (push-értesítések Androidon és a Google Play számlázása) és Resend (egy taf e-mail-ajtaja). A hivatalos, naprakész lista – azzal együtt, hogy melyikük mihez fér hozzá és hol – a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon található.</p><p>Közülük néhányan az Európai Gazdasági Térségen kívül, főként az Egyesült Államokban működnek. Azt, hogy ezeket az adattovábbításokat milyen garanciák védik, <a href=\"/hu/privacy#transfers\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"retention\"><h2>8. Meddig őrizzük meg</h2><ul><li>Amit az Ön eszközei egy tafnak visszaküldenek: csak a futás végéig. Egy csevegésben azt, amit csak olvasott, titkosítva megőrizzük a következő üzeneteihez; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük.</li><li>Egy taf futásai és csevegései, a csevegés összefoglalójával együtt: 30 nap. A memóriajegyzetei: a taf eltávolításáig. Egy saját csevegésedet a Coachcsal korábban is törölheted: az üzenetei és a hozzáadott fájlok azonnal törlődnek, míg a feljegyzés arról, hogy minden futása megtörtént, mikor és mennyibe került, ezalatt a 30 nap alatt megmarad. Ha jelent egy választ, a KIFF azt a választ, az okát és a megjegyzését 180 napig őrzi meg, vagy amíg ki nem törli azt a csevegést vagy a fiókját. A KIFF e-mailben is elküldi őket a bejelentéseket olvasó csapatnak, ahol ezt az e-mailt a KIFF ügyfélszolgálati leveleihez hasonlóan őrzik.</li><li>A Coach rövid jegyzetei a következő válaszához, például arról, hogy egy csevegésben miért nem sikerült létrehozni egy kapcsolatot, vagy hogy egy Cardot jóváhagytak: amíg az a válasz fel nem használja őket, legfeljebb 7 napig; ezt követően az adott csevegés részeként, ameddig a csevegést megőrizzük. Egy másolatot 24 óráig megőrzünk, hogy egy újraküldött üzenet ugyanazt a jegyzetet kapja. Egy csevegés jegyzetét csak abban a csevegésben használjuk.</li><li>A csevegésben csatolt fájlok: azzal az üzenettel együtt, amelyhez csatolták őket, 30 napig, vagy rövidebb ideig, ha a csevegést eltávolítják, és minden esetben 38 napon belül törlődnek. Az olyan fájlt, amelyet egyetlen üzenet sem használ, a feltöltése után körülbelül egy órával eltávolítjuk. Fiókja törlése ezeket is törli.</li><li>A tafjai által átadott fájlok: attól számítva 30 napig, hogy a futás létrehozta őket, majd egy napon belül automatikusan töröljük őket. A fiókjához tartozó bárki korábban is törölheti bármelyiket a Törlés most funkcióval: maga a fájl azonnal megszűnik, másolat nélkül; a neve, a mérete, valamint az őt létrehozó taf és futás a tafs adattárának titkosított, időponthoz kötött másolataiban legfeljebb 35 napig megmaradhat, kizárólag hiba utáni helyreállítás céljára. Egy taf eltávolítása vagy fiókja törlése a fájljait is törli. Egy fájl megosztásakor maga a fájl kerül elküldésre, és a megosztott példány annál az alkalmazásnál marad, amellyel megosztotta. Egy fájl letöltéséhez a fiókja egy bejelentkezett tagja számára olyan hivatkozást hozunk létre, amely egy perc után megszűnik működni; más hivatkozást nem hozunk létre hozzá.</li><li>Amit egy eszköz visszaküldött, a planque által az egyes hívásokról vezetett nyilvántartásban: 24 óra. Ezt követően a nyilvántartás csak azt őrzi meg, hogy a hívást elküldték-e, így azt soha nem küldik el kétszer.</li><li>Egy kapcsolat tokenje vagy kulcsa a planque-ban, illetve egy kezelt kapcsolat bejelentkezése a Composiónál: amíg meg nem szünteti a kapcsolatot. Ha egy másik kapcsolata is használhatja ugyanazt a fiókot az adott szolgáltatónál, használaton kívül megőrizzük, amíg azt a kapcsolatot is meg nem szüntetik, majd visszavonjuk. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Kik kapnak még adatokat</h2><p>Személyes adatait nem adjuk el, és nem osztjuk meg hirdetési célokra.</p><p>A tafshoz a következő vállalatokat vesszük igénybe: Amazon Web Services (tárhely, beleértve a tafs adattárát és a planque kapcsolatait), Clerk (bejelentkezés a KIFF-fiókokba), Anthropic (az MI-modell, amelyet az Anthropic, az Amazon Web Services, a Google Cloud vagy a Microsoft Azure futtat), Composio (a kezelt kapcsolatok bejelentkezései, valamint azok a hívások, amelyek elvégzésére a planque kéri), Apple (push-értesítések), Google (push-értesítések Androidon és a Google Play számlázása) és Resend (a jelentett válaszok, amelyek a KIFF csapatához kerülnek). A hivatalos, naprakész lista – azzal együtt, hogy melyikük mihez fér hozzá és hol – a <a href=\"/subprocessors\">/subprocessors</a> (angolul) oldalon található.</p><p>Közülük néhányan az Európai Gazdasági Térségen kívül, főként az Egyesült Államokban működnek. Azt, hogy ezeket az adattovábbításokat milyen garanciák védik, <a href=\"/hu/privacy#transfers\">a KIFF Adatvédelmi tájékoztatója</a> ismerteti.</p><p><strong>Az Ön országa.</strong> Egyes országok jogszabályai többet kívánnak meg annál, amit ez a tájékoztató tartalmaz. Hogy mit tesznek hozzá, angolul és az adott ország nyelvén <a href=\"/privacy/countries\">Az Ön országa</a> oldalon olvasható.</p></section><section id=\"retention\"><h2>8. Meddig őrizzük meg</h2><ul><li>Amit az Ön eszközei egy tafnak visszaküldenek: csak a futás végéig. Egy csevegésben azt, amit csak olvasott, titkosítva megőrizzük a következő üzeneteihez; addig használjuk, amíg a csevegés egy órája tétlen, de legfeljebb az olvasást követő négy óráig, majd néhány napon belül automatikusan töröljük.</li><li>Egy taf futásai és csevegései, a csevegés összefoglalójával együtt: 30 nap. A memóriajegyzetei: a taf eltávolításáig. Egy saját csevegésedet a Coachcsal korábban is törölheted: az üzenetei és a hozzáadott fájlok azonnal törlődnek, míg a feljegyzés arról, hogy minden futása megtörtént, mikor és mennyibe került, ezalatt a 30 nap alatt megmarad. Ha jelent egy választ, a KIFF azt a választ, az okát és a megjegyzését 180 napig őrzi meg, vagy amíg ki nem törli azt a csevegést vagy a fiókját. A KIFF e-mailben is elküldi őket a bejelentéseket olvasó csapatnak, ahol ezt az e-mailt a KIFF ügyfélszolgálati leveleihez hasonlóan őrzik.</li><li>A Coach rövid jegyzetei a következő válaszához, például arról, hogy egy csevegésben miért nem sikerült létrehozni egy kapcsolatot, vagy hogy egy Cardot jóváhagytak: amíg az a válasz fel nem használja őket, legfeljebb 7 napig; ezt követően az adott csevegés részeként, ameddig a csevegést megőrizzük. Egy másolatot 24 óráig megőrzünk, hogy egy újraküldött üzenet ugyanazt a jegyzetet kapja. Egy csevegés jegyzetét csak abban a csevegésben használjuk.</li><li>A csevegésben csatolt fájlok: azzal az üzenettel együtt, amelyhez csatolták őket, 30 napig, vagy rövidebb ideig, ha a csevegést eltávolítják, és minden esetben 38 napon belül törlődnek. Az olyan fájlt, amelyet egyetlen üzenet sem használ, a feltöltése után körülbelül egy órával eltávolítjuk. Fiókja törlése ezeket is törli.</li><li>A tafjai által átadott fájlok: attól számítva 30 napig, hogy a futás létrehozta őket, majd egy napon belül automatikusan töröljük őket. A fiókjához tartozó bárki korábban is törölheti bármelyiket a Törlés most funkcióval: maga a fájl azonnal megszűnik, másolat nélkül; a neve, a mérete, valamint az őt létrehozó taf és futás a tafs adattárának titkosított, időponthoz kötött másolataiban legfeljebb 35 napig megmaradhat, kizárólag hiba utáni helyreállítás céljára. Egy taf eltávolítása vagy fiókja törlése a fájljait is törli. Egy fájl megosztásakor maga a fájl kerül elküldésre, és a megosztott példány annál az alkalmazásnál marad, amellyel megosztotta. Egy fájl letöltéséhez a fiókja egy bejelentkezett tagja számára olyan hivatkozást hozunk létre, amely egy perc után megszűnik működni; más hivatkozást nem hozunk létre hozzá.</li><li>Amit egy eszköz visszaküldött, a planque által az egyes hívásokról vezetett nyilvántartásban: 24 óra. Ezt követően a nyilvántartás csak azt őrzi meg, hogy a hívást elküldték-e, így azt soha nem küldik el kétszer.</li><li>Egy kapcsolat tokenje vagy kulcsa a planque-ban, illetve egy kezelt kapcsolat bejelentkezése a Composiónál: amíg meg nem szünteti a kapcsolatot. Ha egy másik kapcsolata is használhatja ugyanazt a fiókot az adott szolgáltatónál, használaton kívül megőrizzük, amíg azt a kapcsolatot is meg nem szüntetik, majd visszavonjuk. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("hu"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 84, Col: 372}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 84, Col: 372}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 139, Col: 160}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 139, Col: 160}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 142, Col: 134}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 142, Col: 134}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("hu"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("hu").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleHU() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `hu_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/hu_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {

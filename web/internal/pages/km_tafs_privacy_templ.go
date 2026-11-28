@@ -55,7 +55,7 @@ func TafsPrivacyKM() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("km"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 35, Col: 939}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 35, Col: 939}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func TafsPrivacyKM() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("km").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 45, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func TafsPrivacyKM() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("km").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 45, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 45, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TafsPrivacyKM() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("km").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 47, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 47, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func TafsPrivacyKM() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("km").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 47, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 47, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func TafsPrivacyKM() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("km"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 49, Col: 1577}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 49, Col: 1577}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -144,14 +144,14 @@ func TafsPrivacyKM() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. អ្នកណាផ្សេងទៀតទទួលទិន្នន័យ</h2><p>យើងមិនលក់ទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក ហើយមិនចែករំលែកសម្រាប់ការផ្សាយពាណិជ្ជកម្មទេ។</p><p>សម្រាប់ tafs យើងប្រើក្រុមហ៊ុនទាំងនេះ៖ Amazon Web Services (ម៉ាស៊ីនបម្រើ រួមទាំងកន្លែងផ្ទុករបស់ tafs និងការតភ្ជាប់របស់ planque) Clerk (ការចូលសម្រាប់គណនី KIFF) Anthropic (ម៉ូដែល AI, ដំណើរការដោយ Anthropic, Amazon Web Services, Google Cloud ឬ Microsoft Azure) Composio (ការចូលនៃការតភ្ជាប់ដែលគ្រប់គ្រង និងការហៅដែល planque សុំវាធ្វើ) Apple (ការជូនដំណឹង push) Google (ការជូនដំណឹង push នៅលើ Android និងការគិតប្រាក់របស់ Google Play) និង Resend (ទ្វារអ៊ីមែលរបស់ taf)។ បញ្ជីផ្លូវការបច្ចុប្បន្ន ជាមួយអ្វីដែលនីមួយៗប៉ះពាល់ និងនៅកន្លែងណា មាននៅ <a href=\"/subprocessors\">/subprocessors</a> (ជាភាសាអង់គ្លេស)។</p><p>ខ្លះស្ថិតនៅក្រៅតំបន់សេដ្ឋកិច្ចអឺរ៉ុប ភាគច្រើននៅសហរដ្ឋអាមេរិក។ <a href=\"/km/privacy#transfers\">គោលការណ៍ឯកជនភាពរបស់ KIFF</a> ប្រាប់ពីរបៀបដែលការផ្ទេរទាំងនោះត្រូវបានការពារ។</p><p><strong>ប្រទេសរបស់អ្នក។</strong> ច្បាប់របស់ប្រទេសមួយចំនួនសុំច្រើនជាងអ្វីដែលគោលការណ៍នេះចែង។ អ្វីដែលពួកគេបន្ថែម ជាភាសាអង់គ្លេស និងជាភាសារបស់ប្រទេស មាននៅ <a href=\"/privacy/countries\">ប្រទេសរបស់អ្នក</a> (ជាភាសាអង់គ្លេស)។</p></section><section id=\"retention\"><h2>8. យើងរក្សាវាបានយូរប៉ុណ្ណា</h2><ul><li>អ្វីដែលឧបករណ៍របស់អ្នកបញ្ជូនត្រឡប់ទៅ taf៖ តែរហូតដល់ការដំណើរការបញ្ចប់។ នៅក្នុងការជជែក អ្វីដែលវាបានអានតែប៉ុណ្ណោះត្រូវបានរក្សាទុកដោយអ៊ិនគ្រីបសម្រាប់សារបន្ទាប់របស់វា ប្រើរហូតដល់ការជជែកអសកម្មមួយម៉ោង និងយ៉ាងយូរបួនម៉ោងបន្ទាប់ពីការអាន បន្ទាប់មកលុបដោយស្វ័យប្រវត្តិ ក្នុងរយៈពេលពីរបីថ្ងៃ។</li><li>ការដំណើរការ និងការជជែករបស់ taf ជាមួយសេចក្តីសង្ខេបនៃការជជែក៖ 30 ថ្ងៃ។ កំណត់ត្រាអង្គចងចាំរបស់វា៖ រហូតដល់ taf ត្រូវបានលុបចេញ។ អ្នកអាចលុបការជជែករបស់អ្នកផ្ទាល់ ជាមួយ Coach មុនពេលនោះបាន៖ សាររបស់វា និងឯកសារដែលអ្នកបានបន្ថែមត្រូវបានលុបភ្លាមៗ ខណៈកំណត់ត្រាថាការដំណើរការនីមួយៗបានកើតឡើង ពេលណា និងតម្លៃប៉ុន្មាន នៅតែមានរយៈពេល 30 ថ្ងៃនោះ។</li><li>កំណត់ត្រាខ្លីរបស់ Coach សម្រាប់ចម្លើយបន្ទាប់របស់វា ដូចជាហេតុអ្វីបានជាការតភ្ជាប់មិនអាចធ្វើបាននៅក្នុងការជជែក ឬថា Card ត្រូវបានអនុម័ត៖ រហូតដល់ចម្លើយនោះយកវា យ៉ាងយូរ 7 ថ្ងៃ បន្ទាប់មកជាផ្នែកនៃការជជែកនោះ ដរាបណាការជជែកត្រូវបានរក្សា។ ច្បាប់ចម្លងត្រូវបានរក្សា 24 ម៉ោង ដើម្បីឱ្យសារដែលផ្ញើឡើងវិញទទួលបានកំណត់ត្រាដូចគ្នា។ កំណត់ត្រារបស់ការជជែកត្រូវបានប្រើតែនៅក្នុងការជជែកនោះ។</li><li>ឯកសារដែលអ្នកភ្ជាប់ក្នុងការជជែក៖ ជាមួយសារដែលវាត្រូវបានភ្ជាប់ 30 ថ្ងៃ ឬលឿនជាងនេះប្រសិនបើការជជែកត្រូវបានលុប ហើយក្នុងករណីណាក៏ដោយក្នុងរយៈពេល 38 ថ្ងៃ។ ឯកសារដែលគ្មានសារណាប្រើត្រូវបានលុបប្រហែលមួយម៉ោងបន្ទាប់ពីអ្នកផ្ទុកឡើង។ ការលុបគណនីរបស់អ្នកលុបវា។</li><li>ឯកសារដែល taf របស់អ្នកបញ្ជូន៖ 30 ថ្ងៃចាប់ពីពេលដែលការដំណើរការបង្កើតវា បន្ទាប់មកលុបដោយស្វ័យប្រវត្តិក្នុងរយៈពេលមួយថ្ងៃ។ អ្នករាល់គ្នាលើគណនីរបស់អ្នកអាចលុបមួយលឿនជាងនេះដោយ លុបឥឡូវនេះ៖ ឯកសារខ្លួនវាបាត់ភ្លាមៗ ដោយគ្មានការរក្សាច្បាប់ចម្លង ឈ្មោះ ទំហំ និង taf និងការដំណើរការដែលបង្កើតវាអាចនៅក្នុងច្បាប់ចម្លងអ៊ិនគ្រីបនៅពេលជាក់លាក់នៃកន្លែងផ្ទុករបស់ tafs រហូតដល់ 35 ថ្ងៃ ប្រើតែដើម្បីស្តារវាបន្ទាប់ពីការបរាជ័យ។ ការលុប taf ឬការលុបគណនីរបស់អ្នកលុបឯកសាររបស់វា។ ការចែករំលែកឯកសារផ្ញើឯកសារខ្លួនវា ហើយច្បាប់ចម្លងដែលអ្នកចែករំលែកនៅជាមួយកម្មវិធីដែលអ្នកបានចែករំលែកទៅ។ ដើម្បីទាញយកឯកសារ យើងបង្កើតតំណសម្រាប់សមាជិកដែលបានចូលនៃគណនីរបស់អ្នក ដែលឈប់ដំណើរការបន្ទាប់ពីមួយនាទី យើងមិនបង្កើតតំណផ្សេងទៀតទៅវាទេ។</li><li>អ្វីដែលឧបករណ៍មួយបានបញ្ជូនត្រឡប់ ក្នុងកំណត់ត្រារបស់ planque នៃការហៅនីមួយៗ៖ 24 ម៉ោង។ បន្ទាប់ពីនោះ កំណត់ត្រារក្សាតែថាតើការហៅត្រូវបានផ្ញើឬទេ ដូច្នេះវាមិនដែលត្រូវបានផ្ញើពីរដងទេ។</li><li>token ឬសោនៃការតភ្ជាប់ក្នុង planque ឬការចូលនៃការតភ្ជាប់ដែលគ្រប់គ្រងនៅ Composio៖ រហូតដល់អ្នកផ្តាច់វា។ ប្រសិនបើការតភ្ជាប់ផ្សេងទៀតរបស់អ្នកអាចប្រើគណនីដូចគ្នានៅអ្នកលក់នោះ វាត្រូវបានរក្សា មិនប្រើ រហូតដល់ការតភ្ជាប់នោះត្រូវបានផ្តាច់ដែរ បន្ទាប់មកដកហូត។ ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. អ្នកណាផ្សេងទៀតទទួលទិន្នន័យ</h2><p>យើងមិនលក់ទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក ហើយមិនចែករំលែកសម្រាប់ការផ្សាយពាណិជ្ជកម្មទេ។</p><p>សម្រាប់ tafs យើងប្រើក្រុមហ៊ុនទាំងនេះ៖ Amazon Web Services (ម៉ាស៊ីនបម្រើ រួមទាំងកន្លែងផ្ទុករបស់ tafs និងការតភ្ជាប់របស់ planque) Clerk (ការចូលសម្រាប់គណនី KIFF) Anthropic (ម៉ូដែល AI, ដំណើរការដោយ Anthropic, Amazon Web Services, Google Cloud ឬ Microsoft Azure) Composio (ការចូលនៃការតភ្ជាប់ដែលគ្រប់គ្រង និងការហៅដែល planque សុំវាធ្វើ) Apple (ការជូនដំណឹង push) Google (ការជូនដំណឹង push នៅលើ Android និងការគិតប្រាក់របស់ Google Play) និង Resend (ចម្លើយដែលបានរាយការណ៍ ដែលផ្ញើទៅក្រុមការងាររបស់ KIFF)។ បញ្ជីផ្លូវការបច្ចុប្បន្ន ជាមួយអ្វីដែលនីមួយៗប៉ះពាល់ និងនៅកន្លែងណា មាននៅ <a href=\"/subprocessors\">/subprocessors</a> (ជាភាសាអង់គ្លេស)។</p><p>ខ្លះស្ថិតនៅក្រៅតំបន់សេដ្ឋកិច្ចអឺរ៉ុប ភាគច្រើននៅសហរដ្ឋអាមេរិក។ <a href=\"/km/privacy#transfers\">គោលការណ៍ឯកជនភាពរបស់ KIFF</a> ប្រាប់ពីរបៀបដែលការផ្ទេរទាំងនោះត្រូវបានការពារ។</p><p><strong>ប្រទេសរបស់អ្នក។</strong> ច្បាប់របស់ប្រទេសមួយចំនួនសុំច្រើនជាងអ្វីដែលគោលការណ៍នេះចែង។ អ្វីដែលពួកគេបន្ថែម ជាភាសាអង់គ្លេស និងជាភាសារបស់ប្រទេស មាននៅ <a href=\"/privacy/countries\">ប្រទេសរបស់អ្នក</a> (ជាភាសាអង់គ្លេស)។</p></section><section id=\"retention\"><h2>8. យើងរក្សាវាបានយូរប៉ុណ្ណា</h2><ul><li>អ្វីដែលឧបករណ៍របស់អ្នកបញ្ជូនត្រឡប់ទៅ taf៖ តែរហូតដល់ការដំណើរការបញ្ចប់។ នៅក្នុងការជជែក អ្វីដែលវាបានអានតែប៉ុណ្ណោះត្រូវបានរក្សាទុកដោយអ៊ិនគ្រីបសម្រាប់សារបន្ទាប់របស់វា ប្រើរហូតដល់ការជជែកអសកម្មមួយម៉ោង និងយ៉ាងយូរបួនម៉ោងបន្ទាប់ពីការអាន បន្ទាប់មកលុបដោយស្វ័យប្រវត្តិ ក្នុងរយៈពេលពីរបីថ្ងៃ។</li><li>ការដំណើរការ និងការជជែករបស់ taf ជាមួយសេចក្តីសង្ខេបនៃការជជែក៖ 30 ថ្ងៃ។ កំណត់ត្រាអង្គចងចាំរបស់វា៖ រហូតដល់ taf ត្រូវបានលុបចេញ។ អ្នកអាចលុបការជជែករបស់អ្នកផ្ទាល់ ជាមួយ Coach មុនពេលនោះបាន៖ សាររបស់វា និងឯកសារដែលអ្នកបានបន្ថែមត្រូវបានលុបភ្លាមៗ ខណៈកំណត់ត្រាថាការដំណើរការនីមួយៗបានកើតឡើង ពេលណា និងតម្លៃប៉ុន្មាន នៅតែមានរយៈពេល 30 ថ្ងៃនោះ។</li><li>កំណត់ត្រាខ្លីរបស់ Coach សម្រាប់ចម្លើយបន្ទាប់របស់វា ដូចជាហេតុអ្វីបានជាការតភ្ជាប់មិនអាចធ្វើបាននៅក្នុងការជជែក ឬថា Card ត្រូវបានអនុម័ត៖ រហូតដល់ចម្លើយនោះយកវា យ៉ាងយូរ 7 ថ្ងៃ បន្ទាប់មកជាផ្នែកនៃការជជែកនោះ ដរាបណាការជជែកត្រូវបានរក្សា។ ច្បាប់ចម្លងត្រូវបានរក្សា 24 ម៉ោង ដើម្បីឱ្យសារដែលផ្ញើឡើងវិញទទួលបានកំណត់ត្រាដូចគ្នា។ កំណត់ត្រារបស់ការជជែកត្រូវបានប្រើតែនៅក្នុងការជជែកនោះ។</li><li>ឯកសារដែលអ្នកភ្ជាប់ក្នុងការជជែក៖ ជាមួយសារដែលវាត្រូវបានភ្ជាប់ 30 ថ្ងៃ ឬលឿនជាងនេះប្រសិនបើការជជែកត្រូវបានលុប ហើយក្នុងករណីណាក៏ដោយក្នុងរយៈពេល 38 ថ្ងៃ។ ឯកសារដែលគ្មានសារណាប្រើត្រូវបានលុបប្រហែលមួយម៉ោងបន្ទាប់ពីអ្នកផ្ទុកឡើង។ ការលុបគណនីរបស់អ្នកលុបវា។</li><li>ឯកសារដែល taf របស់អ្នកបញ្ជូន៖ 30 ថ្ងៃចាប់ពីពេលដែលការដំណើរការបង្កើតវា បន្ទាប់មកលុបដោយស្វ័យប្រវត្តិក្នុងរយៈពេលមួយថ្ងៃ។ អ្នករាល់គ្នាលើគណនីរបស់អ្នកអាចលុបមួយលឿនជាងនេះដោយ លុបឥឡូវនេះ៖ ឯកសារខ្លួនវាបាត់ភ្លាមៗ ដោយគ្មានការរក្សាច្បាប់ចម្លង ឈ្មោះ ទំហំ និង taf និងការដំណើរការដែលបង្កើតវាអាចនៅក្នុងច្បាប់ចម្លងអ៊ិនគ្រីបនៅពេលជាក់លាក់នៃកន្លែងផ្ទុករបស់ tafs រហូតដល់ 35 ថ្ងៃ ប្រើតែដើម្បីស្តារវាបន្ទាប់ពីការបរាជ័យ។ ការលុប taf ឬការលុបគណនីរបស់អ្នកលុបឯកសាររបស់វា។ ការចែករំលែកឯកសារផ្ញើឯកសារខ្លួនវា ហើយច្បាប់ចម្លងដែលអ្នកចែករំលែកនៅជាមួយកម្មវិធីដែលអ្នកបានចែករំលែកទៅ។ ដើម្បីទាញយកឯកសារ យើងបង្កើតតំណសម្រាប់សមាជិកដែលបានចូលនៃគណនីរបស់អ្នក ដែលឈប់ដំណើរការបន្ទាប់ពីមួយនាទី យើងមិនបង្កើតតំណផ្សេងទៀតទៅវាទេ។</li><li>អ្វីដែលឧបករណ៍មួយបានបញ្ជូនត្រឡប់ ក្នុងកំណត់ត្រារបស់ planque នៃការហៅនីមួយៗ៖ 24 ម៉ោង។ បន្ទាប់ពីនោះ កំណត់ត្រារក្សាតែថាតើការហៅត្រូវបានផ្ញើឬទេ ដូច្នេះវាមិនដែលត្រូវបានផ្ញើពីរដងទេ។</li><li>token ឬសោនៃការតភ្ជាប់ក្នុង planque ឬការចូលនៃការតភ្ជាប់ដែលគ្រប់គ្រងនៅ Composio៖ រហូតដល់អ្នកផ្តាច់វា។ ប្រសិនបើការតភ្ជាប់ផ្សេងទៀតរបស់អ្នកអាចប្រើគណនីដូចគ្នានៅអ្នកលក់នោះ វាត្រូវបានរក្សា មិនប្រើ រហូតដល់ការតភ្ជាប់នោះត្រូវបានផ្តាច់ដែរ បន្ទាប់មកដកហូត។ ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("km"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 83, Col: 699}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 83, Col: 699}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 139, Col: 228}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 139, Col: 228}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 142, Col: 214}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 142, Col: 214}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("km"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("km").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("km").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleKM() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `km_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/km_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {

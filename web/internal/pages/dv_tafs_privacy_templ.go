@@ -55,7 +55,7 @@ func TafsPrivacyDV() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("dv"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 35, Col: 860}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 35, Col: 860}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func TafsPrivacyDV() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("dv").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 45, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func TafsPrivacyDV() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("dv").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 45, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 45, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TafsPrivacyDV() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("dv").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 47, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 47, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func TafsPrivacyDV() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("dv").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 47, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 47, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func TafsPrivacyDV() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("dv"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 49, Col: 1249}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 49, Col: 1249}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -144,14 +144,14 @@ func TafsPrivacyDV() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. ޑޭޓާ ލިބޭ އެހެން ފަރާތްތައް</h2><p>އަޅުގަނޑުމެން ތިބާގެ ޕަރސަނަލް ޑޭޓާ ނުވިއްކަމެވެ، އަދި އިޝްތިހާރުތަކަށްޓަކައި ނުބަހާލަމެވެ.</p><p>tafs އަށްޓަކައި އަޅުގަނޑުމެން ބޭނުންކުރަނީ މި ކުންފުނިތަކެވެ: Amazon Web Services (ހޯސްޓިންގ، tafs ގެ ސްޓޯރާއި planque ގެ ގުޅުންތައް ހިމެނިގެން)، Clerk (KIFF އެކައުންޓްތަކަށް ލޮގިން)، Anthropic (AI މޮޑެލް، ހިންގަނީ Anthropic، Amazon Web Services، Google Cloud ނުވަތަ Microsoft Azure)، Composio (މެނޭޖް ކުރެވޭ ގުޅުންތަކުގެ ލޮގިންތަކާއި، planque އެއަށް ކުރުމަށް އެދޭ ކޯލްތައް)، Apple (push އެލާޓްތައް)، Google (Android ގައި push އެލާޓްތަކާއި Google Play ގެ ބިލިންގ)، އަދި Resend (taf އެއްގެ އީމެއިލް ދޮރު). ރަސްމީ، މިހާރުގެ ލިސްޓް، ކޮންމެ އެއްޗެއް ހަށްޓަނީ ކޮން ކަމެއްތޯއާއި ކޮންތާކުތޯ އާއެކު، <a href=\"/subprocessors\">/subprocessors</a> (އިނގިރޭސިން) ގައި ހުއްޓެވެ.</p><p>އޭގެ ތެރެއިން ބައެއް ޔޫރަޕިއަން އިކޮނޮމިކް އެރިއާއިން ބޭރުގައި، ގިނައިން އެމެރިކާގައި ހުއްޓެވެ. އެ ޓްރާންސްފަރުތައް ރައްކާތެރިކުރާ ގޮތް <a href=\"/dv/privacy#transfers\">KIFF ގެ ޕްރައިވަސީ ސިޔާސަތުން</a> ބުނެއެވެ.</p><p><strong>ތިބާގެ ޤައުމު.</strong> ބައެއް ޤައުމުތަކުގެ ޤާނޫނުތަކުން މި ސިޔާސަތުން ބުނާ އެއްޗަކަށްވުރެ އިތުރު ކަންތައްތައް އެދެއެވެ. އެ އިތުރުކުރާ ކަންތައްތައް، އިނގިރޭސިބަހުން އަދި އެ ޤައުމުގެ ބަހުން، <a href=\"/privacy/countries\">ތިބާގެ ޤައުމު</a> (އިނގިރޭސިން) ގައި ހުއްޓެވެ.</p></section><section id=\"retention\"><h2>8. އަޅުގަނޑުމެން އެ ބަހައްޓާނެ މުއްދަތު</h2><ul><li>ތިބާގެ ޓޫލްތަކުން taf އަކަށް އެނބުރި ދޭ ކަންތައްތައް: ރަނާ ނިމެންދެން ހަމައެކަނި. ބަހުސެއްގައި، އެ ކިޔާލި ކަންތައްތައް އޭގެ ދެން އޮތް މެސެޖުތަކަށްޓަކައި އެންކްރިޕްޓް ކޮށް ބަހައްޓައެވެ، ބަހުސް އެއް ގަޑިއިރު ހަރަކާތެއް ނެތި ހުރެ އަދި ކިޔުމަށް ފަހު އެންމެ ގިނައިން ހަތަރު ގަޑިއިރާ ހަމައަށް ބޭނުންކޮށް، ދެން ދުވަސް ކޮޅެއްގެ ތެރޭގައި އޮޓޯމެޓިކުން ފޮހެލެވެއެވެ.</li><li>taf އެއްގެ ރަނާތަކާއި ބަހުސްތައް، ބަހުސެއްގެ ޚުލާސާއާއެކު: 30 ދުވަސް. އޭގެ މެމޯރީ ނޯޓުތައް: taf ދުރުކޮށްލަންދެން. ތިބާގެ އަމިއްލަ ބަހުސެއް، Coach އާއި، އެއަށްވުރެ ކުރިން ފޮހެލެވޭނެ: އޭގެ މެސެޖުތަކާއި ތިބާ އިތުރުކުރި ފައިލްތައް ވަގުތުން ފޮހެވޭނެ، އަދި އޭގެ ކޮންމެ ރަނެއް ހިނގި ކަމާއި، ހިނގި ވަގުތާއި، ޚަރަދުވި އަގުގެ ރެކޯޑް އެ 30 ދުވަހު ބާކީ ހުންނާނެ.</li><li>އޭގެ ފަހު ޖަވާބަށްޓަކައި Coach ގެ ކުރު ނޯޓުތައް، ބަހުސެއްގައި ގުޅުމެއް ނުހެދުނީ ކީއްވެގެންތޯ، ނުވަތަ Card އެއް ރުހުން ލިބުނު ކަންކަމެވެ: އެ ޖަވާބުން އެ ނަގަންދެން، އެންމެ ގިނައިން 7 ދުވަސް؛ ދެން އެއަށް ފަހު، އެ ބަހުސުގެ ބައެއްގެ ގޮތުގައި، ބަހުސް ބަހައްޓާ މުއްދަތަށެވެ. އަލުން ފޮނުވި މެސެޖަކަށް އެ ނޯޓު ލިބޭނެ ގޮތަށް ކޮޕީއެއް 24 ގަޑިއިރު ބަހައްޓައެވެ. ބަހުސެއްގެ ނޯޓު ބޭނުންކުރެވެނީ އެ ބަހުސުގައި ހަމައެކަނި ކަމުގައެވެ.</li><li>ބަހުސެއްގައި ތިބާ އެޓޭޗްކުރާ ފައިލްތައް: އެ އެޓޭޗްކުރެވިފައިވާ މެސެޖާއެކު، 30 ދުވަސް، ނުވަތަ ބަހުސް ދުރުކޮށްލައިފިނަމަ އެއަށްވުރެ ކުރިން، އަދި ކޮންމެ ގޮތެއްގައިވެސް 38 ދުވަހުގެ ތެރޭގައި. ކޮންމެ މެސެޖަކުންވެސް ބޭނުން ނުކުރާ ފައިލެއް ތިބާ އަޕްލޯޑް ކުރުމުން އެއް ގަޑިއިރު ފަހުން ދުރުކުރެވެއެވެ. ތިބާގެ އެކައުންޓް ފޮހެލުމުން އެ ފޮހެވެއެވެ.</li><li>ތިބާގެ taf ތަކުން ހަވާލުކުރާ ފައިލްތައް: އެ ރަނާއިން އެ ހެދި ދުވަހުން 30 ދުވަސް، ދެން އެއް ދުވަހުގެ ތެރޭގައި އޮޓޯމެޓިކުން ފޮހެލެވެއެވެ. ތިބާގެ އެކައުންޓުގައިވާ ކޮންމެ މީހަކަށް ފޮހެލަން ނުދަނެވޭނެ ފަދައިން Delete now ގައި ކުރިން ފޮހެލެވޭނެއެވެ: ފައިލް ސީދާ ނެތިގެންދެއެވެ، ކޮޕީއެއް ނުބަހައްޓައެވެ؛ އޭގެ ނަމާއި ސައިޒާއި އެ ހެދި taf އާއި ރަނާ tafs ގެ ސްޓޯރުގެ އެންކްރިޕްޓް ކުރެވިފައިވާ ޕޮއިންޓް-އިން-ޓައިމް ކޮޕީތަކުގައި 35 ދުވަހާ ހަމައަށް ދެމިއޮވެދާނެއެވެ، އެއީ ފެއިލްވުމަކަށް ފަހު އެ ރިސްޓޯރ ކުރުމަށް ހަމައެކަނި ބޭނުންކުރެވޭ ކޮޕީތަކެވެ. taf އެއް ދުރުކޮށްލުމުން ނުވަތަ ތިބާގެ އެކައުންޓް ފޮހެލުމުން އޭގެ ފައިލްތައް ފޮހެވެއެވެ. ފައިލެއް ޝެއަރ ކުރުމުން ފައިލް އަމިއްލައަށް ފޮނުވާއިރު، ތިބާ ޝެއަރ ކުރި ކޮޕީ ތިބާ ޝެއަރ ކުރި އެޕާއެކު ދެމިއޮވެއެވެ. ފައިލެއް ޑައުންލޯޑް ކުރުމަށްޓަކައި، އަޅުގަނޑުމެން ތިބާގެ އެކައުންޓަށް ވަދެފައިވާ މެންބަރެއްގެ ގޮތުން އެއް މިނިޓަށް ފަހު ބަދަލުވެގެންދާ ލިންކެއް ހަދަމެވެ؛ އެއަށް އެހެން ލިންކެއް އަޅުގަނޑުމެން ނުހަދަމެވެ.</li><li>ކޮންމެ ކޯލެއްގެ planque ގެ ރެކޯޑުގައި، ޓޫލަކުން އެނބުރި ދިން ކަންތައްތައް: 24 ގަޑިއިރު. އެއަށް ފަހު، ރެކޯޑުން ބަހައްޓަނީ ކޯލް ފޮނުވިތޯ ހަމައެކަނި، ފަހެ އެ ދުވަހަކުވެސް ދެފަހަރު ނުފޮނުވެއެވެ.</li><li>planque ގައި ގުޅުމެއްގެ token ނުވަތަ ކީ، ނުވަތަ Composio ގައި މެނޭޖް ކުރެވޭ ގުޅުމެއްގެ ލޮގިން: ތިބާ އެ ކަނޑައެޅުމަށް ދެން. ތިބާގެ އެހެން ގުޅުމަކުން އެ ވިއްކާ ފަރާތުގައި އެއް އެކައުންޓް ބޭނުންކުރެވިދާނެ ނަމަ، އެ ބަހައްޓަވާނީ ބޭނުންނުކޮށެވެ، އެއްވެސް އަނެއް ގުޅުމެއްވެސް ކަނޑައެޅުމަށް ދެން، އެއަށްފަހު ބާތިލް ކުރެވެއެވެ. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. ޑޭޓާ ލިބޭ އެހެން ފަރާތްތައް</h2><p>އަޅުގަނޑުމެން ތިބާގެ ޕަރސަނަލް ޑޭޓާ ނުވިއްކަމެވެ، އަދި އިޝްތިހާރުތަކަށްޓަކައި ނުބަހާލަމެވެ.</p><p>tafs އަށްޓަކައި އަޅުގަނޑުމެން ބޭނުންކުރަނީ މި ކުންފުނިތަކެވެ: Amazon Web Services (ހޯސްޓިންގ، tafs ގެ ސްޓޯރާއި planque ގެ ގުޅުންތައް ހިމެނިގެން)، Clerk (KIFF އެކައުންޓްތަކަށް ލޮގިން)، Anthropic (AI މޮޑެލް، ހިންގަނީ Anthropic، Amazon Web Services، Google Cloud ނުވަތަ Microsoft Azure)، Composio (މެނޭޖް ކުރެވޭ ގުޅުންތަކުގެ ލޮގިންތަކާއި، planque އެއަށް ކުރުމަށް އެދޭ ކޯލްތައް)، Apple (push އެލާޓްތައް)، Google (Android ގައި push އެލާޓްތަކާއި Google Play ގެ ބިލިންގ)، އަދި Resend (KIFF ގެ ޓީމަށް ފޮނުވޭ ރިޕޯޓުކުރެވޭ ޖަވާބުތައް). ރަސްމީ، މިހާރުގެ ލިސްޓް، ކޮންމެ އެއްޗެއް ހަށްޓަނީ ކޮން ކަމެއްތޯއާއި ކޮންތާކުތޯ އާއެކު، <a href=\"/subprocessors\">/subprocessors</a> (އިނގިރޭސިން) ގައި ހުއްޓެވެ.</p><p>އޭގެ ތެރެއިން ބައެއް ޔޫރަޕިއަން އިކޮނޮމިކް އެރިއާއިން ބޭރުގައި، ގިނައިން އެމެރިކާގައި ހުއްޓެވެ. އެ ޓްރާންސްފަރުތައް ރައްކާތެރިކުރާ ގޮތް <a href=\"/dv/privacy#transfers\">KIFF ގެ ޕްރައިވަސީ ސިޔާސަތުން</a> ބުނެއެވެ.</p><p><strong>ތިބާގެ ޤައުމު.</strong> ބައެއް ޤައުމުތަކުގެ ޤާނޫނުތަކުން މި ސިޔާސަތުން ބުނާ އެއްޗަކަށްވުރެ އިތުރު ކަންތައްތައް އެދެއެވެ. އެ އިތުރުކުރާ ކަންތައްތައް، އިނގިރޭސިބަހުން އަދި އެ ޤައުމުގެ ބަހުން، <a href=\"/privacy/countries\">ތިބާގެ ޤައުމު</a> (އިނގިރޭސިން) ގައި ހުއްޓެވެ.</p></section><section id=\"retention\"><h2>8. އަޅުގަނޑުމެން އެ ބަހައްޓާނެ މުއްދަތު</h2><ul><li>ތިބާގެ ޓޫލްތަކުން taf އަކަށް އެނބުރި ދޭ ކަންތައްތައް: ރަނާ ނިމެންދެން ހަމައެކަނި. ބަހުސެއްގައި، އެ ކިޔާލި ކަންތައްތައް އޭގެ ދެން އޮތް މެސެޖުތަކަށްޓަކައި އެންކްރިޕްޓް ކޮށް ބަހައްޓައެވެ، ބަހުސް އެއް ގަޑިއިރު ހަރަކާތެއް ނެތި ހުރެ އަދި ކިޔުމަށް ފަހު އެންމެ ގިނައިން ހަތަރު ގަޑިއިރާ ހަމައަށް ބޭނުންކޮށް، ދެން ދުވަސް ކޮޅެއްގެ ތެރޭގައި އޮޓޯމެޓިކުން ފޮހެލެވެއެވެ.</li><li>taf އެއްގެ ރަނާތަކާއި ބަހުސްތައް، ބަހުސެއްގެ ޚުލާސާއާއެކު: 30 ދުވަސް. އޭގެ މެމޯރީ ނޯޓުތައް: taf ދުރުކޮށްލަންދެން. ތިބާގެ އަމިއްލަ ބަހުސެއް، Coach އާއި، އެއަށްވުރެ ކުރިން ފޮހެލެވޭނެ: އޭގެ މެސެޖުތަކާއި ތިބާ އިތުރުކުރި ފައިލްތައް ވަގުތުން ފޮހެވޭނެ، އަދި އޭގެ ކޮންމެ ރަނެއް ހިނގި ކަމާއި، ހިނގި ވަގުތާއި، ޚަރަދުވި އަގުގެ ރެކޯޑް އެ 30 ދުވަހު ބާކީ ހުންނާނެ.</li><li>އޭގެ ފަހު ޖަވާބަށްޓަކައި Coach ގެ ކުރު ނޯޓުތައް، ބަހުސެއްގައި ގުޅުމެއް ނުހެދުނީ ކީއްވެގެންތޯ، ނުވަތަ Card އެއް ރުހުން ލިބުނު ކަންކަމެވެ: އެ ޖަވާބުން އެ ނަގަންދެން، އެންމެ ގިނައިން 7 ދުވަސް؛ ދެން އެއަށް ފަހު، އެ ބަހުސުގެ ބައެއްގެ ގޮތުގައި، ބަހުސް ބަހައްޓާ މުއްދަތަށެވެ. އަލުން ފޮނުވި މެސެޖަކަށް އެ ނޯޓު ލިބޭނެ ގޮތަށް ކޮޕީއެއް 24 ގަޑިއިރު ބަހައްޓައެވެ. ބަހުސެއްގެ ނޯޓު ބޭނުންކުރެވެނީ އެ ބަހުސުގައި ހަމައެކަނި ކަމުގައެވެ.</li><li>ބަހުސެއްގައި ތިބާ އެޓޭޗްކުރާ ފައިލްތައް: އެ އެޓޭޗްކުރެވިފައިވާ މެސެޖާއެކު، 30 ދުވަސް، ނުވަތަ ބަހުސް ދުރުކޮށްލައިފިނަމަ އެއަށްވުރެ ކުރިން، އަދި ކޮންމެ ގޮތެއްގައިވެސް 38 ދުވަހުގެ ތެރޭގައި. ކޮންމެ މެސެޖަކުންވެސް ބޭނުން ނުކުރާ ފައިލެއް ތިބާ އަޕްލޯޑް ކުރުމުން އެއް ގަޑިއިރު ފަހުން ދުރުކުރެވެއެވެ. ތިބާގެ އެކައުންޓް ފޮހެލުމުން އެ ފޮހެވެއެވެ.</li><li>ތިބާގެ taf ތަކުން ހަވާލުކުރާ ފައިލްތައް: އެ ރަނާއިން އެ ހެދި ދުވަހުން 30 ދުވަސް، ދެން އެއް ދުވަހުގެ ތެރޭގައި އޮޓޯމެޓިކުން ފޮހެލެވެއެވެ. ތިބާގެ އެކައުންޓުގައިވާ ކޮންމެ މީހަކަށް ފޮހެލަން ނުދަނެވޭނެ ފަދައިން Delete now ގައި ކުރިން ފޮހެލެވޭނެއެވެ: ފައިލް ސީދާ ނެތިގެންދެއެވެ، ކޮޕީއެއް ނުބަހައްޓައެވެ؛ އޭގެ ނަމާއި ސައިޒާއި އެ ހެދި taf އާއި ރަނާ tafs ގެ ސްޓޯރުގެ އެންކްރިޕްޓް ކުރެވިފައިވާ ޕޮއިންޓް-އިން-ޓައިމް ކޮޕީތަކުގައި 35 ދުވަހާ ހަމައަށް ދެމިއޮވެދާނެއެވެ، އެއީ ފެއިލްވުމަކަށް ފަހު އެ ރިސްޓޯރ ކުރުމަށް ހަމައެކަނި ބޭނުންކުރެވޭ ކޮޕީތަކެވެ. taf އެއް ދުރުކޮށްލުމުން ނުވަތަ ތިބާގެ އެކައުންޓް ފޮހެލުމުން އޭގެ ފައިލްތައް ފޮހެވެއެވެ. ފައިލެއް ޝެއަރ ކުރުމުން ފައިލް އަމިއްލައަށް ފޮނުވާއިރު، ތިބާ ޝެއަރ ކުރި ކޮޕީ ތިބާ ޝެއަރ ކުރި އެޕާއެކު ދެމިއޮވެއެވެ. ފައިލެއް ޑައުންލޯޑް ކުރުމަށްޓަކައި، އަޅުގަނޑުމެން ތިބާގެ އެކައުންޓަށް ވަދެފައިވާ މެންބަރެއްގެ ގޮތުން އެއް މިނިޓަށް ފަހު ބަދަލުވެގެންދާ ލިންކެއް ހަދަމެވެ؛ އެއަށް އެހެން ލިންކެއް އަޅުގަނޑުމެން ނުހަދަމެވެ.</li><li>ކޮންމެ ކޯލެއްގެ planque ގެ ރެކޯޑުގައި، ޓޫލަކުން އެނބުރި ދިން ކަންތައްތައް: 24 ގަޑިއިރު. އެއަށް ފަހު، ރެކޯޑުން ބަހައްޓަނީ ކޯލް ފޮނުވިތޯ ހަމައެކަނި، ފަހެ އެ ދުވަހަކުވެސް ދެފަހަރު ނުފޮނުވެއެވެ.</li><li>planque ގައި ގުޅުމެއްގެ token ނުވަތަ ކީ، ނުވަތަ Composio ގައި މެނޭޖް ކުރެވޭ ގުޅުމެއްގެ ލޮގިން: ތިބާ އެ ކަނޑައެޅުމަށް ދެން. ތިބާގެ އެހެން ގުޅުމަކުން އެ ވިއްކާ ފަރާތުގައި އެއް އެކައުންޓް ބޭނުންކުރެވިދާނެ ނަމަ، އެ ބަހައްޓަވާނީ ބޭނުންނުކޮށެވެ، އެއްވެސް އަނެއް ގުޅުމެއްވެސް ކަނޑައެޅުމަށް ދެން، އެއަށްފަހު ބާތިލް ކުރެވެއެވެ. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("dv"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 83, Col: 609}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 83, Col: 609}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 139, Col: 235}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 139, Col: 235}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 142, Col: 181}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 142, Col: 181}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("dv"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dv").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dv").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleDV() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dv_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dv_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
