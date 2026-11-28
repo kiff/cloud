@@ -179,6 +179,16 @@ func containsAny(s string, ws []string) bool {
 	return false
 }
 
+// NarrowOpenings are the one-value openings the tool's app table gives it,
+// or none: then a Card opens its class whole.
+func (t Tool) NarrowOpenings() []NarrowOpening {
+	tt, ok := tableEntry(t.App, t.classedName())
+	if !ok {
+		return nil
+	}
+	return tt.narrow
+}
+
 // ClassParam is the parameter KIFF is told the call's class in (K4). The
 // gateway sets it from the tool, after the agent's arguments, so an agent
 // can't name its own (apps/api GatewayClassParam).
@@ -303,6 +313,17 @@ type tableTool struct {
 	operation *classOperation
 	// args are the arguments an opening or condition names for this tool.
 	args []string
+	// narrow are the openings the table's categories give this tool for one
+	// value (send_invoices: change_client_invoice_status for operation =
+	// finalize), the narrowest a Card's draft is given.
+	narrow []NarrowOpening
+}
+
+// NarrowOpening is an opening for one argument's value, as a reviewed
+// table's category names it.
+type NarrowOpening struct {
+	Argument string `json:"argument"`
+	Value    string `json:"value"`
 }
 
 var (
@@ -357,6 +378,7 @@ func loadTables() {
 					continue
 				}
 				tt.args = append(tt.args, o.Condition.Argument)
+				tt.narrow = append(tt.narrow, NarrowOpening{Argument: o.Condition.Argument, Value: o.Condition.Equals})
 				m[o.Name] = tt
 			}
 		}

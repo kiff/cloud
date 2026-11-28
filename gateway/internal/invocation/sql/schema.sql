@@ -276,3 +276,13 @@ CREATE TABLE IF NOT EXISTS gateway.object_claims (
     taken_at  timestamptz NOT NULL,
     PRIMARY KEY (tenant_id, kind, object, holder)
 );
+
+-- Each tool's class (K4: read, write, irreversible, delete, money) and the
+-- narrow openings its app's reviewed table gives it ([{"argument","value"}]),
+-- which apps/api reads to fill a Card draft's openings: the narrowest first,
+-- the whole class only when there is none. Set when a tool is connected and
+-- written again at each gateway start, so a table change reaches rows
+-- connected before it. '' or NULL: not known yet, and a draft opens nothing
+-- for the tool (its calls are refused until the owner opens them).
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class text NOT NULL DEFAULT '';
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class_opens jsonb;

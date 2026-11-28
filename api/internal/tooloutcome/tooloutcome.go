@@ -14,6 +14,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -373,6 +374,49 @@ func (p *Postgres) VendorTools(ctx context.Context, tenantID string) (map[string
 		m[r[0]] = r[1]
 	}
 	return m, nil
+}
+
+// ToolClass is what the gateway recorded of a tool's class (K4): the class,
+// and the narrow openings its app's reviewed table gives it.
+type ToolClass struct {
+	Class string
+	Opens []ToolOpening
+}
+
+// ToolOpening is an opening for one value of one argument.
+type ToolOpening struct {
+	Argument string `json:"argument"`
+	Value    string `json:"value"`
+}
+
+// ToolClasses reads the class the gateway recorded for each of tenantID's
+// gateway tools (gateway.tools.class, class_opens), by the name a Card
+// grants it under. Tools without one are left out.
+func (p *Postgres) ToolClasses(ctx context.Context, tenantID string) (map[string]ToolClass, error) {
+	if p == nil || p.pool == nil {
+		return nil, errors.New("tooloutcome: no database")
+	}
+	rows, err := p.pool.Query(ctx, `SELECT name, class, class_opens FROM gateway.tools WHERE tenant_id = $1 AND class <> ''`, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	m := map[string]ToolClass{}
+	for rows.Next() {
+		var name string
+		var tc ToolClass
+		var opens []byte
+		if err := rows.Scan(&name, &tc.Class, &opens); err != nil {
+			return nil, err
+		}
+		if len(opens) > 0 {
+			if err := json.Unmarshal(opens, &tc.Opens); err != nil {
+				return nil, fmt.Errorf("tooloutcome: class_opens of %s: %w", name, err)
+			}
+		}
+		m[name] = tc
+	}
+	return m, rows.Err()
 }
 
 // ReadOnlyTools reads which of tenantID's gateway tools are marked as

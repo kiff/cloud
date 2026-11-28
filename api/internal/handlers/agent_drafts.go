@@ -371,6 +371,12 @@ func (h *MandatesHandler) previewDraft(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "label is at most 100 characters"})
 		return
 	}
+	filled, status, msg := h.fillOpenings(r, tenantID, body.Cards)
+	if status != 0 {
+		writeJSON(w, status, map[string]string{"error": msg})
+		return
+	}
+	body.Cards = filled
 	plan, status, msg := h.draftCards(r, tenantID, agentID, body.Cards, body.NoTools, false)
 	if status != 0 {
 		writeJSON(w, status, map[string]string{"error": msg})
@@ -426,6 +432,10 @@ func (h *MandatesHandler) submitDraft(w http.ResponseWriter, r *http.Request, id
 // returns it with its claim secret, or why it can't be made. It confirms
 // nothing. fromHold is the held call it's made for, or "".
 func (h *MandatesHandler) newDraft(r *http.Request, id auth.Identity, tenantID, agentID, label string, raw []json.RawMessage, noTools, retireRest bool, fromHold string) (agentdrafts.D, string, int, string) {
+	raw, status, msg := h.fillOpenings(r, tenantID, raw)
+	if status != 0 {
+		return agentdrafts.D{}, "", status, msg
+	}
 	plan, status, msg := h.draftCards(r, tenantID, agentID, raw, noTools, retireRest)
 	if status != 0 {
 		return agentdrafts.D{}, "", status, msg

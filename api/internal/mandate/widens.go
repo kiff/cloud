@@ -355,6 +355,17 @@ func newOpenings(cur, next []Grant) []actionOpening {
 	return out
 }
 
+// OpensOnNew lists a new Card's openings (K4), each its own widening: with
+// no Card in force to compare with, every category it opens is one the
+// owner reads before the fingerprint.
+func OpensOnNew(m Mandate) []Widening {
+	var out []Widening
+	for _, o := range newOpenings(nil, m.Grants) {
+		out = append(out, Widening{Kind: "opens", Words: fmt.Sprintf("Opens %s calls for %s", openingWords(o.opening), o.action)})
+	}
+	return out
+}
+
 func openingWords(o Opening) string {
 	if o.Argument != "" {
 		return fmt.Sprintf("%s (%s %s)", o.Class, o.Argument, o.Value)
