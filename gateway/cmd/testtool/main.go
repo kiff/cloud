@@ -97,7 +97,7 @@ func (r *refunds) ListTools(context.Context) ([]mcp.Tool, error) {
 		{Name: "quote", Description: "Quote what refunding an order would cost; changes nothing",
 			InputSchema: json.RawMessage(`{"type":"object","properties":{"order":{"type":"string"},"amount_eur":{"type":"integer"}},"required":["order","amount_eur"]}`)},
 		{Name: "browse_pay", Description: "Pay a checkout read before",
-			InputSchema: json.RawMessage(`{"type":"object","properties":{"url":{"type":"string"},"ref":{"type":"string"},"op":{"type":"string"}},"required":["url","ref"]}`)}}, nil
+			InputSchema: json.RawMessage(`{"type":"object","properties":{"url":{"type":"string"},"ref":{"type":"string"},"planque_op":{"type":"string"}},"required":["url","ref"]}`)}}, nil
 }
 
 func (r *refunds) CallTool(_ context.Context, name string, args json.RawMessage) (json.RawMessage, error) {

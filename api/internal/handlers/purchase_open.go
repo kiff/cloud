@@ -91,18 +91,12 @@ const (
 
 // isPay says the permit request is a relay's pay (browse_pay), not its
 // describe. The gateway sends a describe as the proposal "<call>:describe"
-// with that as its op (planque answers it from the checkout it kept, under
-// its KIFF-Checkout-Describe header, and acts on nothing). A call's own id
-// is the gateway's "tc-<hex>", so a taf can't name a pay as a describe.
+// (planque answers it from the checkout it kept, under its
+// KIFF-Checkout-Describe header, and acts on nothing). A call's own id is
+// the gateway's "tc-<hex>", so a taf can't name a pay as a describe; no
+// argument is read, since each relay names its operation argument its way.
 func isPay(req *permit.Request, proposalID string) bool {
-	if req == nil || req.Tool != purchase.ToolBrowsePay {
-		return false
-	}
-	var a struct {
-		Op string `json:"op"`
-	}
-	_ = json.Unmarshal(req.Arguments, &a)
-	return !(strings.HasSuffix(proposalID, ":describe") && a.Op == proposalID)
+	return req != nil && req.Tool == purchase.ToolBrowsePay && !strings.HasSuffix(proposalID, ":describe")
 }
 
 // relayGrant is the planque account and grant a relay's audience names:
@@ -168,7 +162,7 @@ func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, p
 	if rule.PriceRule != nil {
 		cr.PriceRule = &purchase.PriceRule{UpTo: rule.PriceRule.UpTo, For: rule.PriceRule.For}
 	}
-	c, err := purchase.FromCheckout(purchase.Opening{Tenant: id.Tenant, Agent: prop.ActorID, Checkout: prop.ID, Request: b.Ref, Payer: purchase.Payer{Kind: "account", ID: id.Tenant}}, read, cr)
+	c, err := purchase.FromCheckout(purchase.Opening{Tenant: id.Tenant, Agent: prop.ActorID, Checkout: b.URL, Request: b.Ref, Payer: purchase.Payer{Kind: "account", ID: id.Tenant}}, read, cr)
 	if err != nil {
 		return refuse(reasonPurchaseCheckout, "the checkout can't be a purchase ("+err.Error()+"); nothing was bought")
 	}

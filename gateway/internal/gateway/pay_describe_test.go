@@ -10,7 +10,7 @@ import (
 
 var browsePayTool = gateway.Tool{Name: "browse_pay", Description: "Pay a checkout",
 	InputSchema: json.RawMessage(`{"type":"object","properties":{"url":{"type":"string"},"ref":{"type":"string"}},"required":["url","ref"]}`),
-	UpstreamURL: "http://planque.test/relay/t1/grt_1", UpstreamTool: "browse_pay", IdempotencyArg: "op", Mode: gateway.ModeVerify, Audience: "planque"}
+	UpstreamURL: "http://planque.test/relay/t1/grt_1", UpstreamTool: "browse_pay", IdempotencyArg: "planque_op", Mode: gateway.ModeVerify, Audience: "planque"}
 
 var checkoutBlock = json.RawMessage(`{"block":{"v":"planque/checkout/v1","op":"x"},"sig":"c2lnbmVkLWJ5LXBsYW5xdWU"}`)
 
@@ -43,7 +43,7 @@ func TestAPayIsDescribedBeforeItsDecided(t *testing.T) {
 	}
 	var args map[string]any
 	_ = json.Unmarshal(pr.Arguments, &args)
-	if len(args) != 3 || args["url"] != "https://shop.example/checkout" || args["ref"] != "c7" || args["op"] != describe {
+	if len(args) != 3 || args["url"] != "https://shop.example/checkout" || args["ref"] != "c7" || args["planque_op"] != describe {
 		t.Fatalf("the describe's arguments: %v", args)
 	}
 	if string(r.api.blocks[key]) != string(checkoutBlock) {
@@ -52,7 +52,7 @@ func TestAPayIsDescribedBeforeItsDecided(t *testing.T) {
 	if !slices.Equal(r.tool.tools, []string{"browse_pay", "browse_pay"}) {
 		t.Fatalf("sent: %v", r.tool.tools)
 	}
-	if r.tool.calls[0]["op"] != describe || r.tool.calls[1]["op"] != key {
+	if r.tool.calls[0]["planque_op"] != describe || r.tool.calls[1]["planque_op"] != key {
 		t.Fatalf("the describe went first, then the pay: %v", r.tool.calls)
 	}
 	if !slices.Equal(r.tool.payDescribes, []string{key, ""}) {

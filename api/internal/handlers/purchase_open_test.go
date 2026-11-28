@@ -161,7 +161,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 	aud := "https://planque.example/mcp/t1/g_web"
 	pay := func(aud string) *permit.Request {
 		return &permit.Request{Tool: purchase.ToolBrowsePay, Audience: aud,
-			Arguments: json.RawMessage(`{"url":"https://papeterie-lumiere.example/checkout","ref":"c7","op":"op-pay"}`)}
+			Arguments: json.RawMessage(`{"url":"https://papeterie-lumiere.example/checkout","ref":"c7","planque_op":"op-pay"}`)}
 	}
 
 	h, f := rig(within, false)
@@ -171,7 +171,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 	}
 	c := o.row.Case
 	if c.CaseID != purchase.CaseIDFor("t1", "op-pay") || c.Path != "token" || c.Merchant.StripeProfile != "profile_61RkZt0hLumiere" || c.Price.Total != 8420 ||
-		c.Card != (purchase.CardRef{ID: "card-buy", Version: 3}) || c.Reference.Request != "c7" {
+		c.Card != (purchase.CardRef{ID: "card-buy", Version: 3}) || c.Reference.Request != "c7" || c.Reference.Checkout != "https://papeterie-lumiere.example/checkout" {
 		t.Fatalf("case %+v", c)
 	}
 	// The same pay again: the same case, decided, never a second one.
@@ -250,16 +250,17 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 	}
 }
 
-// A describe is no pay: it opens no case. A pay that names itself one
-// (its op, not its call's id) is still a pay.
+// A describe is no pay: it opens no case. It's told by the gateway's id,
+// never by an argument, whatever the relay calls its operation.
 func TestADescribeIsNoPay(t *testing.T) {
-	pay := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","op":"tc-1"}`)}
-	describe := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","op":"tc-1:describe"}`)}
+	pay := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","planque_op":"tc-1"}`)}
+	describe := &permit.Request{Tool: purchase.ToolBrowsePay, Arguments: json.RawMessage(`{"url":"https://x.example/checkout","ref":"c7","planque_op":"tc-1:describe"}`)}
 	other := &permit.Request{Tool: "browse_open", Arguments: json.RawMessage(`{}`)}
 	if !isPay(pay, "tc-1") || isPay(describe, "tc-1:describe") || isPay(other, "tc-1") || isPay(nil, "tc-1") {
 		t.Fatal("isPay")
 	}
-	if !isPay(describe, "tc-1") || !isPay(pay, "tc-1:describe") {
+	// A pay whose arguments name a describe is still a pay.
+	if !isPay(describe, "tc-1") {
 		t.Fatal("a pay passed as a describe")
 	}
 }

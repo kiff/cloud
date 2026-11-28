@@ -71,7 +71,7 @@ func TestAPayOpensItsCaseFromPlanquesSignedCheckout(t *testing.T) {
 	connector := key(map[string]any{"label": "relay", "roles": []string{"connector"}})
 	agentKey := key(map[string]any{"label": "agent", "agent_id": "agt_e2e", "roles": []string{"gateway_agent"}})
 	if code, out := call(t, http.MethodPost, gw+"/v1/connections", connector, map[string]any{"name": "pay_relay", "url": relayURL, "tool": "browse_pay",
-		"mode": "verify", "audience": relayURL, "idempotency_argument": "op", "app": "e2e"}); code != http.StatusCreated {
+		"mode": "verify", "audience": relayURL, "idempotency_argument": "planque_op", "app": "e2e"}); code != http.StatusCreated {
 		t.Fatalf("connect the relay's pay: %d %v", code, out)
 	}
 	card := map[string]any{"id": "card-e2e-pay", "subject": "agt_e2e", "domain": "gateway",
