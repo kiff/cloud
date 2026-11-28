@@ -753,11 +753,9 @@ if [ -n "\$PERMIT_PUBLISHED_SECRET" ] || [ -n "\$kiff_bundle" ]; then permit_pub
 # The purchase receipt key (Thune): its own Ed25519 seed, never the permit
 # key's, in KIFF's one secret. Without it receipts stay off.
 purchase_receipt_key=""
+if [ -n "\$kiff_bundle" ]; then purchase_receipt_key=\$(secret_value purchase_receipt_key "" optional); fi
 purchase_receipt_published=""
-if [ -n "\$kiff_bundle" ]; then
-	purchase_receipt_key=\$(secret_value purchase_receipt_key "" optional)
-	purchase_receipt_published=\$(secret_value purchase_receipt_published "" optional)
-fi
+if [ -n "\$kiff_bundle" ]; then purchase_receipt_published=\$(secret_value purchase_receipt_published "" optional); fi
 planque_event_secret=""
 if [ -n "\$PLANQUE_EVENT_SECRET_ARN" ] || [ -n "\$kiff_bundle" ]; then
 	planque_event_secret=\$(secret_value planque_event_secret "\$PLANQUE_EVENT_SECRET_ARN" optional)
