@@ -48,11 +48,15 @@ var (
 // Decision is how a case is decided: by the owner's signature, or by KIFF
 // within the Card's limits. Limits are the Card's at that moment.
 type Decision struct {
-	By           string  `json:"decided_by"`
-	Signature    string  `json:"signature,omitempty"`
-	ApproverRole string  `json:"approver_role,omitempty"`
-	Card         CardRef `json:"card"`
-	Limits       Limits  `json:"limits"`
+	By           string `json:"decided_by"`
+	Signature    string `json:"signature,omitempty"`
+	ApproverRole string `json:"approver_role,omitempty"`
+	// Approver is who decided (their KIFF subject), and Method how:
+	// device_biometric or security_key. The receipt says both.
+	Approver string  `json:"approver,omitempty"`
+	Method   string  `json:"method,omitempty"`
+	Card     CardRef `json:"card"`
+	Limits   Limits  `json:"limits"`
 }
 
 // Decided by.

@@ -3,6 +3,7 @@ package purchase
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -167,5 +168,82 @@ func TestMoneyEventsSettleTheCaseAndAForceCapturePausesTheCard(t *testing.T) {
 	}
 	if err := s.Decide(ctx, next.Tenant, next.CaseID, 1, digest, within); err != nil {
 		t.Fatalf("within limits once resumed: %v", err)
+	}
+}
+
+// A receipt is given once the case has ended, read from what KIFF kept: the
+// owner who decided and how, the issuer's merchant beside the case's, the
+// money as captured, the order the shop confirmed. Signed, it checks with
+// the receipt key; a case still deciding has none.
+func TestTheReceiptSaysWhatWasDecidedAndWhatHappened(t *testing.T) {
+	s, now := testStore(t)
+	ctx := t.Context()
+	c := newCase(t, "pc_rc")
+	d := open(t, s, c)
+	if _, err := s.ReceiptOf(ctx, c.Tenant, c.CaseID, "u_ana"); !errors.Is(err, ErrNotEnded) {
+		t.Fatalf("a held case's receipt: %v", err)
+	}
+	dec := owner
+	dec.Approver, dec.Method = "u_ana", "device_biometric"
+	if err := s.Decide(ctx, c.Tenant, c.CaseID, 1, d, dec); err != nil {
+		t.Fatal(err)
+	}
+	if _, ok, err := s.Lease(ctx, c.Tenant, c.CaseID, 1, "exe_rc"); !ok || err != nil {
+		t.Fatalf("lease: %v %v", ok, err)
+	}
+	if err := s.AttachCard(ctx, c.Tenant, c.CaseID, 1, "ic_rc"); err != nil {
+		t.Fatal(err)
+	}
+	if a := s.Authorize(ctx, auth("iauth_rc", "ic_rc", 8570)); !a.Approved {
+		t.Fatalf("authorization: %+v", a)
+	}
+	if _, err := s.RecordMoney(ctx, MoneyEvent{EventID: "evt_rc", Account: "acct_acme", Card: "ic_rc", Kind: EventCapture, Authorization: "iauth_rc", Amount: -8570}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.FinishOrdered(ctx, c.Tenant, c.CaseID, 1, "exe_rc", "PL-2026-118204", now.Add(time.Minute)); err != nil {
+		t.Fatal(err)
+	}
+	rc, err := s.ReceiptOf(ctx, c.Tenant, c.CaseID, "u_ana")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rc.States != (States{Case: StateDone, Money: MoneyCaptured, Order: "confirmed"}) || rc.Amounts.Captured != 8570 || rc.Amounts.ApprovedMax != c.Price.Max ||
+		rc.Merchant.Issuer.Name != "PAPETERIE LUMIERE LYON" || rc.Merchant.Case.StripeProfile != c.Merchant.StripeProfile || rc.Verification != "exempted" ||
+		rc.Approver != (Approver{Role: "owner", Self: true, Method: "device_biometric"}) || rc.Order == nil || rc.Order.Reference != "PL-2026-118204" || rc.DecidedBy != ByOwner {
+		t.Fatalf("receipt %+v", rc)
+	}
+	if rc.Words["state"] != "Bought" || rc.Words["line"] != "Bought from Papeterie Lumière · €85.70 (€1.50 more for shipping, inside what you approved)" || rc.Words["shipping"] != "Order PL-2026-118204 confirmed by the shop." ||
+		rc.Words["allowed"] != "You approved up to €86.20 at this shop, once." || rc.Words["refunds"] != "No refunds." {
+		t.Fatalf("words %v", rc.Words)
+	}
+	// Another reader on the account isn't the approver; the receipt is the same receipt.
+	other, _ := s.ReceiptOf(ctx, c.Tenant, c.CaseID, "u_vic")
+	if other.Approver.Self || other.ReceiptID != rc.ReceiptID || other.IssuedAt != rc.IssuedAt {
+		t.Fatalf("another reader's: %+v", other)
+	}
+	k := receiptKey(t)
+	signed, err := SignReceipt(k, rc, *now)
+	if err != nil || VerifyReceipt(k.Public(), signed) != nil {
+		t.Fatalf("signed: %v", err)
+	}
+}
+
+// The receipt keys are listed apart from the permit keys, a revoked one
+// with when it was revoked.
+func TestReceiptKeysListRevokedOnesWithWhen(t *testing.T) {
+	k := receiptKey(t)
+	pub := base64.RawURLEncoding.EncodeToString(k.Public().Pub)
+	keys, err := ParseReceiptKeys("kiff-receipts-0:" + pub + ":2026-11-01T00:00:00Z, kiff-receipts-2:" + pub)
+	if err != nil || len(keys) != 2 || keys[0].RevokedAt == nil || keys[1].RevokedAt != nil {
+		t.Fatalf("parsed %+v %v", keys, err)
+	}
+	set := ReceiptJWKS(k.Public(), keys)["keys"]
+	if len(set) != 3 || set[0].Kid != "kiff-receipts-1" || set[0].Crv != "Ed25519" || set[1].RevokedAt != "2026-11-01T00:00:00Z" || set[2].RevokedAt != "" {
+		t.Fatalf("set %+v", set)
+	}
+	for _, bad := range []string{"nokey", "k:" + pub + ":yesterday", "k:short"} {
+		if _, err := ParseReceiptKeys(bad); err == nil {
+			t.Errorf("%q: read", bad)
+		}
 	}
 }

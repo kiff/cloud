@@ -107,3 +107,7 @@ CREATE TABLE IF NOT EXISTS purchase.paused (
     at        TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (tenant_id, card_id)
 );
+
+-- The order the shop confirmed, as the execution read it on the page.
+ALTER TABLE purchase.cases ADD COLUMN IF NOT EXISTS order_ref TEXT NOT NULL DEFAULT '';
+ALTER TABLE purchase.cases ADD COLUMN IF NOT EXISTS order_confirmed_at TIMESTAMPTZ;
