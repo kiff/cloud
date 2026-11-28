@@ -505,6 +505,25 @@ type mandateGrantBody struct {
 	// owner may give when a call under this grant is held, e.g.
 	// ["return_first", "proof_first"]. The agent reads the chosen one.
 	NextSteps []string `json:"next_steps,omitempty"`
+	// Opens are the categories the owner opens on this action (K4):
+	// [{"class":"irreversible","argument":"status","value":"finalize"}].
+	Opens []mandateOpeningBody `json:"opens,omitempty"`
+}
+
+type mandateOpeningBody struct {
+	Class    string `json:"class"`
+	Argument string `json:"argument,omitempty"`
+	Value    string `json:"value,omitempty"`
+}
+
+// openingsBody is a grant's openings as a Card body carries them, so a Card
+// rebuilt from one in force keeps what the owner opened.
+func openingsBody(os []mandate.Opening) []mandateOpeningBody {
+	var out []mandateOpeningBody
+	for _, o := range os {
+		out = append(out, mandateOpeningBody{Class: o.Class, Argument: o.Argument, Value: o.Value})
+	}
+	return out
 }
 
 type mandateResourcesBody struct {
@@ -1824,6 +1843,9 @@ func (b mandateBody) toMandate(tenantID string) (mandate.Mandate, error) {
 		for _, s := range g.NextSteps {
 			grant.NextSteps = append(grant.NextSteps, strings.TrimSpace(s))
 		}
+		for _, o := range g.Opens {
+			grant.Opens = append(grant.Opens, mandate.Opening{Class: strings.TrimSpace(o.Class), Argument: strings.TrimSpace(o.Argument), Value: o.Value})
+		}
 		m.Grants = append(m.Grants, grant)
 	}
 	for _, a := range b.Aggregates {
@@ -1925,6 +1947,17 @@ func grantsView(gs []mandate.Grant) []map[string]any {
 		}
 		if len(g.NextSteps) > 0 {
 			gv["next_steps"] = g.NextSteps
+		}
+		if len(g.Opens) > 0 {
+			opens := make([]map[string]any, 0, len(g.Opens))
+			for _, o := range g.Opens {
+				ov := map[string]any{"class": o.Class}
+				if o.Argument != "" {
+					ov["argument"], ov["value"] = o.Argument, o.Value
+				}
+				opens = append(opens, ov)
+			}
+			gv["opens"] = opens
 		}
 		out = append(out, gv)
 	}
