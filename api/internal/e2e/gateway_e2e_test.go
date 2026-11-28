@@ -297,3 +297,121 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 		t.Fatalf("pins: patched %q, fresh %q, before the patch %q", patched, fresh, before)
 	}
 }
+
+// K4 (kiff/cloud#228): on an account whose calls are decided by their class,
+// a Card that covers a relay's money tool without opening its class refuses
+// the call as closed, never as not covered. The agent hears the closed next
+// step, the Record says it's closed until the owner opens it (in the
+// reader's language), and the relay's upstream gets no request.
+func TestAClosedCategoryIsRefusedAsClosedAndNothingIsSent(t *testing.T) {
+	if os.Getenv("KIFF_E2E") != "1" {
+		t.Skip("set KIFF_E2E=1 (and KIFF_TEST_POSTGRES_URL) to run the end-to-end test")
+	}
+	dbURL := testdb.URL(t)
+	if dbURL == "" {
+		t.Skip("set " + testdb.EnvVar)
+	}
+	ctx := context.Background()
+	root, _ := filepath.Abs("../../..")
+	bins := t.TempDir()
+	apiBin := build(t, bins, filepath.Join(root, "api"), "cmd/api")
+	gwBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/gateway")
+	toolBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/testtool")
+
+	_, tenantID := newTenant(t, ctx, dbURL)
+	owner := "e2e-owner-" + strings.ToLower(tenantID)
+	relay := freeAddr(t)
+	start(t, toolBin, nil, "http://"+relay+"/calls", "-addr", relay)
+	relayURL := "http://" + relay + "/v1/relay"
+
+	apiAddr, gwAddr := freeAddr(t), freeAddr(t)
+	start(t, apiBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_AUTH_PROVIDER=stub", "KIFF_STUB_SUBJECTS=" + owner, "KIFF_DEMO_TENANT_ID=" + tenantID,
+		"KIFF_PERMIT_SIGNING_KEY=e2e-1:" + seed(), "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_K4_TENANTS=" + tenantID, "KIFF_LOG_FORMAT=text"}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
+	gwKeys := "e2e:" + base64.StdEncoding.EncodeToString(func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }())
+	start(t, gwBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_GATEWAY_CREDENTIAL_KEYS=" + gwKeys, "KIFF_API_URL=http://" + apiAddr,
+		"KIFF_GATEWAY_ALLOW_PRIVATE_TOOLS=true", "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text"}, "http://"+gwAddr+"/healthz", "-addr", gwAddr)
+	api, gw := "http://"+apiAddr, "http://"+gwAddr
+
+	key := func(body map[string]any) string {
+		code, out := call(t, http.MethodPost, api+"/v1/keys", owner, body)
+		if code != http.StatusCreated && code != http.StatusOK {
+			t.Fatalf("mint key %v: %d %v", body, code, out)
+		}
+		return out["plaintext"].(string)
+	}
+	connector := key(map[string]any{"label": "relay", "roles": []string{"connector"}})
+	agentKey := key(map[string]any{"label": "agent", "agent_id": "agt_k4", "roles": []string{"gateway_agent"}})
+
+	// A relay's refund tool: money by its name, so K4 gates it.
+	if code, out := call(t, http.MethodPost, gw+"/v1/connections", connector, map[string]any{"name": "refund_closed", "url": relayURL, "tool": "refund",
+		"mode": "verify", "audience": relayURL, "idempotency_argument": "idempotency_key", "app": "e2e"}); code != http.StatusCreated {
+		t.Fatalf("connect the relay's tool: %d %v", code, out)
+	}
+	// A Card that covers it, opening no class.
+	card := map[string]any{"id": "card-k4", "subject": "agt_k4", "domain": "gateway",
+		"grants":     []map[string]any{{"action": "refund_closed"}},
+		"aggregates": []map[string]any{{"quantity": "count", "limit": 100, "window": "calendar_day"}}}
+	if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", owner, card); code != http.StatusCreated && code != http.StatusOK {
+		t.Fatalf("issue the Card: %d %v", code, out)
+	}
+
+	code, out := call(t, http.MethodPost, gw+"/mcp", agentKey, map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+		"params": map[string]any{"name": "refund_closed", "arguments": map[string]any{"order": "o-k4", "amount_eur": 5, "idempotency_key": "op-k4-1"}}})
+	res, _ := out["result"].(map[string]any)
+	if code != http.StatusOK || res == nil {
+		t.Fatalf("the call: %d %v", code, out)
+	}
+	raw, _ := json.Marshal(res)
+	text := string(raw)
+	if isErr, _ := res["isError"].(bool); !isErr {
+		t.Fatalf("a closed category's call went through: %s", text)
+	}
+	// The agent's words: closed until the owner opens it, the Card does cover the tool, never "does not cover".
+	if !strings.Contains(text, "mandate_category_closed") || !strings.Contains(text, "closed on the agent's Card until the account owner opens it") || strings.Contains(text, "does not cover") {
+		t.Fatalf("the agent's words: %s", text)
+	}
+
+	// The relay's upstream got no request.
+	resp, err := http.Get("http://" + relay + "/calls")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var calls struct{ Calls int }
+	_ = json.NewDecoder(resp.Body).Decode(&calls)
+	resp.Body.Close()
+	if calls.Calls != 0 {
+		t.Fatalf("the relay's tool received %d calls, want 0", calls.Calls)
+	}
+
+	// The Record line, in the reader's language: closed until opened, never "not covered".
+	for lang, want := range map[string]string{"en": "It's closed on your Card until you open it.", "fr": "Il est fermé sur votre Card tant que vous ne l'ouvrez pas."} {
+		req, _ := http.NewRequest(http.MethodGet, api+"/v1/me/activity?show=refused", nil)
+		req.Header.Set("Authorization", "Bearer "+owner)
+		req.Header.Set("Accept-Language", lang)
+		r, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var page struct {
+			Calls []struct {
+				ActionName string `json:"action_name"`
+				Outcome    string `json:"outcome"`
+				Reason     string `json:"reason"`
+			} `json:"calls"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&page)
+		r.Body.Close()
+		found := false
+		for _, c := range page.Calls {
+			if c.Reason == want {
+				found = true
+			}
+			if strings.Contains(c.Reason, "No Card covers") || strings.Contains(c.Reason, "Aucune Card") {
+				t.Fatalf("%s: a Record line says not covered: %+v", lang, c)
+			}
+		}
+		if !found {
+			t.Fatalf("%s: no Record line %q in %+v", lang, want, page.Calls)
+		}
+	}
+}

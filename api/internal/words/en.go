@@ -64,6 +64,7 @@ var en = Words{
 		"mandate_resource_not_on_card": "It acted on something the Card doesn't cover.",
 		"mandate_unreadable_resource":  "KIFF couldn't read what it acted on.",
 		"mandate_not_covered":          "No Card covers this tool.",
+		"mandate_category_closed":      "It's closed on your Card until you open it.",
 		"mandate_expired":              "Its Card has expired.",
 		"no_mandate_issued":            "No Card covers this tool.",
 		"amount_unit_mismatch":         "It was in another currency than the Card's.",
