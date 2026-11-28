@@ -393,6 +393,13 @@ func ClassTablesErr() error {
 	return tablesErr
 }
 
+// TableNames says whether app's reviewed class table names the tool by its
+// name at the vendor: the app a relay may give a tool kept with none.
+func TableNames(app, vendorName string) bool {
+	_, ok := tableEntry(app, vendorName)
+	return ok
+}
+
 func tableEntry(app, name string) (tableTool, bool) {
 	tablesOnce.Do(loadTables)
 	if tablesErr != nil || app == "" {
