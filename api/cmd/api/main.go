@@ -2183,6 +2183,7 @@ func newRouter(deps routerDeps) http.Handler {
 			handlers.WithMandatesAlerts(deps.alertNotifier),
 			handlers.WithMandatesAgentDrafts(deps.agentDrafts, deps.apiKeyStore),
 			handlers.WithMandatesCalls(callsReader(deps.decisionsReader)),
+			mandatesPurchaseHolds(deps),
 			handlers.WithMandatesSetupReads(setupReadDeps(deps, memberSvc)),
 			handlers.WithMandatesApprovalWindows(deps.devSessionStore, deps.windows),
 			handlers.WithMandatesApprovalPasskeys(deps.passkeys),
@@ -4116,4 +4117,13 @@ func sweepPurchases(store *purchase.Store, logger *slog.Logger) {
 		}
 		cancel()
 	}
+}
+
+// mandatesPurchaseHolds binds a purchase hold's answer to its case, with
+// purchases on; otherwise an option that changes nothing.
+func mandatesPurchaseHolds(deps routerDeps) handlers.MandatesOption {
+	if os.Getenv(envPurchases) != "on" || deps.pool == nil {
+		return func(*handlers.MandatesHandler) {}
+	}
+	return handlers.WithMandatesPurchaseHolds(&purchase.Store{Pool: deps.pool})
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/membership"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/tooloutcome"
 )
 
@@ -810,6 +811,19 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 	// A held sealed fill's answer signs over the block the phone drew.
 	if v := h.withBrowserBlock(r.Context(), tenantID, map[string]any{}, held); v["browser_sha256"] != nil {
 		signed.BrowserSHA256, _ = v["browser_sha256"].(string)
+	}
+	// A held purchase's answer signs its case version's purchase line, so
+	// the signature binds the case the phone drew; a case that can't be
+	// read answers nothing rather than verify without it.
+	if h.purchaseHolds != nil {
+		pr, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+		switch {
+		case err == nil:
+			signed.Purchase = purchase.AnswerLine(pr.Case.CaseID, pr.Case.Version, pr.Digest)
+		case !errors.Is(err, purchase.ErrNoCase):
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+			return nil, false
+		}
 	}
 	// A session that approves with its device's own passkey: an answer that
 	// grants authority counts only with that passkey's assertion (§2.6); a

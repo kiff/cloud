@@ -407,3 +407,28 @@ func TestNotOrderedWithMoneyAuthorizedIsUnknown(t *testing.T) {
 		t.Fatalf("state %s reserved %d", r.State, r.Reserved)
 	}
 }
+
+// A hold is linked once to a held case, and its answer's line is that
+// case version's.
+func TestAHoldNamesItsCase(t *testing.T) {
+	s, _ := testStore(t)
+	ctx := context.Background()
+	c := newCase(t, "pc_hold")
+	digest := open(t, s, c)
+	if err := s.Hold(ctx, c.Tenant, c.CaseID, 1, "exc_1"); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Hold(ctx, c.Tenant, c.CaseID, 1, "exc_2"); !errors.Is(err, ErrNotHeld) {
+		t.Fatalf("a second hold: %v", err)
+	}
+	r, err := s.ByException(ctx, c.Tenant, "exc_1")
+	if err != nil || r.Case.CaseID != c.CaseID || r.Digest != digest {
+		t.Fatalf("by hold: %+v %v", r, err)
+	}
+	if _, err := s.ByException(ctx, "t_other", "exc_1"); !errors.Is(err, ErrNoCase) {
+		t.Fatalf("another tenant's hold: %v", err)
+	}
+	if AnswerLine(r.Case.CaseID, r.Case.Version, r.Digest) != "purchase:pc_hold:1:"+digest {
+		t.Fatal("line")
+	}
+}

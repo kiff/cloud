@@ -68,3 +68,8 @@ CREATE TABLE IF NOT EXISTS purchase.events (
     event_id TEXT        PRIMARY KEY,
     at       TIMESTAMPTZ NOT NULL
 );
+
+-- The hold KIFF opened for a case the owner decides: its answer signs the
+-- case's purchase line.
+ALTER TABLE purchase.cases ADD COLUMN IF NOT EXISTS exception_id TEXT NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS purchase_cases_exception ON purchase.cases (tenant_id, exception_id) WHERE exception_id <> '';

@@ -26,6 +26,7 @@ import (
 	"github.com/kiff/cloud/api/internal/profile"
 	"github.com/kiff/cloud/api/internal/proofs"
 	"github.com/kiff/cloud/api/internal/proposals"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/tenant"
 	"github.com/kiff/cloud/api/internal/tooloutcome"
 	"github.com/kiff/cloud/api/internal/words"
@@ -38,6 +39,9 @@ import (
 // would make every limit advisory — the same escalation the decide path
 // refuses when a caller decorates the actor on a request body.
 type MandatesHandler struct {
+	// purchaseHolds reads the purchase case a hold was opened for, so the
+	// owner's answer signs that case's purchase line. Nil: no purchases.
+	purchaseHolds purchaseHolds
 	// appBaseURL is KIFF's app (https://app.kiff.dev), for the page a held
 	// call is answered on; "" gives the path alone.
 	appBaseURL string
@@ -115,6 +119,16 @@ func WithMandatesPasskeys(store auth.PasskeyStore, rp auth.RelyingParty) Mandate
 
 // WithMandatesAlerts sends hold_answered to the account's alert targets
 // that list it, so an app can clear a held call it is showing.
+// purchaseHolds is the purchase store as a hold's answer reads it.
+type purchaseHolds interface {
+	ByException(ctx context.Context, tenant, exceptionID string) (purchase.Row, error)
+}
+
+// WithMandatesPurchaseHolds binds a purchase hold's answer to its case.
+func WithMandatesPurchaseHolds(p purchaseHolds) MandatesOption {
+	return func(h *MandatesHandler) { h.purchaseHolds = p }
+}
+
 func WithMandatesAlerts(n alert.Notifier) MandatesOption {
 	return func(h *MandatesHandler) { h.alerts = n }
 }

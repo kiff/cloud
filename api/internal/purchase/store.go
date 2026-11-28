@@ -403,6 +403,28 @@ func (s *Store) AttachCard(ctx context.Context, tenant, caseID string, version i
 	return nil
 }
 
+// Hold records the hold KIFF opened for a held case version, which the
+// owner answers: once, and only while the case is held.
+func (s *Store) Hold(ctx context.Context, tenant, caseID string, version int, exceptionID string) error {
+	tag, err := s.Pool.Exec(ctx, `UPDATE purchase.cases SET exception_id = $4, updated_at = $5
+		WHERE tenant_id = $1 AND case_id = $2 AND version = $3 AND state = 'held' AND exception_id = ''`, tenant, caseID, version, exceptionID, s.now())
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() != 1 {
+		return ErrNotHeld
+	}
+	return nil
+}
+
+// ByException reads the case version a hold was opened for.
+func (s *Store) ByException(ctx context.Context, tenant, exceptionID string) (Row, error) {
+	if exceptionID == "" {
+		return Row{}, ErrNoCase
+	}
+	return scanRow(s.Pool.QueryRow(ctx, `SELECT `+rowCols+` FROM purchase.cases WHERE tenant_id = $1 AND exception_id = $2`, tenant, exceptionID))
+}
+
 // Latest reads a case's newest version.
 func (s *Store) Latest(ctx context.Context, tenant, caseID string) (Row, error) {
 	return scanRow(s.Pool.QueryRow(ctx, `SELECT `+rowCols+` FROM purchase.cases WHERE tenant_id = $1 AND case_id = $2 ORDER BY version DESC LIMIT 1`, tenant, caseID))
