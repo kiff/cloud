@@ -258,7 +258,7 @@ func cardBodyOf(m mandate.Mandate) mandateBody {
 		b.ValidUntil = &until
 	}
 	for _, g := range m.Grants {
-		gb := mandateGrantBody{Action: g.Action, EntityStates: g.EntityStates, NextSteps: g.NextSteps, Opens: openingsBody(g.Opens)}
+		gb := mandateGrantBody{Action: g.Action, EntityStates: g.EntityStates, NextSteps: g.NextSteps, Opens: openingsBody(g.Opens), Purchase: purchaseBody(g.Purchase)}
 		for _, l := range g.PerAction {
 			gb.PerActionMax = append(gb.PerActionMax, mandatePerActionBody{Quantity: l.Quantity.String(), Max: l.Max})
 		}

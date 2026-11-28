@@ -244,3 +244,8 @@ func oneOf(s string, list []string) bool {
 	}
 	return false
 }
+
+// LimitsFrom is a Card's purchase rule as a decision checks it.
+func LimitsFrom(perPurchase, perDay int64, perHour, perDayCount int, categories []string) Limits {
+	return Limits{PerPurchase: perPurchase, PerDay: perDay, PerHourCount: perHour, PerDayCount: perDayCount, Categories: categories}
+}
