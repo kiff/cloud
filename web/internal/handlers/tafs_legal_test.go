@@ -41,7 +41,7 @@ func TestTafsPrivacy(t *testing.T) {
 	body := tafsLegalPage(t, TafsPrivacy(), "/tafs/privacy", "28 November 2026")
 	// Doors: who a door keeps, by each kind of sender id, before the first Slack, Telegram or WhatsApp door.
 	for _, s := range []string{"<strong>Doors:</strong>", "Slack member ID", "Telegram user ID", "a phone number for a WhatsApp door",
-		"An email door's mail comes in through chutchut, KIFF's own mail service", "chutchut keeps none of a reply's words", "chutchut also sends two notices for tafs, each to one address"} {
+		"An email door's mail comes in through chutchut, KIFF's own mail service", "chutchut keeps none of a reply's words", "chutchut also sends two notices for tafs, each to one address", "a daily count of notices to each address, which names the address, for two days"} {
 		if !strings.Contains(body, s) {
 			t.Errorf("/tafs/privacy is missing %q", s)
 		}
