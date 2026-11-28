@@ -15,15 +15,22 @@ import (
 // gateway's domain reads it; it is taken out before the call is recorded,
 // as the owner ask is. GatewayClassArgsParam carries the call's values for
 // the arguments an opening can name.
+//
+// GatewayClassByParam says "unknown" when only the universal classes'
+// "unknown is closed" made the call irreversible (gateway.ClassByParam): the
+// one case a Card signed before the account's switch carries an opening
+// over for (mandate.CarriedOver).
 const (
 	GatewayClassParam     = "kiff_class"
 	GatewayClassArgsParam = "kiff_class_args"
+	GatewayClassByParam   = "kiff_class_by"
 )
 
 // callClass is a call's class as the gateway sent it.
 type callClass struct {
 	class string
 	args  map[string]string
+	by    string
 }
 
 // takeClass takes the class parameters out of a gateway call's parameters,
@@ -31,12 +38,13 @@ type callClass struct {
 func takeClass(spec domain.Spec, prop kiffproposal.ActionProposal) (callClass, kiffproposal.ActionProposal) {
 	c, okClass := prop.Parameters[GatewayClassParam]
 	a, okArgs := prop.Parameters[GatewayClassArgsParam]
-	if !okClass && !okArgs {
+	by, okBy := prop.Parameters[GatewayClassByParam]
+	if !okClass && !okArgs && !okBy {
 		return callClass{}, prop
 	}
 	params := make(map[string]any, len(prop.Parameters))
 	for k, p := range prop.Parameters {
-		if k != GatewayClassParam && k != GatewayClassArgsParam {
+		if k != GatewayClassParam && k != GatewayClassArgsParam && k != GatewayClassByParam {
 			params[k] = p
 		}
 	}
@@ -46,6 +54,7 @@ func takeClass(spec domain.Spec, prop kiffproposal.ActionProposal) (callClass, k
 	}
 	out := callClass{}
 	out.class, _ = c.(string)
+	out.by, _ = by.(string)
 	if m, ok := a.(map[string]any); ok {
 		out.args = map[string]string{}
 		for k, v := range m {
@@ -95,6 +104,12 @@ func (h *ProposalsHandler) classInto(ctx context.Context, tenant string, req *ma
 	req.K4, req.Class, req.ClassArgs = true, c.class, c.args
 	if req.Class == "" {
 		req.Class = "write"
+	}
+	// The universal classes' carry-over (mandate.CarriedOver): only for an
+	// account on them with a switch time, and only what the gateway says
+	// "unknown is closed" alone made irreversible.
+	if since, ok := h.k4Universal[tenant]; ok && c.by == mandate.ClassByUnknown {
+		req.ClassBy, req.UniversalSince = c.by, since
 	}
 	// A purchase's card was decided with its case (the owner's fingerprint,
 	// or KIFF within the Card's limits): never asked a second time.

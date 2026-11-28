@@ -352,6 +352,11 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request, c caller) {
 // why. create and createBatch share it, so a batch checks each connection
 // exactly as one alone (batch connections).
 func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRequest) (Connection, int, string) {
+	for _, a := range []string{req.AmountArg, req.ResourceArg, req.IdempotencyArg} {
+		if gateway.ReservedArg(a) {
+			return Connection{}, http.StatusBadRequest, "amount_argument, resource_argument and idempotency_argument can't start with kiff_: those names are KIFF's own parameters"
+		}
+	}
 	req.OutcomeContract = strings.TrimSpace(req.OutcomeContract)
 	req.OutcomeLookupTool = strings.TrimSpace(req.OutcomeLookupTool)
 	if req.OutcomeContract != "" && (req.OutcomeContract != gateway.TerminalNoEffectV1 || req.IdempotencyArg == "") {
@@ -1167,6 +1172,9 @@ func checkResourceArg(schema json.RawMessage, resource, amount, idem string) str
 	}
 	if !gateway.ValidToolName(resource) {
 		return "resource_argument is not a valid argument name"
+	}
+	if gateway.ReservedArg(resource) {
+		return "resource_argument can't start with kiff_: those names are KIFF's own parameters"
 	}
 	if !slices.Contains(schemaProps(schema)[resource], "string") {
 		return "resource_argument " + resource + " must be a string argument of the tool, such as an order or customer id"

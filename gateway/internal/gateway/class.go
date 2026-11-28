@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"unicode"
 )
 
@@ -53,6 +54,41 @@ type ClassedTool struct {
 	// argument (stripe_api_write's PostInvoicesInvoiceVoid): it is classed
 	// too, and only raises, since the tool's own name says nothing of it.
 	Operation string
+	// Universal: the account is on the universal classes
+	// (KIFF_K4_UNIVERSAL, the universal classes contract): the generic money
+	// and access nouns raise, and a tool no rule classes is irreversible.
+	Universal bool
+}
+
+// ClassByUnknown is why a call is irreversible when only the universal
+// rule's "unknown is closed" made it so (no annotation, no verb or noun
+// any rule knows): KIFF may carry an opening over for it on a Card signed
+// before the account's switch, and for nothing else.
+const ClassByUnknown = "unknown"
+
+// ClassByParam is the parameter KIFF is told that in (apps/api
+// GatewayClassByParam), beside ClassParam. Absent for every other call.
+const ClassByParam = "kiff_class_by"
+
+// universalTenants are the accounts on the universal classes
+// (KIFF_K4_UNIVERSAL), set once at start.
+var universalTenants atomic.Pointer[map[string]bool]
+
+// SetUniversalTenants sets the accounts on the universal classes.
+func SetUniversalTenants(tenants map[string]bool) {
+	m := make(map[string]bool, len(tenants))
+	for k, v := range tenants {
+		if v {
+			m[k] = true
+		}
+	}
+	universalTenants.Store(&m)
+}
+
+// UniversalFor says whether an account is on the universal classes.
+func UniversalFor(tenant string) bool {
+	m := universalTenants.Load()
+	return m != nil && (*m)[tenant]
 }
 
 // Classify is the tool's class: the worse of what the rules give and what a
@@ -60,19 +96,41 @@ type ClassedTool struct {
 // other, so a table only ever adds strictness, and a read always needs
 // planque's read_only and a read verb.
 func Classify(t ClassedTool) Class {
-	c := ruleClass(t)
+	c, _ := ClassifyBy(t)
+	return c
+}
+
+// ClassifyBy is Classify and why: ClassByUnknown when the universal rule's
+// "unknown is closed" alone made it irreversible, else "".
+func ClassifyBy(t ClassedTool) (Class, string) {
+	c, unknown := ruleClassBy(t)
 	if tc, ok := tableClass(t.App, t.Name); ok {
+		if classRank[tc] > classRank[ClassWrite] {
+			// A reviewed table that says irreversible or worse is a signal
+			// of its own: the class no longer rests on "unknown" alone.
+			unknown = false
+		}
 		c = worse(c, tc)
 	}
-	return c
+	if unknown && c == ClassIrreversible {
+		return c, ClassByUnknown
+	}
+	return c, ""
 }
 
 // ruleClass is the class from the rules alone: a read needs planque's
 // read_only and a read verb; a name decides delete, money and irreversible;
 // anything else is a write.
 func ruleClass(t ClassedTool) Class {
+	c, _ := ruleClassBy(t)
+	return c
+}
+
+// ruleClassBy is ruleClass, and whether the universal rule's "unknown is
+// closed" alone made it irreversible.
+func ruleClassBy(t ClassedTool) (Class, bool) {
 	if t.Money {
-		return ClassMoney
+		return ClassMoney, false
 	}
 	// A camelCase name (an OpenAPI operation id: searchTickets, postReply) is
 	// read as its words joined by underscores, so its verb is a verb.
@@ -80,27 +138,36 @@ func ruleClass(t ClassedTool) Class {
 	if !strings.ContainsRune(name, '_') && strings.ToLower(name) != name {
 		name = snake(name)
 	}
-	c := nameClass(t, strings.ToLower(name))
+	decisive := strings.ToLower(name)
+	c := nameClass(t, decisive)
 	// A name that starts with its app's name (Composio's STRIPE_VOID_INVOICE)
 	// is classed again without it. The whole name can only raise that class;
 	// and the name without its app makes a read only as any name does, with
 	// planque's read_only too (STRIPE_LIST_INVOICES).
 	if i := strings.IndexByte(name, '_'); i > 0 {
 		n, rest := strings.ToLower(name), strings.ToLower(name[i+1:])
-		if !hasPrefix(n, allVerbs()) && hasPrefix(rest, allVerbs()) {
+		if !hasPrefix(n, allVerbs(t.Universal)) && hasPrefix(rest, allVerbs(t.Universal)) {
 			// The name without its app decides, and the whole name can
 			// only raise it (a money or irreversible word anywhere in it).
 			whole := c
-			c = nameClass(ClassedTool{ReadOnly: t.ReadOnly, Destructive: t.Destructive}, rest)
+			c = nameClass(ClassedTool{ReadOnly: t.ReadOnly, Destructive: t.Destructive, Universal: t.Universal}, rest)
+			decisive = rest
 			if whole != ClassWrite {
 				c = worse(c, whole)
 			}
 		}
 	}
+	op := ClassRead
 	if t.Operation != "" {
-		c = worse(c, nameClass(ClassedTool{}, snake(t.Operation)))
+		op = nameClass(ClassedTool{Universal: t.Universal}, snake(t.Operation))
 	}
-	return c
+	// Unknown is closed (universal classes, step 6): a write whose name has
+	// no verb any rule knows, and nothing else raised it, is irreversible.
+	unknown := false
+	if t.Universal && c == ClassWrite && classRank[op] <= classRank[ClassWrite] && !hasPrefix(decisive, allVerbs(true)) {
+		c, unknown = ClassIrreversible, true
+	}
+	return worse(c, op), unknown
 }
 
 // nameClass is the class one name gives: a read only with planque's
@@ -111,7 +178,7 @@ func nameClass(t ClassedTool, n string) Class {
 	// else its name says: list_cards lists cards and moves no money.
 	// A tool its vendor marks destructive is never a read, whatever its
 	// other hint says.
-	if t.ReadOnly && !t.Destructive && hasPrefix(n, readVerbs) {
+	if t.ReadOnly && !t.Destructive && (hasPrefix(n, readVerbs) || (t.Universal && hasPrefix(n, universalReadVerbs))) {
 		return ClassRead
 	}
 	c := ClassWrite
@@ -127,17 +194,29 @@ func nameClass(t ClassedTool, n string) Class {
 		// for a delete (above).
 		c = worse(c, ClassIrreversible)
 	}
-	if containsAny(n, moneyWords) || n == "approve_request" || n == "decline_request" {
+	if t.Universal && containsAny(n, accessNouns) {
+		// People and access: who may act in the account, and where its data
+		// goes (universal classes, step 3).
+		c = worse(c, ClassIrreversible)
+	}
+	if containsAny(n, moneyWords) || (t.Universal && containsAny(n, universalMoneyNouns)) || n == "approve_request" || n == "decline_request" {
 		c = worse(c, ClassMoney)
 	}
 	return c
 }
 
-// allVerbs are every verb a name's class is read from.
-func allVerbs() []string {
+// allVerbs are every verb a name's class is read from; on the universal
+// classes, the write verbs and show_ too, so a tool with none of them is
+// unknown.
+func allVerbs(universal bool) []string {
 	out := append([]string{}, readVerbs...)
 	out = append(out, irreversibleVerbs...)
-	return append(out, deleteVerbs...)
+	out = append(out, deleteVerbs...)
+	if universal {
+		out = append(out, universalReadVerbs...)
+		out = append(out, writeVerbs...)
+	}
+	return out
 }
 
 // snake writes a CamelCase operation id as words joined by underscores:
@@ -162,6 +241,17 @@ var (
 	irreversibleVerbs = []string{"send_", "finalize_", "finalise_", "issue_", "invite_", "share_", "publish_", "submit_", "approve_", "sign_", "void_", "cancel_", "close_", "mark_", "unmark_", "export_", "forward_"}
 	irreversibleWords = []string{"_status", "finaliz", "finalis", "credit_note", "reminder", "membership", "_invite", "_share", "_void", "uncollectible", "_send", "_export", "_forward"}
 	moneyWords        = []string{"transfer", "payment", "payout", "refund", "charge", "card", "pay_", "_pay", "withdraw", "deposit", "money_request"}
+
+	// The universal classes (KIFF_K4_UNIVERSAL), generic and never per
+	// vendor: nouns that only raise, show_ as one more read verb (a read
+	// still needs the read-only mark too), and the write verbs a name needs
+	// to stay a write rather than be unknown and closed.
+	universalMoneyNouns = []string{"debit", "sepa", "beneficiar", "payment_link", "invoice_pay"}
+	accessNouns         = []string{"membership", "member", "team", "role", "permission", "invite", "user", "bank_account", "api_key", "webhook", "oauth"}
+	universalReadVerbs  = []string{"show_"}
+	writeVerbs          = []string{"create_", "update_", "add_", "set_", "move_", "upload_", "attach_", "edit_", "modify_", "patch_", "change_", "rename_",
+		"assign_", "unassign_", "copy_", "duplicate_", "restore_", "insert_", "append_", "replace_", "save_", "write_", "draft_", "upsert_",
+		"tag_", "untag_", "label_", "unlabel_", "link_", "unlink_", "archive_", "unarchive_", "import_", "convert_", "generate_"}
 )
 
 func hasPrefix(s string, ps []string) bool {
@@ -200,7 +290,13 @@ const ClassParam = "kiff_class"
 // Class is the tool's class (Classify), from its name at the vendor, its
 // app, planque's read_only and the profile's money mark.
 func (t Tool) Class() Class {
-	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint, Operation: t.pinnedOperation()})
+	c, _ := t.ClassBy()
+	return c
+}
+
+// ClassBy is the tool's class and why (ClassifyBy).
+func (t Tool) ClassBy() (Class, string) {
+	return ClassifyBy(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint, Operation: t.pinnedOperation(), Universal: t.Universal})
 }
 
 // Conditioned says whether its app's reviewed table has a condition that can
@@ -424,10 +520,17 @@ func tableClass(app, name string) (Class, bool) {
 // signed into its permit. args are the call's values for the arguments the
 // table names, which KIFF matches an opening against.
 func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
-	c := t.Class()
+	c, args, _ := t.CallClassBy(callArgs)
+	return c, args
+}
+
+// CallClassBy is CallClass, and ClassByUnknown when the universal rule's
+// "unknown is closed" alone made the call irreversible.
+func (t Tool) CallClassBy(callArgs map[string]any) (Class, map[string]string, string) {
+	c, by := t.ClassBy()
 	tt, ok := tableEntry(t.App, t.classedName())
 	if !ok {
-		return c, nil
+		return c, nil, by
 	}
 	// The call's own value for each argument the table names, but the
 	// operation: that one is derived from its flags, never taken as sent.
@@ -467,7 +570,10 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 			c = worse(cond.Then, minimumOf(ClassedTool{ReadOnly: t.ReadOnly, Money: t.Money}))
 		}
 	}
-	return c, args
+	if c != ClassIrreversible {
+		by = ""
+	}
+	return c, args, by
 }
 
 // minimumOf is the floor no condition goes under: money when the profile

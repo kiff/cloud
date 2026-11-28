@@ -67,6 +67,9 @@ actions:
 		if !toolName.MatchString(t.Name) {
 			return "", fmt.Errorf("gateway: tool name %q must be a letter followed by letters, digits or underscores", t.Name)
 		}
+		if ReservedArg(t.AmountArg) || ReservedArg(t.ResourceArg) || ReservedArg(t.IdempotencyArg) {
+			return "", fmt.Errorf("gateway: an argument of %s starts with kiff_, which names KIFF's own parameters", t.Name)
+		}
 		if t.AmountArg != "" && !toolName.MatchString(t.AmountArg) {
 			return "", fmt.Errorf("gateway: amount argument %q of %s is not a valid parameter name", t.AmountArg, t.Name)
 		}

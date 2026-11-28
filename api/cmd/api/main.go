@@ -195,6 +195,9 @@ const (
 	// delete and money refused until a Card opens them, and every money call
 	// held for its owner. Test accounts only until K4's step 7; unset, none.
 	envK4Tenants = "KIFF_K4_TENANTS"
+	// envK4Universal names the accounts on K4's universal classes, each
+	// "tenant@<RFC 3339 switch time>" (the universal classes contract).
+	envK4Universal = "KIFF_K4_UNIVERSAL"
 
 	// envPurchases turns purchases on (Thune): "on", or off.
 	envPurchases = "KIFF_PURCHASES"
@@ -2096,6 +2099,10 @@ func newRouter(deps routerDeps) http.Handler {
 		// K4: the accounts whose calls are decided by their class, test
 		// accounts first (KIFF_K4_TENANTS, comma-separated; unset, none).
 		propOpts = append(propOpts, handlers.WithProposalsK4Tenants(strings.Split(os.Getenv(envK4Tenants), ",")...))
+		// The universal classes' switch times: a Card signed before its
+		// account's carries an opening over only for a tool "unknown is
+		// closed" alone made irreversible.
+		propOpts = append(propOpts, handlers.WithProposalsK4Universal(strings.Split(os.Getenv(envK4Universal), ",")...))
 		proposalsHandler = handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...)
 		proposalsHandler.Register(authed)
 

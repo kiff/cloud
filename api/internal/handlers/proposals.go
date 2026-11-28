@@ -188,6 +188,10 @@ type ProposalsHandler struct {
 	toolProfiles GatewayToolProfiles
 	// k4 are the accounts whose calls are decided by their class (K4).
 	k4 map[string]bool
+	// k4Universal are the accounts on the universal classes, each with its
+	// switch time (KIFF_K4_UNIVERSAL): what a Card signed before it carries
+	// over (mandate.CarriedOver).
+	k4Universal map[string]time.Time
 	// purchases reads purchase cases, so issue_card's permit is signed
 	// only for the exact case KIFF approved and is executing. Nil: no
 	// purchase card is ever allowed.
@@ -321,6 +325,30 @@ func WithProposalsK4Tenants(ids ...string) ProposalsOption {
 				}
 				h.k4[id] = true
 			}
+		}
+	}
+}
+
+// WithProposalsK4Universal names the accounts on K4's universal classes
+// (KIFF_K4_UNIVERSAL), each "tenant@<RFC 3339 switch time>". An entry with
+// no time, or one that doesn't read, carries nothing over: the account's
+// classes still come from the gateway, and every Card opens its classes by
+// name.
+func WithProposalsK4Universal(entries ...string) ProposalsOption {
+	return func(h *ProposalsHandler) {
+		for _, e := range entries {
+			id, at, ok := strings.Cut(strings.TrimSpace(e), "@")
+			if !ok || strings.TrimSpace(id) == "" {
+				continue
+			}
+			t, err := time.Parse(time.RFC3339, strings.TrimSpace(at))
+			if err != nil {
+				continue
+			}
+			if h.k4Universal == nil {
+				h.k4Universal = map[string]time.Time{}
+			}
+			h.k4Universal[strings.TrimSpace(id)] = t.UTC()
 		}
 	}
 }

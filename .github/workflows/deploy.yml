@@ -177,6 +177,9 @@ jobs:
       # The accounts whose permits sign their tools' vendor pins ("-" or unset: none). Each goes on only after
       # planque refuses a differing pin for it (PLANQUE_ENFORCE_PINS).
       KIFF_SIGN_PINS: ${{ secrets.KIFF_SIGN_PINS }}
+      # K4's universal classes (the universal classes contract): the accounts on them, each "tenant@<RFC 3339 switch
+      # time>" (unset or "-": none). Optional: unset changes nothing.
+      KIFF_K4_UNIVERSAL: ${{ secrets.KIFF_K4_UNIVERSAL }}
       KIFF_PROOF_RUNNER_VERSIONS: ${{ vars.KIFF_PROOF_RUNNER_VERSIONS }}
       KIFF_PROOF_RELEASE_ANYWAY: ${{ vars.KIFF_PROOF_RELEASE_ANYWAY }}
       # The box, its database, the secrets it reads and who runs it: deploy.sh has no default for any of

@@ -96,6 +96,10 @@ type Tool struct {
 	// PinsSigned: the tenant is on SignPins, so the permit signs
 	// VendorPins (Gateway.tools sets it).
 	PinsSigned bool
+	// Universal: the tenant is on the universal classes
+	// (KIFF_K4_UNIVERSAL), so its class follows that rule (the catalog
+	// sets it).
+	Universal bool
 	// Control: the account's own control server's tool (kiff/tafs#206),
 	// granted to SetupReaderRole too, read-only or not.
 	Control bool
@@ -853,6 +857,18 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 			params[t.AmountArg] = i
 		}
 	}
+	// The resource goes in before KIFF's own parameters, so no argument name
+	// a connection chose can stand in for one of them (ReservedArg).
+	params, err := t.resourceParam(args, params)
+	if err != nil {
+		return nil, err
+	}
+	if ReservedArg(t.AmountArg) || ReservedArg(t.ResourceArg) {
+		// A tool stored before names were refused: KIFF's own parameters
+		// always win, and its argument's value never reaches the decision.
+		delete(params, t.AmountArg)
+		delete(params, t.ResourceArg)
+	}
 	// A sealed fill asks whatever the tool's own code would say: it is
 	// allowed only once, with the phone's release.
 	if namesSealed(args) {
@@ -862,12 +878,22 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 	}
 	// The call's class (K4): KIFF's own, from the tool, never the agent's.
 	// apps/api decides on it only for an account K4 is on for.
-	class, classArgs := t.CallClass(args)
+	class, classArgs, by := t.CallClassBy(args)
 	params[ClassParam] = string(class)
 	if len(classArgs) > 0 {
 		params[ClassArgsParam] = classArgs
 	}
-	return t.resourceParam(args, params)
+	if by != "" {
+		params[ClassByParam] = by
+	}
+	return params, nil
+}
+
+// ReservedArg says whether an argument name is KIFF's own (kiff_class,
+// kiff_owner_ask…): a connection may never name its amount, resource or
+// idempotency argument so, or the agent's value would stand in for KIFF's.
+func ReservedArg(name string) bool {
+	return strings.HasPrefix(strings.ToLower(strings.TrimSpace(name)), "kiff_")
 }
 
 // resourceParam adds the resource the call is on to params.
@@ -1556,6 +1582,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 		}
 		t.InputSchema = schema
 		t.FixedArgs = fixed
+		t.Universal = UniversalFor(tenantID)
 		out = append(out, t)
 	}
 	return out, rows.Err()

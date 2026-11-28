@@ -120,7 +120,7 @@ func otherTerms(m Mandate) *Mandate {
 	o := m
 	o.ID, o.TenantID, o.Subject, o.Holders, o.Domain, o.DomainID, o.Environment, o.DraftID = "", "", "", nil, "", "", "", ""
 	o.ValidFrom, o.ValidUntil, o.RevokedAt, o.ArchivedAt = time.Time{}, time.Time{}, nil, nil
-	o.Location, o.DefaultLocation, o.OnExceed, o.HoldExpiry, o.Title = "", "", "", 0, ""
+	o.Location, o.DefaultLocation, o.OnExceed, o.HoldExpiry, o.Title, o.RevisedAt = "", "", "", 0, "", time.Time{}
 	var steps []string
 	for _, g := range m.Grants {
 		for _, st := range g.NextSteps {
