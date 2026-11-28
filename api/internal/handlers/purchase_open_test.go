@@ -157,9 +157,11 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 			purchaseOpening: &purchaseOpening{cases: f, rules: fakeRules{rule}, cardFill: cardFill, verify: checkoutVerifier(&key.PublicKey)}}, f
 	}
 	block := signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", nil))
+	// The relay's connection: planque's account t1, grant g_web.
+	aud := "https://planque.example/mcp/t1/g_web"
 
 	h, f := rig(within, false)
-	o, resp, stop := h.openPurchase(context.Background(), id, prop, block)
+	o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, block)
 	if stop || o == nil || !o.decided || f.decided == nil || f.decided.By != purchase.ByCardLimits || f.decided.Limits.Location != "Europe/Paris" {
 		t.Fatalf("within limits: %+v %+v %+v", o, resp, f.decided)
 	}
@@ -169,13 +171,13 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		t.Fatalf("case %+v", c)
 	}
 	// The same pay again: the same case, decided, never a second one.
-	o2, _, _ := h.openPurchase(context.Background(), id, prop, block)
+	o2, _, _ := h.openPurchase(context.Background(), id, prop, aud, block)
 	if o2.row.Case.CaseID != c.CaseID || !o2.decided || len(f.rows) != 1 {
 		t.Fatalf("a retry: %+v", o2)
 	}
 
 	h, f = rig(&ask, false)
-	o, _, stop = h.openPurchase(context.Background(), id, prop, block)
+	o, _, stop = h.openPurchase(context.Background(), id, prop, aud, block)
 	if stop || o.decided || f.decided != nil || ownerAskFrom(withPurchaseOpened(context.Background(), o)) == "" {
 		t.Fatalf("asked each time: %+v", o)
 	}
@@ -187,7 +189,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 
 	h, f = rig(within, false)
 	f.decide = purchase.ErrOutsideLimits
-	if o, _, _ := h.openPurchase(context.Background(), id, prop, block); o == nil || o.decided {
+	if o, _, _ := h.openPurchase(context.Background(), id, prop, aud, block); o == nil || o.decided {
 		t.Fatalf("outside the limits is the owner's: %+v", o)
 	}
 
@@ -209,8 +211,25 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		"totals that don't add up": {within, false, signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", func(b map[string]any) { b["total"] = "84.21" })), reasonPurchaseCheckout},
 	} {
 		h, f := rig(c.rule, c.cardFill)
-		o, resp, stop := h.openPurchase(context.Background(), id, prop, c.block)
+		o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, c.block)
 		if !stop || o != nil || len(resp.Reasons) != 1 || resp.Reasons[0] != c.reason || len(f.rows) != 0 {
+			t.Errorf("%s: %v %+v %d", name, stop, resp, len(f.rows))
+		}
+	}
+	// A block from another connection's describe, or a pay whose audience
+	// names no relay grant, opens nothing.
+	for name, c := range map[string]struct {
+		aud   string
+		block json.RawMessage
+	}{
+		"another connection's checkout": {aud, signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", func(b map[string]any) { b["grant"] = "g_other" }))},
+		"another grant's audience":      {"https://planque.example/mcp/t1/g_other", block},
+		"another account's audience":    {"https://planque.example/mcp/t2/g_web", block},
+		"an audience naming no grant":   {"planque", block},
+	} {
+		h, f := rig(within, false)
+		o, resp, stop := h.openPurchase(context.Background(), id, prop, c.aud, c.block)
+		if !stop || o != nil || len(resp.Reasons) != 1 || resp.Reasons[0] != reasonPurchaseCheckout || len(f.rows) != 0 {
 			t.Errorf("%s: %v %+v %d", name, stop, resp, len(f.rows))
 		}
 	}
@@ -220,7 +239,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		delete(b, "stripe_profile")
 		delete(b, "stripe_profile_from")
 	}))
-	if o, resp, stop := h.openPurchase(context.Background(), id, prop, noToken); stop || o.row.Case.Path != "card_fill" {
+	if o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, noToken); stop || o.row.Case.Path != "card_fill" {
 		t.Fatalf("a card fill in test mode: %+v", resp)
 	}
 }

@@ -1241,7 +1241,7 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	// decided as a plain call.
 	var opened *openedCase
 	if h.purchaseOpening != nil && isPay(req.Permit, prop.ID) {
-		o, refusal, stop := h.openPurchase(ctx, id, prop, req.BrowserBlock)
+		o, refusal, stop := h.openPurchase(ctx, id, prop, req.Permit.Audience, req.BrowserBlock)
 		if stop {
 			if releaseLock != nil {
 				releaseLock()

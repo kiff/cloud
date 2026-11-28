@@ -29,8 +29,6 @@ import (
 	"github.com/kiff/cloud/api/internal/testdb"
 )
 
-const subject = "e2e-owner"
-
 func freeAddr(t *testing.T) string {
 	t.Helper()
 	l, err := net.Listen("tcp", "127.0.0.1:0")
@@ -42,10 +40,10 @@ func freeAddr(t *testing.T) string {
 }
 
 // build builds one of the repository's commands into dir.
-func build(t *testing.T, dir, module, cmd string) string {
+func build(t *testing.T, dir, module, cmd string, flags ...string) string {
 	t.Helper()
 	out := filepath.Join(dir, filepath.Base(cmd))
-	c := exec.Command("go", "build", "-o", out, "./"+cmd)
+	c := exec.Command("go", append(append([]string{"build"}, flags...), "-o", out, "./"+cmd)...)
 	c.Dir = module
 	if b, err := c.CombinedOutput(); err != nil {
 		t.Fatalf("build %s: %v\n%s", cmd, err, b)
@@ -120,6 +118,29 @@ func seed() string {
 	return base64.RawURLEncoding.EncodeToString(b)
 }
 
+// newTenant provisions an account as a first sign-in provisions it.
+func newTenant(t *testing.T, ctx context.Context, dbURL string) (*pgxpool.Pool, string) {
+	t.Helper()
+	pool, err := pgxpool.New(ctx, dbURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(pool.Close)
+	if err := tenant.ApplyCloudMeta(ctx, pool); err != nil {
+		t.Fatal(err)
+	}
+	store := tenant.NewPostgresStore(pool)
+	tenantID := tenant.NewID()
+	if err := store.Create(ctx, tenant.Tenant{ID: tenantID, Slug: "e2e-" + strings.ToLower(tenantID[len(tenantID)-6:]), DisplayName: "E2E", Status: tenant.StatusProvisioning,
+		Metadata: map[string]any{tenant.MetadataKeyPlan: string(tenant.PlanInternal)}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := tenant.NewProvisioner(pool, store).Provision(ctx, tenantID); err != nil {
+		t.Fatal(err)
+	}
+	return pool, tenantID
+}
+
 // A relay's (verify-mode, permit) call and a sealed tool's call go through
 // the gateway, the API's permit gate and its decision on this code, and
 // both reach their tool: the relay's with a permit. The gateway's class
@@ -139,24 +160,9 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	gwBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/gateway")
 	toolBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/testtool")
 
-	// The account, provisioned as a first sign-in provisions it.
-	pool, err := pgxpool.New(ctx, dbURL)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer pool.Close()
-	if err := tenant.ApplyCloudMeta(ctx, pool); err != nil {
-		t.Fatal(err)
-	}
-	store := tenant.NewPostgresStore(pool)
-	tenantID := tenant.NewID()
-	if err := store.Create(ctx, tenant.Tenant{ID: tenantID, Slug: "e2e-" + strings.ToLower(tenantID[len(tenantID)-6:]), DisplayName: "E2E", Status: tenant.StatusProvisioning,
-		Metadata: map[string]any{tenant.MetadataKeyPlan: string(tenant.PlanInternal)}}); err != nil {
-		t.Fatal(err)
-	}
-	if err := tenant.NewProvisioner(pool, store).Provision(ctx, tenantID); err != nil {
-		t.Fatal(err)
-	}
+	pool, tenantID := newTenant(t, ctx, dbURL)
+	// Each test signs in as its own owner, so each finds its own account.
+	owner := "e2e-owner-" + strings.ToLower(tenantID)
 
 	direct, relay := freeAddr(t), freeAddr(t)
 	start(t, toolBin, nil, "http://"+direct+"/calls", "-addr", direct)
@@ -164,7 +170,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	relayURL := "http://" + relay + "/v1/relay"
 
 	apiAddr, gwAddr := freeAddr(t), freeAddr(t)
-	start(t, apiBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_AUTH_PROVIDER=stub", "KIFF_STUB_SUBJECTS=" + subject, "KIFF_DEMO_TENANT_ID=" + tenantID,
+	start(t, apiBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_AUTH_PROVIDER=stub", "KIFF_STUB_SUBJECTS=" + owner, "KIFF_DEMO_TENANT_ID=" + tenantID,
 		"KIFF_PERMIT_SIGNING_KEY=e2e-1:" + seed(), "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text"}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
 	gwKeys := "e2e:" + base64.StdEncoding.EncodeToString(func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }())
 	start(t, gwBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_GATEWAY_CREDENTIAL_KEYS=" + gwKeys, "KIFF_API_URL=http://" + apiAddr,
@@ -174,7 +180,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	// Keys: the owner's, a connector's (the relay registers its tools with
 	// one), and the agent's.
 	key := func(body map[string]any) string {
-		code, out := call(t, http.MethodPost, api+"/v1/keys", subject, body)
+		code, out := call(t, http.MethodPost, api+"/v1/keys", owner, body)
 		if code != http.StatusCreated && code != http.StatusOK {
 			t.Fatalf("mint key %v: %d %v", body, code, out)
 		}
@@ -198,7 +204,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	card := map[string]any{"id": "card-e2e", "subject": "agt_e2e", "domain": "gateway",
 		"grants":     []map[string]any{{"action": "quote_direct"}, {"action": "refund_relay"}},
 		"aggregates": []map[string]any{{"quantity": "count", "limit": 100, "window": "calendar_day"}}}
-	if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", subject, card); code != http.StatusCreated && code != http.StatusOK {
+	if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", owner, card); code != http.StatusCreated && code != http.StatusOK {
 		t.Fatalf("issue the Card: %d %v", code, out)
 	}
 

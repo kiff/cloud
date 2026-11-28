@@ -34,7 +34,11 @@ import (
 // planqueStepKey is planque's step public key (SPKI, base64url): the one the
 // tafs Chrome extension's production build pins to check planque's steps. A
 // new key ships as a new build of both. It's public: nothing here is secret.
-const planqueStepKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExS_lxBTwDdO8wf8ksu6kkIF8r3Z-Vp3tWZUKjlBjQezW0BhCCW_0tkGqRewu0qBL8KDggls0cjFF-NDcnAjH7g"
+// planqueStepKey is it, and only the end-to-end build (-tags e2e) may
+// change it.
+var planqueStepKey = pinnedPlanqueStepKey
+
+const pinnedPlanqueStepKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExS_lxBTwDdO8wf8ksu6kkIF8r3Z-Vp3tWZUKjlBjQezW0BhCCW_0tkGqRewu0qBL8KDggls0cjFF-NDcnAjH7g"
 
 // planqueDescribeLabel is what planque signs a block under: label ‖ 0x00 ‖
 // JCS(block), SHA-256, raw r‖s, as its steps are signed.

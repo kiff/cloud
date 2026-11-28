@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log/slog"
+	"net/url"
 	"strings"
 	"time"
 
@@ -104,10 +105,26 @@ func isPay(req *permit.Request, proposalID string) bool {
 	return !(strings.HasSuffix(proposalID, ":describe") && a.Op == proposalID)
 }
 
+// relayGrant is the planque account and grant a relay's audience names:
+// "<planque base>/mcp/<tenant>/<grant>". A checkout block is for the grant
+// its describe reached, so a block from one connection's describe can't be
+// carried with another connection's pay.
+func relayGrant(audience string) (tenant, grant string) {
+	u, err := url.Parse(audience)
+	if err != nil {
+		return "", ""
+	}
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	if len(parts) < 3 || parts[len(parts)-3] != "mcp" || parts[len(parts)-2] == "" || parts[len(parts)-1] == "" {
+		return "", ""
+	}
+	return parts[len(parts)-2], parts[len(parts)-1]
+}
+
 // openPurchase opens the pay's case, or says why it's refused: the response
 // to send, and true. Within its Card's limits it's decided here; otherwise
 // it waits for the owner (the call is held with the purchase ask).
-func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, prop kiffproposal.ActionProposal, block json.RawMessage) (*openedCase, proposalResponse, bool) {
+func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, prop kiffproposal.ActionProposal, audience string, block json.RawMessage) (*openedCase, proposalResponse, bool) {
 	po := h.purchaseOpening
 	refuse := func(reason, msg string) (*openedCase, proposalResponse, bool) {
 		h.recordRejection(ctx, id, prop, outcomeBlocked, []string{reason})
@@ -117,6 +134,8 @@ func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, p
 	if why == "" {
 		if err := b.Check(id.Tenant, prop.ID, time.Now()); err != nil {
 			why = err.Error()
+		} else if tenant, grant := relayGrant(audience); grant == "" || b.Grant != grant || b.Tenant != tenant {
+			why = "it's another connection's checkout"
 		}
 	}
 	if why != "" {
