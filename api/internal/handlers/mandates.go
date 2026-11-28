@@ -122,6 +122,8 @@ func WithMandatesPasskeys(store auth.PasskeyStore, rp auth.RelyingParty) Mandate
 // purchaseHolds is the purchase store as a hold's answer reads it.
 type purchaseHolds interface {
 	ByException(ctx context.Context, tenant, exceptionID string) (purchase.Row, error)
+	Decide(ctx context.Context, tenant, caseID string, version int, digest string, d purchase.Decision) error
+	Refuse(ctx context.Context, tenant, caseID string, version int, digest string) error
 }
 
 // WithMandatesPurchaseHolds binds a purchase hold's answer to its case.

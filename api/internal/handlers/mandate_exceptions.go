@@ -568,6 +568,12 @@ func (h *MandatesHandler) answerException(answer string) http.HandlerFunc {
 				return
 			}
 		}
+		// A held purchase's case is decided with the answer: approving
+		// reserves the Card's room first, and a room another purchase took
+		// approves nothing.
+		if stop := h.decidePurchase(w, r, tenantID, id, answer); stop {
+			return
+		}
 		var e mandate.Exception
 		var err error
 		switch answer {
@@ -964,4 +970,68 @@ func (h *MandatesHandler) vendorTools(r *http.Request, tenantID string) map[stri
 		return nil
 	}
 	return m
+}
+
+// decidePurchase decides the purchase case a hold was opened for, with the
+// owner's answer: approve-once decides it, its room reserved against the
+// Card's day; reject refuses it. stop is true once it has answered.
+func (h *MandatesHandler) decidePurchase(w http.ResponseWriter, r *http.Request, tenantID, id, answer string) bool {
+	if h.purchaseHolds == nil {
+		return false
+	}
+	pr, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+	if errors.Is(err, purchase.ErrNoCase) {
+		return false
+	}
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+		return true
+	}
+	c := pr.Case
+	if answer == "reject" {
+		err = h.purchaseHolds.Refuse(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest)
+	} else {
+		limits, ok := h.cardPurchaseLimits(r.Context(), tenantID, c)
+		if !ok {
+			writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_card_changed",
+				"detail": "the Card this purchase was made under no longer lets it buy; nothing was approved"})
+			return true
+		}
+		err = h.purchaseHolds.Decide(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest,
+			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card, Limits: limits})
+	}
+	switch {
+	case err == nil:
+		return false
+	case errors.Is(err, purchase.ErrRoomTaken):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_room_taken",
+			"detail": "Another purchase used this room. Nothing was approved; ask again."})
+	case errors.Is(err, purchase.ErrStale), errors.Is(err, purchase.ErrNotHeld):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_changed",
+			"detail": "this purchase changed or was already decided; reload it"})
+	default:
+		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "purchase decision failed"})
+	}
+	return true
+}
+
+// cardPurchaseLimits reads the purchase rule of the Card in force the case
+// was made under, never the request's: its day's room bounds the owner's
+// decision too.
+func (h *MandatesHandler) cardPurchaseLimits(ctx context.Context, tenantID string, c purchase.Case) (purchase.Limits, bool) {
+	cards, err := h.store.List(ctx, tenantID)
+	if err != nil {
+		return purchase.Limits{}, false
+	}
+	for _, m := range cards {
+		if m.ID != c.Card.ID || m.RevokedAt != nil {
+			continue
+		}
+		for _, g := range m.Grants {
+			if p := g.Purchase; p != nil && p.Currency == c.Currency {
+				return purchase.LimitsFrom(p.PerPurchase, p.PerDay, p.PerHour, p.PerDayCount, p.Categories), true
+			}
+		}
+	}
+	return purchase.Limits{}, false
 }
