@@ -51,10 +51,17 @@ type call struct {
 func (c call) CallTool(ctx context.Context, name string, args json.RawMessage) (json.RawMessage, error) {
 	if name == "browse_pay" && c.checkoutKey != nil {
 		var a struct {
-			URL string `json:"url"`
-			Ref string `json:"ref"`
+			URL      string `json:"url"`
+			Ref      string `json:"ref"`
+			Describe string `json:"checkout_describe"`
 		}
 		_ = json.Unmarshal(args, &a)
+		// As planque's describe: the argument and the header name the same
+		// pay, or nothing runs, so a describe is never a pay and back.
+		if a.Describe != c.describe {
+			log.Printf("refused browse_pay: checkout_describe %q, header %q", a.Describe, c.describe)
+			return mcp.TextResult("bad_arguments: a describe carries checkout_describe equal to its header", true), nil
+		}
 		n := c.n.Add(1)
 		log.Printf("call %d: browse_pay %s (describe %q)", n, args, c.describe)
 		if c.describe == "" {
