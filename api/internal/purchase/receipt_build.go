@@ -80,10 +80,10 @@ func (s *Store) ReceiptOf(ctx context.Context, tenant, caseID, reader string) (R
 	}
 	rc := Receipt{
 		ReceiptID: receiptID(c.CaseID, c.Version), CaseID: c.CaseID, Version: c.Version, Digest: r.Digest, Path: c.Path, DecidedBy: d.By,
-		Approver: Approver{Role: d.ApproverRole, Self: reader != "" && reader == d.Approver, Method: method},
-		Merchant: ReceiptMerchant{Case: NameCategory{Name: c.Merchant.Name, Category: c.Merchant.Category, StripeProfile: c.Merchant.StripeProfile}, Issuer: issuer},
-		Amounts:  Amounts{ApprovedMax: c.Price.Max, Authorized: money.Authorized, Captured: money.Captured, Refunded: money.Refunded, Currency: c.Currency},
-		States:   States{Case: r.State, Money: money.Money, Order: orderState(r, order)},
+		Approver:     Approver{Role: d.ApproverRole, Self: reader != "" && reader == d.Approver, Method: method},
+		Merchant:     ReceiptMerchant{Case: NameCategory{Name: c.Merchant.Name, Category: c.Merchant.Category, StripeProfile: c.Merchant.StripeProfile}, Issuer: issuer},
+		Amounts:      Amounts{ApprovedMax: c.Price.Max, Authorized: money.Authorized, Captured: money.Captured, Refunded: money.Refunded, Currency: c.Currency},
+		States:       States{Case: r.State, Money: money.Money, Order: orderState(r, order)},
 		Verification: verification, IssuedAt: updated.UTC().Format(time.RFC3339),
 	}
 	if d.By == ByCardLimits {
