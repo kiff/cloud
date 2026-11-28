@@ -55,3 +55,11 @@ jobs:
       - run: go test -count=1 -timeout 600s ./...
         env:
           KIFF_TEST_POSTGRES_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
+      # The end-to-end test: the API and the gateway as the binaries they
+      # ship as, a relay's (permit) call and a sealed call through both. Every
+      # change to the gateway, proposals, permits or decide/evaluate carries it.
+      - if: matrix.app == 'api'
+        run: go test -count=1 -timeout 600s ./internal/e2e
+        env:
+          KIFF_E2E: "1"
+          KIFF_TEST_POSTGRES_URL: postgres://postgres:test@localhost:5432/postgres?sslmode=disable
