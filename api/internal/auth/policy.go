@@ -298,6 +298,9 @@ var PhoneSessionRules = []string{
 	// The account's record of every call (kiff/tafs#102): what a taf did,
 	// for the app's Activity and Record. Read only.
 	"GET /v1/me/activity",
+	// A purchase's signed receipt (Thune), for the Record: read only, and
+	// the apps check it against the receipt key they pin.
+	"GET /v1/me/purchases/{case_id}/receipt",
 	// The account's two meters, counts only.
 	"GET /v1/me/usage",
 	"GET /v1/me/usage/tasks",

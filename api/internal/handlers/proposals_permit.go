@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/kiff/cloud/api/internal/auth"
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/permit"
+	"github.com/kiff/cloud/api/internal/purchase"
 )
 
 // Execution permits. A decide request for a call whose
@@ -28,6 +30,7 @@ const (
 	reasonPermitNoTarget      = "permit_not_configured"
 	reasonPermitSubstituted   = "permit_target_mismatch"
 	reasonPermitParameters    = "permit_parameters_mismatch"
+	reasonPurchaseCard        = "purchase_card_refused"
 	reasonPermitNotConsumed   = "permit_not_consumed"
 	reasonPermitRequired      = "permit_required"
 	reasonPermitBindingLate   = "permit_binding_late"
@@ -190,6 +193,13 @@ func (h *ProposalsHandler) permitGate(ctx context.Context, id auth.Identity, pro
 		return refuse(outcomeInvalid, reasonPermitParameters,
 			"the parameters to decide on must be exactly the governed argument in the arguments the permit signs")
 	}
+	// A purchase's card: signed only with the exact arguments of the case
+	// KIFF approved and is executing, within its time (purchase.AllowsCard).
+	if target.Tool == purchase.ToolIssueCard {
+		if why := h.purchaseCardRefusal(ctx, id.Tenant, req.Arguments); why != "" {
+			return refuse(outcomeBlocked, reasonPurchaseCard, why)
+		}
+	}
 	// The binding is checked before anything is written, under the
 	// operation's lock (decide): an operation the Card already decided
 	// without a binding (held while its tool was sealed, say) is never
@@ -299,4 +309,27 @@ func validAgentRun(run string) bool {
 		}
 	}
 	return true
+}
+
+// purchaseCardRefusal says why issue_card's arguments get no permit, or "".
+func (h *ProposalsHandler) purchaseCardRefusal(ctx context.Context, tenant string, args json.RawMessage) string {
+	if h.purchases == nil {
+		return "this KIFF deployment makes no purchase cards"
+	}
+	var a struct {
+		Case struct {
+			CaseID string `json:"case_id"`
+		} `json:"case"`
+	}
+	if json.Unmarshal(args, &a) != nil || a.Case.CaseID == "" {
+		return "issue_card's arguments name no purchase case"
+	}
+	r, err := h.purchases.Latest(ctx, tenant, a.Case.CaseID)
+	if err != nil {
+		return "KIFF has no approved purchase case for this card"
+	}
+	if err := purchase.AllowsCard(r, args, time.Now()); err != nil {
+		return "a card is made only for the purchase case KIFF approved and is executing, as it is, within its time"
+	}
+	return ""
 }

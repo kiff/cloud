@@ -275,6 +275,9 @@ type Grant struct {
 	// argument ("finalize" on status). A money opening never lets a pay run
 	// unasked: each is still the owner's to approve.
 	Opens []Opening `json:",omitempty"`
+	// Purchase is how a purchase under this grant is decided (Thune): ask
+	// each time, or buy within these limits. Nil: no purchases.
+	Purchase *PurchaseRule `json:",omitempty"`
 }
 
 // ResourceScope limits a grant to calls whose string parameter is one

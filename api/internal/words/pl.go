@@ -82,6 +82,7 @@ var pl = Words{
 	},
 	OwnerAsks: map[string]string{
 		OwnerAskSealedMoney:  "to narzędzie przenosi pieniądze przez połączenie, do którego klucz ma KIFF, więc każde wywołanie czeka na zatwierdzenie",
+		OwnerAskPurchase:     "to coś kupuje, a karta pyta cię za każdym razem, albo zakup wykracza poza jej limity",
 		OwnerAskSecondRefund: "ta płatność ma już zwrot, więc drugi czeka na zatwierdzenie",
 		OwnerAskNoRequestID:  "agent nie podał żadnej prośby z połączonej aplikacji, więc ten zwrot czeka na zatwierdzenie",
 		OwnerAskOther:        "każde wywołanie tego narzędzia czeka na zatwierdzenie",

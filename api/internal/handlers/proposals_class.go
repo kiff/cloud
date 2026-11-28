@@ -59,6 +59,19 @@ func takeClass(spec domain.Spec, prop kiffproposal.ActionProposal) (callClass, k
 
 type classKey struct{}
 
+type purchaseDecidedKey struct{}
+
+// withPurchaseDecided marks a call as a purchase's card whose case KIFF
+// approved and is executing (permitGate checked it).
+func withPurchaseDecided(ctx context.Context) context.Context {
+	return context.WithValue(ctx, purchaseDecidedKey{}, true)
+}
+
+func purchaseDecided(ctx context.Context) bool {
+	v, _ := ctx.Value(purchaseDecidedKey{}).(bool)
+	return v
+}
+
 func withClass(ctx context.Context, c callClass) context.Context {
 	return context.WithValue(ctx, classKey{}, c)
 }
@@ -83,7 +96,9 @@ func (h *ProposalsHandler) classInto(ctx context.Context, tenant string, req *ma
 	if req.Class == "" {
 		req.Class = "write"
 	}
-	if (req.Class == mandate.ClassMoney || req.Class == mandate.ClassIrreversible) && req.OwnerAsk == "" {
+	// A purchase's card was decided with its case (the owner's fingerprint,
+	// or KIFF within the Card's limits): never asked a second time.
+	if (req.Class == mandate.ClassMoney || req.Class == mandate.ClassIrreversible) && req.OwnerAsk == "" && !purchaseDecided(ctx) {
 		req.OwnerAsk = words.OwnerAskEachCall
 		req.OwnerAskWhy = ownerAskLine(words.OwnerAskEachCall)
 	}

@@ -36,6 +36,7 @@ import (
 	"github.com/kiff/cloud/api/internal/permit"
 	"github.com/kiff/cloud/api/internal/profile"
 	"github.com/kiff/cloud/api/internal/proposals"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/runcontext"
 	"github.com/kiff/cloud/api/internal/stream"
 	"github.com/kiff/cloud/api/internal/tenant"
@@ -187,6 +188,23 @@ type ProposalsHandler struct {
 	toolProfiles GatewayToolProfiles
 	// k4 are the accounts whose calls are decided by their class (K4).
 	k4 map[string]bool
+	// purchases reads purchase cases, so issue_card's permit is signed
+	// only for the exact case KIFF approved and is executing. Nil: no
+	// purchase card is ever allowed.
+	purchases purchaseCases
+	// purchaseOpening opens a purchase's case from each pay (KIFF_PURCHASES); nil decides a pay as any call.
+	purchaseOpening *purchaseOpening
+}
+
+// purchaseCases is the purchase store as the permit gate reads it.
+type purchaseCases interface {
+	Latest(ctx context.Context, tenant, caseID string) (purchase.Row, error)
+}
+
+// WithProposalsPurchases lets issue_card's permit be checked against the
+// purchase case it names.
+func WithProposalsPurchases(p purchaseCases) ProposalsOption {
+	return func(h *ProposalsHandler) { h.purchases = p }
 }
 
 // CallRequesters records the person whose run made a call; the meter is one.
@@ -614,6 +632,10 @@ type proposalResponse struct {
 	// Dropped (false) under enforce. Pairs with Mode so a client
 	// can branch on a single boolean.
 	Advisory bool `json:"advisory,omitempty"`
+
+	// Purchase is the case a relay's pay opened (Thune): the card and the
+	// token planque asks for next bind it.
+	Purchase *purchaseRef `json:"purchase,omitempty"`
 
 	// Exception is the held exception on an owner_required outcome
 	// (the mandates design amendment): the action is outside the agent's Card and
@@ -1105,6 +1127,11 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 		}
 		binding = b
 		ctx = withCoveringSlot(ctx)
+		if b.Tool == purchase.ToolIssueCard {
+			// permitGate checked it's the exact case KIFF approved and is
+			// executing: that case's decision is the owner's one decision.
+			ctx = withPurchaseDecided(ctx)
+		}
 	} else if resp, stop := h.permitRequired(ctx, id, prop, spec); stop {
 		h.incCounter(ctx, id.Tenant, usage.CloudCounterProposalsSubmitted)
 		h.applyMode(ctx, id.Tenant, mode, &resp)
@@ -1209,6 +1236,24 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 	// Submitted counter fires for a genuinely new proposal we are
 	// about to evaluate (not duplicates, which returned above, and
 	// not limit-exceeded rejections, which carry their own counter).
+	// A relay's pay opens its purchase's case first (purchase_open.go): with
+	// purchases on, a pay without planque's signed checkout is refused, never
+	// decided as a plain call.
+	var opened *openedCase
+	if h.purchaseOpening != nil && isPay(req.Permit, prop.ID) {
+		o, refusal, stop := h.openPurchase(ctx, id, prop, req.Permit, req.BrowserBlock)
+		if stop {
+			if releaseLock != nil {
+				releaseLock()
+			}
+			h.incCounter(ctx, id.Tenant, usage.CloudCounterProposalsSubmitted)
+			h.applyMode(ctx, id.Tenant, mode, &refusal)
+			writeJSON(w, statusForResponse(refusal), refusal)
+			return
+		}
+		opened = o
+		ctx = withPurchaseOpened(ctx, o)
+	}
 	h.incCounter(ctx, id.Tenant, usage.CloudCounterProposalsSubmitted)
 	if overLimit {
 		// Paid tenant past its included allowance. Record the
@@ -1222,6 +1267,9 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 	resp := h.evaluate(ctx, id, prop, req.ApprovalID, idempotent, rt, spec)
+	if opened != nil {
+		h.afterPurchase(ctx, id.Tenant, opened, &resp)
+	}
 	if req.Permit != nil {
 		h.mintPermit(ctx, id, prop, binding, &resp)
 	}
