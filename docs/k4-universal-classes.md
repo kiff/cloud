@@ -66,6 +66,17 @@ lowers a `money` tool. A tool missing from every table is still classed by the r
   - recorded on the Card, and a new Card version drops it: that version opens the class like any other.
   A Card naming a money tool never pays by being signed before the switch.
 - Behind `KIFF_K4_UNIVERSAL` per account, as K4 itself was, read back from the running API before an account is switched.
+  Each entry is `tenant@<RFC 3339 switch time>`: the gateway classes the account's tools by this rule, and KIFF reads the
+  time for the carry-over. An entry with no time, or one that doesn't read, carries nothing over.
+
+**As built (Part 1):**
+- The gateway tells KIFF `kiff_class_by: "unknown"` beside the class only for a call that step 6 alone made `irreversible`.
+  A table, an annotation, a verb, a noun, the money mark or a pinned operation that raises it clears it, and so does a
+  reviewed condition that lowers the call (a draft invoice is a `write`). An agent's own `kiff_class_by` is never read.
+- "Signed before the switch" is the Card's latest revision time, as KIFF records it. Any revision after the switch drops the
+  carry-over, a holder-only change included: that Card then opens the class like any other.
+- A carried-over call is still `irreversible` on a K4 account, so it **asks the owner each time**, as every irreversible
+  call does there. The carry-over keeps it from being refused as closed; it never lets it run unasked.
 
 ### Worked examples
 

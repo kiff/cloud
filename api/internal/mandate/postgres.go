@@ -648,6 +648,8 @@ const mandateColumns = `
 		SELECT id, tenant_id, subject, domain, environment, grants, aggregates,
 		       valid_from, valid_until, revoked_at, archived_at, location, domain_id, on_exceed, hold_expiry_seconds, title,
 		       COALESCE(draft_id, ''),
+		       (SELECT MAX(r.changed_at) FROM cloud_meta.mandate_revisions r
+		         WHERE r.tenant_id = mandates.tenant_id AND r.mandate_id = mandates.id),
 		       ARRAY(SELECT h.subject FROM cloud_meta.mandate_holders h
 		              WHERE h.tenant_id = mandates.tenant_id AND h.mandate_id = mandates.id
 		              ORDER BY h.position)`
@@ -852,10 +854,11 @@ func scanMandates(rows pgx.Rows) ([]Mandate, error) {
 			m                                            Mandate
 			grants, aggs                                 []byte
 			validFrom, validUntil, revokedAt, archivedAt *time.Time
+			revisedAt                                    *time.Time
 			holdSecs                                     int64
 		)
 		if err := rows.Scan(&m.ID, &m.TenantID, &m.Subject, &m.Domain, &m.Environment,
-			&grants, &aggs, &validFrom, &validUntil, &revokedAt, &archivedAt, &m.Location, &m.DomainID, &m.OnExceed, &holdSecs, &m.Title, &m.DraftID, &m.Holders); err != nil {
+			&grants, &aggs, &validFrom, &validUntil, &revokedAt, &archivedAt, &m.Location, &m.DomainID, &m.OnExceed, &holdSecs, &m.Title, &m.DraftID, &revisedAt, &m.Holders); err != nil {
 			return nil, fmt.Errorf("scan mandate: %w", err)
 		}
 		if err := json.Unmarshal(grants, &m.Grants); err != nil {
@@ -872,6 +875,9 @@ func scanMandates(rows pgx.Rows) ([]Mandate, error) {
 		}
 		m.RevokedAt = revokedAt
 		m.ArchivedAt = archivedAt
+		if revisedAt != nil {
+			m.RevisedAt = *revisedAt
+		}
 		m.HoldExpiry = time.Duration(holdSecs) * time.Second
 		if len(m.Holders) == 0 {
 			m.Holders = nil // Subject alone

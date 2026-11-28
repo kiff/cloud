@@ -243,6 +243,7 @@ func (t *Tx) Insert(ctx context.Context, c Connection, credential string) error 
 	// with the profile, which writes it again (RecordTenantClasses).
 	ct := toolOf(c)
 	ct.VendorTool, ct.App, ct.DestructiveHint, ct.FixedArgs = c.VendorTool, c.App, c.DestructiveHint, c.FixedArgs
+	ct.Universal = gateway.UniversalFor(t.tenantID)
 	rec := ct.ClassRecord()
 	tag, err := t.tx.Exec(ctx, `
 		INSERT INTO gateway.tools (tenant_id, name, description, input_schema, upstream_url, upstream_tool,

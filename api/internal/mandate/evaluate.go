@@ -75,7 +75,14 @@ type Request struct {
 	K4        bool              `json:",omitempty"`
 	Class     string            `json:",omitempty"`
 	ClassArgs map[string]string `json:",omitempty"`
-	Subject   string
+	// ClassBy is ClassByUnknown when the gateway says only the universal
+	// classes' "unknown is closed" made the call irreversible
+	// (kiff_class_by), and UniversalSince when the account went on them
+	// (KIFF_K4_UNIVERSAL); zero, the account isn't on them, or its switch
+	// has no time: nothing is carried over.
+	ClassBy        string    `json:",omitempty"`
+	UniversalSince time.Time `json:",omitempty"`
+	Subject        string
 	// Domain is the current name (slug) of the domain the request is in;
 	// DomainID is that domain's immutable id. A card issued with a
 	// DomainID matches the id, so it survives a rename; one issued before
@@ -332,7 +339,7 @@ func Evaluate(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, 
 	// for this action, before anything is counted.
 	if req.K4 && GatedClass(req.Class) {
 		for _, m := range covering {
-			if !Opened(m, req) {
+			if !Opened(m, req) && !CarriedOver(m, req) {
 				return Decision{Outcome: OutcomeCategoryClosed, MandateID: m.ID,
 					Reason: fmt.Sprintf("this Card doesn't open %s calls for %s", req.Class, req.Action)}, nil
 			}
@@ -525,6 +532,32 @@ func resourceReason(param, value string, present bool) string {
 
 // Opened reports whether m opens req's class for its action: a grant for the
 // action with an opening of that class, for any value or for the call's.
+// ClassByUnknown is the gateway's word for a call that only the universal
+// classes' "unknown is closed" made irreversible (gateway.ClassByUnknown).
+const ClassByUnknown = "unknown"
+
+// CarriedOver says whether a Card opens a call it doesn't open by name, as
+// the universal classes' one carry-over (docs/k4-universal-classes.md): a
+// tool the switch raised from write to irreversible by "unknown is closed"
+// alone, on a Card whose terms were signed before the account's switch and
+// that grants that action. Never money or delete, never a tool any other
+// signal raised, and a revision after the switch drops it: that version
+// opens the class like any other.
+func CarriedOver(m Mandate, req Request) bool {
+	if req.Class != ClassIrreversible || req.ClassBy != ClassByUnknown || req.UniversalSince.IsZero() {
+		return false
+	}
+	if m.RevisedAt.IsZero() || !m.RevisedAt.Before(req.UniversalSince) {
+		return false
+	}
+	for _, g := range m.Grants {
+		if g.Action == req.Action {
+			return true
+		}
+	}
+	return false
+}
+
 func Opened(m Mandate, req Request) bool {
 	for _, g := range m.Grants {
 		if g.Action != req.Action {

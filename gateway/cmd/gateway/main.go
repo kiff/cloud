@@ -165,6 +165,10 @@ func run(args []string) error {
 	}
 	store := invocation.NewStore(pool)
 	refunds := thune.NewStore(pool)
+	// KIFF_K4_UNIVERSAL: the accounts on the universal classes
+	// (docs/k4-universal-classes.md), comma-separated, each "tenant" or
+	// "tenant@<switch time>" (apps/api reads the time). Unset, none.
+	gateway.SetUniversalTenants(universalSet(os.Getenv("KIFF_K4_UNIVERSAL")))
 	g := &gateway.Gateway{
 		// KIFF_SIGN_PINS: the comma-separated accounts whose permits carry
 		// their relay tools' vendor pins. Unset, none.
@@ -275,6 +279,21 @@ func robots(w http.ResponseWriter, _ *http.Request) {
 }
 
 // tenantSet is a comma-separated list of tenant ids as a set; empty for "".
+// universalSet is KIFF_K4_UNIVERSAL's accounts, each without its switch
+// time.
+func universalSet(s string) map[string]bool {
+	out := map[string]bool{}
+	for _, t := range strings.Split(s, ",") {
+		if i := strings.IndexByte(t, '@'); i >= 0 {
+			t = t[:i]
+		}
+		if t = strings.TrimSpace(t); t != "" {
+			out[t] = true
+		}
+	}
+	return out
+}
+
 func tenantSet(s string) map[string]bool {
 	out := map[string]bool{}
 	for _, t := range strings.Split(s, ",") {

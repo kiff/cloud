@@ -167,6 +167,7 @@ func (s *MemoryStore) issueLocked(m Mandate, by string) {
 		before = cur.HolderList()
 	}
 	m = m.withHolders(keepHolders(m, before))
+	m.RevisedAt = s.now()
 	s.mandates[key(m.TenantID, m.ID)] = m
 	// Whatever was held or approved for an agent that no longer holds
 	// the Card does not travel to the others.

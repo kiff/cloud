@@ -398,6 +398,12 @@ type Mandate struct {
 	// empty when the Card was issued or reissued directly. Changing only
 	// holders, room or the title keeps it.
 	DraftID string `json:",omitempty"`
+	// RevisedAt is when the Card's latest revision was recorded: when its
+	// current terms were signed. K4's universal classes carry an opening
+	// over only for a Card whose terms were signed before the account's
+	// switch (CarriedOver), so a new revision drops it. Read only, never
+	// issued.
+	RevisedAt time.Time `json:"-"`
 }
 
 // MaxTitle is the longest Card title, in characters.

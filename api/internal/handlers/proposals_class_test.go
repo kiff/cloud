@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
@@ -64,5 +65,46 @@ func TestTheCallsClassIsReadForK4AccountsOnly(t *testing.T) {
 	}
 	if (&ProposalsHandler{}).k4["t_k4"] {
 		t.Error("no option names no account")
+	}
+}
+
+// K4's universal classes: kiff_class_by is taken out with the class, and it
+// reaches the decision only for an account on the universal classes with a
+// switch time, and only as "unknown".
+func TestTheUniversalCarryOverReachesTheDecisionOnlyForItsAccounts(t *testing.T) {
+	prop := kiffproposal.ActionProposal{ID: "p1", ActionName: "quote_q1", Parameters: map[string]any{
+		"amount": int64(5), GatewayClassParam: "irreversible", GatewayClassByParam: "unknown",
+	}}
+	c, out := takeClass(domain.Spec{Domain: gatewayDomain}, prop)
+	if c.class != "irreversible" || c.by != "unknown" {
+		t.Fatalf("taken: %+v", c)
+	}
+	if _, ok := out.Parameters[GatewayClassByParam]; ok || len(out.Parameters) != 1 {
+		t.Fatalf("parameters after: %v", out.Parameters)
+	}
+	if c, out := takeClass(domain.Spec{Domain: "billing"}, prop); c.by != "" || len(out.Parameters) != 1 {
+		t.Errorf("another domain: %+v %v", c, out.Parameters)
+	}
+	h := &ProposalsHandler{}
+	WithProposalsK4Tenants("t_u", "t_k4")(h)
+	WithProposalsK4Universal(" t_u@2026-11-28T16:00:00Z ", "t_notime", "t_bad@yesterday", "@2026-11-28T16:00:00Z")(h)
+	if len(h.k4Universal) != 1 || !h.k4Universal["t_u"].Equal(time.Date(2026, 11, 28, 16, 0, 0, 0, time.UTC)) {
+		t.Fatalf("switch times: %v", h.k4Universal)
+	}
+	ctx := withClass(context.Background(), c)
+	var on, off mandate.Request
+	h.classInto(ctx, "t_u", &on)
+	h.classInto(ctx, "t_k4", &off)
+	if on.ClassBy != mandate.ClassByUnknown || on.UniversalSince.IsZero() || on.OwnerAsk != words.OwnerAskEachCall {
+		t.Errorf("on the universal classes: %+v", on)
+	}
+	if off.ClassBy != "" || !off.UniversalSince.IsZero() {
+		t.Errorf("an account off them: %+v", off)
+	}
+	// Any other word is never carried into the decision.
+	var other mandate.Request
+	h.classInto(withClass(context.Background(), callClass{class: "irreversible", by: "anything"}), "t_u", &other)
+	if other.ClassBy != "" {
+		t.Errorf("another word: %+v", other)
 	}
 }

@@ -415,3 +415,134 @@ func TestAClosedCategoryIsRefusedAsClosedAndNothingIsSent(t *testing.T) {
 		}
 	}
 }
+
+// K4's universal classes (docs/k4-universal-classes.md): on an account on
+// KIFF_K4_UNIVERSAL, a tool no rule classes is irreversible and closed,
+// except on a Card signed before the account's switch that grants it (the
+// one carry-over), through the gateway, permitGate and decide: a relay's
+// call (permit mode) and a sealed one. A money noun is never carried over,
+// and a Card revised after the switch carries nothing.
+func TestTheUniversalClassesCarryOverOnlyUnknownToolsOnCardsSignedBefore(t *testing.T) {
+	if os.Getenv("KIFF_E2E") != "1" {
+		t.Skip("set KIFF_E2E=1 (and KIFF_TEST_POSTGRES_URL) to run the end-to-end test")
+	}
+	dbURL := testdb.URL(t)
+	if dbURL == "" {
+		t.Skip("set " + testdb.EnvVar)
+	}
+	ctx := context.Background()
+	root, _ := filepath.Abs("../../..")
+	bins := t.TempDir()
+	apiBin := build(t, bins, filepath.Join(root, "api"), "cmd/api")
+	gwBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/gateway")
+	toolBin := build(t, bins, filepath.Join(root, "gateway"), "cmd/testtool")
+
+	_, tenantID := newTenant(t, ctx, dbURL)
+	owner := "e2e-owner-" + strings.ToLower(tenantID)
+	direct, relay := freeAddr(t), freeAddr(t)
+	start(t, toolBin, nil, "http://"+direct+"/calls", "-addr", direct)
+	start(t, toolBin, nil, "http://"+relay+"/calls", "-addr", relay)
+	relayURL := "http://" + relay + "/v1/relay"
+
+	// The account's switch is a little after now: the Card issued below is
+	// signed before it, and the same Card revised once it's passed is not.
+	switchAt := time.Now().Add(20 * time.Second).UTC()
+	apiAddr, gwAddr := freeAddr(t), freeAddr(t)
+	start(t, apiBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_AUTH_PROVIDER=stub", "KIFF_STUB_SUBJECTS=" + owner, "KIFF_DEMO_TENANT_ID=" + tenantID,
+		"KIFF_PERMIT_SIGNING_KEY=e2e-1:" + seed(), "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_K4_TENANTS=" + tenantID,
+		"KIFF_K4_UNIVERSAL=" + tenantID + "@" + switchAt.Format(time.RFC3339), "KIFF_LOG_FORMAT=text"}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
+	gwKeys := "e2e:" + base64.StdEncoding.EncodeToString(func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }())
+	start(t, gwBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_GATEWAY_CREDENTIAL_KEYS=" + gwKeys, "KIFF_API_URL=http://" + apiAddr,
+		"KIFF_GATEWAY_ALLOW_PRIVATE_TOOLS=true", "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_K4_UNIVERSAL=" + tenantID + "@" + switchAt.Format(time.RFC3339),
+		"KIFF_LOG_FORMAT=text"}, "http://"+gwAddr+"/healthz", "-addr", gwAddr)
+	api, gw := "http://"+apiAddr, "http://"+gwAddr
+
+	key := func(body map[string]any) string {
+		code, out := call(t, http.MethodPost, api+"/v1/keys", owner, body)
+		if code != http.StatusCreated && code != http.StatusOK {
+			t.Fatalf("mint key %v: %d %v", body, code, out)
+		}
+		return out["plaintext"].(string)
+	}
+	ownerKey := key(map[string]any{"label": "owner", "roles": []string{"admin"}})
+	connector := key(map[string]any{"label": "relay", "roles": []string{"connector"}})
+	agentKey := key(map[string]any{"label": "agent", "agent_id": "agt_u", "roles": []string{"gateway_agent"}})
+
+	// A sealed tool whose name no rule knows ("quote"), a relay's tool whose
+	// vendor name no rule knows, and a relay's tool with a money noun.
+	if code, out := call(t, http.MethodPost, gw+"/v1/connections", ownerKey, map[string]any{"name": "quote_direct", "url": "http://" + direct + "/", "tool": "quote"}); code != http.StatusCreated {
+		t.Fatalf("connect the sealed tool: %d %v", code, out)
+	}
+	for name, vendor := range map[string]string{"reconcile_relay": "reconcile_ledger", "beneficiary_relay": "add_beneficiary"} {
+		if code, out := call(t, http.MethodPost, gw+"/v1/connections", connector, map[string]any{"name": name, "url": relayURL, "tool": "refund", "vendor_tool": vendor,
+			"mode": "verify", "audience": relayURL, "idempotency_argument": "idempotency_key", "app": "e2e"}); code != http.StatusCreated {
+			t.Fatalf("connect %s: %d %v", name, code, out)
+		}
+	}
+	card := map[string]any{"id": "card-u", "subject": "agt_u", "domain": "gateway",
+		"grants":     []map[string]any{{"action": "quote_direct"}, {"action": "reconcile_relay"}, {"action": "beneficiary_relay"}},
+		"aggregates": []map[string]any{{"quantity": "count", "limit": 100, "window": "calendar_day"}}}
+	issue := func() {
+		if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", owner, card); code != http.StatusCreated && code != http.StatusOK {
+			t.Fatalf("issue the Card: %d %v", code, out)
+		}
+	}
+	issue()
+	if !time.Now().Before(switchAt) {
+		t.Fatal("the Card was issued after the switch: the test needs a later switch time")
+	}
+
+	op := 0
+	callTool := func(name string, args map[string]any) (bool, string) {
+		op++
+		if strings.HasSuffix(name, "_relay") {
+			args["idempotency_key"] = fmt.Sprintf("op-u-%d", op)
+		}
+		code, out := call(t, http.MethodPost, gw+"/mcp", agentKey, map[string]any{"jsonrpc": "2.0", "id": op, "method": "tools/call",
+			"params": map[string]any{"name": name, "arguments": args}})
+		res, _ := out["result"].(map[string]any)
+		if code != http.StatusOK || res == nil {
+			t.Fatalf("%s: %d %v", name, code, out)
+		}
+		raw, _ := json.Marshal(res)
+		isErr, _ := res["isError"].(bool)
+		return !isErr, string(raw)
+	}
+	received := func(addr string) int {
+		resp, err := http.Get("http://" + addr + "/calls")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var calls struct{ Calls int }
+		_ = json.NewDecoder(resp.Body).Decode(&calls)
+		return calls.Calls
+	}
+
+	// Signed before the switch: the unknown tools are carried over, sealed and relayed. They're irreversible now, so
+	// each call is held for the owner (asked each time), never refused as closed and never run unasked.
+	for _, name := range []string{"quote_direct", "reconcile_relay"} {
+		if ok, text := callTool(name, map[string]any{"order": "o-1", "amount_eur": 5}); ok || !strings.Contains(text, "mandate_owner_required") || strings.Contains(text, "mandate_category_closed") {
+			t.Fatalf("%s, unknown, on a Card signed before the switch: %v %s", name, ok, text)
+		}
+	}
+	// A money noun is never carried over: closed.
+	if ok, text := callTool("beneficiary_relay", map[string]any{"order": "o-3", "amount_eur": 5}); ok || !strings.Contains(text, "mandate_category_closed") {
+		t.Fatalf("a money tool was carried over: %v %s", ok, text)
+	}
+	if received(direct) != 0 || received(relay) != 0 {
+		t.Fatal("a held or closed call reached its tool")
+	}
+
+	// The same Card revised after the switch carries nothing: its unknown tools are closed until opened.
+	time.Sleep(time.Until(switchAt) + time.Second)
+	issue()
+	for _, name := range []string{"quote_direct", "reconcile_relay"} {
+		if ok, text := callTool(name, map[string]any{"order": "o-4", "amount_eur": 5}); ok || !strings.Contains(text, "mandate_category_closed") {
+			t.Fatalf("%s on a Card revised after the switch: %v %s", name, ok, text)
+		}
+	}
+	if received(direct) != 0 || received(relay) != 0 {
+		t.Fatal("a closed call reached its tool")
+	}
+}
