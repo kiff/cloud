@@ -190,6 +190,7 @@ ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS vendor_tool text NOT NULL DEF
 -- its calls by that app's reviewed table (K4, gateway/classes). '' when none is named.
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS app text NOT NULL DEFAULT '';
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS destructive_hint boolean NOT NULL DEFAULT false;
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS vendor_pins jsonb;
 
 -- Connection profiles: each profile the owner approved, kept by
 -- revision so a decided call keeps the profile it was decided under (floor

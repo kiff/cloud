@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -219,6 +220,33 @@ func TestPermit_TheGatewaysUnitIsNotAGovernedArgument(t *testing.T) {
 		map[string]any{"arguments": json.RawMessage(refundArgs)})
 	if r.Outcome != "allowed" || r.Permit == "" {
 		t.Fatalf("decision: %+v", r)
+	}
+}
+
+// K4: the call's class the gateway adds (kiff_class, kiff_class_args) is a
+// fact about the call, not an argument the permit signs. Replays the
+// refused read: list_client_invoices on a relay tool, on a K4 account,
+// with its class and no class arguments, was refused with
+// permit_parameters_mismatch. A read's class and an opening's argument
+// values both leave the governed parameters as they were.
+func TestPermit_TheCallsClassIsNotAGovernedArgument(t *testing.T) {
+	t.Parallel()
+	h := permitRig(t, testIssuer(t), &heldCards{})
+	for i, class := range []map[string]any{
+		{handlers.GatewayClassParam: "read", handlers.GatewayClassArgsParam: map[string]any{}},
+		{handlers.GatewayClassParam: "write"},
+		{handlers.GatewayClassParam: "irreversible", handlers.GatewayClassArgsParam: map[string]any{"operation": "finalize"}},
+	} {
+		params := map[string]any{"amount_cents": 500}
+		for k, v := range class {
+			params[k] = v
+		}
+		op := fmt.Sprintf("op-class-%d", i)
+		args := `{"order_number":"1042","amount_cents":500,"idempotency_key":"` + op + `"}`
+		r := decideAs(t, h, op, "REFUND_ORDER", params, map[string]any{"arguments": json.RawMessage(args)})
+		if r.Outcome == "invalid" {
+			t.Fatalf("%v: %+v", class, r)
+		}
 	}
 }
 

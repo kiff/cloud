@@ -130,7 +130,7 @@ func TestAFilledOpeningIsReadAndSignedBehindTheFingerprint(t *testing.T) {
 		Widens     []struct{ Card, Kind, Words string }
 	}
 	_ = json.Unmarshal(rr.Body.Bytes(), &view)
-	if view.ConfirmKey != "critical" || len(view.Widens) != 1 || view.Widens[0].Kind != "opens" || view.Widens[0].Words != "Opens money calls for refund" {
+	if view.ConfirmKey != "critical" || len(view.Widens) != 1 || view.Widens[0].Kind != "opens" || view.Widens[0].Words != "Lets refund move money" {
 		t.Fatalf("the draft's view: %s", rr.Body.String())
 	}
 

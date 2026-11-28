@@ -369,12 +369,25 @@ func OpensOnNew(m Mandate) []Widening {
 // widening is the line an opening is read as, on a Card revised or new
 // alike: one place for its words.
 func (o actionOpening) widening() Widening {
-	return Widening{Kind: "opens", Words: fmt.Sprintf("Opens %s calls for %s", openingWords(o.opening), o.action)}
+	return Widening{Kind: "opens", Words: openingWords(o.action, o.opening)}
 }
 
-func openingWords(o Opening) string {
-	if o.Argument != "" {
-		return fmt.Sprintf("%s (%s %s)", o.Class, o.Argument, o.Value)
+func openingWords(action string, o Opening) string {
+	// What the agent may now do, as the other widening lines say it; never
+	// a class name.
+	var w string
+	switch o.Class {
+	case ClassMoney:
+		w = fmt.Sprintf("Lets %s move money", action)
+	case ClassDelete:
+		w = fmt.Sprintf("Lets %s delete", action)
+	case ClassIrreversible:
+		w = fmt.Sprintf("Lets %s do what can't be undone", action)
+	default:
+		w = fmt.Sprintf("Opens %s for %s", o.Class, action)
 	}
-	return o.Class
+	if o.Argument != "" {
+		w += fmt.Sprintf(" (only %s %s)", o.Argument, o.Value)
+	}
+	return w
 }

@@ -40,13 +40,16 @@ type Connection struct {
 	App string `json:"app,omitempty"`
 	// DestructiveHint: the vendor marks the tool destructive (K4); it
 	// only raises the tool's class.
-	DestructiveHint bool   `json:"destructive_hint,omitempty"`
-	Description     string `json:"description"`
-	URL             string `json:"url"`
-	UpstreamTool    string `json:"tool"`
-	AmountArg       string `json:"amount_argument,omitempty"`
-	AmountUnit      string `json:"amount_unit,omitempty"`
-	AmountScale     int    `json:"amount_scale,omitempty"`
+	DestructiveHint bool `json:"destructive_hint,omitempty"`
+	// VendorPins: what the relay sets in the vendor's body, signed into
+	// the permit for a tenant on KIFF_SIGN_PINS.
+	VendorPins   []gateway.VendorPin `json:"vendor_pins,omitempty"`
+	Description  string              `json:"description"`
+	URL          string              `json:"url"`
+	UpstreamTool string              `json:"tool"`
+	AmountArg    string              `json:"amount_argument,omitempty"`
+	AmountUnit   string              `json:"amount_unit,omitempty"`
+	AmountScale  int                 `json:"amount_scale,omitempty"`
 	// AmountFormat is "decimal_string" for an amount the tool takes as
 	// text, counted in minor units at AmountScale; "" for a whole number.
 	AmountFormat   string `json:"amount_format,omitempty"`
@@ -107,7 +110,7 @@ type querier interface {
 
 const cols = `name, description, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
 	mode, audience, credential IS NOT NULL, input_schema, created_at, updated_at, outcome_contract, outcome_lookup_tool, resource_arg,
-	amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, profile_revision, amount_format, app, destructive_hint,
+	amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, profile_revision, amount_format, app, destructive_hint, vendor_pins,
 	COALESCE(NULLIF(gateway.tools.paused_reason, ''),
 		(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
 		             ELSE 'a check of an earlier call didn''t hold' END
@@ -119,11 +122,14 @@ const cols = `name, description, upstream_url, upstream_tool, amount_arg, amount
 
 func scanConn(row pgx.Row) (Connection, error) {
 	var c Connection
-	var schema, fixed, unit, amount []byte
+	var schema, fixed, unit, amount, pins []byte
 	err := row.Scan(&c.Name, &c.Description, &c.URL, &c.UpstreamTool, &c.AmountArg, &c.AmountUnit, &c.AmountScale, &c.IdempotencyArg, &c.ReadOnly,
 		&c.Mode, &c.Audience, &c.HasCredential, &schema, &c.CreatedAt, &c.UpdatedAt, &c.OutcomeContract, &c.OutcomeLookupTool, &c.ResourceArg,
-		&c.AmountPath, &c.ResourcePath, &fixed, &c.CreatedBy, &c.Title, &unit, &c.Control, &c.VendorTool, &amount, &c.ProfileRevision, &c.AmountFormat, &c.App, &c.DestructiveHint, &c.Paused)
+		&c.AmountPath, &c.ResourcePath, &fixed, &c.CreatedBy, &c.Title, &unit, &c.Control, &c.VendorTool, &amount, &c.ProfileRevision, &c.AmountFormat, &c.App, &c.DestructiveHint, &pins, &c.Paused)
 	c.InputSchema = schema
+	if err == nil {
+		c.VendorPins, err = gateway.DecodeVendorPins(pins)
+	}
 	if len(fixed) > 0 {
 		c.FixedArgs = fixed
 	}
@@ -242,12 +248,12 @@ func (t *Tx) Insert(ctx context.Context, c Connection, credential string) error 
 		INSERT INTO gateway.tools (tenant_id, name, description, input_schema, upstream_url, upstream_tool,
 		                           amount_arg, idempotency_arg, credential_key_id, credential, read_only,
 		                           amount_unit, amount_scale, mode, audience, outcome_contract, outcome_lookup_tool, resource_arg,
-		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, amount_format, app, destructive_hint, class, class_opens, class_conditioned)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33)
+		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, amount_format, app, destructive_hint, vendor_pins, class, class_opens, class_conditioned)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34)
 		ON CONFLICT (tenant_id, name) DO NOTHING`,
 		t.tenantID, c.Name, c.Description, []byte(c.InputSchema), c.URL, c.UpstreamTool,
 		c.AmountArg, c.IdempotencyArg, keyID, sealed, c.ReadOnly, c.AmountUnit, c.AmountScale, modeOrSealed(c.Mode), c.Audience, c.OutcomeContract, c.OutcomeLookupTool, c.ResourceArg,
-		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup), c.Control, c.VendorTool, unitJSON(c.AmountLookup), c.AmountFormat, c.App, c.DestructiveHint, rec.Class, rec.Opens, rec.Conditioned)
+		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup), c.Control, c.VendorTool, unitJSON(c.AmountLookup), c.AmountFormat, c.App, c.DestructiveHint, pinsJSON(c.VendorPins), rec.Class, rec.Opens, rec.Conditioned)
 	if err != nil {
 		return err
 	}
@@ -393,6 +399,15 @@ func nullJSON(b json.RawMessage) any {
 		return nil
 	}
 	return []byte(b)
+}
+
+// pinsJSON is a tool's vendor pins as stored: NULL when there are none.
+func pinsJSON(p []gateway.VendorPin) any {
+	if len(p) == 0 {
+		return nil
+	}
+	b, _ := json.Marshal(p)
+	return b
 }
 
 // unitJSON is a unit lookup as stored: NULL when there is none.
