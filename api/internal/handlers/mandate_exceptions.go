@@ -776,6 +776,25 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 			"detail": "this phone's key is the integration proofs' test key; it answers only on a test account"})
 		return nil, false
 	}
+	// A purchase is approved only on the phone, behind its fingerprint: the
+	// approval signs the case's purchase line. A session with no device key
+	// (the dashboard, the CLI) and any API key, holds.answer or not, are
+	// refused before anything is reserved; refusing it stays open to anyone
+	// who may answer.
+	if answer == "approve-once" && h.purchaseHolds != nil {
+		_, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
+		switch {
+		case err == nil:
+			if len(ident.DeviceKey) == 0 || ident.APIKey || ident.Method == auth.MethodAPIKey {
+				writeJSON(w, http.StatusForbidden, map[string]string{"error": "device_required",
+					"detail": "a purchase is approved on the phone, behind its fingerprint or face, which signs the purchase"})
+				return nil, false
+			}
+		case !errors.Is(err, purchase.ErrNoCase):
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
+			return nil, false
+		}
+	}
 	if len(ident.DeviceKey) == 0 {
 		// A device's sign-in without a device key (the CLI's, or a device with
 		// no secure hardware) doesn't approve: nothing proves the
@@ -999,8 +1018,18 @@ func (h *MandatesHandler) decidePurchase(w http.ResponseWriter, r *http.Request,
 				"detail": "the Card this purchase was made under no longer lets it buy; nothing was approved"})
 			return true
 		}
+		// Who approved, and how, for the receipt: the phone's approval key behind
+		// its fingerprint, or a passkey (a security key).
+		method := "device_biometric"
+		if with, ok := auth.SignedWithFrom(r.Context()); ok && len(with.Passkey) > 0 {
+			method = "security_key"
+		}
+		approver := ""
+		if ident, err := auth.IdentityFrom(r.Context()); err == nil {
+			approver = ident.Subject
+		}
 		err = h.purchaseHolds.Decide(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest,
-			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card})
+			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card, Approver: approver, Method: method})
 	}
 	switch {
 	case err == nil:
