@@ -25,7 +25,7 @@ templ subprocessorsHeadPL() {
 		<p class="legal-badge">Podmioty podprzetwarzające · v0.1</p>
 		<h1>Podmioty podprzetwarzające</h1>
 		<p class="legal-meta">
-			<strong>Ostatnia aktualizacja:</strong> 25 listopada 2026.
+			<strong>Ostatnia aktualizacja:</strong> 28 listopada 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Firmy, z których Kiff Agents OÜ korzysta, aby prowadzić KIFF
@@ -55,8 +55,8 @@ templ subprocessorsListPL() {
 				<tbody>
 					<tr id="aws">
 						<td>Amazon Web Services</td>
-						<td>Hosting: serwery, baza danych i jej kopie zapasowe, zarządzanie kluczami, sekrety i monitoring. Dla tafs: jego własny magazyn danych i połączenia planque</td>
-						<td>Wszystko, co przechowuje KIFF: konta i osoby, które się logują, Card, decyzje, potwierdzenia, logi. Dla tafs: uruchomienia, czaty, notatki pamięci i tokeny połączeń (zaszyfrowane) oraz, po włączeniu zrzutów ekranu Chrome, obraz zrobiony przed krokiem Chrome, zapieczętowany i przechowywany najwyżej 30 dni</td>
+						<td>Hosting: serwery, baza danych i jej kopie zapasowe, zarządzanie kluczami, sekrety i monitoring. Dla tafs: jego własny magazyn danych, połączenia planque i chutchut, usługa pocztowa KIFF, która odbiera to, co ludzie wysyłają do drzwi e-mailowych tafa, i wysyła odpowiedzi tafa. Dla tafs: odpowiedź, którą ktoś zgłasza z aplikacji, wysyłana do zespołu KIFF</td>
+						<td>Wszystko, co przechowuje KIFF: konta i osoby, które się logują, Card, decyzje, potwierdzenia, logi. Dla tafs: uruchomienia, czaty, notatki pamięci, tokeny połączeń (zaszyfrowane) i wiadomości drzwi e-mailowych, ich nadawcy i załączniki, przechowywane przez 30 dni w postaci, w jakiej przyszły, oraz, po włączeniu zrzutów ekranu Chrome, obraz zrobiony przed krokiem Chrome, zapieczętowany i przechowywany najwyżej 30 dni. W przypadku zgłoszonej odpowiedzi: nazwa tafa, tekst odpowiedzi, który może zawierać dane osobowe z tego czatu, powód i notatka dodana przez osobę, z identyfikatorami konta, tafa, czatu i wiadomości; osoba zgłaszająca jest oznaczona tylko identyfikatorem, nigdy imieniem i nazwiskiem ani adresem e-mail</td>
 						<td>Irlandia (eu-west-1): KIFF Cloud, usługa tafs, uruchomienia, czaty i wywołania modelu tafs oraz planque, ze wszystkim, co przechowują. Z Irlandii działają też publiczne wersje demonstracyjne KIFF i filmy na stronie. Jedyne, co znajduje się w Stanach Zjednoczonych (us-east-1), to certyfikaty, których CloudFront tam wymaga i które nie zawierają danych klientów</td>
 					</tr>
 					<tr id="clerk">
@@ -73,8 +73,8 @@ templ subprocessorsListPL() {
 					</tr>
 					<tr id="resend">
 						<td>Resend</td>
-						<td>E-mail: powiadomienia o oczekujących wywołaniach i ostrzeżenia dotyczące Card, powiadomienia o wykorzystaniu i koncie, kod logowania, powiadomienia o nowym urządzeniu, powiadomienia o włączeniu lub wyłączeniu logowania kodem, odpowiedź na kod zażądany przy wyłączonym ustawieniu, e-maile o członkostwie, takie jak zaproszenia, oraz odpowiedzi wsparcia. Dla tafs: drzwi e-mailowe tafa, czyli poczta, którą ludzie do niego wysyłają, i jego odpowiedzi; oraz odpowiedź, którą ktoś zgłasza z aplikacji, wysyłana do zespołu KIFF</td>
-						<td>Adres e-mail odbiorcy i treść powiadomienia. Powiadomienie o oczekującym wywołaniu podaje agenta, akcję, jej kwotę i Card, poza którą akcja wykracza. E-mail z kodem logowania zawiera kod, czas oraz przeglądarkę i kraj, z których go zażądano; powiadomienie o nowym urządzeniu podaje urządzenie, jego przeglądarkę, sposób logowania, czas i przybliżone miasto i kraj; powiadomienie o włączeniu lub wyłączeniu podaje, że ustawienie włączono lub wyłączono, i kiedy; kod zażądany przy wyłączonym ustawieniu dostaje odpowiedź w e-mailu z czasem oraz przeglądarką i krajem, z których go zażądano; e-mail o członkostwie, taki jak zaproszenie, podaje konto i rolę, a osobę zapraszającą tylko jako administratora; powiadomienie o nowym zatwierdzającym lub ponownie połączonym telefonie podaje urządzenie. W przypadku drzwi e-mailowych: wiadomości, ich nadawcy i załączniki. W przypadku zgłoszonej odpowiedzi: nazwa tafa, tekst odpowiedzi, który może zawierać dane osobowe z tego czatu, powód i notatka dodana przez osobę, z identyfikatorami konta, tafa, czatu i wiadomości; osoba zgłaszająca jest oznaczona tylko identyfikatorem, nigdy imieniem i nazwiskiem ani adresem e-mail</td>
+						<td>E-mail: powiadomienia o oczekujących wywołaniach i ostrzeżenia dotyczące Card, powiadomienia o wykorzystaniu i koncie, kod logowania, powiadomienia o nowym urządzeniu, powiadomienia o włączeniu lub wyłączeniu logowania kodem, odpowiedź na kod zażądany przy wyłączonym ustawieniu, e-maile o członkostwie, takie jak zaproszenia, oraz odpowiedzi wsparcia</td>
+						<td>Adres e-mail odbiorcy i treść powiadomienia. Powiadomienie o oczekującym wywołaniu podaje agenta, akcję, jej kwotę i Card, poza którą akcja wykracza. E-mail z kodem logowania zawiera kod, czas oraz przeglądarkę i kraj, z których go zażądano; powiadomienie o nowym urządzeniu podaje urządzenie, jego przeglądarkę, sposób logowania, czas i przybliżone miasto i kraj; powiadomienie o włączeniu lub wyłączeniu podaje, że ustawienie włączono lub wyłączono, i kiedy; kod zażądany przy wyłączonym ustawieniu dostaje odpowiedź w e-mailu z czasem oraz przeglądarką i krajem, z których go zażądano; e-mail o członkostwie, taki jak zaproszenie, podaje konto i rolę, a osobę zapraszającą tylko jako administratora; powiadomienie o nowym zatwierdzającym lub ponownie połączonym telefonie podaje urządzenie.</td>
 						<td>Stany Zjednoczone</td>
 					</tr>
 					<tr id="cloudflare">
@@ -183,7 +183,7 @@ templ subprocessorsChangesPL() {
 
 		<p class="legal-footnote">
 			<strong>Wersja dokumentu:</strong> v0.1.<br/>
-			<strong>Ostatnia aktualizacja:</strong> 25 listopada 2026.
+			<strong>Ostatnia aktualizacja:</strong> 28 listopada 2026.
 		</p>
 	</section>
 }

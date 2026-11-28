@@ -25,7 +25,7 @@ templ subprocessorsHeadDE() {
 		<p class="legal-badge">Unterauftragsverarbeiter · v0.1</p>
 		<h1>Unterauftragsverarbeiter</h1>
 		<p class="legal-meta">
-			<strong>Zuletzt aktualisiert:</strong> 25. November 2026.
+			<strong>Zuletzt aktualisiert:</strong> 28. November 2026.
 		</p>
 		<p class="legal-disclaimer">
 			Die Unternehmen, die Kiff Agents OÜ für den Betrieb von KIFF
@@ -55,8 +55,8 @@ templ subprocessorsListDE() {
 				<tbody>
 					<tr id="aws">
 						<td>Amazon Web Services</td>
-						<td>Hosting: die Server, die Datenbank und ihre Backups, Schlüsselverwaltung, Secrets und Monitoring. Für tafs: dessen eigener Speicher und die Verbindungen von planque</td>
-						<td>Alles, was KIFF aufbewahrt: Konten und die Personen, die sich anmelden, Cards, Entscheidungen, Belege, Logs. Für tafs: Läufe, Chats, Gedächtnisnotizen und die Token der Verbindungen (verschlüsselt) und, sobald Chrome-Screenshots eingeschaltet sind, das Bild vor einem Chrome-Schritt, versiegelt und höchstens 30 Tage aufbewahrt</td>
+						<td>Hosting: die Server, die Datenbank und ihre Backups, Schlüsselverwaltung, Secrets und Monitoring. Für tafs: dessen eigener Speicher, die Verbindungen von planque und chutchut, der Maildienst von KIFF, der empfängt, was Leute an die E-Mail-Tür eines tafs senden, und die Antworten des tafs verschickt. Für tafs: eine Antwort, die jemand in der App meldet, an das Team von KIFF</td>
+						<td>Alles, was KIFF aufbewahrt: Konten und die Personen, die sich anmelden, Cards, Entscheidungen, Belege, Logs. Für tafs: Läufe, Chats, Gedächtnisnotizen, die Token der Verbindungen (verschlüsselt) und die Nachrichten einer E-Mail-Tür, ihre Absender und Anhänge, 30 Tage so aufbewahrt, wie sie ankamen, und, sobald Chrome-Screenshots eingeschaltet sind, das Bild vor einem Chrome-Schritt, versiegelt und höchstens 30 Tage aufbewahrt. Bei einer gemeldeten Antwort: der Name des tafs, der Text der Antwort, der personenbezogene Daten aus diesem Chat enthalten kann, der Grund und die Notiz der Person, mit den IDs von Konto, taf, Chat und Nachricht; die meldende Person wird nur mit einer ID genannt, nie mit Name oder E-Mail-Adresse</td>
 						<td>Irland (eu-west-1): KIFF Cloud, der tafs-Dienst, die Läufe, Chats und Modellaufrufe von tafs sowie planque, mit allem, was sie speichern. Aus Irland kommen auch KIFFs öffentliche Demos und die Videos der Website. In den Vereinigten Staaten (us-east-1) liegen nur die Zertifikate, die CloudFront dort verlangt; sie enthalten keine Kundendaten</td>
 					</tr>
 					<tr id="clerk">
@@ -73,8 +73,8 @@ templ subprocessorsListDE() {
 					</tr>
 					<tr id="resend">
 						<td>Resend</td>
-						<td>E-Mail: Hinweise zu zurückgehaltenen Aufrufen und Card-Warnungen, Hinweise zu Nutzung und Konto, den Anmeldecode, Hinweise zu neuen Geräten, Hinweise zum Ein- oder Ausschalten der Code-Anmeldung, die Antwort auf einen Code, der bei ausgeschalteter Code-Anmeldung angefordert wurde, Mitgliedschafts-E-Mails wie Einladungen sowie Antworten des Supports. Für tafs: die E-Mail-Tür eines tafs, also die E-Mails, die Leute an ihn senden, und seine Antworten; sowie eine Antwort, die jemand in der App meldet, an das Team von KIFF</td>
-						<td>Die E-Mail-Adresse des Empfängers und der Hinweis. Ein Hinweis zu einem zurückgehaltenen Aufruf nennt den Agenten, die Aktion, ihren Betrag und die Card, außerhalb der sie liegt. Eine E-Mail mit dem Anmeldecode enthält den Code, die Uhrzeit sowie den Browser und das Land, aus denen er angefordert wurde; ein Hinweis zu einem neuen Gerät nennt das Gerät, seinen Browser, die Anmeldeart, die Uhrzeit und eine Schätzung von Stadt und Land; ein Hinweis zum Ein- oder Ausschalten sagt, dass die Einstellung ein- oder ausgeschaltet wurde, und wann; ein Code, der bei ausgeschalteter Einstellung angefordert wird, wird mit einer E-Mail beantwortet, die die Uhrzeit sowie den Browser und das Land nennt, aus denen er angefordert wurde; eine Mitgliedschafts-E-Mail, etwa eine Einladung, nennt das Konto und die Rolle, die einladende Person nur als Admin; ein Hinweis zu einem neuen Genehmiger oder einem neu verbundenen Telefon nennt das Gerät. Bei einer E-Mail-Tür: die Nachrichten, ihre Absender und Anhänge. Bei einer gemeldeten Antwort: der Name des tafs, der Text der Antwort, der personenbezogene Daten aus diesem Chat enthalten kann, der Grund und die Notiz der Person, mit den IDs von Konto, taf, Chat und Nachricht; die meldende Person wird nur mit einer ID genannt, nie mit Name oder E-Mail-Adresse</td>
+						<td>E-Mail: Hinweise zu zurückgehaltenen Aufrufen und Card-Warnungen, Hinweise zu Nutzung und Konto, den Anmeldecode, Hinweise zu neuen Geräten, Hinweise zum Ein- oder Ausschalten der Code-Anmeldung, die Antwort auf einen Code, der bei ausgeschalteter Code-Anmeldung angefordert wurde, Mitgliedschafts-E-Mails wie Einladungen sowie Antworten des Supports</td>
+						<td>Die E-Mail-Adresse des Empfängers und der Hinweis. Ein Hinweis zu einem zurückgehaltenen Aufruf nennt den Agenten, die Aktion, ihren Betrag und die Card, außerhalb der sie liegt. Eine E-Mail mit dem Anmeldecode enthält den Code, die Uhrzeit sowie den Browser und das Land, aus denen er angefordert wurde; ein Hinweis zu einem neuen Gerät nennt das Gerät, seinen Browser, die Anmeldeart, die Uhrzeit und eine Schätzung von Stadt und Land; ein Hinweis zum Ein- oder Ausschalten sagt, dass die Einstellung ein- oder ausgeschaltet wurde, und wann; ein Code, der bei ausgeschalteter Einstellung angefordert wird, wird mit einer E-Mail beantwortet, die die Uhrzeit sowie den Browser und das Land nennt, aus denen er angefordert wurde; eine Mitgliedschafts-E-Mail, etwa eine Einladung, nennt das Konto und die Rolle, die einladende Person nur als Admin; ein Hinweis zu einem neuen Genehmiger oder einem neu verbundenen Telefon nennt das Gerät.</td>
 						<td>Vereinigte Staaten</td>
 					</tr>
 					<tr id="cloudflare">
@@ -184,7 +184,7 @@ templ subprocessorsChangesDE() {
 
 		<p class="legal-footnote">
 			<strong>Dokumentversion:</strong> v0.1.<br/>
-			<strong>Zuletzt aktualisiert:</strong> 25. November 2026.
+			<strong>Zuletzt aktualisiert:</strong> 28. November 2026.
 		</p>
 	</section>
 }

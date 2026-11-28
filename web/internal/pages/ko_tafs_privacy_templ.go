@@ -56,7 +56,7 @@ func TafsPrivacyKO() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("ko"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 36, Col: 506}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 36, Col: 506}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -74,7 +74,7 @@ func TafsPrivacyKO() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("ko").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 46, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 46, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -87,7 +87,7 @@ func TafsPrivacyKO() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("ko").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 46, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 46, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -105,7 +105,7 @@ func TafsPrivacyKO() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("ko").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 48, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 48, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +118,7 @@ func TafsPrivacyKO() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("ko").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 48, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 48, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -131,7 +131,7 @@ func TafsPrivacyKO() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("ko"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 50, Col: 734}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 50, Col: 734}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -145,14 +145,14 @@ func TafsPrivacyKO() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. 데이터를 받는 다른 자</h2><p>당사는 이용자의 개인정보를 판매하지 않으며, 광고를 위해 공유하지 않습니다.</p><p>tafs를 위해 당사는 다음 회사를 이용합니다. Amazon Web Services(tafs의 저장소와 planque의 연결을 포함한 호스팅), Clerk(KIFF 계정 로그인), Anthropic(AI 모델, Anthropic, Amazon Web Services, Google Cloud 또는 Microsoft Azure가 실행), Composio(관리형 연결의 로그인 정보, 그리고 planque가 요청하는 호출), Apple(푸시 알림), Google(Android의 푸시 알림과 Google Play 결제), Resend(taf의 이메일 창구). 각 회사가 무엇을 다루고 어디에서 처리하는지를 포함한 공식적인 최신 목록은 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 있습니다.</p><p>이 중 일부는 유럽경제지역 밖, 주로 미국에 있습니다. 그러한 이전이 어떻게 보호되는지는 <a href=\"/ko/privacy#transfers\">KIFF 개인정보처리방침</a>에 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section><section id=\"retention\"><h2>8. 보유 기간</h2><ul><li>도구가 taf에게 돌려준 내용: 실행이 끝날 때까지만 보유합니다. 채팅에서 읽기만 한 내용은 다음 메시지를 위해 암호화하여 보관하며, 채팅이 한 시간 동안 사용되지 않을 때까지, 그리고 읽은 때부터 최대 네 시간까지 사용한 후 며칠 안에 자동으로 삭제합니다.</li><li>taf의 실행과 채팅(채팅의 요약 포함): 30일. taf의 메모: taf가 삭제될 때까지. Coach와의 내 채팅은 그보다 먼저 삭제할 수 있습니다. 메시지와 내가 추가한 파일은 바로 삭제되고, 각 실행이 있었다는 사실과 그 시각, 비용의 기록은 그 30일 동안 남습니다. 답변을 신고하면, KIFF는 그 답변과 신고 사유, 메모를 180일 동안, 또는 그 채팅이나 계정을 삭제할 때까지 보관합니다. KIFF는 이를 신고를 검토하는 팀에도 이메일로 보내며, 그 이메일은 KIFF의 고객 지원 메일과 같은 방식으로 보관됩니다.</li><li>Coach가 다음 답변을 위해 남기는 짧은 메모(예: 채팅에서 연결이 이루어지지 못한 이유, 또는 Card가 승인되었다는 사실): 그 답변이 메모를 가져갈 때까지, 최대 7일. 그 후에는 그 채팅의 일부로서 채팅이 보관되는 동안 보유합니다. 다시 보낸 메시지가 같은 메모를 받도록 사본을 24시간 보관합니다. 채팅의 메모는 그 채팅에서만 사용합니다.</li><li>채팅에 첨부한 파일: 첨부된 메시지와 함께 30일, 또는 채팅이 삭제되면 그보다 일찍, 어떤 경우에도 38일 이내에 삭제합니다. 어떤 메시지도 사용하지 않는 파일은 업로드 후 약 한 시간 뒤에 삭제합니다. 계정을 삭제하면 파일도 삭제됩니다.</li><li>taf가 전달하는 파일: 실행이 파일을 만든 때부터 30일 후 하루 안에 자동으로 삭제합니다. 계정의 누구든지 지금 삭제로 파일을 더 일찍 삭제할 수 있습니다. 이 경우 파일 자체는 사본을 남기지 않고 즉시 삭제되며, 파일의 이름, 크기, 파일을 만든 taf와 실행은 tafs 저장소의 암호화된 특정 시점 사본에 최대 35일간 남을 수 있고, 이는 장애 후 복원에만 사용합니다. taf를 삭제하거나 계정을 삭제하면 그 파일도 삭제됩니다. 파일을 공유하면 파일 자체가 전송되며, 공유한 사본은 공유 대상 앱에 남습니다. 파일을 다운로드할 수 있도록 당사는 로그인한 계정 구성원을 위해 일 분 후 작동이 멈추는 링크를 만들며, 그 밖의 링크는 만들지 않습니다.</li><li>planque의 호출별 기록에 있는, 도구가 돌려준 내용: 24시간. 그 후에는 호출이 두 번 보내지지 않도록 호출이 보내졌는지 여부만 기록에 남습니다.</li><li>planque에 있는 연결의 토큰 또는 키, 또는 Composio에 있는 관리형 연결의 로그인 정보: 이용자가 연결을 해제할 때까지. 이용자의 다른 연결이 그 업체의 같은 계정을 사용할 수 있는 경우, 그 연결도 해제될 때까지 사용하지 않은 채 보관한 후 취소합니다. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. 데이터를 받는 다른 자</h2><p>당사는 이용자의 개인정보를 판매하지 않으며, 광고를 위해 공유하지 않습니다.</p><p>tafs를 위해 당사는 다음 회사를 이용합니다. Amazon Web Services(tafs의 저장소와 planque의 연결을 포함한 호스팅), Clerk(KIFF 계정 로그인), Anthropic(AI 모델, Anthropic, Amazon Web Services, Google Cloud 또는 Microsoft Azure가 실행), Composio(관리형 연결의 로그인 정보, 그리고 planque가 요청하는 호출), Apple(푸시 알림), Google(Android의 푸시 알림과 Google Play 결제), Amazon SES (taf의 이메일 창구; KIFF 팀에 전달되는 신고된 답변). 각 회사가 무엇을 다루고 어디에서 처리하는지를 포함한 공식적인 최신 목록은 <a href=\"/subprocessors\">/subprocessors</a>(영어)에 있습니다.</p><p>이 중 일부는 유럽경제지역 밖, 주로 미국에 있습니다. 그러한 이전이 어떻게 보호되는지는 <a href=\"/ko/privacy#transfers\">KIFF 개인정보처리방침</a>에 있습니다.</p><p><strong>이용자의 국가.</strong> 일부 국가의 법은 이 방침이 정한 것보다 더 많은 사항을 요구합니다. 각 국가의 법이 추가하는 사항은 영어와 그 국가의 언어로 <a href=\"/privacy/countries\">이용자의 국가</a>에 있습니다.</p></section><section id=\"retention\"><h2>8. 보유 기간</h2><ul><li>도구가 taf에게 돌려준 내용: 실행이 끝날 때까지만 보유합니다. 채팅에서 읽기만 한 내용은 다음 메시지를 위해 암호화하여 보관하며, 채팅이 한 시간 동안 사용되지 않을 때까지, 그리고 읽은 때부터 최대 네 시간까지 사용한 후 며칠 안에 자동으로 삭제합니다.</li><li>taf의 실행과 채팅(채팅의 요약 포함): 30일. taf의 메모: taf가 삭제될 때까지. Coach와의 내 채팅은 그보다 먼저 삭제할 수 있습니다. 메시지와 내가 추가한 파일은 바로 삭제되고, 각 실행이 있었다는 사실과 그 시각, 비용의 기록은 그 30일 동안 남습니다. 답변을 신고하면, KIFF는 그 답변과 신고 사유, 메모를 180일 동안, 또는 그 채팅이나 계정을 삭제할 때까지 보관합니다. KIFF는 이를 신고를 검토하는 팀에도 이메일로 보내며, 그 이메일은 KIFF의 고객 지원 메일과 같은 방식으로 보관됩니다.</li><li>Coach가 다음 답변을 위해 남기는 짧은 메모(예: 채팅에서 연결이 이루어지지 못한 이유, 또는 Card가 승인되었다는 사실): 그 답변이 메모를 가져갈 때까지, 최대 7일. 그 후에는 그 채팅의 일부로서 채팅이 보관되는 동안 보유합니다. 다시 보낸 메시지가 같은 메모를 받도록 사본을 24시간 보관합니다. 채팅의 메모는 그 채팅에서만 사용합니다.</li><li>채팅에 첨부한 파일: 첨부된 메시지와 함께 30일, 또는 채팅이 삭제되면 그보다 일찍, 어떤 경우에도 38일 이내에 삭제합니다. 어떤 메시지도 사용하지 않는 파일은 업로드 후 약 한 시간 뒤에 삭제합니다. 계정을 삭제하면 파일도 삭제됩니다.</li><li>taf가 전달하는 파일: 실행이 파일을 만든 때부터 30일 후 하루 안에 자동으로 삭제합니다. 계정의 누구든지 지금 삭제로 파일을 더 일찍 삭제할 수 있습니다. 이 경우 파일 자체는 사본을 남기지 않고 즉시 삭제되며, 파일의 이름, 크기, 파일을 만든 taf와 실행은 tafs 저장소의 암호화된 특정 시점 사본에 최대 35일간 남을 수 있고, 이는 장애 후 복원에만 사용합니다. taf를 삭제하거나 계정을 삭제하면 그 파일도 삭제됩니다. 파일을 공유하면 파일 자체가 전송되며, 공유한 사본은 공유 대상 앱에 남습니다. 파일을 다운로드할 수 있도록 당사는 로그인한 계정 구성원을 위해 일 분 후 작동이 멈추는 링크를 만들며, 그 밖의 링크는 만들지 않습니다.</li><li>planque의 호출별 기록에 있는, 도구가 돌려준 내용: 24시간. 그 후에는 호출이 두 번 보내지지 않도록 호출이 보내졌는지 여부만 기록에 남습니다.</li><li>planque에 있는 연결의 토큰 또는 키, 또는 Composio에 있는 관리형 연결의 로그인 정보: 이용자가 연결을 해제할 때까지. 이용자의 다른 연결이 그 업체의 같은 계정을 사용할 수 있는 경우, 그 연결도 해제될 때까지 사용하지 않은 채 보관한 후 취소합니다. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("ko"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 84, Col: 366}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 84, Col: 366}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 139, Col: 133}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 139, Col: 133}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 142, Col: 116}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 142, Col: 116}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("ko"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("ko").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("ko").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleKO() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ko_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/ko_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
