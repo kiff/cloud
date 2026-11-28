@@ -60,6 +60,7 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 	name := r.PathValue("name")
 	var old, next relayState
 	var why, vendor string
+	var changed bool
 	err := h.Store.Change(r.Context(), c.me.TenantID, func(tx *Tx) error {
 		conn, err := tx.Get(r.Context(), name)
 		if err != nil {
@@ -90,6 +91,7 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 		if old.App == next.App && old.DestructiveHint == next.DestructiveHint && samePins(old.VendorPins, next.VendorPins) {
 			return nil
 		}
+		changed = true
 		return tx.SetRelay(r.Context(), name, next, old, c.me.CredentialID)
 	}, h.applier(r.Context(), c))
 	switch {
@@ -133,6 +135,17 @@ func (h *Handler) patchRelay(w http.ResponseWriter, r *http.Request, c caller) {
 				slog.String("tenant", c.me.TenantID), slog.String("tool", name), slog.String("from", string(before)), slog.String("to", string(after)))
 		}
 	}
+	// The tool's class follows what the relay said of it (its app's reviewed
+	// table, its hint, its pins): SetRelay cleared its record with the
+	// change, and it's written again now, so a Card drafted before the next
+	// start opens what the tool is. If this fails the record stays cleared,
+	// which opens nothing, until the next start writes it: fails closed.
+	if changed {
+		if err := h.recordClasses(r.Context(), c.me.TenantID); err != nil && h.Logger != nil {
+			h.Logger.WarnContext(r.Context(), "connections: a relay's change wasn't recorded in the tool's class yet",
+				slog.String("tenant", c.me.TenantID), slog.String("tool", name), slog.String("err", err.Error()))
+		}
+	}
 	h.log(r, "relay fields updated", c, name)
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -163,7 +176,14 @@ func removedPins(a, b []gateway.VendorPin) []string {
 
 // SetRelay keeps a relay's fields on its tool, and the change beside it.
 func (t *Tx) SetRelay(ctx context.Context, name string, next, old relayState, keyID string) error {
-	tag, err := t.tx.Exec(ctx, `UPDATE gateway.tools SET app = $3, destructive_hint = $4, vendor_pins = $5, updated_at = now()
+	// The class record goes with the change: cleared here, in the change's
+	// own transaction, and written again from the new fields once it's
+	// committed. Cleared is "not known yet", which a Card draft opens
+	// nothing for, so a re-record that fails, or a draft made before it,
+	// never opens what the old fields gave (a relay can make a tool
+	// conditioned, which gets no opening).
+	tag, err := t.tx.Exec(ctx, `UPDATE gateway.tools SET app = $3, destructive_hint = $4, vendor_pins = $5, updated_at = now(),
+			class = '', class_opens = NULL, class_conditioned = false
 		WHERE tenant_id = $1 AND name = $2`, t.tenantID, name, next.App, next.DestructiveHint, pinsJSON(next.VendorPins))
 	if err != nil {
 		return err
@@ -175,5 +195,18 @@ func (t *Tx) SetRelay(ctx context.Context, name string, next, old relayState, ke
 	n, _ := json.Marshal(next)
 	_, err = t.tx.Exec(ctx, `INSERT INTO gateway.tool_patches (tenant_id, name, key_id, old, new) VALUES ($1, $2, $3, $4, $5)`,
 		t.tenantID, name, keyID, o, n)
+	return err
+}
+
+// recordClasses writes the account's tool class records (RecordClasses, or
+// the catalog's on the store's pool).
+func (h *Handler) recordClasses(ctx context.Context, tenantID string) error {
+	if h.RecordClasses != nil {
+		return h.RecordClasses(ctx, tenantID)
+	}
+	if h.Store == nil || h.Store.Pool == nil {
+		return nil
+	}
+	_, err := gateway.PostgresCatalog{Pool: h.Store.Pool}.RecordTenantClasses(ctx, tenantID)
 	return err
 }

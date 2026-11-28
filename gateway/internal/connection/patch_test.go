@@ -2,6 +2,8 @@ package connection_test
 
 import (
 	"context"
+	"errors"
+	"github.com/kiff/cloud/gateway/internal/gateway"
 	"net/http"
 	"strings"
 	"testing"
@@ -61,6 +63,17 @@ func TestARelayPatchesItsOwnToolWithoutLoweringItsClass(t *testing.T) {
 	if err != nil || invoice.App != "qonto" || len(invoice.VendorPins) != 1 || invoice.VendorPins[0].Path != "status" {
 		t.Fatalf("kept: %+v %v", invoice, err)
 	}
+	// Its class record follows at once, for a Card drafted before the next
+	// start: qonto's table conditions create_client_invoice (status draft).
+	var class string
+	var conditioned bool
+	if err := r.store.Pool.QueryRow(ctx, `SELECT class, class_conditioned FROM gateway.tools WHERE tenant_id = 'tenant-a' AND name = 'invoice'`).Scan(&class, &conditioned); err != nil ||
+		class != "irreversible" || !conditioned {
+		t.Fatalf("the class record after the change: %q %v %v", class, conditioned, err)
+	}
+	if n, err := (gateway.PostgresCatalog{Pool: r.store.Pool}).RecordTenantClasses(ctx, "tenant-a"); err != nil || n != 0 {
+		t.Fatalf("left for the next start: %d %v", n, err)
+	}
 	// Never changed after, nor taken away.
 	for _, app := range []string{"stripe", ""} {
 		if status, body := patch("connector-a", "invoice", map[string]any{"app": app, "destructive_hint": false, "vendor_pins": pins}); status != http.StatusConflict || !strings.Contains(body, "lower") {
@@ -94,4 +107,16 @@ func TestARelayPatchesItsOwnToolWithoutLoweringItsClass(t *testing.T) {
 	if !strings.Contains(first, `"app": ""`) {
 		t.Fatalf("the first record's old values: %s", first)
 	}
+	// A re-record that fails leaves the record cleared, "not known yet",
+	// which a Card draft opens nothing for: never the old fields' class.
+	r.h.RecordClasses = func(context.Context, string) error { return errors.New("the catalog is down") }
+	if status, body := patch("connector-a", "invoice", map[string]any{"app": "qonto", "destructive_hint": true, "vendor_pins": pins}); status != http.StatusNoContent {
+		t.Fatalf("a change whose re-record fails is still kept: %d %s", status, body)
+	}
+	var opens []byte
+	if err := r.store.Pool.QueryRow(ctx, `SELECT class, class_opens, class_conditioned FROM gateway.tools WHERE tenant_id = 'tenant-a' AND name = 'invoice'`).Scan(&class, &opens, &conditioned); err != nil ||
+		class != "" || opens != nil || conditioned {
+		t.Fatalf("after a failed re-record: %q %s %v %v", class, opens, conditioned, err)
+	}
+	r.h.RecordClasses = nil
 }

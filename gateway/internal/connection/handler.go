@@ -61,6 +61,10 @@ type Handler struct {
 	// from the read_only its connector sent (K4 step 1, KIFF_CLASS_LOG=on):
 	// the tool, its app and both values, never anything from a call.
 	ClassLog bool
+	// RecordClasses writes an account's tool class records after a relay's
+	// change (nil: gateway.PostgresCatalog's RecordTenantClasses on the
+	// store's pool). Set apart so a test can make it fail.
+	RecordClasses func(ctx context.Context, tenantID string) error
 }
 
 // Register mounts the routes.
