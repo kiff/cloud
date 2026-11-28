@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// The universal classes (docs/k4-universal-classes.md): on an account on
+// The universal classes (the universal classes contract): on an account on
 // KIFF_K4_UNIVERSAL, generic nouns raise, a read still needs two signals,
 // and a tool no rule classes is irreversible, said so (ClassByUnknown).
 func TestTheUniversalClasses(t *testing.T) {

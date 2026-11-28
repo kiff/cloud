@@ -55,7 +55,7 @@ type ClassedTool struct {
 	// too, and only raises, since the tool's own name says nothing of it.
 	Operation string
 	// Universal: the account is on the universal classes
-	// (KIFF_K4_UNIVERSAL, docs/k4-universal-classes.md): the generic money
+	// (KIFF_K4_UNIVERSAL, the universal classes contract): the generic money
 	// and access nouns raise, and a tool no rule classes is irreversible.
 	Universal bool
 }

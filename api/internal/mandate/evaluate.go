@@ -537,7 +537,7 @@ func resourceReason(param, value string, present bool) string {
 const ClassByUnknown = "unknown"
 
 // CarriedOver says whether a Card opens a call it doesn't open by name, as
-// the universal classes' one carry-over (docs/k4-universal-classes.md): a
+// the universal classes' one carry-over (the universal classes contract): a
 // tool the switch raised from write to irreversible by "unknown is closed"
 // alone, on a Card whose terms were signed before the account's switch and
 // that grants that action. Never money or delete, never a tool any other

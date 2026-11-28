@@ -166,7 +166,7 @@ func run(args []string) error {
 	store := invocation.NewStore(pool)
 	refunds := thune.NewStore(pool)
 	// KIFF_K4_UNIVERSAL: the accounts on the universal classes
-	// (docs/k4-universal-classes.md), comma-separated, each "tenant" or
+	// (the universal classes contract), comma-separated, each "tenant" or
 	// "tenant@<switch time>" (apps/api reads the time). Unset, none.
 	gateway.SetUniversalTenants(universalSet(os.Getenv("KIFF_K4_UNIVERSAL")))
 	g := &gateway.Gateway{

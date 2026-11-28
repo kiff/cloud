@@ -196,7 +196,7 @@ const (
 	// held for its owner. Test accounts only until K4's step 7; unset, none.
 	envK4Tenants = "KIFF_K4_TENANTS"
 	// envK4Universal names the accounts on K4's universal classes, each
-	// "tenant@<RFC 3339 switch time>" (docs/k4-universal-classes.md).
+	// "tenant@<RFC 3339 switch time>" (the universal classes contract).
 	envK4Universal = "KIFF_K4_UNIVERSAL"
 
 	// envPurchases turns purchases on (Thune): "on", or off.

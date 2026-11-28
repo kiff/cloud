@@ -416,7 +416,7 @@ func TestAClosedCategoryIsRefusedAsClosedAndNothingIsSent(t *testing.T) {
 	}
 }
 
-// K4's universal classes (docs/k4-universal-classes.md): on an account on
+// K4's universal classes (the universal classes contract): on an account on
 // KIFF_K4_UNIVERSAL, a tool no rule classes is irreversible and closed,
 // except on a Card signed before the account's switch that grants it (the
 // one carry-over), through the gateway, permitGate and decide: a relay's
