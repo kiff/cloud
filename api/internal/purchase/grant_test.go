@@ -1,53 +1,59 @@
 package purchase
 
 import (
-	"crypto/ed25519"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"strings"
 	"testing"
 	"time"
 )
 
-// The execution grant is signed with KIFF's key under its own typ, carries
-// the case as the relay executes it, and is minted only for an executing
-// case within its time.
-func TestTheExecutionGrantCarriesTheCaseOnlyWhileItExecutes(t *testing.T) {
+// issue_card is allowed only with the exact arguments of the current,
+// executing case, within its time: another case, digest, state or end, or a
+// case not executing, is refused.
+func TestACardIsAllowedOnlyForTheExecutingCasesExactArguments(t *testing.T) {
 	c, digest := contractCase(t)
-	k := receiptKey(t)
 	now := time.Date(2026, 11, 28, 9, 15, 11, 0, time.UTC)
 	r := Row{Case: c, Digest: digest, State: StateExecuting, LeaseHolder: "exe_1", ValidUntil: now.Add(15 * time.Minute)}
-	tok, jti, err := MintGrant(k, "https://api.kiff.dev", "https://relay.example.com", r, now)
+	args, err := CardArgs(r, now)
 	if err != nil {
 		t.Fatal(err)
 	}
-	parts := strings.Split(tok, ".")
-	hb, _ := base64.RawURLEncoding.DecodeString(parts[0])
-	pb, _ := base64.RawURLEncoding.DecodeString(parts[1])
-	sig, _ := base64.RawURLEncoding.DecodeString(parts[2])
-	if !ed25519.Verify(k.Public().Pub, []byte(parts[0]+"."+parts[1]), sig) {
-		t.Fatal("signature")
+	if err := AllowsCard(r, args, now); err != nil {
+		t.Fatal(err)
 	}
-	var h map[string]string
-	var g GrantClaims
-	_ = json.Unmarshal(hb, &h)
-	_ = json.Unmarshal(pb, &g)
-	if h["typ"] != GrantType || h["typ"] == "kiff-permit+jwt" {
-		t.Fatalf("typ %q", h["typ"])
+	var a IssueCardArgs
+	_ = json.Unmarshal(args, &a)
+	if a.Digest != digest || a.State != StateApproved || !a.ValidUntil.Equal(r.ValidUntil) {
+		t.Fatalf("args %+v", a)
 	}
-	p := g.Purchase
-	if g.Jti != jti || p.CaseID != c.CaseID || p.Digest != digest || p.Cap != c.Price.Max || p.Seller != c.Merchant.Site || p.Holder != "exe_1" ||
-		g.Exp != r.ValidUntil.Unix() || p.Delivery != c.Delivery {
-		t.Fatalf("claims %+v", g)
+	edit := func(f func(*IssueCardArgs, *Case)) json.RawMessage {
+		var x IssueCardArgs
+		_ = json.Unmarshal(args, &x)
+		var cc Case
+		_ = json.Unmarshal(x.Case, &cc)
+		f(&x, &cc)
+		x.Case, _ = json.Marshal(cc)
+		b, _ := json.Marshal(x)
+		return b
 	}
-	for name, bad := range map[string]Row{
-		"approved, not executing": {Case: c, Digest: digest, State: StateApproved, LeaseHolder: "exe_1", ValidUntil: r.ValidUntil},
-		"no holder":               {Case: c, Digest: digest, State: StateExecuting, ValidUntil: r.ValidUntil},
-		"past its time":           {Case: c, Digest: digest, State: StateExecuting, LeaseHolder: "exe_1", ValidUntil: now},
+	for name, bad := range map[string]json.RawMessage{
+		"a higher cap":   edit(func(_ *IssueCardArgs, cc *Case) { cc.Grant.Cap++ }),
+		"another case":   edit(func(_ *IssueCardArgs, cc *Case) { cc.CaseID = "pc_other" }),
+		"held":           edit(func(x *IssueCardArgs, _ *Case) { x.State = StateHeld }),
+		"a later end":    edit(func(x *IssueCardArgs, _ *Case) { x.ValidUntil = x.ValidUntil.Add(time.Hour) }),
+		"another digest": edit(func(x *IssueCardArgs, _ *Case) { x.Digest = "00" }),
+		"not json":       json.RawMessage(`[]`),
 	} {
-		if _, _, err := MintGrant(k, "i", "a", bad, now); !errors.Is(err, ErrNotHeld) {
+		if err := AllowsCard(r, bad, now); !errors.Is(err, ErrNotIssuable) {
 			t.Errorf("%s: %v", name, err)
 		}
+	}
+	approved := r
+	approved.State = StateApproved
+	if err := AllowsCard(approved, args, now); !errors.Is(err, ErrNotIssuable) {
+		t.Errorf("approved, no lease: %v", err)
+	}
+	if err := AllowsCard(r, args, r.ValidUntil); !errors.Is(err, ErrNotIssuable) {
+		t.Errorf("at its end: %v", err)
 	}
 }

@@ -140,17 +140,6 @@ func (k Key) Public() PublicKey {
 // Sign returns claims as a compact JWS signed with k.
 func (k Key) Sign(c Claims) (string, error) { return k.sign(Type, c) }
 
-// SignAs signs claims as a compact JWS of another KIFF type (a purchase's
-// execution grant), with the same key and kid as permits, so a verifier
-// that trusts KIFF's published keys reads it, and its typ keeps it from
-// ever passing as a permit.
-func (k Key) SignAs(typ string, claims any) (string, error) {
-	if typ == Type {
-		return "", errors.New("permit: SignAs never signs a permit")
-	}
-	return k.sign(typ, claims)
-}
-
 // sign returns claims as a compact JWS of type typ signed with k.
 func (k Key) sign(typ string, claims any) (string, error) {
 	header, _ := json.Marshal(map[string]string{"alg": Alg, "typ": typ, "kid": k.ID})

@@ -1,60 +1,71 @@
 package purchase
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"time"
-
-	"github.com/kiff/cloud/api/internal/permit"
 )
 
-// GrantType is the execution grant's JOSE typ: a relay refuses any other,
-// so a grant never passes as a permit, nor a permit as a grant.
-const GrantType = "kiff-purchase+jwt"
+// ToolIssueCard is the relay's call that makes a case's single-use card.
+// KIFF allows it, and signs its permit, only for the current version of an
+// approved case whose execution lease is held, within its time: the
+// arguments are the case, its digest and that decision, so the permit's
+// hash binds the card to exactly that case.
+const ToolIssueCard = "issue_card"
 
-// GrantClaims are what KIFF signs for the one execution of an approved
-// case: the relay makes the case's card or token only from these, copied,
-// never widened, and puts the case id and the grant's jti in the card's
-// metadata. It expires with the case's decision.
-type GrantClaims struct {
-	Iss      string        `json:"iss"`
-	Aud      string        `json:"aud"`
-	Sub      string        `json:"sub"`
-	Iat      int64         `json:"iat"`
-	Exp      int64         `json:"exp"`
-	Jti      string        `json:"jti"`
-	Purchase GrantPurchase `json:"purchase"`
+// IssueCardArgs are issue_card's arguments as the relay reads them.
+type IssueCardArgs struct {
+	Case       json.RawMessage `json:"case"`
+	Digest     string          `json:"digest"`
+	State      string          `json:"state"`
+	ValidUntil time.Time       `json:"valid_until"`
 }
 
-// GrantPurchase is the case as the relay executes it.
-type GrantPurchase struct {
-	Tenant     string   `json:"tenant"`
-	CaseID     string   `json:"case_id"`
-	Version    int      `json:"version"`
-	Digest     string   `json:"digest"`
-	State      string   `json:"state"`
-	Path       string   `json:"path"`
-	Holder     string   `json:"holder"`
-	Cap        int64    `json:"cap"`
-	Currency   string   `json:"currency"`
-	Categories []string `json:"categories"`
-	Seller     string   `json:"seller"`
-	Delivery   Address  `json:"delivery"`
-	ValidUntil string   `json:"valid_until"`
-}
+// ErrNotIssuable: issue_card's arguments aren't a case KIFF allows a card for.
+var ErrNotIssuable = errors.New("purchase: no card for this case now")
 
-// MintGrant signs the execution grant for a case whose lease r's holder
-// took: only an executing case gets one, and it never outlives the
-// decision's valid_until.
-func MintGrant(k permit.Key, iss, aud string, r Row, now time.Time) (string, string, error) {
+// CardArgs are issue_card's arguments for an executing case.
+func CardArgs(r Row, now time.Time) (json.RawMessage, error) {
 	if r.State != StateExecuting || r.LeaseHolder == "" || !now.Before(r.ValidUntil) {
-		return "", "", ErrNotHeld
+		return nil, ErrNotIssuable
 	}
-	c := r.Case
-	jti := permit.NewJTI()
-	tok, err := k.SignAs(GrantType, GrantClaims{
-		Iss: iss, Aud: aud, Sub: c.Agent, Iat: now.Unix(), Exp: r.ValidUntil.Unix(), Jti: jti,
-		Purchase: GrantPurchase{Tenant: c.Tenant, CaseID: c.CaseID, Version: c.Version, Digest: r.Digest, State: StateApproved, Path: c.Path,
-			Holder: r.LeaseHolder, Cap: c.Grant.Cap, Currency: c.Currency, Categories: c.Grant.Categories, Seller: c.Merchant.Site,
-			Delivery: c.Delivery, ValidUntil: r.ValidUntil.UTC().Format(time.RFC3339)},
-	})
-	return tok, jti, err
+	body, err := json.Marshal(r.Case)
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(IssueCardArgs{Case: body, Digest: r.Digest, State: StateApproved, ValidUntil: r.ValidUntil.UTC()})
+}
+
+// AllowsCard is KIFF's decision on an issue_card call: the arguments are
+// exactly the ones CardArgs gives for the case's current, executing
+// version, so a card is made only for that case, once its lease is held,
+// and never after its time.
+func AllowsCard(r Row, args json.RawMessage, now time.Time) error {
+	want, err := CardArgs(r, now)
+	if err != nil {
+		return err
+	}
+	var got IssueCardArgs
+	if err := json.Unmarshal(args, &got); err != nil {
+		return ErrNotIssuable
+	}
+	var c Case
+	if err := json.Unmarshal(got.Case, &c); err != nil {
+		return ErrNotIssuable
+	}
+	d, err := c.Digest()
+	if err != nil || d != r.Digest || got.Digest != r.Digest || got.State != StateApproved || !got.ValidUntil.Equal(r.ValidUntil) {
+		return ErrNotIssuable
+	}
+	canonical, _ := json.Marshal(IssueCardArgs{Case: mustJSON(c), Digest: got.Digest, State: got.State, ValidUntil: got.ValidUntil.UTC()})
+	if !bytes.Equal(canonical, want) {
+		return ErrNotIssuable
+	}
+	return nil
+}
+
+func mustJSON(v any) json.RawMessage {
+	b, _ := json.Marshal(v)
+	return b
 }
