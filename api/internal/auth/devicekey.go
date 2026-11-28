@@ -77,6 +77,10 @@ type Answer struct {
 	// the answer then signs over what the owner read. Empty for every other
 	// hold, whose message is unchanged.
 	BrowserSHA256 string
+	// Purchase is, for a held purchase, "purchase:<case_id>:<version>:<digest>"
+	// for the case version the phone drew (contracts/purchase.json): the
+	// signature then binds that case's digest. Empty for every other hold.
+	Purchase string
 }
 
 // Message is the exact text KIFF verifies, one field per line:
@@ -90,6 +94,7 @@ type Answer struct {
 //	<accounting_version>
 //	<signed_at>
 //	<browser_sha256>       only for a held sealed fill; no line otherwise
+//	purchase:<case_id>:<version>:<digest>   only for a held purchase
 func (a Answer) Message() []byte {
 	note := ""
 	if a.Note != "" {
@@ -102,6 +107,9 @@ func (a Answer) Message() []byte {
 	}
 	if a.BrowserSHA256 != "" {
 		lines = append(lines, a.BrowserSHA256)
+	}
+	if a.Purchase != "" {
+		lines = append(lines, a.Purchase)
 	}
 	return []byte(strings.Join(lines, "\n"))
 }
