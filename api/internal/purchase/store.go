@@ -161,15 +161,21 @@ func (s *Store) Decide(ctx context.Context, tenant, caseID string, version int, 
 			return ErrNotHeld
 		}
 		c := r.Case
-		if d.By == ByCardLimits {
-			if err := s.withinLimits(ctx, tx, c, d.Limits, now); err != nil {
-				return err
-			}
-		}
+		// The Card's room row is locked before anything is counted, so two
+		// decisions on one Card serialize here: the second counts the first.
 		day := now.Truncate(24 * time.Hour)
 		if _, err := tx.Exec(ctx, `INSERT INTO purchase.room (tenant_id, card_id, day, currency) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`,
 			tenant, c.Card.ID, day, c.Currency); err != nil {
 			return err
+		}
+		if _, err := tx.Exec(ctx, `SELECT 1 FROM purchase.room WHERE tenant_id = $1 AND card_id = $2 AND day = $3 AND currency = $4 FOR UPDATE`,
+			tenant, c.Card.ID, day, c.Currency); err != nil {
+			return err
+		}
+		if d.By == ByCardLimits {
+			if err := s.withinLimits(ctx, tx, c, d.Limits, now); err != nil {
+				return err
+			}
 		}
 		limit := d.Limits.PerDay
 		tag, err := tx.Exec(ctx, `UPDATE purchase.room SET used = used + $5
@@ -261,7 +267,8 @@ func (s *Store) Lease(ctx context.Context, tenant, caseID string, version int, h
 
 // Finish ends the lease's execution: ordered is done; unknown blocks every
 // further execution until reconciled; not ordered, with why, ends it with
-// nothing bought and releases its room. Only the lease's holder finishes.
+// nothing bought and releases its room, unless an authorization stands on
+// its card: then it's unknown. Only the lease's holder finishes.
 func (s *Store) Finish(ctx context.Context, tenant, caseID string, version int, holder, outcome, ended string) error {
 	now := s.now()
 	return pgx.BeginFunc(ctx, s.Pool, func(tx pgx.Tx) error {
@@ -278,6 +285,11 @@ func (s *Store) Finish(ctx context.Context, tenant, caseID string, version int, 
 		case OutcomeUnknown:
 			return setState(ctx, tx, r, StateUnknown, OutcomeUnknown, "", now)
 		case OutcomeNotOrdered:
+			// Money authorized on the card isn't "not ordered" for sure:
+			// it's unknown until reconciled, and its room stays reserved.
+			if r.Authorized > 0 {
+				return setState(ctx, tx, r, StateUnknown, OutcomeUnknown, "", now)
+			}
 			if err := release(ctx, tx, tenant, r.Case.Card.ID, r.Case.Currency, dayOf(r), r.Reserved); err != nil {
 				return err
 			}
@@ -362,6 +374,18 @@ func (s *Store) Expire(ctx context.Context) (int, error) {
 		return nil
 	})
 	return n, err
+}
+
+// SweepLeases moves an execution whose holder never finished, past its
+// lease, to unknown: nothing executes it again until reconciliation says
+// whether an order exists. It answers how many it moved.
+func (s *Store) SweepLeases(ctx context.Context) (int, error) {
+	tag, err := s.Pool.Exec(ctx, `UPDATE purchase.cases SET state = 'unknown', outcome = 'unknown', updated_at = $1
+		WHERE state = 'executing' AND lease_until <= $1`, s.now())
+	if err != nil {
+		return 0, err
+	}
+	return int(tag.RowsAffected()), nil
 }
 
 // AttachCard records the single-use card issued for an approved case: the

@@ -332,3 +332,78 @@ func TestAnUnusedCaseExpiresAndReleasesItsRoom(t *testing.T) {
 		t.Fatalf("state %s ended %s room used %d", r.State, r.Ended, used)
 	}
 }
+
+// Two within-limits decisions at once on a Card's last count: one passes,
+// the other is held for the owner, never both.
+func TestTwoWithinLimitsDecisionsAtOnceCountEachOther(t *testing.T) {
+	s, _ := testStore(t)
+	ctx := context.Background()
+	within := Decision{By: ByCardLimits, Card: CardRef{ID: "card_9f2c", Version: 4},
+		Limits: Limits{PerPurchase: 10000, PerDay: 1000000, PerHourCount: 1, Categories: []string{"5943"}}}
+	for round := 0; round < 5; round++ {
+		if _, err := s.Pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room`); err != nil {
+			t.Fatal(err)
+		}
+		var wg sync.WaitGroup
+		errs := make([]error, 2)
+		for i := range errs {
+			c := newCase(t, fmt.Sprintf("pc_counted_%d_%d", round, i))
+			d := open(t, s, c)
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				errs[i] = s.Decide(ctx, c.Tenant, c.CaseID, 1, d, within)
+			}(i)
+		}
+		wg.Wait()
+		passed := 0
+		for _, err := range errs {
+			if err == nil {
+				passed++
+			} else if !errors.Is(err, ErrOutsideLimits) {
+				t.Fatal(err)
+			}
+		}
+		if passed != 1 {
+			t.Fatalf("round %d: %d passed a count of 1: %v", round, passed, errs)
+		}
+	}
+}
+
+// An execution whose holder never finished becomes unknown past its lease.
+func TestADeadLeaseHolderLeavesTheCaseUnknown(t *testing.T) {
+	s, now := testStore(t)
+	ctx := context.Background()
+	c := decided(t, s, "pc_dead")
+	if _, ok, _ := s.Lease(ctx, c.Tenant, c.CaseID, 1, "exe_dead"); !ok {
+		t.Fatal("lease")
+	}
+	if n, _ := s.SweepLeases(ctx); n != 0 {
+		t.Fatalf("swept a live lease: %d", n)
+	}
+	*now = now.Add(16 * time.Minute)
+	if n, err := s.SweepLeases(ctx); err != nil || n != 1 {
+		t.Fatalf("swept %d %v", n, err)
+	}
+	if r, ok, _ := s.Lease(ctx, c.Tenant, c.CaseID, 1, "exe_2"); ok || r.State != StateUnknown {
+		t.Fatalf("after the sweep: %v %s", ok, r.State)
+	}
+}
+
+// Not ordered with an authorization standing is unknown, and its room
+// stays reserved.
+func TestNotOrderedWithMoneyAuthorizedIsUnknown(t *testing.T) {
+	s, _ := testStore(t)
+	ctx := context.Background()
+	c := executing(t, s, "pc_money_stands", "ic_money")
+	if a := s.Authorize(ctx, auth("iauth_m", "ic_money", 8420)); !a.Approved {
+		t.Fatalf("authorization %+v", a)
+	}
+	if err := s.Finish(ctx, c.Tenant, c.CaseID, 1, "exe_pc_money_stands", OutcomeNotOrdered, EndedAddressChanged); err != nil {
+		t.Fatal(err)
+	}
+	r, _ := s.Get(ctx, c.Tenant, c.CaseID, 1)
+	if r.State != StateUnknown || r.Reserved != c.Price.Max {
+		t.Fatalf("state %s reserved %d", r.State, r.Reserved)
+	}
+}
