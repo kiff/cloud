@@ -37,8 +37,11 @@ func (h *MandatesHandler) toolClasses(r *http.Request, tenantID string) map[stri
 // draftOpenings fills a drafted gateway Card's openings (K4) for the tools
 // it grants and that would be refused unopened: the narrowest the tool's
 // reviewed table gives (change_client_invoice_status for operation =
-// finalize), and its whole class only when there is none. A grant that
-// names its own openings keeps them. Each opening is a widening the owner
+// finalize), and its whole class only when there is none. A tool whose
+// table lowers its class on a condition is opened nothing: a call that
+// fixes the condition (create_client_invoice with status draft) is a write
+// already, and its whole class would open every other call, finalising
+// included. A grant that names its own openings keeps them. Each opening is a widening the owner
 // reads, line by line, before the fingerprint (OpensOnNew, Widens). It
 // reports whether it opened anything.
 func draftOpenings(body *mandateBody, classes map[string]tooloutcome.ToolClass) bool {
@@ -49,7 +52,7 @@ func draftOpenings(body *mandateBody, classes map[string]tooloutcome.ToolClass) 
 	for i := range body.Grants {
 		g := &body.Grants[i]
 		tc, ok := classes[g.Action]
-		if len(g.Opens) > 0 || !ok || !mandate.GatedClass(tc.Class) {
+		if len(g.Opens) > 0 || !ok || tc.Conditioned || !mandate.GatedClass(tc.Class) {
 			continue
 		}
 		if len(tc.Opens) == 0 {

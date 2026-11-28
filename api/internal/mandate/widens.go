@@ -67,7 +67,7 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 	// K4: a category opened that wasn't is a widening, on an action kept or
 	// added alike.
 	for _, o := range newOpenings(cur.Grants, next.Grants) {
-		add("opens", "Opens %s calls for %s", openingWords(o.opening), o.action)
+		out = append(out, o.widening())
 	}
 	for _, a := range cur.Aggregates {
 		b, ok := matchingAggregate(next.Aggregates, a)
@@ -361,9 +361,15 @@ func newOpenings(cur, next []Grant) []actionOpening {
 func OpensOnNew(m Mandate) []Widening {
 	var out []Widening
 	for _, o := range newOpenings(nil, m.Grants) {
-		out = append(out, Widening{Kind: "opens", Words: fmt.Sprintf("Opens %s calls for %s", openingWords(o.opening), o.action)})
+		out = append(out, o.widening())
 	}
 	return out
+}
+
+// widening is the line an opening is read as, on a Card revised or new
+// alike: one place for its words.
+func (o actionOpening) widening() Widening {
+	return Widening{Kind: "opens", Words: fmt.Sprintf("Opens %s calls for %s", openingWords(o.opening), o.action)}
 }
 
 func openingWords(o Opening) string {

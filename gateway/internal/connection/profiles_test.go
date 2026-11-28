@@ -94,6 +94,21 @@ func TestProfileAppliesOnlyWithTheOwnersApproval(t *testing.T) {
 	if status, body := apply("connector-a", op(2), signed); status != http.StatusOK || !strings.Contains(body, `"revision":3`) {
 		t.Fatalf("apply the invoice profile: %d %s", status, body)
 	}
+	// K4: a tool's class is recorded when it is connected and again when
+	// its profile is applied, for apps/api to fill a draft's openings.
+	if _, err := r.store.Pool.Exec(ctx, `UPDATE gateway.tools SET class = '' WHERE tenant_id = 'tenant-a' AND name = 'record_invoice'`); err != nil {
+		t.Fatal(err)
+	}
+	if status, body := apply("connector-a", op(2), signed); status != http.StatusOK {
+		t.Fatalf("apply the invoice profile again: %d %s", status, body)
+	}
+	var class string
+	if err := r.store.Pool.QueryRow(ctx, `SELECT class FROM gateway.tools WHERE tenant_id='tenant-a' AND name='create_refund'`).Scan(&class); err != nil || class != "money" {
+		t.Fatalf("create_refund's class when connected = %q %v", class, err)
+	}
+	if err := r.store.Pool.QueryRow(ctx, `SELECT class FROM gateway.tools WHERE tenant_id='tenant-a' AND name='record_invoice'`).Scan(&class); err != nil || class != "money" {
+		t.Fatalf("record_invoice's class after its profile = %q %v", class, err)
+	}
 	var format string
 	if err := r.store.Pool.QueryRow(ctx, `SELECT amount_format FROM gateway.tools WHERE tenant_id='tenant-a' AND name='record_invoice'`).Scan(&format); err != nil || format != "decimal_string" {
 		t.Fatalf("amount_format = %q %v", format, err)

@@ -282,7 +282,12 @@ CREATE TABLE IF NOT EXISTS gateway.object_claims (
 -- which apps/api reads to fill a Card draft's openings: the narrowest first,
 -- the whole class only when there is none. Set when a tool is connected and
 -- written again at each gateway start, so a table change reaches rows
--- connected before it. '' or NULL: not known yet, and a draft opens nothing
--- for the tool (its calls are refused until the owner opens them).
+-- connected before it, and when a profile is applied (its money mark).
+-- '' or NULL: not known yet, and a draft opens nothing for the tool (its
+-- calls are refused until the owner opens them). class_conditioned: the
+-- table has a condition that lowers the class on a call
+-- (create_client_invoice with status draft); a draft opens nothing for it,
+-- so its other calls stay refused.
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class text NOT NULL DEFAULT '';
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class_opens jsonb;
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class_conditioned boolean NOT NULL DEFAULT false;

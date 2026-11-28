@@ -377,10 +377,13 @@ func (p *Postgres) VendorTools(ctx context.Context, tenantID string) (map[string
 }
 
 // ToolClass is what the gateway recorded of a tool's class (K4): the class,
-// and the narrow openings its app's reviewed table gives it.
+// the narrow openings its app's reviewed table gives it, and whether that
+// table lowers its class on a condition (create_client_invoice with status
+// draft).
 type ToolClass struct {
-	Class string
-	Opens []ToolOpening
+	Class       string
+	Opens       []ToolOpening
+	Conditioned bool
 }
 
 // ToolOpening is an opening for one value of one argument.
@@ -396,7 +399,7 @@ func (p *Postgres) ToolClasses(ctx context.Context, tenantID string) (map[string
 	if p == nil || p.pool == nil {
 		return nil, errors.New("tooloutcome: no database")
 	}
-	rows, err := p.pool.Query(ctx, `SELECT name, class, class_opens FROM gateway.tools WHERE tenant_id = $1 AND class <> ''`, tenantID)
+	rows, err := p.pool.Query(ctx, `SELECT name, class, class_opens, class_conditioned FROM gateway.tools WHERE tenant_id = $1 AND class <> ''`, tenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +409,7 @@ func (p *Postgres) ToolClasses(ctx context.Context, tenantID string) (map[string
 		var name string
 		var tc ToolClass
 		var opens []byte
-		if err := rows.Scan(&name, &tc.Class, &opens); err != nil {
+		if err := rows.Scan(&name, &tc.Class, &opens, &tc.Conditioned); err != nil {
 			return nil, err
 		}
 		if len(opens) > 0 {

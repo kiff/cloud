@@ -30,17 +30,20 @@ func (c classedTools) ToolClasses(context.Context, string) (map[string]tooloutco
 }
 
 // A draft opens the narrowest category its granted tool's table gives, the
-// whole class only when there is none, nothing for a read or a write, and
-// leaves a grant that names its own openings as it is.
+// whole class only when there is none, nothing for a read, a write or a
+// conditioned tool (create_client_invoice: a draft-pinned call is a write,
+// and its whole class would open finalising), and leaves a grant that names
+// its own openings as it is.
 func TestADraftOpensTheNarrowestCategoryFirst(t *testing.T) {
 	classes := map[string]tooloutcome.ToolClass{
-		"status": {Class: "irreversible", Opens: []tooloutcome.ToolOpening{{Argument: "operation", Value: "finalize"}}},
-		"send":   {Class: "irreversible"},
-		"notes":  {Class: "write"},
-		"refund": {Class: "money"},
+		"status":  {Class: "irreversible", Opens: []tooloutcome.ToolOpening{{Argument: "operation", Value: "finalize"}}},
+		"send":    {Class: "irreversible"},
+		"notes":   {Class: "write"},
+		"refund":  {Class: "money"},
+		"invoice": {Class: "irreversible", Conditioned: true},
 	}
 	body := mandateBody{Domain: gatewayDomain, Grants: []mandateGrantBody{
-		{Action: "status"}, {Action: "send"}, {Action: "notes"}, {Action: "unknown"},
+		{Action: "status"}, {Action: "send"}, {Action: "notes"}, {Action: "unknown"}, {Action: "invoice"},
 		{Action: "refund", Opens: []mandateOpeningBody{{Class: "money", Argument: "currency", Value: "EUR"}}},
 	}}
 	if !draftOpenings(&body, classes) {
@@ -49,7 +52,7 @@ func TestADraftOpensTheNarrowestCategoryFirst(t *testing.T) {
 	want := [][]mandateOpeningBody{
 		{{Class: "irreversible", Argument: "operation", Value: "finalize"}},
 		{{Class: "irreversible"}},
-		nil, nil,
+		nil, nil, nil,
 		{{Class: "money", Argument: "currency", Value: "EUR"}},
 	}
 	for i, g := range body.Grants {
