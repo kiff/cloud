@@ -349,6 +349,12 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 		if tt.operation != nil && cond.Argument == tt.operation.Name {
 			v, ok = args[cond.Argument], true
 		}
+		// A value the permit signs at that path is the one sent: the relay
+		// checks its final body against it. The call's own argument is read
+		// only when no pin is signed there.
+		if pin, signed := t.signedPin(cond.Argument); signed {
+			v, ok = pin.(string)
+		}
 		if ok && v == cond.Equals {
 			c = worse(cond.Then, minimumOf(ClassedTool{ReadOnly: t.ReadOnly, Money: t.Money}))
 		}

@@ -1032,3 +1032,32 @@ func TestControlRefusedWhereAConnectorConnects(t *testing.T) {
 		t.Fatalf("contract:\n%s", y)
 	}
 }
+
+// A relay's vendor pins are kept for its tool, each value on a field the
+// tool's schema lists (a marker isn't); a tool registered straight to KIFF
+// keeps none, as it keeps no app.
+func TestVendorPinsAreKeptOnlyForARelaysToolOnItsSchema(t *testing.T) {
+	r := newRig(t, dev)
+	relay, direct := openToolServer(t), openToolServer(t)
+	r.h.RelayURLs = []string{relay.URL + "/v1/relay"}
+	pinned := func(name, url string, pins []map[string]any) map[string]any {
+		return map[string]any{"name": name, "url": url, "tool": "refund", "mode": "verify", "audience": "https://planque.example/v1/relay",
+			"amount_argument": "amount_eur", "idempotency_argument": "idem", "vendor_pins": pins}
+	}
+	pins := []map[string]any{{"path": "order", "value": "o-1"}, {"path": "metadata.kiff_op", "marker": true}}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_refund", relay.URL, pins)); status != http.StatusCreated ||
+		!strings.Contains(body, `"vendor_pins":[{"path":"order","value":"o-1"},{"path":"metadata.kiff_op","marker":true}]`) {
+		t.Fatalf("a relay's pins: %d %s", status, body)
+	}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_bad", relay.URL, []map[string]any{{"path": "status", "value": "draft"}})); status != http.StatusBadRequest ||
+		!strings.Contains(body, "isn't in the tool's input schema") {
+		t.Fatalf("a pin off the schema: %d %s", status, body)
+	}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("relay_index", relay.URL, []map[string]any{{"path": "lines.0", "value": "x"}})); status != http.StatusBadRequest {
+		t.Fatalf("an index: %d %s", status, body)
+	}
+	if status, body := r.do(t, "connector-a", http.MethodPost, "/v1/connections", pinned("direct_refund", direct.URL, pins)); status != http.StatusCreated ||
+		strings.Contains(body, "vendor_pins") {
+		t.Fatalf("a direct tool's pins: %d %s", status, body)
+	}
+}

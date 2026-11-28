@@ -67,7 +67,7 @@ func (a *agent) cardResult(ctx context.Context, raw json.RawMessage) (json.RawMe
 	if err != nil {
 		return mcp.TextResult("KIFF could not read your Card just now. Calls are still checked when they are made; try again shortly.", true), nil
 	}
-	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
+	tools, err := a.g.tools(ctx, a.me.TenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (a *agent) otherCardResult(ctx context.Context, other string) (json.RawMess
 	if err != nil {
 		return mcp.TextResult("KIFF could not read agent "+other+"'s Card just now; try again shortly.", true), nil
 	}
-	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
+	tools, err := a.g.tools(ctx, a.me.TenantID)
 	if err != nil {
 		return nil, err
 	}

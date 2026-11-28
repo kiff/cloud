@@ -207,6 +207,11 @@ type createRequest struct {
 	// at least irreversible, or delete for a delete. Default false changes
 	// nothing. Kept only for a relay's tool, as App is.
 	DestructiveHint bool `json:"destructive_hint"`
+	// VendorPins are what the relay sets in the vendor's body after the
+	// permit: a value at a vendor path, or a marker that takes the
+	// permit's op. Kept only for a relay's tool, as App is; KIFF signs
+	// them into the permit for a tenant on KIFF_SIGN_PINS.
+	VendorPins []gateway.VendorPin `json:"vendor_pins"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
 	ReadOnly bool `json:"read_only"`
@@ -427,6 +432,9 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	if mode == gateway.ModeVerify && req.Credential != "" {
 		return Connection{}, http.StatusBadRequest, "in verify mode KIFF holds no credential for the tool; leave credential empty"
 	}
+	if msg := gateway.VendorPinsRefusal(req.VendorPins); msg != "" {
+		return Connection{}, http.StatusBadRequest, msg
+	}
 	scale, msg := checkUnit(req.AmountArg, strings.TrimSpace(req.AmountUnit), req.AmountScale)
 	if msg != "" {
 		return Connection{}, http.StatusBadRequest, msg
@@ -455,10 +463,20 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	if len(schema) == 0 {
 		schema = json.RawMessage(`{"type":"object"}`)
 	}
+	// A relay's pins, each value on a field its tool's schema lists.
+	var pins []gateway.VendorPin
+	if h.onRelay(u.String()) && len(req.VendorPins) > 0 {
+		for _, p := range req.VendorPins {
+			if !p.Marker && !gateway.PinInSchema(schema, p.Path) {
+				return Connection{}, http.StatusBadRequest, "vendor_pins: " + p.Path + " isn't in the tool's input schema"
+			}
+		}
+		pins = req.VendorPins
+	}
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
 		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
 		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint && h.onRelay(u.String())}, 0, ""
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint && h.onRelay(u.String()), VendorPins: pins}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the

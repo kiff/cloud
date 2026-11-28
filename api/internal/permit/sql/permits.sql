@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS cloud_meta.permit_bindings (
     PRIMARY KEY (tenant_id, op)
 );
 
+ALTER TABLE cloud_meta.permit_bindings ADD COLUMN IF NOT EXISTS pins TEXT NOT NULL DEFAULT '';
+
 CREATE INDEX IF NOT EXISTS permit_bindings_created ON cloud_meta.permit_bindings (created_at);
 
 -- Where an action's permit goes, set by the account's owner or an admin
