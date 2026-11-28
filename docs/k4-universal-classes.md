@@ -28,9 +28,9 @@ A tool's class is the worst any of these gives, read in order. Every signal may 
 6. **Unknown is closed:** a tool nothing above classes (no annotation, no declared scope, a name with no known verb) is
    `irreversible`, closed on the Card until the owner opens it. Today the same tool is a `write`, which is open.
 
-**Per-app tables (`classes/<app>.json`) become overrides only.** They may only raise, as `Classify` already enforces
-(`worse`). The test that every table tool classes at least as strictly by the rules alone stays, and so does the test that a
-table never lowers. A tool missing from every table is still classed by the rule, never left open.
+**Per-app tables (`classes/<app>.json`) become overrides.** An override may raise a class freely. It may lower one only with
+its reason written beside it and reviewed in the PR that adds it, as `qonto.json`'s draft condition does today, and never
+lowers a `money` tool. A tool missing from every table is still classed by the rule, never left open.
 
 **What changes for live accounts:**
 - Tools that were `read` on one signal (planque's read_only plus a read verb) stay `read`, since that's two signals.
@@ -71,8 +71,14 @@ table never lowers. A tool missing from every table is still classed by the rule
   `client_invoice.write`, `product.write`, `supplier_invoice.write`.
 - `offline_access`: no class; it's how the sign-in lasts.
 
-**The one edge for the security review:** can `readOnlyHint` alone make a tool `read`? This contract says no: a hint is one
-signal, and lowering needs two.
+**The one edge, settled by the security review:** `readOnlyHint` alone never makes a tool `read`. MCP calls these hints: the
+vendor's own claim, unchecked, and relayed from servers we don't control. A hint may raise a class alone and never lower one.
+
+**Tests the code PR carries:**
+- a tool named `list_` with `readOnlyHint` but a write scope stays `write`;
+- `readOnlyHint` on `create_payment` stays `money`;
+- a tool nothing classes is `irreversible`;
+- an override lowers only with its reason, and never a `money` tool.
 
 ## Part 2: a generic identity read at every callback (planque)
 
@@ -85,7 +91,12 @@ At each OAuth callback, planque reads whose account the sign-in is, by one rule:
 - What's kept is `account: {id, label}`: an id the vendor gives and a label for the owner. No token, no other field.
 - **Empty means no resume** for that app: a sign-in that can't say whose account it is can't be resumed on another device
   or after a lapse, and fails closed to a fresh sign-in.
-- The owner sees the label in the words planque already sends (`account_words`), and the resume's signed text names it.
+- The owner sees the label in the words planque already sends (`account_words`), and the resume's signed text names it. No
+  new approval words: the resume reuses the signed-in words the phone already shows.
+- **The identity read is recorded** in the connection's record, like any call planque makes for it, so "every call is
+  recorded" stays true. It's outside any Card: it reads only whose account it is.
+- **The privacy page's account sentence changes first:** a resume finishes only with the same account, read once at sign-in.
+  The new text ships before the identity read, or `KIFF_K4_UNIVERSAL`, is on for any customer.
 
 ## Order
 
