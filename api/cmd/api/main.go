@@ -2193,6 +2193,9 @@ func newRouter(deps routerDeps) http.Handler {
 			handlers.WithMandatesCardChangeNotice(members.NoticeCardChange),
 			handlers.WithMandatesToolOutcomes(toolOutcomes(deps)),
 			handlers.WithMandatesToolTitles(gatewayTitles(deps)),
+			// K4: a draft is given its tools' openings only once every app
+			// draws them (KIFF_DRAFT_OPENINGS=1).
+			handlers.WithMandatesDraftOpenings(os.Getenv("KIFF_DRAFT_OPENINGS") == "1"),
 			handlers.WithMandatesProofTestKeys(deps.proofTestKeys, deps.proofTestTenants),
 			handlers.WithMandatesPermitTargets(deps.permitTargets),
 			handlers.WithMandatesAlerts(deps.alertNotifier),

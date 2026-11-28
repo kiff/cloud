@@ -239,16 +239,21 @@ func (t *Tx) Insert(ctx context.Context, c Connection, credential string) error 
 	if err != nil {
 		return err
 	}
+	// Its class as known when connected: the profile's money mark comes
+	// with the profile, which writes it again (RecordTenantClasses).
+	ct := toolOf(c)
+	ct.VendorTool, ct.App, ct.DestructiveHint, ct.FixedArgs = c.VendorTool, c.App, c.DestructiveHint, c.FixedArgs
+	rec := ct.ClassRecord()
 	tag, err := t.tx.Exec(ctx, `
 		INSERT INTO gateway.tools (tenant_id, name, description, input_schema, upstream_url, upstream_tool,
 		                           amount_arg, idempotency_arg, credential_key_id, credential, read_only,
 		                           amount_unit, amount_scale, mode, audience, outcome_contract, outcome_lookup_tool, resource_arg,
-		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, amount_format, app, destructive_hint, vendor_pins)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31)
+		                           amount_path, resource_path, fixed_args, created_by, title, unit_lookup, control, vendor_tool, amount_lookup, amount_format, app, destructive_hint, vendor_pins, class, class_opens, class_conditioned)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34)
 		ON CONFLICT (tenant_id, name) DO NOTHING`,
 		t.tenantID, c.Name, c.Description, []byte(c.InputSchema), c.URL, c.UpstreamTool,
 		c.AmountArg, c.IdempotencyArg, keyID, sealed, c.ReadOnly, c.AmountUnit, c.AmountScale, modeOrSealed(c.Mode), c.Audience, c.OutcomeContract, c.OutcomeLookupTool, c.ResourceArg,
-		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup), c.Control, c.VendorTool, unitJSON(c.AmountLookup), c.AmountFormat, c.App, c.DestructiveHint, pinsJSON(c.VendorPins))
+		c.AmountPath, c.ResourcePath, nullJSON(c.FixedArgs), c.CreatedBy, c.Title, unitJSON(c.UnitLookup), c.Control, c.VendorTool, unitJSON(c.AmountLookup), c.AmountFormat, c.App, c.DestructiveHint, pinsJSON(c.VendorPins), rec.Class, rec.Opens, rec.Conditioned)
 	if err != nil {
 		return err
 	}
@@ -475,7 +480,14 @@ func (s *Store) ApplyProfile(ctx context.Context, tenantID string, p Profile, to
 			return 0, err
 		}
 	}
-	return rev, tx.Commit(ctx)
+	if err := tx.Commit(ctx); err != nil {
+		return 0, err
+	}
+	// The profile's money mark changes a tool's class: recorded now, for a
+	// draft made before the next start. Best effort: the profile is applied
+	// either way, and the next start records it.
+	_, _ = gateway.PostgresCatalog{Pool: s.Pool}.RecordTenantClasses(ctx, tenantID)
+	return rev, nil
 }
 
 // ProfileAt returns the account's profile at revision.
