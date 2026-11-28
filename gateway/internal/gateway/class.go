@@ -201,11 +201,14 @@ type classOperation struct {
 // flags, or more than one: no opening matches it.
 const OperationMixed = "mixed"
 
-// of is the call's operation, from its flags alone.
+// of is the call's operation, from its flags alone. It fails closed: a
+// flag counts as set unless it's absent, null or false, so a flag sent as
+// "true", 1 or anything else beside finalize makes the call mixed, never
+// finalize.
 func (o *classOperation) of(callArgs map[string]any) string {
 	set := ""
 	for _, flag := range o.OneOf {
-		if v, ok := callArgs[flag].(bool); ok && v {
+		if v, present := callArgs[flag]; present && v != nil && v != false {
 			if set != "" {
 				return OperationMixed
 			}

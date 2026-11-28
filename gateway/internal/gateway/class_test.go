@@ -99,7 +99,11 @@ func TestACallsClassAndItsArgumentsReachKIFF(t *testing.T) {
 		{map[string]any{"id": "inv_1", "unmark_as_paid": true}, "unmark_as_paid"},
 		{map[string]any{"id": "inv_1", "finalize": true, "cancel": true}, OperationMixed},
 		{map[string]any{"id": "inv_1"}, OperationMixed},
-		{map[string]any{"id": "inv_1", "finalize": "true"}, OperationMixed},
+		// Fails closed: any present value but null or false is a set flag.
+		{map[string]any{"id": "inv_1", "finalize": "true"}, "finalize"},
+		{map[string]any{"id": "inv_1", "finalize": true, "cancel": "true"}, OperationMixed},
+		{map[string]any{"id": "inv_1", "finalize": true, "cancel": 1}, OperationMixed},
+		{map[string]any{"id": "inv_1", "finalize": true, "unmark_as_paid": "false"}, OperationMixed},
 		// The agent's own operation is never read.
 		{map[string]any{"id": "inv_1", "operation": "finalize", "cancel": true}, "cancel"},
 		{map[string]any{"id": "inv_1", "operation": "finalize"}, OperationMixed},
