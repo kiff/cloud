@@ -237,7 +237,11 @@ func (s *Store) withinLimits(ctx context.Context, tx pgx.Tx, c Case, l Limits, n
 	if l.PerPurchase > 0 && c.Price.Max > l.PerPurchase {
 		return fmt.Errorf("%w: over the per-purchase limit", ErrOutsideLimits)
 	}
-	if len(l.Categories) > 0 && !oneOf(c.Merchant.Category, l.Categories) {
+	// A case read from a page names no category: the issuer gives it at the
+	// authorization, where the single-use card's categories are the Card's
+	// and anything else is declined. Only then is the category left to the
+	// card; the amounts and counts are checked here either way.
+	if len(l.Categories) > 0 && c.Merchant.Category != "" && !oneOf(c.Merchant.Category, l.Categories) {
 		return fmt.Errorf("%w: a category the Card doesn't open", ErrOutsideLimits)
 	}
 	count := func(since time.Time) (int, error) {

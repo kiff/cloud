@@ -150,6 +150,57 @@ func TestWithinLimitsChecksEachLimitAndTheCount(t *testing.T) {
 	}
 }
 
+// A case read from a page names no category: the Card's limits decide it
+// on its amounts and counts, and the category is the card's, checked at the
+// authorization. A shop in another category is declined there, and the case
+// ends not bought with its room released; its receipt shows the issuer's
+// category beside the case's none.
+func TestACaseWithNoCategoryLeavesItToTheCard(t *testing.T) {
+	s, _ := testStore(t)
+	ctx := context.Background()
+	within := Decision{By: ByCardLimits, Card: CardRef{ID: "card_9f2c", Version: 4},
+		Limits: Limits{PerPurchase: 10000, PerDay: 100000, PerHourCount: 5, Categories: []string{"stationery_office_supplies_printing_and_writing_paper"}}}
+	over := within
+	over.Limits.PerPurchase = 5000
+	c := newCase(t, "pc_nocat_over")
+	c.Merchant.Category = ""
+	if err := s.Decide(ctx, c.Tenant, c.CaseID, 1, open(t, s, c), over); !errors.Is(err, ErrOutsideLimits) {
+		t.Fatalf("no category is no way past the amount: %v", err)
+	}
+	c = newCase(t, "pc_nocat")
+	c.Merchant.Category = ""
+	if err := s.Decide(ctx, c.Tenant, c.CaseID, 1, open(t, s, c), within); err != nil {
+		t.Fatalf("within limits with no category: %v", err)
+	}
+	if _, ok, err := s.Lease(ctx, c.Tenant, c.CaseID, 1, "exe_nocat"); !ok || err != nil {
+		t.Fatalf("lease: %v %v", ok, err)
+	}
+	if err := s.AttachCard(ctx, c.Tenant, c.CaseID, 1, "ic_nocat"); err != nil {
+		t.Fatal(err)
+	}
+	a := auth("iauth_nocat", "ic_nocat", 8420)
+	a.Category = "clothing_stores"
+	if got := s.Authorize(ctx, a); got.Approved || got.Reason != DeclineCategory {
+		t.Fatalf("another category at the card: %+v", got)
+	}
+	if err := s.Finish(ctx, c.Tenant, c.CaseID, 1, "exe_nocat", OutcomeNotOrdered, EndedDeclinedAtAuth); err != nil {
+		t.Fatal(err)
+	}
+	r, _ := s.Get(ctx, c.Tenant, c.CaseID, 1)
+	var used int64
+	s.Pool.QueryRow(ctx, `SELECT used FROM purchase.room WHERE card_id = $1`, c.Card.ID).Scan(&used)
+	if r.State != StateNotBought || r.Ended != EndedDeclinedAtAuth || used != 0 {
+		t.Fatalf("state %s ended %s room used %d", r.State, r.Ended, used)
+	}
+	rc, err := s.ReceiptOf(ctx, c.Tenant, c.CaseID, "u_ana")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rc.States.Case != StateNotBought || rc.Merchant.Case.Category != "" || rc.Merchant.Issuer.Category != "clothing_stores" {
+		t.Fatalf("receipt %+v", rc)
+	}
+}
+
 func decided(t *testing.T, s *Store, id string) Case {
 	t.Helper()
 	c := newCase(t, id)
