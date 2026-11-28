@@ -277,3 +277,16 @@ CREATE TABLE IF NOT EXISTS gateway.object_claims (
     taken_at  timestamptz NOT NULL,
     PRIMARY KEY (tenant_id, kind, object, holder)
 );
+
+-- What a relay changed on a tool it registered (PATCH /v1/connections/{name}):
+-- the relay-owned fields (app, destructive_hint, vendor_pins) before and
+-- after, when, and the key that changed them. Never a call's contents.
+CREATE TABLE IF NOT EXISTS gateway.tool_patches (
+    tenant_id  text        NOT NULL,
+    name       text        NOT NULL,
+    at         timestamptz NOT NULL DEFAULT now(),
+    key_id     text        NOT NULL,
+    old        jsonb       NOT NULL,
+    new        jsonb       NOT NULL
+);
+CREATE INDEX IF NOT EXISTS tool_patches_tool ON gateway.tool_patches (tenant_id, name, at);

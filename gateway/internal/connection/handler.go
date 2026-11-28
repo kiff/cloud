@@ -75,6 +75,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("PUT /v1/connections/{name}/mode", h.auth(notConnector(h.setMode)))
 	mux.HandleFunc("PUT /v1/connections/{name}/settings", h.auth(notConnector(h.setSettings)))
 	mux.HandleFunc("DELETE /v1/connections/{name}", h.auth(h.remove))
+	mux.HandleFunc("PATCH /v1/connections/{name}", h.auth(h.patchRelay))
 	mux.HandleFunc("POST /v1/profiles", h.auth(h.applyProfile))
 	mux.HandleFunc("POST /v1/connections/{name}/resume", h.auth(notConnector(h.resume)))
 }
