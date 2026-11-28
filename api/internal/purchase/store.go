@@ -62,13 +62,36 @@ const (
 )
 
 // Limits are a Card's purchase limits; zero is none. PerDay is the Card's
-// room for a day in the case's currency, kept for either decision.
+// room for a day in the case's currency, kept for either decision. A day is
+// the Card's calendar day in its time zone (Location, an IANA name; "" or
+// one the time zone database doesn't know is UTC), as every other day on a
+// Card is.
 type Limits struct {
 	PerPurchase  int64    `json:"per_purchase,omitempty"`
 	PerDay       int64    `json:"per_day,omitempty"`
 	PerHourCount int      `json:"purchases_per_hour,omitempty"`
 	PerDayCount  int      `json:"purchases_per_day,omitempty"`
 	Categories   []string `json:"categories,omitempty"`
+	Location     string   `json:"location,omitempty"`
+}
+
+// In is l with its days in the time zone named loc.
+func (l Limits) In(loc string) Limits {
+	l.Location = loc
+	return l
+}
+
+// day is the Card's calendar day at now: the date its room is kept under,
+// and the instant it started.
+func (l Limits) day(now time.Time) (date, start time.Time) {
+	loc := time.UTC
+	if l.Location != "" {
+		if z, err := time.LoadLocation(l.Location); err == nil {
+			loc = z
+		}
+	}
+	t := now.In(loc)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC), time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, loc)
 }
 
 // Row is a case version as kept.
@@ -163,7 +186,7 @@ func (s *Store) Decide(ctx context.Context, tenant, caseID string, version int, 
 		c := r.Case
 		// The Card's room row is locked before anything is counted, so two
 		// decisions on one Card serialize here: the second counts the first.
-		day := now.Truncate(24 * time.Hour)
+		day, _ := d.Limits.day(now)
 		if _, err := tx.Exec(ctx, `INSERT INTO purchase.room (tenant_id, card_id, day, currency) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`,
 			tenant, c.Card.ID, day, c.Currency); err != nil {
 			return err
@@ -220,7 +243,8 @@ func (s *Store) withinLimits(ctx context.Context, tx pgx.Tx, c Case, l Limits, n
 		}
 	}
 	if l.PerDayCount > 0 {
-		n, err := count(now.Truncate(24 * time.Hour))
+		_, start := l.day(now)
+		n, err := count(start)
 		if err != nil {
 			return err
 		}

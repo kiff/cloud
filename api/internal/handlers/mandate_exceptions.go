@@ -1031,7 +1031,7 @@ func (h *MandatesHandler) cardPurchaseLimits(ctx context.Context, tenantID strin
 		}
 		for _, g := range m.Grants {
 			if p := g.Purchase; p != nil && p.Currency == c.Currency {
-				return purchase.LimitsFrom(p.PerPurchase, p.PerDay, p.PerHour, p.PerDayCount, p.Categories), true
+				return purchase.LimitsFrom(p.PerPurchase, p.PerDay, p.PerHour, p.PerDayCount, p.Categories).In(m.Location), true
 			}
 		}
 	}

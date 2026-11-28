@@ -449,3 +449,41 @@ func TestTheOwnersApprovalCountsWithoutTheWithinLimitsCeiling(t *testing.T) {
 		t.Fatalf("within limits after the owner used the day: %v", err)
 	}
 }
+
+// A Card's day is its calendar day in its own time zone, as every other day
+// on a Card is: in Auckland, 23:45 and 00:15 are two days' room, though both
+// are the same day in UTC.
+func TestADaysRoomIsTheCardsCalendarDay(t *testing.T) {
+	s, now := testStore(t)
+	ctx := context.Background()
+	limits := owner
+	limits.Limits = Limits{PerDay: 10000}.In("Pacific/Auckland") // room for one €86.20 case a day
+	*now = time.Date(2026, 11, 28, 10, 45, 0, 0, time.UTC)       // 23:45 on 28 Nov in Auckland
+	first := newCase(t, "pc_day_1")
+	if err := s.Decide(ctx, first.Tenant, first.CaseID, 1, open(t, s, first), limits); err != nil {
+		t.Fatal(err)
+	}
+	*now = time.Date(2026, 11, 28, 11, 15, 0, 0, time.UTC) // 00:15 on 29 Nov in Auckland
+	second := newCase(t, "pc_day_2")
+	if err := s.Decide(ctx, second.Tenant, second.CaseID, 1, open(t, s, second), limits); err != nil {
+		t.Fatalf("the next day in Auckland: %v", err)
+	}
+	var day string
+	if err := s.Pool.QueryRow(ctx, `SELECT room_day::text FROM purchase.cases WHERE case_id = 'pc_day_2'`).Scan(&day); err != nil || day != "2026-11-29" {
+		t.Fatalf("room_day = %q %v", day, err)
+	}
+	// The same instants in UTC are one day: the second has no room.
+	utc := owner
+	utc.Limits = Limits{PerDay: 10000}
+	if _, err := s.Pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room`); err != nil {
+		t.Fatal(err)
+	}
+	*now = time.Date(2026, 11, 28, 10, 45, 0, 0, time.UTC)
+	if err := s.Decide(ctx, first.Tenant, first.CaseID, 1, open(t, s, first), utc); err != nil {
+		t.Fatal(err)
+	}
+	*now = time.Date(2026, 11, 28, 11, 15, 0, 0, time.UTC)
+	if err := s.Decide(ctx, second.Tenant, second.CaseID, 1, open(t, s, second), utc); !errors.Is(err, ErrRoomTaken) {
+		t.Fatalf("the same day in UTC: %v", err)
+	}
+}
