@@ -147,10 +147,13 @@ func snake(op string) string {
 }
 
 var (
-	readVerbs         = []string{"get_", "list_", "search_", "find_", "read_", "fetch_", "retrieve_", "lookup_", "describe_", "count_"}
-	deleteVerbs       = []string{"delete_", "remove_", "destroy_", "purge_", "erase_"}
-	irreversibleVerbs = []string{"send_", "finalize_", "finalise_", "issue_", "invite_", "share_", "publish_", "submit_", "approve_", "sign_", "void_", "cancel_", "close_", "mark_", "unmark_"}
-	irreversibleWords = []string{"_status", "finaliz", "finalis", "credit_note", "reminder", "membership", "_invite", "_share", "_void", "uncollectible", "_send"}
+	readVerbs   = []string{"get_", "list_", "search_", "find_", "read_", "fetch_", "retrieve_", "lookup_", "describe_", "count_"}
+	deleteVerbs = []string{"delete_", "remove_", "destroy_", "purge_", "erase_"}
+	// export_ and forward_ move data out of the account (a forward discloses it to a new recipient; an export is the
+	// usual first step of a bulk transfer), so they start closed with send and share: sharing personal data is a
+	// sensitive action the owner opens on the Card.
+	irreversibleVerbs = []string{"send_", "finalize_", "finalise_", "issue_", "invite_", "share_", "publish_", "submit_", "approve_", "sign_", "void_", "cancel_", "close_", "mark_", "unmark_", "export_", "forward_"}
+	irreversibleWords = []string{"_status", "finaliz", "finalis", "credit_note", "reminder", "membership", "_invite", "_share", "_void", "uncollectible", "_send", "_export", "_forward"}
 	moneyWords        = []string{"transfer", "payment", "payout", "refund", "charge", "card", "pay_", "_pay", "withdraw", "deposit", "money_request"}
 )
 

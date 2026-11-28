@@ -281,12 +281,12 @@
   },
   {
    "name": "export_transactions",
-   "class": "write",
-   "why": "'export' isn't a read verb, so it isn't a read by name. An export can be delivered somewhere, so it's a write until its definition shows otherwise."
+   "class": "irreversible",
+   "why": "An export moves the account's transactions out of it, the usual first step of sharing them, so it starts closed with send and share until the owner opens it."
   },
   {
    "name": "export_transaction_attachments",
-   "class": "write",
+   "class": "irreversible",
    "why": "Same as export_transactions."
   },
   {
