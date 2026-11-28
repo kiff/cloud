@@ -991,14 +991,16 @@ func (h *MandatesHandler) decidePurchase(w http.ResponseWriter, r *http.Request,
 	if answer == "reject" {
 		err = h.purchaseHolds.Refuse(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest)
 	} else {
-		limits, ok := h.cardPurchaseLimits(r.Context(), tenantID, c)
-		if !ok {
+		// The Card must still let it buy; the owner's own approval reserves
+		// the room and counts, and isn't refused by the within-limits day
+		// ceiling: outside those limits is exactly what waits for them.
+		if _, ok := h.cardPurchaseLimits(r.Context(), tenantID, c); !ok {
 			writeJSON(w, http.StatusConflict, map[string]string{"error": "purchase_card_changed",
 				"detail": "the Card this purchase was made under no longer lets it buy; nothing was approved"})
 			return true
 		}
 		err = h.purchaseHolds.Decide(r.Context(), tenantID, c.CaseID, c.Version, pr.Digest,
-			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card, Limits: limits})
+			purchase.Decision{By: purchase.ByOwner, Signature: id, ApproverRole: "owner", Card: c.Card})
 	}
 	switch {
 	case err == nil:

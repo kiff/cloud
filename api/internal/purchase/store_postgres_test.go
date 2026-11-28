@@ -432,3 +432,20 @@ func TestAHoldNamesItsCase(t *testing.T) {
 		t.Fatal("line")
 	}
 }
+
+// The owner's approval reserves room and counts, past the within-limits
+// day: a within-limits purchase afterwards sees that room used.
+func TestTheOwnersApprovalCountsWithoutTheWithinLimitsCeiling(t *testing.T) {
+	s, _ := testStore(t)
+	ctx := context.Background()
+	big := newCase(t, "pc_owner_big")
+	byOwner := Decision{By: ByOwner, Signature: "exc_1", Card: CardRef{ID: "card_9f2c", Version: 4}}
+	if err := s.Decide(ctx, big.Tenant, big.CaseID, 1, open(t, s, big), byOwner); err != nil {
+		t.Fatalf("the owner's approval past the day: %v", err)
+	}
+	within := Decision{By: ByCardLimits, Card: CardRef{ID: "card_9f2c", Version: 4}, Limits: Limits{PerPurchase: 10000, PerDay: 10000, PerHourCount: 5, Categories: []string{"5943"}}}
+	small := newCase(t, "pc_within_after")
+	if err := s.Decide(ctx, small.Tenant, small.CaseID, 1, open(t, s, small), within); !errors.Is(err, ErrRoomTaken) {
+		t.Fatalf("within limits after the owner used the day: %v", err)
+	}
+}

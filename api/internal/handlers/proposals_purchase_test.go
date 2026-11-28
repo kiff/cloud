@@ -109,8 +109,9 @@ func (f *fakeHolds) Refuse(context.Context, string, string, int, string) error {
 	return nil
 }
 
-// The owner's answer to a purchase hold decides its case: approve-once with
-// the Card in force's day room, reject refuses it, and a room another
+// The owner's answer to a purchase hold decides its case: approve-once
+// reserves room with no within-limits ceiling (outside them is what waits
+// for the owner), reject refuses it, and a room another
 // purchase took approves nothing.
 func TestTheOwnersAnswerDecidesThePurchase(t *testing.T) {
 	ctx := context.Background()
@@ -130,7 +131,7 @@ func TestTheOwnersAnswerDecidesThePurchase(t *testing.T) {
 		return 0
 	}
 	f := &fakeHolds{row: row}
-	if code := answer(f, "approve-once"); code != 0 || f.decided == nil || f.decided.By != purchase.ByOwner || f.decided.Limits.PerDay != 20000 {
+	if code := answer(f, "approve-once"); code != 0 || f.decided == nil || f.decided.By != purchase.ByOwner || f.decided.Limits.PerDay != 0 {
 		t.Fatalf("approve: %d %+v", code, f.decided)
 	}
 	f = &fakeHolds{row: row}
