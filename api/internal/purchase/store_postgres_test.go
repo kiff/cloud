@@ -28,11 +28,15 @@ func testStore(t *testing.T) (*Store, *time.Time) {
 	if err := ApplySchema(ctx, pool); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room, purchase.authorizations`); err != nil {
+	if _, err := pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room, purchase.authorizations, purchase.accounts, purchase.events`); err != nil {
 		t.Fatal(err)
 	}
 	now := time.Date(2026, 11, 28, 9, 15, 0, 0, time.UTC)
-	return &Store{Pool: pool, Now: func() time.Time { return now }}, &now
+	s := &Store{Pool: pool, Now: func() time.Time { return now }}
+	if err := s.SetAccount(ctx, "t_acme", "acct_acme"); err != nil {
+		t.Fatal(err)
+	}
+	return s, &now
 }
 
 // newCase is the contract's case under another id (and, for a second
@@ -232,7 +236,7 @@ func TestAnUnknownCaseWithAStandingAuthorizationEnds(t *testing.T) {
 }
 
 func auth(id, card string, amount int64) Auth {
-	return Auth{ID: id, Card: card, Amount: amount, Currency: "EUR", MerchantName: "PAPETERIE LUMIERE LYON", MerchantCountry: "FR",
+	return Auth{ID: id, Card: card, Account: "acct_acme", Amount: amount, Currency: "EUR", MerchantName: "PAPETERIE LUMIERE LYON", MerchantCountry: "FR",
 		Category: "stationery_office_supplies_printing_and_writing_paper", Verification: "exempted"}
 }
 
@@ -280,6 +284,7 @@ func TestTheLiveAuthorizationApprovesOnlyTheMatchingCaseOnce(t *testing.T) {
 		"a required check":  func() Auth { a := auth("x6", "ic_b", 100); a.Verification = "required"; return a }(),
 		"an unknown card":   auth("x7", "ic_nobody", 100),
 		"incremental first": func() Auth { a := auth("x8", "ic_b", 100); a.Incremental = true; return a }(),
+		"another account":   func() Auth { a := auth("x10", "ic_b", 100); a.Account = "acct_other"; return a }(),
 	} {
 		if got := s.Authorize(ctx, a); got.Approved {
 			t.Errorf("%s: approved", name)

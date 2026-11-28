@@ -11,8 +11,11 @@ import (
 
 // Auth is one live authorization as the issuer asks it.
 type Auth struct {
-	ID                string
-	Card              string
+	ID   string
+	Card string
+	// Account is the connected account the event came from: each business
+	// is its own, and the authorization counts only on its tenant's.
+	Account           string
 	Amount            int64
 	Currency          string
 	MerchantName      string
@@ -36,6 +39,7 @@ type Answer struct {
 // Why an authorization is declined.
 const (
 	DeclineNoCase      = "no_case"
+	DeclineAccount     = "another_account"
 	DeclineState       = "case_not_executing"
 	DeclineExpired     = "past_valid_until"
 	DeclineTwice       = "already_approved_once"
@@ -123,6 +127,12 @@ func (s *Store) Authorize(ctx context.Context, a Auth) Answer {
 			return err
 		}
 		out = Check(r, a, now)
+		if out.Approved {
+			var account string
+			if err := tx.QueryRow(ctx, `SELECT account FROM purchase.accounts WHERE tenant_id = $1`, r.Case.Tenant).Scan(&account); err != nil || account == "" || account != a.Account {
+				out = Answer{Reason: DeclineAccount}
+			}
+		}
 		if out.Approved {
 			tag, err := tx.Exec(ctx, `UPDATE purchase.cases SET approved_once = true, authorized = authorized + $4, updated_at = $5
 				WHERE tenant_id = $1 AND case_id = $2 AND version = $3 AND approved_once = $6`,

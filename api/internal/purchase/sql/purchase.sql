@@ -55,3 +55,16 @@ CREATE TABLE IF NOT EXISTS purchase.authorizations (
     amount           BIGINT      NOT NULL,
     at               TIMESTAMPTZ NOT NULL
 );
+
+-- Each business is its own connected account at the issuer, and the
+-- cardholder: an authorization counts only on its tenant's account.
+CREATE TABLE IF NOT EXISTS purchase.accounts (
+    tenant_id TEXT PRIMARY KEY,
+    account   TEXT NOT NULL UNIQUE
+);
+
+-- The issuer's events, once each: a replayed event id is refused.
+CREATE TABLE IF NOT EXISTS purchase.events (
+    event_id TEXT        PRIMARY KEY,
+    at       TIMESTAMPTZ NOT NULL
+);
