@@ -2,6 +2,7 @@ package connection_test
 
 import (
 	"context"
+	"errors"
 	"github.com/kiff/cloud/gateway/internal/gateway"
 	"net/http"
 	"strings"
@@ -106,4 +107,16 @@ func TestARelayPatchesItsOwnToolWithoutLoweringItsClass(t *testing.T) {
 	if !strings.Contains(first, `"app": ""`) {
 		t.Fatalf("the first record's old values: %s", first)
 	}
+	// A re-record that fails leaves the record cleared, "not known yet",
+	// which a Card draft opens nothing for: never the old fields' class.
+	r.h.RecordClasses = func(context.Context, string) error { return errors.New("the catalog is down") }
+	if status, body := patch("connector-a", "invoice", map[string]any{"app": "qonto", "destructive_hint": true, "vendor_pins": pins}); status != http.StatusNoContent {
+		t.Fatalf("a change whose re-record fails is still kept: %d %s", status, body)
+	}
+	var opens []byte
+	if err := r.store.Pool.QueryRow(ctx, `SELECT class, class_opens, class_conditioned FROM gateway.tools WHERE tenant_id = 'tenant-a' AND name = 'invoice'`).Scan(&class, &opens, &conditioned); err != nil ||
+		class != "" || opens != nil || conditioned {
+		t.Fatalf("after a failed re-record: %q %s %v %v", class, opens, conditioned, err)
+	}
+	r.h.RecordClasses = nil
 }
