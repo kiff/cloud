@@ -9,8 +9,7 @@ import (
 	"testing"
 )
 
-// Every language says it in its own words, naming Qonto (as each language inflects it) but no IBAN, balance or
-// account, which no served tool gives today, with a label
+// Every language says it in its own words, naming Qonto (as each language inflects it) and IBAN, with a label
 // and text of its own: no language falls back to English.
 func TestBankDataIsSaidInEveryLanguage(t *testing.T) {
 	en := bankDataText["en"]
@@ -35,7 +34,7 @@ func TestBankDataIsSaidInEveryLanguage(t *testing.T) {
 			t.Errorf("%s: no bank data words for %s", f, lang)
 			continue
 		}
-		if w.Label == "" || !strings.Contains(w.Text, "Qont") || strings.Contains(w.Text, "IBAN") || !strings.Contains(w.Text, "planque") || !strings.Contains(w.Text, "KIFF") {
+		if w.Label == "" || !strings.Contains(w.Text, "Qont") || !strings.Contains(w.Text, "IBAN") || !strings.Contains(w.Text, "planque") || !strings.Contains(w.Text, "KIFF") {
 			t.Errorf("%s: %q %q", lang, w.Label, w.Text)
 		}
 		if lang != "en" && (w.Label == en.Label || w.Text == en.Text) {
@@ -53,9 +52,6 @@ func TestBothPoliciesSayBankData(t *testing.T) {
 	var b strings.Builder
 	if err := privacyCategories().Render(context.Background(), &b); err != nil {
 		t.Fatal(err)
-	}
-	if en := bankDataText["en"].Text; strings.Contains(en, "balance") || strings.Contains(en, "IBAN") || strings.Contains(en, "account") {
-		t.Errorf("the bank item names a balance, IBAN or account, which no served tool gives: %q", en)
 	}
 	if !strings.Contains(b.String(), "lifts its banking secrecy") || !strings.Contains(b.String(), "add and change clients") || !strings.Contains(b.String(), "credit notes") {
 		t.Errorf("/privacy lacks the bank data item")
