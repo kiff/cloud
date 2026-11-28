@@ -202,7 +202,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	}
 	// A Card for the agent granting them.
 	card := map[string]any{"id": "card-e2e", "subject": "agt_e2e", "domain": "gateway",
-		"grants": []map[string]any{{"action": "quote_direct"}, {"action": "refund_relay"}, {"action": "refund_fresh"}},
+		"grants":     []map[string]any{{"action": "quote_direct"}, {"action": "refund_relay"}, {"action": "refund_fresh"}},
 		"aggregates": []map[string]any{{"quantity": "count", "limit": 100, "window": "calendar_day"}}}
 	if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", subject, card); code != http.StatusCreated && code != http.StatusOK {
 		t.Fatalf("issue the Card: %d %v", code, out)
