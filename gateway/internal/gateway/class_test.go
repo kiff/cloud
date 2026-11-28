@@ -131,3 +131,12 @@ func TestTheVendorsDestructiveHintOnlyRaises(t *testing.T) {
 		}
 	}
 }
+
+func TestOnlyATableConditionedToolIsConditioned(t *testing.T) {
+	if !(Tool{App: "qonto", Name: "create_client_invoice"}).Conditioned() {
+		t.Fatal("create_client_invoice has the draft condition")
+	}
+	if (Tool{App: "qonto", Name: "list_client_invoices"}).Conditioned() || (Tool{Name: "create_client_invoice"}).Conditioned() {
+		t.Fatal("no condition without one in the app's table")
+	}
+}

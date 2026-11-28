@@ -1276,6 +1276,13 @@ func (h *Handler) logClass(r *http.Request, c caller, conn Connection) {
 	}
 	t := gateway.Tool{Name: conn.Name, UpstreamTool: conn.UpstreamTool, VendorTool: conn.VendorTool, App: conn.App, DestructiveHint: conn.DestructiveHint, ReadOnly: conn.ReadOnly}
 	class := t.Class()
+	if conn.DestructiveHint && t.Conditioned() {
+		// The reviewed table's condition still lowers this tool on its value,
+		// though the vendor now marks it destructive: a cue to read the
+		// table again.
+		h.Logger.InfoContext(r.Context(), "connections: a destructive tool has a condition that lowers its class",
+			slog.String("tenant", c.me.TenantID), slog.String("tool", conn.Name), slog.String("app", conn.App))
+	}
 	if (class == gateway.ClassRead) == conn.ReadOnly {
 		return
 	}

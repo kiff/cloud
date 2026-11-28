@@ -132,6 +132,14 @@ func (t Tool) Class() Class {
 	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint})
 }
 
+// Conditioned says whether its app's reviewed table has a condition that can
+// lower this tool's class on a call (create_client_invoice with status:
+// draft).
+func (t Tool) Conditioned() bool {
+	tt, ok := tableEntry(t.App, t.classedName())
+	return ok && tt.condition != nil
+}
+
 // classedName is the tool's name at its vendor: what its class is read from.
 func (t Tool) classedName() string {
 	switch {
