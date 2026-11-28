@@ -74,12 +74,19 @@ func ruleClass(t ClassedTool) Class {
 	if t.Money {
 		return ClassMoney
 	}
-	c := nameClass(t, strings.ToLower(t.Name))
+	// A camelCase name (an OpenAPI operation id: searchTickets, postReply) is
+	// read as its words joined by underscores, so its verb is a verb.
+	name := t.Name
+	if !strings.ContainsRune(name, '_') && strings.ToLower(name) != name {
+		name = snake(name)
+	}
+	c := nameClass(t, strings.ToLower(name))
 	// A name that starts with its app's name (Composio's STRIPE_VOID_INVOICE)
-	// is classed again without it: only ever raising, so a prefix can't hide
-	// a verb.
-	if i := strings.IndexByte(t.Name, '_'); i > 0 {
-		n, rest := strings.ToLower(t.Name), strings.ToLower(t.Name[i+1:])
+	// is classed again without it. The whole name can only raise that class;
+	// and the name without its app makes a read only as any name does, with
+	// planque's read_only too (STRIPE_LIST_INVOICES).
+	if i := strings.IndexByte(name, '_'); i > 0 {
+		n, rest := strings.ToLower(name), strings.ToLower(name[i+1:])
 		if !hasPrefix(n, allVerbs()) && hasPrefix(rest, allVerbs()) {
 			// The name without its app decides, and the whole name can
 			// only raise it (a money or irreversible word anywhere in it).
