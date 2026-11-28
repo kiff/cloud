@@ -190,7 +190,7 @@ const (
 	// Every other account's test purchases are refused.
 	envAppleSandboxTenants = "KIFF_APPLE_SANDBOX_TENANTS"
 	// envK4Tenants is the comma-separated accounts whose vendor calls KIFF
-	// decides by their class (K4, design/policy-to-card.md): irreversible,
+	// decides by their class (K4): irreversible,
 	// delete and money refused until a Card opens them, and every money call
 	// held for its owner. Test accounts only until K4's step 7; unset, none.
 	envK4Tenants = "KIFF_K4_TENANTS"

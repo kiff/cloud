@@ -71,10 +71,9 @@ func classFrom(ctx context.Context) callClass {
 // classInto sets K4 on req for an account K4 is on for: the call's class and
 // its argument values. A money or irreversible call there always asks its
 // owner, whatever the Card opens: a payment, a finalised document or a send
-// is approved on the phone, each time (K4's requirement, and the PM's ruling
-// on irreversible). An account off the list is decided as before. A call the
-// gateway sent no class for, on a K4 account, is a write: never a read by
-// default.
+// is approved on the phone, each time. An account off the list is decided
+// as before. A call the gateway sent no class for, on a K4 account, is a
+// write: never a read by default.
 func (h *ProposalsHandler) classInto(ctx context.Context, tenant string, req *mandate.Request) {
 	if !h.k4[tenant] {
 		return

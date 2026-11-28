@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// A call's class (K4, design/policy-to-card.md): what the worst call of a
+// A call's class (K4): what the worst call of a
 // tool can do. KIFF computes it itself, beside the read_only planque sends
 // (K1), and never lower than planque's word: a tool planque doesn't call
 // read-only is never a read here.

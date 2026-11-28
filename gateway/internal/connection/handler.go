@@ -1241,7 +1241,7 @@ func appSlug(s string) string {
 // logClass logs conn's class where it differs from its connector's
 // read_only (ClassLog): a tool KIFF calls a write, irreversible, delete or
 // money that its connector sent as read-only, or a read it sent as a write.
-// Step 2 of the one sequence reads these lines.
+// The rollout reads these lines before KIFF decides on its own class.
 func (h *Handler) logClass(r *http.Request, c caller, conn Connection) {
 	if !h.ClassLog || h.Logger == nil {
 		return

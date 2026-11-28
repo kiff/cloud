@@ -270,7 +270,7 @@ type Grant struct {
 	// call. Empty means approve or refuse only, as before.
 	NextSteps []string `json:",omitempty"`
 	// Opens are the categories of call the owner opened on this action
-	// (K4, design/policy-to-card.md): irreversible, delete or money, each
+	// (K4): irreversible, delete or money, each
 	// refused until opened, and optionally only for one value of one
 	// argument ("finalize" on status). A money opening never lets a pay run
 	// unasked: each is still the owner's to approve.
