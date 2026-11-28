@@ -48,7 +48,7 @@ func TafsPrivacyDE() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · Datenschutzerklärung</p><h1>tafs-Datenschutzerklärung</h1><p class=\"legal-meta\"><strong>Zuletzt aktualisiert:</strong> 27. November 2026.</p><p class=\"legal-disclaimer\">Diese Erklärung beschreibt, wie tafs, KIFFs App für iPhone, iPad, Android und Computer, mit personenbezogenen Daten umgeht. tafs ist Teil von KIFF Cloud, also gilt <a href=\"/de/privacy\">KIFFs Datenschutzerklärung</a> auch dafür, und für alles, was diese Seite nicht abdeckt. Fragen: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Wer wir sind</h2><p>tafs wird von <strong>Kiff Agents OÜ</strong> bereitgestellt, einer in Estland gegründeten Gesellschaft mit beschränkter Haftung (Registernummer 17372313, Umsatzsteuer-Identifikationsnummer EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estland. Die Datenschutz-Grundverordnung der EU (DSGVO) gilt für unsere Verarbeitung.</p></section><section id=\"scope\"><h2>2. Geltungsbereich dieser Erklärung</h2><p>Die tafs-App für iPhone, iPad, Android und Computer (Mac, Windows und Linux) und der Dienst dahinter, einschließlich Setup, das die Tools eines Unternehmens verbindet, und planque, das diese Verbindungen aufbewahrt. In tafs übergibt ein Unternehmen eine Aufgabe an einen KI-Agenten, einen taf, der innerhalb von KIFF Cards arbeitet.</p></section><section id=\"roles\"><h2>3. Unsere Rollen</h2><p>Wir sind <strong>Verantwortlicher</strong> für deine Konto- und Anmeldedaten und für die Betriebsdaten unseres eigenen Dienstes. Wir handeln als <strong>Auftragsverarbeiter</strong>, im Auftrag deines Unternehmens, für das, was tafs für es aufbewahrt: die Läufe, Chats, Berichte und Gedächtnisnotizen jedes tafs und die Dateien, die er liefert. Dein Unternehmen ist der Verantwortliche für diese Daten, und der <a href=\"/de/legal/dpa\">AVV</a> regelt dieses Verhältnis.</p></section><section id=\"data\"><h2>4. Was tafs erhebt</h2><ul><li><strong>Dein Konto:</strong> Du meldest dich bei tafs mit deinem KIFF-Konto an. Auf einem Telefon oder Tablet bewahrt die App deine Sitzung im Schlüsselbund des Geräts auf (auf Android in seinem verschlüsselten Speicher). Auf einem Computer bewahrt sie sie versiegelt für dein Benutzerkonto auf: auf einem Windows-PC mit dem eigenen Datenschutz von Windows, unter Linux in deinem Schlüsselring, auf einem Mac in seinem Schlüsselbund. Die Sitzung eines Computers gilt bis zu 90 Tage.</li><li><strong>Dein Gerät:</strong> Die App erzeugt einen Signaturschlüssel, der das Gerät nie verlässt: in der Secure Enclave eines iPhone, iPad oder Mac, im Keystore eines Android-Geräts oder im TPM eines Windows-PCs. Unter Linux und auf einem Mac ohne Secure Enclave ist der Schlüssel ein Software-Schlüssel, der in deinem Schlüsselring oder Schlüsselbund aufbewahrt wird, und dieser Computer kann zeigen, was auf dich wartet, es aber nicht genehmigen; du genehmigst auf deinem Telefon")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"legal prose\"><header class=\"legal-head\"><p class=\"legal-badge\">tafs · Datenschutzerklärung</p><h1>tafs-Datenschutzerklärung</h1><p class=\"legal-meta\"><strong>Zuletzt aktualisiert:</strong> 28. November 2026.</p><p class=\"legal-disclaimer\">Diese Erklärung beschreibt, wie tafs, KIFFs App für iPhone, iPad, Android und Computer, mit personenbezogenen Daten umgeht. tafs ist Teil von KIFF Cloud, also gilt <a href=\"/de/privacy\">KIFFs Datenschutzerklärung</a> auch dafür, und für alles, was diese Seite nicht abdeckt. Fragen: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>.</p></header><section id=\"who-we-are\"><h2>1. Wer wir sind</h2><p>tafs wird von <strong>Kiff Agents OÜ</strong> bereitgestellt, einer in Estland gegründeten Gesellschaft mit beschränkter Haftung (Registernummer 17372313, Umsatzsteuer-Identifikationsnummer EE102924327), Tööstuse tn 75-71, Põhja-Tallinna linnaosa, Tallinn 10416, Estland. Die Datenschutz-Grundverordnung der EU (DSGVO) gilt für unsere Verarbeitung.</p></section><section id=\"scope\"><h2>2. Geltungsbereich dieser Erklärung</h2><p>Die tafs-App für iPhone, iPad, Android und Computer (Mac, Windows und Linux) und der Dienst dahinter, einschließlich Setup, das die Tools eines Unternehmens verbindet, und planque, das diese Verbindungen aufbewahrt. In tafs übergibt ein Unternehmen eine Aufgabe an einen KI-Agenten, einen taf, der innerhalb von KIFF Cards arbeitet.</p></section><section id=\"roles\"><h2>3. Unsere Rollen</h2><p>Wir sind <strong>Verantwortlicher</strong> für deine Konto- und Anmeldedaten und für die Betriebsdaten unseres eigenen Dienstes. Wir handeln als <strong>Auftragsverarbeiter</strong>, im Auftrag deines Unternehmens, für das, was tafs für es aufbewahrt: die Läufe, Chats, Berichte und Gedächtnisnotizen jedes tafs und die Dateien, die er liefert. Dein Unternehmen ist der Verantwortliche für diese Daten, und der <a href=\"/de/legal/dpa\">AVV</a> regelt dieses Verhältnis.</p></section><section id=\"data\"><h2>4. Was tafs erhebt</h2><ul><li><strong>Dein Konto:</strong> Du meldest dich bei tafs mit deinem KIFF-Konto an. Auf einem Telefon oder Tablet bewahrt die App deine Sitzung im Schlüsselbund des Geräts auf (auf Android in seinem verschlüsselten Speicher). Auf einem Computer bewahrt sie sie versiegelt für dein Benutzerkonto auf: auf einem Windows-PC mit dem eigenen Datenschutz von Windows, unter Linux in deinem Schlüsselring, auf einem Mac in seinem Schlüsselbund. Die Sitzung eines Computers gilt bis zu 90 Tage.</li><li><strong>Dein Gerät:</strong> Die App erzeugt einen Signaturschlüssel, der das Gerät nie verlässt: in der Secure Enclave eines iPhone, iPad oder Mac, im Keystore eines Android-Geräts oder im TPM eines Windows-PCs. Unter Linux und auf einem Mac ohne Secure Enclave ist der Schlüssel ein Software-Schlüssel, der in deinem Schlüsselring oder Schlüsselbund aufbewahrt wird, und dieser Computer kann zeigen, was auf dich wartet, es aber nicht genehmigen; du genehmigst auf deinem Telefon")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -123,7 +123,20 @@ func TafsPrivacyDE() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Die Arbeit deiner tafs:</strong> die Läufe, Chats, Berichte und Gedächtnisnotizen jedes tafs und die Dateien, die er liefert, als Auftragsverarbeiter aufbewahrt. Alle in deinem Konto können die Dateien sehen, die deine tafs liefern.</li><li><strong>Türen:</strong> wenn du eine Tür öffnest, damit Leute einem taf per E-Mail, Slack oder Telegram schreiben können, bewahrt der tafs-Dienst jeden Absender auf, den du koppelst, mit seiner E-Mail-Adresse, Slack-Mitglieds-ID oder Telegram-Nutzer-ID (bei einer WhatsApp-Tür einer Telefonnummer) und dem Namen, den du ihm gibst, bis du die Tür oder den taf entfernst. Eine Nachricht von jemandem, den du nicht gekoppelt hast, wartet als Klopfen auf dich, mit Absender und Inhalt, bis zu 30 Tage nach dem letzten. Die Nachricht eines gekoppelten Absenders geht in den Chat des tafs und wird wie der Rest des Chats aufbewahrt. Slack und Telegram übermitteln die Nachrichten nach ihren eigenen Bedingungen.</li><li><strong>Käufe:</strong> Solo und Credit-Pakete verkauft Apple über den App Store oder Google über die Abrechnung von Google Play. Sie teilen uns mit, was gekauft wurde, für welches KIFF-Konto (eine zufällige ID), wann, und ihre Transaktions- oder Bestellreferenzen. Sie geben uns weder deine Apple-ID oder dein Google-Konto noch deinen Namen, deine E-Mail-Adresse oder deine Karte.</li></ul><p>Die App hat keine Analyse- oder Werbe-Tracker.</p></section><section id=\"ai\"><h2>5. Die KI in tafs</h2><p>tafs nutzt die KI Claude von Anthropic für Coach und deine tafs. Anthropic oder einer der Cloud-Anbieter auf unserer Seite der Unterauftragsverarbeiter betreibt sie für uns. Diese Seite sagt, wer und wo. Die App fragt dich, bevor etwas an sie geht.</p><ul><li>Was an sie gesendet wird: was du Coach und deinen tafs schreibst, die Dateien, die du anhängst, was deine verbundenen Apps einem taf bei der Arbeit zurückgeben, und was auf deinem Bildschirm ist, während Coach dir in der App hilft.</li><li>Aus Chrome: die vordere Seite, wenn du Coach im Seitenbereich der Erweiterung schreibst, sobald du Coach dort das Lesen von Seiten erlaubt hast. Auch wenn du dort einem taf schreibst, auf einer seiner eigenen Websites.</li><li>Was nie gesendet wird: die Passwörter und Schlüssel, die deine verbundenen Apps nutzen, oder dein Fingerabdruck.</li><li>Das Unternehmen, das sie betreibt, nutzt es, um zu antworten, und löscht es innerhalb von 30 Tagen, außer es wird als Verstoß gegen seine Nutzungsregeln markiert oder das Gesetz verlangt, es aufzubewahren.</li><li>Nichts wird gesendet, bevor du es erlaubst. Du kannst es unter Konto widerrufen.</li></ul><p>Wenn du widerrufst, antworten dir Coach und deine tafs nicht mehr, und ein taf, dessen Läufe auf deiner Einwilligung beruhen, pausiert. tafs bewahrt zu jeder Einwilligung, die du gibst oder widerrufst, einen Nachweis auf, mit Zeitpunkt und Fassung ihres Wortlauts, 10 Jahre ab der letzten Änderung, um zu zeigen, wozu du eingewilligt hast; wenn du dein Konto löschst, wird er früher gelöscht. <a href=\"/de/privacy#ai-in-tafs\">KIFFs Datenschutzerklärung</a> enthält die Details.</p></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</li><li><strong>Die Arbeit deiner tafs:</strong> die Läufe, Chats, Berichte und Gedächtnisnotizen jedes tafs und die Dateien, die er liefert, als Auftragsverarbeiter aufbewahrt. Alle in deinem Konto können die Dateien sehen, die deine tafs liefern.</li><li><strong>Türen:</strong> wenn du eine Tür öffnest, damit Leute einem taf per E-Mail, Slack oder Telegram schreiben können, bewahrt der tafs-Dienst jeden Absender auf, den du koppelst, mit seiner E-Mail-Adresse, Slack-Mitglieds-ID oder Telegram-Nutzer-ID (bei einer WhatsApp-Tür einer Telefonnummer) und dem Namen, den du ihm gibst, bis du die Tür oder den taf entfernst. Eine Nachricht von jemandem, den du nicht gekoppelt hast, wartet als Klopfen auf dich, mit Absender und Inhalt, bis zu 30 Tage nach dem letzten. Die Nachricht eines gekoppelten Absenders geht in den Chat des tafs und wird wie der Rest des Chats aufbewahrt. Slack und Telegram übermitteln die Nachrichten nach ihren eigenen Bedingungen. ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("de"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 49, Col: 743}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</li><li><strong>Käufe:</strong> Solo und Credit-Pakete verkauft Apple über den App Store oder Google über die Abrechnung von Google Play. Sie teilen uns mit, was gekauft wurde, für welches KIFF-Konto (eine zufällige ID), wann, und ihre Transaktions- oder Bestellreferenzen. Sie geben uns weder deine Apple-ID oder dein Google-Konto noch deinen Namen, deine E-Mail-Adresse oder deine Karte.</li></ul><p>Die App hat keine Analyse- oder Werbe-Tracker.</p></section><section id=\"ai\"><h2>5. Die KI in tafs</h2><p>tafs nutzt die KI Claude von Anthropic für Coach und deine tafs. Anthropic oder einer der Cloud-Anbieter auf unserer Seite der Unterauftragsverarbeiter betreibt sie für uns. Diese Seite sagt, wer und wo. Die App fragt dich, bevor etwas an sie geht.</p><ul><li>Was an sie gesendet wird: was du Coach und deinen tafs schreibst, die Dateien, die du anhängst, was deine verbundenen Apps einem taf bei der Arbeit zurückgeben, und was auf deinem Bildschirm ist, während Coach dir in der App hilft.</li><li>Aus Chrome: die vordere Seite, wenn du Coach im Seitenbereich der Erweiterung schreibst, sobald du Coach dort das Lesen von Seiten erlaubt hast. Auch wenn du dort einem taf schreibst, auf einer seiner eigenen Websites.</li><li>Was nie gesendet wird: die Passwörter und Schlüssel, die deine verbundenen Apps nutzen, oder dein Fingerabdruck.</li><li>Das Unternehmen, das sie betreibt, nutzt es, um zu antworten, und löscht es innerhalb von 30 Tagen, außer es wird als Verstoß gegen seine Nutzungsregeln markiert oder das Gesetz verlangt, es aufzubewahren.</li><li>Nichts wird gesendet, bevor du es erlaubst. Du kannst es unter Konto widerrufen.</li></ul><p>Wenn du widerrufst, antworten dir Coach und deine tafs nicht mehr, und ein taf, dessen Läufe auf deiner Einwilligung beruhen, pausiert. tafs bewahrt zu jeder Einwilligung, die du gibst oder widerrufst, einen Nachweis auf, mit Zeitpunkt und Fassung ihres Wortlauts, 10 Jahre ab der letzten Änderung, um zu zeigen, wozu du eingewilligt hast; wenn du dein Konto löschst, wird er früher gelöscht. <a href=\"/de/privacy#ai-in-tafs\">KIFFs Datenschutzerklärung</a> enthält die Details.</p></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,20 +144,20 @@ func TafsPrivacyDE() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section id=\"sharing\"><h2>7. Wer sonst Daten erhält</h2><p>Wir verkaufen deine personenbezogenen Daten nicht und geben sie nicht für Werbung weiter.</p><p>Für tafs setzen wir diese Unternehmen ein: Amazon Web Services (Hosting, einschließlich des Speichers von tafs und der Verbindungen von planque), Clerk (Anmeldung für KIFF-Konten), Anthropic (das KI-Modell, betrieben von Anthropic, Amazon Web Services, Google Cloud oder Microsoft Azure), Composio (die Anmeldungen verwalteter Verbindungen und die Aufrufe, die planque bei ihm anfordert), Apple (Push-Benachrichtigungen), Google (Push-Benachrichtigungen auf Android und die Abrechnung von Google Play) und Resend (die E-Mail-Tür eines tafs). Die offizielle, aktuelle Liste, mit dem, was jedes dieser Unternehmen berührt und wo, steht unter <a href=\"/de/subprocessors\">/subprocessors</a>.</p><p>Einige von ihnen befinden sich außerhalb des Europäischen Wirtschaftsraums, vor allem in den Vereinigten Staaten. <a href=\"/de/privacy#transfers\">KIFFs Datenschutzerklärung</a> sagt, wie diese Übermittlungen abgesichert sind.</p><p><strong>Dein Land.</strong> In manchen Ländern verlangt das Gesetz mehr, als diese Richtlinie sagt. Was dort hinzukommt, steht auf Englisch und in der Landessprache unter <a href=\"/privacy/countries\">Dein Land</a>.</p></section><section id=\"retention\"><h2>8. Wie lange wir sie aufbewahren</h2><ul><li>Was deine Tools einem taf zurückgeben: nur bis der Lauf endet. In einem Chat wird das, was er nur gelesen hat, verschlüsselt für seine nächsten Nachrichten aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage.</li><li>Die Läufe und Chats eines tafs, mit der Zusammenfassung eines Chats: 30 Tage. Seine Gedächtnisnotizen: bis der taf entfernt wird. Einen deiner eigenen Chats mit Coach kannst du früher löschen: Seine Nachrichten und die Dateien, die du hinzugefügt hast, werden sofort gelöscht, während der Eintrag, dass jeder seiner Läufe stattfand, wann und was er gekostet hat, diese 30 Tage bleibt. Wenn du eine Antwort meldest, behält KIFF diese Antwort, deinen Grund und deine Notiz 180 Tage oder bis du diesen Chat oder dein Konto löschst. KIFF schickt sie außerdem per E-Mail an das Team, das Meldungen liest, wo diese E-Mail wie die Support-Post von KIFF aufbewahrt wird.</li><li>Kurze Notizen von Coach für seine nächste Antwort, etwa warum in einem Chat eine Verbindung nicht zustande kam oder dass eine Card genehmigt wurde: bis diese Antwort sie aufnimmt, höchstens 7 Tage; danach als Teil dieses Chats, so lange der Chat aufbewahrt wird. Eine Kopie bleibt 24 Stunden, damit eine erneut gesendete Nachricht dieselbe Notiz erhält. Die Notiz eines Chats wird nur in diesem Chat genutzt.</li><li>Dateien, die du in einem Chat anhängst: mit der Nachricht, an der sie hängen, 30 Tage, oder früher, wenn der Chat entfernt wird, und auf jeden Fall innerhalb von 38 Tagen. Eine Datei, die keine Nachricht nutzt, wird etwa eine Stunde nach dem Hochladen entfernt. Wenn du dein Konto löschst, werden sie gelöscht.</li><li>Dateien, die deine tafs liefern: 30 Tage ab dem Lauf, der sie erstellt hat, dann innerhalb eines Tages automatisch gelöscht. Alle in deinem Konto können eine Datei mit „Jetzt löschen“ früher löschen: Die Datei selbst ist sofort weg, ohne dass eine Kopie bleibt; ihr Name, ihre Größe sowie der taf und der Lauf, die sie erstellt haben, können bis zu 35 Tage in den verschlüsselten Point-in-Time-Kopien des Speichers von tafs bleiben, die nur dazu dienen, ihn nach einem Ausfall wiederherzustellen. Wenn ein taf entfernt oder dein Konto gelöscht wird, werden seine Dateien gelöscht. Beim Teilen einer Datei wird die Datei selbst gesendet, und die geteilte Kopie bleibt bei der App, mit der du sie geteilt hast. Zum Herunterladen erstellen wir für ein angemeldetes Mitglied deines Kontos einen Link, der nach einer Minute nicht mehr funktioniert; einen anderen Link dazu erstellen wir nicht.</li><li>Was ein Tool zurückgegeben hat, in planques Aufzeichnung jedes Aufrufs: 24 Stunden. Danach hält die Aufzeichnung nur noch fest, ob der Aufruf gesendet wurde, damit er nie zweimal gesendet wird.</li><li>Das Token oder der Schlüssel einer Verbindung in planque oder die Anmeldung einer verwalteten Verbindung bei Composio: bis du sie trennst. Kann eine andere deiner Verbindungen dasselbe Konto bei diesem Anbieter nutzen, bleibt sie ungenutzt bestehen, bis auch diese getrennt ist, und wird dann widerrufen. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. Wer sonst Daten erhält</h2><p>Wir verkaufen deine personenbezogenen Daten nicht und geben sie nicht für Werbung weiter.</p><p>Für tafs setzen wir diese Unternehmen ein: Amazon Web Services (Hosting, einschließlich des Speichers von tafs und der Verbindungen von planque), Clerk (Anmeldung für KIFF-Konten), Anthropic (das KI-Modell, betrieben von Anthropic, Amazon Web Services, Google Cloud oder Microsoft Azure), Composio (die Anmeldungen verwalteter Verbindungen und die Aufrufe, die planque bei ihm anfordert), Apple (Push-Benachrichtigungen), Google (Push-Benachrichtigungen auf Android und die Abrechnung von Google Play) und Resend (die E-Mail-Tür eines tafs). Die offizielle, aktuelle Liste, mit dem, was jedes dieser Unternehmen berührt und wo, steht unter <a href=\"/de/subprocessors\">/subprocessors</a>.</p><p>Einige von ihnen befinden sich außerhalb des Europäischen Wirtschaftsraums, vor allem in den Vereinigten Staaten. <a href=\"/de/privacy#transfers\">KIFFs Datenschutzerklärung</a> sagt, wie diese Übermittlungen abgesichert sind.</p><p><strong>Dein Land.</strong> In manchen Ländern verlangt das Gesetz mehr, als diese Richtlinie sagt. Was dort hinzukommt, steht auf Englisch und in der Landessprache unter <a href=\"/privacy/countries\">Dein Land</a>.</p></section><section id=\"retention\"><h2>8. Wie lange wir sie aufbewahren</h2><ul><li>Was deine Tools einem taf zurückgeben: nur bis der Lauf endet. In einem Chat wird das, was er nur gelesen hat, verschlüsselt für seine nächsten Nachrichten aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage.</li><li>Die Läufe und Chats eines tafs, mit der Zusammenfassung eines Chats: 30 Tage. Seine Gedächtnisnotizen: bis der taf entfernt wird. Einen deiner eigenen Chats mit Coach kannst du früher löschen: Seine Nachrichten und die Dateien, die du hinzugefügt hast, werden sofort gelöscht, während der Eintrag, dass jeder seiner Läufe stattfand, wann und was er gekostet hat, diese 30 Tage bleibt. Wenn du eine Antwort meldest, behält KIFF diese Antwort, deinen Grund und deine Notiz 180 Tage oder bis du diesen Chat oder dein Konto löschst. KIFF schickt sie außerdem per E-Mail an das Team, das Meldungen liest, wo diese E-Mail wie die Support-Post von KIFF aufbewahrt wird.</li><li>Kurze Notizen von Coach für seine nächste Antwort, etwa warum in einem Chat eine Verbindung nicht zustande kam oder dass eine Card genehmigt wurde: bis diese Antwort sie aufnimmt, höchstens 7 Tage; danach als Teil dieses Chats, so lange der Chat aufbewahrt wird. Eine Kopie bleibt 24 Stunden, damit eine erneut gesendete Nachricht dieselbe Notiz erhält. Die Notiz eines Chats wird nur in diesem Chat genutzt.</li><li>Dateien, die du in einem Chat anhängst: mit der Nachricht, an der sie hängen, 30 Tage, oder früher, wenn der Chat entfernt wird, und auf jeden Fall innerhalb von 38 Tagen. Eine Datei, die keine Nachricht nutzt, wird etwa eine Stunde nach dem Hochladen entfernt. Wenn du dein Konto löschst, werden sie gelöscht.</li><li>Dateien, die deine tafs liefern: 30 Tage ab dem Lauf, der sie erstellt hat, dann innerhalb eines Tages automatisch gelöscht. Alle in deinem Konto können eine Datei mit „Jetzt löschen“ früher löschen: Die Datei selbst ist sofort weg, ohne dass eine Kopie bleibt; ihr Name, ihre Größe sowie der taf und der Lauf, die sie erstellt haben, können bis zu 35 Tage in den verschlüsselten Point-in-Time-Kopien des Speichers von tafs bleiben, die nur dazu dienen, ihn nach einem Ausfall wiederherzustellen. Wenn ein taf entfernt oder dein Konto gelöscht wird, werden seine Dateien gelöscht. Beim Teilen einer Datei wird die Datei selbst gesendet, und die geteilte Kopie bleibt bei der App, mit der du sie geteilt hast. Zum Herunterladen erstellen wir für ein angemeldetes Mitglied deines Kontos einen Link, der nach einer Minute nicht mehr funktioniert; einen anderen Link dazu erstellen wir nicht.</li><li>Was ein Tool zurückgegeben hat, in planques Aufzeichnung jedes Aufrufs: 24 Stunden. Danach hält die Aufzeichnung nur noch fest, ob der Aufruf gesendet wurde, damit er nie zweimal gesendet wird.</li><li>Das Token oder der Schlüssel einer Verbindung in planque oder die Anmeldung einer verwalteten Verbindung bei Composio: bis du sie trennst. Kann eine andere deiner Verbindungen dasselbe Konto bei diesem Anbieter nutzen, bleibt sie ungenutzt bestehen, bis auch diese getrennt ist, und wird dann widerrufen. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("de"))
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("de"))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 83, Col: 338}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " Die Aufzeichnung ihrer Genehmigungen: bis das Konto endet.</li><li>Das Push-Token eines Geräts: bis du dich von der App abmeldest, das Gerät entfernst oder Apple oder Google meldet, dass es das Token nicht mehr gibt. Der öffentliche Schlüssel, der Name, die Plattform und die Datumsangaben eines Geräts: solange du es nutzt; sobald du es abmeldest, wird es als entfernt markiert und aufbewahrt, bis das Konto gelöscht wird, damit KIFF eine verspätete Antwort von ihm ablehnen und zeigen kann, welches Gerät eine frühere signiert hat. Der öffentliche Schlüssel, die ID und der Name eines Passkeys: wie die seines Geräts. Die Sitzung eines Computers: bis zu 90 Tage oder bis du dich abmeldest.</li><li>Dein Konto: bis es gelöscht wird. Dienstlogs: 30 Tage. Die Speicher von tafs und planque halten verschlüsselte Point-in-Time-Kopien 35 Tage lang vor, die nur dazu dienen, einen Speicher nach einem Ausfall wiederherzustellen.</li></ul><p>Alles Weitere steht in <a href=\"/de/privacy#retention\">KIFFs Abschnitt zur Aufbewahrung</a>.</p></section><section id=\"lawful-bases\"><h2>9. Rechtsgrundlagen</h2><p>Erfüllung eines Vertrags, um dein Konto und deine tafs zu betreiben. Berechtigte Interessen, für Sicherheit, Betrugsprävention und das Erkennen von Missbrauch. Einwilligung, für die KI in tafs (<a href=\"#ai\">Abschnitt 5</a>). Rechtliche Verpflichtung, für steuerliche Unterlagen. <a href=\"/de/privacy#lawful-bases\">KIFFs Datenschutzerklärung</a> enthält die Details.</p></section><section id=\"rights\"><h2>10. Deine Rechte</h2><p>Nach der DSGVO kannst du Auskunft über deine Daten verlangen, ihre Berichtigung, Löschung, Einschränkung oder eine übertragbare Kopie, der Verarbeitung widersprechen, die auf berechtigten Interessen beruht, und eine Einwilligung widerrufen. Schreib an <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; wir antworten unverzüglich und spätestens innerhalb eines Monats; bei einer komplexen Anfrage können wir zwei weitere Monate brauchen und sagen dir das innerhalb des ersten Monats. In der App lädt Konto → Meine Chats exportieren deine eigenen Chats und Notizen herunter.</p><p>Um dein tafs-Konto zu löschen, öffne die App, geh zu Konto und tippe auf <em>Konto löschen</em>, dann bestätige. Das lässt sich nicht rückgängig machen. <a href=\"/de/privacy#delete-account\">KIFFs Datenschutzerklärung</a> sagt, was gelöscht wird und wann, und wie du es per E-Mail verlangen kannst.</p><p>Du kannst dich bei der <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estnischen Datenschutzinspektion (Andmekaitse Inspektsioon)</a> beschweren oder bei der Aufsichtsbehörde dort, wo du lebst.</p><p><strong>Dein Land.</strong> In manchen Ländern verlangt das Gesetz mehr, als diese Richtlinie sagt. Was dort hinzukommt, steht auf Englisch und in der Landessprache unter <a href=\"/privacy/countries\">Dein Land</a>.</p></section><section id=\"more\"><h2>11. Sicherheit, Kinder und Änderungen</h2><p>Unsere Sicherheitsmaßnahmen stehen unter <a href=\"/de/security\">/security</a>. tafs richtet sich nicht an Kinder, und wir erheben nicht wissentlich personenbezogene Daten von Kindern unter 16 Jahren. Wir ändern diese Erklärung so, wie <a href=\"/de/privacy#changes\">KIFFs Datenschutzerklärung</a> es für ihre eigene vorsieht.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Fragen und Anfragen zum Datenschutz: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Förmliche rechtliche Mitteilungen: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Die eigenen Nutzungsbedingungen der App stehen unter <a href=\"/de/tafs/terms\">/tafs/terms</a>.</p></section></article>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " Die Aufzeichnung ihrer Genehmigungen: bis das Konto endet.</li><li>Das Push-Token eines Geräts: bis du dich von der App abmeldest, das Gerät entfernst oder Apple oder Google meldet, dass es das Token nicht mehr gibt. Der öffentliche Schlüssel, der Name, die Plattform und die Datumsangaben eines Geräts: solange du es nutzt; sobald du es abmeldest, wird es als entfernt markiert und aufbewahrt, bis das Konto gelöscht wird, damit KIFF eine verspätete Antwort von ihm ablehnen und zeigen kann, welches Gerät eine frühere signiert hat. Der öffentliche Schlüssel, die ID und der Name eines Passkeys: wie die seines Geräts. Die Sitzung eines Computers: bis zu 90 Tage oder bis du dich abmeldest.</li><li>Dein Konto: bis es gelöscht wird. Dienstlogs: 30 Tage. Die Speicher von tafs und planque halten verschlüsselte Point-in-Time-Kopien 35 Tage lang vor, die nur dazu dienen, einen Speicher nach einem Ausfall wiederherzustellen.</li></ul><p>Alles Weitere steht in <a href=\"/de/privacy#retention\">KIFFs Abschnitt zur Aufbewahrung</a>.</p></section><section id=\"lawful-bases\"><h2>9. Rechtsgrundlagen</h2><p>Erfüllung eines Vertrags, um dein Konto und deine tafs zu betreiben. Berechtigte Interessen, für Sicherheit, Betrugsprävention und das Erkennen von Missbrauch. Einwilligung, für die KI in tafs (<a href=\"#ai\">Abschnitt 5</a>). Rechtliche Verpflichtung, für steuerliche Unterlagen. <a href=\"/de/privacy#lawful-bases\">KIFFs Datenschutzerklärung</a> enthält die Details.</p></section><section id=\"rights\"><h2>10. Deine Rechte</h2><p>Nach der DSGVO kannst du Auskunft über deine Daten verlangen, ihre Berichtigung, Löschung, Einschränkung oder eine übertragbare Kopie, der Verarbeitung widersprechen, die auf berechtigten Interessen beruht, und eine Einwilligung widerrufen. Schreib an <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>; wir antworten unverzüglich und spätestens innerhalb eines Monats; bei einer komplexen Anfrage können wir zwei weitere Monate brauchen und sagen dir das innerhalb des ersten Monats. In der App lädt Konto → Meine Chats exportieren deine eigenen Chats und Notizen herunter.</p><p>Um dein tafs-Konto zu löschen, öffne die App, geh zu Konto und tippe auf <em>Konto löschen</em>, dann bestätige. Das lässt sich nicht rückgängig machen. <a href=\"/de/privacy#delete-account\">KIFFs Datenschutzerklärung</a> sagt, was gelöscht wird und wann, und wie du es per E-Mail verlangen kannst.</p><p>Du kannst dich bei der <a href=\"https://www.aki.ee/en\" target=\"_blank\" rel=\"noopener\">Estnischen Datenschutzinspektion (Andmekaitse Inspektsioon)</a> beschweren oder bei der Aufsichtsbehörde dort, wo du lebst.</p><p><strong>Dein Land.</strong> In manchen Ländern verlangt das Gesetz mehr, als diese Richtlinie sagt. Was dort hinzukommt, steht auf Englisch und in der Landessprache unter <a href=\"/privacy/countries\">Dein Land</a>.</p></section><section id=\"more\"><h2>11. Sicherheit, Kinder und Änderungen</h2><p>Unsere Sicherheitsmaßnahmen stehen unter <a href=\"/de/security\">/security</a>. tafs richtet sich nicht an Kinder, und wir erheben nicht wissentlich personenbezogene Daten von Kindern unter 16 Jahren. Wir ändern diese Erklärung so, wie <a href=\"/de/privacy#changes\">KIFFs Datenschutzerklärung</a> es für ihre eigene vorsieht.</p></section><section id=\"contact\"><h2>12. Kontakt</h2><p>Fragen und Anfragen zum Datenschutz: <a href=\"mailto:privacy@kiff.dev\">privacy@kiff.dev</a>. Förmliche rechtliche Mitteilungen: <a href=\"mailto:legal@kiff.dev\">legal@kiff.dev</a>. Die eigenen Nutzungsbedingungen der App stehen unter <a href=\"/de/tafs/terms\">/tafs/terms</a>.</p></section></article>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -176,347 +189,347 @@ func tafsPrivacyGoogleDE() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section id=\"google\"><h2>6. Google-Nutzerdaten</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section id=\"google\"><h2>6. Google-Nutzerdaten</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p>Wenn du es darum bittest, verbindet tafs einen taf mit deinem Google-Konto, zum Beispiel mit den Google Sheets oder dem Google Calendar, die seine Aufgabe nutzt, unter Apps verbinden in der App. Dieser Abschnitt sagt, was tafs mit den Daten macht, die es von Google erhält.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Wenn du es darum bittest, verbindet tafs einen taf mit deinem Google-Konto, zum Beispiel mit den Google Sheets oder dem Google Calendar, die seine Aufgabe nutzt, unter Apps verbinden in der App. Dieser Abschnitt sagt, was tafs mit den Daten macht, die es von Google erhält.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p>Wenn du es darum bittest, verbindet tafs einen taf mit deinem Google-Konto, zum Beispiel mit deinem Gmail oder mit dem Google Calendar oder den Google Sheets, die seine Aufgabe nutzt, unter Apps verbinden in der App. Dieser Abschnitt sagt, was tafs mit den Daten macht, die es von Google erhält.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<p>Wenn du es darum bittest, verbindet tafs einen taf mit deinem Google-Konto, zum Beispiel mit deinem Gmail oder mit dem Google Calendar oder den Google Sheets, die seine Aufgabe nutzt, unter Apps verbinden in der App. Dieser Abschnitt sagt, was tafs mit den Daten macht, die es von Google erhält.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<li><strong>Was es liest und schreibt:</strong> was die Aufgabe des tafs braucht: die Tabellen, die es aktuell hält, oder die Termine in den Kalendern, um die es sich kümmert. Es ändert sie nur, wo die Card des tafs es erlaubt, und alles über den Limits der Card wartet auf deine Genehmigung.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Was es liest und schreibt:</strong> was die Aufgabe des tafs braucht: die Tabellen, die es aktuell hält, oder die Termine in den Kalendern, um die es sich kümmert. Es ändert sie nur, wo die Card des tafs es erlaubt, und alles über den Limits der Card wartet auf deine Genehmigung.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<li><strong>Was es liest und schreibt:</strong> was die Aufgabe des tafs braucht. In deinem Gmail liest es deine Nachrichten und Threads, um die zu finden, die eine Antwort brauchen, und schreibt Entwürfe; es sendet E-Mails nur, wo die Card des tafs es erlaubt. In Google Calendar und Google Sheets liest es die Termine in den Kalendern, um die es sich kümmert, oder die Tabellen, die es aktuell hält, und ändert sie nur, wo die Card des tafs es erlaubt. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<li><strong>Was es liest und schreibt:</strong> was die Aufgabe des tafs braucht. In deinem Gmail liest es deine Nachrichten und Threads, um die zu finden, die eine Antwort brauchen, und schreibt Entwürfe; es sendet E-Mails nur, wo die Card des tafs es erlaubt. In Google Calendar und Google Sheets liest es die Termine in den Kalendern, um die es sich kümmert, oder die Tabellen, die es aktuell hält, und ändert sie nur, wo die Card des tafs es erlaubt. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleListed("Google Tasks") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "In Google Tasks liest es die Aufgabenlisten, um die es sich kümmert; Aufgaben anlegen, abhaken, verschieben oder löschen darf es nur, wo die Card des tafs es erlaubt. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "In Google Tasks liest es die Aufgabenlisten, um die es sich kümmert; Aufgaben anlegen, abhaken, verschieben oder löschen darf es nur, wo die Card des tafs es erlaubt. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "Alles über den Limits der Card wartet auf deine Genehmigung.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "Alles über den Limits der Card wartet auf deine Genehmigung.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<li><strong>Warum:</strong> nur, um die Aufgabe zu erledigen, die du für diesen taf eingerichtet hast, und um dir zu zeigen, mit welchem Google-Konto er verbunden ist: dessen E-Mail-Adresse, die bis zum Trennen bei der Verbindung bleibt.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Warum:</strong> nur, um die Aufgabe zu erledigen, die du für diesen taf eingerichtet hast, und um dir zu zeigen, mit welchem Google-Konto er verbunden ist: dessen E-Mail-Adresse, die bis zum Trennen bei der Verbindung bleibt.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) > 0 || len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<li><strong>Wie sich jede Google-App verbindet:</strong><ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li><strong>Wie sich jede Google-App verbindet:</strong><ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(googleManaged()) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<li>Über unseren Anmeldepartner, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist: ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 138, Col: 141}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, ".</li>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			if len(googleInHouse("de")) > 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<li>Über die eigene Google-Anmeldung von tafs, ohne ein anderes Unternehmen dazwischen: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<li>Über unseren Anmeldepartner, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 141, Col: 127}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 138, Col: 141}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, ".</li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, ".</li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			for _, a := range googlePending("de") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<li>")
+			if len(googleInHouse("de")) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<li>Über die eigene Google-Anmeldung von tafs, ohne ein anderes Unternehmen dazwischen: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 141, Col: 127}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("de"))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, ".</li>")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 42}
+					return templ_7745c5c3_Err
+				}
+			}
+			for _, a := range googlePending("de") {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("de").Line)
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("de"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("de").AsksFor)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("de").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 145, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("de").AsksFor)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 146, Col: 42}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var16 string
-					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 149, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var17 string
-					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 149, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 149, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 149, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "Eine App, die unter beiden steht, verbindet sich je nach deinem Konto auf dem einen oder dem anderen Weg. Googles eigene Anmeldeseite zeigt, welchem du es erlaubst.")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "Eine App, die unter beiden steht, verbindet sich je nach deinem Konto auf dem einen oder dem anderen Weg. Googles eigene Anmeldeseite zeigt, welchem du es erlaubst.")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst.<ul><li><strong>Über unseren Anmeldepartner:</strong> tafs fragt nur nach dem Zugriff, den die Tools des tafs brauchen. Ist dieser engere Zugriff nicht möglich, fragt es nach dem üblichen Zugriff der App und sagt das, bevor du dich anmeldest. Würde der übliche Zugriff personenbezogene Daten einschließen, die der taf nicht nutzt, verbindet tafs nicht.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> Die Anmeldung fragt den unten für diese App aufgeführten Zugriff auf einmal an, auch wenn der taf nur liest.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst.<ul><li><strong>Über unseren Anmeldepartner:</strong> tafs fragt nur nach dem Zugriff, den die Tools des tafs brauchen. Ist dieser engere Zugriff nicht möglich, fragt es nach dem üblichen Zugriff der App und sagt das, bevor du dich anmeldest. Würde der übliche Zugriff personenbezogene Daten einschließen, die der taf nicht nutzt, verbindet tafs nicht.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> Die Anmeldung fragt den unten für diese App aufgeführten Zugriff auf einmal an, auch wenn der taf nur liest.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst. Die Anmeldung fragt den unten für diese App aufgeführten Zugriff auf einmal an, auch wenn der taf nur liest.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst. Die Anmeldung fragt den unten für diese App aufgeführten Zugriff auf einmal an, auch wenn der taf nur liest.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst. tafs fragt nur nach dem Zugriff, den die Tools des tafs brauchen. Ist dieser engere Zugriff nicht möglich, fragt es nach dem üblichen Zugriff der App und sagt das, bevor du dich anmeldest. Würde der übliche Zugriff personenbezogene Daten einschließen, die der taf nicht nutzt, verbindet tafs nicht.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Was du erlaubst:</strong> Du meldest dich auf Googles eigener Seite an und wählst, was du erlaubst. tafs fragt nur nach dem Zugriff, den die Tools des tafs brauchen. Ist dieser engere Zugriff nicht möglich, fragt es nach dem üblichen Zugriff der App und sagt das, bevor du dich anmeldest. Würde der übliche Zugriff personenbezogene Daten einschließen, die der taf nicht nutzt, verbindet tafs nicht.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><strong>Wie ein taf sie nutzt:</strong> Ein taf nutzt nur die Tools, die auf seiner Card genehmigt sind. Jeder Aufruf wird anhand einer Freigabe für genau dieses Tool und diese Argumente geprüft, bevor etwas gesendet wird, und ein Aufruf außerhalb des Zugriffs, den du gegeben hast, wird abgelehnt. Welche Aktionen jedes Mal nach deiner Genehmigung fragen, ist auf der Card festgelegt.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li><strong>Wie ein taf sie nutzt:</strong> Ein taf nutzt nur die Tools, die auf seiner Card genehmigt sind. Jeder Aufruf wird anhand einer Freigabe für genau dieses Tool und diese Argumente geprüft, bevor etwas gesendet wird, und ein Aufruf außerhalb des Zugriffs, den du gegeben hast, wird abgelehnt. Welche Aktionen jedes Mal nach deiner Genehmigung fragen, ist auf der Card festgelegt.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if googleBoth() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<strong>Welchen Zugriff die eigene Google-Anmeldung von tafs anfragt:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Welchen Zugriff die eigene Google-Anmeldung von tafs anfragt:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<strong>Welchen Zugriff tafs anfragt:</strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<strong>Welchen Zugriff tafs anfragt:</strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<ul>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<ul>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, a := range googleInHouse("de") {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
+				var templ_7745c5c3_Var19 string
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 184, Col: 16}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<ul>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range a.Scopes {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<li><code>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var19 string
-					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 187, Col: 26}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</code>: ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<li><code>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var20 string
-					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 187, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 187, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</code>: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var21 string
+					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `de_tafs_privacy.templ`, Line: 187, Col: 45}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</ul></li>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul></li>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>Wie viel eine Anmeldung auch erlaubt, der taf nutzt nur die Tools auf seiner Card.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul>Wie viel eine Anmeldung auch erlaubt, der taf nutzt nur die Tools auf seiner Card.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong><ul><li><strong>Über unseren Anmeldepartner:</strong> Deine Google-Anmeldung wird von unserem Anmeldepartner aufbewahrt, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist, und nie einem taf oder planque gegeben. Weder der taf noch tafs sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> planque, der eigene Verbindungsdienst von tafs, bewahrt dein Google-Token für dein Unternehmen auf, verschlüsselt mit AWS KMS in der Europäischen Union (Irland), und nutzt es nur für einen Aufruf, den die Card des tafs erlaubt. Es wird nie einem taf gegeben, und weder der taf noch das KI-Modell sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li></ul></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong><ul><li><strong>Über unseren Anmeldepartner:</strong> Deine Google-Anmeldung wird von unserem Anmeldepartner aufbewahrt, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist, und nie einem taf oder planque gegeben. Weder der taf noch tafs sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> planque, der eigene Verbindungsdienst von tafs, bewahrt dein Google-Token für dein Unternehmen auf, verschlüsselt mit AWS KMS in der Europäischen Union (Irland), und nutzt es nur für einen Aufruf, den die Card des tafs erlaubt. Es wird nie einem taf gegeben, und weder der taf noch das KI-Modell sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li></ul></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong> planque, der eigene Verbindungsdienst von tafs, bewahrt dein Google-Token für dein Unternehmen auf, verschlüsselt mit AWS KMS in der Europäischen Union (Irland), und nutzt es nur für einen Aufruf, den die Card des tafs erlaubt. Es wird nie einem taf gegeben, und weder der taf noch das KI-Modell sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong> planque, der eigene Verbindungsdienst von tafs, bewahrt dein Google-Token für dein Unternehmen auf, verschlüsselt mit AWS KMS in der Europäischen Union (Irland), und nutzt es nur für einen Aufruf, den die Card des tafs erlaubt. Es wird nie einem taf gegeben, und weder der taf noch das KI-Modell sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong> Deine Google-Anmeldung wird von unserem Anmeldepartner aufbewahrt, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist, und nie einem taf oder planque gegeben. Weder der taf noch tafs sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Wer deine Anmeldung aufbewahrt:</strong> Deine Google-Anmeldung wird von unserem Anmeldepartner aufbewahrt, der unter <a href=\"/de/subprocessors\">/subprocessors</a> aufgeführt ist, und nie einem taf oder planque gegeben. Weder der taf noch tafs sieht dein Passwort oder deine Google-Tokens. Ein anderer deiner tafs, der denselben Zugriff braucht, nutzt die Anmeldung erneut, und jeder taf nutzt nur die Tools, die du für ihn genehmigt hast.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if googleBoth() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf.<ul><li><strong>Über unseren Anmeldepartner:</strong> Es läuft auch über unseren Anmeldepartner, der jeden Aufruf ausführt.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> planque ruft Google selbst auf, also führt kein anderes Unternehmen den Aufruf aus oder bewahrt deine Anmeldung auf.</li></ul>Beide stehen unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf.<ul><li><strong>Über unseren Anmeldepartner:</strong> Es läuft auch über unseren Anmeldepartner, der jeden Aufruf ausführt.</li><li><strong>Über die eigene Google-Anmeldung von tafs:</strong> planque ruft Google selbst auf, also führt kein anderes Unternehmen den Aufruf aus oder bewahrt deine Anmeldung auf.</li></ul>Beide stehen unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf. planque ruft Google selbst auf, also führt kein anderes Unternehmen den Aufruf aus oder bewahrt deine Anmeldung auf. Der Anbieter des KI-Modells steht unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf. planque ruft Google selbst auf, also führt kein anderes Unternehmen den Aufruf aus oder bewahrt deine Anmeldung auf. Der Anbieter des KI-Modells steht unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf. Es läuft auch über unseren Anmeldepartner, der jeden Aufruf ausführt. Beide stehen unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>Wer sie sonst erhält:</strong> Was ein taf von Google liest, geht an das KI-Modell, das den taf ausführt, nur sobald du es erlaubst (siehe <a href=\"#ai\">Die KI in tafs</a>), und das KI-Modell bewahrt es bis zu 30 Tage nach den Bedingungen seines Anbieters auf. Es läuft auch über unseren Anmeldepartner, der jeden Aufruf ausführt. Beide stehen unter <a href=\"/de/subprocessors\">/subprocessors</a>.</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<li><strong>KI-Training:</strong> Google-Nutzerdaten werden nicht verwendet, um KI-Modelle zu trainieren.</li><li><strong>Bilder:</strong> tafs erstellt und bearbeitet keine Bilder oder Videos: Seine KI schreibt Text. Es nutzt Google-APIs oder Google-Nutzerdaten nie, um intime Bilder von jemandem zu erstellen, zu bearbeiten oder zu teilen (nicht einvernehmliche intime Bilder, NCII), oder irgendein anderes Bild einer Person.</li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>KI-Training:</strong> Google-Nutzerdaten werden nicht verwendet, um KI-Modelle zu trainieren.</li><li><strong>Bilder:</strong> tafs erstellt und bearbeitet keine Bilder oder Videos: Seine KI schreibt Text. Es nutzt Google-APIs oder Google-Nutzerdaten nie, um intime Bilder von jemandem zu erstellen, zu bearbeiten oder zu teilen (nicht einvernehmliche intime Bilder, NCII), oder irgendein anderes Bild einer Person.</li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(googleManaged()) == 0 && len(googleInHouse("de")) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<li><strong>Wie lange und wo:</strong> Deine Tabellen und Termine bleiben in deinem Google-Konto. Im eigenen Speicher von tafs wird das, was ein Tool zurückgibt, nur aufbewahrt, bis der Lauf des tafs endet. planque, das jeden Aufruf weitergibt, bewahrt das, was Google zurückgibt, 24 Stunden lang auf, damit ein wiederholter Aufruf dieselbe Antwort erhält und nie zweimal gesendet wird; danach hält es nur noch fest, ob der Aufruf gesendet wurde. In einem Chat wird das, was nur gelesen wurde, verschlüsselt aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage. Die Aufzeichnung eines Laufs und sein Chat werden 30 Tage aufbewahrt, und die Notizen eines tafs, bis du den taf entfernst (siehe <a href=\"#retention\">Wie lange wir sie aufbewahren</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Wie lange und wo:</strong> Deine Tabellen und Termine bleiben in deinem Google-Konto. Im eigenen Speicher von tafs wird das, was ein Tool zurückgibt, nur aufbewahrt, bis der Lauf des tafs endet. planque, das jeden Aufruf weitergibt, bewahrt das, was Google zurückgibt, 24 Stunden lang auf, damit ein wiederholter Aufruf dieselbe Antwort erhält und nie zweimal gesendet wird; danach hält es nur noch fest, ob der Aufruf gesendet wurde. In einem Chat wird das, was nur gelesen wurde, verschlüsselt aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage. Die Aufzeichnung eines Laufs und sein Chat werden 30 Tage aufbewahrt, und die Notizen eines tafs, bis du den taf entfernst (siehe <a href=\"#retention\">Wie lange wir sie aufbewahren</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<li><strong>Wie lange und wo:</strong> Deine Entwürfe, Termine und Tabellen bleiben in deinem Google-Konto. Im eigenen Speicher von tafs wird das, was ein Tool zurückgibt, nur aufbewahrt, bis der Lauf des tafs endet. planque, das jeden Aufruf weitergibt, bewahrt das, was Google zurückgibt, 24 Stunden lang auf, damit ein wiederholter Aufruf dieselbe Antwort erhält und nie zweimal gesendet wird; danach hält es nur noch fest, ob der Aufruf gesendet wurde. In einem Chat wird das, was nur gelesen wurde, verschlüsselt aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage. Die Aufzeichnung eines Laufs und sein Chat werden 30 Tage aufbewahrt, und die Notizen eines tafs, bis du den taf entfernst (siehe <a href=\"#retention\">Wie lange wir sie aufbewahren</a>).</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Wie lange und wo:</strong> Deine Entwürfe, Termine und Tabellen bleiben in deinem Google-Konto. Im eigenen Speicher von tafs wird das, was ein Tool zurückgibt, nur aufbewahrt, bis der Lauf des tafs endet. planque, das jeden Aufruf weitergibt, bewahrt das, was Google zurückgibt, 24 Stunden lang auf, damit ein wiederholter Aufruf dieselbe Antwort erhält und nie zweimal gesendet wird; danach hält es nur noch fest, ob der Aufruf gesendet wurde. In einem Chat wird das, was nur gelesen wurde, verschlüsselt aufbewahrt, genutzt, bis der Chat eine Stunde lang ruht, höchstens aber vier Stunden nach dem Lesen, dann automatisch gelöscht, innerhalb weniger Tage. Die Aufzeichnung eines Laufs und sein Chat werden 30 Tage aufbewahrt, und die Notizen eines tafs, bis du den taf entfernst (siehe <a href=\"#retention\">Wie lange wir sie aufbewahren</a>).</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<li><strong>Es beenden:</strong><ul><li>Trenne Google in der App, unter Apps verbinden oder auf dem Card-Tab des tafs. Seine Google-Tools stoppen sofort, und tafs bittet Google, die Anmeldung sofort zu widerrufen; das kann etwas später abgeschlossen sein.</li><li>Entferne einen taf, und seine Verbindungen enden mit ihm. Eine Google-Anmeldung, die ein anderer deiner tafs noch nutzt, bleibt, bis der letzte geht.</li><li>Entziehe tafs jederzeit den Zugriff in deinem Google-Konto, unter <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Deine tafs erreichen Google nicht mehr, und die App zeigt dir, dass die Google-Verbindung abgemeldet ist.</li><li>Lösche dein Konto: Seine tafs, Chats, Notizen, Dateien und Verbindungen werden sofort gelöscht, und aus ihren Point-in-Time-Kopien innerhalb von 35 Tagen, und seine Google-Tokens werden widerrufen, wo Google es zulässt.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<li><strong>Es beenden:</strong><ul><li>Trenne Google in der App, unter Apps verbinden oder auf dem Card-Tab des tafs. Seine Google-Tools stoppen sofort, und tafs bittet Google, die Anmeldung sofort zu widerrufen; das kann etwas später abgeschlossen sein.</li><li>Entferne einen taf, und seine Verbindungen enden mit ihm. Eine Google-Anmeldung, die ein anderer deiner tafs noch nutzt, bleibt, bis der letzte geht.</li><li>Entziehe tafs jederzeit den Zugriff in deinem Google-Konto, unter <a href=\"https://myaccount.google.com/permissions\">myaccount.google.com/permissions</a>. Deine tafs erreichen Google nicht mehr, und die App zeigt dir, dass die Google-Verbindung abgemeldet ist.</li><li>Lösche dein Konto: Seine tafs, Chats, Notizen, Dateien und Verbindungen werden sofort gelöscht, und aus ihren Point-in-Time-Kopien innerhalb von 35 Tagen, und seine Google-Tokens werden widerrufen, wo Google es zulässt.</li></ul></li></ul><p lang=\"en\">tafs's use and transfer to any other app of information received from Google APIs will adhere to <a href=\"https://developers.google.com/terms/api-services-user-data-policy\">Google API Services User Data Policy</a>, including the Limited Use requirements.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
