@@ -17,6 +17,7 @@ import (
 	"github.com/kiff/cloud/api/internal/domain"
 	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/permit"
+	"github.com/kiff/cloud/api/internal/purchase"
 	"github.com/kiff/cloud/api/internal/words"
 	kiffproposal "github.com/kiff/kiff/pkg/kiff/proposal"
 )
@@ -290,5 +291,22 @@ func (h *MandatesHandler) withBrowserBlock(ctx context.Context, tenantID string,
 	sum := sha256.Sum256(canon)
 	v["browser"] = s.Block
 	v["browser_sha256"] = hex.EncodeToString(sum[:])
+	return v
+}
+
+// withPurchase adds a held purchase's approval (contracts/purchase.json
+// approval.value) to its hold as `purchase`, for the apps to draw and sign
+// over. A hold that isn't a purchase's, or a case that can't be read, is
+// left as it is: drawn as any held call, and its answer is refused for a
+// purchase that can't be read.
+func (h *MandatesHandler) withPurchase(ctx context.Context, tenantID string, v map[string]any, e mandate.Exception) map[string]any {
+	if h.purchaseHolds == nil {
+		return v
+	}
+	r, err := h.purchaseHolds.ByException(ctx, tenantID, e.ID)
+	if err != nil {
+		return v
+	}
+	v["purchase"] = purchase.ApprovalOf(r)
 	return v
 }

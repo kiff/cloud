@@ -418,6 +418,8 @@ func (h *MandatesHandler) listExceptions(w http.ResponseWriter, r *http.Request)
 			v["vendor_tool"] = vt
 		}
 		v = h.withBrowserBlock(r.Context(), tenantID, v, e)
+		v = h.withPurchase(r.Context(), tenantID, v, e)
+		v = h.withPurchase(r.Context(), tenantID, v, e)
 		out = append(out, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"exceptions": out})
@@ -468,6 +470,7 @@ func (h *MandatesHandler) getException(w http.ResponseWriter, r *http.Request) {
 		v["vendor_tool"] = vt
 	}
 	v = h.withBrowserBlock(r.Context(), tenantID, v, e)
+	v = h.withPurchase(r.Context(), tenantID, v, e)
 	writeJSON(w, http.StatusOK, withHeldWords(v, e, h.appBaseURL, wordsIn(replyLanguage(r))))
 }
 
@@ -819,6 +822,13 @@ func (h *MandatesHandler) checkDeviceSignature(w http.ResponseWriter, r *http.Re
 		pr, err := h.purchaseHolds.ByException(r.Context(), tenantID, id)
 		switch {
 		case err == nil:
+			// A purchase is approved once or refused: no Card change and no
+			// next step stand in for the owner's decision on its case.
+			if (answer != "approve-once" && answer != "reject") || refusal.NextStep != "" {
+				writeJSON(w, http.StatusBadRequest, map[string]string{"error": "purchase_answer",
+					"detail": "a purchase is answered approve-once or reject, with no next step"})
+				return nil, false
+			}
 			signed.Purchase = purchase.AnswerLine(pr.Case.CaseID, pr.Case.Version, pr.Digest)
 		case !errors.Is(err, purchase.ErrNoCase):
 			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "load purchase failed"})
