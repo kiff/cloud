@@ -194,6 +194,13 @@ type createRequest struct {
 	// VendorTool is the tool's own name at its vendor, from the connector
 	// that relays it (planque). Optional; one line, like a title.
 	VendorTool string `json:"vendor_tool"`
+	// App, DestructiveHint and VendorPins are what a connector that already
+	// speaks K4 (planque since #495) sends with each registration. This
+	// gateway accepts and ignores them: refusing them as unknown fields would
+	// fail every sign-in through that connector.
+	App             string          `json:"app"`
+	DestructiveHint bool            `json:"destructive_hint"`
+	VendorPins      json.RawMessage `json:"vendor_pins"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
 	ReadOnly bool `json:"read_only"`
