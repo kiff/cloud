@@ -48,6 +48,12 @@ const (
 	// different cases. Refused, never held: an owner approving it could
 	// not tell one such call from another.
 	OutcomeUnreadableResource Outcome = "unreadable_resource"
+
+	// OutcomeCategoryClosed is a call whose class (K4) a covering Card
+	// hasn't opened: an irreversible, delete or money call on an action the
+	// owner didn't open that category for. Refused, never held: opening a
+	// category is a change to the Card, with the approval key.
+	OutcomeCategoryClosed Outcome = "category_closed"
 )
 
 // Request is the proposal being evaluated, reduced to what a mandate
@@ -63,7 +69,13 @@ type Request struct {
 	// permit binds the call. Never the caller's words: only codes KIFF words.
 	OwnerAsk    string `json:",omitempty"`
 	OwnerAskWhy string `json:",omitempty"`
-	Subject     string
+	// K4 says the account decides calls by their class (KIFF_K4_TENANTS);
+	// Class is the call's, as the gateway computed it, and ClassArgs the
+	// call's values for the arguments an opening can name.
+	K4        bool              `json:",omitempty"`
+	Class     string            `json:",omitempty"`
+	ClassArgs map[string]string `json:",omitempty"`
+	Subject   string
 	// Domain is the current name (slug) of the domain the request is in;
 	// DomainID is that domain's immutable id. A card issued with a
 	// DomainID matches the id, so it survives a rename; one issued before
@@ -316,6 +328,16 @@ func Evaluate(ms []Mandate, req Request, usage Usage, now time.Time) (Decision, 
 		return Decision{Outcome: OutcomeNotCovered}, nil
 	}
 
+	// K4: a gated class is refused unless every covering Card opened it
+	// for this action, before anything is counted.
+	if req.K4 && GatedClass(req.Class) {
+		for _, m := range covering {
+			if !Opened(m, req) {
+				return Decision{Outcome: OutcomeCategoryClosed, MandateID: m.ID,
+					Reason: fmt.Sprintf("this Card doesn't open %s calls for %s", req.Class, req.Action)}, nil
+			}
+		}
+	}
 	// What the action is taken on, then how large it is: both are
 	// outside the Card however much its totals have left, and both would
 	// still refuse on a fresh Card.
@@ -499,4 +521,26 @@ func resourceReason(param, value string, present bool) string {
 		return fmt.Sprintf("the call names no %s, and this card applies only to the %s values it lists", param, param)
 	}
 	return fmt.Sprintf("%s %q is not one this card applies to", param, value)
+}
+
+// Opened reports whether m opens req's class for its action: a grant for the
+// action with an opening of that class, for any value or for the call's.
+func Opened(m Mandate, req Request) bool {
+	for _, g := range m.Grants {
+		if g.Action != req.Action {
+			continue
+		}
+		for _, o := range g.Opens {
+			if o.Class != req.Class {
+				continue
+			}
+			if o.Argument == "" {
+				return true
+			}
+			if v, ok := req.ClassArgs[o.Argument]; ok && v == o.Value {
+				return true
+			}
+		}
+	}
+	return false
 }

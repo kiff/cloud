@@ -82,6 +82,14 @@ type Tool struct {
 	// ReadOnly: the owner declared the tool only reads. Its calls are
 	// decided as any other, but never treated as retries.
 	ReadOnly bool
+	// VendorTool is the tool's own name at its vendor, when its connector
+	// gave one, and App the app it belongs to (K4): what its class is
+	// computed from.
+	VendorTool string
+	App        string
+	// DestructiveHint: the vendor marks the tool destructive. It only
+	// raises the tool's class (Classify).
+	DestructiveHint bool
 	// Control: the account's own control server's tool (kiff/tafs#206),
 	// granted to SetupReaderRole too, read-only or not.
 	Control bool
@@ -840,6 +848,13 @@ func (t Tool) params(args map[string]any) (map[string]any, error) {
 	} else if code := t.ownerAsk(); code != "" {
 		params[OwnerAskParam] = code
 	}
+	// The call's class (K4): KIFF's own, from the tool, never the agent's.
+	// apps/api decides on it only for an account K4 is on for.
+	class, classArgs := t.CallClass(args)
+	params[ClassParam] = string(class)
+	if len(classArgs) > 0 {
+		params[ClassArgsParam] = classArgs
+	}
 	return t.resourceParam(args, params)
 }
 
@@ -1457,7 +1472,7 @@ type PostgresCatalog struct{ Pool *pgxpool.Pool }
 
 func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, error) {
 	rows, err := c.Pool.Query(ctx, `SELECT name, title, description, input_schema, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
-		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format, control,
+		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format, control, vendor_tool, app, destructive_hint,
 		COALESCE(NULLIF(t.paused_reason, ''),
 			(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
 			             ELSE 'a check of an earlier call didn''t hold' END
@@ -1477,7 +1492,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 		var t Tool
 		var schema, fixed, unit, amount, profile []byte
 		if err := rows.Scan(&t.Name, &t.Title, &t.Description, &schema, &t.UpstreamURL, &t.UpstreamTool, &t.AmountArg, &t.AmountUnit, &t.AmountScale, &t.IdempotencyArg, &t.ReadOnly,
-			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat, &t.Control,
+			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat, &t.Control, &t.VendorTool, &t.App, &t.DestructiveHint,
 			&t.Paused, &profile); err != nil {
 			return nil, err
 		}

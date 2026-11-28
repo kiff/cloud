@@ -64,6 +64,11 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 			add("resources", "Lets %s act on %s", action, res)
 		}
 	}
+	// K4: a category opened that wasn't is a widening, on an action kept or
+	// added alike.
+	for _, o := range newOpenings(cur.Grants, next.Grants) {
+		add("opens", "Opens %s calls for %s", openingWords(o.opening), o.action)
+	}
 	for _, a := range cur.Aggregates {
 		b, ok := matchingAggregate(next.Aggregates, a)
 		if !ok {
@@ -320,4 +325,39 @@ func sortedKeys[V any](m map[string]V) []string {
 	}
 	slices.Sort(keys)
 	return keys
+}
+
+type actionOpening struct {
+	action  string
+	opening Opening
+}
+
+// newOpenings are next's openings that cur doesn't have, by action.
+func newOpenings(cur, next []Grant) []actionOpening {
+	had := map[actionOpening]bool{}
+	for _, g := range cur {
+		for _, o := range g.Opens {
+			had[actionOpening{g.Action, o}] = true
+		}
+	}
+	var out []actionOpening
+	for _, g := range next {
+		for _, o := range g.Opens {
+			k := actionOpening{g.Action, o}
+			// An opening for every value covers one for a single value.
+			if had[k] || had[actionOpening{g.Action, Opening{Class: o.Class}}] {
+				continue
+			}
+			had[k] = true
+			out = append(out, k)
+		}
+	}
+	return out
+}
+
+func openingWords(o Opening) string {
+	if o.Argument != "" {
+		return fmt.Sprintf("%s (%s %s)", o.Class, o.Argument, o.Value)
+	}
+	return o.Class
 }
