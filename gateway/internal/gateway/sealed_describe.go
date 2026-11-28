@@ -86,7 +86,7 @@ func (a *agent) describeSealed(ctx context.Context, t Tool, in invocation.Invoca
 		args.Steps[0].Fill == "" || args.Steps[0].Sealed == "" {
 		return nil, "a call that fills a saved sign-in names its page, its read and that one step, and nothing else"
 	}
-	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
+	tools, err := a.g.tools(ctx, a.me.TenantID)
 	if err != nil {
 		return nil, "KIFF couldn't read this connection's tools"
 	}

@@ -27,6 +27,8 @@ type Binding struct {
 	Tool       string
 	ArgsSHA256 string
 	Audience   string
+	// Pins are the request's pins as signed (canonicalPins): "" for none.
+	Pins string
 	// JTI and MintedAt are set once the operation's one permit has been
 	// minted.
 	JTI      string
@@ -35,7 +37,7 @@ type Binding struct {
 
 // Same reports whether b names the same call as o.
 func (b Binding) Same(o Binding) bool {
-	return b.Tool == o.Tool && b.ArgsSHA256 == o.ArgsSHA256 && b.Audience == o.Audience
+	return b.Tool == o.Tool && b.ArgsSHA256 == o.ArgsSHA256 && b.Audience == o.Audience && b.Pins == o.Pins
 }
 
 // Store keeps bindings.
@@ -58,9 +60,9 @@ type PostgresStore struct{ Pool *pgxpool.Pool }
 
 func (s PostgresStore) Bind(ctx context.Context, tenantID, op string, b Binding, at time.Time) (Binding, bool, error) {
 	tag, err := s.Pool.Exec(ctx, `
-		INSERT INTO cloud_meta.permit_bindings (tenant_id, op, tool, args_sha256, audience, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (tenant_id, op) DO NOTHING`, tenantID, op, b.Tool, b.ArgsSHA256, b.Audience, at.UTC())
+		INSERT INTO cloud_meta.permit_bindings (tenant_id, op, tool, args_sha256, audience, pins, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		ON CONFLICT (tenant_id, op) DO NOTHING`, tenantID, op, b.Tool, b.ArgsSHA256, b.Audience, b.Pins, at.UTC())
 	if err != nil {
 		return Binding{}, false, err
 	}
@@ -68,8 +70,8 @@ func (s PostgresStore) Bind(ctx context.Context, tenantID, op string, b Binding,
 	var got Binding
 	var jti *string
 	var minted *time.Time
-	err = s.Pool.QueryRow(ctx, `SELECT tool, args_sha256, audience, permit_jti, minted_at FROM cloud_meta.permit_bindings
-		WHERE tenant_id = $1 AND op = $2`, tenantID, op).Scan(&got.Tool, &got.ArgsSHA256, &got.Audience, &jti, &minted)
+	err = s.Pool.QueryRow(ctx, `SELECT tool, args_sha256, audience, pins, permit_jti, minted_at FROM cloud_meta.permit_bindings
+		WHERE tenant_id = $1 AND op = $2`, tenantID, op).Scan(&got.Tool, &got.ArgsSHA256, &got.Audience, &got.Pins, &jti, &minted)
 	if jti != nil {
 		got.JTI = *jti
 	}
@@ -92,8 +94,8 @@ func (s PostgresStore) Get(ctx context.Context, tenantID, op string) (Binding, b
 	var got Binding
 	var jti *string
 	var minted *time.Time
-	err := s.Pool.QueryRow(ctx, `SELECT tool, args_sha256, audience, permit_jti, minted_at FROM cloud_meta.permit_bindings
-		WHERE tenant_id = $1 AND op = $2`, tenantID, op).Scan(&got.Tool, &got.ArgsSHA256, &got.Audience, &jti, &minted)
+	err := s.Pool.QueryRow(ctx, `SELECT tool, args_sha256, audience, pins, permit_jti, minted_at FROM cloud_meta.permit_bindings
+		WHERE tenant_id = $1 AND op = $2`, tenantID, op).Scan(&got.Tool, &got.ArgsSHA256, &got.Audience, &got.Pins, &jti, &minted)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Binding{}, false, nil
 	}

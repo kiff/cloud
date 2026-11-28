@@ -19,6 +19,10 @@ type Request struct {
 	Audience  string          `json:"audience,omitempty"`
 	Tool      string          `json:"tool,omitempty"`
 	Arguments json.RawMessage `json:"arguments"`
+	// Pins are what the relay sets in the vendor's own body after the
+	// permit (Qonto's status: draft, Stripe's account, a refund marker),
+	// as its registration said: signed beside the arguments (Detail.Pins).
+	Pins []Pin `json:"pins,omitempty"`
 }
 
 // ErrInvalid: the permit request is malformed. ErrSubstituted: it names a
@@ -46,7 +50,11 @@ func (r Request) BindingFor(t Target) (Binding, error) {
 	if err != nil {
 		return Binding{}, ErrInvalid
 	}
-	return Binding{Tool: t.Tool, ArgsSHA256: h, Audience: t.Audience}, nil
+	pins, err := canonicalPins(r.Pins)
+	if err != nil {
+		return Binding{}, ErrInvalid
+	}
+	return Binding{Tool: t.Tool, ArgsSHA256: h, Audience: t.Audience, Pins: pins}, nil
 }
 
 // SameGoverned reports whether params, the parameters the Card evaluates,
@@ -182,7 +190,7 @@ func (i *Issuer) Mint(ctx context.Context, tenantID, sub, op, card, act, run, ap
 	c := Claims{
 		Iss: i.Iss, Aud: b.Audience, Sub: sub, Iat: now.Unix(), Exp: now.Add(life).Unix(), Jti: NewJTI(),
 		Details: []Detail{{Type: DetailType, Tenant: tenantID, Tool: b.Tool, ArgsSHA256: b.ArgsSHA256,
-			Op: op, Card: card, Decision: op, Approval: approval, Run: run}},
+			Op: op, Card: card, Decision: op, Approval: approval, Run: run, Pins: signedPins(b.Pins, op)}},
 	}
 	if act != "" {
 		c.Act = &Actor{Sub: act}
