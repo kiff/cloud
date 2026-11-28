@@ -55,7 +55,7 @@ func TafsPrivacyDZ() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(macSecurityKey("dz"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 35, Col: 1171}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 35, Col: 1171}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func TafsPrivacyDZ() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("dz").Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 45, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 45, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func TafsPrivacyDZ() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hostedBrowserWords("dz").Text)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 45, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 45, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TafsPrivacyDZ() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("dz").Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 47, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 47, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func TafsPrivacyDZ() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(bankDataWords("dz").Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 47, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 47, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func TafsPrivacyDZ() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(doorMailWords("dz"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 49, Col: 2149}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 49, Col: 2149}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -144,14 +144,14 @@ func TafsPrivacyDZ() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. གནས་ཚུལ་འཐོབ་མི་གཞན།</h2><p>ང་བཅས་ཀྱིས་ཁྱོད་ཀྱི་སྒེར་གྱི་གནས་ཚུལ་མི་ཚོང་ནི་དང་ ཁྱབ་བསྒྲགས་ཀྱི་དོན་ལུ་མི་བགོ་བཤའ།</p><p>tafs གི་དོན་ལུ་ ང་བཅས་ཀྱིས་ལས་ཁུངས་འདི་ཚུ་ལག་ལེན་འཐབ། Amazon Web Services (ཁྱབ་བསྡུར། tafs གི་མཛོད་དང་ planque གི་མཐུད་མཚམས་ཚུ་བསྡོམས)། Clerk (KIFF རྩིས་ཐོའི་དོན་ལུ་ནང་འཛུལ)། Anthropic (AI ཟུར་དཔེ, Anthropic དང་ Amazon Web Services དང་ Google Cloud ཡང་ན་ Microsoft Azure གིས་ལག་ལེན་འཐབ་)། Composio (འཛིན་སྐྱོང་འབད་མི་མཐུད་མཚམས་ཀྱི་ནང་འཛུལ་དང་ planque གིས་དེ་ལུ་འབད་ཞུ་མི་ཁ་པར)། Apple (push བརྡ་བསྐུལ)། Google (Android ནང་ push བརྡ་བསྐུལ་དང་ Google Play གི་འཛིན་འགྱོ)། དང་ Resend (taf ཅིག་གི་གློག་འཕྲིན་སྒོ)། ཐོ་ཡིག་ཡང་དག་མིག་སྔའི་ ལས་ཁུངས་རེ་རེ་གིས་ཅི་ལུ་རེག་མི་དང་ག་ནི་ཨིན་ན་དང་བཅས་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p><p>དེ་ཚུ་གི་ནང་ལས་ལ་ལོ་ཅིག་ཡུ་རོབ་དཔལ་འབྱོར་ས་ཁུལ་ལས་ཕྱིར་ ཚད་མཐའ་ཨ་མེ་རི་ཀ་ནང་ཡོད། <a href=\"/dz/privacy#transfers\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་སྤོ་བཤུད་དེ་ཚུ་ག་དེ་སྦེ་སྲུང་སྐྱོབ་འབད་ཡོདཔ་སླབ།</p><p><strong>ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</strong> རྒྱལ་ཁབ་ལ་ལོ་ཅིག་གི་ཁྲིམས་གིས་སྲིད་བྱུས་འདི་གིས་སླབ་མི་ལས་ལྷག་པའི་དགོས་མཁོ་བཀོད། དེ་ཚུ་གིས་བསྣན་མི་ ཨིང་ཁ་དང་རྒྱལ་ཁབ་ཀྱི་སྐད་ཡིག་ནང་ <a href=\"/privacy/countries\">ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p></section><section id=\"retention\"><h2>8. ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</h2><ul><li>ཁྱོད་ཀྱི་ལག་ཆ་ཚུ་གིས་ taf ལུ་ལོག་སྤྲོད་མི། གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག། གྲོས་ཚོགས་ནང་ དེ་གིས་ལྷག་མི་རྐྱངམ་གཅིག་དེའི་འཕྲིན་ཡིག་ཤུལ་མཐའི་དོན་ལུ་གསང་བསྡམས་ཏེ་བཞག་ཨིན། གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ།</li><li>taf ཅིག་གི་གཡོག་དང་གྲོས་ཚོགས་ གྲོས་ཚོགས་ཀྱི་བསྡུས་དོན་དང་བཅས། ཉིནམ་ 30། དེའི་ཤེས་རྟོགས་དྲན་ཐོ། taf རྩ་བསྐྲད་འབད་ཚུན། ཁྱོད་རང་གི་གྲོས་ཚོགས་ཅིག་ Coach དང་གཅིག་ཁར་ཡོད་མི་ ཧེ་མ་ལས་བཏོན་བཏང་ཚུགས། དེའི་འཕྲིན་ཡིག་དང་ཁྱོད་ཀྱིས་བསྣན་མི་ཡིག་ཆ་ཚུ་ ད་ལྟོ་རང་བཏོན་གཏང་འོང་། དེའི་གཡོག་རེ་རེ་འབད་ཡོདཔ་དང་ ནམ་ འདི་ལུ་གནས་གོང་ག་དེ་སོང་ཡོདཔ་ཀྱི་ཐོ་དེ་ ཉིནམ་ 30 གི་རིང་ ལུས་འོང་། ཁྱོད་ཀྱིས་ལན་ཅིག་ལུ་སྙན་ཞུ་འབད་བ་ཅིན་ KIFF གིས་ ལན་དེ་དང་ ཁྱོད་ཀྱི་རྒྱུ་མཚན་ དྲན་ཐོ་ཚུ་ ཉིན་གྲངས་ 180 གི་རིང་ ཡང་ན་ ཁྱོད་ཀྱིས་ ཁ་བརྡ་དེ་ ཡང་ན་ རྩིས་ཐོ་མ་བཏོན་ཚུན་ཚོད་ བཞགཔ་ཨིན། KIFF གིས་ སྙན་ཞུ་ལྷག་མི་སྡེ་ཚན་ལུ་ཡང་ གློག་འཕྲིན་ནང་གཏངམ་ཨིན། གློག་འཕྲིན་དེ་ KIFF གི་རྒྱབ་སྐྱོར་གློག་འཕྲིན་བཞིན་དུ་བཞགཔ་ཨིན།</li><li>དེའི་ལན་རྗེས་མའི་དོན་ལུ་ Coach གི་དྲན་ཐོ་ཐུང་ཀུ། དཔེར་ན་གྲོས་ཚོགས་ནང་མཐུད་མཚམས་ཅིག་ག་ཅི་འབད་མ་འབད་བཏུབ་ཡང་ན་ Card ཅིག་ཆ་འཇོག་འབད་ཡོདཔ་ཨིན་ན། ལན་དེས་དེ་ཚུ་ལེན་ཚུན། མཐའ་མཇུག་ཉིནམ་ 7། དེའི་ཤུལ་ལས་ གྲོས་ཚོགས་དེའི་ཆ་ཤས་སྦེ་གྲོས་ཚོགས་བཞག་ཚུན། འཕྲིན་ཡིག་བསྐྱར་གཏང་མི་ལུ་དྲན་ཐོ་གཅིག་པ་ཐོབ་ནི་ལུ་ འདྲ་བཤུས་ཅིག་ཆུ་ཚོད་ 24 བཞག། གྲོས་ཚོགས་ཀྱི་དྲན་ཐོ་འདི་གྲོས་ཚོགས་དེ་ནང་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li><li>གྲོས་ཚོགས་ནང་ཁྱོད་ཀྱིས་སྦྲགས་མི་ཡིག་ཆ། དེ་སྦྲགས་པའི་འཕྲིན་ཡིག་དང་བཅས་ ཉིནམ་ 30 ཡང་ན་གྲོས་ཚོགས་རྩ་བསྐྲད་འབད་པ་ཅིན་དེ་ལས་སྔོན་མར། དང་ག་དེ་སྦེ་ཨིན་རུང་ཉིནམ་ 38 གི་ནང་། འཕྲིན་ཡིག་གིས་ལག་ལེན་མི་འཐབ་པའི་ཡིག་ཆ་ཅིག་ཁྱོད་ཀྱིས་འབུད་ཞིནམ་ལས་ཆུ་ཚོད་གཅིག་ཀྱི་ཤུལ་ལས་བསལ། ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ་པ་ཅིན་དེ་ཚུ་བསུབ།</li><li>ཁྱོད་ཀྱི་ taf ཚུ་གིས་བྱིན་མི་ཡིག་ཆ། གཡོག་གིས་དེ་ཚུ་བཟོ་བའི་ཉིནམ་ལས་ཉིནམ་ 30། དེ་ལས་ཉིནམ་གཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། ཁྱོད་ཀྱི་རྩིས་ཐོ་ནང་ཡོད་མི་སུ་ཡང་ད་ལྟ་བསུབ་ཀྱིས་དེ་སྔོན་མར་བསུབ་ཚུགས། ཡིག་ཆ་དེ་ཐད་ཀར་བརླག་འགྱོཝ་དང་འདྲ་བཤུས་མི་བཞག། དེའི་མིང་དང་ཆེ་ཚད་དང་དེ་བཟོ་མི་ taf དང་གཡོག་ tafs གི་མཛོད་ཀྱི་གསང་བསྡམས་པའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ཚུ་ནང་ཉིནམ་ 35 ཚུན་གནས་ཚུགས། འདི་ཚུ་སྐྱོན་འཕྲད་ཤུལ་ལས་བསྐྱར་གསོ་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། taf ཅིག་རྩ་བསྐྲད་འབད་བའམ་ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ་པས་དེའི་ཡིག་ཆ་ཚུ་བསུབ། ཡིག་ཆ་བརྗེ་སོར་འབད་པས་ཡིག་ཆ་རང་བཏངམ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་བརྗེ་སོར་འབད་མི་འདྲ་བཤུས་འདི་ཁྱོད་ཀྱིས་བརྗེ་སོར་འབད་མི་ཨེཔ་དང་ཅིག་ཁར་གནས། ཡིག་ཆ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་ ང་བཅས་ཀྱིས་ཁྱོད་ཀྱི་རྩིས་ཐོའི་ནང་འཛུལ་འབད་མི་ཚོགས་མི་ཅིག་གི་དོན་ལུ་སྐར་མ་ཅིག་གི་ཤུལ་ལས་ལཱ་མི་འབད་མི་ལམ་ཐིག་ཅིག་བཟོ། དེ་ལུ་ལམ་ཐིག་གཞན་ཅིག་ང་བཅས་ཀྱིས་མི་བཟོ།</li><li>ཁ་པར་རེ་རེའི་ planque གི་ཐོ་བཀོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི། ཆུ་ཚོད་ 24། དེའི་ཤུལ་ལས་ ཐོ་བཀོད་འདི་གིས་ཁ་པར་འདི་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག་ཨིན། དེ་ལུ་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་།</li><li>planque ནང་མཐུད་མཚམས་ཀྱི་ token ཡང་ན་ལྡེ་མིག་ ཡང་ན་ Composio ནང་འཛིན་སྐྱོང་འབད་མི་མཐུད་མཚམས་ཀྱི་ནང་འཛུལ། ཁྱོད་ཀྱིས་དེ་བཅད་ཚུན། ཁྱོད་ཀྱི་མཐུད་མཚམས་གཞན་ཅིག་གིས་ཚོང་པ་དེའི་ཁར་རྩིས་ཐོ་གཅིག་པ་ལག་ལེན་འཐབ་ཚུགས་པ་ཅིན་ དེ་ཡང་བཅད་ཚུན་ལག་ལེན་མེད་པར་བཞག་ཞིནམ་ལས་ ཆ་མེད་བཟོ། ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section id=\"sharing\"><h2>7. གནས་ཚུལ་འཐོབ་མི་གཞན།</h2><p>ང་བཅས་ཀྱིས་ཁྱོད་ཀྱི་སྒེར་གྱི་གནས་ཚུལ་མི་ཚོང་ནི་དང་ ཁྱབ་བསྒྲགས་ཀྱི་དོན་ལུ་མི་བགོ་བཤའ།</p><p>tafs གི་དོན་ལུ་ ང་བཅས་ཀྱིས་ལས་ཁུངས་འདི་ཚུ་ལག་ལེན་འཐབ། Amazon Web Services (ཁྱབ་བསྡུར། tafs གི་མཛོད་དང་ planque གི་མཐུད་མཚམས་ཚུ་བསྡོམས)། Clerk (KIFF རྩིས་ཐོའི་དོན་ལུ་ནང་འཛུལ)། Anthropic (AI ཟུར་དཔེ, Anthropic དང་ Amazon Web Services དང་ Google Cloud ཡང་ན་ Microsoft Azure གིས་ལག་ལེན་འཐབ་)། Composio (འཛིན་སྐྱོང་འབད་མི་མཐུད་མཚམས་ཀྱི་ནང་འཛུལ་དང་ planque གིས་དེ་ལུ་འབད་ཞུ་མི་ཁ་པར)། Apple (push བརྡ་བསྐུལ)། Google (Android ནང་ push བརྡ་བསྐུལ་དང་ Google Play གི་འཛིན་འགྱོ)། དང་ Amazon SES (taf ཅིག་གི་གློག་འཕྲིན་སྒོ; KIFF གི་སྡེ་ཚན་ལུ་གཏང་མི་ སྙན་ཞུ་འབད་ཡོད་པའི་ལན་ཚུ)། ཐོ་ཡིག་ཡང་དག་མིག་སྔའི་ ལས་ཁུངས་རེ་རེ་གིས་ཅི་ལུ་རེག་མི་དང་ག་ནི་ཨིན་ན་དང་བཅས་ <a href=\"/subprocessors\">/subprocessors</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p><p>དེ་ཚུ་གི་ནང་ལས་ལ་ལོ་ཅིག་ཡུ་རོབ་དཔལ་འབྱོར་ས་ཁུལ་ལས་ཕྱིར་ ཚད་མཐའ་ཨ་མེ་རི་ཀ་ནང་ཡོད། <a href=\"/dz/privacy#transfers\">KIFF གི་སྒེར་གསང་སྲིད་བྱུས།</a> གིས་སྤོ་བཤུད་དེ་ཚུ་ག་དེ་སྦེ་སྲུང་སྐྱོབ་འབད་ཡོདཔ་སླབ།</p><p><strong>ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</strong> རྒྱལ་ཁབ་ལ་ལོ་ཅིག་གི་ཁྲིམས་གིས་སྲིད་བྱུས་འདི་གིས་སླབ་མི་ལས་ལྷག་པའི་དགོས་མཁོ་བཀོད། དེ་ཚུ་གིས་བསྣན་མི་ ཨིང་ཁ་དང་རྒྱལ་ཁབ་ཀྱི་སྐད་ཡིག་ནང་ <a href=\"/privacy/countries\">ཁྱོད་ཀྱི་རྒྱལ་ཁབ།</a> (ཨིང་ཁའི་ནང་) ནང་ཡོད།</p></section><section id=\"retention\"><h2>8. ང་བཅས་ཀྱིས་དེ་ག་ཚུན་ཚོད་བཞག་ཨིན་ན།</h2><ul><li>ཁྱོད་ཀྱི་ལག་ཆ་ཚུ་གིས་ taf ལུ་ལོག་སྤྲོད་མི། གཡོག་མཇུག་མ་བསྡུ་ཚུན་རྐྱངམ་གཅིག། གྲོས་ཚོགས་ནང་ དེ་གིས་ལྷག་མི་རྐྱངམ་གཅིག་དེའི་འཕྲིན་ཡིག་ཤུལ་མཐའི་དོན་ལུ་གསང་བསྡམས་ཏེ་བཞག་ཨིན། གྲོས་ཚོགས་ཆུ་ཚོད་གཅིག་ཁྲོད་མཚམས་འཇོག་ཚུན་དང་ལྷག་ཞིནམ་ལས་ཆུ་ཚོད་བཞི་ཚུན་ལག་ལེན་འཐབ་ཞིནམ་ལས་ ཉིནམ་ལ་ལོ་ཅིག་ནང་རང་བཞིན་གྱིས་བསུབ།</li><li>taf ཅིག་གི་གཡོག་དང་གྲོས་ཚོགས་ གྲོས་ཚོགས་ཀྱི་བསྡུས་དོན་དང་བཅས། ཉིནམ་ 30། དེའི་ཤེས་རྟོགས་དྲན་ཐོ། taf རྩ་བསྐྲད་འབད་ཚུན། ཁྱོད་རང་གི་གྲོས་ཚོགས་ཅིག་ Coach དང་གཅིག་ཁར་ཡོད་མི་ ཧེ་མ་ལས་བཏོན་བཏང་ཚུགས། དེའི་འཕྲིན་ཡིག་དང་ཁྱོད་ཀྱིས་བསྣན་མི་ཡིག་ཆ་ཚུ་ ད་ལྟོ་རང་བཏོན་གཏང་འོང་། དེའི་གཡོག་རེ་རེ་འབད་ཡོདཔ་དང་ ནམ་ འདི་ལུ་གནས་གོང་ག་དེ་སོང་ཡོདཔ་ཀྱི་ཐོ་དེ་ ཉིནམ་ 30 གི་རིང་ ལུས་འོང་། ཁྱོད་ཀྱིས་ལན་ཅིག་ལུ་སྙན་ཞུ་འབད་བ་ཅིན་ KIFF གིས་ ལན་དེ་དང་ ཁྱོད་ཀྱི་རྒྱུ་མཚན་ དྲན་ཐོ་ཚུ་ ཉིན་གྲངས་ 180 གི་རིང་ ཡང་ན་ ཁྱོད་ཀྱིས་ ཁ་བརྡ་དེ་ ཡང་ན་ རྩིས་ཐོ་མ་བཏོན་ཚུན་ཚོད་ བཞགཔ་ཨིན། KIFF གིས་ སྙན་ཞུ་ལྷག་མི་སྡེ་ཚན་ལུ་ཡང་ གློག་འཕྲིན་ནང་གཏངམ་ཨིན། གློག་འཕྲིན་དེ་ KIFF གི་རྒྱབ་སྐྱོར་གློག་འཕྲིན་བཞིན་དུ་བཞགཔ་ཨིན།</li><li>དེའི་ལན་རྗེས་མའི་དོན་ལུ་ Coach གི་དྲན་ཐོ་ཐུང་ཀུ། དཔེར་ན་གྲོས་ཚོགས་ནང་མཐུད་མཚམས་ཅིག་ག་ཅི་འབད་མ་འབད་བཏུབ་ཡང་ན་ Card ཅིག་ཆ་འཇོག་འབད་ཡོདཔ་ཨིན་ན། ལན་དེས་དེ་ཚུ་ལེན་ཚུན། མཐའ་མཇུག་ཉིནམ་ 7། དེའི་ཤུལ་ལས་ གྲོས་ཚོགས་དེའི་ཆ་ཤས་སྦེ་གྲོས་ཚོགས་བཞག་ཚུན། འཕྲིན་ཡིག་བསྐྱར་གཏང་མི་ལུ་དྲན་ཐོ་གཅིག་པ་ཐོབ་ནི་ལུ་ འདྲ་བཤུས་ཅིག་ཆུ་ཚོད་ 24 བཞག། གྲོས་ཚོགས་ཀྱི་དྲན་ཐོ་འདི་གྲོས་ཚོགས་དེ་ནང་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ།</li><li>གྲོས་ཚོགས་ནང་ཁྱོད་ཀྱིས་སྦྲགས་མི་ཡིག་ཆ། དེ་སྦྲགས་པའི་འཕྲིན་ཡིག་དང་བཅས་ ཉིནམ་ 30 ཡང་ན་གྲོས་ཚོགས་རྩ་བསྐྲད་འབད་པ་ཅིན་དེ་ལས་སྔོན་མར། དང་ག་དེ་སྦེ་ཨིན་རུང་ཉིནམ་ 38 གི་ནང་། འཕྲིན་ཡིག་གིས་ལག་ལེན་མི་འཐབ་པའི་ཡིག་ཆ་ཅིག་ཁྱོད་ཀྱིས་འབུད་ཞིནམ་ལས་ཆུ་ཚོད་གཅིག་ཀྱི་ཤུལ་ལས་བསལ། ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ་པ་ཅིན་དེ་ཚུ་བསུབ།</li><li>ཁྱོད་ཀྱི་ taf ཚུ་གིས་བྱིན་མི་ཡིག་ཆ། གཡོག་གིས་དེ་ཚུ་བཟོ་བའི་ཉིནམ་ལས་ཉིནམ་ 30། དེ་ལས་ཉིནམ་གཅིག་ནང་རང་བཞིན་གྱིས་བསུབ། ཁྱོད་ཀྱི་རྩིས་ཐོ་ནང་ཡོད་མི་སུ་ཡང་ད་ལྟ་བསུབ་ཀྱིས་དེ་སྔོན་མར་བསུབ་ཚུགས། ཡིག་ཆ་དེ་ཐད་ཀར་བརླག་འགྱོཝ་དང་འདྲ་བཤུས་མི་བཞག། དེའི་མིང་དང་ཆེ་ཚད་དང་དེ་བཟོ་མི་ taf དང་གཡོག་ tafs གི་མཛོད་ཀྱི་གསང་བསྡམས་པའི་དུས་ཚོད་ཀྱི་འདྲ་བཤུས་ཚུ་ནང་ཉིནམ་ 35 ཚུན་གནས་ཚུགས། འདི་ཚུ་སྐྱོན་འཕྲད་ཤུལ་ལས་བསྐྱར་གསོ་འབད་ནི་ལུ་རྐྱངམ་གཅིག་ལག་ལེན་འཐབ། taf ཅིག་རྩ་བསྐྲད་འབད་བའམ་ཁྱོད་ཀྱི་རྩིས་ཐོ་བསུབ་པས་དེའི་ཡིག་ཆ་ཚུ་བསུབ། ཡིག་ཆ་བརྗེ་སོར་འབད་པས་ཡིག་ཆ་རང་བཏངམ་ཨིནམ་དང་ ཁྱོད་ཀྱིས་བརྗེ་སོར་འབད་མི་འདྲ་བཤུས་འདི་ཁྱོད་ཀྱིས་བརྗེ་སོར་འབད་མི་ཨེཔ་དང་ཅིག་ཁར་གནས། ཡིག་ཆ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་ ང་བཅས་ཀྱིས་ཁྱོད་ཀྱི་རྩིས་ཐོའི་ནང་འཛུལ་འབད་མི་ཚོགས་མི་ཅིག་གི་དོན་ལུ་སྐར་མ་ཅིག་གི་ཤུལ་ལས་ལཱ་མི་འབད་མི་ལམ་ཐིག་ཅིག་བཟོ། དེ་ལུ་ལམ་ཐིག་གཞན་ཅིག་ང་བཅས་ཀྱིས་མི་བཟོ།</li><li>ཁ་པར་རེ་རེའི་ planque གི་ཐོ་བཀོད་ནང་ ལག་ཆ་གིས་ལོག་སྤྲོད་མི། ཆུ་ཚོད་ 24། དེའི་ཤུལ་ལས་ ཐོ་བཀོད་འདི་གིས་ཁ་པར་འདི་གཏང་ཡོདཔ་ཨིན་ན་རྐྱངམ་གཅིག་བཞག་ཨིན། དེ་ལུ་ནམ་ཡང་གཉིས་ཐེངས་མི་གཏོང་།</li><li>planque ནང་མཐུད་མཚམས་ཀྱི་ token ཡང་ན་ལྡེ་མིག་ ཡང་ན་ Composio ནང་འཛིན་སྐྱོང་འབད་མི་མཐུད་མཚམས་ཀྱི་ནང་འཛུལ། ཁྱོད་ཀྱིས་དེ་བཅད་ཚུན། ཁྱོད་ཀྱི་མཐུད་མཚམས་གཞན་ཅིག་གིས་ཚོང་པ་དེའི་ཁར་རྩིས་ཐོ་གཅིག་པ་ལག་ལེན་འཐབ་ཚུགས་པ་ཅིན་ དེ་ཡང་བཅད་ཚུན་ལག་ལེན་མེད་པར་བཞག་ཞིནམ་ལས་ ཆ་མེད་བཟོ། ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(revokeNoteWords("dz"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 83, Col: 756}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 83, Col: 756}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleManaged()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 139, Col: 297}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 139, Col: 297}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -271,7 +271,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appList(googleInHouseNames()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 142, Col: 199}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 142, Col: 199}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 146, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -299,7 +299,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingSep("dz"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 146, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").Line)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 146, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 146, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(googlePendingWords("dz").AsksFor)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 147, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 147, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 150, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -352,7 +352,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 150, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 150, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 185, Col: 16}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 185, Col: 16}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 26}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 188, Col: 26}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func tafsPrivacyGoogleDZ() templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(s.What)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `dz_tafs_privacy.templ`, Line: 188, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/dz_tafs_privacy.templ`, Line: 188, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
