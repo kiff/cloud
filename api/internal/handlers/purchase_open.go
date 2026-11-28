@@ -121,10 +121,20 @@ func relayGrant(audience string) (tenant, grant string) {
 	return parts[len(parts)-2], parts[len(parts)-1]
 }
 
+// samePage says the pay's own url and ref are the block's: the case binds
+// the exact pay, not only its op.
+func samePage(args json.RawMessage, b purchase.CheckoutBlock) bool {
+	var a struct {
+		URL string `json:"url"`
+		Ref string `json:"ref"`
+	}
+	return json.Unmarshal(args, &a) == nil && a.URL != "" && a.URL == b.URL && a.Ref == b.Ref
+}
+
 // openPurchase opens the pay's case, or says why it's refused: the response
 // to send, and true. Within its Card's limits it's decided here; otherwise
 // it waits for the owner (the call is held with the purchase ask).
-func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, prop kiffproposal.ActionProposal, audience string, block json.RawMessage) (*openedCase, proposalResponse, bool) {
+func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, prop kiffproposal.ActionProposal, pay *permit.Request, block json.RawMessage) (*openedCase, proposalResponse, bool) {
 	po := h.purchaseOpening
 	refuse := func(reason, msg string) (*openedCase, proposalResponse, bool) {
 		h.recordRejection(ctx, id, prop, outcomeBlocked, []string{reason})
@@ -134,8 +144,10 @@ func (h *ProposalsHandler) openPurchase(ctx context.Context, id auth.Identity, p
 	if why == "" {
 		if err := b.Check(id.Tenant, prop.ID, time.Now()); err != nil {
 			why = err.Error()
-		} else if tenant, grant := relayGrant(audience); grant == "" || b.Grant != grant || b.Tenant != tenant {
+		} else if tenant, grant := relayGrant(pay.Audience); grant == "" || b.Grant != grant || b.Tenant != tenant {
 			why = "it's another connection's checkout"
+		} else if !samePage(pay.Arguments, b) {
+			why = "it's another page's, or another control's"
 		}
 	}
 	if why != "" {

@@ -159,9 +159,13 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 	block := signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", nil))
 	// The relay's connection: planque's account t1, grant g_web.
 	aud := "https://planque.example/mcp/t1/g_web"
+	pay := func(aud string) *permit.Request {
+		return &permit.Request{Tool: purchase.ToolBrowsePay, Audience: aud,
+			Arguments: json.RawMessage(`{"url":"https://papeterie-lumiere.example/checkout","ref":"c7","op":"op-pay"}`)}
+	}
 
 	h, f := rig(within, false)
-	o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, block)
+	o, resp, stop := h.openPurchase(context.Background(), id, prop, pay(aud), block)
 	if stop || o == nil || !o.decided || f.decided == nil || f.decided.By != purchase.ByCardLimits || f.decided.Limits.Location != "Europe/Paris" {
 		t.Fatalf("within limits: %+v %+v %+v", o, resp, f.decided)
 	}
@@ -171,13 +175,13 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		t.Fatalf("case %+v", c)
 	}
 	// The same pay again: the same case, decided, never a second one.
-	o2, _, _ := h.openPurchase(context.Background(), id, prop, aud, block)
+	o2, _, _ := h.openPurchase(context.Background(), id, prop, pay(aud), block)
 	if o2.row.Case.CaseID != c.CaseID || !o2.decided || len(f.rows) != 1 {
 		t.Fatalf("a retry: %+v", o2)
 	}
 
 	h, f = rig(&ask, false)
-	o, _, stop = h.openPurchase(context.Background(), id, prop, aud, block)
+	o, _, stop = h.openPurchase(context.Background(), id, prop, pay(aud), block)
 	if stop || o.decided || f.decided != nil || ownerAskFrom(withPurchaseOpened(context.Background(), o)) == "" {
 		t.Fatalf("asked each time: %+v", o)
 	}
@@ -189,7 +193,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 
 	h, f = rig(within, false)
 	f.decide = purchase.ErrOutsideLimits
-	if o, _, _ := h.openPurchase(context.Background(), id, prop, aud, block); o == nil || o.decided {
+	if o, _, _ := h.openPurchase(context.Background(), id, prop, pay(aud), block); o == nil || o.decided {
 		t.Fatalf("outside the limits is the owner's: %+v", o)
 	}
 
@@ -211,7 +215,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		"totals that don't add up": {within, false, signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", func(b map[string]any) { b["total"] = "84.21" })), reasonPurchaseCheckout},
 	} {
 		h, f := rig(c.rule, c.cardFill)
-		o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, c.block)
+		o, resp, stop := h.openPurchase(context.Background(), id, prop, pay(aud), c.block)
 		if !stop || o != nil || len(resp.Reasons) != 1 || resp.Reasons[0] != c.reason || len(f.rows) != 0 {
 			t.Errorf("%s: %v %+v %d", name, stop, resp, len(f.rows))
 		}
@@ -226,9 +230,11 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		"another grant's audience":      {"https://planque.example/mcp/t1/g_other", block},
 		"another account's audience":    {"https://planque.example/mcp/t2/g_web", block},
 		"an audience naming no grant":   {"planque", block},
+		"another page's checkout":       {aud, signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", func(b map[string]any) { b["url"] = "https://papeterie-lumiere.example/other" }))},
+		"another control's checkout":    {aud, signUnder(t, key, planqueCheckoutLabel, checkoutBody("t1", "op-pay", func(b map[string]any) { b["ref"] = "c8" }))},
 	} {
 		h, f := rig(within, false)
-		o, resp, stop := h.openPurchase(context.Background(), id, prop, c.aud, c.block)
+		o, resp, stop := h.openPurchase(context.Background(), id, prop, pay(c.aud), c.block)
 		if !stop || o != nil || len(resp.Reasons) != 1 || resp.Reasons[0] != reasonPurchaseCheckout || len(f.rows) != 0 {
 			t.Errorf("%s: %v %+v %d", name, stop, resp, len(f.rows))
 		}
@@ -239,7 +245,7 @@ func TestAPayOpensItsCaseFromTheCheckout(t *testing.T) {
 		delete(b, "stripe_profile")
 		delete(b, "stripe_profile_from")
 	}))
-	if o, resp, stop := h.openPurchase(context.Background(), id, prop, aud, noToken); stop || o.row.Case.Path != "card_fill" {
+	if o, resp, stop := h.openPurchase(context.Background(), id, prop, pay(aud), noToken); stop || o.row.Case.Path != "card_fill" {
 		t.Fatalf("a card fill in test mode: %+v", resp)
 	}
 }
