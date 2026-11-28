@@ -66,7 +66,7 @@ func (s *Store) ReceiptOf(ctx context.Context, tenant, caseID, reader string) (R
 	var issuer NameCategory
 	var verification string
 	err = s.Pool.QueryRow(ctx, `SELECT merchant_name, merchant_category, verification FROM purchase.authorizations
-		WHERE tenant_id = $1 AND case_id = $2 AND version = $3 AND approved ORDER BY at LIMIT 1`, tenant, caseID, c.Version).Scan(&issuer.Name, &issuer.Category, &verification)
+		WHERE tenant_id = $1 AND case_id = $2 AND version = $3 ORDER BY approved DESC, at LIMIT 1`, tenant, caseID, c.Version).Scan(&issuer.Name, &issuer.Category, &verification)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return Receipt{}, err
 	}
