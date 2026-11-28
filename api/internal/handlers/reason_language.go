@@ -72,6 +72,7 @@ var callReasons = []string{
 	"mandate_" + string(mandate.OutcomeResourceOutside),
 	"mandate_" + string(mandate.OutcomeUnreadableResource),
 	"mandate_" + string(mandate.OutcomeNotCovered),
+	"mandate_" + string(mandate.OutcomeCategoryClosed),
 	"mandate_" + string(mandate.OutcomeExpired),
 	reasonNoMandateIssued,
 	reasonUnitMismatch,

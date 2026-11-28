@@ -255,8 +255,11 @@ var nextSteps = map[string]struct {
 	text  string
 	retry string
 }{
-	"no_mandate_issued":            {"No Card covers this tool for this agent. Ask the account owner to issue one, then call again with a new " + OperationArg + ".", "new_call"},
-	"mandate_not_covered":          {"The agent's Card does not cover this call. Ask the account owner to change the Card, then call again with a new " + OperationArg + ".", "new_call"},
+	"no_mandate_issued":   {"No Card covers this tool for this agent. Ask the account owner to issue one, then call again with a new " + OperationArg + ".", "new_call"},
+	"mandate_not_covered": {"The agent's Card does not cover this call. Ask the account owner to change the Card, then call again with a new " + OperationArg + ".", "new_call"},
+	// K4: the Card covers the tool, but this kind of call (irreversible, money or delete) starts closed until the
+	// owner opens it. The taf says so, never that the Card doesn't cover what the owner just approved.
+	"mandate_category_closed":      {"This kind of call is closed on the agent's Card until the account owner opens it; the Card does cover the tool. Nothing was sent. Tell the owner it's closed on their Card until they open it, never that the Card doesn't cover it, then call again with a new " + OperationArg + " once they have.", "new_call"},
 	"mandate_per_action_exceeded":  {"This call is above the Card's per-call limit. Ask the account owner to raise the limit, then call again with a new " + OperationArg + ".", "new_call"},
 	"mandate_resource_not_on_card": {"This call is on something the agent's Card does not cover. Ask the account owner to add it to the Card, then call again with a new " + OperationArg + ".", "new_call"},
 	"mandate_limit_reached":        {"This call would go over what is left on the Card for its period. Ask the account owner to raise the limit, or call again with a new " + OperationArg + " once the period has room.", "new_call"},

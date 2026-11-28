@@ -67,6 +67,7 @@ var nl = Words{
 		"mandate_resource_not_on_card": "Het ging om iets wat de Card niet dekt.",
 		"mandate_unreadable_resource":  "KIFF kon niet lezen waar het om ging.",
 		"mandate_not_covered":          "Geen enkele Card dekt deze tool.",
+		"mandate_category_closed":      "Het staat dicht op je Card tot je het opent.",
 		"mandate_expired":              "De Card is verlopen.",
 		"no_mandate_issued":            "Geen enkele Card dekt deze tool.",
 		"amount_unit_mismatch":         "Het was in een andere valuta dan die van de Card.",

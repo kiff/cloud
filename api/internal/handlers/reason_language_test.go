@@ -53,6 +53,10 @@ func TestEveryCallReasonHasWordsInEveryLanguage(t *testing.T) {
 	if callReasonIn("refused", []string{"unknown", reasonHalted}, "de") != "Du hattest es angehalten." {
 		t.Error("the first reason with words, in German")
 	}
+	// K4's closed category reads as closed until the owner opens it, never as a Card that doesn't cover it.
+	if got := callReasonIn("blocked", []string{"mandate_category_closed"}, "en"); got != "It's closed on your Card until you open it." {
+		t.Errorf("a closed category: %q", got)
+	}
 }
 
 func TestAHoldsReasonInSpanish(t *testing.T) {
