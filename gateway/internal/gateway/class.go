@@ -7,7 +7,6 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"unicode"
 )
 
 // A call's class (K4): what the worst call of a
@@ -49,10 +48,6 @@ type ClassedTool struct {
 	Money    bool
 	// Destructive is the vendor's destructiveHint: it only raises.
 	Destructive bool
-	// Operation is the vendor operation a narrowed tool pins as a fixed
-	// argument (stripe_api_write's PostInvoicesInvoiceVoid): it is classed
-	// too, and only raises, since the tool's own name says nothing of it.
-	Operation string
 }
 
 // Classify is the tool's class: the worse of what the rules give and what a
@@ -71,35 +66,10 @@ func Classify(t ClassedTool) Class {
 // read_only and a read verb; a name decides delete, money and irreversible;
 // anything else is a write.
 func ruleClass(t ClassedTool) Class {
+	n := strings.ToLower(t.Name)
 	if t.Money {
 		return ClassMoney
 	}
-	c := nameClass(t, strings.ToLower(t.Name))
-	// A name that starts with its app's name (Composio's STRIPE_VOID_INVOICE)
-	// is classed again without it: only ever raising, so a prefix can't hide
-	// a verb.
-	if i := strings.IndexByte(t.Name, '_'); i > 0 {
-		n, rest := strings.ToLower(t.Name), strings.ToLower(t.Name[i+1:])
-		if !hasPrefix(n, allVerbs()) && hasPrefix(rest, allVerbs()) {
-			// The name without its app decides, and the whole name can
-			// only raise it (a money or irreversible word anywhere in it).
-			whole := c
-			c = nameClass(ClassedTool{ReadOnly: t.ReadOnly, Destructive: t.Destructive}, rest)
-			if whole != ClassWrite {
-				c = worse(c, whole)
-			}
-		}
-	}
-	if t.Operation != "" {
-		c = worse(c, nameClass(ClassedTool{}, snake(t.Operation)))
-	}
-	return c
-}
-
-// nameClass is the class one name gives: a read only with planque's
-// read_only and a read verb; a delete, money or irreversible name; else a
-// write.
-func nameClass(t ClassedTool, n string) Class {
 	// A read verb on a tool planque calls read-only is a read, whatever
 	// else its name says: list_cards lists cards and moves no money.
 	// A tool its vendor marks destructive is never a read, whatever its
@@ -126,31 +96,11 @@ func nameClass(t ClassedTool, n string) Class {
 	return c
 }
 
-// allVerbs are every verb a name's class is read from.
-func allVerbs() []string {
-	out := append([]string{}, readVerbs...)
-	out = append(out, irreversibleVerbs...)
-	return append(out, deleteVerbs...)
-}
-
-// snake writes a CamelCase operation id as words joined by underscores:
-// PostInvoicesInvoiceVoid is post_invoices_invoice_void.
-func snake(op string) string {
-	var b strings.Builder
-	for i, r := range op {
-		if unicode.IsUpper(r) && i > 0 {
-			b.WriteByte('_')
-		}
-		b.WriteRune(unicode.ToLower(r))
-	}
-	return b.String()
-}
-
 var (
 	readVerbs         = []string{"get_", "list_", "search_", "find_", "read_", "fetch_", "retrieve_", "lookup_", "describe_", "count_"}
 	deleteVerbs       = []string{"delete_", "remove_", "destroy_", "purge_", "erase_"}
 	irreversibleVerbs = []string{"send_", "finalize_", "finalise_", "issue_", "invite_", "share_", "publish_", "submit_", "approve_", "sign_", "void_", "cancel_", "close_", "mark_", "unmark_"}
-	irreversibleWords = []string{"_status", "finaliz", "finalis", "credit_note", "reminder", "membership", "_invite", "_share", "_void", "uncollectible", "_send"}
+	irreversibleWords = []string{"_status", "finaliz", "finalis", "credit_note", "reminder", "membership", "_invite", "_share"}
 	moneyWords        = []string{"transfer", "payment", "payout", "refund", "charge", "card", "pay_", "_pay", "withdraw", "deposit", "money_request"}
 )
 
@@ -180,7 +130,7 @@ const ClassParam = "kiff_class"
 // Class is the tool's class (Classify), from its name at the vendor, its
 // app, planque's read_only and the profile's money mark.
 func (t Tool) Class() Class {
-	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint, Operation: t.pinnedOperation()})
+	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint})
 }
 
 // Conditioned says whether its app's reviewed table has a condition that can
@@ -189,25 +139,6 @@ func (t Tool) Class() Class {
 func (t Tool) Conditioned() bool {
 	tt, ok := tableEntry(t.App, t.classedName())
 	return ok && tt.condition != nil
-}
-
-// operationArgs are the fixed arguments a narrowed tool pins its vendor
-// operation in.
-var operationArgs = []string{"stripe_api_operation_id"}
-
-// pinnedOperation is the vendor operation the tool's fixed arguments pin,
-// or "".
-func (t Tool) pinnedOperation() string {
-	fixed, err := t.fixedArgs()
-	if err != nil {
-		return ""
-	}
-	for _, k := range operationArgs {
-		if op, ok := fixed[k].(string); ok {
-			return op
-		}
-	}
-	return ""
 }
 
 // classedName is the tool's name at its vendor: what its class is read from.
