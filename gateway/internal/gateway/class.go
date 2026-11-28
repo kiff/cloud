@@ -74,12 +74,19 @@ func ruleClass(t ClassedTool) Class {
 	if t.Money {
 		return ClassMoney
 	}
-	c := nameClass(t, strings.ToLower(t.Name))
+	// A camelCase name (an OpenAPI operation id: searchTickets, postReply) is
+	// read as its words joined by underscores, so its verb is a verb.
+	name := t.Name
+	if !strings.ContainsRune(name, '_') && strings.ToLower(name) != name {
+		name = snake(name)
+	}
+	c := nameClass(t, strings.ToLower(name))
 	// A name that starts with its app's name (Composio's STRIPE_VOID_INVOICE)
-	// is classed again without it: only ever raising, so a prefix can't hide
-	// a verb.
-	if i := strings.IndexByte(t.Name, '_'); i > 0 {
-		n, rest := strings.ToLower(t.Name), strings.ToLower(t.Name[i+1:])
+	// is classed again without it. The whole name can only raise that class;
+	// and the name without its app makes a read only as any name does, with
+	// planque's read_only too (STRIPE_LIST_INVOICES).
+	if i := strings.IndexByte(name, '_'); i > 0 {
+		n, rest := strings.ToLower(name), strings.ToLower(name[i+1:])
 		if !hasPrefix(n, allVerbs()) && hasPrefix(rest, allVerbs()) {
 			// The name without its app decides, and the whole name can
 			// only raise it (a money or irreversible word anywhere in it).
@@ -173,6 +180,16 @@ func containsAny(s string, ws []string) bool {
 		}
 	}
 	return false
+}
+
+// NarrowOpenings are the one-value openings the tool's app table gives it,
+// or none: then a Card opens its class whole.
+func (t Tool) NarrowOpenings() []NarrowOpening {
+	tt, ok := tableEntry(t.App, t.classedName())
+	if !ok {
+		return nil
+	}
+	return tt.narrow
 }
 
 // ClassParam is the parameter KIFF is told the call's class in (K4). The
@@ -299,6 +316,17 @@ type tableTool struct {
 	operation *classOperation
 	// args are the arguments an opening or condition names for this tool.
 	args []string
+	// narrow are the openings the table's categories give this tool for one
+	// value (send_invoices: change_client_invoice_status for operation =
+	// finalize), the narrowest a Card's draft is given.
+	narrow []NarrowOpening
+}
+
+// NarrowOpening is an opening for one argument's value, as a reviewed
+// table's category names it.
+type NarrowOpening struct {
+	Argument string `json:"argument"`
+	Value    string `json:"value"`
 }
 
 var (
@@ -353,6 +381,7 @@ func loadTables() {
 					continue
 				}
 				tt.args = append(tt.args, o.Condition.Argument)
+				tt.narrow = append(tt.narrow, NarrowOpening{Argument: o.Condition.Argument, Value: o.Condition.Equals})
 				m[o.Name] = tt
 			}
 		}

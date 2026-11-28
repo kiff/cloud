@@ -14,7 +14,8 @@ import (
 // force (mandate.Widens, which fails closed). Anything that widens is
 // critical: the phone's approval key, behind its fingerprint, every time.
 // A new Card is routine only for a holder with no Card in force (a new
-// taf's first Cards); beside one it holds already, it widens. Retiring a
+// taf's first Cards) and when it opens no category (K4); beside one it holds
+// already, it widens. Retiring a
 // Card only narrows.
 
 // cardWidening is one way a change widens a Card in force, with the Card.
@@ -48,6 +49,11 @@ func (h *MandatesHandler) widensInForce(ctx context.Context, tenantID string, ca
 	for _, c := range cards {
 		cur, ok := byID[c.ID]
 		if !ok {
+			// K4: each category a new Card opens is its own line, so a
+			// Card's first openings are signed behind the fingerprint too.
+			for _, w := range mandate.OpensOnNew(c) {
+				out = append(out, cardWidening{Card: c.ID, Widening: w})
+			}
 			for _, h := range c.HolderList() {
 				if holds[h] {
 					out = append(out, cardWidening{Card: c.ID, Widening: mandate.Widening{Kind: "new_card",

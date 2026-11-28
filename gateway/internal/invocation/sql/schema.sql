@@ -278,6 +278,21 @@ CREATE TABLE IF NOT EXISTS gateway.object_claims (
     PRIMARY KEY (tenant_id, kind, object, holder)
 );
 
+-- Each tool's class (K4: read, write, irreversible, delete, money) and the
+-- narrow openings its app's reviewed table gives it ([{"argument","value"}]),
+-- which apps/api reads to fill a Card draft's openings: the narrowest first,
+-- the whole class only when there is none. Set when a tool is connected and
+-- written again at each gateway start, so a table change reaches rows
+-- connected before it, and when a profile is applied (its money mark).
+-- '' or NULL: not known yet, and a draft opens nothing for the tool (its
+-- calls are refused until the owner opens them). class_conditioned: the
+-- table has a condition that lowers the class on a call
+-- (create_client_invoice with status draft); a draft opens nothing for it,
+-- so its other calls stay refused.
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class text NOT NULL DEFAULT '';
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class_opens jsonb;
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS class_conditioned boolean NOT NULL DEFAULT false;
+
 -- What a relay changed on a tool it registered (PATCH /v1/connections/{name}):
 -- the relay-owned fields (app, destructive_hint, vendor_pins) before and
 -- after, when, and the key that changed them. Never a call's contents.

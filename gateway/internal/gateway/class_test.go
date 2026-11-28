@@ -207,3 +207,25 @@ func TestAnAppPrefixOrAPinnedOperationDoesntHideTheVerb(t *testing.T) {
 		}
 	}
 }
+
+// An OpenAPI operation id is camelCase: its verb is read as a verb, so a
+// read-only search is a read and a post is a write.
+func TestACamelCaseOperationIsClassedByItsVerb(t *testing.T) {
+	for _, tc := range []struct {
+		tool ClassedTool
+		want Class
+	}{
+		{ClassedTool{Name: "searchTickets", ReadOnly: true}, ClassRead},
+		{ClassedTool{Name: "fetchTicket", ReadOnly: true}, ClassRead},
+		{ClassedTool{Name: "searchTickets"}, ClassWrite},
+		{ClassedTool{Name: "postReply"}, ClassWrite},
+		{ClassedTool{Name: "applyLabel"}, ClassWrite},
+		{ClassedTool{Name: "deleteTicket"}, ClassDelete},
+		{ClassedTool{Name: "sendInvoice"}, ClassIrreversible},
+		{ClassedTool{Name: "createRefund"}, ClassMoney},
+	} {
+		if got := Classify(tc.tool); got != tc.want {
+			t.Errorf("%+v: %s, want %s", tc.tool, got, tc.want)
+		}
+	}
+}
