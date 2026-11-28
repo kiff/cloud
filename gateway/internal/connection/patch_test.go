@@ -84,8 +84,12 @@ func TestARelayPatchesItsOwnToolWithoutLoweringItsClass(t *testing.T) {
 	}
 	var n int
 	var first string
-	if err := r.store.Pool.QueryRow(ctx, `SELECT count(*), min(old::text) FROM gateway.tool_patches WHERE tenant_id = 'tenant-a' AND name = 'invoice'`).Scan(&n, &first); err != nil || n != 2 {
+	if err := r.store.Pool.QueryRow(ctx, `SELECT count(*) FROM gateway.tool_patches WHERE tenant_id = 'tenant-a' AND name = 'invoice'`).Scan(&n); err != nil || n != 2 {
 		t.Fatalf("recorded %d %v", n, err)
+	}
+	// In the order they were made, by their sequence: two in one second keep their order.
+	if err := r.store.Pool.QueryRow(ctx, `SELECT old::text FROM gateway.tool_patches WHERE tenant_id = 'tenant-a' AND name = 'invoice' ORDER BY id LIMIT 1`).Scan(&first); err != nil {
+		t.Fatal(err)
 	}
 	if !strings.Contains(first, `"app": ""`) {
 		t.Fatalf("the first record's old values: %s", first)

@@ -282,6 +282,7 @@ CREATE TABLE IF NOT EXISTS gateway.object_claims (
 -- the relay-owned fields (app, destructive_hint, vendor_pins) before and
 -- after, when, and the key that changed them. Never a call's contents.
 CREATE TABLE IF NOT EXISTS gateway.tool_patches (
+    id         bigserial   PRIMARY KEY,
     tenant_id  text        NOT NULL,
     name       text        NOT NULL,
     at         timestamptz NOT NULL DEFAULT now(),
