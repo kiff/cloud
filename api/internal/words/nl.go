@@ -77,6 +77,7 @@ var nl = Words{
 	},
 	OwnerAsks: map[string]string{
 		OwnerAskSealedMoney:  "deze tool verplaatst geld via een koppeling waarvan KIFF de sleutel heeft, dus elke aanroep wacht op goedkeuring",
+		OwnerAskPurchase:     "dit koopt iets, en de kaart vraagt het je elke keer, of het valt buiten de limieten van de kaart",
 		OwnerAskSecondRefund: "deze betaling heeft al een terugbetaling, dus een tweede wacht op goedkeuring",
 		OwnerAskNoRequestID:  "de agent noemde geen verzoek uit een gekoppelde app, dus deze terugbetaling wacht op goedkeuring",
 		OwnerAskOther:        "elke aanroep van deze tool wacht op goedkeuring",
