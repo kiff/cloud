@@ -174,7 +174,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 		"KIFF_PERMIT_SIGNING_KEY=e2e-1:" + seed(), "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text"}, "http://"+apiAddr+"/healthz", "-addr", apiAddr)
 	gwKeys := "e2e:" + base64.StdEncoding.EncodeToString(func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }())
 	start(t, gwBin, []string{"KIFF_DATABASE_URL=" + dbURL, "KIFF_GATEWAY_CREDENTIAL_KEYS=" + gwKeys, "KIFF_API_URL=http://" + apiAddr,
-		"KIFF_GATEWAY_ALLOW_PRIVATE_TOOLS=true", "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_LOG_FORMAT=text"}, "http://"+gwAddr+"/healthz", "-addr", gwAddr)
+		"KIFF_GATEWAY_ALLOW_PRIVATE_TOOLS=true", "KIFF_PLANQUE_URLS=" + relayURL, "KIFF_SIGN_PINS=" + tenantID, "KIFF_LOG_FORMAT=text"}, "http://"+gwAddr+"/healthz", "-addr", gwAddr)
 	api, gw := "http://"+apiAddr, "http://"+gwAddr
 
 	// Keys: the owner's, a connector's (the relay registers its tools with
@@ -200,9 +200,15 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 		"mode": "verify", "audience": relayURL, "idempotency_argument": "idempotency_key", "app": "e2e"}); code != http.StatusCreated {
 		t.Fatalf("connect the relay's tool: %d %v", code, out)
 	}
-	// A Card for the agent granting both.
+	// A relay's tool registered with today's pins, beside the one above registered before them.
+	pins := []map[string]any{{"path": "currency", "value": "eur"}, {"path": "metadata.kiff_op", "marker": true}}
+	if code, out := call(t, http.MethodPost, gw+"/v1/connections", connector, map[string]any{"name": "refund_fresh", "url": relayURL, "tool": "refund",
+		"mode": "verify", "audience": relayURL, "idempotency_argument": "idempotency_key", "vendor_pins": pins}); code != http.StatusCreated {
+		t.Fatalf("connect the relay's fresh tool: %d %v", code, out)
+	}
+	// A Card for the agent granting them.
 	card := map[string]any{"id": "card-e2e", "subject": "agt_e2e", "domain": "gateway",
-		"grants":     []map[string]any{{"action": "quote_direct"}, {"action": "refund_relay"}},
+		"grants":     []map[string]any{{"action": "quote_direct"}, {"action": "refund_relay"}, {"action": "refund_fresh"}},
 		"aggregates": []map[string]any{{"quantity": "count", "limit": 100, "window": "calendar_day"}}}
 	if code, out := call(t, http.MethodPost, api+"/v1/me/mandates", owner, card); code != http.StatusCreated && code != http.StatusOK {
 		t.Fatalf("issue the Card: %d %v", code, out)
@@ -232,7 +238,7 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 	// its tool and audience; the sealed call needed none.
 	var tool, audience string
 	var minted bool
-	if err := pool.QueryRow(ctx, `SELECT tool, audience, permit_jti IS NOT NULL FROM cloud_meta.permit_bindings WHERE tenant_id = $1`, tenantID).Scan(&tool, &audience, &minted); err != nil {
+	if err := pool.QueryRow(ctx, `SELECT tool, audience, permit_jti IS NOT NULL FROM cloud_meta.permit_bindings WHERE tenant_id = $1 ORDER BY created_at LIMIT 1`, tenantID).Scan(&tool, &audience, &minted); err != nil {
 		t.Fatalf("the relay's permit: %v", err)
 	}
 	if tool != "refund" || audience != relayURL || !minted {
@@ -249,5 +255,45 @@ func TestARelayCallAndASealedCallReachTheirTools(t *testing.T) {
 		if calls.Calls != 1 {
 			t.Fatalf("%s's tool received %d calls, want 1", addr, calls.Calls)
 		}
+	}
+
+	// The relay brings its older tool up to today's registration in place
+	// (PATCH): its next call's permit carries exactly the pins a tool
+	// registered with them does, and the sealed tool's call is unchanged.
+	if code, out := call(t, http.MethodPatch, gw+"/v1/connections/refund_relay", connector, map[string]any{"app": "e2e", "destructive_hint": false, "vendor_pins": pins}); code != http.StatusNoContent {
+		t.Fatalf("patch the relay's tool: %d %v", code, out)
+	}
+	if code, out := call(t, http.MethodPatch, gw+"/v1/connections/quote_direct", connector, map[string]any{"app": "", "destructive_hint": false, "vendor_pins": []any{}}); code != http.StatusForbidden {
+		t.Fatalf("the relay patching the owner's tool: %d %v", code, out)
+	}
+	if ok, text := callTool("refund_relay", map[string]any{"order": "o-3", "amount_eur": 5, "idempotency_key": "op-e2e-patched"}); !ok || !strings.Contains(text, "Refund #") {
+		t.Fatalf("the patched tool's call: %v %s", ok, text)
+	}
+	if ok, text := callTool("refund_fresh", map[string]any{"order": "o-4", "amount_eur": 5, "idempotency_key": "op-e2e-fresh"}); !ok || !strings.Contains(text, "Refund #") {
+		t.Fatalf("the fresh tool's call: %v %s", ok, text)
+	}
+	if ok, text := callTool("quote_direct", map[string]any{"order": "o-5", "amount_eur": 5}); !ok || !strings.Contains(text, "Quote #") {
+		t.Fatalf("the sealed call after the patch: %v %s", ok, text)
+	}
+	// The relay calls' bindings, in the order the calls were made: before the patch, patched, fresh.
+	rows, err := pool.Query(ctx, `SELECT pins FROM cloud_meta.permit_bindings WHERE tenant_id = $1 ORDER BY created_at`, tenantID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var bound []string
+	for rows.Next() {
+		var p string
+		if err := rows.Scan(&p); err != nil {
+			t.Fatal(err)
+		}
+		bound = append(bound, p)
+	}
+	rows.Close()
+	if len(bound) != 3 {
+		t.Fatalf("%d relay bindings, want 3", len(bound))
+	}
+	before, patched, fresh := bound[0], bound[1], bound[2]
+	if patched == "" || patched != fresh || before != "" {
+		t.Fatalf("pins: patched %q, fresh %q, before the patch %q", patched, fresh, before)
 	}
 }
