@@ -25,6 +25,11 @@ type CheckoutRead struct {
 	// Path is how the shop takes payment: a token where it takes one,
 	// else a card fill.
 	Path string `json:"path"`
+	// StripeProfile is the seller's Stripe profile the shop's own payment
+	// endpoint names, for a token; StripeProfileFrom is the host the relay
+	// read it on, which must be on the checkout's own site.
+	StripeProfile     string `json:"stripe_profile,omitempty"`
+	StripeProfileFrom string `json:"stripe_profile_from,omitempty"`
 }
 
 // CheckoutLine is one line as read.
@@ -68,6 +73,14 @@ func FromCheckout(o Opening, read CheckoutRead, rule CardRule) (Case, error) {
 		Merchant: Merchant{Name: strings.TrimSpace(read.Name), Site: strings.TrimSpace(read.Site), Country: strings.ToUpper(read.Country)},
 		Markets:  Markets{Payer: strings.ToUpper(o.PayerMarket), Merchant: strings.ToUpper(read.Country)}}
 	c.Merchant.Match = Match{NameKey: Fold(c.Merchant.Name)}
+	if read.Path == "token" {
+		// The profile is the shop's own claim, so only one read on the
+		// checkout's own site counts.
+		if !onSite(read.StripeProfileFrom, c.Merchant.Site) {
+			return bad("the seller's Stripe profile wasn't read on the checkout's own site")
+		}
+		c.Merchant.StripeProfile = strings.TrimSpace(read.StripeProfile)
+	}
 	var sum int64
 	for _, l := range read.Lines {
 		a, err := amount(l.Price)
@@ -133,4 +146,10 @@ func NewCaseID() string {
 	var b [12]byte
 	_, _ = rand.Read(b[:])
 	return "pc_" + hex.EncodeToString(b[:])
+}
+
+// onSite says whether host is site or a host under it.
+func onSite(host, site string) bool {
+	host, site = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), ".")), strings.ToLower(strings.TrimSpace(site))
+	return host != "" && site != "" && (host == site || strings.HasSuffix(host, "."+site))
 }

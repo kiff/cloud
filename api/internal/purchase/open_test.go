@@ -7,6 +7,7 @@ import (
 
 func read() CheckoutRead {
 	return CheckoutRead{Site: "papeterie-lumiere.example", Name: "Papeterie Lumière", Country: "fr", Currency: "eur", Path: "token",
+		StripeProfile: "profile_61RkZt0hLumiere", StripeProfileFrom: "pay.papeterie-lumiere.example",
 		Lines:    []CheckoutLine{{Item: "A4 paper, 80 g, 5 reams", Quantity: 2, Price: "59.80"}, {Item: "Ballpoint pens, blue, box of 50", Quantity: 1, Price: "14,90"}},
 		Shipping: "9.50", Total: "84.20",
 		Delivery: Address{Name: "Acme SAS", Line1: "12 rue des Lilas", PostalCode: "69003", City: "Lyon", Country: "FR"}}
@@ -24,7 +25,7 @@ func TestACaseIsBuiltFromTheCheckoutRead(t *testing.T) {
 		t.Fatal(err)
 	}
 	if c.Price.Total != 8420 || c.Price.Lines != 7470 || c.Price.Shipping != 950 || c.Price.Max != 8620 || c.Grant.Cap != 8620 || c.Currency != "EUR" ||
-		c.Merchant.Match.NameKey != "papeterielumiere" || c.Merchant.Country != "FR" || c.Lines[1].Amount != 1490 || c.Version != 1 {
+		c.Merchant.Match.NameKey != "papeterielumiere" || c.Merchant.StripeProfile != "profile_61RkZt0hLumiere" || c.Merchant.Country != "FR" || c.Lines[1].Amount != 1490 || c.Version != 1 {
 		t.Fatalf("case %+v", c)
 	}
 	if _, err := c.Digest(); err != nil {
@@ -40,6 +41,12 @@ func TestACheckoutThatDoesntAddUpIsNoCase(t *testing.T) {
 		"no address":            func(r *CheckoutRead) { r.Delivery.Line1 = "" },
 		"no path":               func(r *CheckoutRead) { r.Path = "none" },
 		"a word for a price":    func(r *CheckoutRead) { r.Shipping = "free" },
+		// The seller's profile is the shop's own claim: only one read on
+		// the checkout's own site counts, and a token needs one.
+		"a profile read on another site": func(r *CheckoutRead) { r.StripeProfileFrom = "evil.example" },
+		"a look-alike site":              func(r *CheckoutRead) { r.StripeProfileFrom = "papeterie-lumiere.example.evil.example" },
+		"a token with no profile":        func(r *CheckoutRead) { r.StripeProfile = "" },
+		"a profile that isn't one":       func(r *CheckoutRead) { r.StripeProfile = "acct_123" },
 	} {
 		r := read()
 		r.Lines = append([]CheckoutLine(nil), r.Lines...)

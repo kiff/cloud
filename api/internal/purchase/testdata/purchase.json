@@ -1,7 +1,7 @@
 {
   "about": "A purchase in Thune v1 (buy within the Card), as KIFF keeps it and every other side reads it: the case and what its digest signs, its states, KIFF's execution lease, the live authorization's rules, the approval the apps draw, the owner's signed answer, and the signed receipt. Amounts are integers in the currency's minor units. Every word the owner reads comes from KIFF in `words`; the apps never compose or decide. Written by hand, as data, until KIFF's batch A writes it from its own test; then copied here byte for byte, as kiff-agent-draft-from-hold.json is.",
   "case": {
-    "about": "The case KIFF builds from what it and planque read at the checkout (`Checkout.Same`), never from the taf's words. Every field here is signed: the digest is SHA-256, hex, of the object's canonical JSON (RFC 8785, as runtime/src/cloud/jcs.ts writes it). Any change to a signed field is a new `version` with a new digest, which voids the earlier signature and releases its reservation; a total that stays within `price.rule` is the one change that isn't. `price.total` is `lines` plus `shipping` plus `tax` (tax 0 when the line amounts include it), `price.max` is `total` plus `rule.up_to` (or `total` with no rule), and `grant.cap` equals it. `path` is the case's, never the page's: a merchant chosen for `token` that asks for a card number ends with nothing sent. `delivery` is signed, so an address changed after the decision sends nothing. `valid_for_seconds` is fixed at 900: an approved, unused case ends 15 minutes after its decision. `merchant.category` is the merchant category code, for the receipt and the Record; `grant.categories` are the issuer's own category names, which the card's spending controls take. `merchant.match` is how the live authorization knows it's this shop, not only this kind of shop: the issuer's merchant network id when the case has one, otherwise the issuer's merchant name, folded (lower case, letters and digits only, accents removed), containing `name_key`; and the merchant's country. So the words can say \"at this shop\". `route: existing_method` (and `grant.kind: existing_method`) isn't in v1: KIFF refuses a case with it until that route has its own design.",
+    "about": "The case KIFF builds from what it and planque read at the checkout (`Checkout.Same`), never from the taf's words. Every field here is signed: the digest is SHA-256, hex, of the object's canonical JSON (RFC 8785, as runtime/src/cloud/jcs.ts writes it). Any change to a signed field is a new `version` with a new digest, which voids the earlier signature and releases its reservation; a total that stays within `price.rule` is the one change that isn't. `price.total` is `lines` plus `shipping` plus `tax` (tax 0 when the line amounts include it), `price.max` is `total` plus `rule.up_to` (or `total` with no rule), and `grant.cap` equals it. `path` is the case's, never the page's: a merchant chosen for `token` that asks for a card number ends with nothing sent. `delivery` is signed, so an address changed after the decision sends nothing. `valid_for_seconds` is fixed at 900: an approved, unused case ends 15 minutes after its decision. `merchant.category` is the merchant category code, for the receipt and the Record; `grant.categories` are the issuer's own category names, which the card's spending controls take. `merchant.match` is how the live authorization knows it's this shop, not only this kind of shop: the issuer's merchant network id when the case has one, otherwise the issuer's merchant name, folded (lower case, letters and digits only, accents removed), containing `name_key`; and the merchant's country. So the words can say \"at this shop\". `merchant.stripe_profile` is the seller's Stripe profile a token names (`profile_…`): read only from the case's own checkout site (`merchant.site`, on the grant's sites, over https), in planque's signed checkout block, never from the taf; any other host's is refused. `path: token` needs it, and a case without one is refused as it's built; a `card_fill` case has none. `route: existing_method` (and `grant.kind: existing_method`) isn't in v1: KIFF refuses a case with it until that route has its own design.",
     "value": {
       "schema": "kiff.purchase.v1",
       "case_id": "pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z",
@@ -23,7 +23,8 @@
         "match": {
           "name_key": "papeterielumiere",
           "network_id": ""
-        }
+        },
+        "stripe_profile": "profile_61RkZt0hLumiere"
       },
       "lines": [
         {
@@ -105,7 +106,7 @@
         "existing_method"
       ]
     },
-    "digest": "57485153784a5c18012d50cdaea22ebfdac796497f9b475c2b3a80815cf7bcf3",
+    "digest": "af3b704800fe0adb304c81960f63a9040306b03597984a511d781c1c775981fc",
     "v1": {
       "route": [
         "issued_card"
@@ -321,7 +322,7 @@
     "token": {
       "about": "For `path: token`: the token is made from the case's card, only after the decision, and scoped as the card is. It's a secret: never logged, never shown to the taf, kept only for its life, and revoked when the case ends, used or not. A merchant chosen for a token that asks for a card number ends with nothing sent (`ended: card_number_asked`).",
       "value": {
-        "seller": "papeterie-lumiere.example",
+        "seller": "profile_61RkZt0hLumiere",
         "max_amount": 8620,
         "currency": "EUR",
         "expires_at": "2026-11-28T09:30:10Z",
@@ -331,7 +332,8 @@
         "max_amount equals grant.cap",
         "currency is the case's",
         "expires_at is no later than the decision's valid_until",
-        "seller is the case's merchant"
+        "seller is merchant.stripe_profile, the signed value only",
+        "before live: when Stripe gives the profile's business name or site, it matches merchant.match as the case opens; until then the live authorization's exact shop match is the fence"
       ]
     }
   },
@@ -366,7 +368,7 @@
     "value": {
       "case_id": "pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z",
       "version": 1,
-      "digest": "57485153784a5c18012d50cdaea22ebfdac796497f9b475c2b3a80815cf7bcf3",
+      "digest": "af3b704800fe0adb304c81960f63a9040306b03597984a511d781c1c775981fc",
       "words": {
         "title": "Buy from Papeterie Lumière",
         "subtitle": "Stationery · France",
@@ -411,7 +413,7 @@
       "purchase": {
         "case_id": "pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z",
         "version": 1,
-        "digest": "57485153784a5c18012d50cdaea22ebfdac796497f9b475c2b3a80815cf7bcf3"
+        "digest": "af3b704800fe0adb304c81960f63a9040306b03597984a511d781c1c775981fc"
       }
     },
     "answers": {
@@ -426,18 +428,18 @@
       "note": "",
       "hold_version": 1,
       "signed_at": "2026-11-28T09:15:09Z",
-      "message": "kiff.answer.v1\nt_acme\nexc_7f3a\napprove-once\n\n\n1\n2026-11-28T09:15:09Z\npurchase:pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z:1:57485153784a5c18012d50cdaea22ebfdac796497f9b475c2b3a80815cf7bcf3",
-      "message_sha256": "0dfc6668e02f84a35bbdb09f6ee69d7aaf0bc681bc1c2124a403ea1b86e7dc18"
+      "message": "kiff.answer.v1\nt_acme\nexc_7f3a\napprove-once\n\n\n1\n2026-11-28T09:15:09Z\npurchase:pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z:1:af3b704800fe0adb304c81960f63a9040306b03597984a511d781c1c775981fc",
+      "message_sha256": "2350e932f410d9bc81c2c39c718ec513b8af08dcf2df11116d49f7bf8f8a20c4"
     }
   },
   "receipt": {
-    "about": "KIFF's signed receipt, kept in the Record: what was decided and what happened, `unknown` said as unknown. Signed by KIFF (Ed25519, `kid`) over the canonical JSON of `value`. The issuer's merchant name and category sit beside the case's, so a mismatch is visible. A placeholder `sig` here; the reader checks the shape and that `digest` is the case's. `path` says which way it paid, and `words.card` is that path's line. `approver.self` is whether the reader is the approver, and `method` how they approved: device_biometric or security_key.",
+    "about": "KIFF's signed receipt, kept in the Record: what was decided and what happened, `unknown` said as unknown. Signed by KIFF (Ed25519, `kid`) over the canonical JSON of `value`. The issuer's merchant name and category sit beside the case's, so a mismatch is visible; on `path: token`, the case's side carries the `stripe_profile` the token named, so a profile that paid someone else shows. A placeholder `sig` here; the reader checks the shape and that `digest` is the case's. `path` says which way it paid, and `words.card` is that path's line. `approver.self` is whether the reader is the approver, and `method` how they approved: device_biometric or security_key.",
     "value": {
       "schema": "kiff.purchase-receipt.v1",
       "receipt_id": "rc_8a44",
       "case_id": "pc_01JD8Q7M2K4T9V6X3B5N8R1Y0Z",
       "version": 1,
-      "digest": "57485153784a5c18012d50cdaea22ebfdac796497f9b475c2b3a80815cf7bcf3",
+      "digest": "af3b704800fe0adb304c81960f63a9040306b03597984a511d781c1c775981fc",
       "decided_by": "owner",
       "approver": {
         "role": "owner",
@@ -447,7 +449,8 @@
       "merchant": {
         "case": {
           "name": "Papeterie Lumière",
-          "category": "5943"
+          "category": "5943",
+          "stripe_profile": "profile_61RkZt0hLumiere"
         },
         "issuer": {
           "name": "PAPETERIE LUMIERE LYON",

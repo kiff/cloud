@@ -50,10 +50,12 @@ type ReceiptMerchant struct {
 	Issuer NameCategory `json:"issuer"`
 }
 
-// NameCategory is a merchant's name and category.
+// NameCategory is a merchant's name and category; on a token's case, the
+// Stripe profile the token named, so a profile that paid someone else shows.
 type NameCategory struct {
-	Name     string `json:"name"`
-	Category string `json:"category"`
+	Name          string `json:"name"`
+	Category      string `json:"category"`
+	StripeProfile string `json:"stripe_profile,omitempty"`
 }
 
 // Amounts are the receipt's figures, in minor units.

@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -62,6 +63,11 @@ type Merchant struct {
 	Category string `json:"category"`
 	Country  string `json:"country"`
 	Match    Match  `json:"match"`
+	// StripeProfile is the seller's Stripe profile a token names
+	// (profile_…): read only from the checkout's own site, in the relay's
+	// signed block, never from the taf. A token case needs it; a card fill
+	// has none.
+	StripeProfile string `json:"stripe_profile,omitempty"`
 }
 
 // Match is how the live authorization knows it's this shop, not only this
@@ -145,6 +151,9 @@ var (
 	grants = []string{"single_use_card", "existing_method"}
 )
 
+// stripeProfile is a Stripe profile id as a token names its seller.
+var stripeProfile = regexp.MustCompile(`^profile_[A-Za-z0-9]{1,64}$`)
+
 // ErrCase: the case breaks one of its own rules.
 var ErrCase = errors.New("purchase: the case isn't one KIFF signs")
 
@@ -205,6 +214,12 @@ func (c Case) Check() error {
 	// own risks, and no design yet.
 	if c.Route != "issued_card" || c.Grant.Kind != "single_use_card" || c.Path == "none" {
 		return bad("v1 buys only with a single-use issued card, by token or card fill")
+	}
+	switch {
+	case c.Path == "token" && !stripeProfile.MatchString(c.Merchant.StripeProfile):
+		return bad("a token case names the seller's Stripe profile")
+	case c.Path != "token" && c.Merchant.StripeProfile != "":
+		return bad("only a token case names a Stripe profile")
 	}
 	if c.Merchant.Match.NameKey == "" || c.Merchant.Match.NameKey != Fold(c.Merchant.Name) || c.Merchant.Country == "" {
 		return bad("the merchant's match isn't its folded name")

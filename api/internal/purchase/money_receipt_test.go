@@ -57,7 +57,7 @@ func TestTheReceiptIsSignedOverEveryField(t *testing.T) {
 	k := receiptKey(t)
 	r, err := SignReceipt(k, Receipt{ReceiptID: "rc_1", CaseID: c.CaseID, Version: c.Version, Digest: digest, Path: c.Path, DecidedBy: ByOwner,
 		Approver: Approver{Role: "owner", Self: true, Method: "device_biometric"},
-		Merchant: ReceiptMerchant{Case: NameCategory{c.Merchant.Name, c.Merchant.Category}, Issuer: NameCategory{"PAPETERIE LUMIERE LYON", "5943"}},
+		Merchant: ReceiptMerchant{Case: NameCategory{Name: c.Merchant.Name, Category: c.Merchant.Category, StripeProfile: c.Merchant.StripeProfile}, Issuer: NameCategory{Name: "PAPETERIE LUMIERE LYON", Category: "5943"}},
 		Amounts:  Amounts{ApprovedMax: c.Price.Max, Authorized: 8570, Captured: 8570, Currency: c.Currency},
 		States:   States{Case: StateDone, Money: MoneyCaptured, Order: "confirmed"}, Verification: "exempted",
 		Words: map[string]string{"state": "Bought"}}, time.Date(2026, 11, 28, 9, 16, 52, 0, time.UTC))
