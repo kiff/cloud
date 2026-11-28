@@ -123,6 +123,11 @@ func run(args []string) error {
 		return fmt.Errorf("apply thune schema: %w", err)
 	}
 	catalog := gateway.PostgresCatalog{Pool: pool}
+	if n, err := catalog.RecordClasses(ctx); err != nil {
+		return fmt.Errorf("record tool classes: %w", err)
+	} else if n > 0 {
+		slog.Info("gateway: recorded tool classes", "tools", n)
+	}
 	conns := &connection.Store{Pool: pool, Keys: keys}
 
 	if len(args) > 0 && args[0] == "rotate-credentials" {

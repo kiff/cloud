@@ -67,7 +67,7 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 	// K4: a category opened that wasn't is a widening, on an action kept or
 	// added alike.
 	for _, o := range newOpenings(cur.Grants, next.Grants) {
-		add("opens", "%s", openingWords(o.action, o.opening))
+		out = append(out, o.widening())
 	}
 	for _, a := range cur.Aggregates {
 		b, ok := matchingAggregate(next.Aggregates, a)
@@ -353,6 +353,23 @@ func newOpenings(cur, next []Grant) []actionOpening {
 		}
 	}
 	return out
+}
+
+// OpensOnNew lists a new Card's openings (K4), each its own widening: with
+// no Card in force to compare with, every category it opens is one the
+// owner reads before the fingerprint.
+func OpensOnNew(m Mandate) []Widening {
+	var out []Widening
+	for _, o := range newOpenings(nil, m.Grants) {
+		out = append(out, o.widening())
+	}
+	return out
+}
+
+// widening is the line an opening is read as, on a Card revised or new
+// alike: one place for its words.
+func (o actionOpening) widening() Widening {
+	return Widening{Kind: "opens", Words: openingWords(o.action, o.opening)}
 }
 
 func openingWords(action string, o Opening) string {

@@ -42,10 +42,14 @@ type MandatesHandler struct {
 	// call is answered on; "" gives the path alone.
 	appBaseURL string
 	// titles reads each gateway tool's title for people. Nil: none shown.
-	titles  GatewayToolTitles
-	tenants tenant.Store
-	store   mandate.Store
-	domains domain.Source
+	titles GatewayToolTitles
+	// fillOpens has a draft given its tools' openings (K4, fillOpenings).
+	// Off until every app draws a draft's openings: an app that drops them
+	// would have the owner sign one unseen.
+	fillOpens bool
+	tenants   tenant.Store
+	store     mandate.Store
+	domains   domain.Source
 	// agents records a card's holder as an agent when it is issued.
 	// Nil skips it.
 	agents agents.Store
@@ -189,6 +193,11 @@ func ExpireHolds(ctx context.Context, store mandate.HoldExpirer, alerts alert.No
 // gateway tools, by the name a Card grants it under.
 type GatewayToolTitles interface {
 	ToolTitles(ctx context.Context, tenantID string) (map[string]string, error)
+}
+
+// WithMandatesDraftOpenings turns on filling a draft's openings (K4).
+func WithMandatesDraftOpenings(on bool) MandatesOption {
+	return func(h *MandatesHandler) { h.fillOpens = on }
 }
 
 // WithMandatesToolTitles gives each grant of a Card or a draft its tool's
