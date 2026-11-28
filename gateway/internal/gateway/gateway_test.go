@@ -373,6 +373,8 @@ type fakeTool struct {
 	// answer, when set, is the whole result every call gets, as the tool
 	// writes it.
 	answer json.RawMessage
+	// payDescribed is planque's answer to a pay's describe.
+	payDescribed json.RawMessage
 }
 
 func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args json.RawMessage) (json.RawMessage, error) {
@@ -386,6 +388,12 @@ func (f *fakeTool) CallTool(ctx context.Context, url, bearer, tool string, args 
 	f.releases = append(f.releases, mcp.CallHeader(ctx, gateway.SealedReleaseHeader))
 	f.describes = append(f.describes, mcp.CallHeader(ctx, gateway.SealedDescribeHeader))
 	f.tools = append(f.tools, tool)
+	// planque answers a pay's checkout block only to its describe.
+	if tool == "browse_pay" && a["describe"] == true && f.payDescribed != nil {
+		d := f.payDescribed
+		f.mu.Unlock()
+		return d, nil
+	}
 	// planque answers a block only to the gateway's describe.
 	if tool == "browse_open" && f.described != nil && mcp.CallHeader(ctx, gateway.SealedDescribeHeader) != "" {
 		d := f.described

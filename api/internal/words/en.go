@@ -74,6 +74,7 @@ var en = Words{
 	},
 	OwnerAsks: map[string]string{
 		OwnerAskSealedMoney:  "this tool moves money on a connection whose key KIFF holds, so every call waits for approval",
+		OwnerAskPurchase:     "this buys something, and its Card asks you each time, or it's outside the Card's limits",
 		OwnerAskSecondRefund: "this charge already has a refund, so a second one waits for approval",
 		OwnerAskNoRequestID:  "the agent named no request from a connected app, so this refund waits for approval",
 		OwnerAskOther:        "every call of this tool waits for approval",

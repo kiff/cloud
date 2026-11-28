@@ -112,6 +112,13 @@ func verifyPlanque(block json.RawMessage, sig string) bool {
 // verifyWith reports whether sig is k's signature over JCS(block) under
 // planqueDescribeLabel.
 func verifyWith(k *ecdsa.PublicKey, block json.RawMessage, sig string) bool {
+	return verifyLabel(k, planqueDescribeLabel, block, sig)
+}
+
+// verifyLabel reports whether sig is k's signature over JCS(block) under
+// label: a describe and a checkout are signed under their own, so neither
+// passes for the other.
+func verifyLabel(k *ecdsa.PublicKey, label string, block json.RawMessage, sig string) bool {
 	raw, err := base64.RawURLEncoding.DecodeString(sig)
 	if err != nil || len(raw) != 64 {
 		return false
@@ -120,7 +127,7 @@ func verifyWith(k *ecdsa.PublicKey, block json.RawMessage, sig string) bool {
 	if err != nil {
 		return false
 	}
-	sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+	sum := sha256.Sum256(append(append([]byte(label), 0), canon...))
 	return ecdsa.Verify(k, sum[:], new(big.Int).SetBytes(raw[:32]), new(big.Int).SetBytes(raw[32:]))
 }
 

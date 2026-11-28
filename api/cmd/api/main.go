@@ -198,6 +198,9 @@ const (
 
 	// envPurchases turns purchases on (Thune): "on", or off.
 	envPurchases = "KIFF_PURCHASES"
+	// Paying by card fill puts a card number in a worker's browser: only
+	// while the issuer is in test mode ("test"; unset, tokens only).
+	envPurchaseCardFill = "KIFF_PURCHASE_CARD_FILL"
 	// The purchase receipt key, kid:base64url(seed), its own (never the
 	// permit key's), and the published ones, kid:base64url(pub)[:revoked_at].
 	envPurchaseReceiptKey       = "KIFF_PURCHASE_RECEIPT_KEY"
@@ -2081,6 +2084,13 @@ func newRouter(deps routerDeps) http.Handler {
 				}
 				go sweepPurchases(store, deps.logger)
 				receiptsFor(store, deps.logger).Register(authed, mux)
+				// A relay's pay opens its purchase's case from planque's
+				// signed checkout (purchase_open.go). Card fill only while
+				// the issuer is in test mode (KIFF_PURCHASE_CARD_FILL=test).
+				if deps.mandateStore != nil {
+					propOpts = append(propOpts, handlers.WithProposalsPurchaseOpening(store, purchaseRules{deps.mandateStore},
+						os.Getenv(envPurchaseCardFill) == "test"))
+				}
 			}
 		}
 		// K4: the accounts whose calls are decided by their class, test
@@ -4161,4 +4171,33 @@ func receiptsFor(store *purchase.Store, logger *slog.Logger) *handlers.PurchaseR
 	h.Key, h.Others = &k, others
 	logger.Info("purchase receipts on", slog.String("kid", k.ID), slog.Int("published_keys", 1+len(others)))
 	return h
+}
+
+// purchaseRules finds the Card a pay buys under, from the Cards in force.
+type purchaseRules struct{ store mandate.Store }
+
+// PurchaseRule is the Card in force held by agent that grants action with a
+// purchase rule in currency, and its revision.
+func (p purchaseRules) PurchaseRule(ctx context.Context, tenant, agent, action, currency string) (mandate.Mandate, int, mandate.PurchaseRule, bool, error) {
+	cards, err := p.store.List(ctx, tenant)
+	if err != nil {
+		return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, err
+	}
+	now := time.Now()
+	for _, m := range cards {
+		if !m.Active(now) || !slices.Contains(m.HolderList(), agent) {
+			continue
+		}
+		for _, g := range m.Grants {
+			if g.Action != action || g.Purchase == nil || g.Purchase.Currency != currency {
+				continue
+			}
+			revs, err := p.store.Revisions(ctx, tenant, m.ID)
+			if err != nil {
+				return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, err
+			}
+			return m, len(revs), *g.Purchase, true, nil
+		}
+	}
+	return mandate.Mandate{}, 0, mandate.PurchaseRule{}, false, nil
 }

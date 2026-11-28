@@ -80,6 +80,7 @@ var de = Words{
 	},
 	OwnerAsks: map[string]string{
 		OwnerAskSealedMoney:  "dieses Tool bewegt Geld über eine Verbindung, deren Schlüssel KIFF hält, daher wartet jeder Aufruf auf Genehmigung",
+		OwnerAskPurchase:     "dies kauft etwas, und die Karte fragt dich jedes Mal, oder es liegt außerhalb ihrer Grenzen",
 		OwnerAskSecondRefund: "diese Zahlung hat schon eine Erstattung, daher wartet eine zweite auf Genehmigung",
 		OwnerAskNoRequestID:  "der Agent hat keine Anfrage aus einer verbundenen App genannt, daher wartet diese Erstattung auf Genehmigung",
 		OwnerAskOther:        "jeder Aufruf dieses Tools wartet auf Genehmigung",
