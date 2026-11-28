@@ -161,13 +161,10 @@ func run(args []string) error {
 	store := invocation.NewStore(pool)
 	refunds := thune.NewStore(pool)
 	g := &gateway.Gateway{
-		// KIFF_SIGN_PINS: the comma-separated accounts whose permits carry
-		// their relay tools' vendor pins. Unset, none.
-		SignPins: tenantSet(os.Getenv("KIFF_SIGN_PINS")),
-		Relays:   relays,
-		API:      api,
-		Catalog:  catalog,
-		Store:    store,
+		Relays:  relays,
+		API:     api,
+		Catalog: catalog,
+		Store:   store,
 		// Refunds with a case block go through thune (refund.go); the
 		// watch reads only as an agent, when one touches the account.
 		Thune:          refunds,
@@ -264,15 +261,4 @@ func envOr(key, def string) string {
 func robots(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprint(w, "User-agent: *\nDisallow: /\n")
-}
-
-// tenantSet is a comma-separated list of tenant ids as a set; empty for "".
-func tenantSet(s string) map[string]bool {
-	out := map[string]bool{}
-	for _, t := range strings.Split(s, ",") {
-		if t = strings.TrimSpace(t); t != "" {
-			out[t] = true
-		}
-	}
-	return out
 }

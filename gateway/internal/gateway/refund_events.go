@@ -66,7 +66,7 @@ func (g *Gateway) refundEvent(w http.ResponseWriter, r *http.Request, secret str
 		return
 	}
 	ctx := r.Context()
-	tools, err := g.tools(ctx, e.Tenant)
+	tools, err := g.Catalog.Tools(ctx, e.Tenant)
 	if err != nil {
 		http.Error(w, "KIFF can't read the account's tools now", http.StatusServiceUnavailable)
 		return

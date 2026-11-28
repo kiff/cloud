@@ -67,7 +67,7 @@ func Widens(cur *Mandate, next Mandate) []Widening {
 	// K4: a category opened that wasn't is a widening, on an action kept or
 	// added alike.
 	for _, o := range newOpenings(cur.Grants, next.Grants) {
-		add("opens", "%s", openingWords(o.action, o.opening))
+		add("opens", "Opens %s calls for %s", openingWords(o.opening), o.action)
 	}
 	for _, a := range cur.Aggregates {
 		b, ok := matchingAggregate(next.Aggregates, a)
@@ -355,22 +355,9 @@ func newOpenings(cur, next []Grant) []actionOpening {
 	return out
 }
 
-func openingWords(action string, o Opening) string {
-	// What the agent may now do, as the other widening lines say it; never
-	// a class name.
-	var w string
-	switch o.Class {
-	case ClassMoney:
-		w = fmt.Sprintf("Lets %s move money", action)
-	case ClassDelete:
-		w = fmt.Sprintf("Lets %s delete", action)
-	case ClassIrreversible:
-		w = fmt.Sprintf("Lets %s do what can't be undone", action)
-	default:
-		w = fmt.Sprintf("Opens %s for %s", o.Class, action)
-	}
+func openingWords(o Opening) string {
 	if o.Argument != "" {
-		w += fmt.Sprintf(" (only %s %s)", o.Argument, o.Value)
+		return fmt.Sprintf("%s (%s %s)", o.Class, o.Argument, o.Value)
 	}
-	return w
+	return o.Class
 }

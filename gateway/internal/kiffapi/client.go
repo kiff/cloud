@@ -167,18 +167,6 @@ type PermitRequest struct {
 	Audience  string          `json:"audience"`
 	Tool      string          `json:"tool"`
 	Arguments json.RawMessage `json:"arguments"`
-	// Pins are what the relay sets in the vendor's own body after the
-	// permit, for apps/api to sign beside the arguments (the permit's
-	// pins): a value at a vendor path, or the permit's op at a marker's.
-	Pins []Pin `json:"pins,omitempty"`
-}
-
-// Pin is one value a relay sets in the vendor's body: Value at Path, or,
-// for a Marker, the permit's op.
-type Pin struct {
-	Path   string `json:"path"`
-	Value  any    `json:"value,omitempty"`
-	Marker bool   `json:"marker,omitempty"`
 }
 
 // Proposal is a decide request for one tool call.

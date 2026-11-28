@@ -53,11 +53,6 @@ type Detail struct {
 	// signs what the agent's own key sent and checks only its form; it
 	// authorizes nothing. Absent when the call named no run.
 	Run string `json:"run,omitempty"`
-	// Pins are the values the relay sets in the vendor's body after the
-	// permit, by vendor path, a marker's as the op: the relay checks what
-	// it sends against them. Absent when the call's tool has none, or its
-	// account isn't signing pins yet.
-	Pins map[string]any `json:"pins,omitempty"`
 }
 
 // Claims are the permit's JWT claims.
