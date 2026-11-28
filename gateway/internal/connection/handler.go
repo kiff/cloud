@@ -205,7 +205,7 @@ type createRequest struct {
 	// DestructiveHint is the vendor's own destructiveHint for the tool, as
 	// its connector listed it (K4). It only ever raises the tool's class:
 	// at least irreversible, or delete for a delete. Default false changes
-	// nothing.
+	// nothing. Kept only for a relay's tool, as App is.
 	DestructiveHint bool `json:"destructive_hint"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
@@ -458,7 +458,7 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
 		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
 		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint}, 0, ""
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint && h.onRelay(u.String())}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the
@@ -1232,12 +1232,22 @@ func oneLine(s string, max int) string {
 // (a draft invoice is a write), so a tool registered straight to KIFF that
 // names an app gets none, and the rules class it.
 func (h *Handler) relayApp(url, app string) string {
-	for _, relay := range h.RelayURLs {
-		if sameHost(relay, url) {
-			return appSlug(app)
-		}
+	if h.onRelay(url) {
+		return appSlug(app)
 	}
 	return ""
+}
+
+// onRelay says whether a tool's URL is on a vendor relay's host: only a
+// relay's tool is kept with what the relay says of it (its app, the
+// vendor's destructive_hint).
+func (h *Handler) onRelay(url string) bool {
+	for _, relay := range h.RelayURLs {
+		if sameHost(relay, url) {
+			return true
+		}
+	}
+	return false
 }
 
 // appSlug is a connector's app name as KIFF keeps it: a lowercase slug of

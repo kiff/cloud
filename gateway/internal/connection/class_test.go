@@ -24,3 +24,10 @@ func TestAnAppIsKeptOnlyForAToolOnAVendorRelay(t *testing.T) {
 		t.Fatalf("a tool registered straight to KIFF: app %q, want none", got)
 	}
 }
+
+func TestAToolIsOnARelayOnlyOnItsHost(t *testing.T) {
+	h := &Handler{RelayURLs: []string{"https://relay.example.com"}}
+	if !h.onRelay("https://relay.example.com/mcp") || h.onRelay("https://other.example.com/mcp") {
+		t.Fatal("onRelay must hold only for the relay's host")
+	}
+}
