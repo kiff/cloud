@@ -3,6 +3,7 @@ package gateway
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -120,6 +121,32 @@ func TestACallsClassAndItsArgumentsReachKIFF(t *testing.T) {
 		if c != ClassIrreversible || len(args) != 1 || args["operation"] != tc.want {
 			t.Errorf("%v: %s %v, want operation %s", tc.args, c, args, tc.want)
 		}
+	}
+	// A relay's draft-only tool: the call sends no status, and its relay pins status: draft. Signed into the
+	// permit, the pin is the value sent, so the call is the write the owner opened. Unsigned (the account off
+	// KIFF_SIGN_PINS), or with no pin, or under a name the table doesn't know (no vendor_tool), it stays closed.
+	pinned := Tool{Name: "create_client_invoice_draft", UpstreamTool: "create_client_invoice_draft", VendorTool: "create_client_invoice", App: "qonto",
+		VendorPins: []VendorPin{{Path: "status", Value: "draft"}}, PinsSigned: true}
+	if c, _ := pinned.CallClass(map[string]any{"client_id": "c_1"}); c != ClassWrite {
+		t.Errorf("a draft-pinned invoice, its pin signed: %s", c)
+	}
+	unsigned := pinned
+	unsigned.PinsSigned = false
+	unpinned := pinned
+	unpinned.VendorPins = nil
+	unknownName := pinned
+	unknownName.VendorTool = ""
+	noApp := pinned
+	noApp.App = ""
+	for name, tool := range map[string]Tool{"its pin unsigned": unsigned, "no pin": unpinned, "no vendor_tool": unknownName, "no app": noApp} {
+		if c, _ := tool.CallClass(map[string]any{"client_id": "c_1"}); c != ClassIrreversible {
+			t.Errorf("a draft-pinned invoice, %s: %s", name, c)
+		}
+	}
+	// A call K4 refused for its closed category tells the agent it's closed until the owner opens it, never that
+	// the Card doesn't cover what the owner just approved.
+	if step, ok := nextSteps["mandate_category_closed"]; !ok || !strings.Contains(step.text, "closed on the agent's Card until the account owner opens it") || step.retry != "new_call" {
+		t.Errorf("the closed category's next step: %+v", step)
 	}
 	// Without the app, no table: the rules, and no argument values.
 	if c, args := (Tool{Name: "create_client_invoice"}).CallClass(map[string]any{"status": "draft"}); c != ClassIrreversible || args != nil {

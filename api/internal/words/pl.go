@@ -72,6 +72,7 @@ var pl = Words{
 		"mandate_resource_not_on_card": "Dotyczyło czegoś, czego Card nie obejmuje.",
 		"mandate_unreadable_resource":  "KIFF nie mógł odczytać, czego dotyczyło.",
 		"mandate_not_covered":          "Żadna Card nie obejmuje tego narzędzia.",
+		"mandate_category_closed":      "Jest zamknięte na Twojej Card, dopóki go nie otworzysz.",
 		"mandate_expired":              "Jego Card wygasła.",
 		"no_mandate_issued":            "Żadna Card nie obejmuje tego narzędzia.",
 		"amount_unit_mismatch":         "Było w innej walucie niż waluta Card.",
