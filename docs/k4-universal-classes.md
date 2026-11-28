@@ -56,8 +56,15 @@ lowers a `money` tool. A tool missing from every table is still classed by the r
 **What changes for live accounts:**
 - Tools that were `read` on one signal (planque's read_only plus a read verb) stay `read`, since that's two signals.
 - Tools that were `write` only because nothing matched become `irreversible` and closed. **Each such tool on a live Card is
-  listed before the switch**, and the owner's Cards keep opening what they opened by name: a Card that names a tool opens it
-  whatever its class.
+  listed for the owner before the switch.** Naming a tool on a Card still doesn't open its class: a Card naming
+  `create_client_invoice` gets `category_closed` until the owner opens `irreversible`, as today. The one carry-over, kept as
+  narrow as its purpose (so a Card that worked before the switch doesn't stop at it):
+  - only a tool whose class rises **from `write` to `irreversible` by step 6** (unknown is closed), at the switch;
+  - only on a Card signed **before** that account's switch, and each such tool is on the owner's list first;
+  - **never** a tool that classes `money` or `delete`, and never a tool raised by any other step (an annotation, a verb, a
+    noun, the money mark or an override);
+  - recorded on the Card, and a new Card version drops it: that version opens the class like any other.
+  A Card naming a money tool never pays by being signed before the switch.
 - Behind `KIFF_K4_UNIVERSAL` per account, as K4 itself was, read back from the running API before an account is switched.
 
 ### Worked examples
@@ -92,18 +99,26 @@ vendor's own claim, unchecked, and relayed from servers we don't control. A hint
   a `read`, not `money`;
 - `readOnlyHint` on `create_payment` stays `money`;
 - a tool nothing classes is `irreversible`;
-- an override lowers only with its reason, and never a `money` tool.
+- an override lowers only with its reason, and never a `money` tool;
+- a Card signed before the switch keeps a tool step 6 raised from `write` to `irreversible`; it doesn't keep a tool that
+  classes `money` or `delete`, or one raised by another step; a new version of that Card drops it; and a Card naming
+  `create_client_invoice` still gets `category_closed` until `irreversible` is opened;
+- the identity read calls no tool with the read-only mark and an identity noun but no `get_` or `list_` verb (an
+  `update_organization` marked read-only is never called), and none the vendor marks destructive.
 
 ## Part 2: a generic identity read at every callback (planque)
 
 At each OAuth callback, planque reads whose account the sign-in is, by one rule:
 1. the provider's OpenID userinfo (`sub`, `email`, `name`), or token introspection, where offered (neither Qonto nor Stripe
    publishes one today);
-2. else **the MCP server's identity tool, found by one rule:** a tool the vendor marks read-only whose name says it returns
-   the signed-in account (`authenticated`, `whoami`, `me`, `current_user`, `account`, `organization`, `organisation`),
-   called once at the callback with no arguments. Qonto's `get_authenticated_membership` and `get_organization` and Stripe's
-   `list_available_accounts_or_orgs` fit. Several fit: the first in that word order. Its answer gives `id` and a label (a
-   name, legal name or email) by the same field names for every app;
+2. else **the MCP server's identity tool, found by one rule:** a tool that is a `read` by Part 1's own two signals, the
+   vendor's read-only mark (planque's `read_only`) **and** a read verb, `get_` or `list_`, at the start of its name, with
+   nothing marking it destructive. Among those, one whose name says it returns the signed-in account (`authenticated`,
+   `whoami`, `me`, `current_user`, `account`, `organization`, `organisation`). The mark plus a noun is never enough, so a
+   write named after an account or organization is never called at the callback. It's called once, with no arguments.
+   Qonto's `get_authenticated_membership` and `get_organization` and Stripe's `list_available_accounts_or_orgs` fit. Several
+   fit: the first in that word order. Its answer gives `id` and a label (a name, legal name or email) by the same field
+   names for every app;
 3. else **empty**.
 
 - What's kept is `account: {id, label}`: an id the vendor gives and a label for the owner. No token, no other field.
