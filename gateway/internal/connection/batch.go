@@ -135,7 +135,6 @@ func (h *Handler) createBatch(w http.ResponseWriter, r *http.Request, c caller) 
 		for _, conn := range toMake {
 			made = append(made, conn.Name)
 			h.log(r, "tool connected", c, conn.Name, slog.Bool("batch", true))
-			h.logClass(r, c, conn)
 		}
 	}
 	status = http.StatusOK

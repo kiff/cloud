@@ -30,9 +30,8 @@ func TestResourceArgumentIsSentWithTheAmount(t *testing.T) {
 	for _, p := range r.api.params {
 		params = p
 	}
-	// Beside them, the call's class (K4), which the gateway always sends.
-	if params["order"] != "ord_123" || params["amount_eur"] != int64(500) || params[gateway.ClassParam] == nil || len(params) != 3 {
-		t.Fatalf("proposal parameters = %v, want the amount, the order and the class only", params)
+	if params["order"] != "ord_123" || params["amount_eur"] != int64(500) || len(params) != 2 {
+		t.Fatalf("proposal parameters = %v, want the amount and the order only", params)
 	}
 }
 

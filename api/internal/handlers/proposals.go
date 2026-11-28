@@ -185,8 +185,6 @@ type ProposalsHandler struct {
 	// held call's alert says whether it moves money and whether it may wait
 	// (alert.Hold.MoneyOut, alert.Hold.CanWait); nil leaves both out.
 	toolProfiles GatewayToolProfiles
-	// k4 are the accounts whose calls are decided by their class (K4).
-	k4 map[string]bool
 }
 
 // CallRequesters records the person whose run made a call; the meter is one.
@@ -290,21 +288,6 @@ func WithProposalsMeterLimits(l MeterLimits) ProposalsOption {
 
 func WithProposalsHalts(s halts.Store) ProposalsOption {
 	return func(h *ProposalsHandler) { h.halts = s }
-}
-
-// WithProposalsK4Tenants names the accounts whose calls are decided by their
-// class (K4, KIFF_K4_TENANTS): test accounts first. Blank entries name none.
-func WithProposalsK4Tenants(ids ...string) ProposalsOption {
-	return func(h *ProposalsHandler) {
-		for _, id := range ids {
-			if id = strings.TrimSpace(id); id != "" {
-				if h.k4 == nil {
-					h.k4 = map[string]bool{}
-				}
-				h.k4[id] = true
-			}
-		}
-	}
 }
 
 // ProposalsOption configures ProposalsHandler.
@@ -1120,7 +1103,6 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 		_, recorded := takeObservedUnit(spec, prop)
 		_, recorded = takeAmountUnverified(spec, recorded)
 		_, recorded = takeOwnerAsk(spec, recorded)
-		_, recorded = takeClass(spec, recorded)
 		if dup, ok := h.maybeDedupe(ctx, id, recorded, rt); ok {
 			h.applyMode(ctx, id.Tenant, mode, &dup)
 			// Release the lock (and its parked connection) before
@@ -1961,8 +1943,6 @@ func (h *ProposalsHandler) evaluate(ctx context.Context, id auth.Identity, prop 
 	amountUnverified, prop := takeAmountUnverified(spec, prop)
 	ownerAsk, prop := takeOwnerAsk(spec, prop)
 	ctx = withOwnerAsk(ctx, ownerAsk)
-	class, prop := takeClass(spec, prop)
-	ctx = withClass(ctx, class)
 	// Record the proposal regardless of outcome so the audit
 	// trail captures what the caller asked us to decide on. A
 	// proposal that's later blocked is still evidence the agent

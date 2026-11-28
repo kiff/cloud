@@ -204,14 +204,7 @@ func run(args []string) error {
 			g.LinkServer(version, id).ServeHTTP(w, r)
 		})
 	}
-	// K4 step 1: log where KIFF's class for a connected tool differs from
-	// its connector's read_only (KIFF_CLASS_LOG=on; unset, off).
-	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger, RelayURLs: relays,
-		ClassLog: strings.TrimSpace(os.Getenv("KIFF_CLASS_LOG")) == "on"}).Register(mux)
-	if err := gateway.ClassTablesErr(); err != nil {
-		logger.Error("gateway: a class table can't be read", slog.String("err", err.Error()))
-		os.Exit(1)
-	}
+	(&connection.Handler{Store: conns, API: api, Remote: remote, Policy: policy, Logger: logger, RelayURLs: relays}).Register(mux)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprintln(w, "ok") })
 	mux.HandleFunc("GET /robots.txt", robots)
 

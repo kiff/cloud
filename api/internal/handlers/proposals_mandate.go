@@ -255,7 +255,7 @@ func (h *ProposalsHandler) mandateRequest(ctx context.Context, id auth.Identity,
 		// A trial's call is decided on its trial Cards alone (kiff/tafs#173).
 		subject = mandate.TrialSubject(subject)
 	}
-	req := mandate.Request{
+	return mandate.Request{
 		OwnerAsk:    ownerAskFrom(ctx),
 		OwnerAskWhy: ownerAskWhyFrom(ctx),
 		Subject:     subject,
@@ -276,8 +276,6 @@ func (h *ProposalsHandler) mandateRequest(ctx context.Context, id auth.Identity,
 		TafAbout:    words.about,
 		TafReason:   words.reason,
 	}
-	h.classInto(ctx, id.Tenant, &req)
-	return req
 }
 
 // declaredStrings are the string parameters the action's contract

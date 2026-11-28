@@ -52,9 +52,8 @@ func TestFixedArgumentIsSentAndNestedAmountDecided(t *testing.T) {
 	for _, p := range r.api.params {
 		params = p
 	}
-	// Beside them, the call's class (K4), which the gateway always sends.
-	if params["amount"] != int64(2000) || params["charge"] != "ch_1" || params[gateway.ClassParam] == nil || len(params) != 3 {
-		t.Fatalf("proposal parameters = %v, want the nested amount and charge under their Card names, and the class", params)
+	if params["amount"] != int64(2000) || params["charge"] != "ch_1" || len(params) != 2 {
+		t.Fatalf("proposal parameters = %v, want the nested amount and charge under their Card names", params)
 	}
 }
 

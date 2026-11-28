@@ -161,8 +161,6 @@ func (h *ProposalsHandler) decideTrial(ctx context.Context, id auth.Identity, re
 	// A tool every call of which asks its owner is tried as it's decided.
 	ownerAsk, prop := takeOwnerAsk(spec, prop)
 	ctx = withOwnerAsk(ctx, ownerAsk)
-	class, prop := takeClass(spec, prop)
-	ctx = withClass(ctx, class)
 	actor := kiffactor.Actor{ID: id.AgentID, Roles: append([]string(nil), id.Roles...)}
 	actionCtx, err := prop.ActionContext(gatewayTrialState, actor)
 	if err == nil {

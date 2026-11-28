@@ -57,10 +57,6 @@ type Handler struct {
 	// KIFF_PLANQUE_URLS): a tool on their host is a vendor's, never the
 	// account's control server, whichever is connected first.
 	RelayURLs []string
-	// ClassLog logs, for each tool connected, where KIFF's own class differs
-	// from the read_only its connector sent (K4 step 1, KIFF_CLASS_LOG=on):
-	// the tool, its app and both values, never anything from a call.
-	ClassLog bool
 }
 
 // Register mounts the routes.
@@ -198,15 +194,6 @@ type createRequest struct {
 	// VendorTool is the tool's own name at its vendor, from the connector
 	// that relays it (planque). Optional; one line, like a title.
 	VendorTool string `json:"vendor_tool"`
-	// App is the app the tool belongs to ("qonto"), from the connector
-	// (K4): a lowercase slug, or empty. Its calls are classed by that app's
-	// reviewed table; an app with no table is classed by the rules.
-	App string `json:"app"`
-	// DestructiveHint is the vendor's own destructiveHint for the tool, as
-	// its connector listed it (K4). It only ever raises the tool's class:
-	// at least irreversible, or delete for a delete. Default false changes
-	// nothing. Kept only for a relay's tool, as App is.
-	DestructiveHint bool `json:"destructive_hint"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
 	ReadOnly bool `json:"read_only"`
@@ -332,7 +319,6 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request, c caller) {
 		return
 	}
 	h.log(r, "tool connected", c, req.Name, slog.String("host", u.Host))
-	h.logClass(r, c, conn)
 	saved, _ := h.Store.Get(r.Context(), c.me.TenantID, req.Name)
 	writeJSON(w, http.StatusCreated, saved)
 }
@@ -458,7 +444,7 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
 		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
 		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint && h.onRelay(u.String())}, 0, ""
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100)}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the
@@ -1225,68 +1211,4 @@ func oneLine(s string, max int) string {
 		r = r[:max]
 	}
 	return strings.TrimSpace(string(r))
-}
-
-// relayApp is the app a tool is kept under: only a tool on a vendor relay's
-// host (RelayURLs) has one. An app's reviewed class table can lower a class
-// (a draft invoice is a write), so a tool registered straight to KIFF that
-// names an app gets none, and the rules class it.
-func (h *Handler) relayApp(url, app string) string {
-	if h.onRelay(url) {
-		return appSlug(app)
-	}
-	return ""
-}
-
-// onRelay says whether a tool's URL is on a vendor relay's host: only a
-// relay's tool is kept with what the relay says of it (its app, the
-// vendor's destructive_hint).
-func (h *Handler) onRelay(url string) bool {
-	for _, relay := range h.RelayURLs {
-		if sameHost(relay, url) {
-			return true
-		}
-	}
-	return false
-}
-
-// appSlug is a connector's app name as KIFF keeps it: a lowercase slug of
-// letters, digits and dashes, at most 40, or "" for anything else, so a name
-// that isn't one never selects a table.
-func appSlug(s string) string {
-	s = strings.ToLower(strings.TrimSpace(s))
-	if s == "" || len(s) > 40 {
-		return ""
-	}
-	for _, r := range s {
-		if !(r >= 'a' && r <= 'z' || r >= '0' && r <= '9' || r == '-') {
-			return ""
-		}
-	}
-	return s
-}
-
-// logClass logs conn's class where it differs from its connector's
-// read_only (ClassLog): a tool KIFF calls a write, irreversible, delete or
-// money that its connector sent as read-only, or a read it sent as a write.
-// The rollout reads these lines before KIFF decides on its own class.
-func (h *Handler) logClass(r *http.Request, c caller, conn Connection) {
-	if !h.ClassLog || h.Logger == nil {
-		return
-	}
-	t := gateway.Tool{Name: conn.Name, UpstreamTool: conn.UpstreamTool, VendorTool: conn.VendorTool, App: conn.App, DestructiveHint: conn.DestructiveHint, ReadOnly: conn.ReadOnly}
-	class := t.Class()
-	if conn.DestructiveHint && t.Conditioned() {
-		// The reviewed table's condition still lowers this tool on its value,
-		// though the vendor now marks it destructive: a cue to read the
-		// table again.
-		h.Logger.InfoContext(r.Context(), "connections: a destructive tool has a condition that lowers its class",
-			slog.String("tenant", c.me.TenantID), slog.String("tool", conn.Name), slog.String("app", conn.App))
-	}
-	if (class == gateway.ClassRead) == conn.ReadOnly {
-		return
-	}
-	h.Logger.InfoContext(r.Context(), "connections: class differs from read_only",
-		slog.String("tenant", c.me.TenantID), slog.String("tool", conn.Name), slog.String("app", conn.App),
-		slog.String("class", string(class)), slog.Bool("read_only", conn.ReadOnly))
 }

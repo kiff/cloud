@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/kiff/cloud/api/internal/domain"
 )
@@ -97,9 +96,6 @@ func Validate(m Mandate, actions []domain.ActionSpec) error {
 			return err
 		}
 		if err := validateNextSteps(spec.Name, g.NextSteps); err != nil {
-			return err
-		}
-		if err := validateOpens(spec.Name, g.Opens); err != nil {
 			return err
 		}
 		granted = append(granted, spec)
@@ -291,36 +287,4 @@ func UncappedAmounts(m Mandate, actions []domain.ActionSpec, isAmount func(actio
 		}
 	}
 	return out
-}
-
-// MaxOpens bounds a grant's openings (K4), and MaxOpeningValue an opening's
-// argument and value.
-const (
-	MaxOpens        = 6
-	MaxOpeningValue = 64
-)
-
-// validateOpens checks a grant's openings: each a gated class, at most one
-// per class and value, with an argument and value given together.
-func validateOpens(action string, os []Opening) error {
-	if len(os) > MaxOpens {
-		return fmt.Errorf("%w: %s opens %d categories; at most %d", ErrInvalidMandate, action, len(os), MaxOpens)
-	}
-	seen := map[Opening]bool{}
-	for _, o := range os {
-		if !GatedClass(o.Class) {
-			return fmt.Errorf("%w: %s opens %q; a Card opens irreversible, delete or money", ErrInvalidMandate, action, o.Class)
-		}
-		if (o.Argument == "") != (o.Value == "") {
-			return fmt.Errorf("%w: %s's opening of %s names an argument and its value together, or neither", ErrInvalidMandate, action, o.Class)
-		}
-		if len(o.Argument) > MaxOpeningValue || len(o.Value) > MaxOpeningValue || strings.ContainsFunc(o.Argument+o.Value, unicode.IsControl) {
-			return fmt.Errorf("%w: %s's opening of %s names an argument or value that isn't one", ErrInvalidMandate, action, o.Class)
-		}
-		if seen[o] {
-			return fmt.Errorf("%w: %s opens %s twice", ErrInvalidMandate, action, o.Class)
-		}
-		seen[o] = true
-	}
-	return nil
 }
