@@ -46,7 +46,7 @@ func TestConnectWithAResourceArgument(t *testing.T) {
 		{"an integer", "amount_eur", "must be a string argument"},
 		{"the idempotency argument", "idem", "must differ"},
 		{"not a name", "order id", "not a valid argument name"},
-		{"the gateway's operation argument", "kiff_operation_id", "KIFF uses for its own operation id"},
+		{"the gateway's operation argument", "kiff_operation_id", "can't start with kiff_"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			req := r.refund(toolSecret)
