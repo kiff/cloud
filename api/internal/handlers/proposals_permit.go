@@ -175,10 +175,17 @@ func (h *ProposalsHandler) permitGate(ctx context.Context, id auth.Identity, pro
 	if err != nil {
 		return refuse(outcomeInvalid, reasonPermitInvalid, "the permit request needs the call's arguments as a JSON object")
 	}
-	// The gateway's read of the call's unit sits beside the governed
-	// argument and isn't one the permit signs (kiff/tafs#138): checked
-	// without it, as evaluate decides without it.
+	// The gateway's own parameters sit beside the governed argument and
+	// aren't ones the permit signs: its read of the call's unit
+	// (kiff/tafs#138), an amount it couldn't read, the owner's ask, and the
+	// call's class (K4, kiff_class and kiff_class_args). Checked without
+	// them, as evaluate decides without them and the dedup compares
+	// without them. With the class in, every call on a K4 account that
+	// carries a permit, a plain read included, was refused here.
 	_, governed := takeObservedUnit(spec, prop)
+	_, governed = takeAmountUnverified(spec, governed)
+	_, governed = takeOwnerAsk(spec, governed)
+	_, governed = takeClass(spec, governed)
 	if !req.SameGoverned(target, governed.Parameters) {
 		return refuse(outcomeInvalid, reasonPermitParameters,
 			"the parameters to decide on must be exactly the governed argument in the arguments the permit signs")
