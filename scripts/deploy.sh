@@ -306,6 +306,12 @@ KIFF_K4_TENANTS="${KIFF_K4_TENANTS:-}"
 if [ "$KIFF_K4_TENANTS" = "-" ]; then KIFF_K4_TENANTS=""; fi
 KIFF_CLASS_LOG="${KIFF_CLASS_LOG:-}"
 if [ "$KIFF_CLASS_LOG" != "on" ]; then KIFF_CLASS_LOG=""; fi
+# Optional: the accounts whose permits sign their tools' vendor pins (comma-separated bare ids; "-" or unset: none).
+# K4 lowers a class only on a signed pin (a draft-only tool's status: draft), so an account goes on it only once
+# planque's relay refuses any pin that differs for it (PLANQUE_ENFORCE_PINS), read back from both, and comes off
+# planque's list last.
+KIFF_SIGN_PINS="${KIFF_SIGN_PINS:-}"
+if [ "$KIFF_SIGN_PINS" = "-" ]; then KIFF_SIGN_PINS=""; fi
 # In the production environment all ten are always set, "-" meaning none (deploy.yml checks it);
 # "-" is written as empty, so the API sees no value.
 for v in KIFF_PROOF_OIDC_AUDIENCE KIFF_PROOF_OIDC_REPOSITORY KIFF_PROOF_OIDC_REPOSITORY_ID \
@@ -556,6 +562,7 @@ KIFF_PROOF_TEST_KEYS="${KIFF_PROOF_TEST_KEYS}"
 KIFF_PROOF_SHORT_SESSION_TENANTS="${KIFF_PROOF_SHORT_SESSION_TENANTS}"
 KIFF_K4_TENANTS="${KIFF_K4_TENANTS}"
 KIFF_CLASS_LOG="${KIFF_CLASS_LOG}"
+KIFF_SIGN_PINS="${KIFF_SIGN_PINS}"
 KIFF_PROOF_RUNNER_VERSIONS="${KIFF_PROOF_RUNNER_VERSIONS}"
 KIFF_PROOF_RELEASE_ANYWAY="${KIFF_PROOF_RELEASE_ANYWAY}"
 KIFF_PRUNE_TENANTS="${KIFF_PRUNE_TENANTS}"
@@ -895,6 +902,7 @@ KIFF_LOG_FORMAT=\${KIFF_LOG_FORMAT}
 KIFF_PLANQUE_URLS=\${KIFF_PLANQUE_URLS}
 KIFF_PLANQUE_EVENT_SECRET=\${planque_event_secret}
 KIFF_CLASS_LOG=\${KIFF_CLASS_LOG}
+KIFF_SIGN_PINS=\${KIFF_SIGN_PINS}
 GATEWAY_ENV
 chmod 0600 /etc/kiff/gateway.env
 chown root:root /etc/kiff/gateway.env
