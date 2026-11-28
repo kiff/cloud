@@ -34,7 +34,11 @@ import (
 // planqueStepKey is planque's step public key (SPKI, base64url): the one the
 // tafs Chrome extension's production build pins to check planque's steps. A
 // new key ships as a new build of both. It's public: nothing here is secret.
-const planqueStepKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExS_lxBTwDdO8wf8ksu6kkIF8r3Z-Vp3tWZUKjlBjQezW0BhCCW_0tkGqRewu0qBL8KDggls0cjFF-NDcnAjH7g"
+// planqueStepKey is it, and only the end-to-end build (-tags e2e) may
+// change it.
+var planqueStepKey = pinnedPlanqueStepKey
+
+const pinnedPlanqueStepKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExS_lxBTwDdO8wf8ksu6kkIF8r3Z-Vp3tWZUKjlBjQezW0BhCCW_0tkGqRewu0qBL8KDggls0cjFF-NDcnAjH7g"
 
 // planqueDescribeLabel is what planque signs a block under: label ‖ 0x00 ‖
 // JCS(block), SHA-256, raw r‖s, as its steps are signed.
@@ -112,6 +116,13 @@ func verifyPlanque(block json.RawMessage, sig string) bool {
 // verifyWith reports whether sig is k's signature over JCS(block) under
 // planqueDescribeLabel.
 func verifyWith(k *ecdsa.PublicKey, block json.RawMessage, sig string) bool {
+	return verifyLabel(k, planqueDescribeLabel, block, sig)
+}
+
+// verifyLabel reports whether sig is k's signature over JCS(block) under
+// label: a describe and a checkout are signed under their own, so neither
+// passes for the other.
+func verifyLabel(k *ecdsa.PublicKey, label string, block json.RawMessage, sig string) bool {
 	raw, err := base64.RawURLEncoding.DecodeString(sig)
 	if err != nil || len(raw) != 64 {
 		return false
@@ -120,7 +131,7 @@ func verifyWith(k *ecdsa.PublicKey, block json.RawMessage, sig string) bool {
 	if err != nil {
 		return false
 	}
-	sum := sha256.Sum256(append(append([]byte(planqueDescribeLabel), 0), canon...))
+	sum := sha256.Sum256(append(append([]byte(label), 0), canon...))
 	return ecdsa.Verify(k, sum[:], new(big.Int).SetBytes(raw[:32]), new(big.Int).SetBytes(raw[32:]))
 }
 

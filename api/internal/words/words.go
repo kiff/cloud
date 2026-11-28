@@ -37,6 +37,10 @@ const (
 	// OwnerAskSealedMoney: a tool that moves money on a connection where
 	// KIFF holds the key, so no permit binds the call at the tool.
 	OwnerAskSealedMoney = "sealed_money"
+	// OwnerAskPurchase: a purchase its Card asks the owner about each
+	// time, or one outside its limits (Thune): the owner's answer signs its
+	// case.
+	OwnerAskPurchase = "purchase"
 	// OwnerAskSecondRefund: a refund on a charge that already has one,
 	// from anyone (thune step one).
 	OwnerAskSecondRefund = "second_refund"

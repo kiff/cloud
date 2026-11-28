@@ -77,6 +77,7 @@ var fr = Words{
 	},
 	OwnerAsks: map[string]string{
 		OwnerAskSealedMoney:  "cet outil déplace de l'argent via une connexion dont KIFF détient la clé : chaque appel attend donc une approbation",
+		OwnerAskPurchase:     "cet achat est soumis à votre accord à chaque fois par la carte, ou il dépasse ses limites",
 		OwnerAskSecondRefund: "ce paiement a déjà un remboursement, donc un deuxième attend une approbation",
 		OwnerAskNoRequestID:  "l'agent n'a indiqué aucune demande venant d'une app connectée, donc ce remboursement attend une approbation",
 		OwnerAskOther:        "chaque appel de cet outil attend une approbation",
