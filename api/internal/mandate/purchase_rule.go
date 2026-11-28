@@ -51,7 +51,9 @@ func validatePurchase(action string, g Grant) error {
 	if p == nil {
 		return nil
 	}
-	bad := func(why string) error { return fmt.Errorf("%w: %s's purchase rule: %s", ErrInvalidMandate, action, why) }
+	bad := func(why string) error {
+		return fmt.Errorf("%w: %s's purchase rule: %s", ErrInvalidMandate, action, why)
+	}
 	if !slices.ContainsFunc(g.Opens, func(o Opening) bool { return o.Class == ClassMoney }) {
 		return bad("buying moves money, so the grant must open money")
 	}
