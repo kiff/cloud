@@ -273,6 +273,10 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 		}
 	}
 	if cond := tt.condition; cond != nil {
+		// Only the top-level argument is read: a draft create can still
+		// carry nested send, finalise or e-invoicing fields. The relay's own
+		// draft-only check refuses those, and must stay until KIFF signs the
+		// whole vendor body for pinned arguments.
 		if v, ok := callArgs[cond.Argument].(string); ok && v == cond.Equals {
 			c = worse(cond.Then, minimumOf(ClassedTool{ReadOnly: t.ReadOnly, Money: t.Money}))
 		}

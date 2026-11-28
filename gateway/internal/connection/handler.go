@@ -453,7 +453,7 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
 		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
 		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: appSlug(req.App)}, 0, ""
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App)}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the
@@ -1220,6 +1220,19 @@ func oneLine(s string, max int) string {
 		r = r[:max]
 	}
 	return strings.TrimSpace(string(r))
+}
+
+// relayApp is the app a tool is kept under: only a tool on a vendor relay's
+// host (RelayURLs) has one. An app's reviewed class table can lower a class
+// (a draft invoice is a write), so a tool registered straight to KIFF that
+// names an app gets none, and the rules class it.
+func (h *Handler) relayApp(url, app string) string {
+	for _, relay := range h.RelayURLs {
+		if sameHost(relay, url) {
+			return appSlug(app)
+		}
+	}
+	return ""
 }
 
 // appSlug is a connector's app name as KIFF keeps it: a lowercase slug of

@@ -14,3 +14,13 @@ func TestAnAppIsKeptOnlyAsASlug(t *testing.T) {
 		}
 	}
 }
+
+func TestAnAppIsKeptOnlyForAToolOnAVendorRelay(t *testing.T) {
+	h := &Handler{RelayURLs: []string{"https://relay.example.com"}}
+	if got := h.relayApp("https://relay.example.com/mcp", "Qonto"); got != "qonto" {
+		t.Fatalf("a relay's tool: app %q, want qonto", got)
+	}
+	if got := h.relayApp("https://other.example.com/mcp", "qonto"); got != "" {
+		t.Fatalf("a tool registered straight to KIFF: app %q, want none", got)
+	}
+}
