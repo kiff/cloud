@@ -123,7 +123,12 @@ func receiptWords(c Case, r Row, rc Receipt, d Decision) map[string]string {
 		w["state"] = "Bought"
 		line := fmt.Sprintf("Bought from %s · %s", c.Merchant.Name, money(rc.Amounts.Captured))
 		if extra := rc.Amounts.Captured - c.Price.Total; extra > 0 && rc.Amounts.Captured <= c.Price.Max && c.Price.Rule != nil {
-			line += fmt.Sprintf(" (%s more for %s, inside what you approved)", money(extra), strings.Join(c.Price.Rule.For, " and "))
+			// Inside what the owner approved, or what the Card allowed when its limits decided it.
+			within := "inside what you approved"
+			if d.By == ByCardLimits {
+				within = "inside what your Card allowed"
+			}
+			line += fmt.Sprintf(" (%s more for %s, %s)", money(extra), strings.Join(c.Price.Rule.For, " and "), within)
 		}
 		if rc.Amounts.Captured == 0 {
 			line = fmt.Sprintf("Bought from %s · %s", c.Merchant.Name, money(c.Price.Total))

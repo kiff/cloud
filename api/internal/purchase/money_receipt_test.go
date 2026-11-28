@@ -2,6 +2,7 @@ package purchase
 
 import (
 	"encoding/base64"
+	"strings"
 	"testing"
 	"time"
 
@@ -70,5 +71,19 @@ func TestTheReceiptIsSignedOverEveryField(t *testing.T) {
 	r.Amounts.Captured++
 	if VerifyReceipt(k.Public(), r) == nil {
 		t.Fatal("a changed amount verified")
+	}
+}
+
+// A purchase the Card's limits decided never says the owner approved it.
+func TestAReceiptSaysWhoAllowedTheExtra(t *testing.T) {
+	c, digest := contractCase(t)
+	r := Row{Case: c, Digest: digest, State: StateDone}
+	rc := Receipt{Amounts: Amounts{Captured: c.Price.Total + 150, ApprovedMax: c.Price.Max}}
+	if w := receiptWords(c, r, rc, Decision{By: ByOwner}); !strings.HasSuffix(w["line"], "inside what you approved)") {
+		t.Fatalf("the owner's: %q", w["line"])
+	}
+	w := receiptWords(c, r, rc, Decision{By: ByCardLimits})
+	if !strings.HasSuffix(w["line"], "inside what your Card allowed)") || strings.Contains(w["line"]+w["allowed"], "you approved") {
+		t.Fatalf("the Card's: %q / %q", w["line"], w["allowed"])
 	}
 }
