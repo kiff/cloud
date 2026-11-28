@@ -73,3 +73,37 @@ CREATE TABLE IF NOT EXISTS purchase.events (
 -- case's purchase line.
 ALTER TABLE purchase.cases ADD COLUMN IF NOT EXISTS exception_id TEXT NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS purchase_cases_exception ON purchase.cases (tenant_id, exception_id) WHERE exception_id <> '';
+
+-- What the receipt says of each authorization: the issuer's merchant beside
+-- the case's, and the issuer's verification result.
+ALTER TABLE purchase.authorizations ADD COLUMN IF NOT EXISTS merchant_name TEXT NOT NULL DEFAULT '';
+ALTER TABLE purchase.authorizations ADD COLUMN IF NOT EXISTS merchant_category TEXT NOT NULL DEFAULT '';
+ALTER TABLE purchase.authorizations ADD COLUMN IF NOT EXISTS verification TEXT NOT NULL DEFAULT '';
+
+-- The issuer's money events on a case's card (a capture, a refund), once
+-- each by the issuer's event id: what the money's status is read from. An
+-- event for a card in no case is kept with an empty case, to be found.
+CREATE TABLE IF NOT EXISTS purchase.card_events (
+    event_id         TEXT        PRIMARY KEY,
+    tenant_id        TEXT        NOT NULL,
+    case_id          TEXT        NOT NULL,
+    version          INT         NOT NULL,
+    card             TEXT        NOT NULL,
+    kind             TEXT        NOT NULL,
+    authorization_id TEXT        NOT NULL,
+    amount           BIGINT      NOT NULL,
+    at               TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS purchase_card_events_case ON purchase.card_events (tenant_id, case_id, version);
+
+-- A Card whose buying is paused: a force capture or an over-capture on one
+-- of its purchases. Within limits buys nothing until the owner resumes it;
+-- the owner's own approval still decides.
+CREATE TABLE IF NOT EXISTS purchase.paused (
+    tenant_id TEXT        NOT NULL,
+    card_id   TEXT        NOT NULL,
+    reason    TEXT        NOT NULL,
+    case_id   TEXT        NOT NULL,
+    at        TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (tenant_id, card_id)
+);

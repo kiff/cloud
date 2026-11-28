@@ -28,7 +28,7 @@ func testStore(t *testing.T) (*Store, *time.Time) {
 	if err := ApplySchema(ctx, pool); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room, purchase.authorizations, purchase.accounts, purchase.events`); err != nil {
+	if _, err := pool.Exec(ctx, `TRUNCATE purchase.cases, purchase.room, purchase.authorizations, purchase.accounts, purchase.events, purchase.card_events, purchase.paused`); err != nil {
 		t.Fatal(err)
 	}
 	now := time.Date(2026, 11, 28, 9, 15, 0, 0, time.UTC)

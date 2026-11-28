@@ -84,6 +84,20 @@ func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "the signature doesn't hold", http.StatusBadRequest)
 		return
 	}
+	// The event's kind first: a transaction's card is an id, an
+	// authorization's an object.
+	var kind struct {
+		ID   string `json:"id"`
+		Type string `json:"type"`
+	}
+	if err := json.Unmarshal(body, &kind); err != nil || kind.ID == "" {
+		http.Error(w, "not an event", http.StatusBadRequest)
+		return
+	}
+	if kind.Type == "issuing_transaction.created" {
+		h.transaction(w, r, body)
+		return
+	}
 	var ev stripeEvent
 	if err := json.Unmarshal(body, &ev); err != nil || ev.ID == "" {
 		http.Error(w, "not an event", http.StatusBadRequest)
@@ -201,4 +215,70 @@ func (s *Store) SetAccount(ctx context.Context, tenant, account string) error {
 	_, err := s.Pool.Exec(ctx, `INSERT INTO purchase.accounts (tenant_id, account) VALUES ($1, $2)
 		ON CONFLICT (tenant_id) DO UPDATE SET account = EXCLUDED.account`, tenant, account)
 	return err
+}
+
+// stripeTransaction is an issuing_transaction.created event: a capture or a
+// refund on a card, with the authorization it settles (none for a force
+// capture). Its card is the card's id.
+type stripeTransaction struct {
+	ID      string `json:"id"`
+	Account string `json:"account"`
+	Data    struct {
+		Object struct {
+			ID            string  `json:"id"`
+			Type          string  `json:"type"`
+			Amount        int64   `json:"amount"`
+			Card          string  `json:"card"`
+			Authorization *string `json:"authorization"`
+		} `json:"object"`
+	} `json:"data"`
+}
+
+// transaction keeps a capture or a refund once, by its event id, and says
+// a force capture, an over-capture or a card in no case at once. It answers
+// 200 once kept (a repeat included) and 500 when it couldn't keep it, so the
+// issuer sends it again.
+func (h *Webhook) transaction(w http.ResponseWriter, r *http.Request, body []byte) {
+	var ev stripeTransaction
+	if err := json.Unmarshal(body, &ev); err != nil || ev.Data.Object.Card == "" {
+		http.Error(w, "not a transaction", http.StatusBadRequest)
+		return
+	}
+	o := ev.Data.Object
+	kind := ""
+	switch o.Type {
+	case "capture":
+		kind = EventCapture
+	case "refund":
+		kind = EventRefund
+	default:
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	auth := ""
+	if o.Authorization != nil {
+		auth = *o.Authorization
+	}
+	settled, err := h.Store.RecordMoney(r.Context(), MoneyEvent{EventID: ev.ID, Account: ev.Account, Card: o.Card, Kind: kind, Authorization: auth, Amount: o.Amount})
+	switch {
+	case errors.Is(err, ErrCardNoCase):
+		if h.Logger != nil {
+			h.Logger.WarnContext(r.Context(), "purchase: money moved on a card no case issued", slog.String("transaction", o.ID), slog.String("kind", kind))
+		}
+		w.WriteHeader(http.StatusOK)
+		return
+	case errors.Is(err, ErrOtherAccount):
+		if h.Logger != nil {
+			h.Logger.WarnContext(r.Context(), "purchase: a transaction from another account wasn't counted", slog.String("transaction", o.ID))
+		}
+		w.WriteHeader(http.StatusOK)
+		return
+	case err != nil:
+		http.Error(w, "not kept", http.StatusInternalServerError)
+		return
+	}
+	if settled.Exception && h.Logger != nil {
+		h.Logger.WarnContext(r.Context(), "purchase: the Card's buying is paused", slog.String("transaction", o.ID), slog.String("money", settled.Money))
+	}
+	w.WriteHeader(http.StatusOK)
 }

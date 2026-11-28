@@ -221,6 +221,15 @@ func (s *Store) Decide(ctx context.Context, tenant, caseID string, version int, 
 // withinLimits checks a case against a Card's limits, its counts read in the
 // decision's transaction.
 func (s *Store) withinLimits(ctx context.Context, tx pgx.Tx, c Case, l Limits, now time.Time) error {
+	// A force capture or an over-capture on one of its purchases pauses the
+	// Card's buying until the owner resumes it.
+	var paused bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM purchase.paused WHERE tenant_id = $1 AND card_id = $2)`, c.Tenant, c.Card.ID).Scan(&paused); err != nil {
+		return err
+	}
+	if paused {
+		return fmt.Errorf("%w: the Card's buying is paused", ErrOutsideLimits)
+	}
 	if l.PerPurchase > 0 && c.Price.Max > l.PerPurchase {
 		return fmt.Errorf("%w: over the per-purchase limit", ErrOutsideLimits)
 	}

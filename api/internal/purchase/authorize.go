@@ -144,8 +144,9 @@ func (s *Store) Authorize(ctx context.Context, a Auth) Answer {
 				out = Answer{Reason: DeclineTwice}
 			}
 		}
-		_, err = tx.Exec(ctx, `INSERT INTO purchase.authorizations (authorization_id, tenant_id, case_id, version, approved, reason, amount, at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, a.ID, r.Case.Tenant, r.Case.CaseID, r.Case.Version, out.Approved, out.Reason, a.Amount, now)
+		_, err = tx.Exec(ctx, `INSERT INTO purchase.authorizations (authorization_id, tenant_id, case_id, version, approved, reason, amount, at, merchant_name, merchant_category, verification)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, a.ID, r.Case.Tenant, r.Case.CaseID, r.Case.Version, out.Approved, out.Reason, a.Amount, now,
+			oneLine(a.MerchantName, 100), oneLine(a.Category, 100), a.Verification)
 		return err
 	})
 	if err != nil {
