@@ -1451,3 +1451,30 @@ func TestCallOutcomeIsLogged(t *testing.T) {
 		}
 	})
 }
+
+// A relay tool's vendor pins reach the permit KIFF is asked for only for a
+// tenant on KIFF_SIGN_PINS; off it, the permit request carries none.
+func TestARelayToolsPinsAreSignedOnlyForASigningTenant(t *testing.T) {
+	for _, on := range []bool{false, true} {
+		r := newRig(t)
+		relay := refundTool
+		relay.Mode, relay.Audience = gateway.ModeRelay, "https://relay.example.com"
+		relay.VendorPins = []gateway.VendorPin{{Path: "stripe_context", Value: "acct_1"}, {Path: "metadata.kiff_op", Marker: true}}
+		r.gw.Catalog = catalog{relay}
+		r.gw.Credentials = creds{"t1/issue_refund": "relay-transport"}
+		if on {
+			r.gw.SignPins = map[string]bool{"t1": true}
+		}
+		got := r.call(t, "agent-key", amount(500, fmt.Sprintf("op-pins-%v", on)))
+		key, _ := got.call["invocation"].(string)
+		r.api.mu.Lock()
+		pins := r.api.permits[key].Pins
+		r.api.mu.Unlock()
+		if on && (len(pins) != 2 || pins[0].Path != "stripe_context" || !pins[1].Marker) {
+			t.Fatalf("signing: pins %+v", pins)
+		}
+		if !on && pins != nil {
+			t.Fatalf("not signing: pins %+v", pins)
+		}
+	}
+}

@@ -123,7 +123,7 @@ func (a *agent) pendingResult(ctx context.Context, raw json.RawMessage) (json.Ra
 	if err != nil {
 		return nil, err
 	}
-	tools, err := a.g.Catalog.Tools(ctx, a.me.TenantID)
+	tools, err := a.g.tools(ctx, a.me.TenantID)
 	if err != nil {
 		return nil, err
 	}
