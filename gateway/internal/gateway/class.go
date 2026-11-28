@@ -45,6 +45,8 @@ type ClassedTool struct {
 	Name     string
 	ReadOnly bool
 	Money    bool
+	// Destructive is the vendor's destructiveHint: it only raises.
+	Destructive bool
 }
 
 // Classify is the tool's class: the worse of what the rules give and what a
@@ -69,7 +71,9 @@ func ruleClass(t ClassedTool) Class {
 	}
 	// A read verb on a tool planque calls read-only is a read, whatever
 	// else its name says: list_cards lists cards and moves no money.
-	if t.ReadOnly && hasPrefix(n, readVerbs) {
+	// A tool its vendor marks destructive is never a read, whatever its
+	// other hint says.
+	if t.ReadOnly && !t.Destructive && hasPrefix(n, readVerbs) {
 		return ClassRead
 	}
 	c := ClassWrite
@@ -80,6 +84,10 @@ func ruleClass(t ClassedTool) Class {
 	}
 	if hasPrefix(n, deleteVerbs) {
 		c = worse(c, ClassDelete)
+	} else if t.Destructive {
+		// The vendor's destructiveHint: at least irreversible, or delete
+		// for a delete (above).
+		c = worse(c, ClassIrreversible)
 	}
 	if containsAny(n, moneyWords) || n == "approve_request" || n == "decline_request" {
 		c = worse(c, ClassMoney)
@@ -121,7 +129,7 @@ const ClassParam = "kiff_class"
 // Class is the tool's class (Classify), from its name at the vendor, its
 // app, planque's read_only and the profile's money mark.
 func (t Tool) Class() Class {
-	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money})
+	return Classify(ClassedTool{App: t.App, Name: t.classedName(), ReadOnly: t.ReadOnly, Money: t.Money, Destructive: t.DestructiveHint})
 }
 
 // classedName is the tool's name at its vendor: what its class is read from.
@@ -273,7 +281,9 @@ func (t Tool) CallClass(callArgs map[string]any) (Class, map[string]string) {
 		}
 	}
 	if cond := tt.condition; cond != nil {
-		// Only the top-level argument is read: a draft create can still
+		// The reviewer's condition for this exact tool stands over the
+		// vendor's destructiveHint as it does over the name. Only the
+		// top-level argument is read: a draft create can still
 		// carry nested send, finalise or e-invoicing fields. The relay's own
 		// draft-only check refuses those, and must stay until KIFF signs the
 		// whole vendor body for pinned arguments.

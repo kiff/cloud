@@ -202,6 +202,11 @@ type createRequest struct {
 	// (K4): a lowercase slug, or empty. Its calls are classed by that app's
 	// reviewed table; an app with no table is classed by the rules.
 	App string `json:"app"`
+	// DestructiveHint is the vendor's own destructiveHint for the tool, as
+	// its connector listed it (K4). It only ever raises the tool's class:
+	// at least irreversible, or delete for a delete. Default false changes
+	// nothing.
+	DestructiveHint bool `json:"destructive_hint"`
 	// ReadOnly declares the tool only reads; default false keeps the
 	// safe behaviour (identical calls within the window are one).
 	ReadOnly bool `json:"read_only"`
@@ -453,7 +458,7 @@ func (h *Handler) prepare(ctx, probeCtx context.Context, c caller, req *createRe
 	return Connection{Name: req.Name, Title: title, Description: desc, URL: u.String(), UpstreamTool: req.Tool,
 		AmountArg: req.AmountArg, AmountUnit: strings.TrimSpace(req.AmountUnit), AmountScale: scale, AmountFormat: req.AmountFormat,
 		IdempotencyArg: req.IdempotencyArg, ResourceArg: req.ResourceArg, AmountPath: req.AmountPath, ResourcePath: req.ResourcePath, FixedArgs: req.FixedArgs, InputSchema: schema, ReadOnly: req.ReadOnly, Mode: mode, Audience: audience, OutcomeContract: req.OutcomeContract, OutcomeLookupTool: req.OutcomeLookupTool,
-		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App)}, 0, ""
+		UnitLookup: req.UnitLookup, AmountLookup: req.AmountLookup, CreatedBy: createdBy(c.me), Control: req.Control, VendorTool: oneLine(req.VendorTool, 100), App: h.relayApp(u.String(), req.App), DestructiveHint: req.DestructiveHint}, 0, ""
 }
 
 // discoveredTool is a remote tool as the connect form offers it: the
@@ -1259,7 +1264,7 @@ func (h *Handler) logClass(r *http.Request, c caller, conn Connection) {
 	if !h.ClassLog || h.Logger == nil {
 		return
 	}
-	t := gateway.Tool{Name: conn.Name, UpstreamTool: conn.UpstreamTool, VendorTool: conn.VendorTool, App: conn.App, ReadOnly: conn.ReadOnly}
+	t := gateway.Tool{Name: conn.Name, UpstreamTool: conn.UpstreamTool, VendorTool: conn.VendorTool, App: conn.App, DestructiveHint: conn.DestructiveHint, ReadOnly: conn.ReadOnly}
 	class := t.Class()
 	if (class == gateway.ClassRead) == conn.ReadOnly {
 		return

@@ -189,6 +189,7 @@ ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS vendor_tool text NOT NULL DEF
 -- The app the tool belongs to, when its connector names it ("qonto"): KIFF classes
 -- its calls by that app's reviewed table (K4, gateway/classes). '' when none is named.
 ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS app text NOT NULL DEFAULT '';
+ALTER TABLE gateway.tools ADD COLUMN IF NOT EXISTS destructive_hint boolean NOT NULL DEFAULT false;
 
 -- Connection profiles: each profile the owner approved, kept by
 -- revision so a decided call keeps the profile it was decided under (floor

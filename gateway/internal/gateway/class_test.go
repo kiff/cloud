@@ -112,3 +112,22 @@ func TestACallsClassAndItsArgumentsReachKIFF(t *testing.T) {
 		t.Errorf("a read's parameters: %v", p)
 	}
 }
+
+func TestTheVendorsDestructiveHintOnlyRaises(t *testing.T) {
+	cases := []struct {
+		tool ClassedTool
+		want Class
+	}{
+		{ClassedTool{Name: "update_label", Destructive: true}, ClassIrreversible},
+		{ClassedTool{Name: "remove_label", Destructive: true}, ClassDelete},
+		{ClassedTool{Name: "list_labels", ReadOnly: true, Destructive: true}, ClassIrreversible},
+		{ClassedTool{Name: "create_transfer", Destructive: true}, ClassMoney},
+		{ClassedTool{Name: "update_label"}, ClassWrite},
+		{ClassedTool{Name: "list_labels", ReadOnly: true}, ClassRead},
+	}
+	for _, c := range cases {
+		if got := Classify(c.tool); got != c.want {
+			t.Errorf("%+v: %s, want %s", c.tool, got, c.want)
+		}
+	}
+}

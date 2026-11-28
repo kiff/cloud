@@ -87,6 +87,9 @@ type Tool struct {
 	// computed from.
 	VendorTool string
 	App        string
+	// DestructiveHint: the vendor marks the tool destructive. It only
+	// raises the tool's class (Classify).
+	DestructiveHint bool
 	// Control: the account's own control server's tool (kiff/tafs#206),
 	// granted to SetupReaderRole too, read-only or not.
 	Control bool
@@ -1469,7 +1472,7 @@ type PostgresCatalog struct{ Pool *pgxpool.Pool }
 
 func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, error) {
 	rows, err := c.Pool.Query(ctx, `SELECT name, title, description, input_schema, upstream_url, upstream_tool, amount_arg, amount_unit, amount_scale, idempotency_arg, read_only,
-		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format, control, vendor_tool, app,
+		mode, audience, outcome_contract, outcome_lookup_tool, created_at, resource_arg, amount_path, resource_path, fixed_args, unit_lookup, amount_lookup, profile_revision, amount_format, control, vendor_tool, app, destructive_hint,
 		COALESCE(NULLIF(t.paused_reason, ''),
 			(SELECT CASE WHEN i.verify_evidence->>'result' = 'pending' THEN 'the check of an earlier call hasn''t finished'
 			             ELSE 'a check of an earlier call didn''t hold' END
@@ -1489,7 +1492,7 @@ func (c PostgresCatalog) Tools(ctx context.Context, tenantID string) ([]Tool, er
 		var t Tool
 		var schema, fixed, unit, amount, profile []byte
 		if err := rows.Scan(&t.Name, &t.Title, &t.Description, &schema, &t.UpstreamURL, &t.UpstreamTool, &t.AmountArg, &t.AmountUnit, &t.AmountScale, &t.IdempotencyArg, &t.ReadOnly,
-			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat, &t.Control, &t.VendorTool, &t.App,
+			&t.Mode, &t.Audience, &t.OutcomeContract, &t.OutcomeLookupTool, &t.ConnectionCreatedAt, &t.ResourceArg, &t.AmountPath, &t.ResourcePath, &fixed, &unit, &amount, &t.ProfileRevision, &t.AmountFormat, &t.Control, &t.VendorTool, &t.App, &t.DestructiveHint,
 			&t.Paused, &profile); err != nil {
 			return nil, err
 		}
