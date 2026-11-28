@@ -189,6 +189,11 @@ const (
 	// on the internal plan, whose Sandbox purchases count: App Review's.
 	// Every other account's test purchases are refused.
 	envAppleSandboxTenants = "KIFF_APPLE_SANDBOX_TENANTS"
+	// envK4Tenants is the comma-separated accounts whose vendor calls KIFF
+	// decides by their class (K4, design/policy-to-card.md): irreversible,
+	// delete and money refused until a Card opens them, and every money call
+	// held for its owner. Test accounts only until K4's step 7; unset, none.
+	envK4Tenants = "KIFF_K4_TENANTS"
 
 	// Google Play Billing for the tafs Android app. Set up when the
 	// package name and the service account are both set; otherwise its
@@ -2050,6 +2055,9 @@ func newRouter(deps routerDeps) http.Handler {
 		if deps.meter != nil && deps.tenantStore != nil {
 			propOpts = append(propOpts, handlers.WithProposalsMeterLimits(meter.NewLimits(deps.tenantStore, deps.meter)))
 		}
+		// K4: the accounts whose calls are decided by their class, test
+		// accounts first (KIFF_K4_TENANTS, comma-separated; unset, none).
+		propOpts = append(propOpts, handlers.WithProposalsK4Tenants(strings.Split(os.Getenv(envK4Tenants), ",")...))
 		proposalsHandler = handlers.NewProposalsHandler(deps.tenantRuntime, propOpts...)
 		proposalsHandler.Register(authed)
 

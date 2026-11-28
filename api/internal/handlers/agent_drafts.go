@@ -1238,7 +1238,7 @@ func revisionBody(rv mandate.Revision, cur mandate.Mandate) mandateBody {
 		b.ValidUntil = &until
 	}
 	for _, g := range rv.Grants {
-		gb := mandateGrantBody{Action: g.Action, EntityStates: g.EntityStates, NextSteps: g.NextSteps}
+		gb := mandateGrantBody{Action: g.Action, EntityStates: g.EntityStates, NextSteps: g.NextSteps, Opens: openingsBody(g.Opens)}
 		for _, l := range g.PerAction {
 			gb.PerActionMax = append(gb.PerActionMax, mandatePerActionBody{Quantity: l.Quantity.String(), Max: l.Max})
 		}
