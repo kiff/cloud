@@ -1121,6 +1121,11 @@ func (h *ProposalsHandler) decide(w http.ResponseWriter, r *http.Request) {
 		}
 		binding = b
 		ctx = withCoveringSlot(ctx)
+		if b.Tool == purchase.ToolIssueCard {
+			// permitGate checked it's the exact case KIFF approved and is
+			// executing: that case's decision is the owner's one decision.
+			ctx = withPurchaseDecided(ctx)
+		}
 	} else if resp, stop := h.permitRequired(ctx, id, prop, spec); stop {
 		h.incCounter(ctx, id.Tenant, usage.CloudCounterProposalsSubmitted)
 		h.applyMode(ctx, id.Tenant, mode, &resp)

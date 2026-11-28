@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kiff/cloud/api/internal/mandate"
 	"github.com/kiff/cloud/api/internal/purchase"
 )
 
@@ -67,5 +68,22 @@ func TestIssueCardsPermitIsOnlyForTheExecutingCase(t *testing.T) {
 	}
 	if why := h.purchaseCardRefusal(ctx, "t_acme", json.RawMessage(`{"case":{}}`)); why == "" {
 		t.Error("no case id: allowed")
+	}
+}
+
+// A purchase's card is money, but its case was the one decision: K4 doesn't
+// ask the owner a second time for it. Any other money call still asks.
+func TestAPurchasesCardIsNotAskedTwice(t *testing.T) {
+	h := &ProposalsHandler{k4: map[string]bool{"t1": true}}
+	money := withClass(context.Background(), callClass{class: "money"})
+	var plain mandate.Request
+	h.classInto(money, "t1", &plain)
+	if plain.OwnerAsk == "" {
+		t.Fatal("a money call isn't asked")
+	}
+	var card mandate.Request
+	h.classInto(withPurchaseDecided(money), "t1", &card)
+	if card.OwnerAsk != "" || card.Class != "money" {
+		t.Fatalf("the purchase's card: %+v", card)
 	}
 }
