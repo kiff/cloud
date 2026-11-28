@@ -58,6 +58,14 @@ func TestTheRulesNeverMakeAReadOnAGuess(t *testing.T) {
 		{ClassedTool{Name: "create_transfer"}, ClassMoney},
 		{ClassedTool{Name: "create_invoice"}, ClassIrreversible},
 		{ClassedTool{App: "qonto", Name: "a_tool_qonto_adds_later"}, ClassWrite},
+		// Moving data out of the account starts closed, as sending and sharing do: a forward discloses it to a new
+		// recipient, and an export is the usual first step of a bulk transfer. Read-only is no exception: an export
+		// a reader makes still leaves the account, and only the owner opens it.
+		{ClassedTool{Name: "forward_email"}, ClassIrreversible},
+		{ClassedTool{Name: "export_contacts"}, ClassIrreversible},
+		{ClassedTool{Name: "export_contacts", ReadOnly: true}, ClassIrreversible},
+		{ClassedTool{Name: "INTERCOM_CREATE_DATA_EXPORT"}, ClassIrreversible},
+		{ClassedTool{Name: "create_message_forward"}, ClassIrreversible},
 	} {
 		if got := Classify(c.in); got != c.want {
 			t.Errorf("%+v: %s, want %s", c.in, got, c.want)
